@@ -27,7 +27,7 @@
     "Increase your plant production 1 step. Place a city tile.": "提升你的植物产能1级,放置1个城市板块",
 
     "Ecology Experts": "生态学专家",
-    "Increase your plant production 1 step. Play a card from hand, ignoring global requirements.": "提升你的植物产能1级,并从手中打出一张牌,无视它的改造要求",
+    "Increase your plant production 1 step. Play a card from hand, ignoring global requirements.": "提升你的植物产能1级,并从手中打出一张牌,无视它的全球参数要求（标志需求不算）",
 
     "Eccentric Sponsor": "奇怪的赞助商",
     "Play 1 card from hand with a 25 MC reduction.": "以降低 25MC 的价格打出一张手牌",
@@ -65,7 +65,7 @@
     "Mohole": "超深钻",
     "Increase your heat production 3 steps. Gain 3 heat.": "提升你的热能产量3级,获得3个热能资源",
 
-    "Mohole Excavation": "超深钻挖掘",
+    "Mohole Excavation": "莫霍面挖掘",
     "Increase your steel production 1 step and heat production 2 steps. Gain 2 heat.": "提升1格钢铁产能和2格热能产能,获得2个热能资源",
 
     "Nitrogen Shipment": "氮装运",
@@ -89,13 +89,13 @@
     "Smelting Plant": "冶炼厂",
     "Raise oxygen 2 steps. Gain 5 steel.": "提升火星的氧气浓度2格,获得5个钢铁资源",
 
-    "Society Support": "社会各界的支持",
+    "Society Support": "社会扶持",
     "Increase your plant, energy and heat production 1 step. Decrease money production 1 step.": "提升你的植物产能、电力产能和热能产能1格,降低你的MC产能1格",
 
     "Supplier": "供应商",
     "Increase your energy production 2 steps. Gain 4 steel.": "提升你的电力产能2级,获得4个钢铁资源",
 
-    "Supply Drop": "空投补给品",
+    "Supply Drop": "空投补给",
     "Gain 3 titanium, 8 steel and 3 plants.": "获得3个钛合金资源、8个钢铁资源和3个植物资源",
 
     "UNMI Contractor": "UNMI 承包商",
