@@ -27,8 +27,8 @@ import { TileType } from "./src/TileType";
 import { Phase } from "./src/Phase";
 import { Resources } from "./src/Resources";
 import { CardType } from "./src/cards/CardType";
-import { ClaimedMilestoneModel } from "./src/models/ClaimedMilestoneModel";
-import { FundedAwardModel } from "./src/models/FundedAwardModel";
+import { ClaimedMilestoneModel, IMilestoneScore } from "./src/models/ClaimedMilestoneModel";
+import { FundedAwardModel, IAwardScore } from "./src/models/FundedAwardModel";
 import { Database } from "./src/database/Database";
 import { PartyModel, DelegatesModel, TurmoilModel } from "./src/models/TurmoilModel";
 import { SelectDelegate } from "./src/inputs/SelectDelegate";
@@ -513,11 +513,13 @@ function createGame(req: http.IncomingMessage, res: http.ServerResponse): void {
         heatFor: gameReq.heatFor,
         breakthrough: gameReq.breakthrough,
         startingCorporations: gameReq.startingCorporations,
+        includeVenusMA: gameReq.includeVenusMA,
         soloTR: gameReq.soloTR,
         clonedGamedId: gameReq.clonedGamedId,
         initialDraftVariant: gameReq.initialDraft,
         initialDraftRounds: parseInt(gameReq.initialDraftRounds),
-        randomMA: gameReq.randomMA
+        randomMA: gameReq.randomMA,
+        shuffleMapOption: gameReq.shuffleMapOption,
       } as GameOptions;
 
       const game = new Game(gameId, players, firstPlayer, gameOptions, false);
@@ -623,12 +625,23 @@ function getMilestones(game: Game): Array<ClaimedMilestoneModel> {
   let milestoneModels: Array<ClaimedMilestoneModel> = [];
 
   for (let idx in allMilestones) {
-    let claimed = claimedMilestones.find((m) => m.milestone.name === allMilestones[idx].name)
+    let claimed = claimedMilestones.find((m) => m.milestone.name === allMilestones[idx].name);
+    let scores:Array<IMilestoneScore> =  [];
+    if (claimed === undefined && claimedMilestones.length < 3) {
+      game.getPlayers().forEach(player => {
+        scores.push({
+          playerColor: player.color,
+          playerScore: allMilestones[idx].getScore(player, game)
+        });
+      });
+    }
+
     milestoneModels.push({
       player_name: claimed === undefined ? "" : claimed.player.name,
       player_color: claimed === undefined ? "" : claimed.player.color,
-      milestone: allMilestones[idx]
-    })
+      milestone: allMilestones[idx],
+      scores
+    });
   }
 
   return milestoneModels;
@@ -640,29 +653,49 @@ function getAwards(game: Game): Array<FundedAwardModel> {
   let awardModels: Array<FundedAwardModel> = [];
 
   for (let idx in allAwards) {
-    let funded = fundedAwards.find((a) => a.award.name === allAwards[idx].name)
+    let funded = fundedAwards.find((a) => a.award.name === allAwards[idx].name);
+    let scores:Array<IAwardScore> =  [];
+    if (fundedAwards.length < 3 || funded !== undefined) {
+      game.getPlayers().forEach(player => {
+        scores.push({
+          playerColor: player.color,
+          playerScore: allAwards[idx].getScore(player, game)
+        });
+      });
+    }
+
     awardModels.push({
       player_name: funded === undefined ? "" : funded.player.name,
       player_color: funded === undefined ? "" : funded.player.color,
-      award: allAwards[idx]
+      award: allAwards[idx],
+      scores: scores
     })
   }
 
   return awardModels;
 }
 
+function getCorporationCard(player: Player): CardModel | undefined {
+  if (player.corporationCard === undefined) return undefined;
+
+  return ({
+    name: player.corporationCard.name,
+    resources: player.getResourcesOnCard(player.corporationCard),
+    calculatedCost: 0,
+    cardType: CardType.CORPORATION
+  }) as CardModel
+}
+
 function getPlayer(player: Player, game: Game, block: boolean): string {
   try{
     const output = {
-      cardsInHand: block? []: getCards(player, player.cardsInHand, game),
-      draftedCards: getCards(player, player.draftedCards, game),
+      cardsInHand: block? []: getCards(player, player.cardsInHand, game, false),
+      draftedCards:  block? []: getCards(player, player.draftedCards, game, false),
       milestones: getMilestones(game),
       awards: getAwards(game),
+      cardCost: player.cardCost,
       color: player.color,
-      corporationCard: player.corporationCard ?
-        player.corporationCard.name : undefined,
-      corporationCardResources: player.corporationCard ?
-        player.getResourcesOnCard(player.corporationCard) : undefined,  
+      corporationCard: getCorporationCard(player),
       energy: player.energy,
       energyProduction: player.getProduction(Resources.ENERGY),
       generation: game.getGeneration(),
@@ -706,8 +739,7 @@ function getPlayer(player: Player, game: Game, block: boolean): string {
       fleetSize: player.fleetSize,
       tradesThisTurn: player.tradesThisTurn,
       turmoil: getTurmoil(game),
-      selfReplicatingRobotsCardCost: player.getSelfReplicatingRobotsCardCost(game),
-      selfReplicatingRobotsCardTarget: player.getSelfReplicatingRobotsCard(),
+      selfReplicatingRobotsCards: player.getSelfReplicatingRobotsCards(game),
       undoing : player.undoing,
       gameId : game.id,
       dealtCorporationCards: player.dealtCorporationCards,
@@ -726,11 +758,11 @@ function getPlayer(player: Player, game: Game, block: boolean): string {
 
 }
 
-function getCardsAsCardModel(cards: Array<ICard>): Array<CardModel> {
+function getCardsAsCardModel(cards: Array<ICard>, showResouces: boolean = true): Array<CardModel> {
   let result: Array<CardModel> = [];
 
   cards.forEach((card) => {
-    result.push({ name: card.name, resources: (card.resourceCount !== undefined ? card.resourceCount : 0), calculatedCost: 0, cardType: CardType.AUTOMATED });
+    result.push({name: card.name, resources: (card.resourceCount !== undefined && showResouces ? card.resourceCount : undefined), calculatedCost : 0, cardType : CardType.AUTOMATED});
   });
 
   return result;
@@ -745,6 +777,7 @@ function getWaitingFor(
   const result: PlayerInputModel = {
     id: undefined,
     title: waitingFor.title,
+    buttonLabel: waitingFor.buttonLabel,
     inputType: waitingFor.inputType,
     amount: undefined,
     options: undefined,
@@ -775,13 +808,13 @@ function getWaitingFor(
       }
       break;
     case PlayerInputTypes.SELECT_HOW_TO_PAY_FOR_CARD:
-      result.cards = getCardsAsCardModel((waitingFor as SelectHowToPayForCard).cards);
+      result.cards = getCardsAsCardModel((waitingFor as SelectHowToPayForCard).cards, false);
       result.microbes = (waitingFor as SelectHowToPayForCard).microbes;
       result.floaters = (waitingFor as SelectHowToPayForCard).floaters;
       result.canUseHeat = (waitingFor as SelectHowToPayForCard).canUseHeat;
       break;
     case PlayerInputTypes.SELECT_CARD:
-      result.cards = getCardsAsCardModel((waitingFor as SelectCard<ICard>).cards);
+      result.cards = getCardsAsCardModel((waitingFor as SelectCard<ICard>).cards, waitingFor.title.indexOf("Perform") >= 0 ? true : false);
       result.maxCardsToSelect = (waitingFor as SelectCard<ICard>)
         .maxCardsToSelect;
       result.minCardsToSelect = (waitingFor as SelectCard<ICard>)
@@ -822,10 +855,11 @@ function getWaitingFor(
 function getCards(
   player: Player,
   cards: Array<IProjectCard>,
-  game: Game
+    game: Game,
+    showResouces: boolean = true
 ): Array<CardModel> {
   return cards.map((card) => ({
-    resources: player.getResourcesOnCard(card),
+    resources: showResouces?player.getResourcesOnCard(card):undefined,
     name: card.name,
     calculatedCost: player.getCardCost(game, card),
     cardType: card.cardType
@@ -836,10 +870,7 @@ function getPlayers(players: Array<Player>, game: Game): Array<PlayerModel> {
   return players.map((player) => {
     return {
       color: player.color,
-      corporationCard: player.corporationCard ?
-        player.corporationCard.name : undefined,
-      corporationCardResources: player.corporationCard ?
-        player.getResourcesOnCard(player.corporationCard) : undefined,
+      corporationCard: getCorporationCard(player),
       energy: player.energy,
       energyProduction: player.getProduction(Resources.ENERGY),
       heat: player.heat,
@@ -872,7 +903,7 @@ function getPlayers(players: Array<Player>, game: Game): Array<PlayerModel> {
       fleetSize: player.fleetSize,
       tradesThisTurn: player.tradesThisTurn,
       turmoil: getTurmoil(game),
-      selfReplicatingRobotsCardTarget: player.getSelfReplicatingRobotsCard(),
+      selfReplicatingRobotsCards: player.getSelfReplicatingRobotsCards(game),
       waitingFor: getWaitingFor(player.getWaitingFor())
     } as unknown as PlayerModel;
   });
@@ -1122,6 +1153,7 @@ function serveResource(res: http.ServerResponse, s: Buffer): void {
   res.write(s);
   res.end();
 }
+
 
 loadAllGames();
 

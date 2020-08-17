@@ -1,9 +1,9 @@
-import { IGlobalEvent } from './IGlobalEvent';
-import { GlobalEventName } from './GlobalEventName';
-import { PartyName } from '../parties/PartyName';
-import { Game } from '../../Game';
-import { Resources } from '../../Resources';
-import { Turmoil } from '../Turmoil';
+import { IGlobalEvent } from "./IGlobalEvent";
+import { GlobalEventName } from "./GlobalEventName";
+import { PartyName } from "../parties/PartyName";
+import { Game } from "../../Game";
+import { Resources } from "../../Resources";
+import { Turmoil } from "../Turmoil";
 
 export class Sabotage implements IGlobalEvent {
     public name = GlobalEventName.SABOTAGE;
@@ -12,8 +12,12 @@ export class Sabotage implements IGlobalEvent {
     public currentDelegate = PartyName.REDS;
     public resolve(game: Game, turmoil: Turmoil) {
         game.getPlayers().forEach(player => {
-            player.setProduction(Resources.ENERGY, -1, game, undefined, true);
-            player.setProduction(Resources.STEEL, -1, game, undefined, true);
+            if(player.getProduction(Resources.ENERGY) > 0){
+                 player.setProduction(Resources.ENERGY, -1, game, undefined, true);
+            }
+            if(player.getProduction(Resources.STEEL) > 0){
+                player.setProduction(Resources.STEEL, -1, game, undefined, true);
+            }
             player.setResource(Resources.STEEL, turmoil.getPlayerInfluence(player), game, undefined, true);
         });    
     }

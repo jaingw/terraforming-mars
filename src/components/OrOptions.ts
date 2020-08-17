@@ -4,7 +4,7 @@ import { PlayerInputFactory } from "./PlayerInputFactory";
 import { $t } from "../directives/i18n";
 
 let unique: number = 0;
-
+let childrenMap: Map<any, Array<VNode>>  =  new Map ();
 export const OrOptions = Vue.component("or-options", {
     props: ["player", "players", "playerinput", "onsave", "showsave", "showtitle"],
     data: function () {
@@ -14,7 +14,7 @@ export const OrOptions = Vue.component("or-options", {
     },
     methods: {
         saveData: function () {
-            const componentInstance = this.$children[this.$data.selectedOption];
+            const componentInstance = childrenMap.get(this.playerinput)![this.$data.selectedOption].componentInstance;
             if (componentInstance !== undefined) {
                 if ((componentInstance as any).saveData instanceof Function) {
                     (componentInstance as any).saveData();
@@ -28,6 +28,8 @@ export const OrOptions = Vue.component("or-options", {
         unique++;
         const children: Array<VNode> = [];
         let child :VNode ;
+        let childListForSave: Array<VNode> = [];
+        childrenMap.set(this.playerinput,childListForSave);
         if (this.showtitle) {
             children.push(createElement("label", [createElement("div", $t(this.playerinput.title))]))
         }
@@ -54,10 +56,11 @@ export const OrOptions = Vue.component("or-options", {
                 copy.unshift(String(idx));
                 this.onsave([copy]);
             }, false, false);
+            childListForSave.push(child);
             subchildren.push(createElement("div", { style: { display: displayStyle, marginLeft: "30px" } }, [child]));
             children.push(createElement("div", subchildren));
             if (this.showsave && this.$data.selectedOption === idx) {
-                children.push(createElement("div", { style: {"margin": "5px 30px 10px"}, "class": "wf-action"}, [createElement("button", { domProps: { className: "btn btn-primary" }, on: { click: () => { this.saveData(); } } }, "Save")]));
+                children.push(createElement("div", { style: {"margin": "5px 70px 10px"}, "class": "wf-action"}, [createElement("button", { domProps: { className: "btn btn-primary" }, on: { click: () => { this.saveData(); } } }, $t(option.buttonLabel))]));
             }
         });
         return createElement("div", {"class": "wf-options"}, children);

@@ -10,6 +10,7 @@ import { CardName } from "../../../CardName";
 import { LogMessageType } from "../../../LogMessageType";
 import { LogMessageData } from "../../../LogMessageData";
 import { LogMessageDataType } from "../../../LogMessageDataType";
+import { ICard } from "../../ICard";
 
 export class _Splice_ implements CorporationCard {
     public name: CardName = CardName._SPLICE_;
@@ -35,12 +36,12 @@ export class _Splice_ implements CorporationCard {
     public onCardPlayed(player: Player, game: Game, card: IProjectCard) {
         if (card.tags.indexOf(Tags.MICROBES) === -1) {return undefined;}
 
-        const addResource = new SelectOption("Add a microbe resource to this card", () => {
+        const addResource = new SelectOption("Add a microbe resource to this card", "Add microbe", () => {
             player.addResourceTo(card);
             return undefined;
         });
 
-        const getMegacredits = new SelectOption("Get 2 MC", () => {
+        const getMegacredits = new SelectOption("Get 2 MC", "Gain MC", () => {
             player.megaCredits += 2;
             return undefined;
         });
@@ -57,6 +58,10 @@ export class _Splice_ implements CorporationCard {
         }    
     }
 
+    public onCorpCardPlayed(player: Player, game: Game, card: CorporationCard): void {
+        this.onCardPlayed(player,game,card as ICard as IProjectCard);
+    }
+    
     public play() {
         return undefined;
     }

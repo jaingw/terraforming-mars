@@ -14,5 +14,8 @@ export enum BreakThroughCorporation {
     _TERRALABS_RESEARCH_ = "Terralabs Research (breakthrough)",
     _UNITED_NATIONS_MARS_INITIATIVE_ = "UNMI (breakthrough)",
     _VALLEY_TRUST_ = "Valley Trust (breakthrough)",
-    _VIRON_ = "Viron (breakthrough)"
+    _VIRON_ = "Viron (breakthrough)",
+    _CLESTIC_ = "Celestic (breakthrough)",
+    _ARKLIGHT_ = "Arklight (breakthrough)",
+    _STORMCRAFT_INCORPORATED_ = "StormCraft Incorporated (breakthrough)"
 }

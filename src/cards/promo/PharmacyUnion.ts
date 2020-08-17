@@ -1,7 +1,7 @@
 import { Tags } from "../Tags";
 import { Player } from "../../Player";
-import { CorporationCard } from '../corporation/CorporationCard';
-import { CardName } from '../../CardName';
+import { CorporationCard } from "../corporation/CorporationCard";
+import { CardName } from "../../CardName";
 import { ResourceType } from "../../ResourceType";
 import { SelectOption } from "../../inputs/SelectOption";
 import { OrOptions } from "../../inputs/OrOptions";
@@ -11,6 +11,10 @@ import { CorporationName } from "../../CorporationName";
 import { LogMessageType } from "../../LogMessageType";
 import { LogMessageData } from "../../LogMessageData";
 import { LogMessageDataType } from "../../LogMessageDataType";
+import { ICard } from "../ICard";
+import { PartyHooks } from "../../turmoil/parties/PartyHooks";
+import { PartyName } from "../../turmoil/parties/PartyName";
+import { REDS_RULING_POLICY_COST } from "../../constants";
 
 export class PharmacyUnion implements CorporationCard {
     public name: CardName = CardName.PHARMACY_UNION;
@@ -41,17 +45,22 @@ export class PharmacyUnion implements CorporationCard {
 
     public onCardPlayed(player: Player, game: Game, card: IProjectCard): void {
         if (this.isDisabled) return undefined;
-        
+
         if (card.tags.includes(Tags.MICROBES)) {
             const microbeTagCount = card.tags.filter((cardTag) => cardTag === Tags.MICROBES).length;
-            player.addResourceTo(this, microbeTagCount);
-            player.megaCredits = Math.max(player.megaCredits - microbeTagCount * 4, 0)
+            const aplayer = game.getPlayers().find((p) => p.isCorporation(this.name))!;
+            aplayer.addResourceTo(this, microbeTagCount);
+            aplayer.megaCredits = Math.max(aplayer.megaCredits - microbeTagCount * 4, 0)
         }
             
         if (player.isCorporation(CorporationName.PHARMACY_UNION) && card.tags.includes(Tags.SCIENCE)) {
             this.runInterrupts(player, game, card.tags.filter((tag) => tag === Tags.SCIENCE).length);
             return undefined;
         }
+    }
+
+    public onCorpCardPlayed(player: Player, game: Game, card: CorporationCard): void {
+         this.onCardPlayed(player,game,card as ICard as IProjectCard);
     }
 
     private runInterrupts(player: Player, game: Game, scienceTags: number): void {
@@ -70,22 +79,27 @@ export class PharmacyUnion implements CorporationCard {
             return undefined;
         } else {
             const availableOptions: OrOptions = new OrOptions();
+            const redsAreRuling = PartyHooks.shouldApplyPolicy(game, PartyName.REDS);
+
+            if (!redsAreRuling || (redsAreRuling && player.canAfford(REDS_RULING_POLICY_COST * 3))) {
+                availableOptions.options.push(
+                    new SelectOption("Turn this card face down and gain 3 TR", 
+                    "Gain TR", () => {
+                        this.isDisabled = true;
+                        player.increaseTerraformRatingSteps(3, game);
+                        game.log(
+                            LogMessageType.DEFAULT,
+                            "${0} turned ${1} face down to gain 3 TR",
+                            new LogMessageData(LogMessageDataType.PLAYER, player.id),
+                            new LogMessageData(LogMessageDataType.CARD, this.name)
+                        );
+                        return undefined;
+                    })
+                );
+            }
 
             availableOptions.options.push(
-                new SelectOption('Turn this card face down and gain 3 TR', () => {
-                    this.isDisabled = true;
-                    player.increaseTerraformRatingSteps(3, game);
-                    game.log(
-                        LogMessageType.DEFAULT,
-                        "${0} turned ${1} face down to gain 3 TR",
-                        new LogMessageData(LogMessageDataType.PLAYER, player.id),
-                        new LogMessageData(LogMessageDataType.CARD, this.name)
-                    );
-                    return undefined;
-                })
-            );
-            availableOptions.options.push(
-                new SelectOption('Do nothing', () => {
+                new SelectOption("Do nothing", "Confirm", () => {
                     this.runInterrupts(player, game, scienceTags - 1);
                     return undefined;
                 })

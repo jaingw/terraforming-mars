@@ -1,5 +1,5 @@
 import { IDatabase } from "./IDatabase";
-import { Game } from "../Game";
+import { Game, GameOptions, Score } from "../Game";
 import { IGameData } from "./IDatabase";
 
 import { Client, ClientConfig } from "pg";
@@ -19,17 +19,32 @@ export class PostgreSQL implements IDatabase {
         }
         this.client = new Client(config);
         this.client.connect();
-        this.client.query("CREATE TABLE IF NOT EXISTS games(game_id varchar, save_id integer, game text, status text default 'running', created_time timestamp default now(), PRIMARY KEY (game_id, save_id))", (err) => {
+        this.client.query("CREATE TABLE IF NOT EXISTS games(game_id varchar, players integer, save_id integer, game text, status text default 'running', created_time timestamp default now(), PRIMARY KEY (game_id, save_id))", (err) => {
             if (err) {
                 throw err;
             }
-            console.log("Connected to PostgreSQL");
+        });
+        this.client.query("CREATE TABLE IF NOT EXISTS game_results(game_id varchar not null, seed_game_id varchar, players integer, generations integer, game_options text, scores text, PRIMARY KEY (game_id))", (err) => {
+            if (err) {
+                throw err;
+            }
+        });
+
+        this.client.query("CREATE INDEX IF NOT EXISTS games_i1 on games(save_id)", (err) => {
+            if (err) {
+                throw err;
+            }
+        });
+        this.client.query("CREATE INDEX IF NOT EXISTS games_i2 on games(created_time )", (err) => {
+            if (err) {
+                throw err;
+            }
         });
     }
 
     getClonableGames( cb:(err: any, allGames:Array<IGameData>)=> void) {
         const allGames:Array<IGameData> = [];
-        const sql = "SELECT distinct game_id game_id, game FROM games WHERE status = 'running' and save_id = 0 order by game_id asc";
+        const sql = "SELECT distinct game_id game_id, players players FROM games WHERE save_id = 0 order by game_id asc";
 
         this.client.query(sql, (err, res) => {
             if (err) {
@@ -39,7 +54,7 @@ export class PostgreSQL implements IDatabase {
             }
             for (const row of res.rows) {
                 const gameId:string = row.game_id;
-                const playerCount: number = JSON.parse(row.game).players.length;
+                const playerCount: number = row.players;
                 const gameData:IGameData = {
                     gameId,
                     playerCount
@@ -111,6 +126,15 @@ export class PostgreSQL implements IDatabase {
         });
     }
 
+    saveGameResults(game_id: string, players: number, generations: number, gameOptions: GameOptions, scores: Array<Score>): void {
+        this.client.query("INSERT INTO game_results (game_id, seed_game_id, players, generations, game_options, scores) VALUES($1, $2, $3, $4, $5, $6)", [game_id, gameOptions.clonedGamedId, players, generations, gameOptions, JSON.stringify(scores)], (err) => {
+            if (err) {
+                console.error("PostgreSQL:saveGameResults", err);
+                throw err;
+            }
+        });
+    }   
+
     cleanSaves(game_id: string, save_id: number): void {
         // DELETE all saves except initial and last one
         this.client.query("DELETE FROM games WHERE game_id = $1 AND save_id < $2 AND save_id > 0", [game_id, save_id], (err) => {
@@ -124,8 +148,14 @@ export class PostgreSQL implements IDatabase {
                     console.error("PostgreSQL:cleanSaves2", err2);
                     throw err2;
                 }
-            });
+            });           
         });
+        // Purge unfinished games older than 10 days
+        this.client.query("DELETE FROM games WHERE created_time < now() - interval '10 days' and status = 'running'", function(err: { message: any; }) {
+            if (err) {
+            return console.warn(err.message);  
+            }
+        });         
     }
 
     cleanGame(game_id: string): void {

@@ -333,7 +333,7 @@ import { Polyphemos } from "./cards/colonies/Polyphemos";
 import { UtopiaInvest } from "./cards/turmoil/UtopiaInvest";
 import { LakefrontResorts } from "./cards/turmoil/LakefrontResorts";
 import { StormCraftIncorporated } from "./cards/colonies/StormCraftIncorporated";
-import { SeptumTribus } from "./cards/turmoil/SeptumTribus";
+import { SeptemTribus } from "./cards/turmoil/SeptemTribus";
 import { Arklight } from "./cards/colonies/Arklight";
 import { TerralabsResearch } from "./cards/turmoil/TerralabsResearch";
 import { Factorum } from "./cards/promo/Factorum";
@@ -458,6 +458,7 @@ import { AsteroidDeflectionSystem } from "./cards/promo/AsteroidDeflectionSystem
 import { SubCrustMeasurements } from "./cards/promo/SubCrustMeasurements";
 import { Potatoes } from "./cards/promo/Potatoes";
 import { MeatIndustry } from "./cards/promo/MeatIndustry";
+import { PoliticalAlliance } from "./cards/turmoil/PoliticalAlliance";
 
 
 /////breakthrough
@@ -478,6 +479,10 @@ import { _TerralabsResearch_ } from "./cards/breakthrough/corporation/_Terralabs
 import { _UnitedNationsMarsInitiative_ } from "./cards/breakthrough/corporation/_UnitedNationsMarsInitiative_";
 import { _ValleyTrust_ } from "./cards/breakthrough/corporation/_ValleyTrust_";
 import { _Viron_ } from "./cards/breakthrough/corporation/_Viron_";
+import { _Celestic_ } from "./cards/breakthrough/corporation/_Celestic_";
+import { _Arklight_} from "./cards/breakthrough/corporation/_Arklight_";
+import { _StormCraftIncorporated_} from "./cards/breakthrough/corporation/_StormCraftIncorporated_";
+import { IdFront } from "./cards/promo/IdFront";
 
 
 export interface ICardFactory<T> {
@@ -614,8 +619,7 @@ export const ALL_VENUS_PROJECTS_CARDS: Array<ICardFactory<IProjectCard>> = [
     { cardName: CardName.NEUTRALIZER_FACTORY, factory: NeutralizerFactory },
     { cardName: CardName.ORBITAL_REFLECTORS, factory: OrbitalReflectors },
     { cardName: CardName.OMNICOURT, factory: Omnicourt },
-    { cardName: CardName.MINING_QUOTA, factory: MiningQuota },
-    { cardName: CardName.SATURN_SURFING, factory: SaturnSurfing }
+    { cardName: CardName.MINING_QUOTA, factory: MiningQuota }
 ];    
 
 export const ALL_COLONIES_PROJECTS_CARDS: Array<ICardFactory<IProjectCard>> = [
@@ -680,6 +684,7 @@ export const ALL_TURMOIL_PROJECTS_CARDS: Array<ICardFactory<IProjectCard>> = [
     { cardName: CardName.MARTIAN_MEDIA_CENTER, factory: MartianMediaCenter },
     { cardName: CardName.PARLIAMENT_HALL, factory: ParliamentHall },
     { cardName: CardName.PR_OFFICE, factory: PROffice },
+    { cardName: CardName.POLITICAL_ALLIANCE, factory: PoliticalAlliance },
     { cardName: CardName.PUBLIC_CELEBRATIONS, factory: PublicCelebrations },
     { cardName: CardName.RECRUITMENT, factory: Recruitment },
     { cardName: CardName.RED_TOURISM_WAVE, factory: RedTourismWave },
@@ -710,7 +715,7 @@ export const ALL_TURMOIL_CORPORATIONS: Array<ICardFactory<CorporationCard>> = [
     { cardName: CardName.PRISTAR, factory: Pristar },
     { cardName: CardName.TERRALABS_RESEARCH, factory: TerralabsResearch },
     { cardName: CardName.UTOPIA_INVEST, factory: UtopiaInvest },
-    { cardName: CardName.SEPTUM_TRIBUS, factory: SeptumTribus }
+    { cardName: CardName.SEPTEM_TRIBUS, factory: SeptemTribus }
 ];
 
 export const ALL_PROMO_CORPORATIONS: Array<ICardFactory<CorporationCard>> = [
@@ -721,7 +726,8 @@ export const ALL_PROMO_CORPORATIONS: Array<ICardFactory<CorporationCard>> = [
     { cardName: CardName.PHILARES, factory: Philares },
     { cardName: CardName.MONS_INSURANCE, factory: MonsInsurance },
     { cardName: CardName.RECYCLON, factory: Recyclon },
-    { cardName: CardName.SPLICE, factory: Splice }
+    { cardName: CardName.SPLICE, factory: Splice },
+    { cardName: CardName.ID_FRONT, factory: IdFront }
 ];
 
 export const ALL_PROMO_PROJECTS_CARDS: Array<ICardFactory<IProjectCard>> = [
@@ -759,8 +765,8 @@ export const ALL_PROMO_PROJECTS_CARDS: Array<ICardFactory<IProjectCard>> = [
     { cardName: CardName.ADVERTISING, factory: Advertising },
     { cardName: CardName.DEIMOS_DOWN_PROMO, factory: DeimosDownPromo },
     { cardName: CardName.GREAT_DAM_PROMO, factory: GreatDamPromo },
-    { cardName: CardName.MAGNETIC_FIELD_GENERATORS_PROMO, factory: MagneticFieldGeneratorsPromo }
-
+    { cardName: CardName.MAGNETIC_FIELD_GENERATORS_PROMO, factory: MagneticFieldGeneratorsPromo },
+    { cardName: CardName.SATURN_SURFING, factory: SaturnSurfing }
 ];    
 
 export const ALL_PROJECT_CARDS: Array<ICardFactory<IProjectCard>> = [
@@ -993,7 +999,10 @@ export const ALL_BREAKTHROUGH_CARDS: Array<ICardFactoryBt<ICard>> = [
     { cardName: CardName._TERRALABS_RESEARCH_, factory: _TerralabsResearch_, cardName_ori: CardName.TERRALABS_RESEARCH },
     { cardName: CardName._UNITED_NATIONS_MARS_INITIATIVE_, factory: _UnitedNationsMarsInitiative_, cardName_ori: CardName.UNITED_NATIONS_MARS_INITIATIVE },
     { cardName: CardName._VALLEY_TRUST_, factory: _ValleyTrust_, cardName_ori: CardName.VALLEY_TRUST },  
-    { cardName: CardName._VIRON_, factory: _Viron_, cardName_ori: CardName.VIRON }
+    { cardName: CardName._VIRON_, factory: _Viron_, cardName_ori: CardName.VIRON },
+    { cardName: CardName._CELESTIC_, factory: _Celestic_, cardName_ori: CardName.CELESTIC },
+    { cardName: CardName._ARKLIGHT_, factory: _Arklight_, cardName_ori: CardName.ARKLIGHT },
+    { cardName: CardName._STORMCRAFT_INCORPORATED_, factory: _StormCraftIncorporated_, cardName_ori: CardName.STORMCRAFT_INCORPORATED }
 ];
 
 

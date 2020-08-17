@@ -3,5 +3,5 @@ export enum TurmoilCorporation {
     PRISTAR = "Pristar",
     UTOPIA_INVEST = "Utopia Invest",
     TERRALABS_RESEARCH = "Terralabs Research",
-    SEPTUM_TRIBUS = "Septem Tribus"
+    SEPTEM_TRIBUS = "Septem Tribus"
 }

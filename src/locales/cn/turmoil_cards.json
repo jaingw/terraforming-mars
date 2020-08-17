@@ -48,5 +48,7 @@
   "Requires that Greens are ruling or that you have 2 delegates there. Place a greenery tile and raise oxygen 1 step.": "需要绿党为执政党，或你在该党有至少2个代表。放置一片绿化板块。",
 
   "Vote Of No Confidence": "不信任票",
-  "Requires that you have a Party Leader in any party and that the sitting Chairman is neutral. Remove the NEUTRAL Chairman and move your own delegate(from the reserve) there instead. Gain 1 TR.": "需要你是一个政党的领导者且当前主席是中立代表。将中立主席替换为你储备区的一名代表。提升1点改造度。"
+  "Requires that you have a Party Leader in any party and that the sitting Chairman is neutral. Remove the NEUTRAL Chairman and move your own delegate(from the reserve) there instead. Gain 1 TR.": "需要你是一个政党的领导者且当前主席是中立代表。将中立主席替换为你储备区的一名代表。提升1点改造度。",
+
+  "Requires that you have 2 party leaders. Gain 1 TR.":"需要你是2个政党的领导者，获得1TR"
 }

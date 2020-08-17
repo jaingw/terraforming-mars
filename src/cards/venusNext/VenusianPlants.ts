@@ -2,21 +2,33 @@ import { IProjectCard } from "../IProjectCard";
 import { Tags } from "../Tags";
 import { CardType } from "../CardType";
 import { Player } from "../../Player";
-import { ResourceType } from '../../ResourceType';
-import { SelectCard } from '../../inputs/SelectCard';
-import { Game } from '../../Game';
-import { ICard } from '../ICard';
-import { CardName } from '../../CardName';
+import { ResourceType } from "../../ResourceType";
+import { SelectCard } from "../../inputs/SelectCard";
+import { Game } from "../../Game";
+import { ICard } from "../ICard";
+import { CardName } from "../../CardName";
 import { LogHelper } from "../../components/LogHelper";
+import { MAX_VENUS_SCALE, REDS_RULING_POLICY_COST } from "../../constants";
+import { PartyHooks } from "../../turmoil/parties/PartyHooks";
+import { PartyName } from "../../turmoil/parties/PartyName";
 
 export class VenusianPlants implements IProjectCard {
     public cost: number = 13;
     public tags: Array<Tags> = [Tags.VENUS, Tags.PLANT];
     public name: CardName = CardName.VENUSIAN_PLANTS;
     public cardType: CardType = CardType.AUTOMATED;
+
     public canPlay(player: Player, game: Game): boolean {
-        return game.getVenusScaleLevel() >= 16 - (2 * player.getRequirementsBonus(game, true));
+        const meetsVenusRequirements = game.getVenusScaleLevel() >= 16 - (2 * player.getRequirementsBonus(game, true));
+        const venusMaxed = game.getVenusScaleLevel() === MAX_VENUS_SCALE;
+
+        if (PartyHooks.shouldApplyPolicy(game, PartyName.REDS) && !venusMaxed) {
+          return player.canAfford(player.getCardCost(game, this) + REDS_RULING_POLICY_COST) && meetsVenusRequirements;
+        }
+  
+        return meetsVenusRequirements;
     }
+    
     public play(player: Player, game: Game) {
         game.increaseVenusScaleLevel(player,1);
         const cards = this.getResCards(player);
@@ -29,7 +41,8 @@ export class VenusianPlants implements IProjectCard {
         }
 
         return new SelectCard(
-            'Select card to add 1 resource',
+            "Select card to add 1 resource",
+            "Add resource",
             cards,
             (foundCards: Array<ICard>) => {
               player.addResourceTo(foundCards[0], 1);

@@ -1,13 +1,13 @@
-import { IProjectCard } from '../IProjectCard';
-import { IActionCard, IResourceCard } from '../ICard';
-import { CardName } from '../../CardName';
-import { CardType } from '../CardType';
-import { ResourceType } from '../../ResourceType';
-import { Tags } from '../Tags';
-import { Player } from '../../Player';
-import { Resources } from '../../Resources';
-import { Game } from '../../Game';
-import { LogHelper } from '../../components/LogHelper';
+import { IProjectCard } from "../IProjectCard";
+import { IActionCard, IResourceCard } from "../ICard";
+import { CardName } from "../../CardName";
+import { CardType } from "../CardType";
+import { ResourceType } from "../../ResourceType";
+import { Tags } from "../Tags";
+import { Player } from "../../Player";
+import { Resources } from "../../Resources";
+import { Game } from "../../Game";
+import { LogHelper } from "../../components/LogHelper";
 
 export class AsteroidHollowing implements IActionCard, IProjectCard, IResourceCard {
     public name: CardName = CardName.ASTEROID_HOLLOWING;
@@ -16,10 +16,6 @@ export class AsteroidHollowing implements IActionCard, IProjectCard, IResourceCa
     public resourceType: ResourceType = ResourceType.ASTEROID;
     public resourceCount: number = 0;
     public cardType: CardType = CardType.ACTIVE;
-
-    public canPlay(): boolean {
-        return true;
-    }
 
     public play() {
         return undefined;

@@ -2,10 +2,11 @@
 import Vue from "vue";
 
 interface SelectCardModel {
-    cards: Array<string>;
+    cards: Array<CardModel>;
 }
 
 import { Card } from "./Card";
+import { CardModel } from "../models/CardModel";
 
 export const SelectCard = Vue.component("select-card", {
     props: ["playerinput", "onsave", "showsave", "showtitle"],
@@ -27,10 +28,10 @@ export const SelectCard = Vue.component("select-card", {
         <label v-for="card in playerinput.cards" :key="card.name" class="cardbox">
             <input v-if="playerinput.maxCardsToSelect === 1 && playerinput.minCardsToSelect === 1" type="radio" v-model="cards" :value="card" />
             <input v-else type="checkbox" v-model="cards" :value="card" :disabled="cards.length >= playerinput.maxCardsToSelect && cards.indexOf(card) === -1" />
-            <card :card="card.name" :resources="card.resources"></card>
+            <card :card="card"></card>
         </label>
         <div v-if="showsave === true" class="nofloat">
-            <button class="btn btn-primary" v-on:click="saveData">Save</button>
+            <button class="btn btn-primary" v-on:click="saveData">{{playerinput.buttonLabel}}</button>
         </div>
     </div>`
 });

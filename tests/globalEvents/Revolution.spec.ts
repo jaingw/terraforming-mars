@@ -8,22 +8,37 @@ import { Kelvinists } from '../../src/turmoil/parties/Kelvinists';
 import { Sponsors } from "../../src/cards/Sponsors";
 
 describe("Revolution", function () {
-    it("resolve play", function () {
-        const card = new Revolution();
-        const player = new Player("test", Color.BLUE, false);
-        const player2 = new Player("test2", Color.RED, false);
-        const game = new Game("foobar", [player,player2], player);
-        const turmoil = new Turmoil(game);
+    let card : Revolution, player : Player, player2 : Player, game : Game, turmoil: Turmoil;
+
+    beforeEach(function() {
+        card = new Revolution();
+        player = new Player("test", Color.BLUE, false);
+        player2 = new Player("test2", Color.RED, false);
+
+        game = new Game("foobar", [player, player2], player);
+        turmoil = new Turmoil(game);
+
         turmoil.initGlobalEvent(game);
-        player.playedCards.push(new Sponsors());
-        player2.playedCards.push(new Sponsors());
         turmoil.chairman = player2;
         turmoil.dominantParty = new Kelvinists();
         turmoil.dominantParty.partyLeader = player2;
-        
         turmoil.dominantParty.delegates.push(player2);
+    });
+
+    it("resolve play", function () {
+        player.playedCards.push(new Sponsors());
+        player2.playedCards.push(new Sponsors());
+
         card.resolve(game, turmoil);
         expect(player.getTerraformRating()).to.eq(19);
+        expect(player2.getTerraformRating()).to.eq(18);
+    });
+
+    it("doesn't reduce TR for players with 0 Earth tags + influence", function () {
+        player2.playedCards.push(new Sponsors());
+
+        card.resolve(game, turmoil);
+        expect(player.getTerraformRating()).to.eq(20);
         expect(player2.getTerraformRating()).to.eq(18);
     });
 });

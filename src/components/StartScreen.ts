@@ -24,10 +24,11 @@ export const StartScreen = Vue.component("start-screen", {
             <div class="start-screen-links">
                 <a class="start-screen-link start-screen-link--new-game" href="/new-game" v-i18n>New game</a>
                 <a class="start-screen-link start-screen-link--solo" href="/mygames" v-i18n>My Games</a>
-                <a class="start-screen-link start-screen-link--cards-list" href="https://ssimeonoff.github.io/cards-list" v-i18n>Cards list</a>
-                <a class="start-screen-link start-screen-link--board-game" href="https://boardgamegeek.com/boardgame/167791/terraforming-mars" v-i18n>Board game</a>
-                <a class="start-screen-link start-screen-link--about" href="https://github.com/bafolts/terraforming-mars" v-i18n>About us</a>
-                <a class="start-screen-link start-screen-link--changelog" href="/donate" v-i18n>Donate</a>
+                <a class="start-screen-link start-screen-link--cards-list" href="/donate" v-i18n>Donate</a>
+                <a class="start-screen-link start-screen-link--board-game" href="https://docs.qq.com/doc/DQU5vYmtJeGRQaVpN" v-i18n>Help Translation</a>
+                <a class="start-screen-link start-screen-link--about" href="https://ssimeonoff.github.io/cards-list" v-i18n>Cards list</a>
+                <a class="start-screen-link start-screen-link--changelog" href="https://boardgamegeek.com/boardgame/167791/terraforming-mars" v-i18n>Board game</a>
+                
             </div>
         </div>
     `

@@ -1,15 +1,15 @@
 
-import { PreferencesManager } from "../components/PreferencesManger";
+import { PreferencesManager } from "../components/PreferencesManager";
 
 export function translateText(englishText: string): string {
     let translatedText = englishText;
     if ((window as any).TM_translations === undefined) return translatedText; 
-    const lang = PreferencesManager.loadValue("lang") || "en";
+    const lang = PreferencesManager.loadValue("lang") || "cn";
     if (lang === "en") return englishText;
 
     englishText = normalizeText(englishText);
     if(!englishText){
-        return "";
+        return translatedText;
     }
     if ((window as any).TM_translations[lang][englishText]) {
         translatedText = (window as any).TM_translations[lang][englishText]
@@ -45,7 +45,7 @@ function translateChildren(node: any) {
 }
 
 export function translateTextNode(el: any) {
-    const lang = PreferencesManager.loadValue("lang") || "en";
+    const lang = PreferencesManager.loadValue("lang") || "cn";
     if ((window as any).TM_translations === undefined) return;
     if ((window as any).TM_translations[lang] === undefined) return;
 

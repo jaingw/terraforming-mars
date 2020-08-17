@@ -81,7 +81,7 @@ export const PlayerHome = Vue.component("player-home", {
         dialogPolyfill.default.registerDialog(document.getElementById("dialog-default"));   
     },
     template: `
-        <div id="player-home">
+        <div id="player-home" :class="player.turmoil ? 'with-turmoil': ''">
             <h2 :class="'game-title player_color_'+ player.color">
                 <a :href="'/game?id='+ player.gameId" v-i18n>Terraforming Mars</a>
                 <a :href="'mygames'" v-if="userName">- {{userName}}</a>
@@ -185,7 +185,7 @@ export const PlayerHome = Vue.component("player-home", {
                 <div class="player_home_block player_home_block--hand" v-if="player.draftedCards.length > 0">
                     <h2 v-i18n>Drafted Cards</h2>
                     <div v-for="card in player.draftedCards" :key="card.name" class="cardbox">
-                        <card :card="card.name"></card>
+                        <card :card="card"></card>
                     </div>
                 </div>
 
@@ -198,7 +198,7 @@ export const PlayerHome = Vue.component("player-home", {
                 <div class="player_home_block player_home_block--hand" v-if="player.cardsInHand.length > 0">
                     <h2 :class="'player_color_'+ player.color" v-i18n>Cards In Hand</h2>
                     <div v-for="card in player.cardsInHand" :key="card.name" class="cardbox">
-                        <card :card="card.name" :resources="card.resources"></card>
+                        <card :card="card"></card>
                     </div>
                 </div>
 
@@ -206,31 +206,41 @@ export const PlayerHome = Vue.component("player-home", {
                     <h2 :class="'player_color_'+ player.color" v-i18n>Played Cards</h2>
 
                     <div v-if="player.corporationCard !== undefined" class="cardbox">
-                        <card :card="player.corporationCard" :resources="player.corporationCardResources"></card>
+                        <card :card="player.corporationCard" :actionUsed="isCardActivated(player.corporationCard, player)"></card>
                     </div>
                     <div v-for="card in getCardsByType(player.playedCards, [getActiveCardType()])" :key="card.name" class="cardbox">
-                        <card :card="card.name" :resources="card.resources" :player="player"></card>
+                        <card :card="card" :actionUsed="isCardActivated(card, player)"> </card>
                     </div>
 
-                    <stacked-cards :cards="getCardsByType(player.playedCards, [getAutomatedCardType(), getPreludeCardType()])" ></stacked-cards>
-                    <stacked-cards :cards="getCardsByType(player.playedCards, [getEventCardType()])" ></stacked-cards>
+                    <stacked-cards class="player_home_block--non_blue_cards" :cards="getCardsByType(player.playedCards, [getAutomatedCardType(), getPreludeCardType()])" ></stacked-cards>
+                    <stacked-cards class="player_home_block--non_blue_cards" :cards="getCardsByType(player.playedCards, [getEventCardType()])" ></stacked-cards>                    
                 </div>
+
+                <div v-if="player.selfReplicatingRobotsCards.length > 0" class="player_home_block">
+                    <h2 :class="'player_color_'+ player.color" v-i18n>Self-Replicating Robots cards</h2>
+                    <div>
+                        <div v-for="card in getCardsByType(player.selfReplicatingRobotsCards, [getActiveCardType()])" :key="card.name" class="cardbox">
+                            <card :card="card"></card>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
             <div class="player_home_block player_home_block--setup nofloat"  v-if="!player.corporationCard">
 
                 <div v-for="card in player.dealtCorporationCards" :key="card.name" class="cardbox" v-if="player.initialDraft">
-                    <card :card="card.name"></card>
+                    <card :card="card"></card>
                 </div>
 
                 <div v-for="card in player.dealtPreludeCards" :key="card.name" class="cardbox" v-if="player.initialDraft">
-                    <card :card="card.name"></card>
+                    <card :card="card"></card>
                 </div> 
 
                 <div class="player_home_block player_home_block--hand" v-if="player.draftedCards.length > 0">              
                     <h2 v-i18n>Drafted Cards</h2>
                     <div v-for="card in player.draftedCards" :key="card.name" class="cardbox">
-                        <card :card="card.name"></card>
+                        <card :card="card"></card>
                     </div>
                 </div>
 
@@ -281,7 +291,7 @@ export const PlayerHome = Vue.component("player-home", {
                 </div>
                 <div class="player_home_colony_cont">
                     <div class="player_home_colony" v-for="colony in player.colonies" :key="colony.name">
-                        <colony :colony="colony" :player="player"></colony>
+                        <colony :colony="colony"></colony>
                     </div>
                 </div>
             </div>

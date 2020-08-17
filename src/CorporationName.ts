@@ -8,3 +8,12 @@ import { BreakThroughCorporation } from "./cards/breakthrough/corporation/BreakT
 
 export const CorporationName =  { ...OriginalCorporation, ...PreludeCorporation, ...VenusCorporation, ...ColoniesCorporation, ...TurmoilCorporation, ...PromoCorporation, ...BreakThroughCorporation }
 export type CorporationName = typeof OriginalCorporation | PreludeCorporation | VenusCorporation | ColoniesCorporation | TurmoilCorporation | PromoCorporation | BreakThroughCorporation | string;
+export enum CorporationGroup {
+  ORIGINAL = "Original",
+  PRELUDE = "Prelude",
+  VENUS_NEXT = "Venus Next",
+  COLONIES = "Colonies",
+  TURMOIL = "Turmoil",
+  PROMO = "Promo"
+}
+

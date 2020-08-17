@@ -15,12 +15,12 @@ describe("ExtractorBalloons", function () {
     });
 
     it("Should play", function () {
-        const action = card.play();
+        const action = card.play(player);
         expect(action).to.eq(undefined);
     });
 
     it("Should act", function () {
-        card.play();
+        card.play(player);
         expect(card.resourceCount).to.eq(3);
 
         const orOptions = card.action(player,game) as OrOptions;

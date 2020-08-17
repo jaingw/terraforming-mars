@@ -3,7 +3,7 @@
     "Create New Game": "Neues Spiel erstellen",
     
     "Players count": "Spieleranzahl",
-    "Extensions": "Erweiterungen",
+    "Expansions": "Erweiterungen",
     "Options": "Optionen",
     "Board": "Spielbrett",
 
@@ -17,8 +17,8 @@
     "Custom Corporation list": "Benutzerdefinierte Konzerne",
     "Random first player": "Zufälliger Startspieler",
     "Show real-time VP": "Echtzeit Siegpunkte anzeigen",
-    "TR solo mode": "TW Solo Modus",
-    "Use Solar Phase Option": "Solarphase nutzen",
+    "TR solo mode": "63 TW Solo Modus",
+    "World Government Terraforming": "Terraforming der Weltregierung",
     "Use promo cards": "Promokarten nutzen",
     "Allow undo": "Zug rückgängig machen erlauben",
     "Starting Corporations": "Startkonzerne",
@@ -143,7 +143,7 @@
     "Error with input": "Eingabefehler",
     "This game is over!": "Dieses Spiel ist beendet!",
     "Not your turn to take any actions": "Es ist nicht dein Zug",
-    "Pass": "Passen",
+    "Pass for this generation": "Passen",
     "Pay for a Standard Project": "Standardprojekt nutzen",
     "Play project card": "Karte ausspielen",
     "Sell patents": "Patente verkaufen",
@@ -174,7 +174,7 @@
     "Don't place a greenery": "KEINE Grünfläche platzieren",
     "Select space for greenery": "Grünfläche platzieren",
 
-    "City: 1 VP per each adjanced greenery": "Stadt: 1 SP je angrenzendes Grünflächenplättchen",
+    "City: 1 VP per adjacent greenery": "Stadt: 1 SP je angrenzendes Grünflächenplättchen",
     "Greenery: 1 VP": "Grünflächen: 1 SP",
     "Commercial District: 1 VP per adjacent city tile": "Geschäftsviertel: 1 SP pro angrenzendes Stadtlpättchen",
     "Select space on mars for city tile": "Wähle ein Feld auf dem Mars für ein Stadtplättchen",

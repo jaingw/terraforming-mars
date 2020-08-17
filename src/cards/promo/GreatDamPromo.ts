@@ -3,8 +3,8 @@ import { Tags } from "../Tags";
 import { Player } from "../../Player";
 import { Game } from "../../Game";
 import { CardType } from "../CardType";
-import { Resources } from '../../Resources';
-import { CardName } from '../../CardName';
+import { Resources } from "../../Resources";
+import { CardName } from "../../CardName";
 import { SelectSpace } from "../../inputs/SelectSpace";
 import { TileType } from "../../TileType";
 import { ISpace } from "../../ISpace";
@@ -14,8 +14,12 @@ export class GreatDamPromo implements IProjectCard {
     public tags: Array<Tags> = [Tags.ENERGY, Tags.STEEL];
     public cardType: CardType = CardType.AUTOMATED;
     public name: CardName = CardName.GREAT_DAM_PROMO;
+    
     public canPlay(player: Player, game: Game): boolean {
-        return game.board.getOceansOnBoard() >= 4 - player.getRequirementsBonus(game);
+        const meetsOceanRequirements = game.board.getOceansOnBoard() >= 4 - player.getRequirementsBonus(game);
+        const canPlaceTile = this.getAvailableSpaces(player, game).length > 0;
+        
+        return meetsOceanRequirements && canPlaceTile;
     }
     public play(player: Player, game: Game) {
         player.setProduction(Resources.ENERGY,2);

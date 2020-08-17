@@ -1,11 +1,11 @@
 import { IProjectCard } from "../IProjectCard";
-import { ICard, IActionCard, IResourceCard } from '../ICard';
+import { ICard, IActionCard, IResourceCard } from "../ICard";
 import { Tags } from "../Tags";
 import { CardType } from "../CardType";
 import { Player } from "../../Player";
 import { ResourceType } from "../../ResourceType";
-import { SelectCard } from '../../inputs/SelectCard';
-import { CardName } from '../../CardName';
+import { SelectCard } from "../../inputs/SelectCard";
+import { CardName } from "../../CardName";
 import { Game } from "../../Game";
 import { LogHelper } from "../../components/LogHelper";
 
@@ -28,13 +28,14 @@ export class Dirigibles implements IActionCard,IProjectCard, IResourceCard {
     public action(player: Player, game: Game) {
         const floaterCards = player.getResourceCards(ResourceType.FLOATER);
         if (floaterCards.length === 1) {
-            this.resourceCount++;
+            player.addResourceTo(this);
             LogHelper.logAddResource(game, player, floaterCards[0]);
             return undefined;
         }
 
         return new SelectCard(
-            'Select card to add 1 floater',
+            "Select card to add 1 floater",
+            "Add floater",
             floaterCards,
             (foundCards: Array<ICard>) => {
                 player.addResourceTo(foundCards[0], 1);

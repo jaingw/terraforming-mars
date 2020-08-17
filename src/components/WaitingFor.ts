@@ -37,7 +37,7 @@ export const WaitingFor = Vue.component("waiting-for", {
     methods: {
         waitForUpdate: function (faster:boolean = false) {
             const vueApp = this;
-            clearTimeout(ui_update_timeout_id);
+            clearInterval(ui_update_timeout_id);
             const askForUpdate = () => {
                 const xhr = new XMLHttpRequest();
                 xhr.open("GET", "/api/waitingfor" + window.location.search + "&prev-game-age=" + this.player.gameAge.toString());
@@ -73,12 +73,15 @@ export const WaitingFor = Vue.component("waiting-for", {
                     } else {
                         alert("Unexpected server response");
                     }
-                    (vueApp as any).waitForUpdate();
+                    // (vueApp as any).waitForUpdate();
                 }
                 xhr.responseType = "json";
                 xhr.send();
             }
-            ui_update_timeout_id = (setTimeout(askForUpdate, faster ? 1 : 5000) as any);
+            if(faster){
+                askForUpdate();
+            }
+            ui_update_timeout_id = (setInterval(askForUpdate,   5000) as any);
         }
     },
     render: function (createElement) {

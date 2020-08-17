@@ -30,7 +30,7 @@
     "Action: add 1 Floater to ANY card.": "Действие: добавьте 1 аэростат на любую карту",
     "Effect: when playing a Venus tag, Floaters here may be used as payment, and are worth 3MC each": "Эффект: Разыгрывая метку Венеры, можете убрать 1 или несколько аэростатов с этой карты, чтобы заплатить за нее на 3 МС меньше за каждый убранный аэростат",
 
-    "Extractor Balloons": "Газозборники",
+    "Extractor Balloons": "Газоcборники",
     "Action: add 1 Floater to this card, or remove 2 Floaters here to raise Venus 1 step": "Действие: добавьте 1 аэростат на эту карту или уберите 2 аэростат с этой карты, чтобы увеличить шкалу Венеры на 1",
     "Add 3 Floaters to this card": "Добавьте 3 аэростата на эту карту",
 
@@ -46,7 +46,7 @@
     "Action: Spend 2 MC to add 1 Floater to this card, OR spend 2 Floaters here to increase Venus 1 step": "Действие: потратьте 2 МС, чтобы добавить 1 аэростат на эту карту или потратьте 2 аэростата, чтобы увеличить шкалу Венеры на 1",
 
     "Freyja Biodomes": "Биокуполы Фрейя",
-    "Requires 10% on the Microbes or 2 Animals to another Venus card. Decrease your energy production 1 step and increase your MC production 2 steps": "Требование: 10% на шкале Венеры или выше. Добавьте 2 микроба или 2 животных на другую карту Венеры. Уменьшите своё производство энергии на 1 и увеличьте свое производсто МС на 2",
+    "Requires 10% Venus. Add 2 Microbes or 2 Animals to another Venus card. Decrease your energy production 1 step and increase your MC production 2 steps": "Требование: 10% на шкале Венеры или выше. Добавьте 2 микроба или 2 животных на другую карту Венеры. Уменьшите своё производство энергии на 1 и увеличьте свое производсто МС на 2",
 
     "GHG Import From Venus": "Углекислый газ с Венеры",
     "Raise Venus 1 step. Increase your heat production 3 steps": "Увеличьте шкалу Венеры на 1. Увеличьте своё производство тепла на 3",
@@ -144,7 +144,7 @@
     "Requires Venus 10%.": "Требование: 10% на шкале Венеры или выше",
 
     "Venus Soils": "Почва Венеры",
-    "Raise Venus 1 step. Increase your Plant production 1 step. Add 2 Microbes to ANOTHER card": "Увеличьте шкалу Венеры на 1. Увеличьте свое производство растений на 1. Добавьте 2 микробов на другую карту",
+    "Raise Venus 1 step. Increase your Plant production 1 step. Add 2 Microbes to ANOTHER card.": "Увеличьте шкалу Венеры на 1. Увеличьте свое производство растений на 1. Добавьте 2 микробов на другую карту",
 
     "Venus Waystation": "Венерианская станция",
     "Effect: When you play a Venus tag, you pay 2 MC less for it.": "Эффект: разыгрывая карту с меткой Венеры, платите за нее на 2 МС меньше",

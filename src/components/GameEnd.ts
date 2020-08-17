@@ -1,7 +1,7 @@
 import Vue from "vue";
 import { PlayerModel } from "../models/PlayerModel";
 import { Board } from "./Board";
-import { LogPanel } from './LogPanel';
+import { LogPanel } from "./LogPanel";
 
 export const GameEnd = Vue.component("game-end", {
     props: ["player", "game"],
@@ -45,9 +45,9 @@ export const GameEnd = Vue.component("game-end", {
                                 But it isn't the reason to stop making Mars better.
                             </div>
                             <ul class="game_end_list">
-                                <li v-i18n>Try to win with extensions enabled</li>
+                                <li v-i18n>Try to win with expansions enabled</li>
                                 <li v-i18n>Try to win before the last generation comes</li>
-                                <li v-i18n>Can you get 90+ Victory Points?</li>
+                                <li v-i18n>Can you get 900+ Victory Points?</li>
                             </ul>
                         </div>
                     </div>
@@ -56,16 +56,24 @@ export const GameEnd = Vue.component("game-end", {
                             <h2 v-i18n>Sorry, you lose.</h2>
                             <div class="game_end_notice" v-i18n>
                                 Next time you will get more luck!<br>
-                                Also, take into count these small hints to win:
+                                Also, take into account these small hints to win:
                             </div>
                             <ul class="game_end_list" v-i18n>
                                 <li>Concentrate more on Global parameters, not on Victory Points</li>
                                 <li>Don't be greedy on cards selection</li>
-                                <li>Try to increase Heating production, not Megacredits</li>
+                                <li>Try to increase Heat production, not Megacredits</li>
                                 <li>Try to start with Beginner corporation</li>
                             </ul>
                         </div>
                     </div>
+                </div>
+                <div class="game_end_go_home">
+                    <a href="/" v-i18n>
+                        <button class="btn btn-primary btn-action btn-lg">
+                            <i class="icon icon-back"></i>
+                        </button>
+                        Go to main page
+                    </a>
                 </div>
                 <div class="game_end_victory_points">
                     <h2 v-i18n>Victory points breakdown after<span> {{player.generation}} </span>generations</h2>
@@ -87,7 +95,7 @@ export const GameEnd = Vue.component("game-end", {
                         <tbody>
                             <tr v-for="p in getSortedPlayers()">
                                 <td><a :href="'/player?id='+p.id+'&noredirect'" :style="getPlayerColorStyle(p)">{{ p.name }}</a></td>
-                                <td v-i18n>{{ p.corporationCard }}</td>
+                                <td v-i18n>{{ p.corporationCard.name }}</td>
                                 <td>{{ p.victoryPointsBreakdown.terraformRating }}</td>
                                 <td>{{ p.victoryPointsBreakdown.milestones }}</td>
                                 <td>{{ p.victoryPointsBreakdown.awards }}</td>

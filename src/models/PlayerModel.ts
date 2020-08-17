@@ -14,9 +14,9 @@ import { PlayerInputModel } from "./PlayerInputModel";
 
 export interface PlayerModel {
     boardName: string;
-    corporationCard: string;
-    corporationCardResources: number;
+    corporationCard: CardModel;
     playedCards: Array<CardModel>;
+    cardCost: number;
     // cardsInHand: Array<CardModel>;
     cardsInHandNbr: number;
     colonies: Array<ColonyModel>;
@@ -59,8 +59,7 @@ export interface PlayerModel {
     actionsThisGeneration: Array<string>;
     fleetSize: number;
     tradesThisTurn: number;
-    selfReplicatingRobotsCardCost: number;
-    selfReplicatingRobotsCardTarget: IProjectCard | undefined;
+    selfReplicatingRobotsCards: Array<CardModel>;
     dealtCorporationCards: Array<CorporationCard>;
     dealtPreludeCards:  Array<IProjectCard>;
     initialDraft: boolean;

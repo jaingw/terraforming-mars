@@ -1,10 +1,12 @@
-
 import { IProjectCard } from "../IProjectCard";
 import { Tags } from "../Tags";
 import { CardType } from "../CardType";
 import { Player } from "../../Player";
 import { Game } from '../../Game';
 import { CardName } from '../../CardName';
+import { PartyHooks } from "../../turmoil/parties/PartyHooks";
+import { PartyName } from "../../turmoil/parties/PartyName";
+import { REDS_RULING_POLICY_COST } from "../../constants";
 
 export class NeutralizerFactory  implements IProjectCard {
     public cost: number = 7;
@@ -13,7 +15,12 @@ export class NeutralizerFactory  implements IProjectCard {
     public cardType: CardType = CardType.AUTOMATED;
 
     public canPlay(player: Player, game: Game): boolean {
-        return game.getVenusScaleLevel() >= 10 - (2 * player.getRequirementsBonus(game, true));
+        const venusRequirementMet = game.getVenusScaleLevel() >= 10 - (2 * player.getRequirementsBonus(game, true));
+        if (PartyHooks.shouldApplyPolicy(game, PartyName.REDS)) {
+          return player.canAfford(player.getCardCost(game, this) + REDS_RULING_POLICY_COST) && venusRequirementMet;
+        }
+  
+        return venusRequirementMet;
     }
 
     public play(player: Player, game: Game) {

@@ -5,6 +5,8 @@ import { LogMessageType } from "../LogMessageType";
 import { LogMessageData } from "../LogMessageData";
 import { LogMessageDataType } from "../LogMessageDataType";
 import { Resources } from "../Resources";
+import { ISpace } from "../ISpace";
+import { TileType } from "../TileType";
 
 export class LogHelper {
     static logAddResource(game: Game, player: Player, card: ICard, qty: number = 1): void {
@@ -62,12 +64,44 @@ export class LogHelper {
         );
     }
 
-    static logCardDraw(game: Game, player: Player, qty: number = 1) {
+    static logCardChange(game: Game, player: Player, effect: string, qty: number = 1) {
         game.log(
             LogMessageType.DEFAULT,
-            "${0} drew ${1} cards",
+            "${0} ${1} ${2} card(s)",
             new LogMessageData(LogMessageDataType.PLAYER, player.id),
+            new LogMessageData(LogMessageDataType.STRING, effect),
             new LogMessageData(LogMessageDataType.STRING, qty.toString())
+        );
+    }
+
+    static logTilePlacement(game: Game, player: Player, space: ISpace, tileType: TileType) {
+        let type : string;
+
+        switch (tileType) {
+            case TileType.GREENERY:
+                type = "greenery";
+                break;
+
+            case TileType.CITY:
+                type = "city";
+                break;
+
+            case TileType.OCEAN:
+                type = "ocean";
+                break;
+        
+            default:
+                type = "special";
+                break;
+        }
+
+        game.log(
+            LogMessageType.DEFAULT,
+            "${0} placed ${1} tile on (${2}, ${3})",
+            new LogMessageData(LogMessageDataType.PLAYER, player.id),
+            new LogMessageData(LogMessageDataType.STRING, type),
+            new LogMessageData(LogMessageDataType.STRING, space.x.toString()),
+            new LogMessageData(LogMessageDataType.STRING, space.y.toString())
         );
     }
 }

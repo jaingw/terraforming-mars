@@ -4,6 +4,8 @@ Terraforming Mars Boardgame
 
 The board game is great, this repository highly recommends purchasing [it](https://www.amazon.com/Stronghold-Games-6005SG-Terraforming-Board/dp/B01GSYA4K2) for personal use. If you want to play with people online, you can use this tool.
 
+Join us on Discord [here](https://discord.gg/fWXE53K).
+
 ## Demo
 
 You can try online [here](https://terraforming-mars.herokuapp.com/). Please post any issues found. If you plan on playing long running games it is recommended to host the game locally. This demo site is currently not stable and gets restarted during each push to `master`. As this repository is gaining in popularity we attempt to make this demo page stable but it can't be guaranteed that your game will not be lost. Running the game locally will always be straight forward and it is highly recommended to host the game locally and provide the server ip to other players.
@@ -46,7 +48,7 @@ Thanks goes to these wonderful people:
     </td>
     <td align="center">
       <a href="https://github.com/ssimeonoff"><img src="https://avatars3.githubusercontent.com/u/6917565?s=460&v=4" width="100px;" alt=""/><br />
-        <sub><b>Simeon Simeonov</b></sub><br />Cards and Colonies design</a>
+        <sub><b>Simeon Simeonov</b></sub><br />UX, cards and Colonies design</a>
     </td>
     <td align="center">
       <a href="https://github.com/pierrehilbert"><img src="https://avatars0.githubusercontent.com/u/806950?v=3" width="100px;" alt=""/><br />

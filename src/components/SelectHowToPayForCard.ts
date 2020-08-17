@@ -16,6 +16,7 @@ import { HowToPay } from "../inputs/HowToPay";
 import { getProjectCardByName, Card } from "./Card";
 import { Tags } from "../cards/Tags";
 import { PaymentWidgetMixin } from "./PaymentWidgetMixin";
+import { PreferencesManager } from "./PreferencesManager";
 
 export const SelectHowToPayForCard = Vue.component("select-how-to-pay-for-card", {
     props: ["player", "playerinput", "onsave", "showsave", "showtitle"],
@@ -51,13 +52,12 @@ export const SelectHowToPayForCard = Vue.component("select-how-to-pay-for-card",
     },
     methods: {
         getCardCost: function () {
-            for (const icard of this.player.cardsInHand) {
+            let cards = this.player.cardsInHand.concat(this.player.selfReplicatingRobotsCards);
+            for (const icard of cards) {
                 if (this.$data.card.name === icard.name) {
                     return icard.calculatedCost
                 }
             }
-            // If not found, it should be self replication robot stored card
-            return this.player.selfReplicatingRobotsCardCost;
         },
         setDefaultMicrobesValue: function() {
             // automatically use available microbes to pay if not enough MC
@@ -233,7 +233,8 @@ export const SelectHowToPayForCard = Vue.component("select-how-to-pay-for-card",
                 steel: this.$data.steel,
                 titanium: this.$data.titanium,
                 microbes: this.$data.microbes,
-                floaters: this.$data.floaters
+                floaters: this.$data.floaters,
+                isResearchPhase: false
             };
             if (htp.megaCredits > this.player.megaCredits) {
                 this.$data.warning = "You don't have that many mega credits";
@@ -266,8 +267,38 @@ export const SelectHowToPayForCard = Vue.component("select-how-to-pay-for-card",
                 this.$data.warning = "Haven't spent enough";
                 return;
             }
-            
+
             if (totalSpentAmt > this.getCardCost()) {
+                let diff = totalSpentAmt - this.getCardCost();
+                if (htp.titanium && diff >= this.player.titaniumValue) {
+                    this.$data.warning = "You cannot overspend titanium";
+                    return;
+                }
+                if (htp.steel && diff >= this.player.steelValue) {
+                    this.$data.warning = "You cannot overspend steel";
+                    return;
+                }
+                if (htp.floaters && diff >= 3) {
+                    this.$data.warning = "You cannot overspend floaters";
+                    return;
+                }
+                if (htp.microbes && diff >= 2) {
+                    this.$data.warning = "You cannot overspend microbes";
+                    return;
+                }
+                if (htp.heat && diff >= 1) {
+                    this.$data.warning = "You cannot overspend heat";
+                    return;
+                }
+                if (htp.megaCredits && diff >= 1) {
+                    this.$data.warning = "You cannot overspend megaCredits";
+                    return;
+                }
+            }
+
+            const showAlert = PreferencesManager.loadValue("show_alerts") === "1";
+            
+            if (totalSpentAmt > this.getCardCost() && showAlert) {
                 let diff = totalSpentAmt - this.getCardCost();
   
                 if (confirm("Warning: You are overpaying by " + diff + " MC")) {
@@ -293,7 +324,7 @@ export const SelectHowToPayForCard = Vue.component("select-how-to-pay-for-card",
 
   <label v-for="availableCard in playerinput.cards" :key="availableCard.name" class="payments_cards">
     <input class="hidden" type="radio" v-model="card" v-on:change="cardChanged()" :value="availableCard" />
-    <card class="cardbox" :card="availableCard.name" :resources="availableCard.resources"></card>
+    <card class="cardbox" :card="availableCard"></card>
   </label>
 
   <section v-trim-whitespace>
@@ -347,7 +378,7 @@ export const SelectHowToPayForCard = Vue.component("select-how-to-pay-for-card",
     </div>
 
     <div v-if="showsave === true" class="payments_save">
-      <button class="btn btn-lg btn-primary" v-on:click="saveData">Save</button>
+      <button class="btn btn-lg btn-primary" v-on:click="saveData">{{playerinput.buttonLabel}}</button>
     </div>
   </section>
 </div>`

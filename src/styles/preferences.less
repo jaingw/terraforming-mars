@@ -79,13 +79,18 @@
     margin: -22px -15px 15px -15px;
 }
 
-
+.preferences_small_cards input[type=checkbox]:checked + .filterDiv,
+.preferences_small_cards input[type=radio]:checked + .filterDiv {
+    transform: scale(0.8);
+}
 
 /* Hide blocks */
 .preferences_hide_turnorder .player_home_block--turnorder,
 .preferences_hide_corporation .player_home_block--corporation,
 .preferences_hide_hand .player_home_block--hand,
 .preferences_hide_awards_and_milestones .player_home_block--milestones-and-awards,
+.preferences_hide_ma_scores .player_home_block--milestones-and-awards-scores,
+.preferences_hide_non_blue_cards .player_home_block--non_blue_cards,
 .preferences_hide_cards .player_home_block--cards {
     display: none;
 }

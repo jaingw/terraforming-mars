@@ -1,5 +1,5 @@
 import { IDatabase } from "./IDatabase";
-import {Game} from "../Game";
+import { Game, GameOptions, Score } from "../Game";
 import { IGameData } from "./IDatabase";
 
 import sqlite3 = require("sqlite3");
@@ -20,11 +20,12 @@ export class SQLite implements IDatabase {
         this.db = new sqlite3.Database(dbPath);
         this.db.run("CREATE TABLE IF NOT EXISTS games(game_id varchar, save_id integer, game text, status text default 'running',createtime timestamp default (datetime(CURRENT_TIMESTAMP,'localtime')), PRIMARY KEY (game_id, save_id))");
         this.db.run("CREATE TABLE IF NOT EXISTS 'users'('id'  varchar NOT NULL,'name'  varchar NOT NULL,'password'  varchar NOT NULL,'createtime'  timestamp DEFAULT (datetime(CURRENT_TIMESTAMP,'localtime')),PRIMARY KEY ('id'))");
+        this.db.run("CREATE TABLE IF NOT EXISTS game_results(game_id varchar not null, seed_game_id varchar, players integer, generations integer, game_options text, scores text, PRIMARY KEY (game_id))");
     }
 
     getClonableGames( cb:(err: any, allGames:Array<IGameData>)=> void) {
         var allGames:Array<IGameData> = [];
-        var sql = "SELECT distinct game_id game_id, game FROM games WHERE status = 'running' and save_id = 0 order by game_id asc";
+        var sql = "SELECT distinct game_id game_id, game FROM games WHERE  save_id = 0 order by game_id asc";
   
         this.db.all(sql, [], (err, rows) => {
             if (rows) {
@@ -71,6 +72,15 @@ export class SQLite implements IDatabase {
         });
     }      
 
+    saveGameResults(game_id: string, players: number, generations: number, gameOptions: GameOptions, scores: Array<Score>): void {
+        this.db.run("INSERT INTO game_results (game_id, seed_game_id, players, generations, game_options, scores) VALUES($1, $2, $3, $4, $5, $6)", [game_id, gameOptions.clonedGamedId, players, generations, gameOptions, JSON.stringify(scores)], (err) => {
+            if (err) {
+                console.error("SQlite:saveGameResults", err.message);
+                throw err;
+            }
+        });
+    }   
+
     restoreGameLastSave(game_id:string, game: Game, cb:(err: any) => void) {
         // Retrieve last save from database
         this.db.get("SELECT game game ,createtime createtime  FROM games WHERE game_id = ? ORDER BY save_id DESC LIMIT 1", [game_id],(err: { message: any; }, row: { game: any, createtime: any; }) => {
@@ -104,7 +114,14 @@ export class SQLite implements IDatabase {
             if (err) {
                 return console.warn(err.message);  
             }
-        });        
+        });
+        // Purge unfinished games older than 10 days
+        // this.db.run("DELETE FROM games WHERE created_time < date('now', '-10 day') and status = 'running'", function(err: { message: any; }) {
+            // if (err) {
+                // return console.warn(err.message);  
+            // }
+        // });        
+
     }
 
     cleanGame(game_id: string): void {

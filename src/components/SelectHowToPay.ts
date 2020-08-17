@@ -2,6 +2,7 @@
 import Vue from "vue";
 import { HowToPay } from "../inputs/HowToPay";
 import { PaymentWidgetMixin } from "./PaymentWidgetMixin";
+import { PreferencesManager } from "./PreferencesManager";
 
 interface SelectHowToPayModel {
     heat: number;
@@ -31,9 +32,10 @@ export const SelectHowToPay = Vue.component("select-how-to-pay", {
     mounted: function () {
       let app = this;
       Vue.nextTick(function () {
-        app.$data.cost = app.playerinput.amount;
+        app.$data.isResearchPhase = app.playerinput.title === "Select how to pay for cards";
+        app.setInitialCost();
         app.$data.megaCredits = (app as any).getMegaCreditsMax();
-
+        
         app.setDefaultSteelValue();
         app.setDefaultTitaniumValue();
         app.setDefaultHeatValue();
@@ -42,6 +44,13 @@ export const SelectHowToPay = Vue.component("select-how-to-pay", {
     methods: {
         hasWarning: function () {
             return this.$data.warning !== undefined;
+        },
+        setInitialCost: function() {
+          if (this.$data.isResearchPhase) {
+            this.playerinput.amount = this.player.cardCost * 4;
+          }
+          
+          this.$data.cost = this.playerinput.amount;
         },
         setDefaultSteelValue: function() {
           // automatically use available steel to pay if not enough MC
@@ -98,7 +107,6 @@ export const SelectHowToPay = Vue.component("select-how-to-pay", {
           } else {
               this.$data.heat = 0;
           }
-
           let discountedCost = this.$data.cost - (this.$data.steel * this.player.steelValue) - (this.$data.titanium * this.player.titaniumValue) - this.$data.heat;
           this.$data.megaCredits = Math.max(discountedCost, 0);
         },
@@ -121,8 +129,10 @@ export const SelectHowToPay = Vue.component("select-how-to-pay", {
                 steel: this.$data.steel,
                 titanium: this.$data.titanium,
                 microbes: 0,
-                floaters: 0
+                floaters: 0,
+                isResearchPhase: this.$data.isResearchPhase
             };
+
             if (htp.megaCredits > this.player.megaCredits) {
                 this.$data.warning = "You don't have that many mega credits";
                 return;
@@ -142,13 +152,40 @@ export const SelectHowToPay = Vue.component("select-how-to-pay", {
 
             const requiredAmt =  this.playerinput.amount;
             const totalSpentAmt = htp.heat + htp.megaCredits + (htp.steel * this.player.steelValue) + (htp.titanium * this.player.titaniumValue) + (htp.microbes * 2) + (htp.floaters * 3);
-            
-            if (requiredAmt > 0 && totalSpentAmt < requiredAmt) {
+
+            if (requiredAmt > 0 && totalSpentAmt < requiredAmt && !htp.isResearchPhase) {
                 this.$data.warning = "Haven't spent enough";
                 return;
             }
 
+            if (htp.isResearchPhase && requiredAmt === 0) {
+              htp.heat = 0;
+              htp.megaCredits = 0;
+            }
+
             if (requiredAmt > 0 && totalSpentAmt > requiredAmt) {
+                let diff = totalSpentAmt - requiredAmt;
+                if (htp.titanium && diff >= this.player.titaniumValue) {
+                    this.$data.warning = "You cannot overspend titanium";
+                    return;
+                }
+                if (htp.steel && diff >= this.player.steelValue) {
+                    this.$data.warning = "You cannot overspend steel";
+                    return;
+                }
+                if (htp.heat && diff >= 1) {
+                    this.$data.warning = "You cannot overspend heat";
+                    return;
+                }
+                if (htp.megaCredits && diff >= 1) {
+                    this.$data.warning = "You cannot overspend megaCredits";
+                    return;
+                }
+            }
+            
+            const showAlert = PreferencesManager.loadValue("show_alerts") === "1";
+
+            if (requiredAmt > 0 && totalSpentAmt > requiredAmt && showAlert) {
               let diff = totalSpentAmt - requiredAmt;
 
               if (confirm("Warning: You are overpaying by " + diff + " MC")) {
@@ -201,7 +238,7 @@ export const SelectHowToPay = Vue.component("select-how-to-pay", {
     </div>
 
     <div v-if="showsave === true" class="payments_save">
-      <button class="btn btn-lg btn-primary" v-on:click="saveData">Save</button>
+      <button class="btn btn-lg btn-primary" v-on:click="saveData">{{playerinput.buttonLabel}}</button>
     </div>
 
   </section>

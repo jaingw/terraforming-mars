@@ -3,50 +3,40 @@ import { DiasporaMovement } from "../../../src/cards/turmoil/DiasporaMovement";
 import { Player } from "../../../src/Player";
 import { Color } from "../../../src/Color";
 import { Resources } from "../../../src/Resources";
-import { BoardName } from '../../../src/BoardName';
 import { GameOptions, Game } from '../../../src/Game';
 import { PartyName } from "../../../src/turmoil/parties/PartyName";
 import { ColonizerTrainingCamp } from "../../../src/cards/ColonizerTrainingCamp";
 import { MethaneFromTitan } from "../../../src/cards/MethaneFromTitan";
+import { Turmoil } from "../../../src/turmoil/Turmoil";
+import { IParty } from "../../../src/turmoil/parties/IParty";
+import { setCustomGameOptions } from "../../TestingUtils";
 
 describe("DiasporaMovement", function () {
-    it("Should play", function () {
-        const card = new DiasporaMovement();
-        const card2 = new ColonizerTrainingCamp();
-        const card3 = new MethaneFromTitan();
-        const player = new Player("test", Color.BLUE, false);
-        const player2 = new Player("test2", Color.RED, false);
-        const gameOptions = {
-            draftVariant: false,
-            initialDraftVariant: false,
-            corporateEra: true,
-            randomMA: false,
-            preludeExtension: false,
-            venusNextExtension: true,
-            coloniesExtension: false,
-            turmoilExtension: true,
-            boardName: BoardName.ORIGINAL,
-            showOtherPlayersVP: false,
-            customCorporationsList: [],
-            solarPhaseOption: false,
-            promoCardsOption: false,
-            undoOption: false,
-            startingCorporations: 2,
-            soloTR: false,
-            clonedGamedId: undefined
-          } as GameOptions;
-        const game = new Game("foobar", [player,player2], player, gameOptions);  
-        expect(card.canPlay(player, game)).to.eq(false);
-        if (game.turmoil !== undefined) {
-            let reds = game.turmoil.getPartyByName(PartyName.REDS);
-            if (reds !== undefined) {
-                reds.delegates.push(player, player);
-                expect(card.canPlay(player, game)).to.eq(true); 
-            }
-        } 
+    let card : DiasporaMovement, player : Player, player2 : Player, game : Game, turmoil: Turmoil, reds: IParty;
 
-        player.playedCards.push(card2);
-        player2.playedCards.push(card3);
+    beforeEach(function() {
+        card = new DiasporaMovement();
+        player = new Player("test", Color.BLUE, false);
+        player2 = new Player("test2", Color.RED, false);
+
+        const gameOptions = setCustomGameOptions() as GameOptions;
+        game = new Game("foobar", [player, player2], player, gameOptions);
+        turmoil = game.turmoil!;
+        reds  = turmoil.getPartyByName(PartyName.REDS)!;
+    });
+
+    it("Can't play", function () {
+        reds.sendDelegate(player, game);        
+        expect(card.canPlay(player, game)).to.eq(false);
+    });
+
+    it("Should play", function () {
+        reds.sendDelegate(player, game);
+        reds.sendDelegate(player, game);
+        expect(card.canPlay(player, game)).to.eq(true);
+
+        player.playedCards.push(new ColonizerTrainingCamp());
+        player2.playedCards.push(new MethaneFromTitan());
         card.play(player, game);
         expect(player.getResource(Resources.MEGACREDITS)).to.eq(3);
     });

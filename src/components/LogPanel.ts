@@ -54,12 +54,11 @@ export const LogPanel = Vue.component("log-panel", {
                     }
                 } else if (data.type === LogMessageDataType.CARD) {
                     for (let player of this.players) {
-                        if (player.corporationCard !== undefined && data.value === player.corporationCard) {
+                        if (player.corporationCard !== undefined && data.value === player.corporationCard.name) {
                             return "<log-card class=\"background-color-corporation\">"+data.value+"</log-card>";
-                        } else if (player.selfReplicatingRobotsCardTarget !== undefined && data.value === player.selfReplicatingRobotsCardTarget.name) {
-                            return this.parseCardType(player.selfReplicatingRobotsCardTarget.cardType, data.value);
                         } else {
-                            for (let card of player.playedCards) {
+                            let cards = player.playedCards.concat(player.selfReplicatingRobotsCards);
+                            for (let card of cards) {
                                 if (data.value === card.name && card.cardType !== undefined) {
                                     return this.parseCardType(card.cardType, data.value);
                                 }
@@ -74,17 +73,17 @@ export const LogPanel = Vue.component("log-panel", {
                     return data.value;
                 }
             }
-            return '';
+            return "";
         },
         parseMessage: function(message: LogMessage) {
-            let logEntryBullet = (this.isNewGeneration(message.type)) ? '' : `<span title="${new Date(message.timestamp).toLocaleString()}">&#x1f551;</span>`;
+            let logEntryBullet = (this.isNewGeneration(message.type)) ? "" : `<span title="${new Date(message.timestamp).toLocaleString()}">&#x1f551;</span>`;
             if (message.type !== undefined && message.message !== undefined) {
                 message.message = $t(message.message);
                 return logEntryBullet+message.message.replace(/\$\{([0-9]{1})\}/gi, (_match, idx) => {
                     return this.parseData(message.data[idx]);
                 });
             }
-            return '';
+            return "";
         },
         isNewGeneration: function(type: LogMessageType) {
             return (type === LogMessageType.NEW_GENERATION);
@@ -121,7 +120,7 @@ export const LogPanel = Vue.component("log-panel", {
         <div class="card-panel" v-if="cards.length > 0">
             <button class="btn btn-sm btn-error other_player_close" v-on:click="hideMe()"><i class="icon icon-cross"></i></button>
             <div id="log_panel_card" class="cardbox" v-for="(card, index) in cards" :key="index">
-                <card :card="card"></card>
+                <card :card="{name: card}"></card>
             </div>
         </div>
     </div>

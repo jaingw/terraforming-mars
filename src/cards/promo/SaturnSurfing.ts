@@ -8,7 +8,6 @@ import { CardName } from '../../CardName';
 import { Resources } from "../../Resources";
 
 export class SaturnSurfing implements IActionCard, IProjectCard, IResourceCard {
-
     public name: CardName = CardName.SATURN_SURFING;
     public cost: number = 13;
     public tags: Array<Tags> = [Tags.JOVIAN, Tags.EARTH];
@@ -17,7 +16,7 @@ export class SaturnSurfing implements IActionCard, IProjectCard, IResourceCard {
     public resourceCount: number = 0;
 
     public play(player: Player) {
-        this.resourceCount = player.getTagCount(Tags.EARTH) + 1;
+        player.addResourceTo(this, player.getTagCount(Tags.EARTH) + 1);
         return undefined;
     }
 

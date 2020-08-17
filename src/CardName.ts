@@ -397,7 +397,7 @@ export enum CardName {
     FACTORUM = "Factorum",
     LAKEFRONT_RESORTS = "Lakefront Resorts",
     TERRALABS_RESEARCH = "Terralabs Research",
-    SEPTUM_TRIBUS = "Septem Tribus",
+    SEPTEM_TRIBUS = "Septem Tribus",
     MONS_INSURANCE = "Mons Insurance",
     SPLICE = "Splice",
     PHILARES = "Philares",
@@ -429,6 +429,7 @@ export enum CardName {
     GMO_CONTRACT = "GMO Contract",
     MARTIAN_MEDIA_CENTER = "Martian Media Center",
     PARLIAMENT_HALL = "Parliament Hall",
+    POLITICAL_ALLIANCE = "Political Alliance",
     PR_OFFICE = "PR Office",
     PUBLIC_CELEBRATIONS = "Public Celebrations",
     RECRUITMENT = "Recruitment",
@@ -440,6 +441,7 @@ export enum CardName {
     LAW_SUIT = "Law Suit",
     STANFORD_TORUS = "Stanford Torus",
     SATURN_SURFING = "Saturn Surfing",
+    ID_FRONT = "Id Front",
 
 
 ///// breakthrough
@@ -459,7 +461,10 @@ export enum CardName {
     _TERRALABS_RESEARCH_ = "Terralabs Research (breakthrough)",
     _UNITED_NATIONS_MARS_INITIATIVE_ = "UNMI (breakthrough)",
     _VALLEY_TRUST_ = "Valley Trust (breakthrough)",
-    _VIRON_ = "Viron (breakthrough)"
+    _VIRON_ = "Viron (breakthrough)",
+    _CELESTIC_ = "Celestic (breakthrough)",
+    _ARKLIGHT_ = "Arklight (breakthrough)",
+    _STORMCRAFT_INCORPORATED_ = "StormCraft Incorporated (breakthrough)"
 
 
 

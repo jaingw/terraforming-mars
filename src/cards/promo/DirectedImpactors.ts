@@ -1,16 +1,18 @@
-import { IProjectCard } from '../IProjectCard';
-import { IActionCard, IResourceCard, ICard } from '../ICard';
-import { CardName } from '../../CardName';
-import { CardType } from '../CardType';
-import { ResourceType } from '../../ResourceType';
-import { Tags } from '../Tags';
-import { Player } from '../../Player';
-import { SelectCard } from '../../inputs/SelectCard';
-import { Game } from '../../Game';
-import { SelectOption } from '../../inputs/SelectOption';
-import { OrOptions } from '../../inputs/OrOptions';
-import { MAX_TEMPERATURE } from '../../constants';
-import { LogHelper } from '../../components/LogHelper';
+import { IProjectCard } from "../IProjectCard";
+import { IActionCard, IResourceCard, ICard } from "../ICard";
+import { CardName } from "../../CardName";
+import { CardType } from "../CardType";
+import { ResourceType } from "../../ResourceType";
+import { Tags } from "../Tags";
+import { Player } from "../../Player";
+import { SelectCard } from "../../inputs/SelectCard";
+import { Game } from "../../Game";
+import { SelectOption } from "../../inputs/SelectOption";
+import { OrOptions } from "../../inputs/OrOptions";
+import { MAX_TEMPERATURE, REDS_RULING_POLICY_COST } from "../../constants";
+import { LogHelper } from "../../components/LogHelper";
+import { PartyHooks } from "../../turmoil/parties/PartyHooks";
+import { PartyName } from "../../turmoil/parties/PartyName";
 
 export class DirectedImpactors implements IActionCard, IProjectCard, IResourceCard {
     public name: CardName = CardName.DIRECTED_IMPACTORS;
@@ -20,28 +22,33 @@ export class DirectedImpactors implements IActionCard, IProjectCard, IResourceCa
     public resourceCount: number = 0;
     public cardType: CardType = CardType.ACTIVE;
 
-    public canPlay(): boolean {
-        return true;
-    }
-
     public play() {
         return undefined;
     }
 
     public canAct(player: Player, game: Game): boolean {
         const canRaiseTemperature = this.resourceCount > 0 && game.getTemperature() < MAX_TEMPERATURE;
-        return player.canAfford(6, game, false, true) || canRaiseTemperature;
+        const canPayForAsteroid = player.canAfford(6, game, false, true);
+
+        if (PartyHooks.shouldApplyPolicy(game, PartyName.REDS)) {
+            return canPayForAsteroid || (player.canAfford(REDS_RULING_POLICY_COST) && canRaiseTemperature);
+        }
+
+        return canPayForAsteroid || canRaiseTemperature;
     }
 
     public action(player: Player, game: Game) {
         const asteroidCards = player.getResourceCards(ResourceType.ASTEROID);
         var opts: Array<SelectOption> = [];
 
-        const addResource = new SelectOption("Pay 6 to add 1 asteroid to a card", () => this.addResource(player, game, asteroidCards));
-        const spendResource = new SelectOption("Remove 1 asteroid to raise temperature 1 step", () => this.spendResource(player, game));
+        const addResource = new SelectOption("Pay 6 to add 1 asteroid to a card", "Pay",() => this.addResource(player, game, asteroidCards));
+        const spendResource = new SelectOption("Remove 1 asteroid to raise temperature 1 step", "Remove asteroid", () => this.spendResource(player, game));
+        const redsAreRuling = PartyHooks.shouldApplyPolicy(game, PartyName.REDS);
 
         if (this.resourceCount > 0 && game.getTemperature() < MAX_TEMPERATURE) {
-            opts.push(spendResource);
+            if (!redsAreRuling || (redsAreRuling && player.canAfford(REDS_RULING_POLICY_COST))) {
+                opts.push(spendResource);
+            }
         } else {
             return this.addResource(player, game, asteroidCards);
         }
@@ -66,6 +73,7 @@ export class DirectedImpactors implements IActionCard, IProjectCard, IResourceCa
 
         return new SelectCard(
             "Select card to add 1 asteroid", 
+            "Add asteroid",
             asteroidCards, 
             (foundCards: Array<ICard>) => { 
                 player.addResourceTo(foundCards[0]);

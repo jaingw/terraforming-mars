@@ -1,12 +1,12 @@
 import { CorporationCard } from "../corporation/CorporationCard";
 import { Player } from "../../Player";
 import { Tags } from "../Tags";
-import { ResourceType } from '../../ResourceType';
-import { IProjectCard } from '../IProjectCard';
-import { Resources } from '../../Resources';
-import { Game } from '../../Game';
-import { CardName } from '../../CardName';
-import { IResourceCard } from '../ICard';
+import { ResourceType } from "../../ResourceType";
+import { IProjectCard } from "../IProjectCard";
+import { Resources } from "../../Resources";
+import { Game } from "../../Game";
+import { CardName } from "../../CardName";
+import { IResourceCard } from "../ICard";
 import {CorporationName} from "../../CorporationName";
 
 export class Arklight implements CorporationCard, IResourceCard {
@@ -26,7 +26,7 @@ export class Arklight implements CorporationCard, IResourceCard {
         if (player.isCorporation(CorporationName.ARKLIGHT)) {
             player.addResourceTo(this, card.tags.filter((cardTag) => cardTag === Tags.ANIMAL || cardTag === Tags.PLANT).length);
         }
-      }
+    }
 
     public getVictoryPoints(): number {
         return Math.floor(this.resourceCount / 2);

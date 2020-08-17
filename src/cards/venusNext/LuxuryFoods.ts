@@ -1,8 +1,8 @@
-import { IProjectCard } from '../IProjectCard';
-import { Tags } from '../Tags';
-import { CardType } from '../CardType';
-import { Player } from '../../Player';
-import { CardName } from '../../CardName';
+import { IProjectCard } from "../IProjectCard";
+import { Tags } from "../Tags";
+import { CardType } from "../CardType";
+import { Player } from "../../Player";
+import { CardName } from "../../CardName";
 
 export class LuxuryFoods implements IProjectCard {
     public cost: number = 8;
@@ -11,7 +11,7 @@ export class LuxuryFoods implements IProjectCard {
     public cardType: CardType = CardType.AUTOMATED;
 
     public canPlay(player: Player): boolean {
-      return player.getTagCount(Tags.VENUS) >= 1 && player.getTagCount(Tags.EARTH) >= 1 && player.getTagCount(Tags.JOVIAN) >= 1;
+      return player.checkMultipleTagPresence([Tags.VENUS, Tags.EARTH, Tags.JOVIAN]);
     }
 
     public play() {

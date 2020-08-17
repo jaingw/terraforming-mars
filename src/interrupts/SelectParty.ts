@@ -22,6 +22,7 @@ export class SelectParty implements PlayerInterrupt {
         const sendDelegate = new OrOptions();
         // Change the default title
         sendDelegate.title = title;
+        sendDelegate.buttonLabel = "Send delegate";
         let parties;
         if (replace) {
           parties = game.turmoil!.parties.filter(party => {
@@ -39,7 +40,8 @@ export class SelectParty implements PlayerInterrupt {
           parties = game.turmoil!.parties;
         }
         sendDelegate.options = parties.map(party => new SelectOption(
-              party.name + " - (" + party.description + ")", 
+              party.name + " - (" + party.description + ")",
+              "Send delegate",
               () => {
                 if (price) {
                   game.addSelectHowToPayInterrupt(player, price, false, false, "Select how to pay for send delegate action");
@@ -62,8 +64,9 @@ export class SelectParty implements PlayerInterrupt {
                 
                 game.log(
                   LogMessageType.DEFAULT,
-                  "${0} sent "+ nbr + " delegate(s) in ${1} area",
+                  "${0} sent ${1} delegate(s) in ${2} area",
                   new LogMessageData(LogMessageDataType.PLAYER, player.id),
+                  new LogMessageData(LogMessageDataType.STRING, nbr.toString()),
                   new LogMessageData(LogMessageDataType.PARTY, party.name)
                 );
                 return undefined;

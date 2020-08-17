@@ -6,5 +6,6 @@ export enum PromoCorporation {
     RECYCLON = "Recyclon",
     SPLICE = "Splice",
     ASTRODRILL = "Astrodrill",
-    PHARMACY_UNION = "Pharmacy Union"
+    PHARMACY_UNION = "Pharmacy Union",
+    ID_FRONT = "Id Front",
 }

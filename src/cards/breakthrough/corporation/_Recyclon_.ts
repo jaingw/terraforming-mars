@@ -38,12 +38,12 @@ export class _Recyclon_ implements CorporationCard, IResourceCard {
             return undefined;
         }
 
-        const addResource = new SelectOption("Add a microbe resource to this card", () => {
+        const addResource = new SelectOption("Add a microbe resource to this card", "Add microbe", () => {
             this.resourceCount++;
             return undefined;
         });
 
-        const spendResource = new SelectOption("Remove 2 microbes on this card and increase plant production 1 step", () => {
+        const spendResource = new SelectOption("Remove 2 microbes on this card and increase plant production 1 step", "Remove microbes", () => {
             player.removeResourceFrom(this, 2);
             player.setProduction(Resources.PLANTS);
             return undefined;

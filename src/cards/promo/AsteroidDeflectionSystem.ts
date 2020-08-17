@@ -1,15 +1,15 @@
-import { IProjectCard } from '../IProjectCard';
-import { IActionCard, IResourceCard } from '../ICard';
-import { CardName } from '../../CardName';
-import { CardType } from '../CardType';
-import { ResourceType } from '../../ResourceType';
-import { Tags } from '../Tags';
-import { Player } from '../../Player';
-import { Resources } from '../../Resources';
-import { Game } from '../../Game';
-import { LogMessageType } from '../../LogMessageType';
-import { LogMessageData } from '../../LogMessageData';
-import { LogMessageDataType } from '../../LogMessageDataType';
+import { IProjectCard } from "../IProjectCard";
+import { IActionCard, IResourceCard } from "../ICard";
+import { CardName } from "../../CardName";
+import { CardType } from "../CardType";
+import { ResourceType } from "../../ResourceType";
+import { Tags } from "../Tags";
+import { Player } from "../../Player";
+import { Resources } from "../../Resources";
+import { Game } from "../../Game";
+import { LogMessageType } from "../../LogMessageType";
+import { LogMessageData } from "../../LogMessageData";
+import { LogMessageDataType } from "../../LogMessageDataType";
 
 export class AsteroidDeflectionSystem implements IActionCard, IProjectCard, IResourceCard {
     public name: CardName = CardName.ASTEROID_DEFLECTION_SYSTEM;
@@ -18,7 +18,8 @@ export class AsteroidDeflectionSystem implements IActionCard, IProjectCard, IRes
     public resourceType: ResourceType = ResourceType.ASTEROID;
     public resourceCount: number = 0;
     public cardType: CardType = CardType.ACTIVE;
-
+    public hasRequirements = false;
+    
     public canPlay(player: Player): boolean {
         return player.getProduction(Resources.ENERGY) >= 1;
     }

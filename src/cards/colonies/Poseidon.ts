@@ -21,6 +21,7 @@ export class Poseidon implements CorporationCard {
           openColonies.forEach(colony => {
             const colonySelect =  new SelectOption(
               colony.name + " - (" + colony.description + ")", 
+              "Build colony",
               () => {
                   colony.onColonyPlaced(player, game);
                   return undefined;

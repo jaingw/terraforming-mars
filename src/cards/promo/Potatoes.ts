@@ -2,13 +2,14 @@ import { IProjectCard } from "./../IProjectCard";
 import { Tags } from "./../Tags";
 import { CardType } from "./../CardType";
 import { Player } from "../../Player";
-import { Resources } from '../../Resources';
-import { CardName } from '../../CardName';
+import { Resources } from "../../Resources";
+import { CardName } from "../../CardName";
 
 export class Potatoes implements IProjectCard {
     public cost: number = 2;
     public tags: Array<Tags> = [Tags.PLANT];
     public name: CardName = CardName.POTATOES;
+    public hasRequirements = false;
     public cardType: CardType = CardType.AUTOMATED;
 
     public canPlay(player: Player): boolean {

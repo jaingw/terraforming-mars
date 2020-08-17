@@ -2,7 +2,7 @@
     "Terraforming Mars": "Покорение Марса",
     "Create New Game": "Новая игра",
     "Players count": "Кол-во игроков",
-    "Extensions": "Дополнения",
+    "Expansions": "Дополнения",
     "Options": "Настройки",
     "Use promo cards": "Промо карты",
     "Starting Corporations": "Кол-во корпораций на выбор",
@@ -28,7 +28,7 @@
     "Prelude": "Прологи",
     "Venus Next": "Венера",
     "Custom Corporation list": "Настроить корпорации",
-    "Use Solar Phase Option": "Помощь Солнечной системы",
+    "World Government Terraforming": "Правительственная поддержка",
 
     "NEXT CARD:": "СЛЕДУЮЩАЯ КАРТА:",
 
@@ -118,7 +118,7 @@
     "Error with input": "Ошибка!",
     "This game is over!": "Игра окончена!",
     "Not your turn to take any actions": "Сейчас не ваш ход",
-    "Pass": "Пас",
+    "Pass for this generation": "Пас",
     "Pay for a Standard Project": "Стандартный проект",
     "Play project card": "Разыграть карту",
     "Sell patents": "Продать карты",
@@ -145,7 +145,7 @@
 
     "Pay 9 MC": "Заплатить 9 MC",
     "Trade with a colony": "Торговать с колонией",
-    "TR solo mode": "Соло режим на РТ",
+    "63 TR solo mode": "Соло режим на 63 РТ",
     "Random first player": "Случайный первый игрок",
     "Show real-time VP": "Показывать ПО в реальном времени",
     "Draft variant": "Драфт",
@@ -166,7 +166,7 @@
     "Allow undo": "Разрешить отмену хода",
     "Drafted Cards": "Отложенные на драфте карты",
 
-    "City: 1 VP per each adjanced greenery": "Город: 1 ПО владельцу за каждое смежное озеленение",
+    "City: 1 VP per adjacent greenery": "Город: 1 ПО владельцу за каждое смежное озеленение",
     "Greenery: 1 VP": "Озеленение: 1 ПО владельцу",
     "Commercial District: 1 VP per adjacent city tile": "Коммерческий район: 1 ПО за каждый смежный город",
     "Stanford Torus": "Стэнфордский тор",
@@ -176,5 +176,26 @@
     "Select space for greenery tile": "Выберите место для размещения озеленения",
     "Initial Draft rounds:": "Раундов драфта стартовых карт:",
     "Random Milestones/Awards": "Случайные награды и достижения",
-    "Players": "Игроки"
+    "Players": "Игроки",
+    "Select card to add microbe or animal": "Выберите карту, чтобы добавить на нее микроб или животное",
+    "Forest": "Озеленение",
+    "Alert when Terraforming completed": "Предупреждать о завершении терраформирования",
+    "CORPORATION": "Корпорация",
+    "Randomize board tiles": "Случайные места для тайлов",
+    "Go to main page": "На стартовую страницу",
+
+    "Confirm": "Ok",
+    "Pass": "Пас",
+    "BEGINNER CORPORATION": "Начинающая корпорация",
+    "Standard projects": "Стандартные проекты",
+    "Play card": "Разыграть карту",
+    "Take action": "Выполнить действие",
+    "Promos": "Промо",
+    "Pay trade fee": "Торговать",
+    "Trade": "Торговать",
+    "Pay 3 Titanium": "Заплатить 3 Титана",
+    "Select 2 Prelude cards": "Выберите 2 карты Прологов",
+    "Self-Replicating Robots cards": "Карты Роботов-саморепликантов",
+    "Remove colony": "Убрать колонию"
+
 }

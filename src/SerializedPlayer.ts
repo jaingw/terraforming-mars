@@ -12,6 +12,8 @@ export interface SerializedPlayer {
     beginner: boolean;
     canUseHeatAsMegaCredits: boolean;
     plantsNeededForGreenery: number;
+    heatForTemperature: number;
+    pickedCorporationCard: CorporationCard | undefined ;
     dealtCorporationCards: Array<CorporationCard>;
     dealtProjectCards: Array<IProjectCard>;
     dealtPreludeCards: Array<IProjectCard>;

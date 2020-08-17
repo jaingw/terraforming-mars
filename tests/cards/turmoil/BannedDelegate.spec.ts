@@ -2,37 +2,50 @@ import { expect } from "chai";
 import { BannedDelegate } from "../../../src/cards/turmoil/BannedDelegate";
 import { Player } from "../../../src/Player";
 import { Color } from "../../../src/Color";
-import { BoardName } from '../../../src/BoardName';
 import { GameOptions, Game } from '../../../src/Game';
+import { PartyName } from "../../../src/turmoil/parties/PartyName";
+import { Turmoil } from "../../../src/turmoil/Turmoil";
+import { SelectDelegate } from "../../../src/inputs/SelectDelegate";
+import { OrOptions } from "../../../src/inputs/OrOptions";
+import { setCustomGameOptions } from "../../TestingUtils";
 
 describe("Banned Delegate", function () {
-    it("Should play", function () {
-        const card = new BannedDelegate();
-        const player = new Player("test", Color.BLUE, false);
-        const gameOptions = {
-            draftVariant: false,
-            initialDraftVariant: false,
-            corporateEra: true,
-            randomMA: false,
-            preludeExtension: false,
-            venusNextExtension: true,
-            coloniesExtension: false,
-            turmoilExtension: true,
-            boardName: BoardName.ORIGINAL,
-            showOtherPlayersVP: false,
-            customCorporationsList: [],
-            solarPhaseOption: false,
-            promoCardsOption: false,
-            undoOption: false,
-            startingCorporations: 2,
-            soloTR: false,
-            clonedGamedId: undefined
-          } as GameOptions;
-        const game = new Game("foobar", [player,player], player, gameOptions);  
+    let card : BannedDelegate, player : Player, player2 : Player, game : Game, turmoil: Turmoil;
+
+    beforeEach(function() {
+        card = new BannedDelegate();
+        player = new Player("test", Color.BLUE, false);
+        player2 = new Player("test2", Color.RED, false);
+
+        const gameOptions = setCustomGameOptions() as GameOptions;
+        game = new Game("foobar", [player, player2], player, gameOptions);
+        turmoil = game.turmoil!;
+    });
+
+    it("Can't play", function () {
+        turmoil.chairman = player2;
         expect(card.canPlay(player, game)).to.eq(false);
-        if (game.turmoil !== undefined) {
-            game.turmoil.chairman = player;
-            expect(card.canPlay(player, game)).to.eq(true);
+    });
+
+    it("Should play", function () {
+        turmoil.chairman = player;
+        expect(card.canPlay(player, game)).to.eq(true);
+
+        const greens = turmoil.getPartyByName(PartyName.GREENS)!;
+        turmoil.sendDelegateToParty(player, PartyName.GREENS, game);
+        turmoil.sendDelegateToParty(player2, PartyName.GREENS, game);
+        const initialDelegatesCount = greens.delegates.length;
+
+        const result = card.play(player, game);
+
+        if (result instanceof SelectDelegate) {
+            const selectDelegate = result as SelectDelegate;
+            selectDelegate.cb(result.players[0]);
+        } else {
+            const orOptions = result as OrOptions;
+            orOptions.options.forEach((option) => option.cb((option as SelectDelegate).players[0]));
         }
+
+        expect(greens.delegates.length).to.eq(initialDelegatesCount - 1);
     });
 });
