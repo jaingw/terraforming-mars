@@ -13,12 +13,12 @@ describe("BiosphereSupport", function () {
     });
 
     it("Can't play", function () {
-        player.setProduction(Resources.MEGACREDITS,-5);
-        expect(card.canPlay(player)).to.eq(false);
+        player.addProduction(Resources.MEGACREDITS,-5);
+        expect(card.canPlay(player)).is.not.true;
     });
 
     it("Should play", function () {
-        expect(card.canPlay(player)).to.eq(true);
+        expect(card.canPlay(player)).is.true;
         card.play(player);
         expect(player.getProduction(Resources.PLANTS)).to.eq(2);
         expect(player.getProduction(Resources.MEGACREDITS)).to.eq(-1);

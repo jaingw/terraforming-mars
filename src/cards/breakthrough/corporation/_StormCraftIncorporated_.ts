@@ -5,11 +5,13 @@ import { ResourceType } from "../../../ResourceType";
 import { ICard, IActionCard, IResourceCard } from "../../ICard";
 import { SelectCard } from "../../../inputs/SelectCard";
 import { CardName } from "../../../CardName";
+import { CardType } from "../../CardType";
 
 export class _StormCraftIncorporated_ implements IActionCard, CorporationCard, IResourceCard {
     public name: CardName =  CardName._STORMCRAFT_INCORPORATED_;
     public tags: Array<Tags> = [Tags.JOVIAN];
     public startingMegaCredits: number = 48;
+    public cardType: CardType = CardType.CORPORATION; 
     public resourceType: ResourceType = ResourceType.FLOATER;
     public resourceCount: number = 0;
 

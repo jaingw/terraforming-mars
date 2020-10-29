@@ -1,9 +1,8 @@
-.topmost-start-screen,.topmost-donate {
-    min-height: 900px;
-    height: 100%;
-    width: 100%;
+.topmost-start-screen {
     margin: 0px;
+    padding-bottom: 40px;
     background: url(assets/stars.jpg);
+    min-height: 100%;
 }
 
 .start-screen {
@@ -26,23 +25,30 @@
 .start-screen-links {
     margin: 0 auto;
     width: 370px;
+    padding-top: 50px;
 }
 
 .start-screen-link {
     text-decoration: none;
     cursor: pointer;
-    box-shadow: inset 0 0 10px 1px white;
+    box-shadow: inset 0 0 0px 1px #333;
     height: 90px;
-    line-height: 130px;
+    line-height: 28px;
     border-radius: 10px;
     color: #eee;
     text-shadow: 0 0 2px black, 0 2px 1px black;
     padding-left: 17px;
     width: 369px;
     height: 90px;
-    display: block;
+    display: flex;
     margin-bottom: 5px;
-    font-size: 37px;
+    font-size: 26px;
+    text-transform: uppercase;
+    font-weight: bold;
+    letter-spacing: 1px;
+    padding-bottom: 15px;
+    flex-direction: column-reverse;
+    background-size: 369px 90px;
 
     &:hover, &:visited, &:active, &:focus {
         color: #eee;
@@ -54,30 +60,73 @@
     }
 }
 
+.start-screen-header {
+    box-shadow: inset 0 0 20px 20px black;
+    font-family: Prototype;
+    line-height: 90px;
+    font-size: 16px;
+    width: 369px;
+    height: 90px;
+    line-height: 30px;
+    color: #daab63;
+    display: block;
+    margin-bottom: 5px;
+    margin-left: 5px;
+    text-shadow: 0 0 2px black, 0 2px 2px black;
+    letter-spacing: 1px;
+    background-size: 363px 90px;
+}
+
+.start-screen-title-top {
+    transform: scaleX(2);
+    margin-left: 162px;
+    padding-top: 15px;
+}
+
+.start-screen-title-bottom {
+    transform: scaleX(2);
+    font-size: 30px;
+    margin-left: 190px;
+}
+
+.start-screen-link--title {
+    background-image: url("assets/buttons-homepage/planet1.png");
+}
+
 .start-screen-link--new-game {
-    background-image: url("assets/planet1.png");
+    background-image: url("assets/buttons-homepage/planet2.png");
 }
 
 .start-screen-link--solo {
-    background-image: url("assets/planet2.png");
+    background-image: url("assets/buttons-homepage/planet3.png");
 }
 
 .start-screen-link--cards-list {
-    background-image: url("assets/planet3.png");
+    background-image: url("assets/buttons-homepage/planet4.png");
 }
 
 .start-screen-link--board-game {
-    background-image: url("assets/planet4.png");
+    background-image: url("assets/buttons-homepage/planet5.png");
 }
 
 .start-screen-link--about {
-    background-image: url("assets/planet5.png");
+    background-image: url("assets/buttons-homepage/planet6.png");
 }
 
 .start-screen-link--changelog {
-    background-image: url("assets/planet6.png");
+    background-image: url("assets/buttons-homepage/planet7.png");
 }
 
 .start-screen-link--chat {
-    background-image: url("assets/planet7.png");
+    background-image: url("assets/buttons-homepage/planet8.png");
+}
+
+.start-screen-link--languages {
+    background-image: url("assets/buttons-homepage/planet8.png");
+    padding-top: 30px;
+
+}
+
+.start-version {
+    white-space: nowrap;
 }

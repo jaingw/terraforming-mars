@@ -1,16 +1,18 @@
-import { Colony, IColony } from './Colony';
-import { Player } from '../Player';
-import { ColonyName } from './ColonyName';
-import { Game } from '../Game';
-import { SelectDiscard } from '../interrupts/SelectDiscard';
-import { LogHelper } from '../components/LogHelper';
+import { Colony, IColony } from "./Colony";
+import { Player } from "../Player";
+import { ColonyName } from "./ColonyName";
+import { Game } from "../Game";
+import { LogHelper } from "../components/LogHelper";
+import { DrawCards } from "../deferredActions/DrawCards";
+import { DiscardCards } from "../deferredActions/DiscardCards";
 
 export class Pluto extends Colony implements IColony {
     public name = ColonyName.PLUTO;
     public description: string = "Cards";
-    public trade(player: Player, game: Game): void {
+    public trade(player: Player, game: Game, usesTradeFleet: boolean = true): void {
         let extraCards: number = 0;
-        this.beforeTrade(this, player);
+        if (usesTradeFleet) this.beforeTrade(this, player, game);
+
         if (this.trackPosition === 2) {
             extraCards = 2;
         } else if (this.trackPosition < 5) {
@@ -21,8 +23,9 @@ export class Pluto extends Colony implements IColony {
         for (let i = 0; i < extraCards; i++) {
             player.cardsInHand.push(game.dealer.dealCard());
         }
+
         LogHelper.logCardChange(game, player, "drew", extraCards);
-        this.afterTrade(this, player, game);
+        if (usesTradeFleet) this.afterTrade(this, player, game);
     }
     public onColonyPlaced(player: Player, game: Game): undefined {
         super.addColony(this, player, game);
@@ -31,6 +34,7 @@ export class Pluto extends Colony implements IColony {
         return undefined;
     }
     public giveTradeBonus(player: Player, game: Game): void {
-        game.addInterrupt(new SelectDiscard(player, game, 'Pluto colony bonus. Select a card to discard', true));
-    }    
+        game.defer(new DrawCards(player, game, 1));
+        game.defer(new DiscardCards(player, game, 1, 'Pluto colony bonus. Select a card to discard'));
+    }
 }

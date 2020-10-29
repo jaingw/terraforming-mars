@@ -20,7 +20,7 @@
                 "--timeout",
                 "999999",
                 "--colors",
-                "${workspaceFolder}/dist/tests/cards/turmoil/**.spec.js"
+                "${workspaceFolder}/dist/tests/cards/community/**.spec.js"
             ],
             "cwd": "${workspaceFolder}/",
             "internalConsoleOptions": "openOnSessionStart",

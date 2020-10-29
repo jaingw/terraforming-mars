@@ -18,7 +18,7 @@ export class NoctisCity implements IProjectCard {
     public cardType: CardType = CardType.AUTOMATED;
     public hasRequirements = false;
     public canPlay(player: Player, game: Game): boolean {
-        if (game.boardName === BoardName.ORIGINAL) {
+        if (game.gameOptions.boardName === BoardName.ORIGINAL) {
             return player.getProduction(Resources.ENERGY) >= 1;
         } else {
             return player.getProduction(Resources.ENERGY) >= 1 &&
@@ -27,9 +27,9 @@ export class NoctisCity implements IProjectCard {
     }
     public play(player: Player, game: Game) {
         const noctisSpace = game.getSpace(SpaceName.NOCTIS_CITY);
-        player.setProduction(Resources.ENERGY,-1);
-        player.setProduction(Resources.MEGACREDITS,3);
-        if (game.boardName === BoardName.ORIGINAL) {
+        player.addProduction(Resources.ENERGY,-1);
+        player.addProduction(Resources.MEGACREDITS,3);
+        if (game.gameOptions.boardName === BoardName.ORIGINAL) {
           game.addCityTile(player, noctisSpace.id);
           return undefined;
         } else {

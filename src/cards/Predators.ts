@@ -7,9 +7,6 @@ import { Game } from "../Game";
 import { ResourceType } from "../ResourceType";
 import { SelectCard } from "../inputs/SelectCard";
 import { CardName } from "../CardName";
-import { LogMessageType } from "../LogMessageType";
-import { LogMessageData } from "../LogMessageData";
-import { LogMessageDataType } from "../LogMessageDataType";
 
 export class Predators implements IProjectCard, IActionCard, IResourceCard {
     public cost: number = 14;
@@ -32,8 +29,11 @@ export class Predators implements IProjectCard, IActionCard, IResourceCard {
         const result: Array<ICard> = [];
         game.getPlayers().forEach((p) => {
             if (p.hasProtectedHabitats() && player.id !== p.id) return;
+            // TODO(kberg): the list of cards that can't have animals removed is now 2.
+            // This logic is duplicated in Predators.ts.
             result.push(...p.getCardsWithResources().filter(card => card.resourceType === ResourceType.ANIMAL 
                                                                 && card.name !== CardName.PETS
+                                                                && card.name !== CardName.BIOENGINEERING_ENCLOSURE
                                                                 && card.name !== this.name));
         });
         return result;
@@ -46,13 +46,13 @@ export class Predators implements IProjectCard, IActionCard, IResourceCard {
     }
 
     public canAct(player: Player, game: Game): boolean {
-        if (game.soloMode) return true;
+        if (game.isSoloMode()) return true;
         return this.getPossibleTargetCards(player, game).length > 0;
     }
 
     public action(player: Player, game: Game) {
         // Solo play, can always steal from immaginary opponent
-        if (game.soloMode) {
+        if (game.isSoloMode()) {
             player.addResourceTo(this);
             return undefined;
         }
@@ -74,13 +74,12 @@ export class Predators implements IProjectCard, IActionCard, IResourceCard {
     }
 
     private logCardAction(game: Game, player: Player, card?: ICard) {
-        const target = card ? new LogMessageData(LogMessageDataType.CARD, card.name) : new LogMessageData(LogMessageDataType.STRING, "Neutral Player");
-
-        game.log(
-          LogMessageType.DEFAULT,
-          "${0} removed an animal from ${1}",
-          new LogMessageData(LogMessageDataType.PLAYER, player.id),
-          target
-        );
+        game.log("${0} removed an animal from ${1}", b => {
+            if (card) {
+                b.player(player).card(card);
+            } else {
+                b.player(player).string("Neutral Player")
+            }
+        });
       }
 }

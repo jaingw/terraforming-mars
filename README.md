@@ -1,14 +1,16 @@
 # terraforming-mars
 
-Terraforming Mars Boardgame
+**Terraforming Mars Board Game**
 
-The board game is great, this repository highly recommends purchasing [it](https://www.amazon.com/Stronghold-Games-6005SG-Terraforming-Board/dp/B01GSYA4K2) for personal use. If you want to play with people online, you can use this tool.
+The board game is great and this repository highly recommends purchasing [it](https://www.amazon.com/Stronghold-Games-6005SG-Terraforming-Board/dp/B01GSYA4K2) for personal use. If you want to play with people online, you can use this web app.
+
+Join us on Discord [here](https://discord.gg/fWXE53K).
 
 Join us on Discord [here](https://discord.gg/fWXE53K).
 
 ## Demo
 
-You can try online [here](https://terraforming-mars.herokuapp.com/). Please post any issues found. If you plan on playing long running games it is recommended to host the game locally. This demo site is currently not stable and gets restarted during each push to `master`. As this repository is gaining in popularity we attempt to make this demo page stable but it can't be guaranteed that your game will not be lost. Running the game locally will always be straight forward and it is highly recommended to host the game locally and provide the server ip to other players.
+You can demo this web app online [here](https://terraforming-mars.herokuapp.com/). If you find a bug or have a feature request, please add it as one in issues tab. If you plan on playing long-running games, it is recommended that you host the game locally. This demo site is currently not stable and gets restarted during each push to `master`. A multiplayer game will remain available for 10 days, after which it will be flushed from the database. Unfinished solo games are flushed after one day. As this repository is gaining in popularity, we will attempt to make this demo page stable but cannot guarantee that your game will not be lost. It is highly recommended to host the game locally, and it's dead simple: run `npm install` and then `npm run start`.
 
 ## Running
 
@@ -19,16 +21,39 @@ npm install
 npm run start
 ```
 
-This will start the game server listening on the default port of 8080. If you then point a web browser to http://localhost:8080 you will be on the create game screen.
+This will start the game server listening on the default port of 8080. If you then point a web browser to http://localhost:8080 you will be on the create game screen. To change this port from 8080, add `PORT=<new port>` in your `.env` file. 
 
 Pointing your web browser to http://localhost:8080/games-overview?serverId=_SERVER-ID_ will provide a list of all games available on the server. The secret _SERVER-ID_ is available from the console after starting the server and required to access game administration pages like the games overview.
 
+### Local Setup
+
 Additional information on how to setup the game server locally can be found [here](https://docs.google.com/document/d/1r4GlqA6DkrSAtR6MMYmX_nmh6o4igVTqDUUETiJYGt8/edit?usp=sharing) (short version) and [here](https://docs.google.com/document/d/1y-QnffzkQtpasBkDAFQwBoqhLmUpVTzRPybtvmbktDQ/edit?usp=sharing) (detailed version).
 
-Additional information on how to setup the game with docker can be found [here](https://drive.google.com/file/d/14hOxxLrCjhWJimvCyuLc-2JRrXevFiR1/view?usp=sharing).
+#### dotenv
 
+A [.env](https://www.npmjs.com/package/dotenv) file allows you to store environmental variables like `PORT=443`. The following are supported **and are optional**:
 
-## Contributors ✨
+* PORT: (default 8080) Which port to use for this server
+* HOST: What hostname to use
+* CERT_PATH: Your TLS certificate path (=> `fullchain.pem` created by certbot)
+* KEY_PATH: Your TLS private key path (=> `privkey.pem` created by certbot)
+* MAX_GAME_DAYS: How many days to keep unfinished games before deleting them
+* WAITING_FOR_TIMEOUT: (default 5000) How many milliseconds to check for game update on multi-player games
+* ASSET_CACHE_MAX_AGE: (default 0) How many seconds should assets (fonts, stylesheets, images) be cached by browsers
+
+### Deployment
+
+If you are looking for a dead simple deployment, use Heroku, instructions are are on the [wiki](../../wiki/Heroku-Setup). For Docker, read below.
+
+#### Docker
+
+Additional information on how to setup the game with Docker can be found [here](https://docs.google.com/document/d/1a_xTU2kp1E7-VwIA8qLF16prAvFkleTv9iTtxHCzGtM/edit?usp=sharing).
+
+#### HTTPS
+
+To set up an HTTPS sub/domain for use with this project, set the paths for `KEY_PATH` and `CERT_PATH` in your `.env`. If you do not have a TLS cert/key for your domain, you can get one for free from [certbot](https://certbot.eff.org/).
+
+## ✨ Contributors ✨
 
 Thanks goes to these wonderful people:
 
@@ -57,6 +82,21 @@ Thanks goes to these wonderful people:
     <td align="center">
       <a href="https://github.com/nwai90"><img src="https://avatars1.githubusercontent.com/u/2408094?s=460&v=4" width="100px;" alt=""/><br />
         <sub><b>nwai90</b></sub><br />Helps with the things</a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/pocc"><img src="https://avatars1.githubusercontent.com/u/10995145?s=460&v=4" width="100px;" alt=""/><br />
+        <sub><b>Pocc</b></sub><br />He did that one thing one time</a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/kberg"><img src="https://avatars1.githubusercontent.com/u/413481?s=460&v=4" width="100px;" alt=""/><br />
+        <sub><b>Robert Konigsberg</b></sub><br />Ares expansion!!!!!</a>
     </td>    
   </tr>
 </table>
+
+
+## LICENSE
+
+GPLv3

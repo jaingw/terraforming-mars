@@ -31,3 +31,127 @@
     width: 800px;
     max-width: 800px;
 }
+.donate-screen {
+    width: 700px;
+    margin: 0 auto;
+}
+.donate-screen-links{
+    margin: 0 auto;
+    width: 630px;
+}
+#mc {
+    background: #222;
+    border-bottom: 0.05em solid #555;
+    font-weight: bold;
+    padding-top: 1em;
+    text-align: center;
+
+    a:link, a:visited, a:active{
+        text-decoration:none;color:#B39F67
+    }
+    a:hover{
+        text-decoration:underline;color:#D4C8A0
+    }
+}
+
+.player_home_block {
+    .player_exited{
+        background-color: #fff;
+        filter: Alpha(Opacity=60);
+        opacity: 0.6;
+        text-shadow: none;
+    }
+    
+    .player_name_cont.player_exited {
+        .player_number {
+            text-shadow:none;
+        }
+    }
+}
+
+.preferences_icon--donate{
+    background-image: url(assets/preferences_donate.png);
+    .deck-size {
+        margin: 33px 0 0 0;
+    }
+}
+
+.preferences_icon--resign {
+    background-image: url(assets/preferences_resign.png);
+    .deck-size {
+        margin: 33px 0 0 0;
+    }
+}
+
+.resign_panel {
+    box-shadow: 0 3px 5px 3px rgba(0, 0, 0, 0.5); 
+    border-radius: 10px 10px 10px 10px;
+    padding: 50px 15px 25px 20px;
+    display: inline-block;
+    position: absolute; 
+    white-space: nowrap; 
+    background: #000000; 
+    left: 53px;
+    top: -150px;
+
+    .preferences_panel_item{
+        width: 440px;
+        height: 255px;
+    }
+}
+
+
+#users-overview{
+  .form-input{
+    max-width: 200px;
+    display:  inline;
+  }
+}
+
+#app{
+    min-height: 100%;
+}
+
+.main-container{
+    min-height: 100%;
+}
+
+#player-home{
+    min-height: 100%;
+}
+
+.topmost-donate {
+    margin: 0px;
+    padding-bottom: 40px;
+    background: url(assets/stars.jpg);
+    min-height: 100%;
+}
+
+/**
+player_home.css
+*/
+@player_gray: gray;
+@player_gray_bg: rgba(128, 128, 128, 0.7);
+.player_bg_color_gray {
+    background-color: @player_gray;
+}
+.player_overview_bg_color_gray {
+    background-color: @player_gray_bg;
+}
+
+.players-overview {
+    .player-is-waiting{
+        border: 0.5px solid #fff;
+        padding: 0px 5px;
+    }
+}
+/**
+创建游戏界面的label框禁用
+*/
+.create-game-page-column label.forbidden{
+    color: #383838;
+    background-color: #0a0a0a;
+    a {
+        color: #383838;
+    }
+} 

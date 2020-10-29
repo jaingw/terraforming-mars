@@ -1,6 +1,7 @@
 import Vue from "vue";
 
 import {Phase} from "../Phase";
+import { PreferencesManager } from "./PreferencesManager";
 
 export const GamesOverview = Vue.component("games-overview", {
     data: function () {
@@ -17,7 +18,7 @@ export const GamesOverview = Vue.component("games-overview", {
         getGames: function () {
             const vueApp = this;
             const xhr = new XMLHttpRequest();
-            xhr.open("GET", "/api/games?serverId="+this.serverId);
+            xhr.open("GET", "/api/games?serverId="+this.serverId+"&userId="+ PreferencesManager.loadValue("userId"));
             xhr.onerror = function () {
                 alert("Error getting games data");
             };

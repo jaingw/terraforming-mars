@@ -6,17 +6,16 @@ import { Tags } from "../Tags";
 import { ICard } from "../ICard";
 import {SelectCard} from "../../inputs/SelectCard";
 import { CardName } from "../../CardName";
-import { LogMessageType } from "../../LogMessageType";
-import { LogMessageData } from "../../LogMessageData";
-import { LogMessageDataType } from "../../LogMessageDataType";
+import { CardType } from "../CardType";
 
 export class Viron implements ICard, CorporationCard {
     public name: CardName = CardName.VIRON;
     public tags: Array<Tags> = [Tags.MICROBES];
     public startingMegaCredits: number = 48;
+    public cardType: CardType = CardType.CORPORATION;
 
     private getActionCards(player: Player, game: Game):Array<ICard> {
-        let result: Array<ICard> = [];
+        const result: Array<ICard> = [];
         for (const playedCard of player.playedCards) {
             if (
               playedCard.action !== undefined &&
@@ -44,13 +43,7 @@ export class Viron implements ICard, CorporationCard {
             this.getActionCards(player, game),
             (foundCards: Array<ICard>) => {
               const foundCard = foundCards[0];
-              game.log(
-                LogMessageType.DEFAULT,
-                "${0} used ${1} action with ${2}",
-                new LogMessageData(LogMessageDataType.PLAYER, player.id),
-                new LogMessageData(LogMessageDataType.CARD, foundCard.name),
-                new LogMessageData(LogMessageDataType.CARD, this.name)
-              );
+              game.log("${0} used ${1} action with ${2}", b => b.player(player).card(foundCard).card(this));
               return foundCard.action!(player, game);
             }
         );

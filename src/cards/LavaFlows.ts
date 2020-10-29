@@ -8,11 +8,12 @@ import { TileType } from "../TileType";
 import { Tags } from "./Tags";
 import { ISpace } from "../ISpace";
 import { SelectSpace } from "../inputs/SelectSpace";
-import { BoardName } from '../BoardName';
-import { CardName } from '../CardName';
+import { BoardName } from "../BoardName";
+import { CardName } from "../CardName";
 import { MAX_TEMPERATURE, REDS_RULING_POLICY_COST } from "../constants";
 import { PartyHooks } from "../turmoil/parties/PartyHooks";
 import { PartyName } from "../turmoil/parties/PartyName";
+import { IAdjacencyBonus } from "../ares/IAdjacencyBonus";
 
 export class LavaFlows implements IProjectCard {
     public cost: number = 18;
@@ -20,15 +21,17 @@ export class LavaFlows implements IProjectCard {
     public name: CardName = CardName.LAVA_FLOWS;
     public hasRequirements = false;
     public cardType: CardType = CardType.EVENT;
+    public adjacencyBonus?: IAdjacencyBonus = undefined;
+
     public static getVolcanicSpaces(player: Player, game: Game): Array<ISpace> {
-        if (game.boardName === BoardName.ORIGINAL) {
+        if (game.gameOptions.boardName === BoardName.ORIGINAL) {
         return game.board.getSpaces(SpaceType.LAND, player)
                 .filter((space) => space.tile === undefined && (space.player === undefined || space.player === player))
                 .filter((space) => space.id === SpaceName.THARSIS_THOLUS ||
                                    space.id === SpaceName.ASCRAEUS_MONS ||
                                    space.id === SpaceName.ARSIA_MONS ||
                                    space.id === SpaceName.PAVONIS_MONS);
-        } else if (game.boardName === BoardName.ELYSIUM) {
+        } else if (game.gameOptions.boardName === BoardName.ELYSIUM) {
             return game.board.getSpaces(SpaceType.LAND, player)
             .filter((space) => space.tile === undefined && (space.player === undefined || space.player === player))
             .filter((space) => space.id === SpaceName.HECATES_THOLUS ||
@@ -54,8 +57,8 @@ export class LavaFlows implements IProjectCard {
     public play(player: Player, game: Game) {
         return new SelectSpace("Select either Tharsis Tholus, Ascraeus Mons, Pavonis Mons or Arsia Mons", LavaFlows.getVolcanicSpaces(player, game), (space: ISpace) => {
             game.addTile(player, SpaceType.LAND, space, { tileType: TileType.LAVA_FLOWS });
+            space.adjacency = this.adjacencyBonus;
             return game.increaseTemperature(player, 2);
         });
     }
 }
-

@@ -1,4 +1,3 @@
-
 import Vue from "vue";
 
 import { AndOptions } from "./AndOptions";
@@ -13,14 +12,20 @@ import { SelectPlayer } from "./SelectPlayer";
 import { SelectSpace } from "./SelectSpace";
 import { $t } from "../directives/i18n";
 import { SelectPartyPlayer } from "./SelectPartyPlayer";
-import { playTips } from "../PlaySound";
+import { PreferencesManager } from "./PreferencesManager";
+import { playActivePlayerSound } from "../SoundManager";
+import { SelectColony } from "./SelectColony";
+import { SelectProductionToLose } from "./SelectProductionToLose";
+import { ShiftAresGlobalParameters } from "./ShiftAresGlobalParameters";
 
-var ui_update_timeout_id: number | undefined = undefined;
+let ui_update_timeout_id: number | undefined = undefined;
 
 export const WaitingFor = Vue.component("waiting-for", {
-    props: ["player", "players", "waitingfor","soundtip"],
+    props: ["player", "players", "settings", "waitingfor","soundtip"],
     data: function () {
-        return {}
+        return {
+            waitingForTimeout: this.settings.waitingForTimeout
+        }
     },
     components: {
         "and-options": AndOptions,
@@ -32,7 +37,10 @@ export const WaitingFor = Vue.component("waiting-for", {
         "select-how-to-pay-for-card": SelectHowToPayForCard,
         "select-player": SelectPlayer,
         "select-space": SelectSpace,
-        "select-party-player": SelectPartyPlayer
+        "select-party-player": SelectPartyPlayer,
+        "select-colony": SelectColony,
+        "select-production-to-lose": SelectProductionToLose,
+        "shift-ares-global-parameters": ShiftAresGlobalParameters,
     },
     methods: {
         waitForUpdate: function (faster:boolean = false) {
@@ -59,10 +67,9 @@ export const WaitingFor = Vue.component("waiting-for", {
                                     body: "It's your turn!",
                                 });
                             }
-                            if(this.soundtip){
-                                playTips();
-                                console.log("soundtips");
-                            }
+                            const soundsEnabled = PreferencesManager.loadValue("enable_sounds") === "1";
+                            if (soundsEnabled) playActivePlayerSound();
+
                             // We don't need to wait anymore - it's our turn
                             return;
                         } else if (result["result"] === "REFRESH") {
@@ -81,7 +88,7 @@ export const WaitingFor = Vue.component("waiting-for", {
             if(faster){
                 askForUpdate();
             }
-            ui_update_timeout_id = (setInterval(askForUpdate,   5000) as any);
+            ui_update_timeout_id = (setInterval(askForUpdate,   this.waitingForTimeout) as any);
         }
     },
     render: function (createElement) {
@@ -98,7 +105,14 @@ export const WaitingFor = Vue.component("waiting-for", {
         }
         const input = new PlayerInputFactory().getPlayerInput(createElement, this.players, this.player, this.waitingfor, (out: Array<Array<string>>) => {
             const xhr = new XMLHttpRequest();
-            let userId = window.localStorage.getItem("userId") || "";
+            const root = (this.$root as any);
+            if (root.isServerSideRequestInProgress) {
+                console.warn("Server request in progress");
+                return;
+            }
+           
+            root.isServerSideRequestInProgress = true;
+	    let userId = PreferencesManager.loadValue("userId") ;
             let url = "/player/input?id=" + (this.$parent as any).player.id;
             if(userId.length > 0){
                 url += "&userId=" + userId;
@@ -107,7 +121,6 @@ export const WaitingFor = Vue.component("waiting-for", {
             xhr.responseType = "json";
             xhr.onload = () => {
                 if (xhr.status === 200) {
-                    const root = (this.$root as any);
                     root.screen = "empty";
                     root.player = xhr.response;
                     root.playerkey++;
@@ -128,9 +141,13 @@ export const WaitingFor = Vue.component("waiting-for", {
                 } else {
                     alert("Error sending input");
                 }
+                root.isServerSideRequestInProgress = false;
             }
             let senddata ={"id":this.waitingfor.id,"input":out};
             xhr.send(JSON.stringify(senddata));  
+            xhr.onerror = function () {
+                root.isServerSideRequestInProgress = false;
+            };
         }, true, true);
 
         return createElement("div", {"class": "wf-root"}, [input])

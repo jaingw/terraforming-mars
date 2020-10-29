@@ -3,7 +3,7 @@ export enum GlobalEventName {
     SPONSORED_PROJECTS = "Sponsored Projects",
     ASTEROID_MINING = "Asteroid Mining",
     GENEROUS_FUNDING = "Generous Funding",
-    SUCESSFUL_ORGANISMS = "Sucessful Organisms",
+    SUCCESSFUL_ORGANISMS = "Sucessful Organisms",
     ECO_SABOTAGE = "Eco Sabotage",
     PRODUCTIVITY = "Productivity",
     SNOW_COVER = "Snow Cover",

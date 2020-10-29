@@ -13,8 +13,8 @@ describe("FieldCappedCity", function () {
         const player = new Player("test", Color.BLUE, false);
         const game = new Game("foobar", [player,player], player);
         const action = card.play(player, game);
-        expect(action).not.to.eq(undefined);
-        expect(action instanceof SelectSpace).to.eq(true);
+        expect(action).is.not.undefined;
+        expect(action instanceof SelectSpace).is.true;
         action.cb(action.availableSpaces[0]);
         expect(action.availableSpaces[0].tile && action.availableSpaces[0].tile.tileType).to.eq(TileType.CITY);
         expect(player.plants).to.eq(3);

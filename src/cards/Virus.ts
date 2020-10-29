@@ -1,4 +1,3 @@
-
 import { IProjectCard } from "./IProjectCard";
 import { Tags } from "./Tags";
 import { CardType } from "./CardType";
@@ -8,10 +7,10 @@ import { SelectCard } from "../inputs/SelectCard";
 import { OrOptions } from "../inputs/OrOptions";
 import { PlayerInput } from "../PlayerInput";
 import { CardName } from "../CardName";
-import { Resources } from "../Resources";
 import { SelectOption } from "../inputs/SelectOption";
 import { ResourceType } from "../ResourceType";
 import { ICard } from "./ICard";
+import { RemoveAnyPlants } from "../deferredActions/RemoveAnyPlants";
 
 export class Virus implements IProjectCard {
     public cost: number = 1;
@@ -19,19 +18,18 @@ export class Virus implements IProjectCard {
     public name: CardName = CardName.VIRUS;
     public cardType: CardType = CardType.EVENT;
     public hasRequirements = false;
-    public canPlay(player: Player, game: Game): boolean {
-        return this.getPossibleTargetCards(player, game).length +
-            game.getPlayers().filter((p) => 
-                ((p.id !== player.id && !p.plantsAreProtected()) 
-                || p.id === player.id)
-                && p.plants > 0).length > 0;
+    public canPlay(): boolean {
+        return true;
     }
 
     private getPossibleTargetCards(player: Player, game: Game): Array<ICard> {
         const result: Array<ICard> = [];
         game.getPlayers().forEach((p) => {
             if (p.hasProtectedHabitats() && player.id !== p.id) return;
-            result.push(...p.getCardsWithResources().filter(card => card.resourceType === ResourceType.ANIMAL && card.name !== CardName.PETS));
+            // TODO(kberg): the list of cards that can't have animals removed is now 2.
+            // This logic is duplicated in Predators.ts.
+            // TODO(kberg): Add test for pets & bioengineering enclosure respect a la Predators.
+            result.push(...p.getCardsWithResources().filter(card => card.resourceType === ResourceType.ANIMAL && card.name !== CardName.PETS && card.name !== CardName.BIOENGINEERING_ENCLOSURE));
         });
         return result;
     }
@@ -46,7 +44,7 @@ export class Virus implements IProjectCard {
         const remove5Plants = () => {
             return new SelectOption("Remove up to 5 plants from a player", "Remove plants", () =>
             {
-                game.addResourceDecreaseInterrupt(player, Resources.PLANTS, 5);
+                game.defer(new RemoveAnyPlants(player, game, 5));
                 return undefined;
             })
         };
@@ -70,7 +68,7 @@ export class Virus implements IProjectCard {
 
         // Another player has plants to remove
         if (cards.length === 0 && playersWithPlants > 0) {
-            game.addResourceDecreaseInterrupt(player, Resources.PLANTS, 5);
+            game.defer(new RemoveAnyPlants(player, game, 5));
             return undefined;
         }
 

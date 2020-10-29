@@ -1,7 +1,7 @@
 {
     "Terraforming Mars": "Покорение Марса",
     "Create New Game": "Новая игра",
-    "Players count": "Кол-во игроков",
+    "№ of Players": "Кол-во игроков",
     "Expansions": "Дополнения",
     "Options": "Настройки",
     "Use promo cards": "Промо карты",
@@ -19,8 +19,9 @@
     "Blue": "Синий",
     "Black": "Черный",
     "Purple": "Фиолетовый",
+    "TR Boost": "Фора по РТ",
 
-    "original": "База",
+    "tharsis": "База",
     "hellas": "Эллада",
     "elysium": "Элизий",
     "random": "Случайная",
@@ -28,6 +29,7 @@
     "Prelude": "Прологи",
     "Venus Next": "Венера",
     "Custom Corporation list": "Настроить корпорации",
+    "Custom Colonies list": "Настроить колонии",
     "World Government Terraforming": "Правительственная поддержка",
 
     "NEXT CARD:": "СЛЕДУЮЩАЯ КАРТА:",
@@ -65,7 +67,7 @@
     "Having a terraform rating of at least 35 or 26 with Turmoil.": "Ваш рейтинг терраформирования должен быть не менее 35 (26 c Кризисом)",
     "Tycoon": "Олигарх",
     "Requires that you have 15 project cards in play (blue and green cards)": "Разыграйте не менее 15 проектов (синих и зелёных карт)",
-    
+
     "Awards": "Награды",
     "Landlord": "Землевладелец",
     "Owning the most tiles in play": "Наибольшее количество своих тайлов в игре",
@@ -73,7 +75,7 @@
     "Having the highest MC production": "Наибольший уровень производства кредитов",
     "Scientist": "Ученый",
     "Having the most science tags in play": "Наибольшее количество карт с меткой наука",
-    "Thermalist": "Термалист",   
+    "Thermalist": "Термалист",
     "Having the most heat resource cubes": "Наибольшее количество ресурсов тепла",
     "Miner": "Металлург",
     "Having the most steel and titanium resource cubes": "Наибольшее количество ресурсов стали и титана",
@@ -104,6 +106,7 @@
     "Played Cards": "Сыгранные карты",
     "Cards In Hand": "Карты в руке",
     "Last Actions": "Лог",
+    "Game Log": "Лог",
     "Select initial cards:": "Выберите стартовые карты:",
     "Game details": "Детали игры",
     "Milestones and awards": "Достижения и награды",
@@ -150,6 +153,8 @@
     "Show real-time VP": "Показывать ПО в реальном времени",
     "Draft variant": "Драфт",
     "Initial Draft variant": "Драфт стартовых карт",
+    "Exclude some cards": "Исключить некоторые проекты",
+    "Fast mode": "Быстрая игра",
 
     "Place any final greenery from plants": "Выполнить финальное озеленение",
     "Don't place a greenery": "Не выполнять финального озеленения",
@@ -196,6 +201,6 @@
     "Pay 3 Titanium": "Заплатить 3 Титана",
     "Select 2 Prelude cards": "Выберите 2 карты Прологов",
     "Self-Replicating Robots cards": "Карты Роботов-саморепликантов",
-    "Remove colony": "Убрать колонию"
-
+    "Remove colony": "Убрать колонию",
+    "Tags Overview": "Статистика"
 }

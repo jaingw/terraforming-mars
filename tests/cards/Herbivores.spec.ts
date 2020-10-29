@@ -18,36 +18,37 @@ describe("Herbivores", function () {
 
     it("Can't play if nobody has plant production", function () {
         (game as any).oxygenLevel = 8;
-        expect(card.canPlay(player, game)).to.eq(false);
+        expect(card.canPlay(player, game)).is.not.true;
     });
 
     it("Can't play if oxygen level too low", function () {
         (game as any).oxygenLevel = 7;
-        player2.setProduction(Resources.PLANTS);
-        expect(card.canPlay(player, game)).to.eq(false);
+        player2.addProduction(Resources.PLANTS);
+        expect(card.canPlay(player, game)).is.not.true;
     });
 
     it("Should play - auto select if single target", function () {
         (game as any).oxygenLevel = 8;
-        player2.setProduction(Resources.PLANTS);
-        expect(card.canPlay(player, game)).to.eq(true);
+        player2.addProduction(Resources.PLANTS);
+        expect(card.canPlay(player, game)).is.true;
 
         card.play(player, game);
         expect(card.resourceCount).to.eq(1);
 
-        expect(game.interrupts.length).to.eq(0);
+        const input = game.deferredActions.next()!.execute();
+        expect(input).is.undefined;
         expect(player2.getProduction(Resources.PLANTS)).to.eq(0);
     });
 
     it("Should play - multiple targets", function () {
-        player.setProduction(Resources.PLANTS);
-        player2.setProduction(Resources.PLANTS);
+        player.addProduction(Resources.PLANTS);
+        player2.addProduction(Resources.PLANTS);
 
         card.play(player, game);
         expect(card.resourceCount).to.eq(1);
 
-        expect(game.interrupts.length).to.eq(1);
-        const selectPlayer = game.interrupts[0].playerInput as SelectPlayer;
+        expect(game.deferredActions).has.lengthOf(1);
+        const selectPlayer = game.deferredActions.next()!.execute() as SelectPlayer;
         selectPlayer.cb(player2);
         expect(player2.getProduction(Resources.PLANTS)).to.eq(0);
     });
@@ -69,6 +70,10 @@ describe("Herbivores", function () {
     it("Should be playable in solo mode", function () {
         const game = new Game("foobar_solo", [player], player);
         (game as any).oxygenLevel = 8;
-        expect(card.canPlay(player, game)).to.eq(true);
+        player.addProduction(Resources.PLANTS);
+
+        expect(card.canPlay(player, game)).is.true;
+        card.play(player, game);
+        expect(player.getProduction(Resources.PLANTS)).to.eq(1); // should not decrease
     });
 });

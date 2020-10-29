@@ -15,15 +15,15 @@ describe("UndergroundCity", function () {
     });
 
     it("Can't play", function () {
-        player.setProduction(Resources.ENERGY);
-        expect(card.canPlay(player,game)).to.eq(false);
+        player.addProduction(Resources.ENERGY);
+        expect(card.canPlay(player,game)).is.not.true;
     });
     
     it("Should play", function () {
-        player.setProduction(Resources.ENERGY, 2);
-        expect(card.canPlay(player,game)).to.eq(true);
+        player.addProduction(Resources.ENERGY, 2);
+        expect(card.canPlay(player,game)).is.true;
         const action = card.play(player, game);
-        expect(action).not.to.eq(undefined);
+        expect(action).is.not.undefined;
 
         action.cb(action.availableSpaces[0]);
         expect(game.getCitiesInPlay()).to.eq(1);

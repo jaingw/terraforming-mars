@@ -21,26 +21,27 @@ describe("AerialLenses", function () {
     });
 
     it("Can play", function () {
-        expect(card.canPlay(player, game)).to.eq(false);
+        expect(card.canPlay(player, game)).is.not.true;
         
         const kelvinists = game.turmoil!.getPartyByName(PartyName.KELVINISTS)!;    
         kelvinists.delegates.push(player, player);
-        expect(card.canPlay(player, game)).to.eq(true);
+        expect(card.canPlay(player, game)).is.true;
     });
 
     it("Should play without plants", function () {
         card.play(player, game);
         expect(player.getProduction(Resources.HEAT)).to.eq(2);
-        expect(game.interrupts.length).to.eq(0);
+        const input = game.deferredActions.next()!.execute();
+        expect(input).is.undefined;
     });
 
     it("Should play with plants", function () {
         player2.plants = 5;
         card.play(player, game);
         expect(player.getProduction(Resources.HEAT)).to.eq(2);
-        expect(game.interrupts.length).to.eq(1);
+        expect(game.deferredActions).has.lengthOf(1);
 
-        const orOptions = game.interrupts[0].playerInput as OrOptions;
+        const orOptions = game.deferredActions.next()!.execute() as OrOptions;
         orOptions.options[0].cb();
         expect(player2.plants).to.eq(3);
     });

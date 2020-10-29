@@ -7,29 +7,23 @@ import { SelectOption } from "../../../inputs/SelectOption";
 import { OrOptions } from "../../../inputs/OrOptions";
 import { ResourceType } from "../../../ResourceType";
 import { CardName } from "../../../CardName";
-import { LogMessageType } from "../../../LogMessageType";
-import { LogMessageData } from "../../../LogMessageData";
-import { LogMessageDataType } from "../../../LogMessageDataType";
 import { ICard } from "../../ICard";
+import { CardType } from "../../CardType";
 
 export class _Splice_ implements CorporationCard {
     public name: CardName = CardName._SPLICE_;
     public tags: Array<Tags> = [Tags.MICROBES];
     public startingMegaCredits: number = 48; // 44 + 4 as card resolution when played
+    public cardType: CardType = CardType.CORPORATION; 
 
     public initialAction(player: Player, game: Game) {
         const drawnCards = game.drawCardsByTag(Tags.MICROBES, 2);
-        for (let foundCard of drawnCards) {
+        for (const foundCard of drawnCards) {
             player.cardsInHand.push(foundCard);
         }
+        
+        game.log("${0} drew ${1} and ${2}", b => b.player(player).card(drawnCards[0]).card(drawnCards[1]));
 
-        game.log(
-             LogMessageType.DEFAULT,
-            "${0} drew ${1} and ${2}",
-            new LogMessageData(LogMessageDataType.PLAYER, player.id),
-            new LogMessageData(LogMessageDataType.CARD, drawnCards[0].name),
-            new LogMessageData(LogMessageDataType.CARD, drawnCards[1].name)
-        );
         return undefined;
     }
 

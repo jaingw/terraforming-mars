@@ -32,7 +32,7 @@ export class Atmoscoop implements IProjectCard {
   
         return meetsTagRequirements;
     }
-
+    
     public play(player: Player, game: Game) {
         let result = new OrOptions();
         let options: Array<SelectCard<ICard> | SelectOption> = [];
@@ -42,35 +42,39 @@ export class Atmoscoop implements IProjectCard {
         if (floaterCards.length === 0) {
             if (!this.temperatureIsMaxed(game)) {
                 options.push(new SelectOption("Raise temperature 2 steps", "Raise temperature", () => {
-                    return game.increaseTemperature(player,2);
+                    game.increaseTemperature(player,2);
+                    return undefined;
                 }));
             }
             
             if (!this.venusIsMaxed(game)) {
                 options.push(new SelectOption("Raise Venus 2 steps", "Raise venus",() => {
-                    return game.increaseVenusScaleLevel(player,2);
+                    game.increaseVenusScaleLevel(player,2);
+                    return undefined;
                 }));
             }
         } else if (floaterCards.length === 1) {
             if (!this.temperatureIsMaxed(game)) {
                 options.push(new SelectOption(
                     "Raise temperature 2 steps and add 2 floaters to " + floaterCards[0].name,
-                    "Add floaters",
+                    "Raise temperature and add floaters",
                     () => {
                         player.addResourceTo(floaterCards[0], 2);
                         LogHelper.logAddResource(game, player, floaterCards[0], 2);
-                        return game.increaseTemperature(player,2);
+                        game.increaseTemperature(player,2);
+                        return undefined;
                 }));
             }
 
             if (!this.venusIsMaxed(game)) {
                 options.push(new SelectOption(
                     "Raise Venus 2 steps and add 2 floaters to " + floaterCards[0].name,
-                    "Add floaters",
+                    "Raise Venus and add floaters",
                     () => {
                         player.addResourceTo(floaterCards[0], 2);
                         LogHelper.logAddResource(game, player, floaterCards[0], 2);
-                        return game.increaseVenusScaleLevel(player,2);
+                        game.increaseVenusScaleLevel(player,2);
+                        return undefined;
                 }));
             }
 
@@ -87,25 +91,27 @@ export class Atmoscoop implements IProjectCard {
         } else {
             if (!this.temperatureIsMaxed(game)) {
                 options.push(new SelectCard(
-                    "Select card to add 2 floaters and raise temperature 2 steps",
-                    "Add floaters",
+                    "Raise temperature 2 steps and select card to add 2 floaters",
+                    "Raise temperature and add floaters",
                     floaterCards,
                     (foundCards: Array<ICard>) => {
                         player.addResourceTo(foundCards[0], 2);
                         LogHelper.logAddResource(game, player, foundCards[0], 2);
-                        return game.increaseTemperature(player,2);
+                        game.increaseTemperature(player,2);
+                        return undefined;
                 }));
             }
 
             if (!this.venusIsMaxed(game)) {
                 options.push(new SelectCard(
-                    "Select card to add 2 floaters and raise Venus 2 steps",
-                    "Add floaters",
+                    "Raise Venus 2 steps and select card to add 2 floaters",
+                    "Raise Venus and add floaters",
                     floaterCards,
                     (foundCards: Array<ICard>) => {
                     player.addResourceTo(foundCards[0], 2);
                     LogHelper.logAddResource(game, player, foundCards[0], 2);
-                    return game.increaseVenusScaleLevel(player,2);
+                    game.increaseVenusScaleLevel(player,2);
+                    return undefined;
                 }));
             }
 
@@ -123,7 +129,7 @@ export class Atmoscoop implements IProjectCard {
         }
 
         if (options.length === 1) {
-            if (options instanceof SelectOption) return (options[0] as SelectOption).cb();
+            if (options[0] instanceof SelectOption) return (options[0] as SelectOption).cb();
 
             const selectCard = options[0] as SelectCard<ICard>;
             if (floaterCards.length === 1) return selectCard.cb([floaterCards[0]]);

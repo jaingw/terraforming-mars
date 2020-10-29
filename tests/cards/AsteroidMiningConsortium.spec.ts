@@ -17,29 +17,30 @@ describe("AsteroidMiningConsortium", function () {
     });
 
     it("Can't play if no titanium production", function () {
-        expect(card.canPlay(player)).to.eq(false);
+        expect(card.canPlay(player)).is.not.true;
     });
 
     it("Can play if player has titanium production", function () {
-        player.setProduction(Resources.TITANIUM);
-        expect(card.canPlay(player)).to.eq(true);
+        player.addProduction(Resources.TITANIUM);
+        expect(card.canPlay(player)).is.true;
     });
 
     it("Should play - auto select if single target", function () {
-        player.setProduction(Resources.TITANIUM);
+        player.addProduction(Resources.TITANIUM);
         card.play(player, game); // can decrease own production
-        expect(game.interrupts.length).to.eq(0);
+        const input = game.deferredActions.next()!.execute();
+        expect(input).is.undefined;
         expect(player.getProduction(Resources.TITANIUM)).to.eq(1);
     });
 
     it("Should play - multiple targets", function () {
-        player.setProduction(Resources.TITANIUM);
-        player2.setProduction(Resources.TITANIUM);
+        player.addProduction(Resources.TITANIUM);
+        player2.addProduction(Resources.TITANIUM);
         card.play(player, game);
         expect(player.getProduction(Resources.TITANIUM)).to.eq(2);
 
-        expect(game.interrupts.length).to.eq(1);
-        const selectPlayer = game.interrupts[0].playerInput as SelectPlayer;
+        expect(game.deferredActions).has.lengthOf(1);
+        const selectPlayer = game.deferredActions.next()!.execute() as SelectPlayer;
         selectPlayer.cb(player2);
         expect(player2.getProduction(Resources.TITANIUM)).to.eq(0);
     });

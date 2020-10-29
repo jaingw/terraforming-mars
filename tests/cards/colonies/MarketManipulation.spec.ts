@@ -26,7 +26,7 @@ describe("MarketManipulation", function () {
         game.colonies.push(luna, triton);
 
         const action = card.play(player, game) as OrOptions;
-        expect(action).not.to.eq(undefined);
+        expect(action).is.not.undefined;
         expect(action.options[0].title).to.eq("Increase Luna (MegaCredits) and decrease Triton (Titanium)")
         action.options[0].cb();
 
@@ -39,30 +39,10 @@ describe("MarketManipulation", function () {
         let miranda = new Miranda();
         
         game.colonies.push(enceladus, miranda, luna);
-        game.coloniesExtension = true;
-        expect(card.canPlay(player, game)).to.eq(false);
+        game.gameOptions.coloniesExtension = true;
+        expect(card.canPlay(player, game)).is.not.true;
 
         player.playCard(game, new Pets());
-        expect(card.canPlay(player, game)).to.eq(true);
-    });
-    it("Can't play", function () {
-        const card = new MarketManipulation();
-        const player = new Player("test", Color.BLUE, false);
-        const player2 = new Player("test2", Color.RED, false);
-        const game = new Game("foobar", [player,player2], player);
-        let colony1 = new Enceladus();
-        let colony2 = new Miranda();
-        let colony3 = new Luna();
-        game.colonies.push(colony1);
-        game.colonies.push(colony2);
-        game.colonies.push(colony3);
-        game.coloniesExtension = true;
-        let canPlay = card.canPlay(player, game);
-        expect(canPlay).to.eq(false);
-
-        player.playCard(game, new Pets());
-        canPlay = card.canPlay(player, game);
-        expect(canPlay).to.eq(true);
-
+        expect(card.canPlay(player, game)).is.true;
     });
 });

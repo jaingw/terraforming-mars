@@ -21,12 +21,12 @@ describe("Capital", function () {
 
     it("Can't play without energy production", function () {
         maxOutOceans(player, game);
-        expect(card.canPlay(player, game)).to.eq(false);
+        expect(card.canPlay(player, game)).is.not.true;
     });
 
     it("Can't play if oceans requirement not met", function () {
-        player.setProduction(Resources.ENERGY, 2);
-        expect(card.canPlay(player, game)).to.eq(false);
+        player.addProduction(Resources.ENERGY, 2);
+        expect(card.canPlay(player, game)).is.not.true;
     });
 
     it("Should play", function () {
@@ -34,11 +34,11 @@ describe("Capital", function () {
         for (let i = 0; i < 4; i++) {
             oceanSpaces[i].tile = { tileType: TileType.OCEAN };
         }
-        player.setProduction(Resources.ENERGY,2);
-        expect(card.canPlay(player, game)).to.eq(true);
+        player.addProduction(Resources.ENERGY,2);
+        expect(card.canPlay(player, game)).is.true;
 
         const action = card.play(player, game);
-        expect(action instanceof SelectSpace).to.eq(true);
+        expect(action instanceof SelectSpace).is.true;
         expect(player.getProduction(Resources.ENERGY)).to.eq(0);
         expect(player.getProduction(Resources.MEGACREDITS)).to.eq(5);
 
@@ -46,22 +46,23 @@ describe("Capital", function () {
         expect(citySpace.spaceType).to.eq(SpaceType.LAND); 
         action.cb(citySpace);
         
-        expect(citySpace.tile).not.to.eq(undefined);
+        expect(citySpace.tile).is.not.undefined;
         expect(citySpace.player).to.eq(player);
         expect(citySpace.tile && citySpace.tile.tileType).to.eq(TileType.CAPITAL);
         expect(player.victoryPointsBreakdown.victoryPoints).to.eq(0);
         expect(card.getVictoryPoints(player, game)).to.eq(1);
+        expect(citySpace.adjacency?.bonus).eq(undefined);
     });
 
     it("Capital special tile counts as a city", function () {
-        const space = game.board.getRandomCitySpace(0);
+        const space = game.board.getNthAvailableLandSpace(2, 1, player);
         game.addTile(player, SpaceType.LAND, space, {
             tileType: TileType.CAPITAL,
             card: card.name
         });
 
         // cover main functions
-        expect(Board.isCitySpace(space)).to.eq(true);
+        expect(Board.isCitySpace(space)).is.true;
         expect(game.getCitiesInPlayOnMars()).to.eq(1);
         expect(game.getCitiesInPlay()).to.eq(1);
 

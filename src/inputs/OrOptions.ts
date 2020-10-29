@@ -9,6 +9,7 @@ import { SelectHowToPay } from "./SelectHowToPay";
 import { ICard } from "../cards/ICard";
 import { IProjectCard } from "../cards/IProjectCard";
 import { SelectDelegate } from "./SelectDelegate";
+import { SelectColony } from "./SelectColony";
 
 export class OrOptions implements PlayerInput {
     public cb(): undefined {
@@ -20,7 +21,7 @@ export class OrOptions implements PlayerInput {
     public inputType: PlayerInputTypes = PlayerInputTypes.OR_OPTIONS;
     public id: string | undefined;
     constructor(
-        ...options: Array<SelectAmount | SelectCard<ICard> | SelectCard<IProjectCard>| SelectPlayer | SelectOption | SelectHowToPay | SelectDelegate>
+        ...options: Array<SelectAmount | SelectCard<ICard> | SelectCard<IProjectCard>| SelectPlayer | SelectOption | SelectHowToPay | SelectDelegate | SelectColony >
     ) {
         this.options = options;
     }

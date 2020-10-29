@@ -6,9 +6,8 @@ import { Player } from "../../Player";
 import { Resources } from "../../Resources";
 import { Game } from "../../Game";
 import { PartyName } from "../../turmoil/parties/PartyName";
-import { SelectCity } from "../../interrupts/SelectCity";
-import { SelectParty } from "../../interrupts/SelectParty";
-
+import { PlaceCityTile } from "../../deferredActions/PlaceCityTile";
+import { SendDelegateToArea } from "../../deferredActions/SendDelegateToArea";
 
 export class CulturalMetropolis implements IProjectCard {
     public cost: number = 20;
@@ -28,16 +27,16 @@ export class CulturalMetropolis implements IProjectCard {
     }
 
     public play(player: Player, game: Game) {
-        player.setProduction(Resources.ENERGY,-1);
-        player.setProduction(Resources.MEGACREDITS,3);
-        game.addInterrupt(new SelectCity(player, game));
+        player.addProduction(Resources.ENERGY,-1);
+        player.addProduction(Resources.MEGACREDITS,3);
+        game.defer(new PlaceCityTile(player, game));
         const title = "Select where to send two delegates";
         
         if (game.turmoil!.getDelegates(player) > 1){
-          game.addInterrupt(new SelectParty(player, game, title, 2, undefined, undefined, false));
+            game.defer(new SendDelegateToArea(player, game, title, 2, undefined, undefined, false));
         }
         else if (game.turmoil!.getDelegates(player) === 1 && game.turmoil!.lobby.has(player.id)) {
-          game.addInterrupt(new SelectParty(player, game, title, 2, undefined, undefined, true));
+            game.defer(new SendDelegateToArea(player, game, title, 2, undefined, undefined, true));
         }
         return undefined;
     }

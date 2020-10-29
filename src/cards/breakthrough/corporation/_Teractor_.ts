@@ -4,26 +4,20 @@ import { Game } from "../../../Game";
 import { IProjectCard } from "../../IProjectCard";
 import { CorporationCard } from "../../corporation/CorporationCard";
 import { CardName } from "../../../CardName";
-import { LogMessageType } from "../../../LogMessageType";
-import { LogMessageData } from "../../../LogMessageData";
-import { LogMessageDataType } from "../../../LogMessageDataType";
+import { CardType } from "../../CardType";
 
 export class _Teractor_ implements CorporationCard {
     public name: CardName = CardName._TERACTOR_;
     public tags: Array<Tags> = [Tags.EARTH];
     public startingMegaCredits: number = 55;
+    public cardType: CardType = CardType.CORPORATION; 
 
     /* Start with 55 MC and draw 1 earth card as first sction*/
     public initialAction(player: Player, game: Game) {
         const drawnCard = game.drawCardsByTag(Tags.EARTH, 1)[0]
         player.cardsInHand.push(drawnCard);
 
-        game.log(
-            LogMessageType.DEFAULT,
-            "${0} drew ${1}",
-            new LogMessageData(LogMessageDataType.PLAYER, player.id),
-            new LogMessageData(LogMessageDataType.CARD, drawnCard.name)
-        );
+        game.log("${0} drew ${1}", b => b.player(player).card(drawnCard));
         
         return undefined;
     }

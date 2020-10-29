@@ -6,13 +6,16 @@ import { Resources } from "../../../Resources";
 import { CardName } from "../../../CardName";
 import { IProjectCard } from "../../IProjectCard";
 import { Game } from "../../../Game";
+import { CardType } from "../../CardType";
 
 export class _EcoLine_ implements CorporationCard {
     public name: CardName = CardName._ECOLINE_;
     public tags: Array<Tags> = [Tags.PLANT];
     public startingMegaCredits: number = 36;
+    public cardType: CardType = CardType.CORPORATION; 
+
     public play(player: Player) {
-        player.setProduction(Resources.PLANTS,2);
+        player.addProduction(Resources.PLANTS,2);
         player.plants = 3;
         player.plantsNeededForGreenery = 7;
         return undefined;

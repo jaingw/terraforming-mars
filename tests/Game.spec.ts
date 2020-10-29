@@ -17,18 +17,21 @@ import { ISpace } from "../src/ISpace";
 import { ResearchNetwork } from "../src/cards/prelude/ResearchNetwork";
 import { ArcticAlgae } from "../src/cards/ArcticAlgae";
 import { Ecologist } from "../src/milestones/Ecologist";
+import { CardFinder } from "../src/CardFinder";
 import { Dealer } from "../src/Dealer";
 import { OrOptions } from "../src/inputs/OrOptions";
 import { BoardName } from "../src/BoardName";
 import { SpaceType } from "../src/SpaceType";
 import { Helion } from "../src/cards/corporation/Helion";
+import { COMMUNITY_CARD_MANIFEST } from "../src/cards/community/CommunityCardManifest";
+import { CardName } from "../src/CardName";
 
 describe("Game", function () {
     it("should initialize with right defaults", function () {
         const player = new Player("test", Color.BLUE, false);
         const player2 = new Player("test2", Color.RED, false);
         const game = new Game("foobar", [player,player2], player);
-        expect(game.corporateEra).to.eq(true);
+        expect(game.gameOptions.corporateEra).is.true;
         expect(game.getGeneration()).to.eq(1);
     });
 
@@ -40,6 +43,29 @@ describe("Game", function () {
         // exclude corporate era
         const dealer2 = new Dealer(false, false, false, false, false, false, false);
         expect(dealer2.deck.length).to.eq(137);
+    });
+
+    it("excludes expansion-specific preludes if those expansions are not selected ", function() {
+        const dealer = new Dealer(true, false, false, false, false, false, true);
+        const preludeDeck = dealer.preludeDeck;
+
+        const turmoilPreludes = COMMUNITY_CARD_MANIFEST.preludeCards.cards.map((c) => c.cardName);
+        turmoilPreludes.forEach((preludeName) => {
+            const preludeCard = new CardFinder().getProjectCardByName(preludeName)!;
+            expect(preludeDeck.includes(preludeCard)).to.eq(false)
+        });
+    });
+
+    it("excludes expansion-specific preludes if those expansions are not selected ", function() {
+        const dealer = new Dealer(true, false, false, false, false, false,  
+            false, true);
+        const preludeDeck = dealer.preludeDeck;
+
+        const turmoilPreludes = COMMUNITY_CARD_MANIFEST.preludeCards.cards.map((c) => c.cardName);
+        turmoilPreludes.forEach((preludeName) => {
+            const preludeCard = new CardFinder().getProjectCardByName(preludeName)!;
+            expect(preludeDeck.includes(preludeCard)).is.not.true
+        });
     });
 
     it("sets starting production if corporate era not selected", function() {
@@ -65,7 +91,7 @@ describe("Game", function () {
         game.addGreenery(player, SpaceName.PAVONIS_MONS);
    
         // Claim milestone
-        let milestone = new Mayor();
+        const milestone = new Mayor();
 
         game.claimedMilestones.push({
             player: player,
@@ -77,10 +103,10 @@ describe("Game", function () {
         game.fundAward(player, award);
 
         // Set second player to win Banker award
-        player2.setProduction(Resources.MEGACREDITS,10);
+        player2.addProduction(Resources.MEGACREDITS,10);
   
         // Our testing player will be 2nd Banker in the game
-        player.setProduction(Resources.MEGACREDITS,7);
+        player.addProduction(Resources.MEGACREDITS,7);
 
         // Two other players will share Thermalist award
         award = new Thermalist();
@@ -97,9 +123,9 @@ describe("Game", function () {
         player2.playedCards.push(new WaterImportFromEuropa())
 
         // Finish the game
-        game.playerIsDoneWithGame(player3);
-        game.playerIsDoneWithGame(player2);
-        game.playerIsDoneWithGame(player);
+        // game.playerIsDoneWithGame(player3);
+        // game.playerIsDoneWithGame(player2);
+        // game.playerIsDoneWithGame(player);
 
         player.getVictoryPoints(game);
         player2.getVictoryPoints(game);
@@ -121,10 +147,10 @@ describe("Game", function () {
     it("Disallows to set temperature more than allowed maximum", function () {
         const player = new Player("temp_test", Color.BLUE, false);
         const player2 = new Player("temp_test2", Color.RED, false);
-        const game = new Game("vp_game", [player,player2], player);
+        const game = new Game("vp_game1", [player,player2], player);
 
         (game as any).temperature = 6;
-        var initialTR = player.getTerraformRating();
+        let initialTR = player.getTerraformRating();
         game.increaseTemperature(player, 2);
 
         expect(game.getTemperature()).to.eq(constants.MAX_TEMPERATURE);
@@ -142,7 +168,7 @@ describe("Game", function () {
     it("Disallows to set oxygenLevel more than allowed maximum", function () {
         const player = new Player("temp_test", Color.BLUE, false);
         const player2 = new Player("temp_test2", Color.RED, false);
-        const game = new Game("vp_game", [player,player2], player);
+        const game = new Game("vp_game2", [player,player2], player);
 
         (game as any).oxygenLevel = 13;
         const initialTR = player.getTerraformRating();
@@ -156,7 +182,7 @@ describe("Game", function () {
         const player = new Player("temp_test", Color.BLUE, false);
         const player2 = new Player("temp_test2", Color.RED, false);
         const game = new Game("draft_game", [player,player2], player);
-        game.venusNextExtension = false;
+        game.gameOptions.venusNextExtension = false;
         game.generation = 4;
         game.playerHasPassed(player);
         game.playerIsFinishedTakingActions();
@@ -169,7 +195,7 @@ describe("Game", function () {
         const player = new Player("temp_test", Color.BLUE, false);
         const player2 = new Player("temp_test2", Color.RED, false);
         const game = new Game("classic_game", [player,player2], player);
-        game.venusNextExtension = false;
+        game.gameOptions.venusNextExtension = false;
         game.generation = 2;
         game.playerHasPassed(player);
         game.playerIsFinishedTakingActions();
@@ -181,7 +207,7 @@ describe("Game", function () {
     it("Solo play next generation", function () {
         const player = new Player("temp_test", Color.BLUE, false);
         const game = new Game("draft_game", [player], player);
-        game.venusNextExtension = false;
+        game.gameOptions.venusNextExtension = false;
         game.playerHasPassed(player);
         game.playerIsFinishedTakingActions();
         expect(game.getGeneration()).to.eq(2);
@@ -195,7 +221,7 @@ describe("Game", function () {
         // Now game should be in finished state
         expect(game.phase).to.eq(Phase.END);
 
-        expect(game.isSoloModeWin()).to.eq(false);
+        expect(game.isSoloModeWin()).is.not.true;
     });
 
     it("Should not finish solo game before last generation if Mars is already terraformed", function() {
@@ -245,9 +271,9 @@ describe("Game", function () {
 
         // End the game
         game.playerHasPassed(player);
-        game.playerIsDoneWithGame(player);
+        // game.playerIsDoneWithGame(player);
         expect(game.phase).to.eq(Phase.END);
-        expect(game.isSoloModeWin()).to.eq(false);
+        expect(game.isSoloModeWin()).is.not.true;
 
         // Don't give TR or raise oxygen for final greenery placements
         expect(player.getTerraformRating()).to.eq(20);
@@ -261,7 +287,7 @@ describe("Game", function () {
         const player4 = new Player("p4", Color.RED, false);
         const game = new Game("gto", [player1, player2, player3, player4], player3);
 
-        var players = game.getPlayers();
+        let players = game.getPlayers();
         expect(players[0].name).to.eq("p3");
         expect(players[1].name).to.eq("p4");
         expect(players[2].name).to.eq("p1");
@@ -298,7 +324,7 @@ describe("Game", function () {
         game.addOceanTile(player1, spaceId);
 
         const space: ISpace = game.getSpace(spaceId);
-        expect(space.player).to.eq(undefined);
+        expect(space.player).is.undefined;
     });
 
     it("Check Ecologist Milestone", function() {
@@ -309,51 +335,102 @@ describe("Game", function () {
         const ecologist = new Ecologist();
 
         player.playedCards.push(card1, card2);
-        expect(ecologist.canClaim(player)).to.eq(false);
+        expect(ecologist.canClaim(player)).is.not.true;
         player.playedCards.push(card1, card2);
-        expect(ecologist.canClaim(player)).to.eq(true);
+        expect(ecologist.canClaim(player)).is.true;
     });
 
     it("Removes Hellas bonus ocean space if player cannot pay", function () {
+        // NOTE: By setting up the two-player game, instead of a solo game as we regularly do
+        // the neutral player can't claim the bonus ocean space before our player has a
+        // chance.
         const player = new Player("test", Color.BLUE, false);
+        const secondPlayer = new Player("vestigial", Color.RED, false);
         const gameOptions = setCustomGameOptions({boardName: BoardName.HELLAS}) as GameOptions;
-        const game = new Game("foobar", [player], player, gameOptions);
-        
+        const game = new Game("foobar", [player, secondPlayer], player, gameOptions);
+
+        // Ensuring that HELLAS_OCEAN_TILE will be available for the test.
+        expect(game.board.getEmptySpaces().map(s => s.id)).to.include(SpaceName.HELLAS_OCEAN_TILE);
+
         // Cannot afford
         player.megaCredits = 5;
         let landSpaces = game.board.getSpaces(SpaceType.LAND, player);
-        expect(landSpaces.find((space) => space.id === SpaceName.HELLAS_OCEAN_TILE)).to.eq(undefined);
+        expect(landSpaces.find((space) => space.id === SpaceName.HELLAS_OCEAN_TILE)).is.undefined;
         let availableSpacesOnLand = game.board.getAvailableSpacesOnLand(player);
-        expect(availableSpacesOnLand.find((space) => space.id === SpaceName.HELLAS_OCEAN_TILE)).to.eq(undefined);
+        expect(availableSpacesOnLand.map(s => s.id)).to.not.include(SpaceName.HELLAS_OCEAN_TILE);
 
         // Can afford
         player.megaCredits = 6;
         landSpaces = game.board.getSpaces(SpaceType.LAND, player);
-        expect(landSpaces.find((space) => space.id === SpaceName.HELLAS_OCEAN_TILE)).not.to.eq(undefined);
+        expect(landSpaces.find((space) => space.id === SpaceName.HELLAS_OCEAN_TILE)).is.not.undefined;
         availableSpacesOnLand = game.board.getAvailableSpacesOnLand(player);
-        expect(availableSpacesOnLand.find((space) => space.id === SpaceName.HELLAS_OCEAN_TILE)).not.to.eq(undefined);
+        expect(availableSpacesOnLand.map(s => s.id)).to.include(SpaceName.HELLAS_OCEAN_TILE);
     });
 
     it("Removes Hellas bonus ocean space if Helion player cannot pay", function () {
+        // NOTE: By setting up the two-player game, instead of a solo game as we regularly do
+        // the neutral player can't claim the bonus ocean space before our player has a
+        // chance.
         const player = new Player("test", Color.BLUE, false);
+        const secondPlayer = new Player("vestigial", Color.RED, false);
         const gameOptions = setCustomGameOptions({boardName: BoardName.HELLAS}) as GameOptions;
-        const game = new Game("foobar", [player], player, gameOptions);
+        const game = new Game("foobar", [player, secondPlayer], player, gameOptions);
         player.corporationCard = new Helion();
         player.canUseHeatAsMegaCredits = true;
-        
+
+        // Ensuring that HELLAS_OCEAN_TILE will be available for the test.
+        expect(game.board.getEmptySpaces().map(s => s.id)).to.include(SpaceName.HELLAS_OCEAN_TILE);
+
         // Cannot afford
         player.heat = 2;
         player.megaCredits = 3;
         let landSpaces = game.board.getSpaces(SpaceType.LAND, player);
-        expect(landSpaces.find((space) => space.id === SpaceName.HELLAS_OCEAN_TILE)).to.eq(undefined);
+        expect(landSpaces.find((space) => space.id === SpaceName.HELLAS_OCEAN_TILE)).is.undefined;
         let availableSpacesOnLand = game.board.getAvailableSpacesOnLand(player);
-        expect(availableSpacesOnLand.find((space) => space.id === SpaceName.HELLAS_OCEAN_TILE)).to.eq(undefined);
+        expect(availableSpacesOnLand.map(s => s.id)).to.not.include(SpaceName.HELLAS_OCEAN_TILE);
 
         // Can afford
         player.megaCredits += 1;
         landSpaces = game.board.getSpaces(SpaceType.LAND, player);
-        expect(landSpaces.find((space) => space.id === SpaceName.HELLAS_OCEAN_TILE)).not.to.eq(undefined);
+        expect(landSpaces.find((space) => space.id === SpaceName.HELLAS_OCEAN_TILE)).is.not.undefined;
         availableSpacesOnLand = game.board.getAvailableSpacesOnLand(player);
-        expect(availableSpacesOnLand.find((space) => space.id === SpaceName.HELLAS_OCEAN_TILE)).not.to.eq(undefined);
+        expect(availableSpacesOnLand.map(s => s.id)).to.include(SpaceName.HELLAS_OCEAN_TILE);
+    });
+
+    it("Generates random milestones and awards", function () {
+        const player = new Player("test", Color.BLUE, false);
+        const player2 = new Player("test2", Color.RED, false);
+        const gameOptions = setCustomGameOptions({boardName: BoardName.HELLAS, randomMA: true}) as GameOptions;
+        const game = new Game("foobar", [player, player2], player, gameOptions);
+
+        const prevMilestones = game.milestones.map(m => m.name).sort();
+        const prevAwards = game.awards.map(a => a.name).sort();
+
+        const game2 = new Game("foobar2", [player, player2], player, gameOptions);
+
+        const milestones = game2.milestones.map(m => m.name).sort();
+        const awards = game2.awards.map(a => a.name).sort();
+
+        expect(prevMilestones).to.not.eq(milestones)
+        expect(prevAwards).to.not.eq(awards)
+    });
+
+
+    it("specifically-requested corps override expansion corps", function() {
+        const player = new Player("test", Color.BLUE, false);
+        const player2 = new Player("test2", Color.RED, false);
+        const corpsFromTurmoil = [
+            CardName.LAKEFRONT_RESORTS,
+            CardName.PRISTAR,
+            CardName.TERRALABS_RESEARCH,
+            CardName.UTOPIA_INVEST
+        ]
+        const gameOptions = setCustomGameOptions({customCorporationsList: corpsFromTurmoil, turmoilExtension: true}) as GameOptions;
+        new Game("foobar", [player, player2], player, gameOptions);
+
+        const corpsAssignedToPlayers =
+            [...player.dealtCorporationCards, ...player2.dealtCorporationCards].map(c => c.name);
+
+        expect(corpsAssignedToPlayers).has.members(corpsFromTurmoil);
     });
 });

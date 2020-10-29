@@ -41,7 +41,7 @@
   "You start with 40MC. As your first action add a colony tile.":"起始获得40MC。作为你的第一个行动,将一个殖民地板块加入游戏",
   "Effect: When you get a new type of tag in play (event cards do not count), increase your MC production 1 step.":"当你获得一个新的标志时(不计算事件卡),提升你的MC产能1级",
 
-  "You start with 45MC. As your first acton, place a colony.":"起始获得45MC。作为你的第一个行动,放置一个殖民地",
+  "You start with 45MC. As your first action, place a colony.":"起始获得45MC。作为你的第一个行动,放置一个殖民地",
   "Effect: When any colony is placed, including this, raise your MC production 1 step.":"任何殖民地放置时，增加你的MC产能1级，包括这个",
 
   "You start with 40 MC. As your first action in the game,place a city tile.":"起始获得40MC。作为你的第一个行动,放置一个城市版块",
@@ -57,7 +57,7 @@
   "1 VP per 3 floaters on this card.":"本牌上每3个云资源获得1分",
 
   "As you first action in the game, draw 3 cards. Start with 45MC.":"起始获得45MC。作为你的第一个行动,抽3张牌",
-  "Effect: Your temperature, oxygen and ocean requirements are +2 or -2 steps, your choice in each case.":"效果:你打牌时的 温度/氧气浓度/海洋 要求 +2格或-2格",
+  "Effect: Your temperature, oxygen, ocean, and Venus requirements are +2 or -2 steps, your choice in each case.":"效果:你打牌时的 温度/氧气浓度/海洋 要求 +2格或-2格",
 
   "You start with 20 steel and 30 MC.":"起始获得30MC和20个钢铁资源",
   "Effect: Each time you play an event, you gain 2 MC.":"效果:每次你打出事件卡时,获得2MC",

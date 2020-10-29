@@ -16,12 +16,12 @@ describe("OrbitalCleanup", function () {
     });
 
     it("Can't play if cannot decrease MC production", function () {
-        player.setProduction(Resources.MEGACREDITS, -4);
-        expect(card.canPlay(player)).to.eq(false);
+        player.addProduction(Resources.MEGACREDITS, -4);
+        expect(card.canPlay(player)).is.not.true;
     });
 
     it("Should play", function () {
-        expect(card.canPlay(player)).to.eq(true);
+        expect(card.canPlay(player)).is.true;
         card.play(player);
         expect(player.getProduction(Resources.MEGACREDITS)).to.eq(-2);
     });

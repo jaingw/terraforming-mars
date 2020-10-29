@@ -8,9 +8,6 @@ import {OrOptions} from "../inputs/OrOptions";
 import {SelectOption} from "../inputs/SelectOption";
 import { Resources } from "../Resources";
 import { CardName } from "../CardName";
-import { LogMessageType } from "../LogMessageType";
-import { LogMessageData } from "../LogMessageData";
-import { LogMessageDataType } from "../LogMessageDataType";
 
 export class ElectroCatapult implements IActionCard, IProjectCard {
     public cost: number = 17;
@@ -52,7 +49,7 @@ export class ElectroCatapult implements IActionCard, IProjectCard {
       return undefined;
     }
     public play(player: Player) {
-      player.setProduction(Resources.ENERGY,-1);
+      player.addProduction(Resources.ENERGY,-1);
       return undefined;
     }
     public getVictoryPoints() {
@@ -60,11 +57,6 @@ export class ElectroCatapult implements IActionCard, IProjectCard {
     }
     
     private log(game: Game, player: Player, resource: Resources) {
-      game.log(
-        LogMessageType.DEFAULT,
-        "${0} spent 1 ${1} to gain 7 MC",
-        new LogMessageData(LogMessageDataType.PLAYER, player.id),
-        new LogMessageData(LogMessageDataType.STRING, resource)
-      );
+      game.log("${0} spent 1 ${1} to gain 7 MC", b => b.player(player).string(resource));
     }
 }

@@ -21,11 +21,12 @@ describe("SnowCover", function () {
         turmoil.dominantParty = new Kelvinists();
         turmoil.dominantParty.partyLeader = player2;
         turmoil.dominantParty.delegates.push(player2);
+        turmoil.dominantParty.delegates.push(player2);
     });
 
     it("resolve play", function () {
         card.resolve(game, turmoil);
-        expect(player2.cardsInHand.length).to.eq(3);
+        expect(player2.cardsInHand).has.lengthOf(3);
         expect(game.getTemperature()).to.eq(-30);
 
         game.increaseTemperature(player, 1);

@@ -5,9 +5,11 @@ import { BoardSpace } from "./BoardSpace";
 import { SpaceModel } from "../models/SpaceModel";
 import { SpaceType } from "../SpaceType";
 import { PreferencesManager } from "./PreferencesManager";
+// @ts-ignore
+import { $t } from "../directives/i18n";
 
 class GlobalParamLevel {
-    constructor(public value: number, public isActive: boolean, public strValue: string) {
+    constructor(public value: number, public isActive: boolean, public isDone: boolean, public strValue: string) {
 
     }
 }
@@ -17,7 +19,7 @@ class AlertDialog {
 }
 
 export const Board = Vue.component("board", {
-    props: ["spaces", "venusNextExtension", "venusScaleLevel","boardName", "oceans_count", "oxygen_level", "temperature", "shouldNotify"],
+    props: ["spaces", "venusNextExtension", "venusScaleLevel","boardName", "oceans_count", "oxygen_level", "temperature", "shouldNotify", "aresExtension", "aresData"],
     components: {
         "board-space": BoardSpace
     },
@@ -41,7 +43,7 @@ export const Board = Vue.component("board", {
             return boardSpaces.filter((s: SpaceModel) => {return s.spaceType !== SpaceType.COLONY})
         },
         getSpaceById: function (spaceId: string) {
-            for (let space of this.spaces) {
+            for (const space of this.spaces) {
                 if (space.id === spaceId) {
                     return space
                 }
@@ -49,12 +51,12 @@ export const Board = Vue.component("board", {
             throw "Board space not found by id '" + spaceId + "'"
         },
         getValuesForParameter: function (targetParameter: string): Array<GlobalParamLevel> {
-            let values: Array<GlobalParamLevel> = [];
-            var startValue: number;
-            var endValue: number;
-            var step: number;
-            var curValue: number;
-            var strValue: string;
+            const values: Array<GlobalParamLevel> = [];
+            let startValue: number;
+            let endValue: number;
+            let step: number;
+            let curValue: number;
+            let strValue: string;
 
             switch (targetParameter) {
                 case "oxygen":
@@ -82,7 +84,7 @@ export const Board = Vue.component("board", {
             for (let value: number = endValue; value >= startValue; value -= step) {
                 strValue = (targetParameter === "temperature" && value > 0) ? "+"+value : value.toString();
                 values.push(
-                    new GlobalParamLevel(value, value === curValue, strValue)
+                    new GlobalParamLevel(value, value === curValue, value <= curValue, strValue)
                 )
             }
             return values;
@@ -90,7 +92,10 @@ export const Board = Vue.component("board", {
         getScaleCSS: function (paramLevel: GlobalParamLevel): string {
             let css = "global-numbers-value val-" + paramLevel.value + " ";
             if (paramLevel.isActive) {
-                css += "val-is-active";
+                css += " val-is-active ";
+            }
+            if (paramLevel.isDone) {
+                css += " val-is-done ";
             }
             return css
         },
@@ -110,14 +115,17 @@ export const Board = Vue.component("board", {
             const oceans_count = this.oceans_count || 0;
             const leftover = constants.MAX_OCEAN_TILES - oceans_count;
             if (leftover === 0) {
-                return `<img width="26" src="/assets/checkmark.png" alt="completed">`
+                return `<img width="26" src="/assets/misc/circle-checkmark.png" class="board-ocean-checkmark" :alt="$t('Completed!')">`
             } else {
-                return leftover
+                return `${oceans_count}/${constants.MAX_OCEAN_TILES}`
             }
+        },
+        getGameBoardClassName: function():string {
+            return this.venusNextExtension ? "board-cont board-with-venus" : "board-cont board-without-venus";
         }
     },
     template: `
-    <div class="board-cont">
+    <div :class="getGameBoardClassName()">
         <div class="board-outer-spaces">
             <board-space :space="getSpaceById('01')" text="Ganymede Colony"></board-space>
             <board-space :space="getSpaceById('02')" text="Phobos Space Haven"></board-space>
@@ -141,36 +149,54 @@ export const Board = Vue.component("board", {
                 <div :class="getScaleCSS(lvl)" v-for="lvl in getValuesForParameter('venus')">{{ lvl.strValue }}</div>
             </div>
 
-            <div class="global-numbers-oceans">
-                <div class="global-numbers-value" v-html="oceansValue()"></div>
+            <div class="global-numbers-oceans" v-html="oceansValue()">
+            </div>
+
+            <div v-if="aresExtension">
+                <div v-if="aresData.hazardData.erosionOceanCount.available">
+                    <div class="global-ares-erosions-icon"></div>
+                    <div class="global-ares-erosions-val">{{aresData.hazardData.erosionOceanCount.threshold}}</div>
+                </div>
+                <div v-if="aresData.hazardData.removeDustStormsOceanCount.available">
+                    <div class="global-ares-remove-dust-storms-icon"></div>
+                    <div class="global-ares-remove-dust-storms-val">{{aresData.hazardData.removeDustStormsOceanCount.threshold}}</div>
+                </div>
+                <div v-if="aresData.hazardData.severeErosionTemperature.available">
+                    <div class="global-ares-severe-erosions"
+                    :class="'global-ares-severe-erosions-'+aresData.hazardData.severeErosionTemperature.threshold"></div>
+                </div>
+                <div v-if="aresData.hazardData.severeDustStormOxygen.available">
+                    <div class="global-ares-severe-dust-storms"
+                    :class="'global-ares-severe-dust-storms-'+aresData.hazardData.severeDustStormOxygen.threshold"></div>
+                </div>
             </div>
         </div>
 
         <div class="board" id="main_board">
-            <board-space :space="curSpace" :is_selectable="true" :key="'board-space-'+curSpace.id" v-for="curSpace in getAllSpacesOnMars()"></board-space>
+            <board-space :space="curSpace" :is_selectable="true" :key="'board-space-'+curSpace.id" :aresExtension="aresExtension" v-for="curSpace in getAllSpacesOnMars()"></board-space>
             <svg id="board_legend" height="550" width="630" class="board-legend">
-                <g v-if="boardName === 'original'" id="ascraeus_mons" transform="translate(95, 192)">
+                <g v-if="boardName === 'tharsis'" id="ascraeus_mons" transform="translate(95, 192)">
                     <text class="board-caption">
                         <tspan dy="15">Ascraeus</tspan>
                         <tspan x="12" dy="12">Mons</tspan>
                     </text>
                 </g>
                 
-                <g v-if="boardName === 'original'" id="pavonis_mons" transform="translate(90, 230)">
+                <g v-if="boardName === 'tharsis'" id="pavonis_mons" transform="translate(90, 230)">
                     <text class="board-caption">
                         <tspan dy="15">Pavonis</tspan>
                         <tspan x="4" dy="12">Mons</tspan>
                     </text>
                 </g>
                 
-                <g v-if="boardName === 'original'" id="arsia_mons" transform="translate(77, 275)">
+                <g v-if="boardName === 'tharsis'" id="arsia_mons" transform="translate(77, 275)">
                     <text class="board-caption">
                         <tspan dy="15">Arsia</tspan>
                         <tspan x="-2" dy="12">Mons</tspan>
                     </text>
                 </g>
 
-                <g v-if="boardName === 'original'" id="tharsis_tholus" transform="translate(85, 175)">
+                <g v-if="boardName === 'tharsis'" id="tharsis_tholus" transform="translate(85, 175)">
                     <text class="board-caption" dx="47">
                         <tspan dy="-7">Tharsis</tspan>
                         <tspan dy="12" x="48">Tholus</tspan>
@@ -179,7 +205,7 @@ export const Board = Vue.component("board", {
                     <text x="158" y="5" class="board-caption board_caption--black">&#x25cf;</text>
                 </g>
                 
-                <g v-if="boardName === 'original'" id="noctis_city" transform="translate(85, 320)">
+                <g v-if="boardName === 'tharsis'" id="noctis_city" transform="translate(85, 320)">
                     <text class="board-caption">
                         <tspan dy="15">Noctis</tspan>
                         <tspan x="7" dy="12">City</tspan>

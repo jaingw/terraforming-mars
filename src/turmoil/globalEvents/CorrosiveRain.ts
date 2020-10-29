@@ -1,11 +1,9 @@
-import { IGlobalEvent } from './IGlobalEvent';
-import { GlobalEventName } from './GlobalEventName';
-import { PartyName } from '../parties/PartyName';
-import { Game } from '../../Game';
-import { Resources } from '../../Resources';
-import { Turmoil } from '../Turmoil';
-import { ResourceType } from "../../ResourceType";
-import { SelectRemoveFloaters } from '../../interrupts/SelectRemoveFloaters';
+import { IGlobalEvent } from "./IGlobalEvent";
+import { GlobalEventName } from "./GlobalEventName";
+import { PartyName } from "../parties/PartyName";
+import { Game } from "../../Game";
+import { Turmoil } from "../Turmoil";
+import { CorrosiveRainDeferredAction } from "../../deferredActions/CorrosiveRainDeferredAction";
 
 export class CorrosiveRain implements IGlobalEvent {
     public name = GlobalEventName.CORROSIVE_RAIN;
@@ -17,15 +15,7 @@ export class CorrosiveRain implements IGlobalEvent {
             for (let i = 0; i < turmoil.getPlayerInfluence(player); i++) {
                 player.cardsInHand.push(game.dealer.dealCard());
             }
-            let floaterCards = player.getCardsWithResources().filter(card => card.resourceType === ResourceType.FLOATER 
-                && card.resourceCount != undefined 
-                && card.resourceCount >= 2);
-            if (floaterCards.length === 0) {
-                player.setResource(Resources.MEGACREDITS, -10, game, undefined, true);
-            } else {
-                // Trigger interrupt
-                game.addInterrupt(new SelectRemoveFloaters(player, game, floaterCards));
-            }
+            game.defer(new CorrosiveRainDeferredAction(player, game));
         });    
     }
 }    

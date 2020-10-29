@@ -1,14 +1,15 @@
 
 import Vue from "vue";
+import { Button } from "../components/common/Button";
 
 interface SelectCardModel {
     cards: Array<CardModel>;
 }
 
-import { Card } from "./Card";
+import { Card } from "./card/Card";
 import { CardModel } from "../models/CardModel";
 
-export const SelectCard = Vue.component("select-card", {
+export const SelectCard = Vue.component("select-card", { 
     props: ["playerinput", "onsave", "showsave", "showtitle"],
     data: function () {
         return {
@@ -16,7 +17,8 @@ export const SelectCard = Vue.component("select-card", {
         } as SelectCardModel;
     },
     components: {
-        "card": Card
+        Card,
+        "Button": Button
     },
     methods: {
         saveData: function () {
@@ -28,10 +30,10 @@ export const SelectCard = Vue.component("select-card", {
         <label v-for="card in playerinput.cards" :key="card.name" class="cardbox">
             <input v-if="playerinput.maxCardsToSelect === 1 && playerinput.minCardsToSelect === 1" type="radio" v-model="cards" :value="card" />
             <input v-else type="checkbox" v-model="cards" :value="card" :disabled="cards.length >= playerinput.maxCardsToSelect && cards.indexOf(card) === -1" />
-            <card :card="card"></card>
+            <Card :card="card" />
         </label>
         <div v-if="showsave === true" class="nofloat">
-            <button class="btn btn-primary" v-on:click="saveData">{{playerinput.buttonLabel}}</button>
+            <Button type="submit" :onClick="saveData" :title="playerinput.buttonLabel" />
         </div>
     </div>`
 });

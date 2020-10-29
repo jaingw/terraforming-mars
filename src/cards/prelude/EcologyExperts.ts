@@ -3,7 +3,9 @@ import { CardName } from "../../CardName";
 import { Player } from "../../Player";
 import { PreludeCard } from "./PreludeCard";
 import { IProjectCard } from "../IProjectCard";
-import { Resources } from '../../Resources';
+import { Resources } from "../../Resources";
+import { Game } from "../../Game";
+import { PlayProjectCard } from "../../deferredActions/PlayProjectCard";
 
 export class EcologyExperts extends PreludeCard implements IProjectCard {
     public tags: Array<Tags> = [Tags.PLANT, Tags.MICROBES];
@@ -15,9 +17,9 @@ export class EcologyExperts extends PreludeCard implements IProjectCard {
         }
         return 0;
     }
-    public play(player: Player) {
-        player.setProduction(Resources.PLANTS);
+    public play(player: Player, game: Game) {  
+        player.addProduction(Resources.PLANTS);
+        game.defer(new PlayProjectCard(player, game));
         return undefined;
     }
 }
-

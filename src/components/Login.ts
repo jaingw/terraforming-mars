@@ -1,5 +1,6 @@
 
 import Vue from "vue";
+import { PreferencesManager } from "./PreferencesManager";
 
 export const Login = Vue.component("login", {
     data: function () {
@@ -27,8 +28,8 @@ export const Login = Vue.component("login", {
                     })
                 }else{
                     response.json().then((data: { id: string; name: string; }) => {
-                        localStorage.setItem("userId",data.id);
-                        localStorage.setItem("userName",data.name);
+                        PreferencesManager.saveValue("userId",data.id);
+                        PreferencesManager.saveValue("userName",data.name);
                         window.location.href = "/mygames";
                     })
                 }
@@ -54,7 +55,7 @@ export const Login = Vue.component("login", {
                                 <input class="form-input form-inline create-game-player-name register-input" :placeholder="'Password'" v-model="password"   />
                             </div>
                             <div class="register-action"> 
-                                <button class="btn btn-lg btn-success" v-on:click="login"  v-i18n>Login</button> 
+                                <button class="btn btn-lg btn-success" v-on:click="login" style="min-width: 80px;" v-i18n>Login</button> 
                                 <a class="register-a" href="/register"  v-i18n>Go To Register</a> 
                             </div>
                         </div>

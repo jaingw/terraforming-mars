@@ -3,12 +3,13 @@ import { Game, GameOptions } from "../src/Game";
 import * as constants from "../src/constants"
 import { SpaceType } from "../src/SpaceType";
 import { BoardName } from "../src/BoardName";
+import { RandomMAOptionType } from "../src/RandomMAOptionType";
 
 export const maxOutOceans = function(player: Player, game: Game, toValue: number = 0): void {
     if (toValue < 1) {
         toValue = constants.MAX_OCEAN_TILES;
     }
-    
+
     for (const space of game.board.getSpaces(SpaceType.OCEAN, player)) {
         if (space.tile !== undefined) continue;
         if (game.board.getOceansOnBoard() >= toValue) break;
@@ -28,7 +29,7 @@ export const setCustomGameOptions = function(options: object = {}): GameOptions 
         draftVariant: false,
         initialDraftVariant: false,
         corporateEra: true,
-        randomMA: false,
+        randomMA: RandomMAOptionType.NONE,
         preludeExtension: false,
         venusNextExtension: true,
         coloniesExtension: false,
@@ -39,12 +40,19 @@ export const setCustomGameOptions = function(options: object = {}): GameOptions 
         solarPhaseOption: false,
         shuffleMapOption: false,
         promoCardsOption: false,
+        communityCardsOption: false,
         undoOption: false,
         startingCorporations: 2,
         includeVenusMA: true,
         soloTR: false,
-        clonedGamedId: undefined
+        clonedGamedId: undefined,
+        cardsBlackList: [],
+        aresExtension: false,
+        aresHazards: undefined,
+        fastModeOption: false,
+        removeNegativeGlobalEventsOption: false,
+        customColoniesList: [],
       };
-      
+
     return Object.assign(defaultOptions, options) as GameOptions;
 }

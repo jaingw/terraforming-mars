@@ -9,6 +9,7 @@ import { SelectOption } from "../../inputs/SelectOption";
 import { OrOptions } from "../../inputs/OrOptions";
 import { CardName } from "../../CardName";
 import { IResourceCard } from "../ICard";
+import { CardType } from "../CardType";
 
 
 export class Recyclon implements CorporationCard, IResourceCard {
@@ -17,9 +18,10 @@ export class Recyclon implements CorporationCard, IResourceCard {
     public startingMegaCredits: number = 38;
     public resourceType: ResourceType = ResourceType.MICROBE;
     public resourceCount: number = 0;
+    public cardType: CardType = CardType.CORPORATION;
 
     public play(player: Player) {
-        player.setProduction(Resources.STEEL);
+        player.addProduction(Resources.STEEL);
         player.addResourceTo(this);
         return undefined;
     }
@@ -37,7 +39,7 @@ export class Recyclon implements CorporationCard, IResourceCard {
 
         const spendResource = new SelectOption("Remove 2 microbes on this card and increase plant production 1 step", "Remove microbes", () => {
             player.removeResourceFrom(this, 2);
-            player.setProduction(Resources.PLANTS);
+            player.addProduction(Resources.PLANTS);
             return undefined;
         });
         return new OrOptions(spendResource, addResource);

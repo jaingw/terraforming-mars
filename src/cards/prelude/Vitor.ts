@@ -1,4 +1,3 @@
-
 import { Tags } from "../Tags";
 import { Player } from "../../Player";
 import { CorporationCard } from "./../corporation/CorporationCard";
@@ -8,14 +7,16 @@ import { OrOptions } from "../../inputs/OrOptions";
 import { SelectOption } from "../../inputs/SelectOption";
 import { IAward } from "../../awards/IAward";
 import { CardName } from "../../CardName";
+import { CardType } from "../CardType";
 
 export class Vitor implements CorporationCard {
     public name: CardName = CardName.VITOR;
     public tags: Array<Tags> = [Tags.EARTH];
     public startingMegaCredits: number = 48; // It's 45 + 3 when this corp is played
+    public cardType: CardType = CardType.CORPORATION;
 
     private selectAwardToFund(player: Player, game: Game, award: IAward): SelectOption {
-        return new SelectOption("Fund " + award.name + " award", "", () => {
+        return new SelectOption("Fund " + award.name + " award", "Confirm", () => {
             game.fundAward(player, award);
             return undefined;
         });
@@ -23,7 +24,7 @@ export class Vitor implements CorporationCard {
 
     public initialAction(player: Player, game: Game) {
         // Awards are disabled for 1 player games
-        if (game.soloMode) {
+        if (game.isSoloMode()) {
             return;
         }
         const freeAward = new OrOptions();
@@ -34,7 +35,7 @@ export class Vitor implements CorporationCard {
     }
 
     public onCardPlayed(player: Player, game: Game, card: IProjectCard) {
-        if (player.corporationCard !== undefined && player.corporationCard.name === this.name && card.getVictoryPoints !== undefined && card.getVictoryPoints(player, game) >= 0 ) {
+        if (player.isCorporation(this.name) && card.getVictoryPoints !== undefined && card.getVictoryPoints(player, game) >= 0) {
             player.megaCredits += 3;
         }
     }

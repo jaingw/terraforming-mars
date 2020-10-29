@@ -17,7 +17,7 @@ describe("Fish", function () {
     });
 
     it("Can't play", function () {
-        expect(card.canPlay(player, game)).to.eq(false);
+        expect(card.canPlay(player, game)).is.not.true;
     });
 
     it("Should act", function () {
@@ -27,25 +27,26 @@ describe("Fish", function () {
 
     it("Should play - auto select if single target", function () {
         (game as any).temperature = 2;
-        player2.setProduction(Resources.PLANTS);
+        player2.addProduction(Resources.PLANTS);
 
-        expect(card.canPlay(player, game)).to.eq(true);
+        expect(card.canPlay(player, game)).is.true;
         card.play(player, game);
 
-        expect(game.interrupts.length).to.eq(0);
+        const input = game.deferredActions.next()!.execute();
+        expect(input).is.undefined;
         expect(player2.getProduction(Resources.PLANTS)).to.eq(0);
     });
 
     it("Should play - multiple targets", function () {
         (game as any).temperature = 2;
-        player.setProduction(Resources.PLANTS);
-        player2.setProduction(Resources.PLANTS);
+        player.addProduction(Resources.PLANTS);
+        player2.addProduction(Resources.PLANTS);
 
-        expect(card.canPlay(player, game)).to.eq(true);
+        expect(card.canPlay(player, game)).is.true;
         card.play(player, game);
 
-        expect(game.interrupts.length).to.eq(1);
-        const selectPlayer = game.interrupts[0].playerInput as SelectPlayer;
+        expect(game.deferredActions).has.lengthOf(1);
+        const selectPlayer = game.deferredActions.next()!.execute() as SelectPlayer;
         selectPlayer.cb(player2);
         expect(player2.getProduction(Resources.PLANTS)).to.eq(0);
     });

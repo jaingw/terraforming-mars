@@ -17,21 +17,21 @@ describe("CupolaCity", function () {
     });
 
     it("Can't play without energy production", function () {
-        expect(card.canPlay(player, game)).to.eq(false);
+        expect(card.canPlay(player, game)).is.not.true;
     });
 
     it("Can't play if oxygen level too high", function () {
-        player.setProduction(Resources.ENERGY);
+        player.addProduction(Resources.ENERGY);
         (game as any).oxygenLevel = 10;
-        expect(card.canPlay(player, game)).to.eq(false);
+        expect(card.canPlay(player, game)).is.not.true;
     });
 
     it("Should play", function () {
-        player.setProduction(Resources.ENERGY);
-        expect(card.canPlay(player, game)).to.eq(true);
+        player.addProduction(Resources.ENERGY);
+        expect(card.canPlay(player, game)).is.true;
 
         const action = card.play(player, game);
-        expect(action instanceof SelectSpace).to.eq(true);
+        expect(action instanceof SelectSpace).is.true;
         
         action.cb(action.availableSpaces[0]);
         expect(player.getProduction(Resources.ENERGY)).to.eq(0);

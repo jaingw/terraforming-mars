@@ -11,6 +11,7 @@ export class IdFront implements CorporationCard {
     public name: CardName =  CardName.ID_FRONT;
     public tags: Array<Tags> = [];
     public startingMegaCredits: number = 32;
+    public cardType: CardType = CardType.CORPORATION; 
     public allTags = new Set();
 
     public onCardPlayed(player: Player, _game: Game, card: IProjectCard) {

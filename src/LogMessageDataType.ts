@@ -1,5 +1,6 @@
 export enum LogMessageDataType {
-	STRING,
+    STRING,
+    RAW_STRING, // Raw strings are untranslated.
     PLAYER,
     CARD,
     AWARD,

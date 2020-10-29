@@ -7,16 +7,15 @@ import { Game } from "../../../Game";
 import { IActionCard, ICard, IResourceCard } from "../../ICard";
 import { SelectCard } from "../../../inputs/SelectCard";
 import { CardName } from "../../../CardName";
-import { LogMessageType } from "../../../LogMessageType";
-import { LogMessageData } from "../../../LogMessageData";
-import { LogMessageDataType } from "../../../LogMessageDataType";
 import { LogHelper } from "../../../components/LogHelper";
 import { IProjectCard } from "../../IProjectCard";
+import { CardType } from "../../CardType";
 
 export class _Celestic_ implements IActionCard, CorporationCard, IResourceCard {
     public name: CardName = CardName._CELESTIC_;
     public tags: Array<Tags> = [Tags.VENUS];
     public startingMegaCredits: number = 42;
+    public cardType: CardType = CardType.CORPORATION; 
     public resourceType: ResourceType = ResourceType.FLOATER;
     public resourceCount: number = 0;
 
@@ -38,11 +37,11 @@ export class _Celestic_ implements IActionCard, CorporationCard, IResourceCard {
         const requiredCardsCount = 2;
         if (game.hasCardsWithResource(ResourceType.FLOATER, requiredCardsCount)) {
             let drawnCount = 0;
-            let floaterCards: Array<CardName> = [];
-            let discardedCards: Array<IProjectCard> = [];
+            const floaterCards: Array<CardName> = [];
+            const discardedCards: Array<IProjectCard> = [];
 
             while (drawnCount < requiredCardsCount) {
-                let card = game.dealer.dealCard();
+                const card = game.dealer.dealCard();
                 if (_Celestic_.floaterCards.has(card.name) || card.resourceType === ResourceType.FLOATER) {
                     player.cardsInHand.push(card);
                     drawnCount++;
@@ -53,19 +52,9 @@ export class _Celestic_ implements IActionCard, CorporationCard, IResourceCard {
                 }
             }
 
-            game.log(
-                LogMessageType.DEFAULT,
-                "${0} drew ${1} and ${2}",
-                new LogMessageData(LogMessageDataType.PLAYER, player.id),
-                new LogMessageData(LogMessageDataType.CARD, floaterCards[0]),
-                new LogMessageData(LogMessageDataType.CARD, floaterCards[1])
-            );
+            game.log("${0} drew ${1} and ${2}", b => b.player(player).cardName(floaterCards[0]).cardName(floaterCards[1]));
 
-            game.log(
-                LogMessageType.DEFAULT,
-                discardedCards.length + " card(s) were discarded",
-               ...discardedCards.map((card) => new LogMessageData(LogMessageDataType.CARD, card.name)),
-            );
+            LogHelper.logDiscardedCards(game, discardedCards);
         }
         
         return undefined;

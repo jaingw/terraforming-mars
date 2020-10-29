@@ -16,14 +16,14 @@ describe("AerosportTournament", function () {
         corp.action(player, game);
         corp.action(player, game);
         corp.action(player, game);
-        expect(card.canPlay(player)).to.eq(false);
+        expect(card.canPlay(player)).is.not.true;
         corp.action(player, game);
-        expect(card.canPlay(player)).to.eq(true);
+        expect(card.canPlay(player)).is.true;
 
         game.addCityTile(player, '03');
 
         const play = card.play(player, game);
-        expect(play).to.eq(undefined);
+        expect(play).is.undefined;
         expect(player.megaCredits).to.eq(1);
     });
 });

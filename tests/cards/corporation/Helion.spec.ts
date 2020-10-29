@@ -10,8 +10,8 @@ describe("Helion", function () {
         const card = new Helion();
         const player = new Player("test", Color.BLUE, false);
         const action = card.play(player);
-        expect(action).to.eq(undefined);
+        expect(action).is.undefined;
         expect(player.getProduction(Resources.HEAT)).to.eq(3);
-        expect(player.canUseHeatAsMegaCredits).to.eq(true);
+        expect(player.canUseHeatAsMegaCredits).is.true;
     });
 });

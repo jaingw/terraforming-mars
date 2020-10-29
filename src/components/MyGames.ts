@@ -1,18 +1,20 @@
 import Vue from "vue";
 
 import {Phase} from "../Phase";
+import { PreferencesManager } from "./PreferencesManager";
 
 export const MyGames = Vue.component("my-games", {
     data: function () {
         return {
             userId: "",
             userName: "",
-            games: {}
+            games: [],
+            vipDate: ""
         }
     },
     mounted: function() {
-        this.userId = localStorage.getItem("userId") || "";
-        this.userName = localStorage.getItem("userName") || "";
+        this.userId = PreferencesManager.loadValue("userId") ;
+        this.userName = PreferencesManager.loadValue("userName") ;
         if(this.userId.length > 0){
             this.getGames();
         }
@@ -28,8 +30,11 @@ export const MyGames = Vue.component("my-games", {
             xhr.onload = () => {
                 if (xhr.status === 200) {
                     const result = xhr.response;
-                    if (result instanceof Array) {
-                        (vueApp as any).games = result;
+                    if (result && result.mygames && result.mygames instanceof Array) {
+                        (vueApp as any).games = result.mygames;
+                        if(result.vipDate){
+                            (vueApp as any).vipDate = result.vipDate;
+                        }
                     } else {
                         alert("Unexpected response fetching games from API");
                     }
@@ -47,8 +52,9 @@ export const MyGames = Vue.component("my-games", {
             if(this.userName !== ""){
                 this.userId = "";
                 this.userName = "";
-                localStorage.removeItem("userId") ;
-                localStorage.removeItem("userName");
+                this.vipDate = "";
+                this.games = [];
+                PreferencesManager.loginOUt();
             }else{
                 window.location.href = "/login" ;
             }
@@ -56,7 +62,10 @@ export const MyGames = Vue.component("my-games", {
     },
     template: `
         <div id="games-overview">
-            <h1><span v-i18n>Terraforming Mars</span> — <span v-i18n>My Games</span> <button class="btn btn-lg btn-success" style="margin-bottom: 7px;" v-on:click="changeLogin" v-i18n><span v-if="userName">LoginOut</span><span v-else>Login</span></button></h1>
+            <h1><span v-i18n>Terraforming Mars</span> — <span v-i18n>My Games</span> 
+                <span v-if="this.vipDate"><img src="assets/potato.png" style="height: 50px;vertical-align: middle;" />{{vipDate}}<img src="assets/potato.png" style="height: 50px;vertical-align: middle;" /></span> 
+                <button class="btn btn-lg btn-success" style="margin-bottom: 7px;min-width: 80px;" v-on:click="changeLogin" v-i18n><span v-if="userName">LoginOut</span><span v-else>Login</span></button>
+            </h1>
             <div v-if="userName">
                 <p>Hello <span class="user-name">{{userName}}</span>,the following games are related with you:</p>
             </div>

@@ -2,7 +2,7 @@ export enum CardName {
     ACQUIRED_COMPANY = "Acquired Company",
     ADAPTATION_TECHNOLOGY = "Adaptation Technology",
     ADAPTED_LICHEN = "Adapted Lichen",
-    ADVANCED_ALLOYS ="Advanced Alloys",
+    ADVANCED_ALLOYS = "Advanced Alloys",
     ADVANCED_ECOSYSTEMS = "Advanced Ecosystems",
     AEROBRAKED_AMMONIA_ASTEROID = "Aerobraked Ammonia Asteroid",
     AI_CENTRAL = "AI Central",
@@ -39,7 +39,7 @@ export enum CardName {
     CARTEL = "Cartel",
     CEOS_FAVORITE_PROJECT = "CEOs Favorite Project",
     CLOUD_SEEDING = "Cloud Seeding",
-    COLONIZER_TRAINING_CAMP ="Colonizer Training Camp",
+    COLONIZER_TRAINING_CAMP = "Colonizer Training Camp",
     COMET = "Comet",
     COMMERCIAL_DISTRICT = "Commercial District",
     COMMUNITY_SERVICES = "Community Services",
@@ -375,6 +375,7 @@ export enum CardName {
     ARCADIAN_COMMUNITIES = "Arcadian Communities",
     ASTRODRILL = "Astrodrill",
     ASTEROID_HOLLOWING = "Asteroid Hollowing",
+    ASTEROID_RIGHTS = "Asteroid Rights",
     ADVERTISING = "Advertising",
     PHARMACY_UNION = "Pharmacy Union",
     COMET_AIMING = "Comet Aiming",
@@ -410,9 +411,9 @@ export enum CardName {
     PENGUINS = "Penguins",
     SMALL_ASTEROID = "Small Asteroid",
     SNOW_ALGAE = "Snow Algae",
-    DEIMOS_DOWN_PROMO = "Deimos Down Promo",
-    MAGNETIC_FIELD_GENERATORS_PROMO = "Magnetic Field Generators Promo",
-    GREAT_DAM_PROMO = "Great Dam Promo",
+    DEIMOS_DOWN_PROMO = "Deimos Down:promo",
+    MAGNETIC_FIELD_GENERATORS_PROMO = "Magnetic Field Generators:promo",
+    GREAT_DAM_PROMO = "Great Dam:promo",
     DUSK_LASER_MINING = "Dusk Laser Mining",
     MERCURIAN_ALLOYS = "Mercurian Alloys",
     REGO_PLASTICS = "Rego Plastics",
@@ -443,11 +444,10 @@ export enum CardName {
     SATURN_SURFING = "Saturn Surfing",
     ID_FRONT = "Id Front",
 
-
-///// breakthrough
-
+    
+    ///// breakthrough
     _INVENTRIX_ = "Inventrix (breakthrough)",
-    _PHOBOLOG_ = "Pobolog (breakthrough)",
+    _PHOBOLOG_ = "Pobolog (breakthrough)",// Phobolog
     _THORGATE_ = "Thorgate (breakthrough)",
     _ECOLINE_ = "Ecoline (breakthrough)",
     _TERACTOR_ = "Teractor (breakthrough)",
@@ -464,8 +464,52 @@ export enum CardName {
     _VIRON_ = "Viron (breakthrough)",
     _CELESTIC_ = "Celestic (breakthrough)",
     _ARKLIGHT_ = "Arklight (breakthrough)",
-    _STORMCRAFT_INCORPORATED_ = "StormCraft Incorporated (breakthrough)"
+    _STORMCRAFT_INCORPORATED_ = "StormCraft Incorporated (breakthrough)",
 
+    // Community corps
+    AGRICOLA_INC = "Agricola Inc",
+    PROJECT_WORKSHOP = "Project Workshop",
+    INCITE = "Incite",
+    PLAYWRIGHTS = "Playwrights",
+    MIDAS = "Midas",
+	
+
+    // Community preludes
+    VALUABLE_GASES = "Valuable Gases",
+    VENUS_FIRST = "Venus First",
+    RESEARCH_GRANT = "Research Grant",
+    AEROSPACE_MISSION = "Aerospace Mission",
+    TRADE_ADVANCE = "Trade Advance",
+    POLITICAL_UPRISING = "Political Uprising",
+    BY_ELECTION = "By-Election",
+
+    // Community colonies
+    SCIENCE_TAG_BLANK_CARD = "",
+
+    // Ares expansion.
+    BIOENGINEERING_ENCLOSURE = "Bioengineering Enclosure",
+    BIOFERTILIZER_FACILITY = "Bio-Fertilizer Facility",
+    BUTTERFLY_EFFECT = "Butterfly Effect",
+    CAPITAL_ARES = "Capital:ares",
+    COMMERCIAL_DISTRICT_ARES = "Commercial District:ares",
+    DESPERATE_MEASURES = "Desperate Measures",
+    ECOLOGICAL_SURVEY = "Ecological Survey",
+    ECOLOGICAL_ZONE_ARES = "Ecological Zone:ares",
+    GEOLOGICAL_SURVEY = "Geological Survey",
+    INDUSTRIAL_CENTER_ARES = "Industrial Center:ares",
+    LAVA_FLOWS_ARES = "Lava Flows:ares",
+    MARKETING_EXPERTS = "Marketing Experts",
+    METALLIC_ASTEROID = "Metallic Asteroid",
+    MINING_AREA_ARES = "Mining Area:ares",
+    MINING_RIGHTS_ARES = "Mining Rights:ares",
+    MOHOLE_AREA_ARES = "Mohole Area:ares",
+    NATURAL_PRESERVE_ARES = "Natural Preserve:ares",
+    NUCLEAR_ZONE_ARES = "Nuclear Zone:ares",
+    OCEAN_CITY = "Ocean City",
+    OCEAN_FARM = "Ocean Farm",
+    OCEAN_SANCTUARY = "Ocean Sanctuary",
+    RESTRICTED_AREA_ARES = "Restricted Area:ares",
+    SOLAR_FARM = "Solar Farm",
 
 
 }

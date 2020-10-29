@@ -18,11 +18,11 @@ describe("ImmigrantCity", function () {
     });
     
     it("Can't play without energy production", function () {
-        expect(card.canPlay(player, game)).to.eq(false);
+        expect(card.canPlay(player, game)).is.not.true;
     });
     
     it("Should play", function () {
-        player.setProduction(Resources.ENERGY);
+        player.addProduction(Resources.ENERGY);
         const action = card.play(player, game);
         action.cb(action.availableSpaces[0]);
 
@@ -35,12 +35,12 @@ describe("ImmigrantCity", function () {
     });
 
     it("Can play at -4 MC production", function () {
-        player.setProduction(Resources.ENERGY);
-        player.setProduction(Resources.MEGACREDITS, -4);
-        expect(card.canPlay(player, game)).to.eq(true);
+        player.addProduction(Resources.ENERGY);
+        player.addProduction(Resources.MEGACREDITS, -4);
+        expect(card.canPlay(player, game)).is.true;
 
         player.playCard(game,card);
-        const action = game.interrupts.pop()!.playerInput as SelectSpace;
+        const action = game.deferredActions.next()!.execute() as SelectSpace;
         action.cb(action.availableSpaces[0]);
 
         expect(player.getProduction(Resources.ENERGY)).to.eq(0);
@@ -53,12 +53,12 @@ describe("ImmigrantCity", function () {
     
     it("Tharsis can play at -5 MC production", function () {
         player.corporationCard = new TharsisRepublic();
-        player.setProduction(Resources.ENERGY);
-        player.setProduction(Resources.MEGACREDITS, -5);
-        expect(card.canPlay(player, game)).to.eq(true);
+        player.addProduction(Resources.ENERGY);
+        player.addProduction(Resources.MEGACREDITS, -5);
+        expect(card.canPlay(player, game)).is.true;
 
         player.playCard(game,card);
-        const action = game.interrupts.pop()!.playerInput as SelectSpace;
+        const action = game.deferredActions.next()!.execute() as SelectSpace;
         action.cb(action.availableSpaces[0]);
 
         expect(player.getProduction(Resources.ENERGY)).to.eq(0);

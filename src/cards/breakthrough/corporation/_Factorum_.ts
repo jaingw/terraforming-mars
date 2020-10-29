@@ -7,14 +7,16 @@ import { Resources } from "../../../Resources";
 import { SelectOption } from "../../../inputs/SelectOption";
 import { OrOptions } from "../../../inputs/OrOptions";
 import { CardName } from "../../../CardName";
+import { CardType } from "../../CardType";
 
 export class _Factorum_ implements IActionCard, CorporationCard {
     public name: CardName = CardName._FACTORUM_;
     public tags: Array<Tags> = [Tags.ENERGY, Tags.STEEL];
     public startingMegaCredits: number = 45;
+    public cardType: CardType = CardType.CORPORATION; 
 
     public play(player: Player) {
-        player.setProduction(Resources.STEEL);
+        player.addProduction(Resources.STEEL);
         return undefined;
     }
 
@@ -27,7 +29,7 @@ export class _Factorum_ implements IActionCard, CorporationCard {
             "Increase your energy production 1 step",
             "Increase production",
             () => {
-              player.setProduction(Resources.ENERGY);
+              player.addProduction(Resources.ENERGY);
               return undefined;
             }
         );
@@ -35,6 +37,11 @@ export class _Factorum_ implements IActionCard, CorporationCard {
         const drawBuildingCard = new SelectOption("Spend 3 MC to draw a building card", "Draw card", () => {
             player.megaCredits -= 3;
             player.cardsInHand.push(game.drawCardsByTag(Tags.STEEL, 1)[0]);
+
+            const drawnCard = game.getCardsInHandByTag(player, Tags.STEEL).slice(-1)[0];
+
+            game.log("${0} drew ${1}", b => b.player(player).card(drawnCard));
+            
             return undefined;
         });
 

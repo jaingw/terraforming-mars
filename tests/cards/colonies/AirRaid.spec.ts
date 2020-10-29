@@ -8,7 +8,7 @@ import { Game } from '../../../src/Game';
 import { AndOptions } from '../../../src/inputs/AndOptions';
 import { SelectCard } from '../../../src/inputs/SelectCard';
 import { ICard } from '../../../src/cards/ICard';
-import { SelectPlayer } from '../../../src/inputs/SelectPlayer';
+import { OrOptions } from "../../../src/inputs/OrOptions";
 
 describe("AirRaid", function () {
     let card : AirRaid, player : Player, player2 : Player, game : Game, corpo: StormCraftIncorporated;
@@ -24,14 +24,14 @@ describe("AirRaid", function () {
     });
 
     it("Can't play", function () {
-        expect(card.canPlay(player)).to.eq(false);
+        expect(card.canPlay(player)).is.not.true;
     });
 
     it("Should play - multiple targets", function () {
         const player3 = new Player("test3", Color.YELLOW, false);
         const game = new Game("foobar", [player, player2, player3], player);
         player.addResourceTo(corpo);
-        expect(card.canPlay(player)).to.eq(true);
+        expect(card.canPlay(player)).is.true;
 
         const otherCardWithFloater = new Dirigibles();
         player.playedCards.push(otherCardWithFloater);
@@ -40,19 +40,19 @@ describe("AirRaid", function () {
 
         const andOptions = card.play(player, game) as AndOptions;
         const option1 = andOptions.options[0] as SelectCard<ICard>;
-        const option2 = andOptions.options[1] as SelectPlayer;
+        const option2 = andOptions.options[1] as OrOptions;
 
         option1.cb([corpo]);
         expect(player.getResourcesOnCard(corpo)).to.eq(0);
 
-        option2.cb(player2);
+        option2.options[0].cb();
         expect(player2.megaCredits).to.eq(0);
         expect(player.megaCredits).to.eq(4);
     });
 
     it("Should play - single target for floater removal and MC removal", function () {
         player.addResourceTo(corpo);
-        expect(card.canPlay(player)).to.eq(true);
+        expect(card.canPlay(player)).is.true;
         
         player2.megaCredits = 4;
         card.play(player, game);

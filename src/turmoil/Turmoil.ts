@@ -1,35 +1,12 @@
 import { PartyName } from "./parties/PartyName";
-import { IParty } from "./parties/IParty";
-import { MarsFirst } from "./parties/MarsFirst";
-import { Scientists } from "./parties/Scientists";
-import { Unity } from "./parties/Unity";
-import { Kelvinists } from "./parties/Kelvinists";
-import { Reds } from "./parties/Reds";
-import { Greens } from "./parties/Greens";
+import { IParty, ALL_PARTIES } from "./parties/IParty";
 import { Player } from "../Player";
 import { Game } from "../Game";
 import { GlobalEventDealer, getGlobalEventByName } from "./globalEvents/GlobalEventDealer";
 import { IGlobalEvent } from "./globalEvents/IGlobalEvent";
 import { ILoadable } from "../ILoadable";
 import { SerializedTurmoil } from "./SerializedTurmoil";
-import { LogMessageType } from "../LogMessageType";
-import { LogMessageData } from "../LogMessageData";
-import { LogMessageDataType } from "../LogMessageDataType";
 import { PLAYER_DELEGATES_COUNT } from "../constants";
-
-export interface IPartyFactory<T> {
-    partyName: PartyName;
-    factory: new () => T
-}
-
-export const ALL_PARTIES: Array<IPartyFactory<IParty>> = [
-    { partyName: PartyName.MARS, factory: MarsFirst },
-    { partyName: PartyName.SCIENTISTS, factory: Scientists },
-    { partyName: PartyName.UNITY, factory: Unity },
-    { partyName: PartyName.KELVINISTS, factory: Kelvinists },
-    { partyName: PartyName.REDS, factory: Reds },
-    { partyName: PartyName.GREENS, factory: Greens }
-];
 
 export class Turmoil implements ILoadable<SerializedTurmoil, Turmoil> {
     public chairman: undefined | Player | "NEUTRAL" = undefined;
@@ -129,7 +106,7 @@ export class Turmoil implements ILoadable<SerializedTurmoil, Turmoil> {
     public checkDominantParty(party:IParty): void {
         // If there is a dominant party
         if (this.dominantParty) {
-            let sortParties = [...this.parties].sort(
+            const sortParties = [...this.parties].sort(
                 (p1, p2) => p2.delegates.length - p1.delegates.length
             );
             const max = sortParties[0].delegates.length;
@@ -144,7 +121,7 @@ export class Turmoil implements ILoadable<SerializedTurmoil, Turmoil> {
 
     // Function to get next dominant party taking into account the clockwise order
     public setNextPartyAsDominant(currentDominantParty: IParty) {
-        let sortParties = [...this.parties].sort(
+        const sortParties = [...this.parties].sort(
             (p1, p2) => p2.delegates.length - p1.delegates.length
         );
         const max = sortParties[0].delegates.length;
@@ -161,7 +138,7 @@ export class Turmoil implements ILoadable<SerializedTurmoil, Turmoil> {
             partiesToCheck = this.parties.slice(0, currentIndex);
         }
         else {
-            let left = this.parties.slice(0, currentIndex);
+            const left = this.parties.slice(0, currentIndex);
             const right = this.parties.slice(currentIndex + 1);
             partiesToCheck = right.concat(left);
         }
@@ -233,9 +210,7 @@ export class Turmoil implements ILoadable<SerializedTurmoil, Turmoil> {
         if (this.distantGlobalEvent) {
             this.sendDelegateToParty("NEUTRAL", this.distantGlobalEvent.revealedDelegate, game);
         }
-        game.log(
-            LogMessageType.DEFAULT,
-            "Turmoil phase has been resolved");        
+        game.log("Turmoil phase has been resolved");
     }
 
     // Ruling Party changes
@@ -253,11 +228,7 @@ export class Turmoil implements ILoadable<SerializedTurmoil, Turmoil> {
             if (this.chairman) {
                 if (this.chairman instanceof Player) {
                     this.chairman.increaseTerraformRating(game);
-
-                    game.log(
-                        LogMessageType.DEFAULT,
-                        "${0} is the new chairman and got 1 TR increase",
-                        new LogMessageData(LogMessageDataType.PLAYER, this.chairman.id));
+                    game.log("${0} is the new chairman and got 1 TR increase", b => b.player(this.chairman as Player));
                 }
             }
             else {
@@ -279,8 +250,20 @@ export class Turmoil implements ILoadable<SerializedTurmoil, Turmoil> {
     public getPlayerInfluence(player: Player) {
         let influence: number = 0;
         if (this.chairman !== undefined && this.chairman === player) influence++;
-        if (this.dominantParty !== undefined && this.dominantParty.partyLeader === player) influence++;
-        if (this.dominantParty !== undefined && this.dominantParty.delegates.indexOf(player) !== -1) influence++;
+
+        if (this.dominantParty !== undefined) {
+            const dominantParty : IParty = this.dominantParty;
+            const isPartyLeader = dominantParty.partyLeader === player;
+            const delegateCount = dominantParty.delegates.filter((delegate) => delegate === player).length;
+
+            if (isPartyLeader) {
+                influence++;
+                if (delegateCount > 1) influence++; // at least 1 non-leader delegate
+            } else {
+                if (delegateCount > 0) influence++;
+            }
+        }
+
         if (this.playersInfluenceBonus.has(player.id)) {
             const bonus = this.playersInfluenceBonus.get(player.id);
             if (bonus) {
@@ -295,6 +278,7 @@ export class Turmoil implements ILoadable<SerializedTurmoil, Turmoil> {
             let current = this.playersInfluenceBonus.get(player.id);
             if (current) {
                 current += bonus;
+                this.playersInfluenceBonus.set(player.id, current);
             }
         }
         else {
@@ -307,7 +291,7 @@ export class Turmoil implements ILoadable<SerializedTurmoil, Turmoil> {
             return true;
         }
         
-        let party = this.getPartyByName(partyName);
+        const party = this.getPartyByName(partyName);
         if (party !== undefined && party.getDelegates(player) >= 2) {
             return true;
         }
@@ -322,7 +306,7 @@ export class Turmoil implements ILoadable<SerializedTurmoil, Turmoil> {
 
     // Return number of delegate
     public getDelegates(player: Player | "NEUTRAL"): number {
-        let delegates = this.delegate_reserve.filter(p => p === player).length;
+        const delegates = this.delegate_reserve.filter(p => p === player).length;
         return delegates;
     }
 
@@ -341,7 +325,7 @@ export class Turmoil implements ILoadable<SerializedTurmoil, Turmoil> {
     // Function used to rebuild each objects
     loadFromJSON(d: SerializedTurmoil): Turmoil {
         // Assign each attributes
-        let o = Object.assign(this, d);
+        const o = Object.assign(this, d);
 
         this.parties = ALL_PARTIES.map((cf) => new cf.factory());
 

@@ -3,8 +3,9 @@ import { Tags } from "./Tags";
 import { CardType } from "./CardType";
 import { Player } from "../Player";
 import { Game } from "../Game";
-import { Resources } from '../Resources';
-import { CardName } from '../CardName';
+import { Resources } from "../Resources";
+import { CardName } from "../CardName";
+import { DecreaseAnyProduction } from "../deferredActions/DecreaseAnyProduction";
 
 export class PowerSupplyConsortium implements IProjectCard {
     public cost: number = 5;
@@ -12,14 +13,14 @@ export class PowerSupplyConsortium implements IProjectCard {
     public name: CardName = CardName.POWER_SUPPLY_CONSORTIUM;
     public cardType: CardType = CardType.AUTOMATED;
 
-    public canPlay(player: Player, game: Game): boolean {
-        return player.getTagCount(Tags.ENERGY) >= 2 && game.someoneHasResourceProduction(Resources.ENERGY,1); 
+    public canPlay(player: Player): boolean {
+        return player.getTagCount(Tags.ENERGY) >= 2;
     }
+
+
     public play(player: Player, game: Game) {
-        if ( ! game.soloMode) {
-            game.addResourceProductionDecreaseInterrupt(player, Resources.ENERGY, 1);
-        }
-        player.setProduction(Resources.ENERGY);
+        player.addProduction(Resources.ENERGY);
+        game.defer(new DecreaseAnyProduction(player, game, Resources.ENERGY, 1));
         return undefined;
     }
 }

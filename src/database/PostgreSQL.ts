@@ -3,6 +3,7 @@ import { Game, GameOptions, Score } from "../Game";
 import { IGameData } from "./IDatabase";
 
 import { Client, ClientConfig } from "pg";
+import { User } from "../User";
 
 export class PostgreSQL implements IDatabase {
     private client: Client;
@@ -67,7 +68,7 @@ export class PostgreSQL implements IDatabase {
 
     getGames(cb:(err: any, allGames:Array<string>)=> void) {
         const allGames:Array<string> = [];
-        const sql: string = "SELECT distinct game_id game_id FROM games WHERE status = 'running' and save_id > 0";
+        const sql: string = "SELECT games.game_id FROM games, (SELECT max(save_id) save_id, game_id FROM games WHERE status='running' AND save_id > 0 GROUP BY game_id) a WHERE games.game_id = a.game_id AND games.save_id = a.save_id ORDER BY created_time DESC";
         this.client.query(sql, (err, res) => {
             if (err) {
                 console.error("PostgreSQL:getGames", err);
@@ -91,13 +92,18 @@ export class PostgreSQL implements IDatabase {
             if (res.rows.length === 0) {
                 return cb(new Error("Game not found"));
             }
-            // Transform string to json
-            let gameToRestore = JSON.parse(res.rows[0].game);
+            try {
+                // Transform string to json
+                const gameToRestore = JSON.parse(res.rows[0].game);
 
-            // Rebuild each objects
-            game.loadFromJSON(gameToRestore);
-
-            return cb(err);
+                // Rebuild each objects
+                game.loadFromJSON(gameToRestore);
+            } catch (exception) {
+                console.error(`Unable to restore game ${game_id}`, exception);
+                cb(exception);
+                return;
+            }
+            return cb(undefined);
         });
     }
 
@@ -112,7 +118,7 @@ export class PostgreSQL implements IDatabase {
                 return cb(new Error("Game not found"));
             }
             // Transform string to json
-            let gameToRestore = JSON.parse(res.rows[0].game);
+            const gameToRestore = JSON.parse(res.rows[0].game);
 
             // Rebuild each objects
             try {
@@ -150,6 +156,12 @@ export class PostgreSQL implements IDatabase {
                 }
             });           
         });
+        // Purge unfinished solo games older than 1 days
+        this.client.query("DELETE FROM games WHERE players = 1 and created_time < now() - interval '1 days'", function(err: { message: any; }) {
+            if (err) {
+            return console.warn(err.message);  
+            }
+        });         
         // Purge unfinished games older than 10 days
         this.client.query("DELETE FROM games WHERE created_time < now() - interval '10 days' and status = 'running'", function(err: { message: any; }) {
             if (err) {
@@ -176,7 +188,7 @@ export class PostgreSQL implements IDatabase {
         });
     }
     
-    restoreGame(game_id: string, save_id: number, game: Game): void {
+    restoreGame(game_id: string, save_id: number, game: Game,_playId: string): void {
         // Retrieve last save from database
         this.client.query("SELECT game game FROM games WHERE game_id = $1 AND save_id = $2 ORDER BY save_id DESC LIMIT 1", [game_id, save_id], (err, res) => {
             if (err) {
@@ -188,7 +200,7 @@ export class PostgreSQL implements IDatabase {
             }
 
             // Transform string to json
-            let gameToRestore = JSON.parse(res.rows[0].game);
+            const gameToRestore = JSON.parse(res.rows[0].game);
 
             // Rebuild each objects
             game.loadFromJSON(gameToRestore);
@@ -205,10 +217,16 @@ export class PostgreSQL implements IDatabase {
         });
     }
 
-    saveUser(_id: string, _name: string, _password: string): void {
+    saveUser(_id: string, _name: string, _password: string, _prop: string): void {
+        throw new Error("Method not implemented.");
+    }
+    updateUser(_user: User): void {
         throw new Error("Method not implemented.");
     }
     getUsers(_cb: (err: any, allUsers: import("../User").User[]) => void): void {
+        throw new Error("Method not implemented.");
+    }
+    refresh(): void {
         throw new Error("Method not implemented.");
     }
 }

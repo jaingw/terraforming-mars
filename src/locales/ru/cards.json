@@ -333,7 +333,7 @@
     "Action: Spend 4 energy to gain 1 titanium and increase oxygen 1 step.": "Действие: потратьте 4 энергии, чтобы получить 1 титан и повысить уровень кислорода на 1.",
 
     "Earth Office": "Офис на Земле",
-    "Effect: When you play an Earth card, you pay 3 MC less for it.": "Свойство: когда вы играете карту с символом Земли, вы платите на 3 MC меньше.",
+    "Effect: When you play an Earth tag, you pay 3 MC less for it.": "Свойство: когда вы играете карту с символом Земли, вы платите на 3 MC меньше.",
 
     "Acquired Company": "Приобретённая компания",
 
@@ -341,8 +341,7 @@
     "Gain 1 MC for each event EVER PLAYED by all players.": "Получите 1 MC за каждую сыгранную карту событий, учитываются все карты событий, сыгранные всеми игроками в этой партии.",
 
     "Open City": "Город под открытым небом",
-    "Requires 12% oxygen. Gain 2 plants. Place a City tile.": "Уровень кислорода должен быть 12%. Получите 2 растения и постройте город.",
-    "Decrease your Energy production 1 step and increase your MC production 4 steps.": "Снизьте своё производство энергии на 1 и повысьте свой доход на 4.",
+    "Requires 12% oxygen. Gain 2 plants. Place a City tile. Decrease your Energy production 1 step and increase your MC production 4 steps.": "Уровень кислорода должен быть 12%. Получите 2 растения и постройте город. Снизьте своё производство энергии на 1 и повысьте свой доход на 4.",
 
     "Media Group": "Медиа-холдинг",
     "Effect: After you play an event card, you gain 3MC.": "Свойство: когда вы сыграли карту события, получите 3 MC.",
@@ -369,7 +368,7 @@
     "Requires -6 C or warmer. Place 1 ocean tile ON AN AREA NOT RESERVED FOR OCEAN.": "Температура должна быть -6 градусов или выше. Выложите тайл океана на участок, не зарезервированный для океана.",
 
     "Geothermal Power": "Геотермальная энергия",
-    "Increase your energy production 2 step.": "Повысьте своё производство энергии на 2.",
+    "Increase your energy production 2 steps.": "Повысьте своё производство энергии на 2.",
 
     "Farming": "Земледелие",
     "Requires +4 C or warmer. Increase your MC production 2 steps and your plant production 2 steps. Gain 2 Plants.": "Температура должна быть +4 градуса или выше. Повысьте свой доход на 2 и своё производство растений на 2. Получите 2 растения.",
@@ -552,7 +551,7 @@
     "Increase your MC production 2 steps. Place on a greenery tile ON AN AREA RESERVED FOR OCEAN, disregarding normal placement restrictions, and increase oxygen 1 step.": "Повысьте свой доход на 2. Проведите озеленение зарезервированного для океана участка, игнорируя правила проведения озеленений, и повысьте уровень кислорода на 1.",
     
     "Satellites": "Спутники",
-    "Increase your MC production 1 step for each space tag your have, including this one.": "Повысьте свой доход на 1 за каждый символ космоса на ваших картах, включая эту.",
+    "Increase your MC production 1 step for each space tag you have, including this one.": "Повысьте свой доход на 1 за каждый символ космоса на ваших картах, включая эту.",
 
     "Noctis Farming": "Земледелие в Лабиринте Ночи",
     "Requires -20 C or warmer. Increase your MC production 1 step and gain 2 Plants.": "Температура должна быть -20 или выше. Повысьте свой доход на 1 и получите 2 растения.",
@@ -664,6 +663,7 @@
     "Project Requirement": "Требования пректа",
     "PRELUDE": "ПРОЛОГ",
     "EFFECT": "ЭФФЕКТ",
+    "ACTION": "ДЕЙСТВИЕ",
     "Select prelude card to play": "Выберите карту Прологов, чтобы разыграть ее",
     "Select space for ocean tile": "Выберите место для размещения океана",
     "Venus Milestone/Award": "Награда/Достижение проекта Венера",

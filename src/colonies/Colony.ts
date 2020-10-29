@@ -1,23 +1,14 @@
 import { Player } from '../Player';
 import { SelectSpace } from '../inputs/SelectSpace';
+import { SerializedColony } from "../SerializedColony";
 import { Game } from '../Game';
-import { ColonyName } from './ColonyName';
-import { ResourceType } from '../ResourceType';
-import { CorporationName } from '../CorporationName';
 import { Resources } from '../Resources';
-import { LogMessageType } from "../LogMessageType";
-import { LogMessageData } from "../LogMessageData";
-import { LogMessageDataType } from "../LogMessageDataType";
+import { LogHelper } from "../components/LogHelper";
+import { MAX_COLONY_TRACK_POSITION } from "../constants";
+import { CardName } from "../CardName";
 
-export interface IColony {
-    name: ColonyName;
-    description: string;
-    isActive: boolean;
-    visitor: undefined | Player;
-    trackPosition: number;
-    colonies: Array<Player>;
-    resourceType?: ResourceType;
-    trade: (player: Player, game: Game) => void;
+export interface IColony extends SerializedColony {
+    trade: (player: Player, game: Game, usesTradeFleet?: boolean) => void;
     onColonyPlaced: (player: Player, game: Game) => undefined | SelectSpace;
     giveTradeBonus: (player: Player, game: Game) => void;
     endGeneration: () => void;
@@ -25,7 +16,7 @@ export interface IColony {
     decreaseTrack(value?: number): void;
 }
 
-export abstract class Colony  {
+export abstract class Colony {
     public isActive: boolean = true;
     public visitor: undefined | Player = undefined;
     public colonies: Array<Player> = [];
@@ -43,7 +34,7 @@ export abstract class Colony  {
         } else {
             this.trackPosition += value;
         }    
-        if (this.trackPosition > 6) this.trackPosition = 6;
+        if (this.trackPosition > MAX_COLONY_TRACK_POSITION) this.trackPosition = MAX_COLONY_TRACK_POSITION;
     }
 
     public decreaseTrack(value?: number): void {
@@ -59,11 +50,18 @@ export abstract class Colony  {
         return this.colonies.length >= 3;
     }
 
-    public beforeTrade(colony: IColony, player: Player): void {
-        if (player.colonyTradeOffset > 0) {
-            colony.increaseTrack(player.colonyTradeOffset);
+    public beforeTrade(colony: IColony, player: Player, game: Game, steps?: number): void {
+        if (steps === undefined) {
+            steps = player.colonyTradeOffset;
         }
-    }    
+        steps = Math.min(steps, MAX_COLONY_TRACK_POSITION - colony.trackPosition);
+        if (steps <= 0) {
+            return;
+        }
+
+        LogHelper.logColonyTrackIncrease(game, player, colony, steps);
+        colony.increaseTrack(steps);
+    }
 
     public afterTrade(colony: IColony, player: Player, game: Game): void {
         colony.trackPosition = this.colonies.length;
@@ -83,17 +81,12 @@ export abstract class Colony  {
             colony.trackPosition = colony.colonies.length;
         }
 
-        game.log(
-            LogMessageType.DEFAULT,
-            "${0} built a colony on ${1}",
-            new LogMessageData(LogMessageDataType.PLAYER, player.id),
-            new LogMessageData(LogMessageDataType.COLONY, colony.name)
-          );
+        game.log("${0} built a colony on ${1}", b => b.player(player).colony(colony));
 
         // Poseidon hook
-        let poseidon = game.getPlayers().filter(player => player.isCorporation(CorporationName.POSEIDON));
+        let poseidon = game.getPlayers().filter(player => player.isCorporation(CardName.POSEIDON));
         if (poseidon.length > 0) {
-          poseidon[0].setProduction(Resources.MEGACREDITS);
+          poseidon[0].addProduction(Resources.MEGACREDITS);
         }
-    }    
-}    
+    }  
+}

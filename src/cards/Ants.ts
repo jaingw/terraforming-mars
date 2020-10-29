@@ -7,9 +7,6 @@ import {Game} from "../Game";
 import {SelectCard} from "../inputs/SelectCard";
 import {ResourceType} from "../ResourceType";
 import { CardName } from "../CardName";
-import { LogMessageType } from "../LogMessageType";
-import { LogMessageData } from "../LogMessageData";
-import { LogMessageDataType } from "../LogMessageDataType";
 
 export class Ants implements IActionCard, IProjectCard, IResourceCard {
     public cost: number = 9;
@@ -28,7 +25,7 @@ export class Ants implements IActionCard, IProjectCard, IResourceCard {
       return undefined;
     }
     public canAct(player: Player, game: Game): boolean {
-      if (game.soloMode) return true;
+      if (game.isSoloMode()) return true;
       return this.getAvailableCards(game, player).length > 0;
     }
     private getAvailableCards(game: Game, currentPlayer: Player): Array<ICard> {
@@ -43,7 +40,7 @@ export class Ants implements IActionCard, IProjectCard, IResourceCard {
     }
     public action(player: Player, game: Game) {
       // Solo play, can always steal from immaginary opponent
-      if (game.soloMode) {
+      if (game.isSoloMode()) {
         player.addResourceTo(this);
         return undefined;
       }
@@ -69,13 +66,11 @@ export class Ants implements IActionCard, IProjectCard, IResourceCard {
     }
 
     private logCardAction(game: Game, player: Player, card?: ICard) {
-      const target = card ? new LogMessageData(LogMessageDataType.CARD, card.name) : new LogMessageData(LogMessageDataType.STRING, "Neutral Player");
-
-      game.log(
-        LogMessageType.DEFAULT,
-        "${0} removed a microbe from ${1}",
-        new LogMessageData(LogMessageDataType.PLAYER, player.id),
-        target
-      );
+      if (card) {
+        var otherPlayer = game.getCardPlayer(card.name);
+        game.log("${0} removed a microbe from ${1}'s ${2}", b => b.player(player).player(otherPlayer).card(card));
+      } else {
+        game.log("${0} removed a microbe from ${1}", b => b.player(player).string("Neutral Player"));
+      }
     }
 }

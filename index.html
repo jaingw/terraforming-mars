@@ -2,26 +2,44 @@
 <html>
     <head>
         <title>Terraforming Mars</title>
-        <link href="assets/font-ubuntu.css" rel="stylesheet">
-        <link rel='stylesheet' type='text/css' media='all' href='/styles.css?v=0817' />
+        <link rel="stylesheet" type="text/css" media="all" href="/styles.css?v=1025" />
+        <meta name="viewport" content='width=1260, user-scalable=1'>
     </head>
     <body id="ts-preferences-target">
         <div id="app" :class="'topmost-'+screen">
             <div class="main-container">
-                <start-screen v-if="screen === 'start-screen'"></start-screen>
-                <create-game-form v-if="screen === 'create-game-form'"></create-game-form>
-                <load-game-form v-if="screen === 'load'"></load-game-form>
-                <game-home v-if="screen === 'game-home'" :game="game" ></game-home>
-                <player-home v-if="screen === 'player-home'" :player="player" :key="playerkey"></player-home>
-                <game-end v-if="screen === 'the-end'" :player="player" :game="game"></game-end>
-                <games-overview v-if="screen === 'games-overview'"></games-overview>
+                <start-screen v-if="screen === 'start-screen'" :version="settings.version"></start-screen>
+                <create-game-form
+                    v-else-if="screen === 'create-game-form'"
+                ></create-game-form>
+                <load-game-form v-else-if="screen === 'load'"></load-game-form>
+                <game-home
+                    v-else-if="screen === 'game-home'"
+                    :game="game"
+                ></game-home>
+                <player-home
+                    v-else-if="screen === 'player-home'"
+                    :player="player"
+                    :key="playerkey"
+                    :settings="settings"
+                ></player-home>
+                <game-end
+                    v-else-if="screen === 'the-end'"
+                    :player="player"
+                    :game="game"
+                ></game-end>
+                <games-overview
+                    v-else-if="screen === 'games-overview'"
+                ></games-overview>
+                <debug-ui v-else-if="screen === 'debug-ui'"></debug-ui>
+                <help-iconology v-else-if="screen === 'help-iconology'"></help-iconology>
+				<debug-ui v-else-if="screen === 'debug-ui'"></debug-ui>
                 <login v-if="screen === 'login'"></login>
                 <my-games v-if="screen === 'my-games'"></my-games>
                 <register v-if="screen === 'register'"></register>
                 <donate v-if="screen === 'donate'"></donate>
             </div>
-
         </div>
-        <script src="/main.js?v=0817"></script>
+        <script src="/main.js?v=1029"></script>
     </body>
 </html>

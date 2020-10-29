@@ -9,12 +9,16 @@ import {SpaceType} from '../SpaceType';
 import {ISpace} from '../ISpace';
 import { Resources } from '../Resources';
 import { CardName } from '../CardName';
+import { IAdjacencyBonus } from '../ares/IAdjacencyBonus';
+import { Board } from "../Board";
 
 export class Capital implements IProjectCard {
     public cost: number = 26;
     public tags: Array<Tags> = [Tags.CITY, Tags.STEEL];
     public cardType: CardType = CardType.AUTOMATED;
     public name: CardName = CardName.CAPITAL;
+    public adjacencyBonus?: IAdjacencyBonus = undefined;
+
     public canPlay(player: Player, game: Game): boolean {
       return player.getProduction(Resources.ENERGY) >= 2 &&
         game.board.getOceansOnBoard() >= 4 - player.getRequirementsBonus(game) &&
@@ -24,16 +28,13 @@ export class Capital implements IProjectCard {
       const usedSpace = game.board.getSpaceByTileCard(this.name);
       if (usedSpace !== undefined) {
         return game.board.getAdjacentSpaces(usedSpace)
-            .filter(
-                (s) => s.tile !== undefined &&
-                s.tile.tileType === TileType.OCEAN
-            ).length;
+            .filter((s) => Board.isOceanSpace(s)).length;
       }
       return 0;
     }
     public play(player: Player, game: Game) {
-      player.setProduction(Resources.ENERGY,-2);
-      player.setProduction(Resources.MEGACREDITS,5);
+      player.addProduction(Resources.ENERGY,-2);
+      player.addProduction(Resources.MEGACREDITS,5);
       return new SelectSpace(
           'Select space for special city tile',
           game.board.getAvailableSpacesForCity(player),
@@ -42,6 +43,7 @@ export class Capital implements IProjectCard {
               tileType: TileType.CAPITAL,
               card: this.name
             });
+            space.adjacency = this.adjacencyBonus;
             return undefined;
           }
       );

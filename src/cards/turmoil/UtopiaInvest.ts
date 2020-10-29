@@ -6,14 +6,16 @@ import { OrOptions } from "../../inputs/OrOptions";
 import { SelectOption } from "../../inputs/SelectOption";
 import { Resources } from "../../Resources";
 import { CardName } from "../../CardName";
+import { CardType } from "../CardType";
 
 export class UtopiaInvest implements IActionCard, CorporationCard {
     public name: CardName = CardName.UTOPIA_INVEST;
     public tags: Array<Tags> = [Tags.STEEL];
     public startingMegaCredits: number = 40;
+    public cardType: CardType = CardType.CORPORATION;
     public play(player: Player) {
-        player.setProduction(Resources.STEEL);
-        player.setProduction(Resources.TITANIUM);
+        player.addProduction(Resources.STEEL);
+        player.addProduction(Resources.TITANIUM);
         return undefined;
     }
     public canAct(player: Player): boolean {
@@ -30,38 +32,38 @@ export class UtopiaInvest implements IActionCard, CorporationCard {
 
         let options: Array<SelectOption> = [];
 
-        const reduceMegacredits = new SelectOption("Decrease MC production", "Decrease -MC", () => {
-            player.setProduction(Resources.MEGACREDITS, -1);
+        const reduceMegacredits = new SelectOption("Decrease MC production", "Decrease production", () => {
+            player.addProduction(Resources.MEGACREDITS, -1);
             player.megaCredits += 4;
             return undefined;
         });
 
-        const reduceSteel = new SelectOption("Decrease steel production", "Decrease steel", () => {
-            player.setProduction(Resources.STEEL, -1);
+        const reduceSteel = new SelectOption("Decrease steel production", "Decrease production", () => {
+            player.addProduction(Resources.STEEL, -1);
             player.steel += 4;
             return undefined;
         });
 
-        const reduceTitanium = new SelectOption("Decrease titanium production", "Decrease titanium", () => {
-            player.setProduction(Resources.TITANIUM, -1);
+        const reduceTitanium = new SelectOption("Decrease titanium production", "Decrease production", () => {
+            player.addProduction(Resources.TITANIUM, -1);
             player.titanium += 4;
             return undefined;
         });
 
-        const reducePlants = new SelectOption("Decrease plants production", "Decrease plants", () => {
-            player.setProduction(Resources.PLANTS, -1);
+        const reducePlants = new SelectOption("Decrease plants production", "Decrease production", () => {
+            player.addProduction(Resources.PLANTS, -1);
             player.plants += 4;
             return undefined;
         });
 
-        const reduceEnergy = new SelectOption("Decrease energy production", "Decrease energy", () => {
-            player.setProduction(Resources.ENERGY, -1);
+        const reduceEnergy = new SelectOption("Decrease energy production", "Decrease production", () => {
+            player.addProduction(Resources.ENERGY, -1);
             player.energy += 4;
             return undefined;
         });
 
-        const reduceHeat = new SelectOption("Decrease heat production", "Decrease heat", () => {
-            player.setProduction(Resources.HEAT, -1);
+        const reduceHeat = new SelectOption("Decrease heat production", "Decrease production", () => {
+            player.addProduction(Resources.HEAT, -1);
             player.heat += 4;
             return undefined;
         });

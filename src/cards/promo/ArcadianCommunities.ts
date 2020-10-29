@@ -1,19 +1,19 @@
 import { Tags } from "../Tags";
 import { Player } from "../../Player";
 import { Game } from "../../Game";
-import { CorporationCard } from '../corporation/CorporationCard';
+import { CorporationCard } from "../corporation/CorporationCard";
 import { SelectSpace } from "../../inputs/SelectSpace";
-import { ISpace } from '../../ISpace';
-import { IActionCard } from '../ICard';
-import { CardName } from '../../CardName';
-import { LogMessageType } from "../../LogMessageType";
-import { LogMessageData } from "../../LogMessageData";
-import { LogMessageDataType } from "../../LogMessageDataType";
+import { ISpace } from "../../ISpace";
+import { IActionCard } from "../ICard";
+import { CardName } from "../../CardName";
+import { CardType } from "../CardType";
+
 
 export class ArcadianCommunities implements IActionCard, CorporationCard {
     public name: CardName = CardName.ARCADIAN_COMMUNITIES;
     public tags: Array<Tags> = [];
     public startingMegaCredits: number = 40; 
+    public cardType: CardType = CardType.CORPORATION;
 
     public initialAction(player: Player, game: Game) {
         return new SelectSpace(
@@ -22,11 +22,7 @@ export class ArcadianCommunities implements IActionCard, CorporationCard {
             (foundSpace: ISpace) => {
                 foundSpace.player = player;
                 
-                game.log(
-                    LogMessageType.DEFAULT,
-                    "${0} placed a Community (player marker)",
-                    new LogMessageData(LogMessageDataType.PLAYER, player.id)
-                );
+                game.log("${0} placed a Community (player marker)", b => b.player(player));
 
                 return undefined;
             }

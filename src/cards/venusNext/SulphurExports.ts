@@ -19,14 +19,14 @@ export class SulphurExports implements IProjectCard {
     public canPlay(player: Player, game: Game): boolean {
         const venusMaxed = game.getVenusScaleLevel() === MAX_VENUS_SCALE;
         if (PartyHooks.shouldApplyPolicy(game, PartyName.REDS) && !venusMaxed) {
-          return player.canAfford(player.getCardCost(game, this) + REDS_RULING_POLICY_COST, game, false, true);
+          return player.canAfford(player.getCardCost(game, this) + REDS_RULING_POLICY_COST, game, false, true, true);
         }
   
         return true;
     }
 
     public play(player: Player, game: Game) {
-        player.setProduction(Resources.MEGACREDITS,player.getTagCount(Tags.VENUS) + 1 );
+        player.addProduction(Resources.MEGACREDITS,player.getTagCount(Tags.VENUS) + 1 );
         game.increaseVenusScaleLevel(player,1);
         return undefined;
     }

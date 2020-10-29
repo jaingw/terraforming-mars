@@ -17,12 +17,12 @@ describe("CommercialDistrict", function () {
     });
 
     it("Can't play", function () {
-        expect(card.canPlay(player, game)).to.eq(false);
+        expect(card.canPlay(player, game)).is.not.true;
     });
 
     it("Should play", function () {
-        player.setProduction(Resources.ENERGY);
-        expect(card.canPlay(player, game)).to.eq(true);
+        player.addProduction(Resources.ENERGY);
+        expect(card.canPlay(player, game)).is.true;
 
         const action = card.play(player, game);
         expect(action instanceof SelectSpace);
@@ -35,5 +35,6 @@ describe("CommercialDistrict", function () {
         adjacent[0].tile = { tileType: TileType.CITY, card: card.name };
         adjacent[0].player = player;
         expect(card.getVictoryPoints(player, game)).to.eq(1);
+        expect(action.availableSpaces[0].adjacency?.bonus).eq(undefined);
     });
 });

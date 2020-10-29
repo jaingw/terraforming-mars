@@ -6,10 +6,8 @@ import { Game } from "../Game";
 import { SelectCard } from "../inputs/SelectCard";
 import { CardName } from "../CardName";
 import { Resources } from "../Resources";
-import { LogMessageType } from "../LogMessageType";
-import { LogMessageData } from "../LogMessageData";
-import { LogMessageDataType } from "../LogMessageDataType";
 import { ICard } from "./ICard";
+import { DecreaseAnyProduction } from "../deferredActions/DecreaseAnyProduction";
 
 export class RoboticWorkforce implements IProjectCard {
     public cost: number = 9;
@@ -202,13 +200,13 @@ export class RoboticWorkforce implements IProjectCard {
                 const foundCard: ICard = selectedCards[0];
                 // this cards require additional user input
                 if (foundCard.name === CardName.BIOMASS_COMBUSTORS) {
-                    player.setProduction(Resources.ENERGY,2);
-                    game.addResourceProductionDecreaseInterrupt(player, Resources.PLANTS, 1);
+                    player.addProduction(Resources.ENERGY,2);
+                    game.defer(new DecreaseAnyProduction(player, game, Resources.PLANTS, 1));
                     return undefined;
                 }
                 if (foundCard.name === CardName.HEAT_TRAPPERS) {
-                    player.setProduction(Resources.ENERGY,1);
-                    game.addResourceProductionDecreaseInterrupt(player, Resources.HEAT, 2);
+                    player.addProduction(Resources.ENERGY,1);
+                    game.defer(new DecreaseAnyProduction(player, game, Resources.HEAT, 2));
                     return undefined;
                 }
 
@@ -328,20 +326,15 @@ export class RoboticWorkforce implements IProjectCard {
                     throw "not enough heat production";
                 }
 
-                player.setProduction(Resources.ENERGY,result.energyProduction);
-                player.setProduction(Resources.MEGACREDITS,result.megaCreditProduction);
-                player.setProduction(Resources.STEEL,result.steelProduction);
-                player.setProduction(Resources.TITANIUM,result.titaniumProduction);
-                player.setProduction(Resources.PLANTS,result.plantProduction);
-                player.setProduction(Resources.HEAT,result.heatProduction);
+                player.addProduction(Resources.ENERGY,result.energyProduction);
+                player.addProduction(Resources.MEGACREDITS,result.megaCreditProduction);
+                player.addProduction(Resources.STEEL,result.steelProduction);
+                player.addProduction(Resources.TITANIUM,result.titaniumProduction);
+                player.addProduction(Resources.PLANTS,result.plantProduction);
+                player.addProduction(Resources.HEAT,result.heatProduction);
 
-                game.log(
-                  LogMessageType.DEFAULT,
-                  "${0} copied ${1} production with ${2}",
-                  new LogMessageData(LogMessageDataType.PLAYER, player.id),
-                  new LogMessageData(LogMessageDataType.CARD, result.name),
-                  new LogMessageData(LogMessageDataType.CARD, this.name)
-                );
+                game.log("${0} copied ${1} production with ${2}", b =>
+                    b.player(player).cardName(result.name).card(this));
 
                 return undefined;
             });

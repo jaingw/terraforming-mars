@@ -2,12 +2,7 @@ import { CardName } from "./CardName";
 
 export const HTML_DATA: Map<string, string> =
   new Map ([
-    [CardName.COLONIZER_TRAINING_CAMP,`
-        <div class="title background-color-automated ">Colonizer Training Camp</div>
-        <div class="price ">8</div>
-        <div class="tag tag1 tag-building "></div>
-        <div class="tag tag2 tag-jovian "></div>
-        <div class="card-number">001</div>
+    [CardName.COLONIZER_TRAINING_CAMP,` 
         <div class="content ">
             <div class="points points-big ">2</div>
             <div class="requirements requirements-max ">max 5% O2</div>
@@ -16,30 +11,20 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.ASTEROID_MINING_CONSORTIUM,`
-        <div class="title background-color-automated ">Asteroid Mining Consortium</div>
-        <div class="price">13</div>
-        <div class="tag tag1 tag-jovian"></div>
-        <div class="corporate-icon project-icon"></div>
-        <div class="card-number">002</div>
+[CardName.ASTEROID_MINING_CONSORTIUM,` 
         <div class="content ">
             <div class="points points-big ">1</div>
             <div class="requirements ">Titanium production</div>
             <div class="production-box production-box-size1a ">
-                <div class="production-prefix ">&#x2796;&#xFE0E;</div><div class="titanium production red-outline "></div><br>
-                <div class="production-prefix ">&#x2795;&#xFE0E;</div><div class="titanium production "></div>
+                <div class="production-prefix minus"></div><div class="titanium production red-outline "></div><br>
+                <div class="production-prefix plus"></div><div class="titanium production "></div>
             </div>
             <div class="description " style="margin-top:0px;">
                 (Requires that you have titanium production. Decrease any titanium production 1 step and increase your own 1 step.)
             </div>
         </div>
 `],
-[CardName.DEEP_WELL_HEATING,`
-        <div class="title background-color-automated ">Deep Well Heating</div>
-        <div class="price ">13</div>
-        <div class="tag tag1 tag-building "></div>
-        <div class="tag tag2 tag-power "></div>
-        <div class="card-number">003</div>
+[CardName.DEEP_WELL_HEATING,` 
         <div class="content">
             <div class="production-box ">
                 <div class="energy production "></div>
@@ -50,28 +35,21 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.CLOUD_SEEDING,`
-        <div class="title background-color-automated ">Cloud Seeding</div>
-        <div class="price ">11</div>
-        <div class="card-number">004</div>
+[CardName.CLOUD_SEEDING,` 
         <div class="content ">
             <div class="requirements ">3 Oceans</div>
             <div class="production-box production-box-size2a ">
-                <div class="production-prefix ">&#x2796;&#xFE0E;</div><div class="money production ">1</div><div class="heat production red-outline "></div><br>
-                <div class="production-prefix ">&#x2795;&#xFE0E;</div><div class="plant production "></div><div class="plant production "></div>
+                <div class="production-prefix minus"></div><div class="money production ">1</div><div class="heat production red-outline "></div><br>
+                <div class="production-prefix plus"></div><div class="plant production "></div><div class="plant production "></div>
             </div>
             <div class="description ">
               (Requires 3 ocean tiles. Decrease your MC production 1 step and any heat production 1 step. Increase your Plant production 2 steps.)
             </div>
         </div>
 `],
-[CardName.SEARCH_FOR_LIFE,`
-        <div class="title background-color-active ">Search for Life</div>
-        <div class="price ">3</div>
-        <div class="tag tag1 tag-science "></div>
-        <div class="card-number">005</div>
+[CardName.SEARCH_FOR_LIFE,` 
         <div class="content ">
-            <div class="points points-big">3/<div class="resource science"></div></div>
+            <div class="points points-big"><div class="resource science"></div>*:3</div>
             <div class="requirements requirements-max ">max 6% O2</div>
             <div class=" "><span class=" money resource ">1</span> <span class="red-arrow "></span> <span class="microbe resource "></span>*  :  <div class="resource science"></div> </div>
             <div class="description ">
@@ -80,21 +58,12 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.INVENTORS_GUILD,`
-        <div class="title background-color-active ">Inventors' Guild</div>
-        <div class="price ">9</div>
-        <div class="corporate-icon project-icon"></div>
-        <div class="tag tag1 tag-science "></div>
-        <div class="card-number">006</div>
+[CardName.INVENTORS_GUILD,` 
         <div class="content ">
             <span class="red-arrow "></span> <span style="font-size:14px; ">ACTION: LOOK AT THE TOP CARD AND EITHER BUY IT OR DISCARD IT</span>
         </div>
 `],
-[CardName.MARTIAN_RAILS,`
-        <div class="title background-color-active ">Martian Rails</div>
-        <div class="price ">13</div>
-        <div class="tag tag1 tag-building "></div>
-        <div class="card-number">007</div>
+[CardName.MARTIAN_RAILS,` 
         <div class="content ">
             <span class="energy resource "></span> <span class="red-arrow "></span>
             <span class=" money resource ">1</span> / <span class="city-tile-small tile red-outline "></span>
@@ -103,20 +72,21 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.CAPITAL,`
-        <div class="title background-color-automated ">Capital</div>
-        <div class="price ">26</div>
-        <div class="tag tag1 tag-building "></div>
-        <div class="tag tag2 tag-city "></div>
-        <div class="card-number">008</div>
+[CardName.CAPITAL,` 
         <div class="content ">
             <div class="points ">1/<span class="resource ocean-resource "></span></div>
             <div class="requirements ">4 Oceans</div>
             <div class="production-box production-box-size2a ">
-                <div class="production-prefix ">&#x2796;&#xFE0E;</div><div class="energy production "></div><div class="energy production "></div><br>
-                <div class="production-prefix ">&#x2795;&#xFE0E;</div><div class="money production ">5</div>
+                <div class="production-prefix minus"></div><div class="energy production "></div><div class="energy production "></div><br>
+                <div class="production-prefix plus"></div><div class="money production ">5</div>
             </div>
-            <div class="special-tile tile capitol ">&#x2302;&#xFE0E;</div>
+            <div class="tile city-tile" style="
+                width: 60px;
+                height: 69px;
+                background-size: 60px 69px;
+                filter:none;
+                ">
+            </div>
             <div class="description " style="text-align:left;">
                 Requires 4 ocean tiles. Place this tile. Decrease your Energy production 2 steps and increase your MC production 5 steps.<br>
                 <div style="font-size:9px;line-height:12px;margin-top:10px; width: 140px;">
@@ -125,12 +95,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.ASTEROID,`
-        <div class="title background-color-events ">Asteroid</div>
-        <div class="price ">14</div>
-        <div class="tag tag1 tag-event "></div>
-        <div class="tag tag2 tag-space "></div>
-        <div class="card-number">009</div>
+[CardName.ASTEROID,` 
         <div class="content ">
             <div class="tile temperature-tile "></div><br>
             <div class=" titanium resource "></div><div class=" titanium resource "></div><br>
@@ -140,12 +105,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.COMET,`
-        <div class="title background-color-events ">Comet</div>
-        <div class="price ">21</div>
-        <div class="tag tag1 tag-event "></div>
-        <div class="tag tag2 tag-space "></div>
-        <div class="card-number">010</div>
+[CardName.COMET,` 
         <div class="content ">
             <div class="tile temperature-tile "></div><div class="tile ocean-tile "></div>
             <br>
@@ -155,12 +115,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.BIG_ASTEROID,`
-        <div class="title background-color-events ">Big Asteroid</div>
-        <div class="price ">27</div>
-        <div class="tag tag1 tag-event "></div>
-        <div class="tag tag2 tag-space "></div>
-        <div class="card-number">011</div>
+[CardName.BIG_ASTEROID,` 
         <div class="content ">
             <div class="tile temperature-tile "></div>
             <div class="tile temperature-tile "></div><br>
@@ -171,15 +126,10 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.WATER_IMPORT_FROM_EUROPA,`
-        <div class="title background-color-active ">Water Import from Europa</div>
-        <div class="price ">25</div>
-        <div class="tag tag1 tag-space "></div>
-        <div class="tag tag2 tag-jovian "></div>
-        <div class="card-number">012</div>
+[CardName.WATER_IMPORT_FROM_EUROPA,` 
         <div class="content ">
             <div class="points points-big">1/<span class="tag-jovian resource-tag"></span></div>
-            <div class=" money resource ">12</div> (<span class="titanium " style="margin:0px;padding:1px;padding-top:3px;border-radius:5px; "></span>)
+            <div class=" money resource ">12</div> (<span class="titanium resource"></span>)
             <span class="red-arrow "></span> <div class="ocean-tile tile "></div>
             <div class="description ">
                 (Action: Pay 12 MC to place an ocean tile. TITANIUM MAY BE USED as if playing a Space card.)<br><br>
@@ -187,13 +137,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.SPACE_ELEVATOR,`
-        <div class="title background-color-active ">Space Elevator</div>
-        <div class="price ">27</div>
-        <div class="tag tag1 tag-space "></div>
-        <div class="tag tag2 tag-building "></div>
-        <div class="corporate-icon project-icon"></div>
-        <div class="card-number">013</div>
+[CardName.SPACE_ELEVATOR,` 
         <div class="content ">
             <div class="points points-big ">2</div>
             <span class=" steel resource "></span> <span class="red-arrow "></span> <span class="money resource ">5</span>
@@ -206,13 +150,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.DEVELOPMENT_CENTER,`
-        <div class="title background-color-active ">Development Center</div>
-        <div class="price ">11</div>
-        <div class="tag tag1 tag-building "></div>
-        <div class="tag tag2 tag-science "></div>
-        <div class="corporate-icon project-icon"></div>
-        <div class="card-number">014</div>
+[CardName.DEVELOPMENT_CENTER,` 
         <div class="content ">
             <span class="energy resource "></span> <span class="red-arrow "></span> <span class="card resource "></span>
             <div class="description ">
@@ -220,14 +158,10 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.EQUATORIAL_MAGNETIZER,`
-        <div class="title background-color-active ">Equatorial Magnetizer</div>
-        <div class="price ">11</div>
-        <div class="tag tag1 tag-building "></div>
-        <div class="card-number">015</div>
+[CardName.EQUATORIAL_MAGNETIZER,` 
         <div class="content ">
             <div class="production-box production-box-size1a ">
-                <div class="production-prefix ">&#x2796;&#xFE0E;</div><div class="energy production "></div>
+                <div class="production-prefix minus"></div><div class="energy production "></div>
             </div>
             <span class="red-arrow " style="margin-left:5px; "></span>
             <div class="rating tile "></div>
@@ -236,37 +170,29 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.DOMED_CRATER,`
-        <div class="title background-color-automated ">Domed Crater</div>
-        <div class="price ">24</div>
-        <div class="tag tag1 tag-building "></div>
-        <div class="tag tag2 tag-city "></div>
-        <div class="card-number">016</div>
+[CardName.DOMED_CRATER,` 
         <div class="content ">
             <div class="points points-big ">1</div>
             <div class="requirements requirements-max ">max 7% O2</div>
-            <div class="production-box production-box-size1a " style="margin-bottom:5px;">
-                <div class="production-prefix ">&#x2796;&#xFE0E;</div><div class="energy production "></div>
-                <div class="production-prefix ">&#x2795;&#xFE0E;</div><div class="money production ">3</div>
+            <div class="production-box production-box-size1a">
+                <div class="production-prefix minus"></div><div class="energy production"></div>
+                <div class="production-prefix plus"></div><div class="money production">3</div>
             </div>
-            <div class="tile city-tile " style="margin-left:20px;margin-bottom:5px;"></div><br>
+            <div class="tile city-tile"></div>
+            <div class="card-content-plants">
             <div class="plant resource "></div><div class="plant resource "></div><div class="plant resource "></div>
-            <div class="description " style="margin-top:-5px;font-size:11px;text-align: left; line-height: 12px;">
+            </div>
+            <div class="description">
                 <div>Oxygen must be 7% or less.</div>
-                <div style="width:140px;">Gain 3 plants. Place a City tile. Decrease your Energy production 1 step and increase your MC production 3 steps.</div>
+                <div>Gain 3 plants. Place a City tile. Decrease your Energy production 1 step and increase your MC production 3 steps.</div>
             </div>
         </div>
 `],
-[CardName.NOCTIS_CITY,`
-        <div class="title background-color-automated ">Noctis City</div>
-        <div class="price ">18</div>
-        <div class="tag tag1 tag-building "></div>
-        <div class="tag tag2 tag-city "></div>
-        <div class="card-number">017</div>
+[CardName.NOCTIS_CITY,` 
         <div class="content ">
             <div class="production-box production-box-size1a ">
-                <div class="production-prefix ">&#x2796;&#xFE0E;</div><div class="energy production "></div>
-                <div class="production-prefix ">&#x2795;&#xFE0E;</div><div class="money production ">3</div>
+                <div class="production-prefix minus"></div><div class="energy production "></div>
+                <div class="production-prefix plus"></div><div class="money production ">3</div>
             </div>
             <div class="tile city-tile " style="margin-left:20px "></div><br>
             <div class="description ">
@@ -275,12 +201,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.METHANE_FROM_TITAN,`
-        <div class="title background-color-automated ">Methane from Titan</div>
-        <div class="price ">28</div>
-        <div class="tag tag1 tag-space "></div>
-        <div class="tag tag2 tag-jovian "></div>
-        <div class="card-number">018</div>
+[CardName.METHANE_FROM_TITAN,` 
         <div class="content ">
             <div class="points points-big ">2</div>
             <div class="requirements ">2% O2</div>
@@ -293,13 +214,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.IMPORTED_HYDROGEN,`
-        <div class="title background-color-events ">Imported Hydrogen</div>
-        <div class="price ">16</div>
-        <div class="tag tag1 tag-event "></div>
-        <div class="tag tag2 tag-space "></div>
-        <div class="tag tag3 tag-earth "></div>
-        <div class="card-number">019</div>
+[CardName.IMPORTED_HYDROGEN,` 
         <div class="content ">
             <span>3</span><div class="resource plant "></div> OR <span>3</span><div class="resource microbe "></div>* OR <span>2</span><div class="resource animal "></div>*
             <br><div class="tile ocean-tile "></div>
@@ -308,13 +223,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.RESEARCH_OUTPOST,`
-        <div class="title background-color-active ">Research Outpost</div>
-        <div class="price ">18</div>
-        <div class="tag tag1 tag-building "></div>
-        <div class="tag tag2 tag-city "></div>
-        <div class="tag tag3 tag-science "></div>
-        <div class="card-number">020</div>
+[CardName.RESEARCH_OUTPOST,` 
         <div class="content ">
             : <span class="money resource ">-1</span>
             <div class="description ">
@@ -326,12 +235,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.PHOBOS_SPACE_HAVEN,`
-        <div class="title background-color-automated ">Phobos Space Haven</div>
-        <div class="price ">25</div>
-        <div class="tag tag1 tag-space "></div>
-        <div class="tag tag2 tag-city "></div>
-        <div class="card-number">021</div>
+[CardName.PHOBOS_SPACE_HAVEN,` 
         <div class="content ">
             <div class="points points-big ">3</div>
             <div class="production-box "><div class="titanium production "></div></div>
@@ -341,14 +245,11 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.BLACK_POLAR_DUST,`
-        <div class="title background-color-automated ">Black Polar Dust</div>
-        <div class="price ">15</div>
-        <div class="card-number">022</div>
+[CardName.BLACK_POLAR_DUST,` 
         <div class="content ">
             <div class="production-box production-box-size3a ">
-                <div class="production-prefix ">&#x2796;&#xFE0E;</div><div class="money production ">2</div><br>
-                <div class="production-prefix ">&#x2795;&#xFE0E;</div><div class="heat production "></div><div class="heat production "></div><div class="heat production "></div>
+                <div class="production-prefix minus"></div><div class="money production ">2</div><br>
+                <div class="production-prefix plus"></div><div class="heat production "></div><div class="heat production "></div><div class="heat production "></div>
             </div>
             <div class="tile ocean-tile "></div>
             <div class="description ">
@@ -356,11 +257,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.ARCTIC_ALGAE,`
-        <div class="title background-color-active ">Arctic Algae</div>
-        <div class="price ">12</div>
-        <div class="tag tag1 tag-plant "></div>
-        <div class="card-number">023</div>
+[CardName.ARCTIC_ALGAE,` 
         <div class="content ">
             <div class="requirements requirements-max ">max -12 C </div>
             <div class="tile ocean-tile red-outline "></div> : <div class="resource plant "></div><div class="resource plant "></div><br>
@@ -373,11 +270,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.PREDATORS,`
-        <div class="title background-color-active ">Predators</div>
-        <div class="price ">14</div>
-        <div class="tag tag1 tag-animal "></div>
-        <div class="card-number">024</div>
+[CardName.PREDATORS,` 
         <div class="content ">
             <div class="points ">1/<div class="animal resource "></div></div>
             <div class="requirements">11% O2</div>
@@ -390,12 +283,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.SPACE_STATION,`
-        <div class="title background-color-active ">Space Station</div>
-        <div class="price ">10</div>
-        <div class="tag tag1 tag-space "></div>
-        <div class="corporate-icon project-icon"></div>
-        <div class="card-number">025</div>
+[CardName.SPACE_STATION,` 
         <div class="content ">
             <div class="points points-big ">1</div>
             <div class="resource-tag tag-space"></div> : <div class="money resource ">-2</div>
@@ -404,12 +292,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.EOS_CHASMA_NATIONAL_PARK,`
-        <div class="title background-color-automated ">Eos Chasma National Park</div>
-        <div class="price ">16</div>
-        <div class="tag tag1 tag-building "></div>
-        <div class="tag tag2 tag-plant "></div>
-        <div class="card-number">026</div>
+[CardName.EOS_CHASMA_NATIONAL_PARK,` 
         <div class="content ">
             <div class="points points-big ">1</div>
             <div class="requirements">-12 C</div>
@@ -422,28 +305,16 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.INTERSTELLAR_COLONY_SHIP,`
-        <div class="title background-color-events ">Interstellar Colony Ship</div>
-        <div class="price ">24</div>
-        <div class="tag tag1 tag-event "></div>
-        <div class="tag tag2 tag-space "></div>
-        <div class="tag tag3 tag-earth "></div>
-        <div class="corporate-icon project-icon"></div>
-        <div class="card-number">027</div>
+[CardName.INTERSTELLAR_COLONY_SHIP,` 
         <div class="content ">
             <div class="points points-big ">4</div>
             <div class="requirements ">5 Science</div>
         </div>
 `],
-[CardName.SECURITY_FLEET,`
-        <div class="title background-color-active ">Security Fleet</div>
-        <div class="price ">12</div>
-        <div class="tag tag1 tag-space "></div>
-        <div class="corporate-icon project-icon"></div>
-        <div class="card-number">028</div>
+[CardName.SECURITY_FLEET,` 
         <div class="content ">
-            <div class="points ">1/<div class="resource " style="padding-bottom:2px;padding-top:2px;font-size:22px;background-color:rgb(230,230,230);font-weight:normal ">&#x1F680;&#xFE0E;</div></div>
-            <div class="resource titanium "></div> <span class="red-arrow "></span> <div class="resource " style="padding-bottom:2px;padding-top:2px;font-size:22px;background-color:rgb(230,230,230);font-weight:normal ">&#x1F680;&#xFE0E;</div>
+            <div class="points ">1/<div class="resource fighter"></div></div>
+            <div class="resource titanium "></div> <span class="red-arrow "></span> <div class="resource fighter"></div>
             <div class="description ">
                 (Action: Spend 1 titanium to add 1 fighter resource to this card.)
             </div>
@@ -452,17 +323,12 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.CUPOLA_CITY,`
-        <div class="title background-color-automated ">Cupola City</div>
-        <div class="price ">16</div>
-        <div class="tag tag1 tag-building "></div>
-        <div class="tag tag2 tag-city "></div>
-        <div class="card-number">029</div>
+[CardName.CUPOLA_CITY,` 
         <div class="content ">
             <div class="requirements requirements-max ">max 9% O2</div>
             <div class="production-box production-box-size1a ">
-                <div class="production-prefix ">&#x2796;&#xFE0E;</div><div class="energy production "></div>
-                <div class="production-prefix ">&#x2795;&#xFE0E;</div><div class="money production ">3</div>
+                <div class="production-prefix minus"></div><div class="energy production "></div>
+                <div class="production-prefix plus"></div><div class="money production ">3</div>
             </div>
             <div class="tile city-tile " style="margin-left:20px "></div>
             <div class="description ">
@@ -470,45 +336,33 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.LUNAR_BEAM,`
-        <div class="title background-color-automated ">Lunar Beam</div>
-        <div class="price ">13</div>
-        <div class="tag tag1 tag-power "></div>
-        <div class="tag tag2 tag-earth "></div>
-        <div class="card-number">030</div>
+[CardName.LUNAR_BEAM,` 
         <div class="content ">
             <div class="production-box production-box-size2a ">
-                <div class="production-prefix ">&#x2796;&#xFE0E;</div><div class="money production ">2</div><br>
-                <div class="production-prefix ">&#x2795;&#xFE0E;</div><div class="heat production "></div><div class="heat production "></div><br>
-                <div class="production-prefix ">&#x2795;&#xFE0E;</div><div class="energy production "></div><div class="energy production "></div>
+                <div class="production-prefix minus"></div><div class="money production ">2</div><br>
+                <div class="production-prefix plus"></div><div class="heat production "></div><div class="heat production "></div><br>
+                <div class="production-prefix plus"></div><div class="energy production "></div><div class="energy production "></div>
             </div>
             <div class="description ">
                 (Decrease your MC production 2 steps and increase your heat production and Energy production 2 steps each.)
             </div>
         </div>
 `],
-[CardName.OPTIMAL_AEROBRAKING,`
-        <div class="title background-color-active ">Optimal Aerobraking</div>
-        <div class="price ">7</div>
-        <div class="tag tag1 tag-space "></div>
-        <div class="card-number">031</div>
+[CardName.OPTIMAL_AEROBRAKING,` 
         <div class="content ">
-            <div class="resource-tag tag-space "></div> <div class="resource-tag tag-event "></div> : <div class="resource money ">3</div><div class="resource heat "></div><div class="resource heat "></div><div class="resource heat "></div>
+            <div class="nowrap">
+              <div class="resource-tag tag-space "></div> <div class="resource-tag tag-event "></div> : <div class="resource money ">3</div><div class="resource heat "></div><div class="resource heat "></div><div class="resource heat "></div>
+            </div>
             <div class="description ">
                 (Effect: When you play a Space Event, you gain 3 MC and 3 heat.)
             </div>
         </div>
 `],
-[CardName.UNDERGROUND_CITY,`
-        <div class="title background-color-automated ">Underground City</div>
-        <div class="price ">18</div>
-        <div class="tag tag1 tag-building "></div>
-        <div class="tag tag2 tag-city "></div>
-        <div class="card-number">032</div>
+[CardName.UNDERGROUND_CITY,` 
         <div class="content ">
             <div class="production-box production-box-size2a ">
-                <div class="production-prefix ">&#x2796;&#xFE0E;</div><div class="energy production "></div><div class="energy production "></div>
-                <div class="production-prefix ">&#x2795;&#xFE0E;</div><div class="steel production "></div><div class="steel production "></div>
+                <div class="production-prefix minus"></div><div class="energy production "></div><div class="energy production "></div>
+                <div class="production-prefix plus"></div><div class="steel production "></div><div class="steel production "></div>
             </div>
             <div class="tile city-tile " style="margin-left:20px "></div>
             <div class="description ">
@@ -516,12 +370,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.REGOLITH_EATERS,`
-        <div class="title background-color-active ">Regolith Eaters</div>
-        <div class="price ">13</div>
-        <div class="tag tag1 tag-microbe "></div>
-        <div class="tag tag2 tag-science "></div>
-        <div class="card-number">033</div>
+[CardName.REGOLITH_EATERS,` 
         <div class="content ">
             <div class="red-arrow "></div> <div class="microbe resource "></div><br>
             OR <div class="microbe resource "></div><div class="microbe resource "></div> <div class="red-arrow "></div> <div class="tile oxygen-tile "></div>
@@ -530,13 +379,8 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.GHG_PRODUCING_BACTERIA,`
-        <div class="title background-color-active ">GHG Producing Bacteria</div>
-        <div class="price ">8</div>
-        <div class="tag tag1 tag-microbe "></div>
-        <div class="tag tag2 tag-science "></div>
-        <div class="card-number">034</div>
-        <div class="content ">
+[CardName.GHG_PRODUCING_BACTERIA,` 
+        <div class="content hover-hide-res">
             <div class="requirements ">4% O2</div>
             <div class="red-arrow "></div> <div class="microbe resource "></div><br>
             OR <div class="microbe resource "></div><div class="microbe resource "></div> <div class="red-arrow "></div> <div class="tile temperature-tile "></div>
@@ -546,11 +390,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.ANTS,`
-        <div class="title background-color-active ">Ants</div>
-        <div class="price ">9</div>
-        <div class="tag tag1 tag-microbe "></div>
-        <div class="card-number">035</div>
+[CardName.ANTS,` 
         <div class="content ">
             <div class="points ">1/2<div class="resource microbe "></div></div>
             <div class="requirements ">4% O2</div>
@@ -562,11 +402,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.RELEASE_OF_INERT_GASES,`
-        <div class="title background-color-events ">Release of Inert Gases</div>
-        <div class="price ">14</div>
-        <div class="tag tag1 tag-event "></div>
-        <div class="card-number">036</div>
+[CardName.RELEASE_OF_INERT_GASES,` 
         <div class="content ">
             <div class="tile rating "></div>  <div class="tile rating "></div>
             <div class="description ">
@@ -574,12 +410,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.NITROGEN_RICH_ASTEROID,`
-        <div class="title background-color-events ">Nitrogen-Rich Asteroid</div>
-        <div class="price ">31</div>
-        <div class="tag tag1 tag-event "></div>
-        <div class="tag tag2 tag-space "></div>
-        <div class="card-number">037</div>
+[CardName.NITROGEN_RICH_ASTEROID,` 
         <div class="content ">
             <div class="production-box production-box-size3">
       <div class="production plant" style="margin-left:37px"></div> OR <br> 3 <div class="tag-plant resource-tag"></div> : 4<div class="plant production"></div>
@@ -592,11 +423,7 @@ export const HTML_DATA: Map<string, string> =
     </div>
     </div>
 `],
-[CardName.ROVER_CONSTRUCTION,`
-    <div class="title background-color-active">Rover Construction</div>
-    <div class="price">8</div>
-    <div class="tag tag1 tag-building"></div>
-    <div class="card-number">038</div>
+[CardName.ROVER_CONSTRUCTION,` 
     <div class="content">
       <div class="points points-big">1</div>
       <div class="tile city-tile-small red-outline"></div> :
@@ -606,12 +433,7 @@ export const HTML_DATA: Map<string, string> =
       </div>
     </div>
 `],
-[CardName.DEIMOS_DOWN,`
-    <div class="title background-color-events">Deimos Down</div>
-    <div class="price">31</div>
-    <div class="tag tag1 tag-event"></div>
-    <div class="tag tag2 tag-space"></div>
-    <div class="card-number">039</div>
+[CardName.DEIMOS_DOWN,` 
     <div class="content">
       <div class="tile temperature-tile"></div>
       <div class="tile temperature-tile"></div>
@@ -623,12 +445,7 @@ export const HTML_DATA: Map<string, string> =
       </div>
     </div>
 `],
-[CardName.ASTEROID_MINING,`
-    <div class="title background-color-automated">Asteroid Mining</div>
-    <div class="price">30</div>
-    <div class="tag tag1 tag-space"></div>
-    <div class="tag tag2 tag-jovian"></div>
-    <div class="card-number">040</div>
+[CardName.ASTEROID_MINING,` 
     <div class="content">
       <div class="points points-big">2</div>
       <div class="production-box production-box-size2">
@@ -639,27 +456,19 @@ export const HTML_DATA: Map<string, string> =
       </div>
     </div>
 `],
-[CardName.FOOD_FACTORY,`
-    <div class="title background-color-automated">Food Factory</div>
-    <div class="price">12</div>
-    <div class="tag tag1 tag-building"></div>
-    <div class="card-number">041</div>
+[CardName.FOOD_FACTORY,` 
     <div class="content">
       <div class="points points-big">1</div>
       <div class="production-box production-box-size1a">
-        <div class="production-prefix">&#x2796;&#xFE0E;</div><div class="plant production"></div>
-        <div class="production-prefix">&#x2795;&#xFE0E;</div><div class="money production">4</div>
+        <div class="production-prefix minus"></div><div class="plant production"></div>
+        <div class="production-prefix plus"></div><div class="money production">4</div>
       </div>
       <div class="description">
         (Decrease your Plant production 1 step and increase your MC production 4 steps.)
       </div>
     </div>
 `],
-[CardName.ARCHAEBACTERIA,`
-    <div class="title background-color-automated">Archaebacteria</div>
-    <div class="price">6</div>
-    <div class="tag tag1 tag-microbe"></div>
-    <div class="card-number">042</div>
+[CardName.ARCHAEBACTERIA,` 
     <div class="content">
       <div class="requirements requirements-max">max -18 C</div>
       <div class="production-box">
@@ -670,61 +479,42 @@ export const HTML_DATA: Map<string, string> =
       </div>
     </div>
 `],
-[CardName.CARBONATE_PROCESSING,`
-    <div class="title background-color-automated">Carbonate Processing</div>
-    <div class="price">6</div>
-    <div class="tag tag1 tag-building"></div>
-    <div class="card-number">043</div>
+[CardName.CARBONATE_PROCESSING,` 
     <div class="content">
       <div class="production-box production-box-size3a">
-        <div class="production-prefix">&#x2796;&#xFE0E;</div><div class="energy production"></div><br>
-        <div class="production-prefix">&#x2795;&#xFE0E;</div><div class="heat production"></div><div class="heat production"></div><div class="heat production"></div>
+        <div class="production-prefix minus"></div><div class="energy production"></div><br>
+        <div class="production-prefix plus"></div><div class="heat production"></div><div class="heat production"></div><div class="heat production"></div>
       </div>
       <div class="description">
         (Decrease your Energy production 1 step and increase your heat production 3 steps.)
       </div>
     </div>
 `],
-[CardName.NATURAL_PRESERVE,`
-    <div class="title background-color-automated">Natural Preserve</div>
-    <div class="price">9</div>
-    <div class="tag tag1 tag-building"></div>
-    <div class="tag tag2 tag-science"></div>
-    <div class="card-number">044</div>
+[CardName.NATURAL_PRESERVE,` 
     <div class="content">
       <div class="points points-big">1</div>
       <div class="requirements requirements-max">max 4% O2</div>
       <div class="production-box">
         <div class="money production">1</div>
       </div>
-      <div class="tile special-tile" style="font-size:30px;margin-left:20px;">&#x2642;</div>*
+      <div class="tile special-tile"><div class="special-tile-symbol special-tile--natural_preserve"></div></div>*
       <div class="description">
         (Oxygen must be 4% or less. Place this tile NEXT TO NO OTHER TILE. Increase your MC production 1 step.)
       </div>
     </div>
 `],
-[CardName.NUCLEAR_POWER,`
-    <div class="title background-color-automated">Nuclear Power</div>
-    <div class="price">10</div>
-    <div class="tag tag1 tag-building"></div>
-    <div class="tag tag2 tag-power"></div>
-    <div class="card-number">045</div>
+[CardName.NUCLEAR_POWER,` 
     <div class="content">
       <div class="production-box production-box-size3a">
-        <div class="production-prefix">&#x2796;&#xFE0E;</div><div class="money production">2</div><br>
-        <div class="production-prefix">&#x2795;&#xFE0E;</div><div class="energy production"></div><div class="energy production"></div><div class="energy production"></div>
+        <div class="production-prefix minus"></div><div class="money production">2</div><br>
+        <div class="production-prefix plus"></div><div class="energy production"></div><div class="energy production"></div><div class="energy production"></div>
       </div>
       <div class="description">
         (Decrease your MC production 2 steps and increase your Energy production 3 steps.)
       </div>
     </div>
 `],
-[CardName.LIGHTNING_HARVEST,`
-    <div class="title background-color-automated">Lightning Harvest</div>
-    <div class="price">8</div>
-    <div class="tag tag1 tag-power"></div>
-    <div class="corporate-icon project-icon"></div>
-    <div class="card-number">046</div>
+[CardName.LIGHTNING_HARVEST,` 
     <div class="content">
       <div class="points points-big">1</div>
       <div class="requirements">3 Science</div>
@@ -736,11 +526,7 @@ export const HTML_DATA: Map<string, string> =
       </div>
     </div>
 `],
-[CardName.ALGAE,`
-    <div class="title background-color-automated">Algae</div>
-    <div class="price">10</div>
-    <div class="tag tag1 tag-plant"></div>
-    <div class="card-number">047</div>
+[CardName.ALGAE,` 
     <div class="content">
       <div class="requirements">5 Oceans</div>
       <div class="production-box production-box-size2">
@@ -752,11 +538,7 @@ export const HTML_DATA: Map<string, string> =
       </div>
     </div>
 `],
-[CardName.ADAPTED_LICHEN,`
-    <div class="title background-color-automated">Adapted Lichen</div>
-    <div class="price">9</div>
-    <div class="tag tag1 tag-plant"></div>
-    <div class="card-number">048</div>
+[CardName.ADAPTED_LICHEN,` 
     <div class="content">
       <div class="production-box">
         <div class="plant production"></div>
@@ -766,12 +548,7 @@ export const HTML_DATA: Map<string, string> =
       </div>
     </div>
 `],
-[CardName.TARDIGRADES,`
-      <div class="title background-color-active">Tardigrades</div>
-      <div class="price">4</div>
-      <div class="tag tag1 tag-microbe"></div>
-      <div class="corporate-icon project-icon"></div>
-      <div class="card-number">049</div>
+[CardName.TARDIGRADES,` 
       <div class="content">
         <div class="points">1/4<div class="resource microbe"></div>
         </div>
@@ -783,27 +560,15 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.VIRUS,`
-      <div class="title background-color-events">Virus</div>
-      <div class="price">1</div>
-      <div class="tag tag1 tag-event"></div>
-      <div class="tag tag2 tag-microbe"></div>
-      <div class="corporate-icon project-icon"></div>
-      <div class="card-number">050</div>
+[CardName.VIRUS,` 
       <div class="content">
-        -2<div class="resource animal red-outline"></div> OR -5<div class="resource plant red-outline"></div>
+        -2 <div class="resource animal red-outline"></div> OR -5 <div class="resource plant red-outline"></div>
         <div class="description">
           (Remove up to 2 Animals or 5 Plants from any player.)
         </div>
       </div>
 `],
-[CardName.MIRANDA_RESORT,`
-      <div class="title background-color-automated">Miranda Resort</div>
-      <div class="price">12</div>
-      <div class="tag tag1 tag-space"></div>
-      <div class="tag tag2 tag-jovian"></div>
-      <div class="corporate-icon project-icon"></div>
-      <div class="card-number">051</div>
+[CardName.MIRANDA_RESORT,` 
       <div class="content">
         <div class="points points-big">1</div>
         <div class="production-box production-box-size2a">
@@ -814,11 +579,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.FISH,`
-      <div class="title background-color-active">Fish</div>
-      <div class="price">9</div>
-      <div class="tag tag1 tag-animal"></div>
-      <div class="card-number">052</div>
+[CardName.FISH,` 
       <div class="content">
         <div class="points">1/<div class="animal resource"></div>
         </div>
@@ -829,17 +590,14 @@ export const HTML_DATA: Map<string, string> =
           (Action: Add 1 Animal to this card.)
         </div><br>
         <div class="production-box production-box-size1a" style="margin-top:-10px;">
-          <div class="production-prefix">&#x2796;&#xFE0E;</div><div class="plant production red-outline"></div>
+          <div class="production-prefix minus"></div><div class="plant production red-outline"></div>
         </div>
         <div class="description description-half">
           (Requires +2 C or warmer. Decrease any Plant production 1 step. 1 VP for each Animal on this card.)
         </div>
       </div>
 `],
-[CardName.LAKE_MARINERIS,`
-      <div class="title background-color-automated">Lake Marineris</div>
-      <div class="price">18</div>
-      <div class="card-number">053</div>
+[CardName.LAKE_MARINERIS,` 
       <div class="content">
         <div class="points points-big">2</div>
         <div class="requirements">0 C</div>
@@ -850,12 +608,8 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.SMALL_ANIMALS,`
-      <div class="title background-color-active">Small Animals</div>
-      <div class="price">6</div>
-      <div class="tag tag1 tag-animal"></div>
-      <div class="card-number">054</div>
-      <div class="content">
+[CardName.SMALL_ANIMALS,` 
+      <div class="content hover-hide-res">
         <div class="points">1/2<div class="animal resource"></div>
         </div>
         <div class="requirements">6% O2</div>
@@ -865,7 +619,7 @@ export const HTML_DATA: Map<string, string> =
           (Action: Add 1 Animal to this card.)
         </div>
         <div class="production-box production-box-size1a">
-          <div class="production-prefix">&#x2796;&#xFE0E;</div><div class="plant production red-outline"></div>
+          <div class="production-prefix minus"></div><div class="plant production red-outline"></div>
         </div>
         <div class="description" style="text-align:left;">
           <div>Requires 6% oxygen.</div>
@@ -873,11 +627,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.KELP_FARMING,`
-      <div class="title background-color-automated">Kelp Farming</div>
-      <div class="price">17</div>
-      <div class="tag tag1 tag-plant"></div>
-      <div class="card-number">055</div>
+[CardName.KELP_FARMING,` 
       <div class="content">
         <div class="points points-big">1</div>
         <div class="requirements">6 Oceans</div>
@@ -892,12 +642,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.MINE,`
-      <div class="title background-color-automated">Mine</div>
-      <div class="price">4</div>
-      <div class="tag tag1 tag-building"></div>
-      <div class="corporate-icon project-icon"></div>
-      <div class="card-number">056</div>
+[CardName.MINE,` 
       <div class="content">
         <div class="production-box">
           <div class="steel production"></div>
@@ -907,13 +652,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.VESTA_SHIPYARD,`
-      <div class="title background-color-automated">Vesta Shipyard</div>
-      <div class="price">15</div>
-      <div class="tag tag1 tag-space"></div>
-      <div class="tag tag2 tag-jovian"></div>
-      <div class="corporate-icon project-icon"></div>
-      <div class="card-number">057</div>
+[CardName.VESTA_SHIPYARD,` 
       <div class="content">
         <div class="points points-big">1</div>
         <div class="production-box">
@@ -924,13 +663,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.BEAM_FROM_A_THORIUM_ASTEROID,`
-      <div class="title background-color-automated">Beam from a Thorium Asteroid</div>
-      <div class="price">32</div>
-      <div class="tag tag1 tag-power"></div>
-      <div class="tag tag2 tag-space"></div>
-      <div class="tag tag3 tag-jovian"></div>
-      <div class="card-number">058</div>
+[CardName.BEAM_FROM_A_THORIUM_ASTEROID,` 
       <div class="content">
         <div class="points points-big">1</div>
         <div class="requirements">Jovian</div>
@@ -943,11 +676,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.MANGROVE,`
-      <div class="title background-color-automated">Mangrove</div>
-      <div class="price">12</div>
-      <div class="tag tag1 tag-plant"></div>
-      <div class="card-number">059</div>
+[CardName.MANGROVE,` 
       <div class="content">
         <div class="points points-big">1</div>
         <div class="requirements">+4 C</div>
@@ -957,11 +686,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.TREES,`
-      <div class="title background-color-automated">Trees</div>
-      <div class="price">13</div>
-      <div class="tag tag1 tag-plant"></div>
-      <div class="card-number">060</div>
+[CardName.TREES,` 
       <div class="content">
         <div class="points points-big">1</div>
         <div class="requirements">-4 C</div>
@@ -974,28 +699,19 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.GREAT_ESCARPMENT_CONSORTIUM,`
-      <div class="title background-color-automated" style="font-size:14px;">Great Escarpment Consortium</div>
-      <div class="price">6</div>
-      <div class="corporate-icon project-icon"></div>
-      <div class="card-number">061</div>
+[CardName.GREAT_ESCARPMENT_CONSORTIUM,` 
       <div class="content">
         <div class="requirements">Steel production</div>
         <div class="production-box production-box-size1a">
-          <div class="production-prefix">&#x2796;&#xFE0E;</div><div class="production steel red-outline"></div><br>
-          <div class="production-prefix">&#x2795;&#xFE0E;</div><div class="production steel"></div>
+          <div class="production-prefix minus"></div><div class="production steel red-outline"></div><br>
+          <div class="production-prefix plus"></div><div class="production steel"></div>
         </div>
         <div class="description">
           (Requires that you have steel production. Decrease any steel production 1 step and increase your own 1 step.)
         </div>
       </div>
 `],
-[CardName.MINERAL_DEPOSIT,`
-        <div class="title background-color-events ">Mineral Deposit</div>
-        <div class="price ">5</div>
-        <div class="tag tag1 tag-event "></div>
-        <div class="corporate-icon project-icon"></div>
-      <div class="card-number">062</div>
+[CardName.MINERAL_DEPOSIT,` 
         <div class="content ">
             5<div class="resource steel"></div>
             <div class="description ">
@@ -1003,28 +719,19 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.MINING_EXPEDITION,`
-        <div class="title background-color-events ">Mining Expedition</div>
-        <div class="price ">12</div>
-        <div class="tag tag1 tag-event "></div>
-      <div class="card-number">063</div>
+[CardName.MINING_EXPEDITION,` 
         <div class="content ">
           <div class="tile oxygen-tile"></div><br>
-            <div class="resource steel"></div><div class="resource steel"></div>
-            <div class="resource plant red-outline"></div><div class="resource plant red-outline"></div>
+          - <div class="resource plant red-outline"></div><div class="resource plant red-outline"></div>
+          <div class="resource steel"></div><div class="resource steel"></div>
             <div class="description ">
                 (Raise oxygen 1 step. Remove 2 plants from any player. Gain 2 steel.)
             </div>
         </div>
 `],
-[CardName.MINING_AREA,`
-      <div class="title background-color-automated">Mining Area</div>
-      <div class="price">4</div>
-      <div class="tag tag1 tag-building"></div>
-      <div class="corporate-icon project-icon"></div>
-      <div class="card-number">064</div>
+[CardName.MINING_AREA,` 
       <div class="content">
-        <div class="tile special-tile" style="font-size:40px;color: rgb(73,54,40);">&#x2692;</div>*<br>
+      <div class="tile special-tile"><div class="special-tile-symbol special-tile--mining-area"></div></div>*<br>
         <div class="production-box production-box-size3">
           <div class="steel production"></div> OR <div class="titanium production"></div>
         </div> *
@@ -1033,39 +740,26 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.BUILDING_INDUSTRIES,`
-      <div class="title background-color-automated">Building Industries</div>
-      <div class="price">6</div>
-      <div class="tag tag1 tag-building"></div>
-      <div class="corporate-icon project-icon"></div>
-      <div class="card-number">065</div>
+[CardName.BUILDING_INDUSTRIES,` 
       <div class="content">
         <div class="production-box production-box-size2a">
-          <div class="production-prefix ">&#x2796;&#xFE0E;</div><div class="energy production"></div><br>
-          <div class="production-prefix ">&#x2795;&#xFE0E;</div><div class="steel production"></div><div class="steel production"></div>
+          <div class="production-prefix minus"></div><div class="energy production"></div><br>
+          <div class="production-prefix plus"></div><div class="steel production"></div><div class="steel production"></div>
         </div>
         <div class="description">
           (Decrease your Energy production 1 step and increase your steel production 2 steps.)
         </div>
       </div>
 `],
-[CardName.LAND_CLAIM,`
-        <div class="title background-color-events ">Land Claim</div>
-        <div class="price ">1</div>
-        <div class="tag tag1 tag-event"></div>
-        <div class="corporate-icon project-icon"></div>
+[CardName.LAND_CLAIM,` 
       <div class="card-number">066</div>
         <div class="content " style="font-size:14px;">
             PLACE YOUR MARKER ON A NON-RESERVED AREA. ONLY YOU MAY PLACE A TILE HERE.
         </div>
 `],
-[CardName.MINING_RIGHTS,`
-      <div class="title background-color-automated">Mining Rights</div>
-      <div class="price">9</div>
-      <div class="tag tag1 tag-building"></div>
-      <div class="card-number">067</div>
+[CardName.MINING_RIGHTS,` 
       <div class="content">
-        <div class="tile special-tile" style="font-size:40px;color: rgb(73,54,40);">&#x2692;</div>*<br>
+      <div class="tile special-tile"><div class="special-tile-symbol special-tile--mining-area"></div></div>*<br>
         <div class="production-box production-box-size3">
           <div class="steel production"></div> OR <div class="titanium production"></div>
         </div> *
@@ -1074,12 +768,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.SPONSORS,`
-      <div class="title background-color-automated">Sponsors</div>
-      <div class="price">6</div>
-      <div class="tag tag1 tag-earth"></div>
-      <div class="corporate-icon project-icon"></div>
-      <div class="card-number">068</div>
+[CardName.SPONSORS,` 
       <div class="content">
         <div class="production-box">
           <div class="money production">2</div>
@@ -1089,13 +778,8 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.ELECTRO_CATAPULT,`
-      <div class="title background-color-active">Electro Catapult</div>
-      <div class="price">17</div>
-      <div class="tag tag1 tag-building"></div>
-      <div class="corporate-icon project-icon"></div>
-      <div class="card-number">069</div>
-      <div class="content">
+[CardName.ELECTRO_CATAPULT,` 
+      <div class="content hover-hide-res">
         <div class="points points-big">1</div>
         <div class="requirements requirements-max">max 8% O2</div>
         <div class="resource plant"></div> / <div class="resource steel"></div> <div class="red-arrow"></div> <div class="resource money">7</div><br>
@@ -1103,19 +787,14 @@ export const HTML_DATA: Map<string, string> =
           (Action: Spend 1 plant or 1 steel to gain 7MC.)
         </div>
         <div class="production-box production-box-size1a">
-          <div class="production-prefix ">&#x2796;&#xFE0E;</div><div class="energy production"></div>
+          <div class="production-prefix minus"></div><div class="energy production"></div>
         </div>
         <div class="description" style="text-align:left;">
           (Oxygen must be 8% or less. Decrease your energy production 1 step.)
         </div>
       </div>
 `],
-[CardName.EARTH_CATAPULT,`
-        <div class="title background-color-active ">Earth Catapult</div>
-        <div class="price ">23</div>
-        <div class="tag tag1 tag-earth"></div>
-        <div class="corporate-icon project-icon"></div>
-      <div class="card-number">070</div>
+[CardName.EARTH_CATAPULT,` 
         <div class="content ">
           <div class="points points-big">2</div>
             : <span class="money resource ">-2</span>
@@ -1124,12 +803,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.ADVANCED_ALLOYS,`
-        <div class="title background-color-active ">Advanced Alloys</div>
-        <div class="price ">9</div>
-        <div class="corporate-icon project-icon"></div>
-        <div class="tag tag1 tag-science "></div>
-      <div class="card-number">071</div>
+[CardName.ADVANCED_ALLOYS,` 
         <div class="content ">
           <div class="resource titanium"></div> : +<div class="resource money">1</div><br>
           <div class="resource steel"></div> : +<div class="resource money">1</div>
@@ -1138,11 +812,7 @@ export const HTML_DATA: Map<string, string> =
           </div>
         </div>
 `],
-[CardName.BIRDS,`
-        <div class="title background-color-active ">Birds</div>
-        <div class="price ">10</div>
-        <div class="tag tag1 tag-animal "></div>
-      <div class="card-number">072</div>
+[CardName.BIRDS,` 
         <div class="content ">
             <div class="points ">1/<div class="animal resource "></div></div>
             <div class="requirements" style="margin-bottom:5px;">13% O2</div>
@@ -1151,35 +821,23 @@ export const HTML_DATA: Map<string, string> =
                 (Action: Add an animal to this card.)
             </div>
             <div class="production-box production-box-size2a">
-              <div class="production-prefix">&#x2796;&#xFE0E;</div><div class="plant production red-outline"></div><div class="plant production red-outline"></div>
+              <div class="production-prefix minus"></div><div class="plant production red-outline"></div><div class="plant production red-outline"></div>
             </div>
             <div class="description"  style="margin-top:-5px;">
                 (Requires 13% oxygen. Decrease any plant production 2 steps. 1 VP per Animal on this card.)
             </div>
         </div>
 `],
-[CardName.MARS_UNIVERSITY,`
-        <div class="title background-color-active ">Mars University</div>
-        <div class="price ">8</div>
-        <div class="tag tag1 tag-building "></div>
-        <div class="tag tag2 tag-science "></div>
-        <div class="corporate-icon project-icon"></div>
-      <div class="card-number">073</div>
+[CardName.MARS_UNIVERSITY,` 
         <div class="content ">
           <div class="points points-big">1</div>
-            <div class="resource-tag science"></div> : - <span class="card resource "></span> + <span class="card resource "></span>
+            <div class="resource-tag tag-science"></div> : - <span class="card resource "></span> + <span class="card resource "></span>
             <div class="description ">
                 (Effect: When you play a Science tag, including this, you may discard a card from hand to draw a card.)
             </div>
         </div>
 `],
-[CardName.VIRAL_ENHANCERS,`
-        <div class="title background-color-active ">Viral Enhancers</div>
-        <div class="price ">9</div>
-        <div class="tag tag1 tag-microbe"></div>
-        <div class="tag tag2 tag-science "></div>
-        <div class="corporate-icon project-icon"></div>
-      <div class="card-number">074</div>
+[CardName.VIRAL_ENHANCERS,` 
         <div class="content ">
             <div class="resource-tag tag-plant"></div> / <div class="resource-tag tag-microbe"></div> / <div class="resource-tag tag-animal"></div> : <br><br>
             <div class="plant resource"></div> / <div class="microbe resource"></div>* / <div class="animal resource"></div>*
@@ -1188,12 +846,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.TOWING_A_COMET,`
-        <div class="title background-color-events ">Towing a Comet</div>
-        <div class="price ">23</div>
-        <div class="tag tag1 tag-event "></div>
-        <div class="tag tag2 tag-space "></div>
-      <div class="card-number">075</div>
+[CardName.TOWING_A_COMET,` 
         <div class="content ">
             <div class="tile oxygen-tile "></div><div class="tile ocean-tile "></div>
             <br>
@@ -1203,12 +856,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.SPACE_MIRRORS,`
-        <div class="title background-color-active ">Space Mirrors</div>
-        <div class="price ">3</div>
-        <div class="tag tag1 tag-space "></div>
-        <div class="tag tag2 tag-power "></div>
-      <div class="card-number">076</div>
+[CardName.SPACE_MIRRORS,` 
         <div class="content ">
             <div class="resource money">7</div>
                           <div class="red-arrow"></div>
@@ -1220,13 +868,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.SOLAR_WIND_POWER,`
-        <div class="title background-color-automated ">Solar Wind Power</div>
-        <div class="price ">11</div>
-        <div class="tag tag1 tag-power "></div>
-        <div class="tag tag2 tag-space "></div>
-        <div class="tag tag3 tag-science "></div>
-      <div class="card-number">077</div>
+[CardName.SOLAR_WIND_POWER,` 
         <div class="content ">
             <div class="production-box ">
                 <div class="energy production "></div>
@@ -1237,12 +879,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.ICE_ASTEROID,`
-        <div class="title background-color-events ">Ice Asteroid</div>
-        <div class="price ">23</div>
-        <div class="tag tag1 tag-event "></div>
-        <div class="tag tag2 tag-space "></div>
-      <div class="card-number">078</div>
+[CardName.ICE_ASTEROID,` 
         <div class="content ">
             <div class="tile ocean-tile "></div><div class="tile ocean-tile "></div>
             <div class="description ">
@@ -1250,13 +887,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.QUANTUM_EXTRACTOR,`
-        <div class="title background-color-active ">Quantum Extractor</div>
-        <div class="price ">13</div>
-        <div class="tag tag1 tag-power"></div>
-        <div class="tag tag2 tag-science"></div>
-        <div class="corporate-icon project-icon"></div>
-      <div class="card-number">079</div>
+[CardName.QUANTUM_EXTRACTOR,` 
         <div class="content ">
           <div class="requirements">4 Science</div>
             <div class="resource-tag tag-space"></div> : <div class="money resource ">-2</div>
@@ -1271,29 +902,18 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.GIANT_ICE_ASTEROID,`
-        <div class="title background-color-events ">Giant Ice Asteroid</div>
-        <div class="price ">36</div>
-        <div class="tag tag1 tag-event "></div>
-        <div class="tag tag2 tag-space "></div>
-      <div class="card-number">080</div>
+[CardName.GIANT_ICE_ASTEROID,` 
         <div class="content ">
             <div class="tile temperature-tile "></div><div class="tile temperature-tile "></div> <br>
             <div class="tile ocean-tile "></div><div class="tile ocean-tile "></div>
             <br>
-            -6<div class="plant resource red-outline "></div>
+            -6  <div class="plant resource red-outline "></div>
             <div class="description ">
                 (Raise temperature 2 steps and place 2 ocean tiles. Remove up to 6 plants from any player.)
             </div>
         </div>
 `],
-[CardName.GANYMEDE_COLONY,`
-        <div class="title background-color-automated ">Ganymede Colony</div>
-        <div class="price ">20</div>
-        <div class="tag tag1 tag-city"></div>
-        <div class="tag tag2 tag-space "></div>
-        <div class="tag tag3 tag-jovian "></div>
-      <div class="card-number">081</div>
+[CardName.GANYMEDE_COLONY,` 
         <div class="content ">
             <div class="points points-big ">1/<span class="resource-tag tag-jovian"></span></div>
             <div class="tile city-tile"></div>*
@@ -1302,13 +922,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.CALLISTO_PENAL_MINES,`
-        <div class="title background-color-automated ">Callisto Penal Mines</div>
-        <div class="price ">24</div>
-        <div class="tag tag1 tag-space "></div>
-        <div class="tag tag2 tag-jovian "></div>
-        <div class="corporate-icon project-icon"></div>
-      <div class="card-number">082</div>
+[CardName.CALLISTO_PENAL_MINES,` 
         <div class="content ">
             <div class="points points-big">2</div>
             <div class="production-box"><div class="production money">3</div></div>
@@ -1317,12 +931,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.GIANT_SPACE_MIRROR,`
-        <div class="title background-color-automated ">Giant Space Mirror</div>
-        <div class="price ">17</div>
-        <div class="tag tag1 tag-space "></div>
-        <div class="tag tag2 tag-power "></div>
-      <div class="card-number">083</div>
+[CardName.GIANT_SPACE_MIRROR,` 
         <div class="content ">
             <div class="production-box production-box-size3"><div class="production energy"></div><div class="production energy"></div><div class="production energy"></div></div>
             <div class="description ">
@@ -1330,44 +939,28 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.TRANS_NEPTUNE_PROBE,`
-        <div class="title background-color-automated ">Trans-Neptune Probe</div>
-        <div class="price ">6</div>
-        <div class="tag tag1 tag-space "></div>
-        <div class="tag tag2 tag-science "></div>
-        <div class="corporate-icon project-icon"></div>
-      <div class="card-number">084</div>
+[CardName.TRANS_NEPTUNE_PROBE,` 
         <div class="content ">
           <div class="points points-big">1</div>
         </div>
 `],
-[CardName.COMMERCIAL_DISTRICT,`
-        <div class="title background-color-automated ">Commercial District</div>
-        <div class="price ">16</div>
-        <div class="tag tag1 tag-building "></div>
-        <div class="corporate-icon project-icon"></div>
-      <div class="card-number">085</div>
+[CardName.COMMERCIAL_DISTRICT,` 
         <div class="content ">
           <div class="points big">1/<div class="tile city-tile-small"></div></div>
           <div class="production-box production-box-size1a">
-              <div class="production-prefix">&#x2796;&#xFE0E;</div><div class="energy production"></div>
-              <div class="production-prefix">&#x2795;&#xFE0E;</div><div class="money production">4</div>
+              <div class="production-prefix minus"></div><div class="energy production"></div>
+              <div class="production-prefix plus"></div><div class="money production">4</div>
           </div>
           <div class="description" style="margin-top:-5px">
           (Decrease your energy production 1 step and increase your MC production 4 steps.)
           </div>
-          <div class="tile special-tile">&#x20ac;</div>
+          <div class="tile special-tile"><div class="special-tile-symbol special-tile--commerical-district"></div></div>
           <div class="description" style="text-align:left; width: 140px;">
           (Place this tile. 1 VP PER ADJACENT CITY TILE.)
           </div>
         </div>
 `],
-[CardName.ROBOTIC_WORKFORCE,`
-        <div class="title background-color-automated ">Robotic Workforce</div>
-        <div class="price ">9</div>
-        <div class="tag tag1 tag-science "></div>
-        <div class="corporate-icon project-icon"></div>
-      <div class="card-number">086</div>
+[CardName.ROBOTIC_WORKFORCE,` 
         <div class="content ">
           COPY A &nbsp; <div class="production-box"><div  class="resource-tag tag-building"></div></div>
           <div class="description">
@@ -1375,11 +968,7 @@ export const HTML_DATA: Map<string, string> =
           </div>
         </div>
 `],
-[CardName.GRASS,`
-      <div class="title background-color-automated">Grass</div>
-      <div class="price">11</div>
-      <div class="tag tag1 tag-plant"></div>
-      <div class="card-number">087</div>
+[CardName.GRASS,` 
       <div class="content">
         <div class="requirements">-16 C</div>
         <div class="production-box">
@@ -1391,11 +980,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.HEATHER,`
-      <div class="title background-color-automated">Heather</div>
-      <div class="price">6</div>
-      <div class="tag tag1 tag-plant"></div>
-      <div class="card-number">088</div>
+[CardName.HEATHER,` 
       <div class="content">
         <div class="requirements">-14 C</div>
         <div class="production-box">
@@ -1407,29 +992,18 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.PEROXIDE_POWER,`
-      <div class="title background-color-automated">Peroxide Power</div>
-      <div class="price">7</div>
-      <div class="tag tag1 tag-building"></div>
-      <div class="tag tag2 tag-power"></div>
-      <div class="card-number">089</div>
+[CardName.PEROXIDE_POWER,` 
       <div class="content">
         <div class="production-box production-box-size2a">
-          <div class="production-prefix">&#x2796;&#xFE0E;</div><div class="money production">1</div><br>
-          <div class="production-prefix">&#x2795;&#xFE0E;</div><div class="energy production"></div><div class="energy production"></div>
+          <div class="production-prefix minus"></div><div class="money production">1</div><br>
+          <div class="production-prefix plus"></div><div class="energy production"></div><div class="energy production"></div>
         </div>
         <div class="description">
           (Decrease your MC production 1 step and increase your Energy production 2 steps.)
         </div>
       </div>
 `],
-[CardName.RESEARCH,`
-        <div class="title background-color-automated ">Research</div>
-        <div class="price ">11</div>
-        <div class="tag tag1 tag-science "></div>
-        <div class="tag tag2 tag-science "></div>
-        <div class="corporate-icon project-icon"></div>
-      <div class="card-number">090</div>
+[CardName.RESEARCH,` 
         <div class="content ">
           <div class="points points-big">1</div>
           <div class="resource card"></div> <div class="resource card"></div>
@@ -1438,12 +1012,7 @@ export const HTML_DATA: Map<string, string> =
           </div>
         </div>
 `],
-[CardName.GENE_REPAIR,`
-        <div class="title background-color-automated ">Gene Repair</div>
-        <div class="price ">12</div>
-        <div class="tag tag1 tag-science "></div>
-        <div class="corporate-icon project-icon"></div>
-      <div class="card-number">091</div>
+[CardName.GENE_REPAIR,` 
         <div class="content ">
           <div class="points points-big">2</div>
           <div class="requirements">3 Science</div>
@@ -1453,13 +1022,7 @@ export const HTML_DATA: Map<string, string> =
           </div>
         </div>
 `],
-[CardName.IO_MINING_INDUSTRIES,`
-        <div class="title background-color-automated ">IO Mining Industries </div>
-        <div class="price ">41</div>
-        <div class="tag tag1 tag-space "></div>
-        <div class="tag tag2 tag-jovian "></div>
-        <div class="corporate-icon project-icon"></div>
-      <div class="card-number">092</div>
+[CardName.IO_MINING_INDUSTRIES,` 
         <div class="content ">
             <div class="points points-big">1/<span class="tag-jovian resource-tag "></span></div>
             <div class="production-box production-box-size3">
@@ -1470,11 +1033,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.BUSHES,`
-      <div class="title background-color-automated">Bushes</div>
-      <div class="price">10</div>
-      <div class="tag tag1 tag-plant"></div>
-      <div class="card-number">093</div>
+[CardName.BUSHES,` 
       <div class="content">
         <div class="requirements">-10 C</div>
         <div class="production-box production-box-size2">
@@ -1486,13 +1045,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.MASS_CONVERTER,`
-        <div class="title background-color-active ">Mass Converter</div>
-        <div class="price ">8</div>
-        <div class="tag tag1 tag-power "></div>
-        <div class="tag tag2 tag-science "></div>
-        <div class="corporate-icon project-icon"></div>
-        <div class="card-number">094</div>
+[CardName.MASS_CONVERTER,` 
         <div class="content ">
           <div class="requirements">5 Science</div>
             <div class="resource-tag tag-space"></div> : <div class="money resource ">-2</div>
@@ -1507,13 +1060,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.PHYSICS_COMPLEX,`
-        <div class="title background-color-active ">Physics Complex</div>
-        <div class="price ">12</div>
-        <div class="tag tag1 tag-building "></div>
-        <div class="tag tag2 tag-science "></div>
-        <div class="corporate-icon project-icon"></div>
-        <div class="card-number">095</div>
+[CardName.PHYSICS_COMPLEX,` 
         <div class="content ">
           <div class="points points-big">2/<div class="science resource"></div></div>
             6 <div class="energy resource "></div> <div class="red-arrow "></div> <div class="resource science"></div>
@@ -1525,12 +1072,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.GREENHOUSES,`
-        <div class="title background-color-automated ">Greenhouses</div>
-        <div class="price ">6</div>
-        <div class="tag tag1 tag-building "></div>
-        <div class="tag tag2 tag-plant "></div>
-        <div class="card-number">096</div>
+[CardName.GREENHOUSES,` 
         <div class="content ">
             <div class="resource plant"></div> / <div class="tile city-tile red-outline"></div>
             <div class="description ">
@@ -1538,43 +1080,29 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.NUCLEAR_ZONE,`
-      <div class="title background-color-automated">Nuclear Zone</div>
-      <div class="price">10</div>
-      <div class="tag tag1 tag-earth"></div>
-      <div class="card-number">097</div>
+[CardName.NUCLEAR_ZONE,` 
       <div class="content">
         <div class="points points-big">-2</div>
-          <div class="tile special-tile" style="font-size:40px;">&#x2622;</div><br>
+        <div class="tile special-tile"><div class="special-tile-symbol special-tile--nuclear-zone"></div></div><br>
           <div class="tile temperature-tile"></div> <div class="tile temperature-tile"></div>
         <div class="description">
           (Place this tile and raise temperature 2 steps.)
         </div>
       </div>
 `],
-[CardName.TROPICAL_RESORT,`
-      <div class="title background-color-automated">Tropical Resort</div>
-      <div class="price">13</div>
-      <div class="tag tag1 tag-building"></div>
-      <div class="corporate-icon project-icon"></div>
-      <div class="card-number">098</div>
+[CardName.TROPICAL_RESORT,` 
       <div class="content">
         <div class="points points-big">2</div>
         <div class="production-box production-box-size2a">
-          <div class="production-prefix ">&#x2796;&#xFE0E;</div><div class="heat production"></div><div class="heat production"></div><br>
-          <div class="production-prefix ">&#x2795;&#xFE0E;</div><div class="money production">3</div>
+          <div class="production-prefix minus"></div><div class="heat production"></div><div class="heat production"></div><br>
+          <div class="production-prefix plus"></div><div class="money production">3</div>
         </div>
         <div class="description">
           (Reduce your heat production 2 steps and increase your MC production 3 steps.)
         </div>
       </div>
 `],
-[CardName.TOLL_STATION,`
-      <div class="title background-color-automated">Toll Station</div>
-      <div class="price">12</div>
-      <div class="tag tag1 tag-space"></div>
-      <div class="corporate-icon project-icon"></div>
-      <div class="card-number">099</div>
+[CardName.TOLL_STATION,` 
       <div class="content">
         <div class="production-box production-box-size2a">
           <div class="production money">1</div> / <div class="resource-tag tag-space red-outline"></div>
@@ -1584,27 +1112,18 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.FUELED_GENERATORS,`
-      <div class="title background-color-automated">Fueled Generators</div>
-      <div class="price">1</div>
-      <div class="tag tag1 tag-building"></div>
-      <div class="tag tag2 tag-power"></div>
-      <div class="card-number">100</div>
+[CardName.FUELED_GENERATORS,` 
       <div class="content">
         <div class="production-box production-box-size1a">
-          <div class="production-prefix">&#x2796;&#xFE0E;</div><div class="money production">1</div><br>
-          <div class="production-prefix">&#x2795;&#xFE0E;</div><div class="energy production"></div>
+          <div class="production-prefix minus"></div><div class="money production">1</div><br>
+          <div class="production-prefix plus"></div><div class="energy production"></div>
         </div>
         <div class="description">
           (Decrease your MC production 1 step and increase your Energy production 1 steps.)
         </div>
       </div>
 `],
-[CardName.IRONWORKS,`
-        <div class="title background-color-active ">Ironworks</div>
-        <div class="price ">11</div>
-        <div class="tag tag1 tag-building "></div>
-      <div class="card-number">101</div>
+[CardName.IRONWORKS,` 
         <div class="content ">
             4 <span class="energy resource "></span> <span class="red-arrow "></span>
             <div class="steel resource "></div><div class="tile oxygen-tile"></div>
@@ -1613,11 +1132,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.POWER_GRID,`
-      <div class="title background-color-automated">Power Grid</div>
-      <div class="price">18</div>
-      <div class="tag tag1 tag-power"></div>
-      <div class="card-number">102</div>
+[CardName.POWER_GRID,` 
       <div class="content">
         <div class="production-box production-box-size2a">
           <div class="energy production"></div> / <div class="resource-tag tag-power"></div>
@@ -1627,11 +1142,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.STEELWORKS,`
-        <div class="title background-color-active ">Steelworks</div>
-        <div class="price ">15</div>
-        <div class="tag tag1 tag-building "></div>
-      <div class="card-number">103</div>
+[CardName.STEELWORKS,` 
         <div class="content ">
             4 <span class="energy resource "></span> <span class="red-arrow "></span>
             <div class="steel resource "></div><div class="resource steel"></div> <div class="tile oxygen-tile" style="margin-left:0px;"></div>
@@ -1640,11 +1151,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.ORE_PROCESSOR,`
-        <div class="title background-color-active ">Ore Processor</div>
-        <div class="price ">13</div>
-        <div class="tag tag1 tag-building "></div>
-      <div class="card-number">104</div>
+[CardName.ORE_PROCESSOR,` 
         <div class="content ">
             4 <span class="energy resource "></span> <span class="red-arrow "></span>
             <div class="titanium resource "></div><div class="tile oxygen-tile"></div>
@@ -1653,25 +1160,15 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.EARTH_OFFICE,`
-        <div class="title background-color-active ">Earth Office</div>
-        <div class="price ">1</div>
-        <div class="tag tag1 tag-earth "></div>
-        <div class="corporate-icon project-icon"></div>
-      <div class="card-number">105</div>
+[CardName.EARTH_OFFICE,` 
         <div class="content ">
             <div class="resource-tag tag-earth"></div> : <div class="money resource ">-3</div>
             <div class="description ">
-                (Effect: When you play an Earth card, you pay 3 MC less for it.)
+                (Effect: When you play an Earth tag, you pay 3 MC less for it.)
             </div>
         </div>
 `],
-[CardName.ACQUIRED_COMPANY,`
-      <div class="title background-color-automated">Acquired Company</div>
-      <div class="price">10</div>
-      <div class="tag tag1 tag-earth"></div>
-      <div class="corporate-icon project-icon"></div>
-      <div class="card-number">106</div>
+[CardName.ACQUIRED_COMPANY,` 
       <div class="content">
         <div class="production-box">
           <div class="money production">3</div>
@@ -1681,46 +1178,30 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.MEDIA_ARCHIVES,`
-      <div class="title background-color-automated">Media Archives</div>
-      <div class="price">8</div>
-      <div class="tag tag1 tag-earth"></div>
-      <div class="corporate-icon project-icon"></div>
-      <div class="card-number">107</div>
+[CardName.MEDIA_ARCHIVES,` 
       <div class="content">
-          <div class="money resource">1</div> / <div class="resource-tag tag-event red-outline"></div>
+          <div class="money resource">1</div> / &nbsp;<div class="resource-tag tag-event red-outline"></div>
         <div class="description">
           (Gain 1 MC for each event EVER PLAYED by all players.)
         </div>
       </div>
 `],
-[CardName.OPEN_CITY,`
-        <div class="title background-color-automated ">Open City</div>
-        <div class="price ">23</div>
-        <div class="tag tag1 tag-building "></div>
-        <div class="tag tag2 tag-city "></div>
-      <div class="card-number">108</div>
+[CardName.OPEN_CITY,` 
         <div class="content ">
-            <div class="points points-big ">1</div>
+            <div class="points points-big">1</div>
             <div class="requirements">12% O2</div>
-            <div class="production-box production-box-size1a " style="margin-bottom:5px;">
-                <div class="production-prefix ">&#x2796;&#xFE0E;</div><div class="energy production "></div>
-                <div class="production-prefix ">&#x2795;&#xFE0E;</div><div class="money production ">4</div>
+            <div class="production-box production-box-size1a">
+                <div class="production-prefix minus"></div><div class="energy production "></div>
+                <div class="production-prefix plus"></div><div class="money production ">4</div>
             </div>
-            <div class="tile city-tile " style="margin-left:20px;margin-bottom:5px; "></div><br>
-            <div class="plant resource "></div><div class="plant resource "></div>
-            <div class="description " style="margin-top:-8px;font-size:11px;text-align: left">
-                <div>Requires 12% oxygen. Gain 2 plants. Place a City tile.</div>
-                <div style="width: 135px">Decrease your Energy production 1 step and increase your MC production 4 steps.</div>
+            <div class="tile city-tile"></div>
+            <div class="plant resource"></div><div class="plant resource"></div>
+            <div class="description">
+                Requires 12% oxygen. Gain 2 plants. Place a City tile. Decrease your Energy production 1 step and increase your MC production 4 steps.
             </div>
         </div>
 `],
-[CardName.MEDIA_GROUP,`
-        <div class="title background-color-active ">Media Group</div>
-        <div class="price ">6</div>
-        <div class="tag tag1 tag-earth "></div>
-        <div class="corporate-icon project-icon"></div>
-      <div class="card-number">109</div>
+[CardName.MEDIA_GROUP,` 
         <div class="content ">
             <div class="resource-tag tag-event"></div> : <div class="money resource ">3</div>
             <div class="description ">
@@ -1728,12 +1209,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.BUSINESS_NETWORK,`
-        <div class="title background-color-active ">Business Network</div>
-        <div class="price ">4</div>
-        <div class="corporate-icon project-icon"></div>
-        <div class="tag tag1 tag-earth "></div>
-      <div class="card-number">110</div>
+[CardName.BUSINESS_NETWORK,` 
         <div class="content ">
             <span class="red-arrow "></span> <span style="font-size:14px; ">ACTION: LOOK AT THE TOP CARD AND EITHER BUY IT OR DISCARD IT</span>
             <br><br>
@@ -1743,24 +1219,12 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.BUSINESS_CONTACTS,`
-        <div class="title background-color-events ">Business Contacts</div>
-        <div class="price ">7</div>
-        <div class="corporate-icon project-icon"></div>
-        <div class="tag tag1 tag-event "></div>
-        <div class="tag tag2 tag-earth "></div>
-      <div class="card-number">111</div>
+[CardName.BUSINESS_CONTACTS,` 
         <div class="content ">
             <span style="font-size:14px; ">LOOK AT THE TOP 4 CARDS FROM THE DECK. TAKE 2 OF THEM INTO HAND AND DISCARD THE OTHER 2</span>
         </div>
 `],
-[CardName.BRIBED_COMMITTEE,`
-        <div class="title background-color-events ">Bribed Committee</div>
-        <div class="price ">7</div>
-        <div class="corporate-icon project-icon"></div>
-        <div class="tag tag1 tag-event "></div>
-        <div class="tag tag2 tag-earth "></div>
-      <div class="card-number">112</div>
+[CardName.BRIBED_COMMITTEE,` 
         <div class="content ">
           <div class="points points-big">-2</div>
           <div class="tile rating"></div> <div class="tile rating"></div>
@@ -1769,12 +1233,7 @@ export const HTML_DATA: Map<string, string> =
           </div>
         </div>
 `],
-[CardName.SOLAR_POWER,`
-        <div class="title background-color-automated ">Solar Power</div>
-        <div class="price ">11</div>
-        <div class="tag tag1 tag-building "></div>
-        <div class="tag tag2 tag-power "></div>
-      <div class="card-number">113</div>
+[CardName.SOLAR_POWER,` 
         <div class="content ">
           <div class="points points-big">1</div>
             <div class="production-box ">
@@ -1785,11 +1244,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.BREATHING_FILTERS,`
-        <div class="title background-color-automated ">Breathing Filters</div>
-        <div class="price ">11</div>
-        <div class="tag tag1 tag-science "></div>
-      <div class="card-number">114</div>
+[CardName.BREATHING_FILTERS,` 
         <div class="content ">
             <div class="points points-big ">2</div>
             <div class="requirements">7% O2</div>
@@ -1798,11 +1253,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.ARTIFICIAL_PHOTOSYNTHESIS,`
-        <div class="title background-color-automated ">Artificial Photosynthesis</div>
-        <div class="price ">12</div>
-        <div class="tag tag1 tag-science "></div>
-      <div class="card-number">115</div>
+[CardName.ARTIFICIAL_PHOTOSYNTHESIS,` 
         <div class="content ">
           <div class="production-box production-box-size4">
             <div class="production plant"></div> OR <div class="production energy"></div><div class="production energy"></div>
@@ -1812,11 +1263,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.ARTIFICIAL_LAKE,`
-      <div class="title background-color-automated">Artificial Lake</div>
-      <div class="price">15</div>
-      <div class="tag tag1 tag-building "></div>
-      <div class="card-number">116</div>
+[CardName.ARTIFICIAL_LAKE,` 
       <div class="content">
         <div class="points points-big">1</div>
         <div class="requirements">-6 C</div>
@@ -1826,26 +1273,17 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.GEOTHERMAL_POWER,`
-        <div class="title background-color-automated ">Geothermal Power</div>
-        <div class="price ">11</div>
-        <div class="tag tag1 tag-building "></div>
-        <div class="tag tag2 tag-power "></div>
-      <div class="card-number">117</div>
+[CardName.GEOTHERMAL_POWER,` 
         <div class="content ">
             <div class="production-box production-box-size2">
                 <div class="energy production "></div><div class="energy production "></div>
             </div>
             <div class="description ">
-                (Increase your energy production 2 step.)
+                (Increase your energy production 2 steps.)
             </div>
         </div>
 `],
-[CardName.FARMING,`
-      <div class="title background-color-automated">Farming</div>
-      <div class="price">16</div>
-      <div class="tag tag1 tag-plant"></div>
-      <div class="card-number">118</div>
+[CardName.FARMING,` 
       <div class="content">
         <div class="points points-big">2</div>
         <div class="requirements">+4 C</div>
@@ -1860,10 +1298,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.DUST_SEALS,`
-        <div class="title background-color-automated ">Dust Seals</div>
-        <div class="price ">2</div>
-      <div class="card-number">119</div>
+[CardName.DUST_SEALS,` 
         <div class="content ">
             <div class="points points-big ">1</div>
             <div class="requirements requirements-max ">max 3 Oceans</div>
@@ -1872,16 +1307,11 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.URBANIZED_AREA,`
-        <div class="title background-color-automated ">Urbanized Area</div>
-        <div class="price ">10</div>
-        <div class="tag tag1 tag-building "></div>
-        <div class="tag tag2 tag-city "></div>
-      <div class="card-number">120</div>
+[CardName.URBANIZED_AREA,` 
         <div class="content ">
             <div class="production-box production-box-size1a ">
-                <div class="production-prefix ">&#x2796;&#xFE0E;</div><div class="energy production "></div>
-                <div class="production-prefix ">&#x2795;&#xFE0E;</div><div class="money production ">2</div>
+                <div class="production-prefix minus"></div><div class="energy production "></div>
+                <div class="production-prefix plus"></div><div class="money production ">2</div>
             </div>
             <div class="tile city-tile " style="margin-left:20px "></div>*<br>
             <div class="description ">
@@ -1890,24 +1320,15 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.SABOTAGE,`
-      <div class="title background-color-events">Sabotage</div>
-      <div class="price">1</div>
-      <div class="tag tag1 tag-event"></div>
-      <div class="corporate-icon project-icon"></div>
-      <div class="card-number">121</div>
+[CardName.SABOTAGE,` 
       <div class="content">
-        -3<div class="resource titanium red-outline"></div> OR -4<div class="resource steel red-outline"></div> OR -<div class="resource money red-outline">7</div>
+        -3<div class="resource titanium red-outline"></div> OR -4<div class="resource steel red-outline"></div> OR - <div class="resource money red-outline">7</div>
         <div class="description">
           (Remove up to 3 titanium from any player, or 4 steel, or 7 MC.)
         </div>
       </div>
 `],
-[CardName.MOSS,`
-      <div class="title background-color-automated">Moss</div>
-      <div class="price">4</div>
-      <div class="tag tag1 tag-plant"></div>
-      <div class="card-number">122</div>
+[CardName.MOSS,` 
       <div class="content">
         <div class="requirements">3 Oceans</div>
         <div class="production-box">
@@ -1919,72 +1340,50 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.INDUSTRIAL_CENTER,`
-        <div class="title background-color-active ">Industrial Center</div>
-        <div class="price ">4</div>
-        <div class="tag tag1 tag-building "></div>
-        <div class="corporate-icon project-icon"></div>
-        <div class="card-number">123</div>
+[CardName.INDUSTRIAL_CENTER,` 
         <div class="content ">
             <div class="money resource ">7</div> <div class="red-arrow "></div> <div class="production-box"><div class="steel production "></div></div>
             <div class="description ">
                 (Action: Spend 7 MC to increase your steel production 1 step.)
             </div><br>
-            <div class="tile special-tile">&#x1f3ed;</div>*
+            <div class="tile special-tile"><div class="special-tile-symbol special-tile--industrial-center"></div></div>*
             <div class="description ">
                 (Place this tile adjacent to a city tile.)
             </div>
         </div>
 `],
-[CardName.HIRED_RAIDERS,`
-      <div class="title background-color-events">Hired Raiders</div>
-      <div class="price">1</div>
-      <div class="tag tag1 tag-event"></div>
-      <div class="corporate-icon project-icon"></div>
-      <div class="card-number">124</div>
+[CardName.HIRED_RAIDERS,` 
       <div class="content">
-        STEAL 2<div class="resource steel red-outline"></div> <br>OR STEAL <div class="resource money red-outline">3</div>
+        STEAL 2 <div class="resource steel red-outline"></div> <br>OR STEAL <div class="resource money red-outline">3</div>
         <div class="description">
           (Steal up to 2 steel, or 3 MC from any player.)
         </div>
       </div>
 `],
-[CardName.HACKERS,`
-        <div class="title background-color-automated ">Hackers</div>
-        <div class="price ">3</div>
-        <div class="corporate-icon project-icon"></div>
-        <div class="card-number">125</div>
+[CardName.HACKERS,` 
         <div class="content ">
           <div class="points points-big">-1</div>
             <div class="production-box production-box-size2a ">
-                <div class="production-prefix ">&#x2796;&#xFE0E;</div><div class="energy production "></div><div class="money production red-outline">2</div>
-                <div class="production-prefix ">&#x2795;&#xFE0E;</div><div class="money production ">2</div>
+                <div class="production-prefix minus"></div><div class="energy production "></div><div class="money production red-outline">2</div>
+                <div class="production-prefix plus"></div><div class="money production ">2</div>
             </div>
             <div class="description ">
                 Decrease your energy production 1 step and any MC production 2 steps. increase your MC production 2 steps.
             </div>
         </div>
 `],
-[CardName.GHG_FACTORIES,`
-      <div class="title background-color-automated">GHG Factories</div>
-      <div class="price">11</div>
-      <div class="tag tag1 tag-building"></div>
-      <div class="card-number">126</div>
+[CardName.GHG_FACTORIES,` 
       <div class="content">
         <div class="production-box production-box-size2">
-          <div class="production-prefix">&#x2796;&#xFE0E;</div>&nbsp;&nbsp;<div class="energy production"></div><br>
-          <div class="production-prefix">&#x2795;&#xFE0E;</div>4 <div class="heat production"></div>
+          <div class="production-prefix minus"></div>&nbsp;&nbsp;<div class="energy production"></div><br>
+          <div class="production-prefix plus"></div>4 <div class="heat production"></div>
         </div>
         <div class="description">
           (Decrease your Energy production 1 step and increase your heat production 4 steps.)
         </div>
       </div>
 `],
-[CardName.SUBTERRANEAN_RESERVOIR,`
-        <div class="title background-color-events ">Subterranean Reservoir</div>
-        <div class="price ">11</div>
-        <div class="tag tag1 tag-event "></div>
-        <div class="card-number">127</div>
+[CardName.SUBTERRANEAN_RESERVOIR,` 
         <div class="content ">
             <div class="tile ocean-tile "></div>
             <div class="description ">
@@ -1992,12 +1391,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.ECOLOGICAL_ZONE,`
-      <div class="title background-color-active">Ecological Zone</div>
-      <div class="price">12</div>
-      <div class="tag tag1 tag-plant"></div>
-      <div class="tag tag2 tag-animal"></div>
-      <div class="card-number">128</div>
+[CardName.ECOLOGICAL_ZONE,` 
       <div class="content">
         <div class="points">1/2<div class="resource animal"></div></div>
         <div class="requirements">Forest</div>
@@ -2005,16 +1399,13 @@ export const HTML_DATA: Map<string, string> =
         <div class="description">
           (Effect: When you play an animal or plant tag (including these), add an animal to this card.)
         </div>
-        <div class="tile special-tile" style="margin-left:143px;">&#x1F43e;&#xFE0E;</div>
-        <div class="description" style="text-align:left;margin-top:-65px;width: 135px;">
+        <div class="tile special-tile"><div class="special-tile-symbol special-tile--ecological-zone"></div></div>*
+        <div class="description description-tile">
           (Requires that you have a greenery tile. Place this tile adjacent to any greenery tile. 1 VP per 2 Animals on this card.)
         </div>
       </div>
 `],
-[CardName.ZEPPELINS,`
-        <div class="title background-color-automated ">Zeppelins</div>
-        <div class="price ">13</div>
-      <div class="card-number">129</div>
+[CardName.ZEPPELINS,` 
         <div class="content ">
           <div class="points points-big">1</div>
             <div class="requirements ">5% O2</div>
@@ -2026,11 +1417,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.WORMS,`
-        <div class="title background-color-automated ">Worms</div>
-        <div class="price ">8</div>
-        <div class="tag tag1 tag-microbe"></div>
-      <div class="card-number">130</div>
+[CardName.WORMS,` 
         <div class="content ">
             <div class="requirements ">4% O2</div>
             <div class="production-box production-box-size2a ">
@@ -2041,11 +1428,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.DECOMPOSERS,`
-      <div class="title background-color-active">Decomposers</div>
-      <div class="price">5</div>
-      <div class="tag tag1 tag-microbe"></div>
-      <div class="card-number">131</div>
+[CardName.DECOMPOSERS,` 
       <div class="content">
         <div class="points">1/3<div class="resource microbe"></div></div>
         <div class="requirements">3% O2</div>
@@ -2058,13 +1441,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.FUSION_POWER,`
-      <div class="title background-color-automated">Fusion Power</div>
-      <div class="price">14</div>
-      <div class="tag tag1 tag-building"></div>
-      <div class="tag tag2 tag-power"></div>
-      <div class="tag tag3 tag-science"></div>
-      <div class="card-number">132</div>
+[CardName.FUSION_POWER,` 
       <div class="content">
         <div class="requirements">2 Power</div>
         <div class="production-box production-box-size3">
@@ -2075,11 +1452,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.SYMBIOTIC_FUNGUS,`
-        <div class="title background-color-active ">Symbiotic Fungus</div>
-        <div class="price ">4</div>
-        <div class="tag tag1 tag-microbe "></div>
-      <div class="card-number">133</div>
+[CardName.SYMBIOTIC_FUNGUS,` 
         <div class="content ">
             <div class="requirements ">-14 C</div>
             <div class="red-arrow "></div> <div class="microbe resource "></div>*
@@ -2090,11 +1463,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.EXTREME_COLD_FUNGUS,`
-        <div class="title background-color-active ">Extreme-Cold Fungus</div>
-        <div class="price ">13</div>
-        <div class="tag tag1 tag-microbe "></div>
-      <div class="card-number">134</div>
+[CardName.EXTREME_COLD_FUNGUS,` 
         <div class="content ">
             <div class="requirements requirements-max">max -10 C</div>
             <div class="red-arrow " style="margin-left:-9px"></div> <div class="plant resource " ></div><br>
@@ -2106,13 +1475,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.ADVANCED_ECOSYSTEMS,`
-      <div class="title background-color-automated">Advanced Ecosystems</div>
-      <div class="price">11</div>
-      <div class="tag tag1 tag-animal"></div>
-      <div class="tag tag2 tag-microbe"></div>
-      <div class="tag tag3 tag-plant"></div>
-      <div class="card-number">135</div>
+[CardName.ADVANCED_ECOSYSTEMS,` 
       <div class="content">
         <div class="points points-big">3</div>
         <div class="requirements">Plant Microbe Animal</div>
@@ -2121,12 +1484,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.GREAT_DAM,`
-      <div class="title background-color-automated">Great Dam</div>
-      <div class="price">12</div>
-      <div class="tag tag1 tag-building"></div>
-      <div class="tag tag2 tag-power"></div>
-      <div class="card-number">136</div>
+[CardName.GREAT_DAM,` 
       <div class="content">
         <div class="points points-big">1</div>
         <div class="requirements">4 Oceans</div>
@@ -2138,12 +1496,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.CARTEL,`
-      <div class="title background-color-automated">Cartel</div>
-      <div class="price">8</div>
-      <div class="tag tag1 tag-earth"></div>
-      <div class="corporate-icon project-icon"></div>
-      <div class="card-number">137</div>
+[CardName.CARTEL,` 
       <div class="content">
         <div class="production-box production-box-size2a">
           <div class="money production">1</div> / <div class="tag-earth v resource-tag"></div>
@@ -2153,15 +1506,11 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.STRIP_MINE,`
-        <div class="title background-color-automated ">Strip Mine</div>
-        <div class="price ">25</div>
-        <div class="tag tag1 tag-building "></div>
-      <div class="card-number">138</div>
+[CardName.STRIP_MINE,` 
         <div class="content ">
             <div class="production-box production-box-size3a ">
-                <div class="production-prefix ">&#x2796;&#xFE0E;</div><div class="energy production "></div><div class="energy production "></div><br>
-                <div class="production-prefix ">&#x2795;&#xFE0E;</div><div class="steel production "></div><div class="steel production "></div><div class="titanium production "></div>
+                <div class="production-prefix minus"></div><div class="energy production "></div><div class="energy production "></div><br>
+                <div class="production-prefix plus"></div><div class="steel production "></div><div class="steel production "></div><div class="titanium production "></div>
             </div><br>
             <div class="tile oxygen-tile "></div><div class="tile oxygen-tile "></div>
             <div class="description ">
@@ -2169,11 +1518,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.WAVE_POWER,`
-      <div class="title background-color-automated">Wave Power</div>
-      <div class="price">8</div>
-      <div class="tag tag1 tag-power"></div>
-      <div class="card-number">139</div>
+[CardName.WAVE_POWER,` 
       <div class="content">
         <div class="points points-big">1</div>
         <div class="requirements">3 Oceans</div>
@@ -2185,25 +1530,16 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.LAVA_FLOWS,`
-                <div class="title background-color-events ">Lava Flows</div>
-                <div class="price ">18</div>
-                <div class="tag tag1 tag-event "></div>
-      <div class="card-number">140</div>
+[CardName.LAVA_FLOWS,` 
                 <div class="content ">
                     <div class="tile temperature-tile "></div><div class="tile temperature-tile "></div><br>
-                    <div class="tile special-tile ">&#x1f30b;</div>*
+                    <div class="tile special-tile"><div class="special-tile-symbol special-tile--lava-flows"></div></div>*
                     <div class="description ">
                       (Raise temperature 2 steps and place this tile ON EITHER THARSIS THOLUS, ASCRAEUS MONS, PAVONIS MONS OR ARSIA MONS.)
                     </div>
                 </div>
 `],
-[CardName.POWER_PLANT,`
-      <div class="title background-color-automated">Power Plant</div>
-      <div class="price">4</div>
-      <div class="tag tag1 tag-building"></div>
-      <div class="tag tag2 tag-power"></div>
-      <div class="card-number">141</div>
+[CardName.POWER_PLANT,` 
       <div class="content">
         <div class="production-box "><div class="energy production"></div>
         </div>
@@ -2212,28 +1548,18 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.MOHOLE_AREA,`
-      <div class="title background-color-automated">Mohole Area</div>
-      <div class="price">20</div>
-      <div class="tag tag1 tag-building"></div>
-      <div class="card-number">142</div>
+[CardName.MOHOLE_AREA,` 
       <div class="content">
         <div class="production-box production-box-size1a">
           4 <div class="heat production"></div>
         </div><br>
-          <div class="tile special-tile " style="font-size:40px;">&#x2668;</div>*
+          <div class="tile special-tile"><div class="special-tile-symbol special-tile--mohole-area"></div></div>*
         <div class="description">
           (Increase your heat production 4 steps. Place this tile ON AN AREA RESERVED FOR OCEAN.)
         </div>
       </div>
 `],
-[CardName.LARGE_CONVOY,`
-        <div class="title background-color-events ">Large Convoy</div>
-        <div class="price ">36</div>
-        <div class="tag tag1 tag-event "></div>
-        <div class="tag tag2 tag-space "></div>
-        <div class="tag tag3 tag-earth "></div>
-      <div class="card-number">143</div>
+[CardName.LARGE_CONVOY,` 
         <div class="content ">
           <div class="points points-big">2</div>
             <div class="tile ocean-tile "></div> <div class="resource card "></div><div class="resource card"></div><br>
@@ -2243,12 +1569,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.TITANIUM_MINE,`
-      <div class="title background-color-automated">Titanium Mine</div>
-      <div class="price">7</div>
-      <div class="tag tag1 tag-building"></div>
-      <div class="corporate-icon project-icon"></div>
-      <div class="card-number">144</div>
+[CardName.TITANIUM_MINE,` 
       <div class="content">
         <div class="production-box">
           <div class="titanium production"></div>
@@ -2258,12 +1579,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.TECTONIC_STRESS_POWER,`
-      <div class="title background-color-automated">Tectonic Stress Power</div>
-      <div class="price">18</div>
-      <div class="tag tag1 tag-building"></div>
-      <div class="tag tag2 tag-power"></div>
-      <div class="card-number">145</div>
+[CardName.TECTONIC_STRESS_POWER,` 
       <div class="content">
         <div class="points points-big">1</div>
         <div class="requirements">2 Science</div>
@@ -2275,11 +1591,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.NITROPHILIC_MOSS,`
-      <div class="title background-color-automated"> Nitrophilic Moss</div>
-      <div class="price">8</div>
-      <div class="tag tag1 tag-plant"></div>
-      <div class="card-number">146</div>
+[CardName.NITROPHILIC_MOSS,` 
       <div class="content">
         <div class="requirements">3 Oceans</div>
         <div class="production-box production-box-size2">
@@ -2291,32 +1603,24 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.HERBIVORES,`
-        <div class="title background-color-active ">Herbivores</div>
-        <div class="price ">12</div>
-        <div class="tag tag1 tag-animal "></div>
-        <div class="card-number">147</div>
-        <div class="content ">
+[CardName.HERBIVORES,` 
+        <div class="content hover-hide-res">
             <div class="points ">1/2<div class="animal resource "></div></div>
             <div class="requirements">8% O2</div>
-            <div class="tile greenery-tile" style="margin-top:-3px;"></div> : <div class="animal resource "></div>
-            <div class="description " style="margin-top:-8px;">
+            <div class="tile greenery-tile"></div> : <div class="animal resource "></div>
+            <div class="description">
               (Effect: When you place a greenery tile, add an Animal to this card.)
             </div>
-            <div class="animal resource " style="margin-left:105px;"></div>
-            <div class="production-box production-box-size1a" style="margin-top:2px;">
-                <div class="production-prefix">&#x2796;&#xFE0E;</div><div class="plant production red-outline"></div>
+            <div class="animal resource herbivores-starting-animal"></div>
+            <div class="production-box production-box-size1a">
+                <div class="production-prefix minus"></div><div class="plant production red-outline"></div>
             </div>
-            <div class="description" style="position:absolute;text-align:left;margin-top:-25px; width: 130px;">
+            <div class="description herbivores-requirement">
               (Requires 8% oxygen. Add 1 Animal to this card. Decrease any Plant production 1 step. 1 VP per 2 Animals on this card.)
             </div>
         </div>
 `],
-[CardName.INSECTS,`
-        <div class="title background-color-automated ">Insects</div>
-        <div class="price ">9</div>
-        <div class="tag tag1 tag-microbe"></div>
-      <div class="card-number">148</div>
+[CardName.INSECTS,` 
         <div class="content ">
             <div class="requirements ">6% O2</div>
             <div class="production-box production-box-size2a ">
@@ -2327,22 +1631,12 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.CEOS_FAVORITE_PROJECT,`
-        <div class="title background-color-events ">CEO's Favorite Project</div>
-        <div class="price ">1</div>
-        <div class="tag tag1 tag-event"></div>
-        <div class="corporate-icon project-icon"></div>
-      <div class="card-number">149</div>
+[CardName.CEOS_FAVORITE_PROJECT,` 
         <div class="content " style="font-size:14px;">
           ADD 1 RESOURCE TO A CARD WITH AT LEAST 1 RESOURCE ON IT
         </div>
 `],
-[CardName.ANTI_GRAVITY_TECHNOLOGY,`
-        <div class="title background-color-active ">Anti-Gravity Technology</div>
-        <div class="price ">14</div>
-        <div class="tag tag1 tag-science"></div>
-        <div class="corporate-icon project-icon"></div>
-      <div class="card-number">150</div>
+[CardName.ANTI_GRAVITY_TECHNOLOGY,` 
         <div class="content ">
           <div class="points points-big">3</div>
           <div class="requirements">7 Science</div>
@@ -2355,13 +1649,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.INVESTMENT_LOAN,`
-        <div class="title background-color-events ">Investment Loan</div>
-        <div class="price ">3</div>
-        <div class="corporate-icon project-icon"></div>
-        <div class="tag tag1 tag-event "></div>
-        <div class="tag tag2 tag-earth "></div>
-      <div class="card-number">151</div>
+[CardName.INVESTMENT_LOAN,` 
         <div class="content ">
             <div class="production-box"><div class="production money">-1</div></div> <div class="resource money" style="margin-left:20px;">10</div>
             <div class="description ">
@@ -2369,10 +1657,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.INSULATION,`
-        <div class="title background-color-automated ">Insulation</div>
-        <div class="price ">2</div>
-      <div class="card-number">152</div>
+[CardName.INSULATION,` 
         <div class="content ">
             <div class="production-box production-box-size3 ">
                 -x<div class="heat production "></div> +<div class="money production ">X</div>
@@ -2382,24 +1667,18 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.ADAPTATION_TECHNOLOGY,`
-      <div class="title background-color-active">Adaptation Technology</div>
-      <div class="price">12</div>
-      <div class="tag tag1 tag-science"></div>
-      <div class="card-number">153</div>
+[CardName.ADAPTATION_TECHNOLOGY,` 
       <div class="content">
         <div class="points points-big">1</div>
-        <div class="tile background-color-corporation" style="width:100px;text-shadow:none;color:black;font-size:11px;padding-top:5px;padding-bottom:5px;">Temp / O2 / Ocean</div>: +/- 2
+        <div class="card-content-requirements">
+          <div class="globals-box">Global requirements</div>: +/- 2
+        </div>
         <div class="description">
           (Effect: Your global requirements are +2 or -2 steps, your choice in each case.)
         </div>
       </div>
 `],
-[CardName.CARETAKER_CONTRACT,`
-        <div class="title background-color-active ">Caretaker Contract</div>
-        <div class="price ">3</div>
-        <div class="corporate-icon project-icon"></div>
-      <div class="card-number">154</div>
+[CardName.CARETAKER_CONTRACT,` 
         <div class="content ">
           <div class="requirements">0 C</div>
           8  <span class="heat resource "></span> <span class="red-arrow "></span> <span class="rating tile "></span>
@@ -2411,12 +1690,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.DESIGNED_MICRO_ORGANISMS,`
-        <div class="title background-color-automated ">Designed Micro-organisms</div>
-        <div class="price ">16</div>
-        <div class="tag tag1 tag-microbe"></div>
-        <div class="tag tag2 tag-science"></div>
-      <div class="card-number">155</div>
+[CardName.DESIGNED_MICRO_ORGANISMS,` 
         <div class="content ">
             <div class="requirements requirements-max">max -14 C</div>
             <div class="production-box production-box-size2 ">
@@ -2427,25 +1701,18 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.STANDARD_TECHNOLOGY,`
-      <div class="title background-color-active">Standard Technology</div>
-      <div class="price">6</div>
-      <div class="tag tag1 tag-science"></div>
-      <div class="corporate-icon project-icon"></div>
-      <div class="card-number">156</div>
+[CardName.STANDARD_TECHNOLOGY,` 
       <div class="content">
-        <div class="tile" style="width:100px;text-shadow:none;color:black;font-size:14px;line-height:17px;vertical-align:middle;background-color: rgb(255,204,100);padding:5px;">Standard projects</div> : <div class="money resource">3</div>
+        <div class="card-content-requirements">
+          <div class="globals-box">Standard projects</div> : <div class="money resource">3</div>
+        </div>
         <div class="description">
           (Effect: After you pay for a standard project, except selling patents, you gain 3 MC.)
         </div>
       </div>
 `],
-[CardName.NITRITE_REDUCING_BACTERIA,`
-        <div class="title background-color-active ">Nitrite Reducing Bacteria</div>
-        <div class="price ">11</div>
-        <div class="tag tag1 tag-microbe "></div>
-        <div class="card-number">157</div>
-        <div class="content ">
+[CardName.NITRITE_REDUCING_BACTERIA,` 
+        <div class="content hover-hide-res">
             <div class="red-arrow "></div> <div class="microbe resource "></div><br>
             OR 3 <div class="microbe resource "></div> <div class="red-arrow "></div> <div class="tile rating "></div>
             <div class="description ">
@@ -2457,12 +1724,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.INDUSTRIAL_MICROBES,`
-      <div class="title background-color-automated">Industrial Microbes</div>
-      <div class="price">12</div>
-      <div class="tag tag1 tag-building"></div>
-      <div class="tag tag2 tag-microbe"></div>
-      <div class="card-number">158</div>
+[CardName.INDUSTRIAL_MICROBES,` 
       <div class="content">
         <div class="production-box">
           <div class="energy production"></div>
@@ -2473,11 +1735,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.LICHEN,`
-      <div class="title background-color-automated">Lichen</div>
-      <div class="price">7</div>
-      <div class="tag tag1 tag-plant"></div>
-      <div class="card-number">159</div>
+[CardName.LICHEN,` 
       <div class="content">
         <div class="requirements">-24 C</div>
         <div class="production-box">
@@ -2488,29 +1746,19 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.POWER_SUPPLY_CONSORTIUM,`
-        <div class="title background-color-automated">Power Supply Consortium</div>
-        <div class="price">5</div>
-        <div class="tag tag1 tag-power"></div>
-        <div class="corporate-icon project-icon"></div>
-      <div class="card-number">160</div>
+[CardName.POWER_SUPPLY_CONSORTIUM,` 
         <div class="content">
           <div class="requirements">2 Power</div>
           <div class="production-box production-box-size1a">
-              <div class="production-prefix">&#x2796;&#xFE0E;</div><div class="energy production red-outline"></div>
-              <div class="production-prefix">&#x2795;&#xFE0E;</div><div class="energy production"></div>
+              <div class="production-prefix minus"></div><div class="energy production red-outline"></div>
+              <div class="production-prefix plus"></div><div class="energy production"></div>
           </div>
           <div class="description">
             (Requires 2 Power tags. Decrease any Energy production 1 step and increase your own 1 step.)
           </div>
         </div>
 `],
-[CardName.CONVOY_FROM_EUROPA,`
-          <div class="title background-color-events ">Convoy From Europa</div>
-          <div class="price ">15</div>
-          <div class="tag tag1 tag-event "></div>
-          <div class="tag tag2 tag-space "></div>
-      <div class="card-number">161</div>
+[CardName.CONVOY_FROM_EUROPA,`  
           <div class="content ">
               <div class="tile ocean-tile "></div> <div class="resource card " style="margin-left:20px;"></div>
               <div class="description ">
@@ -2518,13 +1766,7 @@ export const HTML_DATA: Map<string, string> =
               </div>
           </div>
 `],
-[CardName.IMPORTED_GHG,`
-          <div class="title background-color-events ">Imported GHG</div>
-          <div class="price ">7</div>
-          <div class="tag tag1 tag-event "></div>
-          <div class="tag tag2 tag-space "></div>
-          <div class="tag tag3 tag-earth "></div>
-      <div class="card-number">162</div>
+[CardName.IMPORTED_GHG,` 
           <div class="content ">
             <div class="production-box ">
                 <div class="heat production"></div>
@@ -2534,24 +1776,17 @@ export const HTML_DATA: Map<string, string> =
               </div>
           </div>
 `],
-[CardName.IMPORTED_NITROGEN,`
-          <div class="title background-color-events ">Imported Nitrogen</div>
-          <div class="price ">23</div>
-          <div class="tag tag1 tag-event "></div>
-          <div class="tag tag2 tag-space "></div>
-          <div class="tag tag3 tag-earth "></div>
-      <div class="card-number">163</div>
+[CardName.IMPORTED_NITROGEN,` 
           <div class="content ">
-            <div class="rating tile"></div> 4<div class="plant resource"></div> 3<div class="microbe resource"></div>* 2<div class="animal resource"></div>*
+              <div class="nowrap">
+                <div class="rating tile"></div> 4<div class="plant resource"></div> 3<div class="microbe resource"></div>* 2<div class="animal resource"></div>*
+              </div>
               <div class="description ">
                 (Raise your TR 1 step and gain 4 Plants. Add 3 Microbes to ANOTHER card and 2 Animals to ANOTHER card.)
               </div>
           </div>
 `],
-[CardName.MICRO_MILLS,`
-        <div class="title background-color-automated">Micro-Mills</div>
-        <div class="price">3</div>
-      <div class="card-number">164</div>
+[CardName.MICRO_MILLS,` 
         <div class="content">
           <div class="production-box">
           <div class="heat production"></div>
@@ -2561,15 +1796,11 @@ export const HTML_DATA: Map<string, string> =
           </div>
         </div>
 `],
-[CardName.MAGNETIC_FIELD_GENERATORS,`
-        <div class="title background-color-automated">Magnetic Field Generators</div>
-        <div class="price">20</div>
-        <div class="tag tag1 tag-building"></div>
-      <div class="card-number">165</div>
+[CardName.MAGNETIC_FIELD_GENERATORS,` 
         <div class="content">
           <div class="production-box production-box-size2a">
-            <div class="production-prefix">&#x2796;&#xFE0E;</div> 4 <div class="energy production"></div><br>
-            <div class="production-prefix">&#x2795;&#xFE0E;</div><div class="plant production"></div><div class="plant production"></div>
+            <div class="production-prefix minus"></div> 4 <div class="energy production"></div><br>
+            <div class="production-prefix plus"></div><div class="plant production"></div><div class="plant production"></div>
           </div> <br>
            <div class="tile rating"></div> <div class="tile rating"></div> <div class="tile rating"></div>
           <div class="description">
@@ -2577,11 +1808,7 @@ export const HTML_DATA: Map<string, string> =
           </div>
         </div>
 `],
-[CardName.SHUTTLES,`
-          <div class="title background-color-active ">Shuttles</div>
-          <div class="price ">10</div>
-          <div class="tag tag1 tag-space "></div>
-      <div class="card-number">166</div>
+[CardName.SHUTTLES,` 
           <div class="content ">
             <div class="points points-big">1</div>
             <div class="requirements">5% O2</div>
@@ -2590,20 +1817,15 @@ export const HTML_DATA: Map<string, string> =
                   (Effect: When you play a Space card, you pay 2 MC less for it.)
               </div>
               <div class="production-box production-box-size1a" style="margin-top:10px;margin-right:130px;">
-                 <div class="production-prefix">&#x2796;&#xFE0E;</div><div class="energy production"></div>
-                   <div class="production-prefix">&#x2795;&#xFE0E;</div><div class="money production">2</div>
+                 <div class="production-prefix minus"></div><div class="energy production"></div>
+                   <div class="production-prefix plus"></div><div class="money production">2</div>
               </div>
               <div class="description " style="position:absolute;margin-top:-90px;text-align:left;margin-left:86px;">
                 (Requires 5% oxygen. Decrease your Energy production 1 step and increase your MC production 2 steps.)
               </div>
           </div>
 `],
-[CardName.IMPORT_OF_ADVANCED_GHG,`
-          <div class="title background-color-events ">Import of Advanced GHG</div>
-          <div class="price ">9</div>
-          <div class="tag tag1 tag-event "></div>
-          <div class="tag tag2 tag-space "></div>
-          <div class="tag tag3 tag-earth "></div>
+[CardName.IMPORT_OF_ADVANCED_GHG,` 
       <div class="card-number">167</div>
           <div class="content ">
             <div class="production-box production-box-size2">
@@ -2614,12 +1836,7 @@ export const HTML_DATA: Map<string, string> =
               </div>
           </div>
 `],
-[CardName.WINDMILLS,`
-          <div class="title background-color-automated ">Windmills</div>
-          <div class="price ">6</div>
-          <div class="tag tag1 tag-building "></div>
-          <div class="tag tag2 tag-power "></div>
-      <div class="card-number">168</div>
+[CardName.WINDMILLS,` 
           <div class="content ">
             <div class="points points-big">1</div>
             <div class="requirements">7% O2</div>
@@ -2631,11 +1848,7 @@ export const HTML_DATA: Map<string, string> =
               </div>
           </div>
 `],
-[CardName.TUNDRA_FARMING,`
-        <div class="title background-color-automated">Tundra Farming</div>
-        <div class="price">16</div>
-        <div class="tag tag1 tag-plant"></div>
-      <div class="card-number">169</div>
+[CardName.TUNDRA_FARMING,` 
         <div class="content">
           <div class="points points-big">2</div>
           <div class="requirements">-6 C</div>
@@ -2648,12 +1861,7 @@ export const HTML_DATA: Map<string, string> =
           </div>
         </div>
 `],
-[CardName.AEROBRAKED_AMMONIA_ASTEROID,`
-          <div class="title background-color-events " style="font-size:14px">Aerobraked Ammonia Asteroid</div>
-          <div class="price ">26</div>
-          <div class="tag tag1 tag-event "></div>
-          <div class="tag tag2 tag-space "></div>
-      <div class="card-number">170</div>
+[CardName.AEROBRAKED_AMMONIA_ASTEROID,` 
           <div class="content ">
             <div class="production-box production-box-size3">
                 <div class="heat production"></div><div class="heat production"></div><div class="heat production"></div>
@@ -2665,15 +1873,11 @@ export const HTML_DATA: Map<string, string> =
               </div>
           </div>
 `],
-[CardName.MAGNETIC_FIELD_DOME,`
-        <div class="title background-color-automated">Magnetic Field Dome</div>
-        <div class="price">5</div>
-        <div class="tag tag1 tag-building"></div>
-        <div class="card-number">171</div>
+[CardName.MAGNETIC_FIELD_DOME,` 
         <div class="content">
           <div class="production-box production-box-size2a">
-            <div class="production-prefix">&#x2796;&#xFE0E;</div><div class="energy production"></div><div class="energy production"></div><br>
-            <div class="production-prefix">&#x2795;&#xFE0E;</div><div class="plant production"></div>
+            <div class="production-prefix minus"></div><div class="energy production"></div><div class="energy production"></div><br>
+            <div class="production-prefix plus"></div><div class="plant production"></div>
           </div>
            &nbsp;&nbsp;&nbsp;<div class="tile rating"></div>
           <div class="description">
@@ -2681,13 +1885,8 @@ export const HTML_DATA: Map<string, string> =
           </div>
         </div>
 `],
-[CardName.PETS,`
-        <div class="title background-color-active">Pets</div>
-        <div class="price">10</div>
-        <div class="tag tag1 tag-animal"></div>
-        <div class="tag tag2 tag-earth"></div>
-        <div class="card-number">172</div>
-        <div class="content">
+[CardName.PETS,` 
+        <div class="content hover-hide-res">
           <div class="points">1/2<div class="animal resource"></div>
           </div>
           <div class="tile city-tile-small red-outline"></div> : <div class="animal resource"></div> <br>
@@ -2701,22 +1900,13 @@ export const HTML_DATA: Map<string, string> =
           </div>
         </div>
 `],
-[CardName.PROTECTED_HABITATS,`
-          <div class="title background-color-active ">Protected Habitats</div>
-          <div class="price ">5</div>
-          <div class="corporate-icon project-icon"></div>
-      <div class="card-number">173</div>
+[CardName.PROTECTED_HABITATS,` 
           <div class="content ">
           <span style="font-size:12px; ">OPPONENTS MAY NOT REMOVE YOUR</span><br>
           <div class="plant resource"></div> <div class="animal resource"></div> <div class="microbe resource"></div>
           </div>
 `],
-[CardName.PROTECTED_VALLEY,`
-          <div class="title background-color-automated ">Protected Valley</div>
-          <div class="price ">23</div>
-          <div class="tag tag1 tag-building "></div>
-          <div class="tag tag2 tag-plant "></div>
-      <div class="card-number">174</div>
+[CardName.PROTECTED_VALLEY,` 
           <div class="content ">
               <div class="production-box production-box ">
                   <div class="money production ">2</div>
@@ -2726,27 +1916,17 @@ export const HTML_DATA: Map<string, string> =
               </div>
           </div>
 `],
-[CardName.SATELLITES,`
-        <div class="title background-color-automated">Satellites</div>
-        <div class="price">10</div>
-        <div class="tag tag1 tag-space"></div>
-        <div class="corporate-icon project-icon"></div>
-      <div class="card-number">175</div>
+[CardName.SATELLITES,` 
         <div class="content">
           <div class="production-box production-box-size2a">
             <div class="production money">1</div> / <div class="resource-tag tag-space"></div>
           </div>
           <div class="description">
-            (Increase your MC production 1 step for each space tag your have, including this one.)
+            (Increase your MC production 1 step for each space tag you have, including this one.)
           </div>
         </div>
 `],
-[CardName.NOCTIS_FARMING,`
-        <div class="title background-color-automated">Noctis Farming</div>
-        <div class="price">10</div>
-        <div class="tag tag1 tag-plant"></div>
-        <div class="tag tag2 tag-building"></div>
-      <div class="card-number">176</div>
+[CardName.NOCTIS_FARMING,` 
         <div class="content">
           <div class="points points-big">1</div>
           <div class="requirements">-20 C</div>
@@ -2758,11 +1938,7 @@ export const HTML_DATA: Map<string, string> =
           </div>
         </div>
 `],
-[CardName.WATER_SPLITTING_PLANT,`
-          <div class="title background-color-active ">Water Splitting Plant</div>
-          <div class="price ">12</div>
-          <div class="tag tag1 tag-building "></div>
-      <div class="card-number">177</div>
+[CardName.WATER_SPLITTING_PLANT,` 
           <div class="content ">
             <div class="requirements">2 Oceans</div>
               <div class="energy resource "></div><div class="energy resource "></div><div class="energy resource "></div> <div class="red-arrow "></div>
@@ -2774,60 +1950,42 @@ export const HTML_DATA: Map<string, string> =
                </div>
           </div>
 `],
-[CardName.HEAT_TRAPPERS,`
-          <div class="title background-color-automated ">Heat Trappers</div>
-          <div class="price ">6</div>
-          <div class="tag tag1 tag-building "></div>
-          <div class="tag tag2 tag-power "></div>
-      <div class="card-number">178</div>
+[CardName.HEAT_TRAPPERS,` 
           <div class="content ">
             <div class="points points-big">-1</div>
               <div class="production-box production-box-size2a">
-                <div class="production-prefix">&#x2796;&#xFE0E;</div><div class="heat production red-outline "></div><div class="heat production red-outline "></div>
-                  <div class="production-prefix">&#x2795;&#xFE0E;</div><div class="energy production "></div>
+                <div class="production-prefix minus"></div><div class="heat production red-outline "></div><div class="heat production red-outline "></div>
+                  <div class="production-prefix plus"></div><div class="energy production "></div>
               </div>
               <div class="description ">
                 (Decrease any heat production 2 steps and increase your Energy production 1 step.)
               </div>
           </div>
 `],
-[CardName.SOIL_FACTORY,`
-          <div class="title background-color-automated ">Soil Factory</div>
-          <div class="price ">9</div>
-          <div class="tag tag1 tag-building "></div>
-      <div class="card-number">179</div>
+[CardName.SOIL_FACTORY,` 
           <div class="content ">
             <div class="points points-big ">1</div>
               <div class="production-box production-box-size1a">
-                <div class="production-prefix">&#x2796;&#xFE0E;</div><div class="energy production  "></div>
-                  <div class="production-prefix">&#x2795;&#xFE0E;</div><div class="plant production "></div>
+                <div class="production-prefix minus"></div><div class="energy production  "></div>
+                  <div class="production-prefix plus"></div><div class="plant production "></div>
               </div>
               <div class="description ">
                 (Decrease your Energy production 1 step and increase your Plant production 1 step.)
               </div>
           </div>
 `],
-[CardName.FUEL_FACTORY,`
-          <div class="title background-color-automated ">Fuel Factory</div>
-          <div class="price ">6</div>
-          <div class="tag tag1 tag-building "></div>
-          <div class="corporate-icon project-icon"></div>
-      <div class="card-number">180</div>
+[CardName.FUEL_FACTORY,` 
           <div class="content ">
               <div class="production-box production-box-size2a">
-                <div class="production-prefix">&#x2796;&#xFE0E;</div><div class="energy production  "></div><br>
-                  <div class="production-prefix">&#x2795;&#xFE0E;</div><div class="titanium production "></div><div class="money production ">1</div>
+                <div class="production-prefix minus"></div><div class="energy production  "></div><br>
+                  <div class="production-prefix plus"></div><div class="titanium production "></div><div class="money production ">1</div>
               </div>
               <div class="description ">
                 (Decrease your Energy production 1 step and increase your titanium and your MC production 1 step each.)
               </div>
           </div>
 `],
-[CardName.ICE_CAP_MELTING,`
-          <div class="title background-color-events ">Ice Cap Melting</div>
-          <div class="price ">5</div>
-          <div class="tag tag1 tag-event "></div>
-      <div class="card-number">181</div>
+[CardName.ICE_CAP_MELTING,` 
           <div class="content ">
             <div class="requirements">+2 C</div>
               <div class="tile ocean-tile "></div>
@@ -2836,18 +1994,12 @@ export const HTML_DATA: Map<string, string> =
               </div>
           </div>
 `],
-[CardName.CORPORATE_STRONGHOLD,`
-          <div class="title background-color-automated ">Corporate Stronghold</div>
-          <div class="price ">11</div>
-          <div class="tag tag1 tag-building "></div>
-          <div class="tag tag2 tag-city "></div>
-          <div class="corporate-icon project-icon"></div>
-      <div class="card-number">182</div>
+[CardName.CORPORATE_STRONGHOLD,` 
           <div class="content ">
             <div class="points points-big">-2</div>
               <div class="production-box production-box-size1a ">
-                  <div class="production-prefix ">&#x2796;&#xFE0E;</div><div class="energy production "></div>
-                  <div class="production-prefix ">&#x2795;&#xFE0E;</div><div class="money production ">3</div>
+                  <div class="production-prefix minus"></div><div class="energy production "></div>
+                  <div class="production-prefix plus"></div><div class="money production ">3</div>
               </div>
               <div class="tile city-tile " style="margin-left:20px "></div><br>
               <div class="description ">
@@ -2855,29 +2007,20 @@ export const HTML_DATA: Map<string, string> =
               </div>
           </div>
 `],
-[CardName.BIOMASS_COMBUSTORS,`
-        <div class="title background-color-automated">Biomass Combustors</div>
-        <div class="price">4</div>
-        <div class="tag tag1 tag-building"></div>
-        <div class="tag tag2 tag-power"></div>
-      <div class="card-number">183</div>
+[CardName.BIOMASS_COMBUSTORS,` 
         <div class="content">
           <div class="points points-big">-1</div>
           <div class="requirements">6% O2</div>
           <div class="production-box production-box-size2a">
-            <div class="production-prefix">&#x2796;&#xFE0E;</div><div class="plant production red-outline"></div><br>
-            <div class="production-prefix">&#x2795;&#xFE0E;</div><div class="energy production"></div><div class="energy production"></div>
+            <div class="production-prefix minus"></div><div class="plant production red-outline"></div><br>
+            <div class="production-prefix plus"></div><div class="energy production"></div><div class="energy production"></div>
           </div>
           <div class="description">
             (Requires 6% oxygen. Decrease any Plant production 1 step and increase your Energy production 2 steps.)
           </div>
         </div>
 `],
-[CardName.LIVESTOCK,`
-        <div class="title background-color-active">Livestock</div>
-        <div class="price">13</div>
-        <div class="tag tag1 tag-animal"></div>
-        <div class="card-number">184</div>
+[CardName.LIVESTOCK,` 
         <div class="content">
           <div class="points">1/<div class="animal resource"></div>
           </div>
@@ -2888,35 +2031,24 @@ export const HTML_DATA: Map<string, string> =
             (Action: Add 1 Animal to this card.)
           </div>
           <div class="production-box production-box-size1a" style="margin-top:10px;margin-right:150px;">
-            <div class="production-prefix">&#x2796;&#xFE0E;</div><div class="plant production"></div>
-            <div class="production-prefix">&#x2795;&#xFE0E;</div><div class="money production">2</div>
+            <div class="production-prefix minus"></div><div class="plant production"></div>
+            <div class="production-prefix plus"></div><div class="money production">2</div>
           </div>
           <div class="description" style="position:absolute;margin-top:-85px;text-align:left;margin-left:80px;font-size:10px;">
             (Requires 9% oxygen. Decrease your Plant production 1 step and increase your MC production 2 steps. 1 VP for each Animal on this card.)
           </div>
         </div>
 `],
-[CardName.OLYMPUS_CONFERENCE,`
-          <div class="title background-color-active ">Olympus Conference</div>
-          <div class="price ">10</div>
-          <div class="tag tag1 tag-building "></div>
-          <div class="tag tag2 tag-earth "></div>
-          <div class="tag tag3 tag-science "></div>
-          <div class="corporate-icon project-icon"></div>
-          <div class="card-number">185</div>
+[CardName.OLYMPUS_CONFERENCE,` 
           <div class="content ">
             <div class="points points-big">1</div>
-              <div class="resource-tag science"></div> : <div class="resource science"></div> OR -<div class="resource science"></div>+<div class="card resource "></div>
+              <div class="resource-tag tag-science"></div> : <div class="resource science"></div> OR -<div class="resource science"></div>+<div class="card resource "></div>
               <div class="description ">
                 (When you play a Science tag, including this, either add a Science resource to this card, or remove a Science resource from this card to draw a card.)
               </div>
           </div>
 `],
-[CardName.RAD_SUITS,`
-          <div class="title background-color-automated ">Rad-Suits</div>
-          <div class="price ">6</div>
-          <div class="corporate-icon project-icon"></div>
-      <div class="card-number">186</div>
+[CardName.RAD_SUITS,` 
           <div class="content ">
             <div class="points points-big">1</div>
             <div class="requirements">2 Cities</div>
@@ -2926,24 +2058,16 @@ export const HTML_DATA: Map<string, string> =
             </div>
           </div>
 `],
-[CardName.AQUIFER_PUMPING,`
-          <div class="title background-color-active ">Aquifer Pumping</div>
-          <div class="price ">18</div>
-          <div class="tag tag1 tag-building "></div>
-      <div class="card-number">187</div>
+[CardName.AQUIFER_PUMPING,` 
           <div class="content ">
-              <div class=" money resource ">8</div> (<span class="steel " style="margin:0px;padding:2px;padding-top:3px;border-radius:5px; "></span>)
+              <div class=" money resource ">8</div> (<span class="steel resource"></span>)
               <span class="red-arrow "></span> <div class="ocean-tile tile "></div>
               <div class="description ">
                 (Action: Spend 8 MC to place 1 ocean tile. STEEL MAY BE USED as if you were playing a Building card.)
               </div>
           </div>
 `],
-[CardName.FLOODING,`
-          <div class="title background-color-events ">Flooding</div>
-          <div class="price ">7</div>
-          <div class="tag tag1 tag-event "></div>
-      <div class="card-number">188</div>
+[CardName.FLOODING,` 
           <div class="content ">
             <div class="points points-big">-1</div>
               <div class="tile ocean-tile " style="margin-right:20px"></div> - <div class="resource money red-outline" >4</div>*
@@ -2952,11 +2076,7 @@ export const HTML_DATA: Map<string, string> =
               </div>
           </div>
 `],
-[CardName.ENERGY_SAVING,`
-        <div class="title background-color-automated">Energy Saving</div>
-        <div class="price">15</div>
-        <div class="tag tag1 tag-power"></div>
-      <div class="card-number">189</div>
+[CardName.ENERGY_SAVING,` 
         <div class="content">
           <div class="production-box production-box-size2a">
             <div class="energy production"></div> / <div class="tile city-tile-small red-outline" style="margin-bottom:3px;"></div>
@@ -2966,23 +2086,17 @@ export const HTML_DATA: Map<string, string> =
           </div>
         </div>
 `],
-[CardName.LOCAL_HEAT_TRAPPING,`
-          <div class="title background-color-events ">Local Heat Trapping</div>
-          <div class="price ">1</div>
-          <div class="tag tag1 tag-event "></div>
-      <div class="card-number">190</div>
+[CardName.LOCAL_HEAT_TRAPPING,` 
           <div class="content ">
+              <div class="nowrap">
               -5<div class="resource heat" style="margin-right:15px;"></div> + &nbsp;&nbsp;&nbsp;4<div class="resource plant"></div> OR 2<div class="resource animal"></div>*
+              </div>
               <div class="description ">
                 (Spend 5 heat to gain either 4 Plants, or to add 2 Animals to ANOTHER card.)
               </div>
           </div>
 `],
-[CardName.PERMAFROST_EXTRACTION,`
-          <div class="title background-color-events ">Permafrost Extraction</div>
-          <div class="price ">8</div>
-          <div class="tag tag1 tag-event "></div>
-      <div class="card-number">191</div>
+[CardName.PERMAFROST_EXTRACTION,` 
           <div class="content ">
             <div class="requirements">-8 C</div>
               <div class="tile ocean-tile "></div>
@@ -2991,22 +2105,12 @@ export const HTML_DATA: Map<string, string> =
               </div>
           </div>
 `],
-[CardName.INVENTION_CONTEST,`
-          <div class="title background-color-events ">Invention Contest</div>
-          <div class="price ">2</div>
-          <div class="tag tag1 tag-event "></div>
-          <div class="tag tag2 tag-science "></div>
-          <div class="corporate-icon project-icon"></div>
-      <div class="card-number">192</div>
+[CardName.INVENTION_CONTEST,` 
           <div class="content " style="font-size:14px">
             LOOK AT THE TOP 3 CARDS FROM THE DECK. TAKE 1 OF THEM INTO HAND AND DISCARD THE OTHER 2
           </div>
 `],
-[CardName.PLANTATION,`
-        <div class="title background-color-automated">Plantation</div>
-        <div class="price">15</div>
-        <div class="tag tag1 tag-plant"></div>
-      <div class="card-number">193</div>
+[CardName.PLANTATION,` 
         <div class="content">
           <div class="requirements">2 Science</div>
           <div class="tile greenery-tile"></div>
@@ -3015,13 +2119,7 @@ export const HTML_DATA: Map<string, string> =
           </div>
         </div>
 `],
-[CardName.POWER_INFRASTRUCTURE,`
-          <div class="title background-color-active ">Power Infrastructure</div>
-          <div class="price ">4</div>
-          <div class="tag tag1 tag-building "></div>
-          <div class="tag tag2 tag-power "></div>
-          <div class="corporate-icon project-icon"></div>
-      <div class="card-number">194</div>
+[CardName.POWER_INFRASTRUCTURE,` 
           <div class="content ">
               X<div class="energy resource "></div> <div class="red-arrow "></div> <div class="money resource ">X</div>
               <div class="description ">
@@ -3029,12 +2127,7 @@ export const HTML_DATA: Map<string, string> =
               </div>
           </div>
 `],
-[CardName.INDENTURED_WORKERS,`
-          <div class="title background-color-events ">Indentured Workers</div>
-          <div class="price ">0</div>
-          <div class="tag tag1 tag-event "></div>
-          <div class="corporate-icon project-icon"></div>
-      <div class="card-number">195</div>
+[CardName.INDENTURED_WORKERS,` 
           <div class="content ">
             <div class="points points-big">-1</div>
             <span style="font-size:14px;">NEXT CARD: </span> <div class="resource money">-8</div>
@@ -3043,13 +2136,7 @@ export const HTML_DATA: Map<string, string> =
               </div>
           </div>
 `],
-[CardName.LAGRANGE_OBSERVATORY,`
-          <div class="title background-color-automated ">Lagrange Observatory</div>
-          <div class="price ">9</div>
-          <div class="tag tag1 tag-space "></div>
-          <div class="tag tag2 tag-science "></div>
-          <div class="corporate-icon project-icon"></div>
-      <div class="card-number">196</div>
+[CardName.LAGRANGE_OBSERVATORY,` 
           <div class="content ">
             <div class="points points-big">1</div>
             <div class="resource card"></div>
@@ -3058,27 +2145,16 @@ export const HTML_DATA: Map<string, string> =
             </div>
           </div>
 `],
-[CardName.TERRAFORMING_GANYMEDE,`
-          <div class="title background-color-automated ">Terraforming Ganymede</div>
-          <div class="price ">33</div>
-          <div class="tag tag1 tag-space "></div>
-          <div class="tag tag2 tag-jovian "></div>
-          <div class="corporate-icon project-icon"></div>
-      <div class="card-number">197</div>
+[CardName.TERRAFORMING_GANYMEDE,` 
           <div class="content ">
               <div class="points points-big">2</div>
-              <div class="tile rating"></div> / <div class="resource-tag tag-jovian"></div>
+              <div class="tile rating"></div> / &nbsp;<div class="resource-tag tag-jovian"></div>
               <div class="description ">
                 (Raise your TR 1 step for each Jovian tag you have, including this.)
               </div>
           </div>
 `],
-[CardName.IMMIGRATION_SHUTTLES,`
-          <div class="title background-color-automated ">Immigration Shuttles</div>
-          <div class="price ">31</div>
-          <div class="tag tag1 tag-space"></div>
-          <div class="tag tag2 tag-earth"></div>
-      <div class="card-number">198</div>
+[CardName.IMMIGRATION_SHUTTLES,` 
           <div class="content ">
             <div class="points big" style="font-size:24px">1/3<div class="tile city-tile-small red-outline"></div></div>
             <div class="production-box ">
@@ -3089,66 +2165,45 @@ export const HTML_DATA: Map<string, string> =
             </div>
           </div>
 `],
-[CardName.RESTRICTED_AREA,`
-          <div class="title background-color-active ">Restricted Area</div>
-          <div class="price ">11</div>
-          <div class="tag tag1 tag-science "></div>
-          <div class="corporate-icon project-icon"></div>
-      <div class="card-number">199</div>
+[CardName.RESTRICTED_AREA,` 
           <div class="content ">
               <div class="money resource ">2</div> <div class="red-arrow "></div> <div class="card resource "></div>
               <div class="description ">
                   (Action: Spend 2 MC to draw a card.)
               </div><br>
-              <div class="tile special-tile" style="padding-top: 4px;
-              padding-bottom: 4px;
-              padding-left: 6px;"><div class="restricted-area-tile"></div></div>
+              <div class="tile special-tile"><div class="special-tile-symbol special-tile--restricted-area"></div></div>
               <div class="description ">
                 (Place this tile.)
               </div>
           </div>
 `],
-[CardName.IMMIGRANT_CITY,`
-          <div class="title background-color-active ">Immigrant City</div>
-          <div class="price ">13</div>
-          <div class="tag tag1 tag-building "></div>
-          <div class="tag tag2 tag-city "></div>
-      <div class="card-number">200</div>
+[CardName.IMMIGRANT_CITY,` 
           <div class="content ">
               <div class="tile city-tile red-outline"></div> :&nbsp; <div class="production-box"><div class="production money">1</div></div>
               <div class="description ">
                 (Effect: When a City tile is placed, including this, increase your MC production 1 step.)
               </div><br>
               <div class="production-box production-box-size2a">
-                  <div class="production-prefix">&#x2796;&#xFE0E;</div><div class="production energy"></div><div class="production money">-2</div>
+                  <div class="production-prefix minus"></div><div class="production energy"></div><div class="production money">-2</div>
               </div> <div class="tile city-tile "></div>
               <div class="description ">
                 (Decrease your Energy production 1 step and decrease your MC production 2 steps. Place a City tile.)
               </div>
           </div>
 `],
-[CardName.ENERGY_TAPPING,`
-        <div class="title background-color-automated">Energy Tapping</div>
-        <div class="price">3</div>
-        <div class="tag tag1 tag-power"></div>
-        <div class="corporate-icon project-icon"></div>
-      <div class="card-number">201</div>
+[CardName.ENERGY_TAPPING,` 
         <div class="content">
           <div class="points points-big">-1</div>
           <div class="production-box production-box-size1a">
-              <div class="production-prefix">&#x2796;&#xFE0E;</div><div class="energy production red-outline"></div>
-              <div class="production-prefix">&#x2795;&#xFE0E;</div><div class="energy production"></div>
+              <div class="production-prefix minus"></div><div class="energy production red-outline"></div>
+              <div class="production-prefix plus"></div><div class="energy production"></div>
           </div>
           <div class="description">
             (Decrease any Energy production 1 step and increase your own 1 step.)
           </div>
         </div>
 `],
-[CardName.UNDERGROUND_DETONATIONS,`
-          <div class="title background-color-active ">Underground Detonations</div>
-          <div class="price ">6</div>
-          <div class="tag tag1 tag-building "></div>
-      <div class="card-number">202</div>
+[CardName.UNDERGROUND_DETONATIONS,` 
           <div class="content ">
             <div class="money resource ">10</div><div class="red-arrow " style="margin-left:5px; "></div>&nbsp;
               <div class="production-box production-box-size2 ">
@@ -3159,11 +2214,7 @@ export const HTML_DATA: Map<string, string> =
               </div>
           </div>
 `],
-[CardName.SOLETTA,`
-          <div class="title background-color-automated ">Soletta</div>
-          <div class="price ">35</div>
-          <div class="tag tag1 tag-space"></div>
-      <div class="card-number">203</div>
+[CardName.SOLETTA,` 
           <div class="content ">
             <div class="production-box production-box-size1a">
                 7 <div class="heat production"></div>
@@ -3173,14 +2224,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
           </div>
 `],
-[CardName.TECHNOLOGY_DEMONSTRATION,`
-          <div class="title background-color-events ">Technology Demonstration</div>
-          <div class="price ">5</div>
-          <div class="tag tag1 tag-event "></div>
-          <div class="tag tag2 tag-space "></div>
-          <div class="tag tag3 tag-science "></div>
-          <div class="corporate-icon project-icon"></div>
-      <div class="card-number">204</div>
+[CardName.TECHNOLOGY_DEMONSTRATION,` 
           <div class="content ">
               <div class="resource card"></div> <div class="resource card"></div>
               <div class="description ">
@@ -3188,40 +2232,30 @@ export const HTML_DATA: Map<string, string> =
               </div>
           </div>
 `],
-[CardName.RAD_CHEM_FACTORY,`
-        <div class="title background-color-automated">Rad-Chem Factory</div>
-        <div class="price">8</div>
-        <div class="tag tag1 tag-building"></div>
-      <div class="card-number">205</div>
+[CardName.RAD_CHEM_FACTORY,` 
         <div class="content">
           <div class="production-box production-box-size1a">
-            <div class="production-prefix">&#x2796;&#xFE0E;</div><div class="energy production"></div><br>
-          </div><br> <div class="tile rating"></div><div class="tile rating"></div>
+            <div class="production-prefix minus"></div><div class="energy production"></div><br>
+          </div>
+          <div class="nowrap">
+            <div class="tile rating"></div><div class="tile rating"></div>
+          </div>
           <div class="description">
             (Decrease your Energy production 1 step. Raise your TR 2 steps.)
           </div>
         </div>
 `],
-[CardName.SPECIAL_DESIGN,`
-        <div class="title background-color-events">Special Design</div>
-        <div class="price">4</div>
-        <div class="tag tag1 tag-event"></div>
-        <div class="tag tag2 tag-science"></div>
-      <div class="card-number">206</div>
+[CardName.SPECIAL_DESIGN,` 
         <div class="content">
-          <div class="tile background-color-corporation" style="width:100px;text-shadow:none;color:black;font-size:11px;padding-top:5px;padding-bottom:5px;">Temp / O2 / Ocean</div>: +/- 2
+          <div class="card-content-requirements">
+            <div class="globals-box">Global requirements</div>: +/- 2
+          </div>
           <div class="description">
             (The next card you play this generation is +2 or -2 steps in global requirements, your choice.)
           </div>
         </div>
 `],
-[CardName.MEDICAL_LAB,`
-        <div class="title background-color-automated">Medical Lab</div>
-        <div class="price">13</div>
-        <div class="tag tag1 tag-building"></div>
-        <div class="tag tag2 tag-science"></div>
-        <div class="corporate-icon project-icon"></div>
-      <div class="card-number">207</div>
+[CardName.MEDICAL_LAB,` 
         <div class="content">
           <div class="points points-big">1</div>
           <div class="production-box production-box-size3">
@@ -3232,13 +2266,7 @@ export const HTML_DATA: Map<string, string> =
           </div>
         </div>
 `],
-[CardName.AI_CENTRAL,`
-          <div class="title background-color-active ">AI Central</div>
-          <div class="price ">21</div>
-          <div class="tag tag1 tag-building "></div>
-          <div class="tag tag2 tag-science "></div>
-          <div class="corporate-icon project-icon"></div>
-      <div class="card-number">208</div>
+[CardName.AI_CENTRAL,` 
           <div class="content ">
             <div class="points points-big">1</div>
               <div class="requirements">3 Science</div>
@@ -3247,25 +2275,23 @@ export const HTML_DATA: Map<string, string> =
                   (Action: Draw 2 cards.)
               </div>
               <div class="production-box production-box-size1a" style="margin-right:135px;margin-top:10px;">
-                  <div class="production-prefix">&#x2796;&#xFE0E;</div><div class="energy production"></div>
+                  <div class="production-prefix minus"></div><div class="energy production"></div>
               </div>
               <div class="description" style="position:absolute;text-align:left;margin-top:-53px;margin-left:85px;">
                 (Requires 3 Science tags to play. Decrease your Energy production 1 step.)
               </div>
           </div>
 `],
-[CardName.SELF_REPLICATING_ROBOTS,`
-          <div class="title background-color-active ">Self-replicating robots</div>
-          <div class="price ">7</div>
-          <div class="promo-icon project-icon"></div>
-          <div class="card-number">210</div>
+[CardName.SELF_REPLICATING_ROBOTS,` 
           <div class="content ">
             <div class="requirements">2 Science</div>
-            <div class="red-arrow "></div>
-            <div class="resource card"><div class="production" style="position:absolute;background:white;color:black;margin-left:-4px;margin-top:7px;">2</div><div class="card-icon card-icon-space">&#x2734;</div><div class="card-icon card-icon-building" style="margin-left:37px">&#x2617;</div></div>
-            &nbsp;&nbsp;&nbsp;OR&nbsp;&nbsp;&nbsp;
-            <div class="red-arrow "></div>
-            <div class="production" style="background:white;color:black;vertical-align:middle">X</div> x2
+            <div class="nowrap">
+              <div class="red-arrow "></div>
+              <div class="resource card"><div class="cards-count">2</div><div class="card-icon card-icon-space">&#x2734;</div><div class="card-icon card-icon-building" style="margin-left:37px">&#x2617;</div></div>
+              &nbsp;&nbsp;&nbsp;OR&nbsp;&nbsp;&nbsp;
+              <div class="red-arrow "></div>
+              <div class="production" style="background:white;color:black;vertical-align:middle">X</div> x2
+            </div>
             <div class="description">
               (Action: Reveal and place a SPACE OR BUILDING card here from hand, and place 2 resources on it, OR double the resources on a card here.) <br>
               (Effect: Card here may be played as if from hand with its cost reduced by the number of resources on it.)<br>
@@ -3273,12 +2299,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
           </div>
 `],
-[CardName.PENGUINS,`
-            <div class="title background-color-active ">Penguins</div>
-            <div class="price ">7</div>
-            <div class="tag tag1 tag-animal "></div>
-            <div class="promo-icon project-icon"></div>
-            <div class="card-number">212</div>
+[CardName.PENGUINS,` 
             <div class="content ">
                 <div class="points ">1/<div class="animal resource "></div></div>
                 <div class="requirements ">8 Oceans</div>
@@ -3291,27 +2312,19 @@ export const HTML_DATA: Map<string, string> =
                 </div>
             </div>
 `],
-[CardName.AERIAL_MAPPERS,`
-          <div class="title background-color-active">Aerial Mappers</div>
-          <div class="price">11</div>
-          <div class="tag tag1 tag-venus"></div>
-          <div class="venus-icon project-icon"></div>
-          <div class="card-number">213</div>
+[CardName.AERIAL_MAPPERS,` 
           <div class="content">
             <div class="points points-big">1</div>
-            <div class="red-arrow"></div>
-            <div class="floater resource"></div>* OR <div class="floater resource"></div> <div class="red-arrow"></div> <div class="card resource"></div><br>
+            <div class="nowrap">
+              <div class="red-arrow"></div>
+              <div class="floater resource"></div>* OR <div class="floater resource"></div> <div class="red-arrow"></div> <div class="card resource"></div>
+            </div>
             <div class="description">
               (Action: Add 1 Floater to ANY card or spend 1 Floater here to draw 1 card)
             </div>
           </div>
 `],
-[CardName.AEROSPORT_TOURNAMENT,`
-            <div class="title background-color-events ">Aerosport Tournament</div>
-            <div class="price ">7</div>
-            <div class="tag tag1 tag-event "></div>
-            <div class="venus-icon project-icon"></div>
-      <div class="card-number">214</div>
+[CardName.AEROSPORT_TOURNAMENT,` 
             <div class="content ">
                 <div class="points points-big ">1</div>
                 <div class="requirements ">5 Floaters</div>
@@ -3321,30 +2334,18 @@ export const HTML_DATA: Map<string, string> =
                 </div>
             </div>
 `],
-[CardName.AIR_SCRAPPING_EXPEDITION,`
-            <div class="title background-color-events ">Air-Scrapping Expedition</div>
-            <div class="price ">13</div>
-            <div class="tag tag1 tag-event "></div>
-            <div class="tag tag2 tag-venus "></div>
-            <div class="venus-icon project-icon"></div>
-      <div class="card-number">215</div>
+[CardName.AIR_SCRAPPING_EXPEDITION,` 
             <div class="content ">
               <div class="tile venus-tile">V</div> &nbsp;&nbsp;
-                <div class="resource floater"><div class="card-icon card-icon-venus">V</div></div>
-                  <div class="resource floater"><div class="card-icon card-icon-venus">V</div></div>
-                    <div class="resource floater"><div class="card-icon card-icon-venus">V</div></div>
+                <div class="resource floater"><div class="card-icon tag-venus"></div></div>
+                  <div class="resource floater"><div class="card-icon tag-venus"></div></div>
+                    <div class="resource floater"><div class="card-icon tag-venus"></div></div>
                 <div class="description">
                   (Raise Venus 1 step. Add 3 Floaters to ANY Venus CARD)
                 </div>
             </div>
 `],
-[CardName.ATALANTA_PLANITIA_LAB,`
-            <div class="title background-color-automated ">Atalanta Planitia Lab</div>
-            <div class="price ">10</div>
-            <div class="tag tag1 tag-science "></div>
-            <div class="tag tag2 tag-venus "></div>
-            <div class="venus-icon project-icon"></div>
-      <div class="card-number">216</div>
+[CardName.ATALANTA_PLANITIA_LAB,` 
             <div class="content ">
               <div class="points points-big">2</div>
               <div class="requirements">3 Science</div>
@@ -3354,80 +2355,52 @@ export const HTML_DATA: Map<string, string> =
               </div>
             </div>
 `],
-[CardName.ATMOSCOOP,`
-            <div class="title background-color-automated ">Atmoscoop</div>
-            <div class="price ">22</div>
-            <div class="tag tag1 tag-space "></div>
-            <div class="tag tag2 tag-jovian "></div>
-            <div class="venus-icon project-icon"></div>
-      <div class="card-number">217</div>
+[CardName.ATMOSCOOP,` 
             <div class="content ">
               <div class="points points-big">1</div>
               <div class="requirements">3 Science</div>
-              <div class="tile temperature-tile" style="width:24px"></div><div class="tile temperature-tile" style="width:24px"></div> OR
-              <div class="tile venus-tile" style="width:20px">V</div><div class="tile venus-tile" style="width:20px">V</div>
-              <span>*</span><div class="resource floater" style="margin-left:8px;"></div><div class="resource floater"></div>
+              <div class="nowrap">
+                <div class="tile temperature-tile"></div><div class="tile temperature-tile"></div> OR
+                <div class="tile venus-tile"></div><div class="tile venus-tile"></div>
+              </div>
+              <div class="resource floater"></div><div class="resource floater"></div><span>*</span>
               <div class="description" style="text-align:left;position:absolute;margin-top:-8px;">
                 (Requires 3 Science tags. Either raise the temperature 2 steps, or raise Venus 2 steps. Add 2 Floaters to ANY card)
               </div>
             </div>
 `],
-[CardName.COMET_FOR_VENUS,`
-            <div class="title background-color-events ">Comet for Venus</div>
-            <div class="price ">11</div>
-            <div class="tag tag1 tag-event "></div>
-            <div class="tag tag2 tag-space "></div>
-            <div class="venus-icon project-icon"></div>
-      <div class="card-number">218</div>
+[CardName.COMET_FOR_VENUS,` 
             <div class="content ">
-              <div class="tile venus-tile">V</div> &nbsp;&nbsp;
-                - <div class="resource money red-outline">4<div class="card-icon card-icon-venus" style="color: white;margin-top: -39px;">V</div></div>
+            <div class="tile venus-tile"></div> &nbsp;&nbsp;
+                - <div class="resource money red-outline"><div class="card-icon tag-venus"></div>4</div>
                 <div class="description">
                   (Raise Venus 1 step. Remove up to 4MC from any player WITH A VENUS TAG IN PLAY.)
                 </div>
             </div>
 `],
-[CardName.CORRODER_SUITS,`
-            <div class="title background-color-automated ">Corroder Suits</div>
-            <div class="price ">8</div>
-            <div class="tag tag1 tag-venus "></div>
-            <div class="venus-icon project-icon"></div>
-      <div class="card-number">219</div>
+[CardName.CORRODER_SUITS,` 
             <div class="content ">
               <div class="production-box"><div class="production money">2</div></div>
-               <div class="resource" style="background:white;margin-left:20px;">?<div class="card-icon card-icon-venus" style="color: white;margin-top: -36px;margin-left: 16px;">V</div></div>
+              <div class="resource wild"><div class="card-icon tag-venus"></div></div>
               <div class="description">
                 (Increase your MC production 2 steps. Add 1 resource to ANY Venus CARD)
               </div>
             </div>
 `],
-[CardName.DAWN_CITY,`
-            <div class="title background-color-automated ">Dawn City</div>
-            <div class="price ">15</div>
-            <div class="tag tag1 tag-city "></div>
-            <div class="tag tag2 tag-space "></div>
-            <div class="venus-icon project-icon"></div>
-            <div class="card-number">220</div>
+[CardName.DAWN_CITY,` 
             <div class="content ">
               <div class="points points-big">3</div>
                 <div class="requirements">4 Science</div>
                   <div class="production-box production-box-size1a">
-                      <div class="production-prefix">&#x2796;&#xFE0E;</div><div class="energy production"></div>
-                      <div class="production-prefix">&#x2795;&#xFE0E;</div><div class="titanium production"></div>
+                      <div class="production-prefix minus"></div><div class="energy production"></div>
+                      <div class="production-prefix plus"></div><div class="titanium production"></div>
                   </div> <div class="tile city-tile" style="margin-left:20px"></div>*
               <div class="description" style="margin-top:-5px;">
                 (Requires 4 Science tags. Decrease your energy production 1 step. Increase your titanium production 1 step. Place a City tile on the RESERVED AREA)
               </div>
             </div>
 `],
-[CardName.DEUTERIUM_EXPORT,`
-            <div class="title background-color-active ">Deuterium Export</div>
-            <div class="price ">11</div>
-            <div class="tag tag1 tag-space "></div>
-            <div class="tag tag2 tag-power "></div>
-            <div class="tag tag3 tag-venus "></div>
-            <div class="venus-icon project-icon"></div>
-            <div class="card-number">221</div>
+[CardName.DEUTERIUM_EXPORT,` 
             <div class="content ">
                 <div class="red-arrow " style="margin-left:53px;"></div> <div class="floater resource "></div> <br> OR
                 <div class="floater resource "></div> <div class="red-arrow "></div>   <div class="production-box "><div class="energy production "></div></div>
@@ -3436,12 +2409,7 @@ export const HTML_DATA: Map<string, string> =
                 </div>
             </div>
 `],
-[CardName.DIRIGIBLES,`
-            <div class="title background-color-active ">Dirigibles</div>
-            <div class="price ">11</div>
-            <div class="tag tag1 tag-venus "></div>
-            <div class="venus-icon project-icon"></div>
-            <div class="card-number">222</div>
+[CardName.DIRIGIBLES,` 
             <div class="content ">
                 <div class="red-arrow "></div> <div class="floater resource "></div>* &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
               <div class="resource-tag tag-venus"></div>  : <div class="floater resource "></div> = <div class="money resource ">3</div>
@@ -3451,13 +2419,8 @@ export const HTML_DATA: Map<string, string> =
                 </div>
             </div>
 `],
-[CardName.EXTRACTOR_BALLOONS,`
-            <div class="title background-color-active ">Extractor Balloons</div>
-            <div class="price ">21</div>
-            <div class="tag tag1 tag-venus "></div>
-            <div class="venus-icon project-icon"></div>
-            <div class="card-number">223</div>
-            <div class="content ">
+[CardName.EXTRACTOR_BALLOONS,` 
+            <div class="content hover-hide-res">
                 <div class="red-arrow " style="margin-left:95px"></div> <div class="floater resource "></div> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
               OR <div class="floater resource "></div><div class="floater resource "></div> <div class="red-arrow "></div> <div class="tile venus-tile ">V</div>
                 <div class="description ">
@@ -3470,13 +2433,7 @@ export const HTML_DATA: Map<string, string> =
                 </div>
             </div>
 `],
-[CardName.EXTREMOPHILES,`
-            <div class="title background-color-active ">Extremophiles</div>
-            <div class="price ">3</div>
-            <div class="tag tag1 tag-microbe "></div>
-            <div class="tag tag2 tag-venus "></div>
-            <div class="venus-icon project-icon"></div>
-            <div class="card-number">224</div>
+[CardName.EXTREMOPHILES,` 
             <div class="content ">
               <div class="points">1/3<div class="resource microbe"></div></div>
               <div class="requirements">2 Science</div>
@@ -3489,12 +2446,7 @@ export const HTML_DATA: Map<string, string> =
                 </div>
             </div>
 `],
-[CardName.FLOATING_HABS,`
-            <div class="title background-color-active ">Floating Habs</div>
-            <div class="price ">5</div>
-            <div class="tag tag1 tag-venus "></div>
-            <div class="venus-icon project-icon"></div>
-            <div class="card-number">225</div>
+[CardName.FLOATING_HABS,` 
             <div class="content ">
               <div class="points">1/2<div class="resource floater"></div></div>
               <div class="requirements">2 Science</div>
@@ -3507,12 +2459,7 @@ export const HTML_DATA: Map<string, string> =
                 </div>
             </div>
 `],
-[CardName.FORCED_PRECIPITATION,`
-            <div class="title background-color-active ">Forced Precipitation</div>
-            <div class="price ">8</div>
-            <div class="tag tag1 tag-venus "></div>
-            <div class="venus-icon project-icon"></div>
-            <div class="card-number">226</div>
+[CardName.FORCED_PRECIPITATION,` 
             <div class="content ">
                 <div class="money resource " style="margin-left: 60px;">2</div> <div class="red-arrow "></div> <div class="floater resource "></div> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
               OR <div class="floater resource "></div><div class="floater resource "></div> <div class="red-arrow "></div> <div class="tile venus-tile ">V</div>
@@ -3521,36 +2468,23 @@ export const HTML_DATA: Map<string, string> =
                 </div>
             </div>
 `],
-[CardName.FREYJA_BIODOMES,`
-            <div class="title background-color-automated ">Freyja Biodomes</div>
-            <div class="price ">14</div>
-            <div class="tag tag1 tag-plant "></div>
-            <div class="tag tag2 tag-venus "></div>
-            <div class="venus-icon project-icon"></div>
-            <div class="card-number">227</div>
+[CardName.FREYJA_BIODOMES,` 
             <div class="content ">
               <div class="points points-big">2</div>
                 <div class="requirements">10% Venus</div>
-               <div class="resource microbe"><div class="card-icon card-icon-venus" style="color: white;margin-top: -36px;font-weight:bold;">V</div></div> <div class="resource microbe"><div class="card-icon card-icon-venus" style="font-weight:bold;color: white;margin-top: -36px;">V</div></div>
+               <div class="resource microbe"><div class="card-icon tag-venus"></div></div> <div class="resource microbe"><div class="card-icon tag-venus"></div></div>
               &nbsp;&nbsp;  OR &nbsp;&nbsp;
-               <div class="resource animal"><div class="card-icon card-icon-venus" style="color: white;margin-top: -36px;font-weight:bold;">V</div></div> <div class="resource animal"><div class="card-icon card-icon-venus" style="font-weight:bold;color: white;margin-top: -36px;">V</div></div>
+               <div class="resource animal"><div class="card-icon tag-venus"></div></div> <div class="resource animal"><div class="card-icon tag-venus"></div></div>
                <div class="production-box production-box-size1a" style="margin-left:135px;">
-                   <div class="production-prefix">&#x2796;&#xFE0E;</div><div class="energy production"></div>
-                   <div class="production-prefix">&#x2795;&#xFE0E;</div><div class="money production">2</div>
+                   <div class="production-prefix minus"></div><div class="energy production"></div>
+                   <div class="production-prefix plus"></div><div class="money production">2</div>
                </div>
                <div class="description" style="position:absolute;margin-top:-90px;margin-left:10px;text-align:left; width: 120px">
                  (Requires 10% Venus. Add 2 Microbes or 2 Animals to another Venus card. Decrease your energy production 1 step and increase your MC production 2 steps)
               </div>
             </div>
 `],
-[CardName.GHG_IMPORT_FROM_VENUS,`
-            <div class="title background-color-events ">GHG Import From Venus</div>
-            <div class="price ">23</div>
-            <div class="tag tag1 tag-event "></div>
-            <div class="tag tag2 tag-space "></div>
-            <div class="tag tag3 tag-venus "></div>
-            <div class="venus-icon project-icon"></div>
-            <div class="card-number">228</div>
+[CardName.GHG_IMPORT_FROM_VENUS,` 
             <div class="content ">
               <div class="tile venus-tile">V</div> &nbsp;&nbsp;
               <div class="production-box production-box-size3">
@@ -3561,59 +2495,35 @@ export const HTML_DATA: Map<string, string> =
                 </div>
             </div>
 `],
-[CardName.GIANT_SOLAR_SHADE,`
-            <div class="title background-color-automated ">Giant Solar Shade</div>
-            <div class="price ">27</div>
-            <div class="tag tag1 tag-space "></div>
-            <div class="tag tag2 tag-venus "></div>
-            <div class="venus-icon project-icon"></div>
-            <div class="card-number">229</div>
+[CardName.GIANT_SOLAR_SHADE,` 
             <div class="content ">
             <div class="tile venus-tile">V</div><div class="tile venus-tile">V</div><div class="tile venus-tile">V</div>
                <div class="description">
                  (Raise Venus 3 steps)
             </div>
 `],
-[CardName.GYROPOLIS,`
-            <div class="title background-color-automated ">Gyropolis</div>
-            <div class="price ">20</div>
-            <div class="tag tag1 tag-building "></div>
-            <div class="tag tag2 tag-city "></div>
-            <div class="venus-icon project-icon"></div>
-            <div class="card-number">230</div>
+[CardName.GYROPOLIS,` 
             <div class="content ">
               <div class="production-box production-box-size3">
-                  <div class="production-prefix">&#x2796;&#xFE0E;</div><div class="energy production"></div><div class="energy production"></div>
-                  <div class="production-prefix">&#x2795;&#xFE0E;</div><div class="money production">1</div> / <div class="resource-tag tag-venus"></div>
-                  <div class="production-prefix">&#x2795;&#xFE0E;</div><div class="money production">1</div> / <div class="resource-tag tag-earth"></div>
+                  <div class="production-prefix minus"></div><div class="energy production"></div><div class="energy production"></div>
+                  <div class="production-prefix plus"></div><div class="money production">1</div> / <div class="resource-tag tag-venus"></div>
+                  <div class="production-prefix plus"></div><div class="money production">1</div> / <div class="resource-tag tag-earth"></div>
               </div>
               <div class="tile city-tile" style="margin-left:20px"></div>
                <div class="description">
                  (Decrease your energy production 2 steps. Increase your MC production 1 step for each Venus and Earth tag you have. Place a City tile)
             </div>
 `],
-[CardName.HYDROGEN_TO_VENUS,`
-            <div class="title background-color-events ">Hydrogen to Venus</div>
-            <div class="price ">11</div>
-            <div class="tag tag1 tag-event "></div>
-            <div class="tag tag2 tag-space "></div>
-            <div class="venus-icon project-icon"></div>
-            <div class="card-number">231</div>
+[CardName.HYDROGEN_TO_VENUS,` 
             <div class="content ">
-              <div class="tile venus-tile">V</div><br><br>
-              <div class="resource floater"><div class="card-icon card-icon-venus">V</div></div> / <div class="resource-tag tag-jovian"></div><br><br>
+              <div class="tile venus-tile"></div><br><br>
+              <div class="resource floater"><div class="card-icon tag-venus"></div></div> / <div class="resource-tag tag-jovian"></div><br><br>
                 <div class="description">
                   (Raise Venus 1 step. Add 1 Floater to A Venus CARD for each Jovian tag you have)
                 </div>
             </div>
 `],
-[CardName.IO_SULPHUR_RESEARCH,`
-            <div class="title background-color-automated ">Io Sulphur Research</div>
-            <div class="price ">17</div>
-            <div class="tag tag1 tag-jovian "></div>
-            <div class="tag tag2 tag-science "></div>
-            <div class="venus-icon project-icon"></div>
-            <div class="card-number">232</div>
+[CardName.IO_SULPHUR_RESEARCH,` 
             <div class="content ">
               <div class="points points-big">2</div>
               <div class="resource card"></div> OR <br>
@@ -3625,12 +2535,7 @@ export const HTML_DATA: Map<string, string> =
                  (Draw 1 card, or draw 3 if you have at least 3 Venus tags)
             </div>
 `],
-[CardName.ISHTAR_MINING,`
-            <div class="title background-color-automated ">Ishtar Mining</div>
-            <div class="price ">5</div>
-            <div class="tag tag1 tag-venus "></div>
-            <div class="venus-icon project-icon"></div>
-            <div class="card-number">233</div>
+[CardName.ISHTAR_MINING,` 
             <div class="content ">
               <div class="requirements">8% Venus</div>
                 <div class="production-box ">
@@ -3640,12 +2545,7 @@ export const HTML_DATA: Map<string, string> =
                  (Requires Venus 8%. Increase your titanium production 1 step)
             </div>
 `],
-[CardName.JET_STREAM_MICROSCRAPPERS,`
-            <div class="title background-color-active ">Jet Stream Microscrappers</div>
-            <div class="price ">12</div>
-            <div class="tag tag1 tag-venus "></div>
-            <div class="venus-icon project-icon"></div>
-            <div class="card-number">234</div>
+[CardName.JET_STREAM_MICROSCRAPPERS,` 
             <div class="content ">
                 <div class="titanium resource "></div> <div class="red-arrow "></div> <div class="floater resource "></div><div class="floater resource "></div><br>
               OR <div class="floater resource "></div><div class="floater resource "></div> <div class="red-arrow "></div> <div class="tile venus-tile ">V</div>
@@ -3654,12 +2554,7 @@ export const HTML_DATA: Map<string, string> =
                 </div>
             </div>
 `],
-[CardName.LOCAL_SHADING,`
-            <div class="title background-color-active ">Local Shading</div>
-            <div class="price ">4</div>
-            <div class="tag tag1 tag-venus "></div>
-            <div class="venus-icon project-icon"></div>
-            <div class="card-number">235</div>
+[CardName.LOCAL_SHADING,` 
             <div class="content ">
                 <div class="red-arrow "></div> <div class="floater resource "></div> <br>
               OR <div class="floater resource "></div> <div class="red-arrow "></div>
@@ -3671,14 +2566,7 @@ export const HTML_DATA: Map<string, string> =
                 </div>
             </div>
 `],
-[CardName.LUNA_METROPOLIS,`
-            <div class="title background-color-automated ">Luna Metropolis</div>
-            <div class="price ">21</div>
-            <div class="tag tag1 tag-city "></div>
-            <div class="tag tag2 tag-earth "></div>
-            <div class="tag tag3 tag-space "></div>
-            <div class="venus-icon project-icon"></div>
-            <div class="card-number">236</div>
+[CardName.LUNA_METROPOLIS,` 
             <div class="content ">
               <div class="points points-big">2</div>
                 <div class="production-box production-box-size2a">
@@ -3690,32 +2578,22 @@ export const HTML_DATA: Map<string, string> =
             </div>
           </div>
 `],
-[CardName.LUXURY_FOODS,`
-            <div class="title background-color-automated ">Luxury Foods</div>
-            <div class="price ">8</div>
-            <div class="venus-icon project-icon"></div>
-            <div class="card-number">237</div>
+[CardName.LUXURY_FOODS,` 
             <div class="content ">
               <div class="points points-big">2</div>
               <div class="requirements"> Venus Earth Jovian</div>
             </div>
 `],
-[CardName.MAXWELL_BASE,`
-            <div class="title background-color-active ">Maxwell Base</div>
-            <div class="price ">18</div>
-            <div class="tag tag1 tag-city "></div>
-            <div class="tag tag2 tag-venus "></div>
-            <div class="venus-icon project-icon"></div>
-            <div class="card-number">238</div>
+[CardName.MAXWELL_BASE,` 
             <div class="content ">
               <div class="points points-big">3</div>
               <div class="requirements">12% Venus</div>
-                <div class="red-arrow "></div> <div class="resource " style="background:white;">?<div class="card-icon card-icon-venus" style="color: white;margin-top: -36px;margin-left: 17px;font-weight:bold;">V</div></div>
+                <div class="red-arrow "></div> <div class="resource wild"><div class="card-icon tag-venus"></div></div>
                 <div class="description " style="margin-top:-5px">
                   (Action: Add 1 resource to ANOTHER VENUS CARD)
                 </div>
               <div class="production-box production-box-size1a">
-                    <div class="production-prefix">&#x2796;&#xFE0E;</div><div class="energy production"></div>
+                    <div class="production-prefix minus"></div><div class="energy production"></div>
               </div>
               <div class="tile city-tile" style="margin-left:20px"></div>*
               <div class="description" style="text-align:left;margin-top:-8px; width: 223px">
@@ -3726,12 +2604,7 @@ export const HTML_DATA: Map<string, string> =
               </div>
             </div>
 `],
-[CardName.MINING_QUOTA,`
-            <div class="title background-color-automated ">Mining Quota</div>
-            <div class="price ">5</div>
-            <div class="tag tag1 tag-building"></div>
-            <div class="venus-icon project-icon"></div>
-            <div class="card-number">239</div>
+[CardName.MINING_QUOTA,` 
             <div class="content ">
               <div class="requirements"> Venus Earth Jovian</div>
               <div class="production-box production-box-size2">
@@ -3742,12 +2615,7 @@ export const HTML_DATA: Map<string, string> =
               </div>
             </div>
 `],
-[CardName.NEUTRALIZER_FACTORY,`
-            <div class="title background-color-automated ">Neutralizer Factory</div>
-            <div class="price ">7</div>
-            <div class="tag tag1 tag-venus"></div>
-            <div class="venus-icon project-icon"></div>
-            <div class="card-number">240</div>
+[CardName.NEUTRALIZER_FACTORY,` 
             <div class="content ">
               <div class="requirements"> 10% Venus</div>
               <div class="tile venus-tile">V</div>
@@ -3756,12 +2624,7 @@ export const HTML_DATA: Map<string, string> =
               </div>
             </div>
 `],
-[CardName.OMNICOURT,`
-            <div class="title background-color-automated ">Omnicourt</div>
-            <div class="price ">11</div>
-            <div class="tag tag1 tag-building"></div>
-            <div class="venus-icon project-icon"></div>
-            <div class="card-number">241</div>
+[CardName.OMNICOURT,` 
             <div class="content ">
               <div class="requirements">Venus Earth Jovian</div>
               <div class="tile rating"></div>  <div class="tile rating"></div>
@@ -3770,13 +2633,7 @@ export const HTML_DATA: Map<string, string> =
               </div>
             </div>
 `],
-[CardName.ORBITAL_REFLECTORS,`
-            <div class="title background-color-automated ">Orbital Reflectors</div>
-            <div class="price ">26</div>
-            <div class="tag tag1 tag-space"></div>
-            <div class="tag tag2 tag-venus"></div>
-            <div class="venus-icon project-icon"></div>
-            <div class="card-number">242</div>
+[CardName.ORBITAL_REFLECTORS,` 
             <div class="content ">
               <div class="tile venus-tile">V</div>  <div class="tile venus-tile">V</div><br>
               <div class="production-box production-box-size2">
@@ -3787,30 +2644,19 @@ export const HTML_DATA: Map<string, string> =
               </div>
             </div>
 `],
-[CardName.ROTATOR_IMPACTS,`
-            <div class="title background-color-active ">Rotator Impacts</div>
-            <div class="price ">6</div>
-            <div class="tag tag1 tag-space "></div>
-            <div class="venus-icon project-icon"></div>
-            <div class="card-number">243</div>
-            <div class="content ">
+[CardName.ROTATOR_IMPACTS,` 
+            <div class="content hover-hide-res">
                 <div class="requirements requirements-max">max 14% Venus</div>
-                <div class=" money resource ">6</div> (<span class="titanium " style="margin:0px;padding:1px;padding-top:3px;border-radius:5px; "></span>)
-                <span class="red-arrow "></span> <div class="resource" style="background:black;color:#bbb;">A</div> <br>
-                OR <div class="resource" style="background:black;color:#bbb;">A</div> <span class="red-arrow "></span> <div class="tile venus-tile">V</div>
+                <div class=" money resource ">6</div> (<span class="resource titanium"></span>)
+                <span class="red-arrow "></span><div class="asteroid resource"></div><br>
+                OR <div class="asteroid resource"></div> <span class="red-arrow "></span> <div class="tile venus-tile">V</div>
                 <div class="description ">
                   (Action: spend 6 MC to add an asteroid resource to this card (TITANIUM MAY BE USED), or spend 1 resource from this card to increase Venus 1 step)
                   <br>(Venus must be 14% or lower)
                 </div>
             </div>
 `],
-[CardName.SISTER_PLANET_SUPPORT,`
-            <div class="title background-color-automated ">Sister Planet Support</div>
-            <div class="price ">7</div>
-            <div class="tag tag1 tag-earth"></div>
-            <div class="tag tag2 tag-venus"></div>
-            <div class="venus-icon project-icon"></div>
-            <div class="card-number">244</div>
+[CardName.SISTER_PLANET_SUPPORT,` 
             <div class="content ">
               <div class="requirements">Venus Earth</div>
               <div class="production-box">
@@ -3821,11 +2667,7 @@ export const HTML_DATA: Map<string, string> =
               </div>
             </div>
 `],
-[CardName.SOLARNET,`
-            <div class="title background-color-automated ">Solarnet</div>
-            <div class="price ">7</div>
-            <div class="venus-icon project-icon"></div>
-            <div class="card-number">245</div>
+[CardName.SOLARNET,` 
             <div class="content ">
               <div class="points points-big">1</div>
               <div class="requirements"> Venus Earth Jovian</div>
@@ -3835,13 +2677,7 @@ export const HTML_DATA: Map<string, string> =
               </div>
             </div>
 `],
-[CardName.SPIN_INDUCING_ASTEROID,`
-            <div class="title background-color-events ">Spin-Inducing Asteroid</div>
-            <div class="price ">16</div>
-            <div class="tag tag1 tag-event "></div>
-            <div class="tag tag2 tag-space "></div>
-            <div class="venus-icon project-icon"></div>
-            <div class="card-number">246</div>
+[CardName.SPIN_INDUCING_ASTEROID,` 
             <div class="content ">
               <div class="requirements requirements-max">max 10% Venus</div>
               <div class="tile venus-tile">V</div> <div class="tile venus-tile">V</div>
@@ -3850,13 +2686,7 @@ export const HTML_DATA: Map<string, string> =
                 </div>
             </div>
 `],
-[CardName.SPONSORED_ACADEMIES,`
-            <div class="title background-color-automated ">Sponsored Academies</div>
-            <div class="price ">9</div>
-            <div class="tag tag1 tag-earth"></div>
-            <div class="tag tag2 tag-science"></div>
-            <div class="venus-icon project-icon"></div>
-            <div class="card-number">247</div>
+[CardName.SPONSORED_ACADEMIES,` 
             <div class="content ">
               <div class="points points-big">1</div>
               - <div class="resource card"></div><br>
@@ -3866,19 +2696,13 @@ export const HTML_DATA: Map<string, string> =
               </div>
             </div>
 `],
-[CardName.STRATOPOLIS,`
-            <div class="title background-color-active ">Stratopolis</div>
-            <div class="price ">22</div>
-            <div class="tag tag1 tag-city "></div>
-            <div class="tag tag2 tag-venus "></div>
-            <div class="venus-icon project-icon"></div>
-            <div class="card-number">248</div>
-            <div class="content ">
+[CardName.STRATOPOLIS,` 
+            <div class="content hover-hide-res">
               <div class="points">1/3<div class="resource floater"></div></div>
               <div class="requirements" style="margin-bottom:15px;">2 Science</div>
                 <div class="red-arrow "></div>
-                <div class="resource floater"><div class="card-icon card-icon-venus">V</div></div>
-                <div class="resource floater"><div class="card-icon card-icon-venus">V</div></div>
+                <div class="resource floater"><div class="card-icon tag-venus"></div></div>
+                <div class="resource floater"><div class="card-icon tag-venus"></div></div>
                 <div class="description " style="margin-top:-5px">
                   (Action: Add 2 floaters to ANY VENUS CARD.)
                 </div>
@@ -3894,13 +2718,7 @@ export const HTML_DATA: Map<string, string> =
                 </div>
             </div>
 `],
-[CardName.STRATOSPHERIC_BIRDS,`
-            <div class="title background-color-active ">Stratospheric Birds</div>
-            <div class="price ">12</div>
-            <div class="tag tag1 tag-animal "></div>
-            <div class="tag tag2 tag-venus "></div>
-            <div class="venus-icon project-icon"></div>
-            <div class="card-number">249</div>
+[CardName.STRATOSPHERIC_BIRDS,` 
             <div class="content ">
               <div class="points">1/<div class="resource animal"></div></div>
               <div class="requirements">12% Venus</div>
@@ -3915,13 +2733,7 @@ export const HTML_DATA: Map<string, string> =
                 </div>
             </div>
 `],
-[CardName.SULPHUR_EXPORTS,`
-            <div class="title background-color-automated ">Sulphur Exports</div>
-            <div class="price ">21</div>
-            <div class="tag tag1 tag-space "></div>
-            <div class="tag tag2 tag-venus "></div>
-            <div class="venus-icon project-icon"></div>
-            <div class="card-number">250</div>
+[CardName.SULPHUR_EXPORTS,` 
             <div class="content ">
               <div class="tile venus-tile">V</div><br>
                 <div class="production-box production-box-size2a">
@@ -3932,14 +2744,8 @@ export const HTML_DATA: Map<string, string> =
             </div>
           </div>
 `],
-[CardName.SULPHUR_EATING_BACTERIA,`
-            <div class="title background-color-active ">Sulphur-Eating Bacteria</div>
-            <div class="price ">6</div>
-            <div class="tag tag1 tag-microbe "></div>
-            <div class="tag tag2 tag-venus "></div>
-            <div class="venus-icon project-icon"></div>
-            <div class="card-number">251</div>
-            <div class="content ">
+[CardName.SULPHUR_EATING_BACTERIA,` 
+            <div class="content hover-hide-res">
               <div class="requirements">6% Venus</div>
                 <div class="red-arrow " style="margin-left:76px;"></div> <div class="microbe resource "></div><br>
               OR X<div class="microbe resource "></div> <div class="red-arrow "></div> <div class="resource money ">3X</div>
@@ -3950,12 +2756,7 @@ export const HTML_DATA: Map<string, string> =
                 </div>
             </div>
 `],
-[CardName.TERRAFORMING_CONTRACT,`
-            <div class="title background-color-automated ">Terraforming Contract</div>
-            <div class="price ">8</div>
-            <div class="tag tag1 tag-earth"></div>
-            <div class="venus-icon project-icon"></div>
-            <div class="card-number">252</div>
+[CardName.TERRAFORMING_CONTRACT,` 
             <div class="content ">
               <div class="requirements">25 TR</div>
               <div class="production-box">
@@ -3966,16 +2767,10 @@ export const HTML_DATA: Map<string, string> =
               </div>
             </div>
 `],
-[CardName.THERMOPHILES,`
-            <div class="title background-color-active ">Thermophiles</div>
-            <div class="price ">9</div>
-            <div class="tag tag1 tag-microbe "></div>
-            <div class="tag tag2 tag-venus "></div>
-            <div class="venus-icon project-icon"></div>
-            <div class="card-number">253</div>
-            <div class="content ">
+[CardName.THERMOPHILES,` 
+            <div class="content hover-hide-res">
               <div class="requirements">6% Venus</div>
-                <div class="red-arrow " style="margin-left:76px;"></div> <div class="resource microbe"><div class="card-icon card-icon-venus" style="color: white;margin-top: -36px;font-weight:bold;">V</div></div>
+                <div class="red-arrow " style="margin-left:76px;"></div> <div class="resource microbe"><div class="card-icon tag-venus"></div></div>
                 <br>
               OR <div class="microbe resource "></div><div class="microbe resource "></div> <div class="red-arrow "></div> <div class="tile venus-tile">V</div>
                 <div class="description ">
@@ -3985,13 +2780,7 @@ export const HTML_DATA: Map<string, string> =
                 </div>
             </div>
 `],
-[CardName.WATER_TO_VENUS,`
-            <div class="title background-color-events ">Water to Venus</div>
-            <div class="price ">9</div>
-            <div class="tag tag1 tag-event "></div>
-            <div class="tag tag2 tag-space "></div>
-            <div class="venus-icon project-icon"></div>
-            <div class="card-number">254</div>
+[CardName.WATER_TO_VENUS,` 
             <div class="content ">
               <div class="tile venus-tile">V</div>
                 <div class="description">
@@ -3999,13 +2788,7 @@ export const HTML_DATA: Map<string, string> =
                 </div>
             </div>
 `],
-[CardName.VENUS_GOVERNOR,`
-            <div class="title background-color-automated ">Venus Governor</div>
-            <div class="price ">4</div>
-            <div class="tag tag1 tag-venus"></div>
-            <div class="tag tag2 tag-venus"></div>
-            <div class="venus-icon project-icon"></div>
-            <div class="card-number">255</div>
+[CardName.VENUS_GOVERNOR,` 
             <div class="content ">
               <div class="requirements">2 Venus</div>
               <div class="production-box">
@@ -4016,16 +2799,11 @@ export const HTML_DATA: Map<string, string> =
               </div>
             </div>
 `],
-[CardName.VENUS_MAGNETIZER,`
-            <div class="title background-color-active ">Venus Magnetizer</div>
-            <div class="price ">7</div>
-            <div class="tag tag1 tag-venus "></div>
-            <div class="venus-icon project-icon"></div>
-            <div class="card-number">256</div>
+[CardName.VENUS_MAGNETIZER,` 
             <div class="content ">
               <div class="requirements">10% Venus</div>
                 <div class="production-box production-box-size1a ">
-                    <div class="production-prefix ">&#x2796;&#xFE0E;</div><div class="energy production "></div>
+                    <div class="production-prefix minus"></div><div class="energy production "></div>
                 </div>
                 <span class="red-arrow " style="margin-left:5px; "></span>
                 <div class="tile venus-tile ">V</div>
@@ -4036,13 +2814,7 @@ export const HTML_DATA: Map<string, string> =
                 </div>
             </div>
 `],
-[CardName.VENUS_SOILS,`
-            <div class="title background-color-automated ">Venus Soils</div>
-            <div class="price ">20</div>
-            <div class="tag tag1 tag-plant"></div>
-            <div class="tag tag2 tag-venus"></div>
-            <div class="venus-icon project-icon"></div>
-            <div class="card-number">257</div>
+[CardName.VENUS_SOILS,` 
             <div class="content ">
               <div class="tile venus-tile">V</div> <br>
               <div class="production-box">
@@ -4054,13 +2826,7 @@ export const HTML_DATA: Map<string, string> =
               </div>
             </div>
 `],
-[CardName.VENUS_WAYSTATION,`
-            <div class="title background-color-active ">Venus Waystation</div>
-            <div class="price ">9</div>
-            <div class="tag tag1 tag-space "></div>
-            <div class="tag tag2 tag-venus "></div>
-            <div class="venus-icon project-icon"></div>
-            <div class="card-number">258</div>
+[CardName.VENUS_WAYSTATION,` 
             <div class="content ">
                 <div class="points points-big ">1</div>
                 <div class="resource-tag tag-venus"></div> : <div class="money resource ">-2</div>
@@ -4069,30 +2835,17 @@ export const HTML_DATA: Map<string, string> =
                 </div>
             </div>
 `],
-[CardName.VENUSIAN_ANIMALS,`
-            <div class="title background-color-active ">Venusian Animals</div>
-            <div class="price ">15</div>
-            <div class="tag tag1 tag-animal "></div>
-            <div class="tag tag2 tag-science "></div>
-            <div class="tag tag3 tag-venus "></div>
-            <div class="venus-icon project-icon"></div>
-            <div class="card-number">259</div>
+[CardName.VENUSIAN_ANIMALS,` 
             <div class="content ">
                 <div class="points">1/<div class="animal resource "></div></div>
                 <div class="requirements">18% Venus</div>
-                <div class="resource-tag science"></div> : <div class="animal resource "></div>
+                <div class="resource-tag tag-science"></div> : <div class="animal resource "></div>
                 <div class="description ">
                   (Effect: when you play a Science tag, including this, add 1 Animal to this card)
                 </div>
             </div>
 `],
-[CardName.VENUSIAN_INSECTS,`
-            <div class="title background-color-active ">Venusian Insects</div>
-            <div class="price ">5</div>
-            <div class="tag tag1 tag-microbe "></div>
-            <div class="tag tag2 tag-venus "></div>
-            <div class="venus-icon project-icon"></div>
-            <div class="card-number">260</div>
+[CardName.VENUSIAN_INSECTS,` 
             <div class="content ">
               <div class="points">1/2<div class="resource microbe"></div></div>
               <div class="requirements">12% Venus</div>
@@ -4105,30 +2858,19 @@ export const HTML_DATA: Map<string, string> =
                 </div>
             </div>
 `],
-[CardName.VENUSIAN_PLANTS,`
-            <div class="title background-color-automated ">Venusian Plants</div>
-            <div class="price ">13</div>
-            <div class="tag tag1 tag-plant"></div>
-            <div class="tag tag2 tag-venus"></div>
-            <div class="venus-icon project-icon"></div>
-            <div class="card-number">261</div>
+[CardName.VENUSIAN_PLANTS,` 
             <div class="content ">
               <div class="points points-big">1</div>
               <div class="requirements">16% Venus</div>
-              <div class="tile venus-tile">V</div>
-              <br><div class="microbe resource"><div class="card-icon card-icon-venus" style="color: white;margin-top: -36px;font-weight:bold;">V</div></div> OR
-              <div class="animal resource"><div class="card-icon card-icon-venus" style="color: white;margin-top: -36px;font-weight:bold;">V</div></div>
+              <div class="tile venus-tile"></div>
+              <br><div class="microbe resource"><div class="card-icon tag-venus"></div></div> OR
+              <div class="animal resource"><div class="card-icon tag-venus"></div></div>
               <div class="description">
                 (Requires Venus 16%. Raise Venus 1 step. Add 1 Microbe or 1 Animal to ANOTHER VENUS CARD)
               </div>
             </div>
 `],
-[CardName.HOUSE_PRINTING,`
-            <div class="title background-color-automated ">House Printing</div>
-            <div class="price ">10</div>
-            <div class="tag tag1 tag-building"></div>
-            <div class="prelude-icon project-icon"></div>
-            <div class="card-number">P36</div>
+[CardName.HOUSE_PRINTING,` 
             <div class="content ">
               <div class="points points-big">1</div>
               <div class="production-box">
@@ -4139,17 +2881,11 @@ export const HTML_DATA: Map<string, string> =
               </div>
             </div>
 `],
-[CardName.LAVA_TUBE_SETTLEMENT,`
-            <div class="title background-color-automated ">Lava Tube Settlement</div>
-            <div class="price ">15</div>
-            <div class="tag tag1 tag-building"></div>
-            <div class="tag tag2 tag-city"></div>
-            <div class="prelude-icon project-icon"></div>
-            <div class="card-number">P37</div>
+[CardName.LAVA_TUBE_SETTLEMENT,` 
             <div class="content ">
               <div class="production-box production-box-size1a">
-                <div class="production-prefix ">&#x2796;&#xFE0E;</div><div class="energy production "></div><br>
-                <div class="production-prefix ">&#x2795;&#xFE0E;</div><div class="money production ">2</div>
+                <div class="production-prefix minus"></div><div class="energy production "></div><br>
+                <div class="production-prefix plus"></div><div class="money production ">2</div>
               </div><br>
               <div class="tile city-tile"></div>*
               <div class="description">
@@ -4157,13 +2893,7 @@ export const HTML_DATA: Map<string, string> =
               </div>
             </div>
 `],
-[CardName.MARTIAN_SURVEY,`
-              <div class="title background-color-events ">Martian Survey</div>
-              <div class="price ">9</div>
-              <div class="tag tag1 tag-event"></div>
-              <div class="tag tag2 tag-science"></div>
-              <div class="prelude-icon project-icon"></div>
-              <div class="card-number">P38</div>
+[CardName.MARTIAN_SURVEY,` 
               <div class="content ">
                 <div class="points points-big">1</div>
                 <div class="requirements requirements-max ">max 4% O2</div>
@@ -4173,13 +2903,8 @@ export const HTML_DATA: Map<string, string> =
                 </div>
               </div>
 `],
-[CardName.PSYCHROPHILES,`
-              <div class="title background-color-active ">PSYCHROPHILES</div>
-              <div class="price ">2</div>
-              <div class="tag tag1 tag-microbe"></div>
-              <div class="prelude-icon project-icon"></div>
-              <div class="card-number">P39</div>
-              <div class="content ">
+[CardName.PSYCHROPHILES,` 
+              <div class="content hover-hide-res">
                 <div class="requirements requirements-max ">max -20 C</div>
                 <div class="red-arrow "></div> <div class="microbe resource "></div><br>
                 <div class="resource-tag tag-plant"></div>  : <div class="microbe resource "></div> = <div class="money resource ">2</div>
@@ -4192,22 +2917,12 @@ export const HTML_DATA: Map<string, string> =
                 </div>
               </div>
 `],
-[CardName.RESEARCH_COORDINATION,`
-              <div class="title background-color-automated ">RESEARCH COORDINATION</div>
-              <div class="price ">4</div>
-              <div class="tag tag1 tag-wild"></div>
-              <div class="prelude-icon project-icon"></div>
-              <div class="card-number">P40</div>
+[CardName.RESEARCH_COORDINATION,` 
               <div class="content ">
                 After being played, when you perform an action, the wild tag counts as any tag of your choice.
               </div>
 `],
-[CardName.SF_MEMORIAL,`
-              <div class="title background-color-automated ">SF MEMORIAL</div>
-              <div class="price ">7</div>
-              <div class="tag tag1 tag-building"></div>
-              <div class="prelude-icon project-icon"></div>
-              <div class="card-number">P41</div>
+[CardName.SF_MEMORIAL,` 
               <div class="content ">
                 <div class="points points-big">1</div>
                 <div class="resource card"></div>
@@ -4216,13 +2931,7 @@ export const HTML_DATA: Map<string, string> =
                 </div>
               </div>
 `],
-[CardName.SPACE_HOTELS,`
-              <div class="title background-color-automated ">Space hotels</div>
-              <div class="price ">12</div>
-              <div class="tag tag1 tag-space"></div>
-              <div class="tag tag2 tag-earth"></div>
-              <div class="prelude-icon project-icon"></div>
-              <div class="card-number">P42</div>
+[CardName.SPACE_HOTELS,` 
               <div class="content ">
                 <div class="requirements">2 Earth</div>
                 <div class="production-box">
@@ -4233,11 +2942,7 @@ export const HTML_DATA: Map<string, string> =
                 </div>
               </div>
 `],
-[CardName.AIRLINERS,`
-            <div class="title background-color-automated ">Airliners</div>
-            <div class="price ">11</div>
-            <div class="colonies-icon project-icon"></div>
-            <div class="card-number">C01</div>
+[CardName.AIRLINERS,` 
             <div class="content ">
               <div class="points points-big ">1</div>
               <div class="requirements ">3 Floaters</div>
@@ -4250,12 +2955,7 @@ export const HTML_DATA: Map<string, string> =
               </div>
             </div>
 `],
-[CardName.AIR_RAID,`
-            <div class="title background-color-events">Air Raid</div>
-            <div class="price">0</div>
-            <div class="tag tag1 tag-event"></div>
-            <div class="colonies-icon project-icon"></div>
-            <div class="card-number">C02</div>
+[CardName.AIR_RAID,` 
             <div class="content">
               - <div class="resource floater" style="margin-right:20px;"></div>
               STEAL <div class="resource money red-outline">5</div>
@@ -4264,29 +2964,23 @@ export const HTML_DATA: Map<string, string> =
               </div>
             </div>
 `],
-[CardName.ATMO_COLLECTORS,`
-            <div class="title background-color-active ">Atmo Collectors</div>
-            <div class="price ">15</div>
-            <div class="colonies-icon project-icon"></div>
-            <div class="card-number">C03</div>
+[CardName.ATMO_COLLECTORS,` 
             <div class="content ">
-              <div class="red-arrow "></div> <div class="floater resource "></div> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; OR <br>
-              <div class="floater resource "></div> <div class="red-arrow "></div> 2<div class="titanium resource "></div> / 3<div class="energy resource "></div> / 4<div class="heat resource "></div>
+              <div class="red-arrow "></div> <div class="floater resource "></div> OR
+              <div class="card-effect-line nowrap">
+                <div class="floater resource "></div> <div class="red-arrow "></div> 2<div class="titanium resource "></div> / 3<div class="energy resource "></div> / 4<div class="heat resource "></div>
+              </div>
               <div class="description ">
                 (Action: Add 1 floater here, or spend 1 floater here to gain 2 titanium, or 3 energy, or 4 heat.)
               </div>
-              <div class="resource floater"></div><div class="resource floater"></div>*
+              <div class="resource floater"></div><div class="resource floater"></div><span>*</span>
               <br>
               <div class="description ">
                 (Add 2 floaters to ANY card.)
               </div>
             </div>
 `],
-[CardName.COMMUNITY_SERVICES,`
-            <div class="title background-color-automated ">Community Services</div>
-            <div class="price">13</div>
-            <div class="colonies-icon project-icon"></div>
-            <div class="card-number">C04</div>
+[CardName.COMMUNITY_SERVICES,` 
             <div class="content ">
               <div class="points points-big ">1</div>
               <div class="production-box">
@@ -4297,13 +2991,7 @@ export const HTML_DATA: Map<string, string> =
               </div>
             </div>
 `],
-[CardName.CONSCRIPTION,`
-              <div class="title background-color-events ">Conscription</div>
-              <div class="price ">5</div>
-              <div class="tag tag1 tag-event "></div>
-              <div class="tag tag2 tag-earth "></div>
-              <div class="colonies-icon project-icon"></div>
-              <div class="card-number">C05</div>
+[CardName.CONSCRIPTION,` 
               <div class="content ">
                 <div class="points points-big">-1</div>
                 <div class="requirements">2 Earth</div>
@@ -4313,13 +3001,7 @@ export const HTML_DATA: Map<string, string> =
                   </div>
               </div>
 `],
-[CardName.CORONA_EXTRACTOR,`
-              <div class="title background-color-automated ">Corona Extractor</div>
-              <div class="price ">10</div>
-              <div class="tag tag1 tag-space"></div>
-              <div class="tag tag2 tag-power"></div>
-              <div class="colonies-icon project-icon"></div>
-              <div class="card-number">C06</div>
+[CardName.CORONA_EXTRACTOR,` 
               <div class="content ">
                 <div class="requirements">4 Science</div>
                   <div class="production-box production-box-size1a">
@@ -4330,27 +3012,16 @@ export const HTML_DATA: Map<string, string> =
                   </div>
               </div>
 `],
-[CardName.CRYO_SLEEP,`
-              <div class="title background-color-active ">Cryo Sleep</div>
-              <div class="price ">10</div>
-              <div class="tag tag1 tag-science"></div>
-              <div class="colonies-icon project-icon"></div>
-              <div class="card-number">C07</div>
+[CardName.CRYO_SLEEP,` 
               <div class="content ">
                 <div class="points points-big ">1</div>
-                  <div class="triangle triangle-white"></div> : <div class="resource " style="background:white">-1</div>
+                  <div class="tile trade"></div> : <div class="resource resource--white">-1</div>
                   <div class="description ">
                       (Effect: When you trade, you pay 1 less resource for it.)
                   </div>
               </div>
 `],
-[CardName.EARTH_ELEVATOR,`
-            <div class="title background-color-automated">Earth Elevator</div>
-            <div class="price">43</div>
-            <div class="tag tag1 tag-space"></div>
-            <div class="tag tag2 tag-earth"></div>
-            <div class="colonies-icon project-icon"></div>
-            <div class="card-number">C08</div>
+[CardName.EARTH_ELEVATOR,` 
             <div class="content">
               <div class="points points-big">4</div>
               <div class="production-box production-box-size3">
@@ -4361,19 +3032,11 @@ export const HTML_DATA: Map<string, string> =
               </div>
             </div>
 `],
-[CardName.ECOLOGY_RESEARCH,`
-            <div class="title background-color-automated ">Ecology Research</div>
-            <div class="price">21</div>
-            <div class="tag tag1 tag-plant"></div>
-            <div class="tag tag2 tag-microbe"></div>
-            <div class="tag tag3 tag-animal"></div>
-            <div class="tag tag-science" style="margin-left:56px;"></div>
-            <div class="colonies-icon project-icon"></div>
-            <div class="card-number">C09</div>
+[CardName.ECOLOGY_RESEARCH,` 
             <div class="content ">
               <div class="points points-big ">1</div>
               <div class="production-box production-box-size2a">
-                <div class="plant production"></div> / <div class="triangle triangle-black"></div>
+                <div class="plant production"></div> / <div class="colony colony-icon-small"></div>
               </div><br>
               <div class="resource animal"></div>* <div class="resource microbe" style="margin-left:20px;"></div><div class="resource microbe"></div>*
               <div class="description">
@@ -4381,11 +3044,7 @@ export const HTML_DATA: Map<string, string> =
               </div>
             </div>
 `],
-[CardName.FLOATER_LEASING,`
-            <div class="title background-color-automated ">Floater Leasing</div>
-            <div class="price ">3</div>
-            <div class="colonies-icon project-icon"></div>
-            <div class="card-number">C10</div>
+[CardName.FLOATER_LEASING,` 
             <div class="content ">
               <div class="production-box">
                 <div class="money production">1</div>
@@ -4395,13 +3054,7 @@ export const HTML_DATA: Map<string, string> =
               </div>
             </div>
 `],
-[CardName.FLOATER_PROTOTYPES,`
-              <div class="title background-color-events ">Floater Prototypes</div>
-              <div class="price ">2</div>
-              <div class="tag tag1 tag-event "></div>
-              <div class="tag tag2 tag-science "></div>
-              <div class="colonies-icon project-icon"></div>
-              <div class="card-number">C11</div>
+[CardName.FLOATER_PROTOTYPES,` 
               <div class="content ">
                 <div class="resource floater"></div><div class="resource floater"></div>*
                   <div class="description ">
@@ -4409,12 +3062,7 @@ export const HTML_DATA: Map<string, string> =
                   </div>
               </div>
 `],
-[CardName.FLOATER_TECHNOLOGY,`
-              <div class="title background-color-active ">Floater Technology</div>
-              <div class="price ">7</div>
-              <div class="tag tag1 tag-science"></div>
-              <div class="colonies-icon project-icon"></div>
-              <div class="card-number">C12</div>
+[CardName.FLOATER_TECHNOLOGY,` 
               <div class="content ">
                   <div class="red-arrow "></div> <div class="floater resource "></div>*
                   <div class="description ">
@@ -4422,12 +3070,7 @@ export const HTML_DATA: Map<string, string> =
                   </div>
               </div>
 `],
-[CardName.GALILEAN_WAYSTATION,`
-            <div class="title background-color-automated ">Galilean Waystation</div>
-            <div class="price ">15</div>
-            <div class="tag tag1 tag-space "></div>
-            <div class="colonies-icon project-icon"></div>
-            <div class="card-number">C13</div>
+[CardName.GALILEAN_WAYSTATION,` 
             <div class="content ">
               <div class="points points-big ">1</div>
               <div class="production-box production-box-size2a">
@@ -4438,12 +3081,7 @@ export const HTML_DATA: Map<string, string> =
               </div>
             </div>
 `],
-[CardName.HEAVY_TAXATION,`
-              <div class="title background-color-automated ">Heavy Taxation</div>
-              <div class="price ">3</div>
-              <div class="tag tag1 tag-earth "></div>
-              <div class="colonies-icon project-icon"></div>
-              <div class="card-number">C14</div>
+[CardName.HEAVY_TAXATION,` 
               <div class="content ">
                 <div class="points points-big">-1</div>
                 <div class="requirements">2 Earth</div>
@@ -4453,26 +3091,15 @@ export const HTML_DATA: Map<string, string> =
                   </div>
               </div>
 `],
-[CardName.ICE_MOON_COLONY,`
-            <div class="title background-color-automated ">Ice Moon Colony</div>
-            <div class="price ">23</div>
-            <div class="tag tag1 tag-space"></div>
-            <div class="colonies-icon project-icon"></div>
-            <div class="card-number">C15</div>
+[CardName.ICE_MOON_COLONY,` 
             <div class="content ">
-              <div class="triangle triangle-black"></div> <div class="tile ocean-tile" style="margin-left:20px;"></div>
+              <div class="tile colony"></div> <div class="tile ocean-tile"></div>
               <div class="description">
                 (Place 1 colony and 1 ocean tile.)
               </div>
             </div>
 `],
-[CardName.IMPACTOR_SWARM,`
-              <div class="title background-color-events ">Impactor Swarm</div>
-              <div class="price ">11</div>
-              <div class="tag tag1 tag-event "></div>
-              <div class="tag tag2 tag-space "></div>
-              <div class="colonies-icon project-icon"></div>
-              <div class="card-number">C16</div>
+[CardName.IMPACTOR_SWARM,` 
               <div class="content ">
                 <div class="requirements">2 Jovian</div>
                 12<div class="resource heat"></div><br>
@@ -4482,28 +3109,16 @@ export const HTML_DATA: Map<string, string> =
                   </div>
               </div>
 `],
-[CardName.INTERPLANETARY_COLONY_SHIP,`
-              <div class="title background-color-events ">Interplanetary Colony Ship</div>
-              <div class="price ">12</div>
-              <div class="tag tag1 tag-event "></div>
-              <div class="tag tag2 tag-space "></div>
-              <div class="tag tag3 tag-earth "></div>
-              <div class="colonies-icon project-icon"></div>
-              <div class="card-number">C17</div>
+[CardName.INTERPLANETARY_COLONY_SHIP,` 
               <div class="content ">
                 <br>
-                <div class="triangle triangle-black"></div><br><br>
-                  <div class="description ">
+                <div class="tile colony"></div>
+                  <div class="description mt-10">
                     (Place a colony.)
                   </div>
               </div>
 `],
-[CardName.JOVIAN_LANTERNS,`
-            <div class="title background-color-active ">Jovian Lanterns</div>
-            <div class="price ">20</div>
-            <div class="tag tag1 tag-jovian "></div>
-            <div class="colonies-icon project-icon"></div>
-            <div class="card-number">C18</div>
+[CardName.JOVIAN_LANTERNS,` 
             <div class="content ">
                 <div class="points">1/2<div class="resource floater"></div></div>
                 <div class="requirements">Jovian</div>
@@ -4517,12 +3132,7 @@ export const HTML_DATA: Map<string, string> =
                 </div>
               </div>
 `],
-[CardName.JUPITER_FLOATING_STATION,`
-            <div class="title background-color-active ">Jupiter Floating Station</div>
-            <div class="price ">9</div>
-            <div class="tag tag1 tag-jovian "></div>
-            <div class="colonies-icon project-icon"></div>
-            <div class="card-number">C19</div>
+[CardName.JUPITER_FLOATING_STATION,` 
             <div class="content ">
               <div class="points points-big">1</div>
               <div class="requirements">3 Science</div>
@@ -4536,13 +3146,7 @@ export const HTML_DATA: Map<string, string> =
               </div>
             </div>
 `],
-[CardName.LUNA_GOVERNOR,`
-              <div class="title background-color-automated ">Luna Governor</div>
-              <div class="price ">4</div>
-              <div class="tag tag1 tag-earth "></div>
-              <div class="tag tag2 tag-earth "></div>
-              <div class="colonies-icon project-icon"></div>
-              <div class="card-number">C20</div>
+[CardName.LUNA_GOVERNOR,` 
               <div class="content ">
                 <div class="requirements">3 Earth</div>
                 <div class="production-box"><div class="production money">2</div></div>
@@ -4551,13 +3155,7 @@ export const HTML_DATA: Map<string, string> =
                   </div>
               </div>
 `],
-[CardName.LUNAR_EXPORTS,`
-            <div class="title background-color-automated ">Lunar Exports</div>
-            <div class="price ">19</div>
-            <div class="tag tag1 tag-earth"></div>
-            <div class="tag tag2 tag-space"></div>
-            <div class="colonies-icon project-icon"></div>
-            <div class="card-number">C21</div>
+[CardName.LUNAR_EXPORTS,` 
             <div class="content ">
               <div class="production-box production-box-size4">
                 <div class="plant production"></div><div class="plant production"></div> OR <div class="money production">5</div>
@@ -4567,12 +3165,7 @@ export const HTML_DATA: Map<string, string> =
               </div>
             </div>
 `],
-[CardName.LUNAR_MINING,`
-            <div class="title background-color-automated ">Lunar Mining</div>
-            <div class="price ">11</div>
-            <div class="tag tag1 tag-earth"></div>
-            <div class="colonies-icon project-icon"></div>
-            <div class="card-number">C22</div>
+[CardName.LUNAR_MINING,` 
             <div class="content ">
               <div class="production-box production-box-size3">
                 <div class="titanium production"></div> / 2 <div class="resource-tag tag-earth"></div>
@@ -4582,26 +3175,14 @@ export const HTML_DATA: Map<string, string> =
               </div>
             </div>
 `],
-[CardName.MARKET_MANIPULATION,`
-              <div class="title background-color-events ">Market Manipulation</div>
-              <div class="price ">1</div>
-              <div class="tag tag1 tag-event "></div>
-              <div class="tag tag2 tag-earth "></div>
-              <div class="colonies-icon project-icon"></div>
-              <div class="card-number">C23</div>
+[CardName.MARKET_MANIPULATION,` 
               <div class="content ">
                 INCREASE ONE COLONY TILE TRACK 1 STEP. <BR>
                 DECREASE ANOTHER COLONY TILE TRACK 1 STEP.
               </div>
 `],
-[CardName.MARTIAN_ZOO,`
-              <div class="title background-color-active ">Martian Zoo</div>
-              <div class="price ">12</div>
-              <div class="tag tag1 tag-building"></div>
-              <div class="tag tag2 tag-animal"></div>
-              <div class="colonies-icon project-icon"></div>
-              <div class="card-number">C24</div>
-              <div class="content ">
+[CardName.MARTIAN_ZOO,` 
+              <div class="content hover-hide-res">
                 <div class="points points-big">1</div>
                 <div class="requirements">2 Cities</div>
                 <div class="resource-tag tag-earth"></div> : <div class="resource animal"></div> <br>
@@ -4613,61 +3194,44 @@ export const HTML_DATA: Map<string, string> =
                 </div>
               </div>
 `],
-[CardName.MINING_COLONY,`
-            <div class="title background-color-automated ">Mining Colony</div>
-            <div class="price ">20</div>
-            <div class="tag tag1 tag-space"></div>
-            <div class="colonies-icon project-icon"></div>
-            <div class="card-number">C25</div>
+[CardName.MINING_COLONY,` 
             <div class="content ">
               <div class="production-box">
                 <div class="production titanium"></div>
               </div>
-              <div class="triangle triangle-black" style="margin-left:20px;"></div>
+              <div class="tile colony"></div>
               <div class="description" >
                 (Increase your titanium production 1 step. Place a colony.)
               </div>
             </div>
 `],
-[CardName.MINORITY_REFUGE,`
-            <div class="title background-color-automated ">Minority Refuge</div>
-            <div class="price ">5</div>
-            <div class="tag tag1 tag-space"></div>
-            <div class="colonies-icon project-icon"></div>
-            <div class="card-number">C26</div>
+[CardName.MINORITY_REFUGE,` 
             <div class="content ">
               <div class="production-box">
                 <div class="production money">-2</div>
               </div>
-              <div class="triangle triangle-black" style="margin-left:20px;"></div>
+              <div class="tile colony"></div>
               <div class="description" >
                 (Decrease your MC production 2 steps. Place a colony.)
               </div>
             </div>
 `],
-[CardName.MOLECULAR_PRINTING,`
-              <div class="title background-color-automated ">Molecular Printing</div>
-              <div class="price ">11</div>
-              <div class="tag tag1 tag-science"></div>
-              <div class="colonies-icon project-icon"></div>
-              <div class="card-number">C27</div>
+[CardName.MOLECULAR_PRINTING,` 
               <div class="content ">
                 <div class="points points-big ">1</div>
-                  <div class="resource money">1</div> / <div class="tile city-tile-small red-outline"></div> <br>
-                  <div class="resource money" style="margin-left:-14px;">1</div> / <div class="triangle triangle-red"></div>
-                  <div class="description ">
-                      <p>(Gain 1MC for each city tile in play.)</p>
-                      <p>(Gain 1MC for each colony in play.)</p>
+                  <div class="nowrap">
+                    <div class="resource money">1</div> / <div class="tile city-tile red-outline"></div>
+                  </div>
+                  <div class="nowrap">
+                    <div class="resource money">1</div> / <div class="colony tile red-outline"></div>
+                  </div>
+                  <div class="description mt-10">
+                      <div>(Gain 1MC for each city tile in play.)</div>
+                      <div>(Gain 1MC for each colony in play.)</div>
                   </div>
               </div>
 `],
-[CardName.NITROGEN_FROM_TITAN,`
-              <div class="title background-color-automated ">Nitrogen From Titan</div>
-              <div class="price ">25</div>
-              <div class="tag tag1 tag-space"></div>
-              <div class="tag tag2 tag-jovian"></div>
-              <div class="colonies-icon project-icon"></div>
-              <div class="card-number">C28</div>
+[CardName.NITROGEN_FROM_TITAN,` 
               <div class="content ">
                 <div class="points points-big ">1</div>
                   <div class="tile rating"></div><div class="tile rating"></div>
@@ -4678,43 +3242,30 @@ export const HTML_DATA: Map<string, string> =
                   </div>
               </div>
 `],
-[CardName.PIONEER_SETTLEMENT,`
-            <div class="title background-color-automated ">Pioneer Settlement</div>
-            <div class="price ">13</div>
-            <div class="tag tag1 tag-space"></div>
-            <div class="colonies-icon project-icon"></div>
-            <div class="card-number">C29</div>
+[CardName.PIONEER_SETTLEMENT,` 
             <div class="content ">
               <div class="points points-big ">2</div>
               <div class="requirements requirements-max">max 1 Colony</div>
               <div class="production-box">
                 <div class="production money">-2</div>
               </div>
-              <div class="triangle triangle-black" style="margin-left:20px;"></div>
+              <div class="tile colony"></div>
               <div class="description" >
                 (Requires that you have no more than 1 colony. Decrease your MC production 2 steps. Place a colony.)
               </div>
             </div>
 `],
-[CardName.PRODUCTIVE_OUTPOST,`
-            <div class="title background-color-automated ">Productive Outpost</div>
-            <div class="price ">0</div>
-            <div class="colonies-icon project-icon"></div>
-            <div class="card-number">C30</div>
+[CardName.PRODUCTIVE_OUTPOST,` 
             <div class="content ">
               GAIN ALL YOUR COLONY BONUSES
             </div>
 `],
-[CardName.QUANTUM_COMMUNICATIONS,`
-            <div class="title background-color-automated ">Quantum Communications</div>
-            <div class="price">8</div>
-            <div class="colonies-icon project-icon"></div>
-            <div class="card-number">C31</div>
+[CardName.QUANTUM_COMMUNICATIONS,` 
             <div class="content ">
               <div class="points points-big ">1</div>
               <div class="requirements">4 Science</div>
               <div class="production-box production-box-size2a">
-                <div class="money production">1</div> / <div class="triangle triangle-red"></div>
+                <div class="money production">1</div> / <div class="colony colony-icon-small red-outline"></div>
               </div><br>
               <div class="description">
                 (Requires 4 Science tags. Increase your MC production 1 step for each colony in play.)
@@ -4722,13 +3273,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
 `],
 [CardName.RED_SPOT_OBSERVATORY,`
-            <div class="title background-color-active ">Red Spot Observatory</div>
-            <div class="price ">17</div>
-            <div class="tag tag1 tag-jovian "></div>
-            <div class="tag tag2 tag-science "></div>
-            <div class="colonies-icon project-icon"></div>
-            <div class="card-number">C32</div>
-            <div class="content ">
+              <div class="content ">
                 <div class="points points-big">2</div>
                 <div class="requirements">3 Science</div>
                 <div class="red-arrow "></div> <div class="resource floater"></div> OR
@@ -4741,16 +3286,11 @@ export const HTML_DATA: Map<string, string> =
                 <div class="description bottom" style="margin-left: 30px;">(Draw 2 cards.)</div>
               </div>
 `],
-[CardName.REFUGEE_CAMP,`
-              <div class="title background-color-active ">Refugee Camps</div>
-              <div class="price ">10</div>
-              <div class="tag tag1 tag-earth"></div>
-              <div class="colonies-icon project-icon"></div>
-              <div class="card-number">C33</div>
+[CardName.REFUGEE_CAMP,` 
               <div class="content ">
                   <div class="points points-big">1/<div class="resource camp" style="vertical-align:middle;"></div></div>
                   <div class="production-box production-box-size1a ">
-                      <div class="production-prefix ">&#x2796;&#xFE0E;</div><div class="money production ">1</div>
+                      <div class="production-prefix minus"></div><div class="money production ">1</div>
                   </div>
                   <span class="red-arrow " style="margin-left:5px; "></span>
                   <div class="resource camp"></div>
@@ -4760,76 +3300,47 @@ export const HTML_DATA: Map<string, string> =
                   </div>
               </div>
 `],
-[CardName.RESEARCH_COLONY,`
-            <div class="title background-color-automated ">Research Colony</div>
-            <div class="price ">20</div>
-            <div class="tag tag1 tag-space"></div>
-            <div class="tag tag2 tag-science"></div>
-            <div class="colonies-icon project-icon"></div>
-            <div class="card-number">C34</div>
+[CardName.RESEARCH_COLONY,` 
             <div class="content ">
-              <div class="triangle triangle-black"></div>* <div class="resource card" style="margin-left:20px;"></div><div class="resource card"></div>
-              <div class="description" >
+              <div class="tile colony"></div>* <div class="resource card first"></div><div class="resource card"></div>
+              <div class="description mt-10" >
                 (Place a colony. MAY BE PLACED WHERE YOU ALREADY HAVE A COLONY. Draw 2 cards.)
               </div>
             </div>
 `],
-[CardName.RIM_FREIGHTERS,`
-              <div class="title background-color-active ">Rim Freighters</div>
-              <div class="price ">4</div>
-              <div class="tag tag1 tag-space"></div>
-              <div class="colonies-icon project-icon"></div>
-              <div class="card-number">C35</div>
+[CardName.RIM_FREIGHTERS,` 
               <div class="content ">
-                  <div class="triangle triangle-white"></div> : <div class="resource " style="background:white">-1</div>
+                  <div class="tile trade"></div> : <div class="resource resource--white">-1</div>
                   <div class="description ">
                       (Effect: When you trade, you pay 1 less resource for it.)
                   </div>
               </div>
 `],
-[CardName.SKY_DOCKS,`
-              <div class="title background-color-active ">Sky Docks</div>
-              <div class="price ">18</div>
-              <div class="tag tag1 tag-space"></div>
-              <div class="tag tag2 tag-earth"></div>
-              <div class="colonies-icon project-icon"></div>
-              <div class="card-number">C36</div>
+[CardName.SKY_DOCKS,` 
               <div class="content ">
                 <div class="points points-big">2</div>
                 <div class="requirements">2 Earth</div>
                   : <span class="money resource ">-1</span>
                   <div class="description ">
                       (Effect: When you play a card, you pay 1 MC less for it.)
-                  </div><br>
-                  <div class="triangle triangle-white"></div>
+                  </div>
+                  <div class="tile fleet"></div>
                   <div class="description ">
                       (Requires 2 Earth tags. Gain 1 Trade Fleet.)
                   </div>
               </div>
 `],
-[CardName.SOLAR_PROBE,`
-              <div class="title background-color-events ">Solar Probe</div>
-              <div class="price ">9</div>
-              <div class="tag tag1 tag-event "></div>
-              <div class="tag tag2 tag-space "></div>
-              <div class="tag tag3 tag-science "></div>
-              <div class="colonies-icon project-icon"></div>
-              <div class="card-number">C37</div>
+[CardName.SOLAR_PROBE,` 
               <div class="content ">
                 <div class="points points-big">1</div>
                   <div class="resource card"></div> /
-                    <div class="resource-tag science"></div><div class="resource-tag science" style="margin-left:-10px"></div><div class="resource-tag science" style="margin-left:-10px"></div>
+                    <div class="resource-tag tag-science"></div><div class="resource-tag tag-science" style="margin-left:-10px"></div><div class="resource-tag tag-science" style="margin-left:-10px"></div>
                   <div class="description ">
                       (Draw 1 card for every 3 science tags you have, including this.)
                   </div>
               </div>
 `],
-[CardName.SOLAR_REFLECTORS,`
-              <div class="title background-color-automated ">Solar Reflectors</div>
-              <div class="price ">23</div>
-              <div class="tag tag1 tag-space"></div>
-              <div class="colonies-icon project-icon"></div>
-              <div class="card-number">C38</div>
+[CardName.SOLAR_REFLECTORS,` 
               <div class="content ">
                 <div class="production-box production-box-size1a">
                     5 <div class="heat production"></div>
@@ -4839,46 +3350,30 @@ export const HTML_DATA: Map<string, string> =
                 </div>
               </div>
 `],
-[CardName.SPACE_PORT,`
-              <div class="title background-color-automated ">Space Port</div>
-              <div class="price ">22</div>
-              <div class="tag tag1 tag-building "></div>
-              <div class="tag tag2 tag-city "></div>
-              <div class="colonies-icon project-icon"></div>
-              <div class="card-number">C39</div>
+[CardName.SPACE_PORT,` 
               <div class="content ">
                 <div class="requirements">Colony</div>
                   <div class="production-box production-box-size1a ">
-                      <div class="production-prefix ">&#x2796;&#xFE0E;</div><div class="energy production "></div>
-                      <div class="production-prefix ">&#x2795;&#xFE0E;</div><div class="money production ">4</div>
+                      <div class="production-prefix minus"></div><div class="energy production "></div>
+                      <div class="production-prefix plus"></div><div class="money production ">4</div>
                   </div>
-                  <div class="tile city-tile " style="margin-left:10px "></div> <div class="triangle triangle-white" style="margin-left:10px "></div><br>
-                  <div class="description ">
+                  <div class="tile city-tile "></div> <div class="tile fleet"></div>
+                  <div class="description mt-10">
                       (Requires 1 colony. Decrease your Energy production 1 step and increase your MC production 4 steps. Place a City tile. Gain 1 Trade Fleet.)
                   </div>
               </div>
 `],
-[CardName.SPACE_PORT_COLONY,`
-              <div class="title background-color-automated ">Space Port Colony</div>
-              <div class="price ">27</div>
-              <div class="tag tag1 tag-space "></div>
-              <div class="colonies-icon project-icon"></div>
-              <div class="card-number">C40</div>
+[CardName.SPACE_PORT_COLONY,` 
               <div class="content ">
-                <div class="points">1/2<div class="triangle triangle-red" style="vertical-align:middle;"></div></div>
+                <div class="points">1/2<div class="tile colony red-outline"></div></div>
                 <div class="requirements">Colony</div>
-                  <div class="triangle triangle-black"></div>* <div class="triangle triangle-white" style="margin-left:20px "></div><br>
-                  <div class="description ">
+                  <div class="tile colony"></div>* <div class="tile fleet"></div>
+                  <div class="description mt-10">
                       (Requires a colony. Place a colony. MAY BE PLACED ON A COLONY TILE WHERE YOU ALREADY HAVE A COLONY. Gain 1 Trade Fleet. 1VP per 2 colonies in play.)
                   </div>
               </div>
 `],
-[CardName.SPINOFF_DEPARTMENT,`
-            <div class="title background-color-active">Spin-off Department</div>
-            <div class="price ">10</div>
-            <div class="tag tag1 tag-building"></div>
-            <div class="colonies-icon project-icon"></div>
-            <div class="card-number">C41</div>
+[CardName.SPINOFF_DEPARTMENT,` 
             <div class="content ">
               <div class="resource money">20</div>* : <div class="resource card"></div>
               <div class="description" >
@@ -4890,13 +3385,8 @@ export const HTML_DATA: Map<string, string> =
               </div>
             </div>
 `],
-[CardName.SUBZERO_SALT_FISH,`
-            <div class="title background-color-active">Sub-Zero Salt Fish</div>
-            <div class="price">5</div>
-            <div class="tag tag1 tag-animal"></div>
-            <div class="colonies-icon project-icon"></div>
-            <div class="card-number">C42</div>
-            <div class="content">
+[CardName.SUBZERO_SALT_FISH,` 
+            <div class="content hover-hide-res">
               <div class="points">1/2<div class="animal resource"></div>
               </div>
               <div class="requirements">-6 C</div>
@@ -4906,19 +3396,14 @@ export const HTML_DATA: Map<string, string> =
                 (Action: Add 1 Animal to this card.)
               </div>
               <div class="production-box production-box-size1a">
-                <div class="production-prefix">&#x2796;&#xFE0E;</div><div class="plant production red-outline"></div>
+                <div class="production-prefix minus"></div><div class="plant production red-outline"></div>
               </div>
               <div class="description" style="text-align:left;">
                 (Requires -6 C. Decrease any Plant production 1 step. 1 VP per 2 Animals on this card.)
               </div>
             </div>
 `],
-[CardName.TITAN_AIRSCRAPPING,`
-            <div class="title background-color-active ">Titan Air-scrapping</div>
-            <div class="price ">21</div>
-            <div class="tag tag1 tag-jovian "></div>
-            <div class="colonies-icon project-icon"></div>
-            <div class="card-number">C43</div>
+[CardName.TITAN_AIRSCRAPPING,` 
             <div class="content ">
                 <div class="points points-big">2</div>
                 <div class="resource titanium"></div> <div class="red-arrow "></div> <div class="resource floater"></div><div class="resource floater"></div> <br>
@@ -4928,34 +3413,25 @@ export const HTML_DATA: Map<string, string> =
                 </div>
               </div>
 `],
-[CardName.TITAN_FLOATER_LAUNCHPAD,`
-            <div class="title background-color-active ">Titan Floating Launch-Pad</div>
-            <div class="price ">18</div>
-            <div class="tag tag1 tag-jovian "></div>
-            <div class="colonies-icon project-icon"></div>
-            <div class="card-number">C44</div>
+[CardName.TITAN_FLOATER_LAUNCHPAD,` 
             <div class="content ">
                 <div class="points points-big">1</div>
                 <div class="red-arrow "></div>
-                <div class="resource floater"><div class="card-icon tag-jovian"></div></div> <br>
-                OR <div class="resource floater"></div> <div class="red-arrow "></div> <div class="triangle triangle-white"></div>
+                <div class="resource floater"><div class="card-icon tag-jovian"></div></div>
+                <div class="nowrap second-line">
+                  OR <div class="resource floater"></div> <div class="red-arrow "></div> <div class="tile trade"></div>
+                </div>
                 <div class="description ">
                   (Action: Add 1 floater to ANY JOVIAN CARD, or spend 1 floater here to trade for free.)
                 </div>
-                <div class="resource floater" style="margin-left:-130px;margin-top:15px;"><div class="card-icon tag-jovian"></div></div>
                 <div class="resource floater"><div class="card-icon tag-jovian"></div></div>
-                <div class="description" style="position: absolute; margin-left: 87px; margin-top: -36px;">
+                <div class="resource floater"><div class="card-icon tag-jovian"></div></div>
+                <div class="description description--2">
                   (Add two floaters to ANY JOVIAN CARD.)
                 </div>
               </div>
 `],
-[CardName.TITAN_SHUTTLES,`
-            <div class="title background-color-active ">Titan Shuttles</div>
-            <div class="price ">23</div>
-            <div class="tag tag1 tag-space "></div>
-            <div class="tag tag2 tag-jovian "></div>
-            <div class="colonies-icon project-icon"></div>
-            <div class="card-number">C45</div>
+[CardName.TITAN_SHUTTLES,` 
             <div class="content ">
                 <div class="points points-big">1</div>
                 <div class="red-arrow "></div>
@@ -4967,43 +3443,29 @@ export const HTML_DATA: Map<string, string> =
                 </div>
               </div>
 `],
-[CardName.TRADE_ENVOYS,`
-              <div class="title background-color-active ">Trade Envoys</div>
-              <div class="price ">6</div>
-              <div class="colonies-icon project-icon"></div>
-              <div class="card-number">C46</div>
-              <div class="content ">
-                  <div class="triangle triangle-white"></div> : <span style="font-family:Prototype;font-size:23px;font-weight:normal;vertical-align:middle">+1</span>
-                  <div class="description " style="margin-top:5px">
-                      (Effect: When you trade, you may first increase that Colony Tile track 1 step.)
-                  </div>
-              </div>
+[CardName.TRADE_ENVOYS,` 
+            <div class="content ">
+                <div class="tile trade"></div> : <span class="card-sign">+1</span>
+                <div class="description mt-10">
+                    (Effect: When you trade, you may first increase that Colony Tile track 1 step.)
+                </div>
+            </div>
 `],
-[CardName.TRADING_COLONY,`
-              <div class="title background-color-active ">Trading Colony</div>
-              <div class="price ">18</div>
-              <div class="tag tag1 tag-space "></div>
-              <div class="colonies-icon project-icon"></div>
-              <div class="card-number">C47</div>
-              <div class="content ">
-                <div class="triangle triangle-white"></div> : <span style="font-family:Prototype;font-size:23px;font-weight:normal;vertical-align:middle">+1</span>
-                  <br>
-                  <div class="description " style="margin-top:5px;margin-bottom:5px">
-                      (Effect: When you trade, you may first increase that Colony Tile track 1 step.)
-                  </div>
-                  <div class="triangle triangle-black"></div>
-                  <br>
-                  <div class="description " style="margin-top:5px">
-                      (Place a colony.)
-                  </div>
-              </div>
+[CardName.TRADING_COLONY,` 
+            <div class="content ">
+                <div class="tile trade"></div> : <span class="card-sign">+1</span>
+                <div class="description mt-10">
+                  (Effect: When you trade, you may first increase that Colony Tile track 1 step.)
+                </div>
+                <div class="mt-10">
+                  <div class="tile colony mt-10"></div>
+                </div>
+                <div class="description mt-10">
+                    (Place a colony.)
+                </div>
+            </div>
 `],
-[CardName.URBAN_DECOMPOSERS,`
-            <div class="title background-color-automated">Urban Decomposers</div>
-            <div class="price">6</div>
-            <div class="tag tag1 tag-microbe"></div>
-            <div class="colonies-icon project-icon"></div>
-            <div class="card-number">C48</div>
+[CardName.URBAN_DECOMPOSERS,` 
             <div class="content">
               <div class="requirements">Colony City</div>
               <div class="production-box">
@@ -5015,12 +3477,7 @@ export const HTML_DATA: Map<string, string> =
               </div>
             </div>
 `],
-[CardName.WARP_DRIVE,`
-              <div class="title background-color-active ">Warp Drive</div>
-              <div class="price ">14</div>
-              <div class="tag tag1 tag-science"></div>
-              <div class="colonies-icon project-icon"></div>
-              <div class="card-number">C49</div>
+[CardName.WARP_DRIVE,` 
               <div class="content ">
                 <div class="points points-big ">2</div>
                 <div class="requirements">5 Science</div>
@@ -5034,7 +3491,7 @@ export const HTML_DATA: Map<string, string> =
               </div>
 `],
 [CardName.CREDICOR,`
-      <div class="corporationLabel ">CORPORATION</div>
+      
       <div class="contentCorporation ">
           <div class="corporationEffectBox ">
               <div class="corporationEffectBoxLabel ">EFFECT</div>
@@ -5054,8 +3511,8 @@ export const HTML_DATA: Map<string, string> =
       </div>
 `],
 [CardName.ECOLINE,`
-    <div class="tag tag1 tag-plant"></div>
-    <div class="corporationLabel">CORPORATION</div>
+     
+    
     <div class="contentCorporation">
       <div class="corporationEffectBox">
         <div class="corporationEffectBoxLabel">EFFECT</div>
@@ -5082,42 +3539,29 @@ export const HTML_DATA: Map<string, string> =
       <div class="description" style="margin-top:-3px;text-align:center;">(You start with 2 plant production, 3 plants, and 36MC)</div>
     </div>
 `],
-[CardName.HELION,`
-    <div class="tag tag1 tag-space"></div>
-    <div class="corporationLabel">CORPORATION</div>
+[CardName.HELION,` 
+    
     <div class="contentCorporation">
       <div class="corporationEffectBox">
         <div class="corporationEffectBoxLabel">EFFECT</div>
         X<div class="resource heat"></div> :
         <div class="resource money">X</div>
-        <div class="description" style="text-align:center;margin-top:0px;">
+        <div class="description helion-effect">
           (Effect: Your may use heat as MC. You may not use MC as heat.)
         </div>
       </div>
-      <div style="font-size:34px;
-                      width:140px;
-                      text-align: center;
-                      color: #020202;
-                      margin-top:5px;
-                      border:2px solid black;
-                      margin-left:8px;
-                      background: #e6e600;
-                      box-shadow: 6px 6px 6px grey;
-                      border-radius:2px;">
-                  helion</div><br>
-      <div class="production-box production-box-size3" style="margin-left:20px;margin-top:-50px;">
+      <div class="helion">helion</div><br>
+      <div class="production-box production-box-size3 helion-production">
         <div class="production heat"></div><div class="production heat"></div><div class="production heat"></div>
       </div>
-        <div class="resource money" style="margin-left:20px;">42</div>
-      <div class="description" style="text-align:center;">
+        <div class="resource money helion-mc">42</div>
+      <div class="description helion-resource-description">
         (You start with 3 heat production and 42 MC.)
       </div>
     </div>
 `],
-[CardName.MINING_GUILD,`
-    <div class="tag tag1 tag-building"></div>
-    <div class="tag tag2 tag-building"></div>
-    <div class="corporationLabel">CORPORATION</div>
+[CardName.MINING_GUILD,` 
+    
     <div class="contentCorporation">
       <div class="corporationEffectBox">
         <div class="corporationEffectBoxLabel">EFFECT</div>
@@ -5144,7 +3588,7 @@ export const HTML_DATA: Map<string, string> =
                   MINING<br>GUILD
               </span><br>
       <div class="resource money" style="margin-left:35px;">30</div>&nbsp;&nbsp;
-      5<div class="production steel"></div>
+      5<div class="resource steel"></div>
       <div class="production-box" style="margin-top:5px;margin-left:20px;">
         <div class="production steel"></div>
       </div>
@@ -5153,9 +3597,8 @@ export const HTML_DATA: Map<string, string> =
       </div>
     </div>
 `],
-[CardName.INTERPLANETARY_CINEMATICS,`
-    <div class="tag tag1 tag-building"></div>
-      <div class="corporationLabel ">CORPORATION</div>
+[CardName.INTERPLANETARY_CINEMATICS,` 
+      
       <div class="contentCorporation ">
           <div class="corporationEffectBox ">
               <div class="corporationEffectBoxLabel ">EFFECT</div>
@@ -5185,15 +3628,18 @@ export const HTML_DATA: Map<string, string> =
           </div>
       </div>
 `],
-[CardName.INVENTRIX,`
-    <div class="tag tag1 tag-science"></div>
-      <div class="corporationLabel ">CORPORATION</div>
+[CardName.INVENTRIX,` 
+      
       <div class="contentCorporation ">
           <div class="corporationEffectBox ">
-              <div class="corporationEffectBoxLabel ">EFFECT</div>
-                <div class="tile background-color-corporation" style="width:100px;text-shadow:none;color:black;font-size:11px;padding-top:5px;padding-bottom:5px;">Temp / O2 / Ocean</div>: +/- 2
-              <div class="description " style="text-align:center;margin-top:0px; ">
-                  (Effect: Your temperature, oxygen and ocean requirements are +2 or -2 steps, your choice in each case.)
+              <div class="corporationEffectBoxLabel">EFFECT</div>
+              
+              <div class="corporation-ability">
+                <div class="globals-box">Global requirements</div>: +/- 2
+              </div>
+              
+              <div class="description ">
+                  (Effect: Your temperature, oxygen, ocean, and Venus requirements are +2 or -2 steps, your choice in each case.)
               </div>
           </div>
           <span style="color: #020202;
@@ -5210,9 +3656,8 @@ export const HTML_DATA: Map<string, string> =
           </div>
       </div>
 `],
-[CardName.PHOBOLOG,`
-    <div class="tag tag1 tag-space"></div>
-    <div class="corporationLabel">CORPORATION</div>
+[CardName.PHOBOLOG,` 
+    
     <div class="contentCorporation">
       <div class="corporationEffectBox">
         <div class="corporationEffectBoxLabel">EFFECT</div>
@@ -5248,9 +3693,8 @@ export const HTML_DATA: Map<string, string> =
       </div>
     </div>
 `],
-[CardName.THARSIS_REPUBLIC,`
-    <div class="tag tag1 tag-building"></div>
-      <div class="corporationLabel ">CORPORATION</div>
+[CardName.THARSIS_REPUBLIC,` 
+      
       <div class="contentCorporation ">
           <div class="corporationEffectBox ">
               <div class="corporationEffectBoxLabel ">EFFECT</div>
@@ -5269,9 +3713,8 @@ export const HTML_DATA: Map<string, string> =
           </div>
       </div>
 `],
-[CardName.THORGATE,`
-    <div class="tag tag1 tag-power"></div>
-    <div class="corporationLabel">CORPORATION</div>
+[CardName.THORGATE,` 
+    
     <div class="contentCorporation">
       <div class="corporationEffectBox">
         <div class="corporationEffectBoxLabel">EFFECT</div>
@@ -5297,9 +3740,8 @@ export const HTML_DATA: Map<string, string> =
       </div>
     </div>
 `],
-[CardName.UNITED_NATIONS_MARS_INITIATIVE,`
-    <div class="tag tag1 tag-earth"></div>
-    <div class="corporationLabel">CORPORATION</div>
+[CardName.UNITED_NATIONS_MARS_INITIATIVE,` 
+    
     <div class="contentCorporation">
       <div class="corporationEffectBox">
         <div class="corporationEffectBoxLabel">ACTION</div>
@@ -5328,9 +3770,8 @@ export const HTML_DATA: Map<string, string> =
       </div>
     </div>
 `],
-[CardName.TERACTOR,`
-    <div class="tag tag1 tag-earth"></div>
-    <div class="corporationLabel">CORPORATION</div>
+[CardName.TERACTOR,` 
+    
     <div class="corporate-icon corporation-icon"></div>
     <div class="contentCorporation">
       <div class="corporationEffectBox">
@@ -5338,7 +3779,7 @@ export const HTML_DATA: Map<string, string> =
         <div class="resource-tag tag-earth"></div> :
         <div class="resource money">-3</div>
         <div class="description" style="text-align:center;margin-top:0px;">
-          (Effect: When playing an Earth card, you pay 3 MC less for it.)
+          (Effect: When you play an Earth tag, you pay 3 MC less for it.)
         </div>
       </div>
       <span style="font-size:34px;
@@ -5353,9 +3794,8 @@ export const HTML_DATA: Map<string, string> =
       </div>
     </div>
 `],
-[CardName.SATURN_SYSTEMS,`
-    <div class="tag tag1 tag-jovian"></div>
-    <div class="corporationLabel">CORPORATION</div>
+[CardName.SATURN_SYSTEMS,` 
+    
     <div class="corporate-icon corporation-icon"></div>
     <div class="contentCorporation">
       <div class="corporationEffectBox">
@@ -5391,10 +3831,8 @@ export const HTML_DATA: Map<string, string> =
       </div>
     </div>
 `],
-[CardName.APHRODITE,`
-    <div class="tag tag1 tag-plant"></div>
-    <div class="tag tag2 tag-venus"></div>
-    <div class="corporationLabel">CORPORATION</div>
+[CardName.APHRODITE,` 
+    
     <div class="venus-icon corporation-icon"></div>
     <div class="contentCorporation">
       <div class="corporationEffectBox">
@@ -5420,9 +3858,8 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.CELESTIC,`
-      <div class="tag tag1 tag-venus"></div>
-      <div class="corporationLabel">CORPORATION</div>
+[CardName.CELESTIC,` 
+      
       <div class="venus-icon corporation-icon"></div>
       <div class="contentCorporation">
         <div class="pointsCorporation">1/3<div class="resource floater"></div></div>
@@ -5441,24 +3878,25 @@ export const HTML_DATA: Map<string, string> =
           style="background:linear-gradient(to right,rgb(23,185,236),rgb(251,192,137))">ES</span><span style="background:rgb(251,192,137);padding-right:5px;">TIC</span>
         </div>
       </div><br>
-        <div class="resource money" style="margin-left:30px;">42</div>
-        <div class="resource card" style="margin-left:15px;"><div class="card-icon card-icon-floater">&#x2601;</div></div>
-        <div class="resource card"><div class="card-icon card-icon-floater">&#x2601;</div></div>
-        <div class="description" style="text-align:center;margin-top:-3px;font-size:10px;">
+        <div class="celestic-fix">
+          <div class="resource money" style="margin-left:30px;">42</div>
+          <div class="resource card"><div class="card-icon-box floater"></div></div>
+          <div class="resource card"><div class="card-icon-box floater"></div></div>
+          <div class="description" style="text-align:center;margin-top:-3px;font-size:10px;">
           (You start with 42 MC. As your first action, reveal cards from the deck until you have revealed 2 cards with a floater icon on it. Take those 2 cards into hand and discard the rest.)
         </div>
+        </div>
 `],
-[CardName.MANUTECH,`
-      <div class="tag tag1 tag-building"></div>
-      <div class="corporationLabel">CORPORATION</div>
+[CardName.MANUTECH,` 
+      
       <div class="venus-icon corporation-icon"></div>
       <div class="contentCorporation">
         <div class="corporationEffectBox">
           <div class="corporationEffectBoxLabel">EFFECT</div>
           <div class="production-box">
-            <div class="production" style="background:white;">?</div>
+          <div class="production wild"></div>
           </div> :
-          <div class="resource" style="background:white;">?</div>
+          <div class="resource wild"></div>
           <div class="description" style="text-align:center;margin-top:0px;">
             (Effect: For each step you increase the production of a resource, including this, you also gain that resource.)
           </div>
@@ -5477,9 +3915,8 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.MORNING_STAR_INC,`
-      <div class="tag tag1 tag-venus"></div>
-      <div class="corporationLabel">CORPORATION</div>
+[CardName.MORNING_STAR_INC,` 
+      
       <div class="venus-icon corporation-icon"></div>
       <div class="contentCorporation">
         <div class="corporationEffectBox">
@@ -5495,17 +3932,16 @@ export const HTML_DATA: Map<string, string> =
                     MORNING STAR INC.
                 </div><br>
         <div class="resource money" style="margin-left:10px;">50</div>
-        <div class="resource card" style="margin-left:15px;"><div class="card-icon card-icon-venus">V</div></div>
-        <div class="resource card"><div class="card-icon card-icon-venus">V</div></div>
-        <div class="resource card"><div class="card-icon card-icon-venus">V</div></div>
+        <div class="resource card"><div class="card-icon tag-venus"></div></div>
+        <div class="resource card"><div class="card-icon tag-venus"></div></div>
+        <div class="resource card"><div class="card-icon tag-venus"></div></div>
         <div class="description" style="text-align:center;margin-top:-4px;">
           (You start with 50 MC. As your first action, reveal cards from the deck until you have revealed 3 Venus-tag cards. Take those into hand and discard the rest.)
         </div>
       </div>
 `],
-[CardName.VIRON,`
-      <div class="tag tag1 tag-microbe"></div>
-      <div class="corporationLabel">CORPORATION</div>
+[CardName.VIRON,` 
+      
       <div class="venus-icon corporation-icon"></div>
       <div class="contentCorporation">
         <div class="corporationEffectBox">
@@ -5526,9 +3962,8 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.CHEUNG_SHING_MARS,`
-      <div class="tag tag1 tag-building"></div>
-      <div class="corporationLabel">CORPORATION</div>
+[CardName.CHEUNG_SHING_MARS,` 
+      
       <div class="prelude-icon corporation-icon"></div>
       <div class="contentCorporation">
         <div class="corporationEffectBox">
@@ -5555,10 +3990,8 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.POINT_LUNA,`
-      <div class="tag tag1 tag-space"></div>
-      <div class="tag tag2 tag-earth"></div>
-        <div class="corporationLabel ">CORPORATION</div>
+[CardName.POINT_LUNA,` 
+        
         <div class="prelude-icon corporation-icon"></div>
         <div class="contentCorporation ">
             <div class="corporationEffectBox ">
@@ -5568,20 +4001,7 @@ export const HTML_DATA: Map<string, string> =
                     (Effect: When you play an Earth tag, including this, draw a card.)
                 </div>
             </div>
-            <div class="point luna" style="font-size:22px;
-            font-family: Prototype;
-            font-weight: normal;
-            display:inline-block;
-            margin-top: 35px;
-            margin-bottom: 5px;
-            text-decoration: underline;
-            margin-left: 40px;
-            -webkit-transform:scale(1.5,1); /* Safari and Chrome */
-            -moz-transform:scale(1.5,1); /* Firefox */
-            -ms-transform:scale(1.5,1); /* IE 9 */
-            -o-transform:scale(1.5,1); /* Opera */
-            transform:scale(1.5,1); /* W3C */
-            ">POINT<span>&nbsp;</span>LUNA</div>
+            <div class="luna-fix">POINT<span>&nbsp;</span>LUNA</div>
             </div>
             <div class="description " style="text-align:center;margin-top:0px ">
             <div class="production-box" style="margin-left:-30px;margin-top:-5px;margin-bottom:-5px;"><div class="production titanium"></div></div>
@@ -5590,7 +4010,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
 `],
 [CardName.ROBINSON_INDUSTRIES,`
-      <div class="corporationLabel">CORPORATION</div>
+      
       <div class="prelude-icon corporation-icon"></div>
       <div class="contentCorporation">
         <div class="corporationEffectBox">
@@ -5598,7 +4018,7 @@ export const HTML_DATA: Map<string, string> =
           <div class="resource money">4</div>
           <div class="red-arrow"></div>
           <div class="production-box">
-            <div class="production" style="background:white;">?</div>
+          <div class="production wild"></div>
           </div>
           <div class="description" style="text-align:center;margin-top:0px;">
             (Action: Spend 4 MC to increase (one of) your LOWEST PRODUCTION 1 step.)
@@ -5612,9 +4032,8 @@ export const HTML_DATA: Map<string, string> =
           (You start with 47 MC.)
         </div>
 `],
-[CardName.VALLEY_TRUST,`
-      <div class="tag tag1 tag-earth"></div>
-        <div class="corporationLabel ">CORPORATION</div>
+[CardName.VALLEY_TRUST,` 
+        
         <div class="prelude-icon corporation-icon"></div>
         <div class="contentCorporation ">
             <div class="corporationEffectBox ">
@@ -5634,9 +4053,8 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.VITOR,`
-      <div class="tag tag1 tag-earth"></div>
-        <div class="corporationLabel ">CORPORATION</div>
+[CardName.VITOR,` 
+        
         <div class="prelude-icon corporation-icon"></div>
         <div class="contentCorporation ">
             <div class="corporationEffectBox ">
@@ -5684,8 +4102,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.ARIDOR,`
-      <div class="corporationLabel">CORPORATION</div>
+[CardName.ARIDOR,` 
       <div class="colonies-icon corporation-icon"></div>
       <div class="contentCorporation">
         <div class="corporationEffectBox">
@@ -5707,16 +4124,15 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.MONS_INSURANCE,`
-      <div class="corporationLabel">CORPORATION</div>
+[CardName.MONS_INSURANCE,` 
       <div class="promo-icon corporation-icon"></div>
       <div class="contentCorporation">
         <div class="corporationEffectBox">
           <div class="corporationEffectBoxLabel">EFFECT</div>
-          <div class="production-box" style="width:50px;margin-left:-2px">
-            -<div class="production red-outline" style="background:white;">?</div>
+          <div class="production-box corp-effect-box">
+          -<div class="resource wild corp-effect"></div>
           </div>
-          OR - <div class="resource red-outline" style="background:white;">?</div>:
+          OR - <div class="resource wild red-outline"></div>:
           PAY<div class="resource money" style="margin-right:-2px">3</div>
           <div class="description" style="text-align:center;margin-top:-2px;">
             (Effect: When a player causes another player to decrease production or lose resources, pay 3MC to the victim,
@@ -5744,9 +4160,8 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.ARKLIGHT,`
-      <div class="tag tag1 tag-animal"></div>
-      <div class="corporationLabel">CORPORATION</div>
+[CardName.ARKLIGHT,` 
+      
       <div class="colonies-icon corporation-icon"></div>
       <div class="contentCorporation">
          <div class="pointsCorporation">1/2<div class="resource animal"></div></div>
@@ -5781,12 +4196,11 @@ export const HTML_DATA: Map<string, string> =
           (You start with 45 MC. Increase your MC production 2 steps. 1 VP per 2 animals on this card.)
         </div>
 `],
-[CardName.PRISTAR,`
-            <div class="corporationLabel ">CORPORATION</div>
+[CardName.PRISTAR,` 
             <div class="turmoil-icon corporation-icon"></div>
             <div class="contentCorporation ">
                <div class="pointsCorporation" >1/<div class="resource pristar"></div></div>
-                <div class="corporationEffectBox" style="height:140px;margin-top:150px">
+                <div class="corporationEffectBox hover-hide-res" style="height:140px;margin-top:150px">
                     <div class="corporationEffectBoxLabel" style="margin-bottom:5px;">EFFECT</div>
 
                       <div class="tile rating"><div class="left-line"></div><div class="right-line"></div></div> : <div class="resource pristar"></div> <div class="resource money">6</div>
@@ -5803,8 +4217,7 @@ export const HTML_DATA: Map<string, string> =
                 </div>
             </div>
 `],
-[CardName.POLYPHEMOS,`
-      <div class="corporationLabel">CORPORATION</div>
+[CardName.POLYPHEMOS,` 
       <div class="colonies-icon corporation-icon"></div>
       <div class="contentCorporation">
         <div class="corporationEffectBox">
@@ -5821,59 +4234,59 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.UTOPIA_INVEST,`
-<div class="tag tag1 tag-building"></div>
-<div class="corporationLabel">CORPORATION</div>
+[CardName.UTOPIA_INVEST,` 
+
 <div class="turmoil-icon corporation-icon"></div>
 <div class="contentCorporation">
   <div class="corporationEffectBox">
     <div class="corporationEffectBoxLabel">ACTION</div>
     <div class="production-box">
-      <div class="production" style="background:white;">?</div>
+      <div class="resource wild"></div>
     </div>
     <div class="red-arrow"></div>
-    4<div class="resource" style="background:white;">?</div>
-    <div class="description" style="text-align:center;margin-top:0px;">
+    4<div class="production wild"></div>
+    <div class="description utopia-ability-description">
       (Action: Decrease any production to gain 4 resources of that kind.)
     </div>
   </div>
-  <div class="utopia">
-    <div class="utopia1">UTOPIA</div>
-    <div class="utopia2">INVEST</div>
+  <div class="utopia-corp-name">
+    <div class="utopia-corp-name-1">UTOPIA</div>
+    <div class="utopia-corp-name-2">INVEST</div>
   </div>
-  <div class="resource money" style="margin-left:35px;margin-right:20px;margin-top:20px;">40</div>
-  <div class="production-box production-box-size2">
+  <div class="utopia-starting-resources">
+    <div class="resource money">40</div>
+  </div>
+  <div class="production-box production-box-size2 utopia-production-box">
     <div class="production steel"></div><div class="production titanium"></div>
   </div>
-  <div class="description" style="margin-top:-5px;text-align:center;">
+  <div class="description utopia-description-box">
     (You start with 40 MC. Increase your steel and titanium production 1 step each.)
   </div>
 </div>
 `],
 [CardName.POSEIDON,`
-      <div class="corporationLabel">CORPORATION</div>
+      
       <div class="colonies-icon corporation-icon"></div>
       <div class="contentCorporation">
         <div class="corporationEffectBox">
           <div class="corporationEffectBoxLabel">EFFECT</div>
-          <div class="tringle triangle-red"></div>: <div class="production-box"><div class="resource money">1</div></div>
+          <div class="tile colony red-outline"></div>: <div class="production-box"><div class="production money">1</div></div>
           <div class="description" style="text-align:center;margin-top:0px;">
             (Effect: When any colony is placed, including this, raise your MC production 1 step.)
           </div>
         </div>
         <div class="poseidon">POSEIDON</div>
-        <div class="resource money" style="margin-left:50px;margin-right:20px;">45</div> <div class="triangle triangle-black"></div>
+        <div class="resource money" style="margin-left:70px;">45</div> <div class="tile colony"></div>
         <div class="description" style="text-align:center;margin-top:0px;">
-          (You start with 45MC. As your first acton, place a colony.)
+          (You start with 45MC. As your first action, place a colony.)
         </div>
       </div>
 `],
-[CardName.STORMCRAFT_INCORPORATED,`
-      <div class="tag tag1 tag-jovian"></div>
-      <div class="corporationLabel">CORPORATION</div>
+[CardName.STORMCRAFT_INCORPORATED,` 
+      
       <div class="colonies-icon corporation-icon"></div>
       <div class="contentCorporation">
-        <div class="corporationEffectBox" style="margin-top: 136px; height: 149px">
+        <div class="corporationEffectBox hover-hide-res" style="margin-top: 136px; height: 149px">
           <div class="corporationEffectBoxLabel" style="margin-bottom:5px;" >ACTION</div>
           <div class="red-arrow"></div> <div class="resource floater" style="margin-bottom:5px;"></div>* <br>
           <div class="resource floater"></div> = <div class="resource heat"></div><div class="resource heat"></div>
@@ -5890,32 +4303,27 @@ export const HTML_DATA: Map<string, string> =
       </div>
 `],
 [CardName.ARCADIAN_COMMUNITIES,`
-      <div class="corporationLabel">CORPORATION</div>
+      
       <div class="promo-icon corporation-icon"></div>
       <div class="contentCorporation">
         <div class="corporationEffectBox">
           <div class="corporationEffectBoxLabel">ACTION</div>
-          <div style="font-size:10px;line-height:12px;margin-top:-5px;margin-bottom:10px;"><span class="red-arrow"></span>ACTION: PLACE A COMMUNITY (PLAYER MARKER) ON A NON-RESERVED AREA ADJACENT TO ONE OF YOUR TILES OR MARKED AREAS</div>
-          <div class="corporationEffectBoxLabel" style="margin-top:-3px">EFFECT</div>
-            <div style="font-size:10px;line-height:12px;margin-top:-5px;">EFFECT: MARKED AREAS ARE RESERVED FOR YOU. WHEN YOU PLACE A TILE THERE, GAIN 3 MC</div>
+          <div class="corporation-action-text"><span class="red-arrow"></span>ACTION: PLACE A COMMUNITY (PLAYER MARKER) ON A NON-RESERVED AREA ADJACENT TO ONE OF YOUR TILES OR MARKED AREAS</div>
+          <div class="corporationEffectBoxLabel">EFFECT</div>
+            <div class="corporation-effect-text">EFFECT: MARKED AREAS ARE RESERVED FOR YOU. WHEN YOU PLACE A TILE THERE, GAIN 3 MC</div>
         </div>
-        <div style="font-size:20px;
-        padding-left:3px;width:147px;background:#eeeeee;box-shadow: 0 0 0 1px rgba(0,0,0,0.6), 3px 3px 3px grey;margin-left:10px;border-radius:5px;
-        margin-bottom:4px;
-        border-top: 2px solid rgb(221,221,221);
-        border-left: 2px solid rgb(221,221,221);
-        border-bottom: 2px solid rgb(137,137,137);
-        border-right: 2px solid rgb(137,137,137);">
-                    &nbsp;&nbsp;&nbsp;ARCADIAN <br>COMMUNITIES
-                </div>
-                <div class="resource money" style="margin-left:15px;margin-right:15px;">40</div>
-                10<div class="resource steel" style="margin-right:20px;"></div>
-                <div class="resource" style="background: linear-gradient(orange, orangered);">&nbsp;</div>*
-        <div class="description" style="margin-top:-5px;text-align:center;">(You start with 40 MC and 10 steel. AS YOUR FIRST ACTION, PLACE A COMMUNITY (PLAYER MARKER) ON A NON-RESERVED AREA.)</div>
+        <div class="corporation-logo">ARCADIAN COMMUNITIES</div>
+
+        <div class="corporation-startswith nowrap">
+          <div class="resource money">40</div>
+          10<div class="resource steel"></div>
+          <div class="resource special">&nbsp;</div>*
+        </div>
+        <div class="description" >(You start with 40 MC and 10 steel. AS YOUR FIRST ACTION, PLACE A COMMUNITY (PLAYER MARKER) ON A NON-RESERVED AREA.)</div>
       </div>
 `],
 [CardName.BEGINNER_CORPORATION,`
-      <div class="corporationLabel">CORPORATION</div>
+      
       <div class="contentCorporation">
         <div class="corporation-frame">BEGINNER CORPORATION</div>
         <div class="resource money">42</div>
@@ -5924,17 +4332,14 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.PHILARES,`
-      <div class="tag tag1 tag-building"></div>
-      <div class="corporationLabel">CORPORATION</div>
+[CardName.PHILARES,` 
+      
       <div class="promo-icon corporation-icon"></div>
       <div class="contentCorporation">
         <div class="corporationEffectBox">
           <div class="corporationEffectBoxLabel">EFFECT</div>
-          <div class="tile empty-tile-small red-outline" style="
-            padding: 6px; margin-right: -3px;
-          "></div><div class="tile empty-tile-small"></div>
-          : <div class="resource" style="background:white;">?</div>
+          <div class="tile empty-tile-small red-outline"></div><div class="tile empty-tile-small"></div>
+          : <div class="resource wild"></div>
           <div class="description" style="text-align:center;margin-top:0px;">
             (Effect: Each new adjacency between your tile and an opponent's tile gives you a standard resource of your choice (regardless of who just placed a tile).)
           </div>
@@ -5950,30 +4355,26 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.RECYCLON,`
-      <div class="tag tag1 tag-building"></div>
-      <div class="tag tag2 tag-microbe"></div>
-      <div class="corporationLabel">CORPORATION</div>
+[CardName.RECYCLON,` 
+      
       <div class="promo-icon corporation-icon"></div>
       <div class="contentCorporation">
-        <div class="corporationEffectBox">
+        <div class="corporationEffectBox hover-hide-res">
           <div class="corporationEffectBoxLabel" style="margin-bottom:10px">EFFECT</div>
           <div class="resource-tag tag-building"></div> :<div class="resource microbe"></div> OR
           2<div class="resource microbe"></div>:<div class="production-box" style="margin-left:5px;"><div class="production plant"></div></div><br>
           <div class="description" style="margin-top:-3px;text-align:center;">(Effect: When you play a building tag, including this, gain 1 microbe to this card, or remove 2 microbes here and raise your plant production 1 step.)
         </div>
         </div>
-        <div  style="font-size:20px;margin-top:5px;margin-bottom:5px; border-radius:25px;padding:10px;font-weight:bold;
-        background:red;color:white; box-shadow: 0 0 0 1px rgba(0,0,0,0.6), 0 0 0 2px rgba(0,0,0,0.3), 3px 3px 3px #444; font-family: Prototype;
-        font-weight: normal;text-shadow: 0 0 1px black;"> RECYCLON</div>
-                </div>
-                <div class="resource money" style="margin-left:60px;margin-right:25px;">38</div>
-                <div class="production-box" style="margin-left:20px;"><div class="production steel"></div></div>
+        <div class="recyclon-fix"> RECYCLON</div>
+      </div>
+      <div class="recyclon-fix-2">
+        <div class="resource money" style="margin-left:60px;margin-right:25px;">38</div>
+        <div class="production-box" style="margin-left:20px;"><div class="production steel"></div></div>
         <div class="description" style="margin-top:0px;text-align:center;">(You start with 38 MC and 1 steel production.)</div>
+      </div>
 `],
 [CardName.SPLICE,`
-      <div class="tag tag1 tag-microbe"></div>
-      <div class="corporationLabel">CORPORATION</div>
       <div class="promo-icon corporation-icon"></div>
       <div class="contentCorporation">
         <div class="corporationEffectBox">
@@ -5988,21 +4389,20 @@ export const HTML_DATA: Map<string, string> =
                     <div STYLE="font-size:10px">TACTICAL GENOMICS</div>
                 </div>
                 <div class="resource money" style="margin-left:60px;margin-right:25px;">44</div>
-                <div class="resource card" style="margin-left:20px;margin-bottom: 0px;top: -10px;margin-top: -4px;"><div class="card-icon card-icon-microbe">&#x2042;</div></div>
+        <div class="resource card"><div class="card-icon tag-microbe"></div></div>
         <div class="description" style="margin-top:-2px;margin-left:-7px;margin-right:-7px;text-align:center;">(You start with 44 MC. As your first action, reveal cards until you have revealed a microbe tag. Take that card into hand and discard the rest.)</div>
       </div>
 `],
 [CardName.LAKEFRONT_RESORTS,`
-            <div class="tag tag1 tag-building"></div>
-            <div class="corporationLabel ">CORPORATION</div>
             <div class="turmoil-icon corporation-icon"></div>
             <div class="contentCorporation ">
                 <div class="corporationEffectBox" style="height:140px;margin-top:150px">
                     <div class="corporationEffectBoxLabel" style="margin-bottom:4px;">EFFECT</div>
-                    <div class="resource ocean-resource red-outline"></div>*: <div class="production-box"><div class="production money">1</div></div>&nbsp;&nbsp;
-                      <div class="resource" style="height:29px;width:30px;background:#eee"></div>
-                      <div class="resource ocean-resource" style="position:absolute;margin-left:-39px;margin-top:36px;"></div>
-                      :<div class="resource money">3</div>
+                    <div class="nowrap">
+                      <div class="resource ocean-resource red-outline"></div>*: <div class="production-box"><div class="production money">1</div></div>
+                      <div class="tile empty-tile-small"></div>
+                      <div class="resource ocean-resource" style="margin-left:-3px;"></div>:<div class="resource money">3</div>
+                    </div>
                     <div class="description " style="text-align:center;margin-top:0px; ">
                         (Effect: When any ocean tile is placed, increase your MC production 1 step. Your bonus for placing adjacent to oceans is 3MC instead of 2MC.)
                     </div>
@@ -6018,9 +4418,6 @@ export const HTML_DATA: Map<string, string> =
             </div>
 `],
 [CardName.TERRALABS_RESEARCH,`
-<div class="tag tag1 tag-earth"></div>
-<div class="tag tag2 tag-science"></div>
-  <div class="corporationLabel ">CORPORATION</div>
   <div class="turmoil-icon corporation-icon"></div>
   <div class="contentCorporation ">
       <div class="corporationEffectBox ">
@@ -6041,38 +4438,36 @@ export const HTML_DATA: Map<string, string> =
   </div>
 `],
 [CardName.FACTORUM,`
-          <div class="tag tag1 tag-building"></div>
-          <div class="tag tag2 tag-power"></div>
-          <div class="corporationLabel">CORPORATION</div>
           <div class="promo-icon corporation-icon"></div>
           <div class="contentCorporation">
             <div class="corporationEffectBox">
-              <div class="corporationEffectBoxLabel" style="margin-bottom:5px">ACTION</div>
-              <div class="red-arrow"></div><div class="production-box">
-                <div class="production energy"></div>
-              </div> * OR
-              <div class="resource money">3</div><div class="red-arrow"></div><div class="resource card">
-                <div class="card-icon card-icon-building" style="margin-top:-17px;">&#x2617;</div>
+              <div class="corporationEffectBoxLabel">ACTION</div>
+
+              <div class="corporation-action-icons nowrap">
+                <div class="red-arrow"></div><div class="production-box">
+                  <div class="production energy"></div>
+                </div> * OR
+                <div class="resource money">3</div><div class="red-arrow"></div>                <div class="resource card"><div class="card-icon tag-building"></div></div>
               </div>
-              <div class="description" style="text-align:center;margin-top:0px;">
+
+              <div class="description">
                 (Action: Increase your energy production 1 step IF YOU HAVE NO ENERGY RESOURCES, or spend 3MC to draw a building card.)
               </div>
             </div>
-            <div class="factorum">
-              FACTORUM
+
+            <div class="factorum">FACTORUM</div>
+            <div class="corporation-starts-with">
+              <div class="resource money">37</div>
+              <div class="production-box">
+                <div class="production steel"></div>
+              </div>
             </div>
-            <div class="resource money" style="margin-left:35px;margin-right:20px;margin-top:20px;">37</div>
-            <div class="production-box">
-              <div class="production steel"></div>
-            </div>
-            <div class="description" style="text-align:center;">
+            <div class="description">
               (You start with 37 MC. Increase your steel production 1 step.)
             </div>
           </div>
           `],
 [CardName.SEPTEM_TRIBUS,`
-      <div class="tag tag1 tag-wild"></div>
-      <div class="corporationLabel">CORPORATION</div>
       <div class="turmoil-icon corporation-icon"></div>
       <div class="contentCorporation">
         <div class="corporationEffectBox">
@@ -6090,32 +4485,25 @@ export const HTML_DATA: Map<string, string> =
       </div>
 `],
 [CardName.ASTRODRILL,`
-      <div class="tag tag1 tag-space"></div>
-      <div class="corporationLabel">CORPORATION</div>
       <div class="promo-icon corporation-icon"></div>
       <div class="contentCorporation">
-        <div class="corporationEffectBox" style="height:160px;margin-top:130px">
+        <div class="corporationEffectBox hover-hide-res" style="height:165px;margin-top:127px">
           <div class="corporationEffectBoxLabel" >ACTION</div>
-          <div class="red-arrow"></div> <div class="asteroid resource">A</div> * / <div class="resource " style="background:white;">?</div> OR <br>
-          <div class="asteroid resource">A</div><div class="red-arrow"></div> 3 <div class="resource titanium"></div>
+          <div class="red-arrow"></div> <div class="asteroid resource"></div> * / <div class="resource wild"></div> OR <br>
+          <div class="asteroid resource"></div><div class="red-arrow"></div> 3 <div class="resource titanium"></div>
           <div class="description" style="text-align:center;">
             (Action: Add an asteroid resource to ANY card OR gain any standard resource, OR remove an asteroid resource from this card to gain 3 titanium.)<br>
           </div>
         </div>
         <div class="astrodrill">Astrodrill</div>
         <div class="resource money" style="margin:3px 40px 0px 50px">38</div>
-        3 <div class="asteroid resource">A</div>
+        3 <div class="asteroid resource"></div>
         <div class="description" style="text-align:center">
           (You start with 38 MC and 3 asteroid resources.)
         </div>
       </div>
 `],
-[CardName.ALLIED_BANKS,`
-      <div class="title background-color-prelude">Allied Banks</div>
-      <div class="tag tag1 tag-earth"></div>
-      <div class="prelude-label">PRELUDE</div>
-      <div class="prelude-icon preludeCard-icon"></div>
-      <div class="card-number">P01</div>
+[CardName.ALLIED_BANKS,` 
       <div class="content">
         <div class="production-box">
           <div class="production money">4</div>
@@ -6126,12 +4514,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.AQUIFER_TURBINES,`
-      <div class="title background-color-prelude">Aquifer Turbines</div>
-      <div class="tag tag1 tag-power"></div>
-      <div class="prelude-label">PRELUDE</div>
-      <div class="prelude-icon preludeCard-icon"></div>
-      <div class="card-number">P02</div>
+[CardName.AQUIFER_TURBINES,` 
       <div class="content">
         <div class="tile ocean-tile"></div>
         <div class="production-box production-box-size2">
@@ -6143,12 +4526,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.BIOFUELS,`
-      <div class="title background-color-prelude">Biofuels</div>
-      <div class="tag tag1 tag-microbe"></div>
-      <div class="prelude-label">PRELUDE</div>
-      <div class="prelude-icon preludeCard-icon"></div>
-      <div class="card-number">P03</div>
+[CardName.BIOFUELS,` 
       <div class="content">
         <div class="production-box production-box-size2">
           <div class="production energy"></div><div class="production plant"></div>
@@ -6159,12 +4537,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.BIOLAB,`
-      <div class="title background-color-prelude">Biolab</div>
-      <div class="tag tag1 tag-science"></div>
-      <div class="prelude-label">PRELUDE</div>
-      <div class="prelude-icon preludeCard-icon"></div>
-      <div class="card-number">P04</div>
+[CardName.BIOLAB,` 
       <div class="content">
         <div class="production-box ">
           <div class="production plant"></div>
@@ -6175,28 +4548,18 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.BIOSPHERE_SUPPORT,`
-      <div class="title background-color-prelude">Biosphere Support</div>
-      <div class="tag tag1 tag-plant"></div>
-      <div class="prelude-label">PRELUDE</div>
-      <div class="prelude-icon preludeCard-icon"></div>
-      <div class="card-number">P05</div>
+[CardName.BIOSPHERE_SUPPORT,` 
       <div class="content">
         <div class="production-box production-box-size2a">
-          <div class="production-prefix ">&#x2796;&#xFE0E;</div><div class="production money">1</div><br>
-          <div class="production-prefix ">&#x2795;&#xFE0E;</div><div class="production plant"></div><div class="production plant"></div>
+          <div class="production-prefix minus"></div><div class="production money">1</div><br>
+          <div class="production-prefix plus"></div><div class="production plant"></div><div class="production plant"></div>
         </div><br>
         <div class="description">
           Increase your plant production 2 steps. Decrease your MC production 1 step.
         </div>
       </div>
 `],
-[CardName.BUSINESS_EMPIRE,`
-      <div class="title background-color-prelude">Business Empire</div>
-      <div class="tag tag1 tag-earth"></div>
-      <div class="prelude-label">PRELUDE</div>
-      <div class="prelude-icon preludeCard-icon"></div>
-      <div class="card-number">P06</div>
+[CardName.BUSINESS_EMPIRE,` 
       <div class="content">
         <div class="production-box">
           <div class="production money">6</div>
@@ -6207,13 +4570,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.DOME_FARMING,`
-      <div class="title background-color-prelude">Dome Farming</div>
-      <div class="prelude-label">PRELUDE</div>
-      <div class="tag tag1 tag-plant"></div>
-      <div class="tag tag2 tag-building"></div>
-      <div class="prelude-icon preludeCard-icon"></div>
-      <div class="card-number">P07</div>
+[CardName.DOME_FARMING,` 
       <div class="content">
         <div class="production-box">
           <div class="production money">2</div><div class="production plant"></div>
@@ -6223,11 +4580,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.DONATION,`
-      <div class="title background-color-prelude">Donation</div>
-      <div class="prelude-label">PRELUDE</div>
-      <div class="prelude-icon preludeCard-icon"></div>
-      <div class="card-number">P08</div>
+[CardName.DONATION,` 
       <div class="content">
         <div class="resource money">21</div>
         <div class="description">
@@ -6235,13 +4588,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.EARLY_SETTLEMENT,`
-      <div class="title background-color-prelude">Early Settlement</div>
-      <div class="prelude-label">PRELUDE</div>
-      <div class="tag tag1 tag-building"></div>
-      <div class="tag tag2 tag-city"></div>
-      <div class="prelude-icon preludeCard-icon"></div>
-      <div class="card-number">P09</div>
+[CardName.EARLY_SETTLEMENT,` 
       <div class="content">
         <div class="production-box">
           <div class="production plant"></div>
@@ -6251,28 +4598,21 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.ECOLOGY_EXPERTS,`
-      <div class="title background-color-prelude">Ecology Experts</div>
-      <div class="prelude-label">PRELUDE</div>
-      <div class="tag tag1 tag-microbe"></div>
-      <div class="tag tag2 tag-plant"></div>
-      <div class="prelude-icon preludeCard-icon"></div>
-      <div class="card-number">P10</div>
+[CardName.ECOLOGY_EXPERTS,` 
       <div class="content">
         <div class="production-box">
           <div class="production plant"></div>
         </div><br>
-        <div class="requirements" style="margin-left:31px; width:70%;"><div style="color:red;font-size:56px;display:inline-block;">X</div><div style="position:absolute;margin-top:-40px;margin-left:6px;">Project Requirements</div></div>
+        <div class="requirements prelude-ecology-experts-requirement-box">
+          <div class="prelude-ecology-experts-crossout">X</div>
+          <div class="prelude-ecology-experts-requirement-text">Project Requirements</div>
+        </div>
         <div class="description">
           Increase your plant production 1 step. Play a card from hand, ignoring global requirements.
         </div>
       </div>
 `],
-[CardName.ECCENTRIC_SPONSOR,`
-      <div class="title background-color-prelude">Eccentric Sponsor</div>
-      <div class="prelude-label">PRELUDE</div>
-      <div class="prelude-icon preludeCard-icon"></div>
-      <div class="card-number">P11</div>
+[CardName.ECCENTRIC_SPONSOR,` 
       <div class="content">
         <div class="resource card"></div> : <div class="resource money">-25</div>
         <div class="description">
@@ -6280,26 +4620,16 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.EXPERIMENTAL_FOREST,`
-      <div class="title background-color-prelude">Experimental Forest</div>
-      <div class="prelude-label">PRELUDE</div>
-      <div class="tag tag1 tag-plant"></div>
-      <div class="prelude-icon preludeCard-icon"></div>
-      <div class="card-number">P12</div>
+[CardName.EXPERIMENTAL_FOREST,` 
       <div class="content">
         <div class="tile greenery-tile"></div>
-        <div class="resource card"><div class="card-icon card-icon-plant">&#x1F331;&#xFE0E;</div></div> <div class="resource card"><div class="card-icon card-icon-plant">&#x1F331;&#xFE0E;</div></div>
+        <div class="resource card"><div class="card-icon tag-plant"></div></div><div class="resource card"><div class="card-icon tag-plant"></div></div>
         <div class="description">
           Place 1 Greenery Tile. Reveal cards until you reveal two cards with plant tags on them. Take them into your hand and discard the rest.
         </div>
       </div>
 `],
-[CardName.GALILEAN_MINING,`
-      <div class="title background-color-prelude">Galilean Mining</div>
-      <div class="prelude-label">PRELUDE</div>
-      <div class="tag tag1 tag-jovian"></div>
-      <div class="prelude-icon preludeCard-icon"></div>
-      <div class="card-number">P13</div>
+[CardName.GALILEAN_MINING,` 
       <div class="content">
         <div class="production-box production-box-size2">
           <div class="production titanium"></div><div class="production titanium"></div>
@@ -6310,11 +4640,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.GREAT_AQUIFER,`
-      <div class="title background-color-prelude">Great Aquifer</div>
-      <div class="prelude-label">PRELUDE</div>
-      <div class="prelude-icon preludeCard-icon"></div>
-      <div class="card-number">P14</div>
+[CardName.GREAT_AQUIFER,` 
       <div class="content">
         <div class="tile ocean-tile"></div> <div class="tile ocean-tile"></div>
         <div class="description">
@@ -6322,11 +4648,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.HUGE_ASTEROID,`
-      <div class="title background-color-prelude">Huge Asteroid</div>
-      <div class="prelude-label">PRELUDE</div>
-      <div class="prelude-icon preludeCard-icon"></div>
-      <div class="card-number">P15</div>
+[CardName.HUGE_ASTEROID,` 
       <div class="content">
         <div class="tile temperature-tile"></div><div class="tile temperature-tile"></div><div class="tile temperature-tile"></div><br>
         - <div class="resource money">5</div>
@@ -6335,13 +4657,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.IO_RESEARCH_OUTPOST,`
-      <div class="title background-color-prelude">IO Research Outpost</div>
-      <div class="prelude-label">PRELUDE</div>
-      <div class="tag tag1 tag-jovian"></div>
-      <div class="tag tag2 tag-science"></div>
-      <div class="prelude-icon preludeCard-icon"></div>
-      <div class="card-number">P16</div>
+[CardName.IO_RESEARCH_OUTPOST,` 
       <div class="content">
         <div class="production-box"><div class="production titanium"></div></div><br>
         <div class="resource card"></div>
@@ -6350,14 +4666,10 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.LOAN,`
-      <div class="title background-color-prelude">Loan</div>
-      <div class="prelude-label">PRELUDE</div>
-      <div class="prelude-icon preludeCard-icon"></div>
-      <div class="card-number">P17</div>
+[CardName.LOAN,` 
       <div class="content">
         <div class="production-box production-box-size1a">
-          <div class="production-prefix">&#x2796;&#xFE0E;</div><div class="money production">2</div>
+          <div class="production-prefix minus"></div><div class="money production">2</div>
         </div><br>
         <div class="resource money">30</div>
         <div class="description">
@@ -6365,12 +4677,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.MARTIAN_INDUSTRIES,`
-      <div class="title background-color-prelude">Martian Industries</div>
-      <div class="tag tag1 tag-building"></div>
-      <div class="prelude-label">PRELUDE</div>
-      <div class="prelude-icon preludeCard-icon"></div>
-      <div class="card-number">P18</div>
+[CardName.MARTIAN_INDUSTRIES,` 
       <div class="content">
         <div class="production-box production-box-size2" style="vertical-align: bottom;">
           <div class="production energy"></div><div class="production steel"></div>
@@ -6381,11 +4688,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.METAL_RICH_ASTEROID,`
-      <div class="title background-color-prelude">Metal-Rich Asteroid</div>
-      <div class="prelude-label">PRELUDE</div>
-      <div class="prelude-icon preludeCard-icon"></div>
-      <div class="card-number">P19</div>
+[CardName.METAL_RICH_ASTEROID,` 
       <div class="content">
         <div class="tile temperature-tile"></div>
         <div class="resource titanium"></div><div class="resource titanium"></div><div class="resource titanium"></div><div class="resource titanium"></div><br>
@@ -6395,11 +4698,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.METALS_COMPANY,`
-      <div class="title background-color-prelude">Metals Company</div>
-      <div class="prelude-label">PRELUDE</div>
-      <div class="prelude-icon preludeCard-icon"></div>
-      <div class="card-number">P20</div>
+[CardName.METALS_COMPANY,` 
       <div class="content">
         <div class="production-box production-box-size3">
           <div class="production money">1</div><div class="production steel"></div><div class="production titanium"></div>
@@ -6409,12 +4708,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.MINING_OPERATIONS,`
-      <div class="title background-color-prelude">Mining Operations</div>
-      <div class="tag tag1 tag-building"></div>
-      <div class="prelude-label">PRELUDE</div>
-      <div class="prelude-icon preludeCard-icon"></div>
-      <div class="card-number">P21</div>
+[CardName.MINING_OPERATIONS,` 
       <div class="content">
         <div class="production-box production-box-size2">
           <div class="production steel"></div><div class="production steel"></div>
@@ -6425,12 +4719,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.MOHOLE,`
-      <div class="title background-color-prelude">Mohole</div>
-      <div class="prelude-label">PRELUDE</div>
-      <div class="tag tag1 tag-building"></div>
-      <div class="prelude-icon preludeCard-icon"></div>
-      <div class="card-number">P22</div>
+[CardName.MOHOLE,` 
       <div class="content">
         <div class="production-box production-box-size3">
           <div class="production heat"></div><div class="production heat"></div><div class="production heat"></div>
@@ -6441,12 +4730,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.MOHOLE_EXCAVATION,`
-      <div class="title background-color-prelude">Mohole Excavation</div>
-      <div class="prelude-label">PRELUDE</div>
-      <div class="tag tag1 tag-building"></div>
-      <div class="prelude-icon preludeCard-icon"></div>
-      <div class="card-number">P23</div>
+[CardName.MOHOLE_EXCAVATION,` 
       <div class="content">
         <div class="production-box production-box-size2">
           <div class="production steel"></div><br>
@@ -6458,11 +4742,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.NITROGEN_SHIPMENT,`
-      <div class="title background-color-prelude">Nitrogen Shipment</div>
-      <div class="prelude-label">PRELUDE</div>
-      <div class="prelude-icon preludeCard-icon"></div>
-      <div class="card-number">P24</div>
+[CardName.NITROGEN_SHIPMENT,` 
       <div class="content">
         <div class="production-box ">
           <div class="production plant"></div>
@@ -6473,12 +4753,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.ORBITAL_CONSTRUCTION_YARD,`
-      <div class="title background-color-prelude">Orbital Construction Yard</div>
-      <div class="tag tag1 tag-space"></div>
-      <div class="prelude-label">PRELUDE</div>
-      <div class="prelude-icon preludeCard-icon"></div>
-      <div class="card-number">P25</div>
+[CardName.ORBITAL_CONSTRUCTION_YARD,` 
       <div class="content">
         <div class="production-box"><div class="production titanium"></div></div><br>
         <div class="resource titanium"></div><div class="resource titanium"></div><div class="resource titanium"></div><div class="resource titanium"></div>
@@ -6487,12 +4762,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.POLAR_INDUSTRIES,`
-      <div class="title background-color-prelude">Polar Industries</div>
-      <div class="prelude-label">PRELUDE</div>
-      <div class="tag tag1 tag-building"></div>
-      <div class="prelude-icon preludeCard-icon"></div>
-      <div class="card-number">P26</div>
+[CardName.POLAR_INDUSTRIES,` 
       <div class="content">
         <div class="production-box production-box-size2">
           <div class="production heat"></div><div class="production heat"></div>
@@ -6502,12 +4772,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.POWER_GENERATION,`
-      <div class="title background-color-prelude">Power Generation</div>
-      <div class="prelude-label">PRELUDE</div>
-      <div class="tag tag1 tag-power"></div>
-      <div class="prelude-icon preludeCard-icon"></div>
-      <div class="card-number">P27</div>
+[CardName.POWER_GENERATION,` 
       <div class="content">
         <div class="production-box production-box-size3">
           <div class="production energy"></div><div class="production energy"></div><div class="production energy"></div>
@@ -6517,12 +4782,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.RESEARCH_NETWORK,`
-      <div class="title background-color-prelude">Research Network</div>
-      <div class="prelude-label">PRELUDE</div>
-      <div class="tag tag1 tag-wild"></div>
-      <div class="prelude-icon preludeCard-icon"></div>
-      <div class="card-number">P28</div>
+[CardName.RESEARCH_NETWORK,` 
       <div class="content">
         <div class="production-box ">
           <div class="production money">1</div>
@@ -6533,29 +4793,18 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.SELF_SUFFICIENT_SETTLEMENT,`
-      <div class="title background-color-prelude">Self-Sufficient Settlement</div>
-      <div class="prelude-label">PRELUDE</div>
-      <div class="tag tag1 tag-building"></div>
-      <div class="tag tag2 tag-city"></div>
-      <div class="prelude-icon preludeCard-icon"></div>
-      <div class="card-number">P29</div>
+[CardName.SELF_SUFFICIENT_SETTLEMENT,` 
       <div class="content">
         <div class="production-box ">
           <div class="production money">2</div>
         </div><br>
         <div class="tile city-tile"></div>
         <div class="description">
-          Increase your money production 2 step. Place a City tile.
+          Increase your money production 2 steps. Place a City tile.
         </div>
       </div>
 `],
-[CardName.SMELTING_PLANT,`
-      <div class="title background-color-prelude">Smelting Plant</div>
-      <div class="tag tag1 tag-building"></div>
-      <div class="prelude-label">PRELUDE</div>
-      <div class="prelude-icon preludeCard-icon"></div>
-      <div class="card-number">P30</div>
+[CardName.SMELTING_PLANT,` 
       <div class="content">
         <div class="tile oxygen-tile"></div><div class="tile oxygen-tile"></div><br>
         <div class="resource steel"></div><div class="resource steel"></div><div class="resource steel"></div><div class="resource steel"></div><div class="resource steel"></div>
@@ -6564,11 +4813,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.SOCIETY_SUPPORT,`
-      <div class="title background-color-prelude">Society Support</div>
-      <div class="prelude-label">PRELUDE</div>
-      <div class="prelude-icon preludeCard-icon"></div>
-      <div class="card-number">P31</div>
+[CardName.SOCIETY_SUPPORT,` 
       <div class="content">
         <div class="production-box production-box-size2">
           <div class="production money">-1</div><div class="production plant"></div><br>
@@ -6579,12 +4824,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.SUPPLIER,`
-      <div class="title background-color-prelude">Supplier</div>
-      <div class="tag tag1 tag-power"></div>
-      <div class="prelude-label">PRELUDE</div>
-      <div class="prelude-icon preludeCard-icon"></div>
-      <div class="card-number">P32</div>
+[CardName.SUPPLIER,` 
       <div class="content">
         <div class="production-box production-box-size2">
           <div class="production energy"></div><div class="production energy"></div>
@@ -6595,11 +4835,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.SUPPLY_DROP,`
-      <div class="title background-color-prelude">Supply Drop</div>
-      <div class="prelude-label">PRELUDE</div>
-      <div class="prelude-icon preludeCard-icon"></div>
-      <div class="card-number">P33</div>
+[CardName.SUPPLY_DROP,` 
       <div class="content">
         3<div class="resource titanium"></div> 8<div class="resource steel"></div> 3<div class="resource plant"></div>
         <div class="description">
@@ -6607,12 +4843,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.UNMI_CONTRACTOR,`
-      <div class="title background-color-prelude">UNMI Contractor</div>
-      <div class="tag tag1 tag-earth"></div>
-      <div class="prelude-label">PRELUDE</div>
-      <div class="prelude-icon preludeCard-icon"></div>
-      <div class="card-number">P34</div>
+[CardName.UNMI_CONTRACTOR,` 
       <div class="content">
         <div class="tile rating"></div><div class="tile rating"></div><div class="tile rating"></div> <div class="resource card"></div>
         <div class="description">
@@ -6620,25 +4851,16 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.ACQUIRED_SPACE_AGENCY,`
-      <div class="title background-color-prelude">Acquired Space Agency</div>
-      <div class="prelude-label">PRELUDE</div>
-      <div class="prelude-icon preludeCard-icon"></div>
-      <div class="card-number">P35</div>
+[CardName.ACQUIRED_SPACE_AGENCY,` 
       <div class="content">
         <div class="resource titanium"></div><div class="resource titanium"></div><div class="resource titanium"></div><div class="resource titanium"></div><div class="resource titanium"></div><div class="resource titanium"></div>
-        <div class="resource card"><div class="card-icon card-icon-space">&#x2734;</div></div> <div class="resource card"><div class="card-icon card-icon-space">&#x2734;</div></div>
+        <div class="resource card"><div class="card-icon tag-space"></div></div><div class="resource card"><div class="card-icon tag-space"></div></div>
         <div class="description">
           Gain 6 titanium. Reveal cards until you reveal two cards with Space Tags. Take them into your hand, discard the rest.
         </div>
       </div>
 `],
-[CardName.PENGUINS, `
-    <div class="title background-color-active">Penguins</div>
-    <div class="price ">7</div>
-    <div class="tag tag1 tag-animal "></div>
-    <div class="promo-icon project-icon"></div>
-    <div class="card-number">212</div>
+[CardName.PENGUINS, ` 
     <div class="content ">
         <div class="points">1/<div class="animal resource"></div></div>
         <div class="requirements">8 Oceans</div>
@@ -6651,13 +4873,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
     </div>
 `],
-[CardName.SMALL_ASTEROID,`
-    <div class="title background-color-events ">Small Asteroid</div>
-    <div class="price ">10</div>
-    <div class="tag tag1 tag-event"></div>
-    <div class="tag tag2 tag-space"></div>
-    <div class="promo-icon project-icon"></div>
-    <div class="card-number">209</div>
+[CardName.SMALL_ASTEROID,` 
     <div class="content ">
         <div class="tile temperature-tile"></div><br/>
         - <div class="resource plant red-outline"></div><div class="resource plant red-outline"></div>
@@ -6666,12 +4882,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
     </div>
 `],
-[CardName.SNOW_ALGAE,`
-    <div class="title background-color-automated">Snow Algae</div>
-    <div class="price">12</div>
-    <div class="tag tag1 tag-plant"></div>
-    <div class="promo-icon project-icon"></div>
-    <div class="card-number">211</div>
+[CardName.SNOW_ALGAE,` 
     <div class="content">
         <div class="requirements">2 Oceans</div>
         <div class="production-box production-box-size2">
@@ -6682,19 +4893,16 @@ export const HTML_DATA: Map<string, string> =
         </div>
     </div>
 `],
-[CardName.DUSK_LASER_MINING,`
-    <div class="title background-color-automated">Dusk Laser Mining</div>
-    <div class="price">8</div>
-    <div class="tag tag1 tag-space"></div>
-    <div class="promo-icon project-icon"></div>
-    <div class="card-number">X01</div>
+[CardName.DUSK_LASER_MINING,` 
     <div class="content">
         <div class="requirements">2 Science</div>
         <div class="production-box production-box-size1a">
-            <div class="production-prefix">&#x2796;&#xFE0E;</div><div class="production energy"></div><br/>
-            <div class="production-prefix">&#x2795;&#xFE0E;</div><div class="production titanium"></div>
+            <div class="production-prefix minus"></div><div class="production energy"></div><br/>
+            <div class="production-prefix plus"></div><div class="production titanium"></div>
         </div>
-        <span style="font-size: 18px; margin-left: 20px; font-family: Prototype">4</span> <div class="production titanium"></div>
+        <div class="res-count-wrapper">
+          <span>4</span> <div class="resource titanium"></div>
+        </div>
         <div class="description">
             (Requires 2 Science tags.
             Decrease your energy production 1 step, and increase your titanium production 1 step.
@@ -6702,11 +4910,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
     </div>
 `],
-[CardName.ASTEROID_HOLLOWING, `
-    <div class="title background-color-active">Asteroid Hollowing</div>
-    <div class="price ">16</div>
-    <div class="tag tag1 tag-space "></div>
-    <div class="promo-icon project-icon"></div>
+[CardName.ASTEROID_HOLLOWING, ` 
     <div class="content ">
         <div class="points" style="line-height:45px;vertical-align:middle">1/2<div class="asteroid resource" style="vertical-align:middle;margin-left:5px">A</div></div>
         <div class="resource titanium"></div>
@@ -6720,11 +4924,33 @@ export const HTML_DATA: Map<string, string> =
       </div>
     </div>
 `],
-[CardName.ADVERTISING,`
-      <div class="title background-color-active">Advertising</div>
-      <div class="price ">4</div>
-      <div class="tag tag1 tag-earth"></div>
-      <div class="promo-icon project-icon"></div>
+[CardName.ASTEROID_RIGHTS, ` 
+    <div class="content">
+        <div>
+            <span class="money resource">1</span>
+            <span class="red-arrow"></span>
+            <span class="asteroid resource"></span>*
+        </div>
+        <div class="effect">
+            <span class="asteroid resource"></span>
+            <span class="red-arrow"></span>
+            <div class="production-box">
+                <div class="money production">1</div>
+            </div>
+             OR <div class="resource titanium"></div><div class="resource titanium"></div>
+        </div>
+        <div class="description">
+            (Action: Spend 1 MC to add 1 asteroid to ANY card, or spend 1 asteroid here to increase MC production 1 step OR gain 2 titanium.)
+        </div>
+        <div class="effect2">
+            <span class="asteroid resource"></span>
+            <span class="asteroid resource"></span>
+            <span class="description">(Add 2 asteroids to this card.)</span>
+        </div>
+      </div>
+    </div>
+`],
+[CardName.ADVERTISING,` 
       <div class="content ">
         <div class="resource money">20</div>* : <div class="production-box"><div class="production money">1</div></div></div>
         <div class="description" style="text-align:center;margin:0px 10px;">
@@ -6733,9 +4959,6 @@ export const HTML_DATA: Map<string, string> =
       </div>
 `],
 [CardName.PHARMACY_UNION,`
-    <div class="tag tag1 tag-microbe"></div>
-    <div class="tag tag2 tag-microbe"></div>
-    <div class="corporationLabel">Corporation</div>
     <div class="promo-icon corporation-icon"></div>
     <div class="contentCorporation">
 
@@ -6743,16 +4966,14 @@ export const HTML_DATA: Map<string, string> =
 
       <div class="card-effect-icons">
         <div class="resource money startmc">54</div>
-        <div class="resource card">
-          <div class="card-icon card-icon-science"></div>
-        </div>
+        <div class="resource card"><div class="card-icon tag-science"></div></div>
       </div>
 
       <div class="description card-effect-text">
-        (You start with 54 MC. As your first action, draw a Science card.)
+        (You start with 54 MC. When this corporation is revealed, draw a Science card.)
       </div>
 
-      <div class="corporationEffectBox">
+      <div class="corporationEffectBox hover-hide-res">
         <div class="corporationEffectBoxLabel">Effect</div>
         <div class="resource-tag tag-microbe red-outline"></div> : <div class="resource disease">D</div><div class="resource money">-4</div>
         <div class="corp-effectrow2">
@@ -6765,15 +4986,11 @@ export const HTML_DATA: Map<string, string> =
     </div>
 
 `],
-[CardName.COMET_AIMING, `
-    <div class="title background-color-active">Comet Aiming</div>
-    <div class="price ">17</div>
-    <div class="tag tag1 tag-space "></div>
-    <div class="promo-icon project-icon"></div>
+[CardName.COMET_AIMING, ` 
     <div class="content ">
         <div class="resource titanium"></div>
         <span class="red-arrow"></span>
-        <div class="asteroid resource">A</div>*
+        <div class="asteroid resource">A</div><span>*</span>
         <br>
         OR <div class="asteroid resource">A</div>
         <span class="red-arrow"></span>
@@ -6784,11 +5001,7 @@ export const HTML_DATA: Map<string, string> =
       </div>
     </div>
 `],
-[CardName.CUTTING_EDGE_TECHNOLOGY,`
-            <div class="title background-color-active">Cutting Edge Technology</div>
-            <div class="price">11</div>
-            <div class="tag tag1 tag-science"></div>
-            <div class="promo-icon project-icon"></div>
+[CardName.CUTTING_EDGE_TECHNOLOGY,` 
             <div class="content">
                 <div class="points points-big">1</div>
                 <div class="resource card">
@@ -6799,27 +5012,23 @@ export const HTML_DATA: Map<string, string> =
                 </div>
             </div>
 `],
-[CardName.CRASH_SITE_CLEANUP, `
-    <div class="title background-color-events">Crash Site Cleanup</div>
-    <div class="price">4</div>
-    <div class="tag tag1 tag-event"></div>
-    <div class="promo-icon project-icon"></div>
+[CardName.CRASH_SITE_CLEANUP, ` 
     <div class="content">
         <div class="points points-big">1</div>
-        <div class="requirements">- <div class="resource plant red-outline"></div></div>
+        <div class="requirements">
+            <div class="crash-site-minus-plant">
+                <div class="production-prefix minus"></div><div class="resource plant red-outline"></div>
+            </div>
+        </div>
         <div class="resource titanium"></div> OR 2 <div class="resource steel"></div>
         <div class="description">
             (Requires that a player removed ANOTHER PLAYER's plants this generation. Gain 1 titanium or 2 steel.)
         </div>
     </div>
 `],
-[CardName.DIRECTED_IMPACTORS, `
-    <div class="title background-color-active">Directed Impactors</div>
-    <div class="price">8</div>
-    <div class="tag tag1 tag-space"></div>
-    <div class="promo-icon project-icon"></div>
+[CardName.DIRECTED_IMPACTORS, ` 
     <div class="content">
-        <div class=" money resource">6</div> (<span class="titanium"></span>)
+        <div class=" money resource">6</div> (<span class="titanium resource"></span>)
         <span class="red-arrow"></span>
         <div class="asteroid resource">A</div>*
         <br>
@@ -6832,17 +5041,11 @@ export const HTML_DATA: Map<string, string> =
       </div>
     </div>
 `],
-[CardName.FIELD_CAPPED_CITY,`
-        <div class="title background-color-automated">Field-Capped City</div>
-        <div class="price">29</div>
-        <div class="tag tag1 tag-building"></div>
-        <div class="tag tag2 tag-city"></div>
-        <div class="tag tag3 tag-power"></div>
-        <div class="promo-icon project-icon"></div>
+[CardName.FIELD_CAPPED_CITY,` 
         <div class="content">
             <div class="production-box production-box-size1a">
-            <div class="production-prefix">&#x2795;&#xFE0E;</div><div class="money production">2</div>
-            <div class="production-prefix">&#x2795;&#xFE0E;</div><div class="energy production"></div>
+              <div class="production-prefix plus"></div><div class="money production">2</div>
+              <div class="production-prefix plus"></div><div class="energy production"></div>
             </div>
             <div class="tile city-tile"></div><br>
             <div class="plant resource"></div><div class="plant resource"></div><div class="plant resource"></div>
@@ -6851,11 +5054,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.MAGNETIC_SHIELD,`
-    <div class="title background-color-automated">Magnetic Shield</div>
-    <div class="price">26</div>
-    <div class="tag tag1 tag-space"></div>
-    <div class="promo-icon project-icon"></div>
+[CardName.MAGNETIC_SHIELD,` 
     <div class="content">
         <div class="requirements">2 Power</div>
         4 <div class="tile rating"></div>
@@ -6864,11 +5063,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
     </div>
 `],
-[CardName.MELTWORKS,`
-    <div class="title background-color-active">Meltworks</div>
-    <div class="price">4</div>
-    <div class="tag tag1 tag-building"></div>
-    <div class="promo-icon project-icon"></div>
+[CardName.MELTWORKS,` 
     <div class="content ">
       5 <span class="heat resource"></span> <span class="red-arrow "></span>
       <div class="steel resource"></div><div class="steel resource"></div><div class="steel resource"></div>
@@ -6877,11 +5072,7 @@ export const HTML_DATA: Map<string, string> =
       </div>
     </div>
 `],
-[CardName.MOHOLE_LAKE,`
-    <div class="title background-color-active">Mohole Lake</div>
-    <div class="price">31</div>
-    <div class="tag tag1 tag-building"></div>
-    <div class="promo-icon project-icon"></div>
+[CardName.MOHOLE_LAKE,` 
     <div class="content">
         <div class="red-arrow"></div><div class="microbe resource"></div>* OR <div class="animal resource"></div>*
         <div class="description">
@@ -6895,11 +5086,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
     </div>
 `],
-[CardName.DIVERSITY_SUPPORT,`
-        <div class="title background-color-events">Diversity Support</div>
-        <div class="price">1</div>
-        <div class="tag tag1 tag-event"></div>
-        <div class="promo-icon project-icon"></div>
+[CardName.DIVERSITY_SUPPORT,` 
         <div class="content">
             <div class="requirements">9 Resource Types</div>
             <div class="tile rating"></div>
@@ -6908,12 +5095,7 @@ export const HTML_DATA: Map<string, string> =
             </div>
         </div>
 `],
-[CardName.TOPSOIL_CONTRACT, `
-    <div class="title background-color-active">Topsoil Contract</div>
-    <div class="price">8</div>
-    <div class="tag tag1 tag-microbe"></div>
-    <div class="tag tag2 tag-earth"></div>
-    <div class="promo-icon project-icon"></div>
+[CardName.TOPSOIL_CONTRACT, ` 
     <div class="content">
       <div class="microbe resource"></div>* : <div class="money resource">1</div>
       <div class="description">
@@ -6926,13 +5108,7 @@ export const HTML_DATA: Map<string, string> =
       </div>
     </div>
 `],
-[CardName.IMPORTED_NUTRIENTS,`
-    <div class="title background-color-events">Imported Nutrients</div>
-    <div class="price">14</div>
-    <div class="tag tag1 tag-event"></div>
-    <div class="tag tag2 tag-space"></div>
-    <div class="tag tag3 tag-earth"></div>
-    <div class="promo-icon project-icon"></div>
+[CardName.IMPORTED_NUTRIENTS,` 
     <div class="content">
       4 <div class="plant resource"></div> 4 <div class="microbe resource"></div>*
       <div class="description">
@@ -6940,13 +5116,7 @@ export const HTML_DATA: Map<string, string> =
       </div>
     </div>
 `],
-[CardName.ASTEROID_DEFLECTION_SYSTEM,`
-    <div class="title background-color-active">Asteroid Deflection System</div>
-    <div class="price">13</div>
-    <div class="tag tag1 tag-building"></div>
-    <div class="tag tag2 tag-space"></div>
-    <div class="tag tag3 tag-earth"></div>
-    <div class="promo-icon project-icon"></div>
+[CardName.ASTEROID_DEFLECTION_SYSTEM,` 
     <div class="content">
       <div class="points">1/<div class="asteroid resource">A</div></div>
       <span class="red-arrow"></span><div class="resource card"></div>*
@@ -6960,19 +5130,14 @@ export const HTML_DATA: Map<string, string> =
       </div>
       <br>
       <div class="production-box production-box-size1a">
-        <div class="production-prefix">&#x2796;&#xFE0E;</div><div class="energy production"></div><br>
+        <div class="production-prefix minus"></div><div class="energy production"></div><br>
       </div>
       <div class="description bottom" >
         (Decrease your energy production 1 step. 1 VP per asteroid on this card.)
       </div>
     </div>
 `],
-[CardName.JOVIAN_EMBASSY,`
-<div class="title background-color-automated">Jovian Embassy</div>
-<div class="price">14</div>
-<div class="tag tag1 tag-building"></div>
-<div class="tag tag2 tag-jovian"></div>
-<div class="promo-icon project-icon"></div>
+[CardName.JOVIAN_EMBASSY,` 
 <div class="content">
     <div class="points points-big">1</div>
     <div class="tile rating"></div>
@@ -6981,13 +5146,7 @@ export const HTML_DATA: Map<string, string> =
     </div>
 </div>
 `],
-[CardName.SUB_CRUST_MEASUREMENTS,`
-    <div class="title background-color-active">Sub-Crust Measurements</div>
-    <div class="price">20</div>
-    <div class="tag tag1 tag-building"></div>
-    <div class="tag tag2 tag-science"></div>
-    <div class="tag tag3 tag-earth"></div>
-    <div class="promo-icon project-icon"></div>
+[CardName.SUB_CRUST_MEASUREMENTS,` 
     <div class="content">
       <div class="points points-big">2</div>
       <div class="requirements">2 Science</div>
@@ -7001,11 +5160,7 @@ export const HTML_DATA: Map<string, string> =
       </div>
     </div>
 `],
-[CardName.POTATOES,`
-      <div class="title background-color-automated">Potatoes</div>
-      <div class="price">2</div>
-      <div class="tag tag1 tag-plant"></div>
-      <div class="promo-icon project-icon"></div>
+[CardName.POTATOES,` 
       <div class="content">
         -  <div class="plant resource"></div><div class="plant resource"></div>
         &nbsp;&nbsp;
@@ -7017,11 +5172,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-[CardName.MEAT_INDUSTRY, `
-    <div class="title background-color-active">Meat Industry</div>
-    <div class="price">5</div>
-    <div class="tag tag1 tag-building"></div>
-    <div class="promo-icon project-icon"></div>
+[CardName.MEAT_INDUSTRY, ` 
     <div class="content">
       <div class="animal resource"></div>* : <div class="money resource">2</div>
       <div class="description">
@@ -7030,16 +5181,11 @@ export const HTML_DATA: Map<string, string> =
     </div>
 `],
 [CardName.DEIMOS_DOWN_PROMO,`
-    <div class="title background-color-events">Deimos Down</div>
-    <div class="price">31</div>
-    <div class="tag tag1 tag-event"></div>
-    <div class="tag tag2 tag-space"></div>
-    <div class="promo-icon project-icon"></div>
     <div class="content">
       <div class="tile temperature-tile"></div>
       <div class="tile temperature-tile"></div>
       <div class="tile temperature-tile"></div><br>
-      <div class="tile special-tile">&#x274B;</div>*&nbsp;
+      <div class="tile special-tile"><div class="special-tile-symbol special-tile--deimos-promo"></div></div>*&nbsp;
       4 <div class=" steel resource"></div>&nbsp;
       -6 <div class="resource plant red-outline"></div>
       <div class="description">
@@ -7047,46 +5193,32 @@ export const HTML_DATA: Map<string, string> =
       </div>
     </div>
 `],
-[CardName.GREAT_DAM_PROMO,`
-      <div class="title background-color-automated">Great Dam</div>
-      <div class="price">15</div>
-      <div class="tag tag1 tag-building"></div>
-      <div class="tag tag2 tag-power"></div>
-      <div class="promo-icon project-icon"></div>
+[CardName.GREAT_DAM_PROMO,` 
       <div class="content">
         <div class="points points-big">1</div>
         <div class="requirements">4 Oceans</div>
         <div class="production-box production-box-size2">
           <div class="energy production"></div><div class="energy production"></div>
         </div>
-        *&nbsp;<div class="tile special-tile">&#x23DA;</div>
+        <div class="tile special-tile"><div class="special-tile-symbol special-tile--great-dam-promo"></div></div><span>*</span>
         <div class="description">
           (Requires 4 ocean tiles. Increase your Energy production 2 steps. Place this tile ADJACENT TO an ocean tile.)
         </div>
       </div>
 `],
-[CardName.MAGNETIC_FIELD_GENERATORS_PROMO,`
-        <div class="title background-color-automated">Magnetic Field Generators</div>
-        <div class="price">22</div>
-        <div class="tag tag1 tag-building"></div>
-        <div class="promo-icon project-icon"></div>
+[CardName.MAGNETIC_FIELD_GENERATORS_PROMO,` 
         <div class="content">
           <div class="production-box production-box-size2a">
-            <div class="production-prefix">&#x2796;&#xFE0E;</div> 4 <div class="energy production"></div><br>
-            <div class="production-prefix">&#x2795;&#xFE0E;</div><div class="plant production"></div><div class="plant production"></div>
+            <div class="production-prefix minus"></div> 4 <div class="energy production"></div><br>
+            <div class="production-prefix plus"></div><div class="plant production"></div><div class="plant production"></div>
           </div> <br>
-           3 <div class="tile rating"></div>*&nbsp;&nbsp;<div class="tile special-tile"><span class="tile-icon">&#x25C9;</span></div>
+           3 <div class="tile rating"></div>&nbsp;&nbsp;<div class="tile special-tile"><div class="special-tile-symbol special-tile--magnetic-field-gen-promo"></div></div><span>*</span>
           <div class="description">
             (Decrease your Energy production 4 steps and increase your Plant production 2 steps. Raise your TR 3 steps and place this tile.)
           </div>
         </div>
 `],
-[CardName.MERCURIAN_ALLOYS,`
-    <div class="title background-color-active">Mercurian Alloys</div>
-    <div class="price">3</div>
-    <div class="tag tag1 tag-space"></div>
-    <div class="promo-icon project-icon"></div>
-    <div class="card-number">X07</div>
+[CardName.MERCURIAN_ALLOYS,` 
     <div class="content">
         <div class="requirements">2 Science</div>
         <div class="resource titanium"></div> : + <div class="resource money">1</div>
@@ -7098,12 +5230,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
     </div>
 `],
-[CardName.REGO_PLASTICS,`
-    <div class="title background-color-active">Rego Plastics</div>
-    <div class="price">10</div>
-    <div class="tag tag1 tag-building"></div>
-    <div class="promo-icon project-icon"></div>
-    <div class="card-number">X10</div>
+[CardName.REGO_PLASTICS,` 
     <div class="content ">
         <div class="points points-big">1</div>
         <div class="resource steel"></div> : + <div class="resource money">1</div>
@@ -7112,12 +5239,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
     </div>
 `],
-[CardName.INTERPLANETARY_TRADE,`
-    <div class="title background-color-automated">Interplanetary Trade</div>
-    <div class="price">27</div>
-    <div class="tag tag1 tag-space"></div>
-    <div class="promo-icon project-icon"></div>
-    <div class="card-number">X05</div>
+[CardName.INTERPLANETARY_TRADE,` 
     <div class="content">
         <div class="points points-big">1</div>
         <div class="production-box"><div class="production money">1</div></div> /
@@ -7127,23 +5249,12 @@ export const HTML_DATA: Map<string, string> =
         </div>
         </div>
 `],
-[CardName.PROJECT_INSPECTION, `
-    <div class="title background-color-events">Project Inspection</div>
-    <div class="price">0</div>
-    <div class="tag tag1 tag-event"></div>
-    <div class="promo-icon project-icon"></div>
-    <div class="card-number">X02</div>
+[CardName.PROJECT_INSPECTION, ` 
     <div class="content">
         USE A CARD ACTION THAT HAS BEEN USED THIS GENERATION
     </div>
 `],
-[CardName.ORBITAL_CLEANUP, `
-    <div class="title background-color-active">Orbital Cleanup</div>
-    <div class="price ">14</div>
-    <div class="tag tag1 tag-space"></div>
-    <div class="tag tag2 tag-earth"></div>
-    <div class="promo-icon project-icon"></div>
-    <div class="card-number">X08</div>
+[CardName.ORBITAL_CLEANUP, ` 
     <div class="content">
         <div class="points points-big">2</div>
         <span class="red-arrow"></span> <div class="money resource">1</div> / <div class="resource-tag tag-science"></div>
@@ -7156,13 +5267,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
     </div>
 `],
-[CardName.HI_TECH_LAB, `
-    <div class="title background-color-active">Hi-Tech Lab</div>
-    <div class="price ">17</div>
-    <div class="tag tag1 tag-building"></div>
-    <div class="tag tag2 tag-science"></div>
-    <div class="promo-icon project-icon"></div>
-    <div class="card-number">X04</div>
+[CardName.HI_TECH_LAB, ` 
     <div class="content">
         <div class="points points-big">1</div>
         X <div class="energy resource "></div> <div class="red-arrow"></div> X <div class="card resource "></div>*
@@ -7171,25 +5276,16 @@ export const HTML_DATA: Map<string, string> =
         </div>
     </div>
 `],
-[CardName.ENERGY_MARKET, `
-    <div class="title background-color-active">Energy Market</div>
-    <div class="price ">3</div>
-    <div class="tag tag1 tag-power"></div>
-    <div class="promo-icon project-icon"></div>
-    <div class="card-number">X03</div>
+[CardName.ENERGY_MARKET, ` 
     <div class="content ">
         <div class="money resource">2X</div> <div class="red-arrow"></div> X <div class="energy resource"></div><br/>
-        OR <div class="production-box production-box-size1a"><div class="production-prefix ">&#x2796;&#xFE0E;</div><div class="energy production "></div></div> <div class="red-arrow"></div> <div class="money resource">8</div>
+        OR <div class="production-box production-box-size1a"><div class="production-prefix minus"></div><div class="energy production "></div></div> <div class="red-arrow"></div> <div class="money resource">8</div>
         <div class="description">
             (Action: Spend 2X MC to gain X energy, or decrease energy production 1 step to gain 8 MC.)
         </div>
     </div>
 `],
-[CardName.AERIAL_LENSES, `
-  <div class="title background-color-automated ">Aerial Lenses</div>
-  <div class="price">2</div>
-  <div class="turmoil-icon project-icon"></div>
-  <div class="card-number">T01</div>
+[CardName.AERIAL_LENSES, ` 
   <div class="content ">
     <div class="points points-big">-1</div>
     <div class="requirements"><span class="party">Kelvinists</span></div>
@@ -7203,12 +5299,7 @@ export const HTML_DATA: Map<string, string> =
       </div>
   </div>
 `],
-[CardName.BANNED_DELEGATE, `
-  <div class="title background-color-events ">Banned Delegate</div>
-  <div class="price">0</div>
-  <div class="turmoil-icon project-icon"></div>
-  <div class="tag tag1 tag-event "></div>
-  <div class="card-number">T02</div>
+[CardName.BANNED_DELEGATE, ` 
   <div class="content ">
     <div class="requirements">Chairman</div>
       - <div class="delegate delegate-red"></div>
@@ -7217,18 +5308,12 @@ export const HTML_DATA: Map<string, string> =
       </div>
   </div>
 `],
-[CardName.CULTURAL_METROPOLIS, `
-  <div class="title background-color-automated ">Cultural Metropolis</div>
-  <div class="price">20</div>
-  <div class="turmoil-icon project-icon"></div>
-  <div class="tag tag1 tag-building "></div>
-  <div class="tag tag2 tag-city "></div>
-  <div class="card-number">#T03</div>
+[CardName.CULTURAL_METROPOLIS, ` 
   <div class="content ">
       <div class="requirements"><span class="party">Unity</span></div>
       <div class="production-box production-box-size1a ">
-          <div class="production-prefix ">&#x2796;&#xFE0E;</div><div class="energy production "></div>
-          <div class="production-prefix ">&#x2795;&#xFE0E;</div><div class="money production ">3</div>
+          <div class="production-prefix minus"></div><div class="energy production "></div>
+          <div class="production-prefix plus"></div><div class="money production ">3</div>
       </div>
       <div class="tile city-tile " style="margin-left:10px "></div>
       <div class="delegate"></div><div class="delegate"></div>
@@ -7237,30 +5322,20 @@ export const HTML_DATA: Map<string, string> =
       </div>
   </div>
 `],
-[CardName.DIASPORA_MOVEMENT, `
-  <div class="title background-color-automated ">Diaspora Movement</div>
-  <div class="price">7</div>
-  <div class="turmoil-icon project-icon"></div>
-  <div class="tag tag1 tag-jovian "></div>
-  <div class="card-number">#T04</div>
+[CardName.DIASPORA_MOVEMENT, ` 
   <div class="content ">
       <div class="points points-big">1</div>
       <div class="requirements"><span class="party">Reds</span></div>
-      <div class="money production">1</div> / <div class="resource-tag tag-jovian red-outline"></div>
+      <div class="money production">1</div> / &nbsp;&nbsp;<div class="resource-tag tag-jovian red-outline"></div>
       <div class="description" style="margin-top:5px;">
         (Requires that Reds are ruling or that you have 2 delegates there. Gain 1MC for each Jovian tag in play.)
       </div>
   </div>
 `],
-[CardName.EVENT_ANALYSTS, `
-  <div class="title background-color-active ">Event Analysts</div>
-  <div class="price">5</div>
-  <div class="turmoil-icon project-icon"></div>
-  <div class="tag tag1 tag-science "></div>
-  <div class="card-number">#T05</div>
+[CardName.EVENT_ANALYSTS, ` 
   <div class="content ">
     <div class="requirements"><span class="party">Scientists</span></div>
-    + <div class="influence"></div><br>
+    <div class="plus"></div> <div class="influence"></div><br>
     <div class="description" style="margin-top:5px;">
       (Effect: You have influence +1.)
     </div>
@@ -7270,13 +5345,7 @@ export const HTML_DATA: Map<string, string> =
     </div>
   </div>
 `],
-[CardName.GMO_CONTRACT, `
-  <div class="title background-color-active">GMO Contract</div>
-  <div class="price">3</div>
-  <div class="turmoil-icon project-icon"></div>
-  <div class="tag tag1 tag-microbe"></div>
-  <div class="tag tag2 tag-science"></div>
-  <div class="card-number">#T06</div>
+[CardName.GMO_CONTRACT, ` 
   <div class="content">
     <div class="requirements"><span class="party">Greens</span></div>
     <div class="tag-animal resource-tag"></div> / <div class="tag-plant resource-tag"></div> / <div class="tag-microbe resource-tag"></div> : <div class="money resource">2</div>
@@ -7288,12 +5357,7 @@ export const HTML_DATA: Map<string, string> =
     </div>
   </div>
 `],
-[CardName.MARTIAN_MEDIA_CENTER, `
-  <div class="title background-color-active ">Martian Media Center</div>
-  <div class="price">7</div>
-  <div class="turmoil-icon project-icon"></div>
-  <div class="tag tag1 tag-building "></div>
-  <div class="card-number">#T07</div>
+[CardName.MARTIAN_MEDIA_CENTER, ` 
   <div class="content ">
     <div class="requirements"><span class="party">Mars First</span></div>
       <div class="money resource ">3</div> <span class="red-arrow "></span> <div class="delegate"></div>
@@ -7306,12 +5370,7 @@ export const HTML_DATA: Map<string, string> =
       </div>
   </div>
 `],
-[CardName.PARLIAMENT_HALL, `
-  <div class="title background-color-automated ">Parliament Hall</div>
-  <div class="price">8</div>
-  <div class="turmoil-icon project-icon"></div>
-  <div class="tag tag1 tag-building "></div>
-  <div class="card-number">#T08</div>
+[CardName.PARLIAMENT_HALL, ` 
   <div class="content ">
     <div class="points points-big">1</div>
     <div class="requirements"><span class="party">Mars First</span></div>
@@ -7326,12 +5385,7 @@ export const HTML_DATA: Map<string, string> =
       </div>
   </div>
 `],
-[CardName.POLITICAL_ALLIANCE, `
-  <div class="title background-color-events">Political Alliance</div>
-  <div class="price">4</div>
-  <div class="turmoil-icon project-icon"></div>
-  <div class="tag tag1 tag-event"></div>
-  <div class="card-number">X09</div>
+[CardName.POLITICAL_ALLIANCE, ` 
   <div class="content">
     <div class="requirements">2 Party Leaders</div>
       <div class="tile rating"></div>
@@ -7341,12 +5395,7 @@ export const HTML_DATA: Map<string, string> =
       </div>
   </div>
 `],
-[CardName.PR_OFFICE, `
-  <div class="title background-color-automated ">PR Office</div>
-  <div class="price">7</div>
-  <div class="turmoil-icon project-icon"></div>
-  <div class="tag tag1 tag-earth "></div>
-  <div class="card-number">#T09</div>
+[CardName.PR_OFFICE, ` 
   <div class="content ">
     <div class="requirements"><span class="party">Unity</span></div>
       <div class="tile rating"></div>
@@ -7357,12 +5406,7 @@ export const HTML_DATA: Map<string, string> =
       </div>
   </div>
 `],
-[CardName.PUBLIC_CELEBRATIONS, `
-  <div class="title background-color-events ">Public Celebrations</div>
-  <div class="price">8</div>
-  <div class="turmoil-icon project-icon"></div>
-  <div class="tag tag1 tag-event "></div>
-  <div class="card-number">#T10</div>
+[CardName.PUBLIC_CELEBRATIONS, ` 
   <div class="content ">
     <div class="points points-big">2</div>
     <div class="requirements">Chairman</div>
@@ -7371,26 +5415,15 @@ export const HTML_DATA: Map<string, string> =
       </div>
   </div>
 `],
-[CardName.RECRUITMENT, `
-  <div class="title background-color-events ">Recruitment</div>
-  <div class="price">2</div>
-  <div class="turmoil-icon project-icon"></div>
-  <div class="tag tag1 tag-event "></div>
-  <div class="card-number">#T11</div>
+[CardName.RECRUITMENT, ` 
   <div class="content ">
-    - <div class="delegate delegate-red"></div>* &nbsp;&nbsp; + <div class="delegate"></div>
+    <div class="minus"></div> <div class="delegate delegate-red"></div>* &nbsp;&nbsp; <div class="plus"></div> <div class="delegate"></div>
       <div class="description ">
         (Exchange one NEUTRAL NON-LEADER delegate with one of your own from the reserve.)
       </div>
   </div>
 `],
-[CardName.RED_TOURISM_WAVE, `
-  <div class="title background-color-events ">Red Tourism Wave</div>
-  <div class="price">3</div>
-  <div class="turmoil-icon project-icon"></div>
-  <div class="tag tag1 tag-event "></div>
-  <div class="tag tag2 tag-earth "></div>
-  <div class="card-number">#T12</div>
+[CardName.RED_TOURISM_WAVE, ` 
   <div class="content ">
     <div class="requirements"><span class="party">Reds</span></div>
     <div class="resource money">1</div> / <div class="tile empty-tile-small"></div>*
@@ -7400,12 +5433,7 @@ export const HTML_DATA: Map<string, string> =
       </div>
   </div>
 `],
-[CardName.SPONSORED_MOHOLE, `
-  <div class="title background-color-automated ">Sponsored Mohole</div>
-  <div class="price">5</div>
-  <div class="turmoil-icon project-icon"></div>
-  <div class="tag tag1 tag-building "></div>
-  <div class="card-number">#T13</div>
+[CardName.SPONSORED_MOHOLE, ` 
   <div class="content ">
     <div class="requirements"><span class="party">Kelvinists</span></div>
       <div class="production-box production-box-size2">
@@ -7416,12 +5444,7 @@ export const HTML_DATA: Map<string, string> =
       </div>
   </div>
 `],
-[CardName.SUPPORTED_RESEARCH, `
-  <div class="title background-color-automated ">Supported Research</div>
-  <div class="price">3</div>
-  <div class="turmoil-icon project-icon"></div>
-  <div class="tag tag1 tag-science "></div>
-  <div class="card-number">#T14</div>
+[CardName.SUPPORTED_RESEARCH, ` 
   <div class="content ">
     <div class="requirements"><span class="party">Scientists</span></div>
       <div class="resource card"></div> <div class="resource card"></div>
@@ -7430,14 +5453,7 @@ export const HTML_DATA: Map<string, string> =
       </div>
   </div>
 `],
-[CardName.WILDLIFE_DOME, `
-  <div class="title background-color-automated ">Wildlife Dome</div>
-  <div class="price">15</div>
-  <div class="turmoil-icon project-icon"></div>
-  <div class="tag tag1 tag-building"></div>
-  <div class="tag tag2 tag-plant"></div>
-  <div class="tag tag3 tag-animal"></div>
-  <div class="card-number">#T15</div>
+[CardName.WILDLIFE_DOME, ` 
   <div class="content ">
     <div class="requirements"><span class="party">Greens</span></div>
       <div class="tile greenery-tile"></div>
@@ -7446,14 +5462,9 @@ export const HTML_DATA: Map<string, string> =
       </div>
   </div>
 `],
-[CardName.VOTE_OF_NO_CONFIDENCE, `
-  <div class="title background-color-events ">Vote Of No Confidence</div>
-  <div class="price">5</div>
-  <div class="turmoil-icon project-icon"></div>
-  <div class="tag tag1 tag-event "></div>
-  <div class="card-number">#T16</div>
+[CardName.VOTE_OF_NO_CONFIDENCE, ` 
   <div class="content ">
-    - <div class="chairman" style="box-shadow:1px 0 1px red, -1px 0 1px red"></div> * &nbsp;&nbsp; + <div class="chairman"></div>
+    <div class="minus"></div> <div class="chairman red-outline"></div> * &nbsp;&nbsp; <div class="plus"></div> <div class="leader"></div>
     <br>
     <div class="tile rating"></div>
       <div class="description ">
@@ -7461,13 +5472,7 @@ export const HTML_DATA: Map<string, string> =
       </div>
   </div>
 `],
-[CardName.LAW_SUIT, `
-    <div class="title background-color-events">Law Suit</div>
-    <div class="price ">2</div>
-    <div class="tag tag1 tag-event"></div>
-    <div class="tag tag2 tag-earth"></div>
-    <div class="promo-icon project-icon"></div>
-    <div class="card-number">X06</div>
+[CardName.LAW_SUIT, ` 
     <div class="content">
         <div class="points points-big red-outline">-1</div>
         STEAL <div class="production money red-outline">3</div> *
@@ -7477,13 +5482,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
     </div>
 `],
-[CardName.STANFORD_TORUS, `
-    <div class="title background-color-automated">Stanford Torus</div>
-    <div class="price">12</div>
-    <div class="tag tag1 tag-space"></div>
-    <div class="tag tag2 tag-city"></div>
-    <div class="promo-icon project-icon"></div>
-    <div class="card-number">X12</div>
+[CardName.STANFORD_TORUS, ` 
     <div class="content">
         <div class="points points-big">2</div>
         <div class="tile city-tile"></div> *
@@ -7492,20 +5491,16 @@ export const HTML_DATA: Map<string, string> =
         </div>
     </div>
 `],
-[CardName.SATURN_SURFING, `
-    <div class="title background-color-active">Saturn Surfing</div>
-    <div class="price">13</div>
-    <div class="tag tag1 tag-earth"></div>
-    <div class="tag tag2 tag-jovian"></div>
-    <div class="promo-icon project-icon"></div>
-    <div class="card-number">X11</div>
+[CardName.SATURN_SURFING, ` 
     <div class="content">
         <div class="points points-big">1</div>
-        <div class="floater resource"></div>
-        <span class="red-arrow"></span>
-        <div class="money resource">1</div> / <div class="resource floater"></div> * max 5
+        <div class="nowrap">
+          <div class="floater resource"></div>
+          <span class="red-arrow"></span>
+          <div class="money resource">1</div> / <div class="resource floater"></div> * max 5
+        </div>
         <div class="description" style="margin-bottom:10px;">
-            (Action: Spend 1 floater from here to gain 1 MC from each floater here, INCLUDING THE PAID FLOATER. Max 5.)
+          (Action: Spend 1 floater from here to gain 1 MC from each floater here, INCLUDING THE PAID FLOATER. Max 5.)
         </div>
         <div class="floater resource"></div> / <div class="resource-tag tag-earth"></div>
         <div class="description">
@@ -7515,42 +5510,35 @@ export const HTML_DATA: Map<string, string> =
 `],
 
 
-
-
-
-
 ///// breakthrough
 [CardName._INVENTRIX_,`
-    <div class="tag tag1 tag-science"></div>
-    <div class="tag tag2 tag-science"></div>
-      <div class="corporationLabel ">CORPORATION</div>
-      <div class="contentCorporation ">
-          <div class="corporationEffectBox ">
-              <div class="corporationEffectBoxLabel ">EFFECT</div>
-                <div class="tile background-color-corporation" style="width:100px;text-shadow:none;color:black;font-size:11px;padding-top:5px;padding-bottom:5px;">Temp / O2 / Ocean</div>: +/- 3
-              <div class="description " style="text-align:center;margin-top:0px; ">
-                  (Effect: Your temperature, oxygen and ocean requirements are +3 or -3 steps, your choice in each case.)
-              </div>
-          </div>
-          <span style="color: #020202;
-          position: relative;
-          top: 22px;
-          font-size:24px;
-          padding-left:5px;
-          padding-bottom:5px;
-          text-shadow: 6px 6px 5px grey;
-          ;">
-            <span style="color: #020202;background-color:#6bb5c7;margin-top:33px;padding-left:4px;padding-right:4px;font-size:26px;box-shadow: 6px 6px 10px grey;">X</span> INVENTRIX
-          </span>
-          <div class="description " style="text-align:center;margin-top: 22px;">
-            <div class="resource money " style="margin-left:20px;">45</div> <div class="resource card" style="margin-left:20px"></div><div class="resource card"></div><div class="resource card"></div><br>
-              (As you first action in the game, draw 3 cards. Start with 45MC.)
-          </div>
-      </div>
+    <div class="contentCorporation ">
+        <div class="corporationEffectBox ">
+            <div class="corporationEffectBoxLabel ">EFFECT</div>
+            <div class="corporation-ability">
+              <div class="globals-box">Global requirements</div>: +/- 3
+            </div>
+            <div class="description ">
+                (Effect: Your temperature, oxygen and ocean requirements are +3 or -3 steps, your choice in each case.)
+            </div>
+        </div>
+        <span style="color: #020202;
+        position: relative;
+        top: 22px;
+        font-size:24px;
+        padding-left:5px;
+        padding-bottom:5px;
+        text-shadow: 6px 6px 5px grey;
+        ;">
+          <span style="color: #020202;background-color:#6bb5c7;margin-top:33px;padding-left:4px;padding-right:4px;font-size:26px;box-shadow: 6px 6px 10px grey;">X</span> INVENTRIX
+        </span>
+        <div class="description " style="text-align:center;margin-top: 22px;">
+          <div class="resource money " style="margin-left:20px;">45</div> <div class="resource card" style="margin-left:20px"></div><div class="resource card"></div><div class="resource card"></div><br>
+            (As you first action in the game, draw 3 cards. Start with 45MC.)
+        </div>
+    </div>
 `],
 [CardName._PHOBOLOG_,`
-    <div class="tag tag1 tag-space"></div>
-    <div class="corporationLabel">CORPORATION</div>
     <div class="contentCorporation">
       <div class="corporationEffectBox">
         <div class="corporationEffectBoxLabel">EFFECT</div>
@@ -7583,8 +5571,8 @@ export const HTML_DATA: Map<string, string> =
               
       <div class="resource money" style="margin-left:10px;">23</div>
       10<div class="resource titanium"></div>
-      <div class="resource card"><div class="card-icon card-icon-space">&#x2734;</div></div> 
-      <div class="resource card"><div class="card-icon card-icon-space">&#x2734;</div></div>
+      <div class="resource card"><div class="card-icon tag-space"></div></div> 
+      <div class="resource card"><div class="card-icon tag-space"></div></div>
       
       <div class="description" style="text-align:center;">
         (You start with 10 titanium and 23 MC.As your first action, draw 2 space cards. )
@@ -7592,9 +5580,6 @@ export const HTML_DATA: Map<string, string> =
     </div>
 `],
 [CardName._THORGATE_,`
-    <div class="tag tag1 tag-power"></div>
-    <div class="tag tag2 tag-science"></div>
-    <div class="corporationLabel">CORPORATION</div>
     <div class="contentCorporation">
       <div class="corporationEffectBox">
         <div class="corporationEffectBoxLabel">EFFECT</div>
@@ -7621,49 +5606,35 @@ export const HTML_DATA: Map<string, string> =
     </div>
 `],
 [CardName._HELION_,`
-    <div class="tag tag1 tag-space"></div>
-    <div class="corporationLabel">CORPORATION</div>
     <div class="contentCorporation">
       <div class="corporationEffectBox">
         <div class="corporationEffectBoxLabel">EFFECT</div>
         X<div class="resource heat"></div> :
         <div class="resource money">X</div>
-        <div class="description" style="text-align:center;margin-top:0px;">
+        <div class="description" >
           (Effect: Your may use heat as MC. You may not use MC as heat.)
         </div>
       </div>
-      <div style="font-size:34px;
-                      width:140px;
-                      text-align: center;
-                      color: #020202;
-                      margin-top:5px;
-                      border:2px solid black;
-                      margin-left:8px;
-                      background: #e6e600;
-                      box-shadow: 6px 6px 6px grey;
-                      border-radius:2px;">
-                  helion</div><br>
-      <div class="production-box production-box-size3" style="margin-left:5px;margin-top:-50px;">
-        <div class="production heat"></div><div class="production heat"></div><div class="production heat"></div>
+      <div class="helion">helion</div><br>
+      <div style="margin-left: -10px">
+        <div class="production-box production-box-size3 helion-production" >
+          <div class="production heat"></div><div class="production heat"></div><div class="production heat"></div>
+        </div>
+        3<div class="resource heat"></div><div class="resource money">48</div>
       </div>
-      3<div class="resource heat"></div>
-        <div class="resource money">48</div>
-
       <div class="description" style="text-align:center;">
         (You start with 3 heat production, 3 heat and 48 MC.)
       </div>
     </div>
 `],
 [CardName._ECOLINE_,`
-    <div class="tag tag1 tag-plant"></div>
-    <div class="corporationLabel">CORPORATION</div>
     <div class="contentCorporation">
       <div class="corporationEffectBox">
         <div class="corporationEffectBoxLabel "style="margin-bottom:3px;"">EFFECT</div>
         7
         <div class="resource plant" style="margin-bottom: 0px;"></div> 
         <span class="red-arrow"></span>
-        <div class="greenery-tile tile"style="margin-bottom:0px;padding: 2px;width: 25px;margin-top: 0px;"></div><br>
+        <div class="greenery-tile tile"style="margin-bottom:0px;margin-top: 0px;"></div><br>
         <div class="resource-tag tag-plant "style="margin-bottom:0px;"></div>  :
         <div class="resource money">2</div>
         <div class="description" style="text-align:center;margin-top:0px;">
@@ -7687,8 +5658,6 @@ export const HTML_DATA: Map<string, string> =
     </div>
 `],
 [CardName._TERACTOR_,`
-    <div class="tag tag1 tag-earth"></div>
-    <div class="corporationLabel">CORPORATION</div>
     <div class="corporate-icon corporation-icon"></div>
     <div class="contentCorporation">
       <div class="corporationEffectBox">
@@ -7714,9 +5683,6 @@ export const HTML_DATA: Map<string, string> =
     </div>
 `],
 [CardName._APHRODITE_,`
-    <div class="tag tag1 tag-plant"></div>
-    <div class="tag tag2 tag-venus"></div>
-    <div class="corporationLabel">CORPORATION</div>
     <div class="venus-icon corporation-icon"></div>
     <div class="contentCorporation">
       <div class="corporationEffectBox">
@@ -7743,18 +5709,15 @@ export const HTML_DATA: Map<string, string> =
         </div>
 `],
 [CardName._FACTORUM_,`
-    <div class="tag tag1 tag-building"></div>
-    <div class="tag tag2 tag-power"></div>
-    <div class="corporationLabel">CORPORATION</div>
     <div class="promo-icon corporation-icon"></div>
     <div class="contentCorporation">
       <div class="corporationEffectBox">
         <div class="corporationEffectBoxLabel" style="margin-bottom:5px">ACTION</div>
-        <div class="red-arrow"></div><div class="production-box">
-          <div class="production energy"></div>
-        </div> * OR
-        <div class="resource money">3</div><div class="red-arrow"></div><div class="resource card">
-          <div class="card-icon card-icon-building" style="margin-top:-17px;">&#x2617;</div>
+        <div class="corporation-action-icons nowrap">
+          <div class="red-arrow"></div>
+          <div class="production-box"><div class="production energy"></div></div> * OR
+          <div class="resource money">3</div><div class="red-arrow"></div>
+          <div class="resource card"><div class="card-icon card-icon-building" ></div></div>
         </div>
         <div class="description" style="text-align:center;margin-top:0px;">
           (Action: Increase your energy production 1 step IF YOU HAVE NO ENERGY RESOURCES, or spend 3MC to draw a building card.)
@@ -7773,21 +5736,17 @@ export const HTML_DATA: Map<string, string> =
     </div>
     `],
 [CardName._MINING_GUILD_,`
-  <div class="tag tag1 tag-building"></div>
-  <div class="tag tag2 tag-building"></div>
-  <div class="corporationLabel">CORPORATION</div>
   <div class="contentCorporation">
     <div class="corporationEffectBox">
       <div class="corporationEffectBoxLabel"style="margin-bottom:3px;">EFFECT</div>
       <div class="resource steel" style="margin-bottom: 0px;"></div> /
       <div class="resource titanium" style="margin-bottom: 0px;"></div> :
       <div class="production-box" style="margin-bottom:0px;padding: 1px;width: 34px;" >
-        <div class="production steel"style="margin-bottom:0px;"></div></div><br>
-        4<div class="resource steel" style = "margin-bottom:0px"></div>
+        <div class="production steel"style="margin-bottom:0px;"></div></div>
+        <br>4<div class="resource steel" style = "margin-bottom:0px;margin-right: -3px;"></div>
         <div class="red-arrow"></div>
-        <div class="triangle triangle-white"margin-bottom:0px;></div> /
-        <div class="tile city-tile " style="margin-bottom:0px;margin-left:5px;padding:1px;width: 30px;"></div>
-        (<span class="steel " style="margin:0px;padding:2px;padding-top:3px;border-radius:5px;"></span>)
+        <div class="triangle triangle-white" margin-left: -5px;margin-right: -5px;></div>/<div class="tile city-tile " style="margin-bottom:0px;margin-left:5px;"></div>
+        (<span class="resource steel"></span>)
       <div class="description" style="text-align:center;line-height: 10px;font-size: 10px;">
         (Effect: Each time you get steel/titanium as placement bonus, increase 1 steel prod.You can use 4 steel to trade.You can use steel to pay for city standard project.)
       </div>
@@ -7806,39 +5765,36 @@ export const HTML_DATA: Map<string, string> =
                 MINING<br>GUILD
             </span><br>
     <div class="resource money" style="margin-left:35px;">30</div>&nbsp;&nbsp;
-    5<div class="production steel"></div>
+    5<div class="resource steel"></div>
     <div class="production-box" style="margin-top:5px;margin-left:20px;">
       <div class="production steel"></div>
     </div>
-    <div class="description" style="margin-top:-5px;text-align:center;">
+    <div class="description" style="margin-top:-5px;text-align:center;margin-top: -5px;">
       (You start with 30 MC, 5 steel, and 1 steel production)
     </div>
   </div>
 `],
 [CardName._RECYCLON_,`
-      <div class="tag tag1 tag-building"></div>
-      <div class="tag tag2 tag-microbe"></div>
-      <div class="corporationLabel">CORPORATION</div>
       <div class="promo-icon corporation-icon"></div>
       <div class="contentCorporation">
-        <div class="corporationEffectBox">
+        <div class="corporationEffectBox hover-hide-res">
           <div class="corporationEffectBoxLabel" style="margin-bottom:10px">EFFECT</div>
           <div class="resource-tag tag-building"></div> :<div class="resource microbe"></div> OR
           2<div class="resource microbe"></div>:<div class="production-box" style="margin-left:5px;"><div class="production plant"></div></div><br>
           <div class="description" style="margin-top:-3px;text-align:center;">(Effect: When you play a building tag, including this, gain 1 microbe to this card, or remove 2 microbes here and raise your plant production 1 step.)
+          </div>
         </div>
-        </div>
-        <div  style="font-size:20px;margin-top:5px;margin-bottom:5px; border-radius:25px;padding:10px;font-weight:bold;
-        background:red;color:white; box-shadow: 0 0 0 1px rgba(0,0,0,0.6), 0 0 0 2px rgba(0,0,0,0.3), 3px 3px 3px #444; font-family: Prototype;
-        font-weight: normal;text-shadow: 0 0 1px black;"> RECYCLON</div>
-                </div><br>
-                <div class="resource money" style="margin-left:25px;">38</div>
-                <div class="resource microbe"></div><div class="resource microbe"></div>*
-                <div class="production-box"><div class="production steel"></div></div>
+        <div  class="recyclon-fix"> RECYCLON</div>
+      </div><br>
+      <div class="recyclon-fix-2" style="margin-top: -20px; color: black;">
+        <div class="resource money" style="margin-left:25px;">38</div>
+        <div class="resource microbe"></div>
+        <div class="resource microbe"></div>*
+        <div class="production-box"><div class="production steel"></div></div>
         <div class="description" style="margin-top:0px;text-align:center;">(You start with 38 MC and 1 steel production. As your first action, add 2 mocrobed to this card)</div>
+      </div>
 `],
 [CardName._ROBINSON_INDUSTRIES_,`
-      <div class="corporationLabel">CORPORATION</div>
       <div class="prelude-icon corporation-icon"></div>
       <div class="contentCorporation">
         <div class="corporationEffectBox">
@@ -7861,8 +5817,6 @@ export const HTML_DATA: Map<string, string> =
         </div>
 `],
 [CardName._SPLICE_,`
-      <div class="tag tag1 tag-microbe"></div>
-      <div class="corporationLabel">CORPORATION</div>
       <div class="promo-icon corporation-icon"></div>
       <div class="contentCorporation">
         <div class="corporationEffectBox">
@@ -7877,15 +5831,12 @@ export const HTML_DATA: Map<string, string> =
                     <div STYLE="font-size:10px">TACTICAL GENOMICS</div>
                 </div>
                 <div class="resource money" style="margin-left:60px;margin-right:5px;">44</div>
-                <div class="resource card" style="margin-left:20px;margin-bottom: 0px;top: -10px;margin-top: -4px;"><div class="card-icon card-icon-microbe">&#x2042;</div></div>
-                <div class="resource card" style="margin-bottom: 0px;top: -10px;margin-top: -4px;"><div class="card-icon card-icon-microbe">&#x2042;</div></div>
+                <div class="resource card" style="margin-left:20px;margin-bottom: 0px;top: -10px;margin-top: -4px;"><div class="card-icon tag-microbe"></div></div>
+                <div class="resource card" style="margin-bottom: 0px;top: -10px;margin-top: -4px;"><div class="card-icon tag-microbe"></div></div>
         <div class="description" style="margin-top:-2px;margin-left:-7px;margin-right:-7px;text-align:center;">(You start with 44 MC. As your first action, reveal cards until you have revealed 2 microbe tag. Take these cards into hand and discard the rest.)</div>
       </div>
 `],
 [CardName._TERRALABS_RESEARCH_,`
-<div class="tag tag1 tag-earth"></div>
-<div class="tag tag2 tag-science"></div>
-  <div class="corporationLabel ">CORPORATION</div>
   <div class="turmoil-icon corporation-icon"></div>
   <div class="contentCorporation ">
       <div class="corporationEffectBox ">
@@ -7907,14 +5858,12 @@ export const HTML_DATA: Map<string, string> =
 `],
 
 [CardName._UNITED_NATIONS_MARS_INITIATIVE_,`
-    <div class="tag tag1 tag-earth"></div>
-    <div class="corporationLabel">CORPORATION</div>
     <div class="contentCorporation">
       <div class="corporationEffectBox">
         <div class="corporationEffectBoxLabel" style="margin-bottom: 0px;">ACTION</div>
         <div class="resource money" style="margin-bottom: 3px;top:3px">5</div> <span class="red-arrow"></span>
-        <div class="tile rating" style="margin-bottom: 3px;padding-top: 6px;padding-bottom: 3px;padding-left: 4px;width: 26px;"></div>*<br>
-        <div class="tile rating"style="margin-bottom: 3px;padding-top: 6px;padding-bottom: 3px;padding-left: 4px;width: 26px;";></div>: <div class="resource money">2</div>
+        <div class="tile rating" style="margin-bottom: 0px;margin-top: 0px;"></div>*<br>
+        <div class="tile rating"style="margin-bottom: 0px;margin-top: 0px;"></div>: <div class="resource money">2</div>
         <div class="description" style="text-align:center;margin-top:0px;">
           (Action:If your TR was raised this generation, you may pay 5 MC to raise 1 step. When you raise TR, gain 2 MC.)
         </div>
@@ -7939,9 +5888,6 @@ export const HTML_DATA: Map<string, string> =
     </div>
 `],
 [CardName._VALLEY_TRUST_,`
-      <div class="tag tag1 tag-earth"></div>
-      <div class="tag tag2 tag-science"></div>
-        <div class="corporationLabel ">CORPORATION</div>
         <div class="prelude-icon corporation-icon"></div>
         <div class="contentCorporation ">
             <div class="corporationEffectBox ">
@@ -7962,8 +5908,6 @@ export const HTML_DATA: Map<string, string> =
         </div>
 `],
 [CardName._VIRON_,`
-      <div class="tag tag1 tag-wild"></div>
-      <div class="corporationLabel">CORPORATION</div>
       <div class="venus-icon corporation-icon"></div>
       <div class="contentCorporation">
         <div class="corporationEffectBox">
@@ -7985,8 +5929,6 @@ export const HTML_DATA: Map<string, string> =
       </div>
 `],
 [CardName._CELESTIC_,`
-      <div class="tag tag1 tag-venus"></div>
-      <div class="corporationLabel">CORPORATION</div>
       <div class="venus-icon corporation-icon"></div>
       <div class="contentCorporation">
         <div class="pointsCorporation">1/3<div class="resource floater"></div></div>
@@ -8003,16 +5945,16 @@ export const HTML_DATA: Map<string, string> =
           style="background:linear-gradient(to right,rgb(23,185,236),rgb(251,192,137))">ES</span><span style="background:rgb(251,192,137);padding-right:5px;">TIC</span>
         </div>
       </div><br>
-        <div class="resource money" style="margin-left:30px;">42</div>
-        <div class="resource card" style="margin-left:15px;"><div class="card-icon card-icon-floater">&#x2601;</div></div>
-        <div class="resource card"><div class="card-icon card-icon-floater">&#x2601;</div></div>
-        <div class="description" style="text-align:center;margin-top:-3px;font-size:10px;">
+      <div class="celestic-fix">
+          <div class="resource money" style="margin-left:30px;">42</div>
+          <div class="resource card"><div class="card-icon-box floater"></div></div>
+          <div class="resource card"><div class="card-icon-box floater"></div></div>
+          <div class="description" style="text-align:center;margin-top:-3px;font-size:10px;">
           (You start with 42 MC. As your first action, draw 2 floater-icon cards.)
-        </div>
+          </div>
+      </div>
 `],
 [CardName.ID_FRONT,`
-      <div class="corporationLabel">CORPORATION</div>
-      <div class="promo-icon corporation-icon"></div>
       <div class="contentCorporation">
         <div class="corporationEffectBox">
           <div class="corporationEffectBoxLabel">EFFECT</div>
@@ -8043,8 +5985,6 @@ export const HTML_DATA: Map<string, string> =
       </div>
 `],
 [CardName._ARKLIGHT_,`
-      <div class="tag tag1 tag-animal"></div>
-      <div class="corporationLabel">CORPORATION</div>
       <div class="colonies-icon corporation-icon"></div>
       <div class="contentCorporation">
          <div class="pointsCorporation">1/2<div class="resource animal"></div></div>
@@ -8081,8 +6021,6 @@ export const HTML_DATA: Map<string, string> =
         </div>
 `],
 [CardName._STORMCRAFT_INCORPORATED_,`
-      <div class="tag tag1 tag-jovian"></div>
-      <div class="corporationLabel">CORPORATION</div>
       <div class="colonies-icon corporation-icon"></div>
       <div class="contentCorporation">
       <div class="pointsCorporation" style="margin-left:150px;padding-right:4px;width: 60px;">1/<span class="resource-tag tag-jovian"></span></div>
@@ -8101,6 +6039,529 @@ export const HTML_DATA: Map<string, string> =
           (You start with 48 MC.)
         </div>
       </div>
+`],
+
+
+// fan-made
+[CardName.AGRICOLA_INC,` 
+      <div class="community-icon corporation-icon"></div>
+      <div class="contentCorporation">
+        <div class="pointsCorporation">?</div>
+        <div class="corporationEffectBox">
+          <div class="corporationEffectBoxLabel">EFFECT</div>
+
+          <div class="description effect">
+            (Effect: At game end, score -2 / 0 / 1 / 2 VP PER TAG TYPE for 0 / 1-2 / 3-4 / 5+ tags.)
+          </div>
+        </div>
+      </div>
+
+      <div class="agricola">Agricola Inc</div>
+      <div class="resource money">40</div>
+
+      <div class="production-box production-box-size2">
+        <div class="money production ">1</div>
+        <div class="production plant"></div>
+      </div>
+      
+      <div class="description">
+        (You start with 1 plant production, 1 MC production and 40 MC.)
+      </div>
+`],
+[CardName.PROJECT_WORKSHOP,`
+      <div class="community-icon corporation-icon"></div>
+      <div class="contentCorporation">
+        <div class="corporationEffectBox">
+          <div class="corporationEffectBoxLabel">ACTION</div>
+
+          <div style="margin-top:-2px">
+            FLIP <div class="resource card card-small"><div class="card-icon card-icon-blue"></div></div>
+            <div class="red-arrow "></div>
+            ? <div class="tile rating"></div>
+            <div class="resource card card-small"></div>
+            <div class="resource card card-small"></div>
+          </div>
+
+          <div>
+            OR <div class="money production">3</div>
+            <div class="red-arrow "></div>
+            <div class="resource card card-small"><div class="card-icon card-icon-blue"></div></div>
+          </div>
+
+          <div class="effect description">
+            (Action: Flip and discard a played blue card to convert any VP on it into TR and draw 2 cards, or spend 3 MC to draw a blue card.)
+          </div>
+        </div>
+      </div>
+
+      <div class="project_workshop">PROJECT WORKSHOP</div>
+      <div class="resource money">39</div>
+      <div class="resource steel"></div>
+      <div class="resource titanium"></div>
+      <div class="resource card card-medium"><div class="card-icon card-icon-blue"></div></div>
+      
+      <div class="description">
+        (You start with 39 MC, 1 steel and 1 titanium.<br>
+        As your first action, draw a blue card.)
+      </div>
+`],
+[CardName.INCITE,`
+      <div class="community-icon corporation-icon"></div>
+      <div class="contentCorporation">
+        <div class="corporationEffectBox">
+          <div class="corporationEffectBoxLabel">EFFECT</div>
+          + <div class="influence"></div>
+          <br>
+          <div class="delegate effect"></div> : <div class="money resource effect-money">-2</div>
+          <div class="description effect">
+            (Effect: You have influence +1. When you send a delegate from the reserve, you pay 2 MC less for it.)
+          </div>
+        </div>
+      </div>
+
+      <div class="incite">INCITE</div>
+      <div class="resource money">32</div>
+      <div class="delegate"></div><div class="delegate"></div>
+      
+      <div class="description start-text">
+        (You start with 32 MC. As your first action, place two delegates in one party.)
+      </div>
+`],
+[CardName.PLAYWRIGHTS,`
+      <div class="community-icon corporation-icon"></div>
+      <div class="contentCorporation">
+        <div class="corporationEffectBox">
+          <div class="corporationEffectBoxLabel">ACTION</div>
+          <div class="resource money effect-money">?</div>
+          <div class="red-arrow"></div>
+          REPLAY &nbsp;<div class="resource card red-outline"><div class="card-icon tag-event"></div></div>&nbsp;*
+          
+          <div class="description effect">
+            (Action: Replay a played event from any player by paying its cost ONLY in MC (discounts and rebates apply), then REMOVE IT FROM PLAY.)
+          </div>
+        </div>
+      </div>
+
+      <div class="playwrights">Playwrights</div>
+      <div class="resource money">38</div>
+      <div class="production-box">
+        <div class="production energy"></div>
+      </div>
+      
+      <div class="description start-text">
+        (You start with 38 MC and 1 Energy production.)
+      </div>
+`],
+[CardName.MIDAS,`
+      <div class="community-icon corporation-icon"></div>
+
+      <div class="midas">Midas</div>
+      <div class="resource money">120</div>
+      <span class="start-tr-text">-7</span>
+      <div class="tile rating"></div>
+
+      <div class="description">
+        (You start with 120 MC. Lower your TR 7 steps.)
+      </div>
+`],
+
+[CardName.VALUABLE_GASES,`
+      <div class="content">
+        <div class="resource money">6</div>
+        <div class="resource card" style="margin-left:10px">
+          <div class="card-icon tag-venus"></div>
+        </div>
+        &nbsp;: +4 <div class="resource floater"></div>
+        <div class="description">
+          Gain 6 MC. Play a Venus card from your hand that collects floaters and add 4 floaters to it.
+        </div>
+      </div>
+`],
+[CardName.VENUS_FIRST,`
+      <div class="content">
+        <div class="tile venus-tile">V</div>
+        <div class="tile venus-tile">V</div>
+        <br>
+        <div class="resource card"><div class="card-icon tag-venus"></div></div>
+        <div class="resource card"><div class="card-icon tag-venus"></div></div>
+        <div class="description">
+          Raise Venus 2 steps. Draw 2 Venus cards from the deck.
+        </div>
+      </div>
+`],
+[CardName.RESEARCH_GRANT,`
+      <div class="content">
+        <div class="resource money">8</div>
+        <div class="description">
+          Gain 8 MC.
+        </div>
+      </div>
+`],
+[CardName.AEROSPACE_MISSION,`
+      <div class="content">
+        <div>
+          <div class="tile colony"></div>
+          <div class="tile colony"></div>
+          <br>
+          - <div class="resource money">14</div>
+        </div>
+        <div class="description">
+          Place 2 colonies. Pay 14 MC.
+        </div>
+      </div>
+`],
+[CardName.TRADE_ADVANCE,`
+      <div class="content">
+        <div class="resource money">2</div> &nbsp;(SOLO: <div class="resource money">10</div>)
+        <div>Trade all colonies with</div>
+        <div class="tile trade"></div> : <span class="card-sign">+1</span>
+        <div class="description">
+          Immediately trade with all active colonies. You may increase the Colony Tile track 1 step before each trade.
+          <br><br>Gain 2 MC (SOLO: Gain 10 MC).
+        </div>
+      </div>
+`],
+[CardName.POLITICAL_UPRISING,`
+      <div class="content">
+        <div class="delegate"></div>
+        <div class="delegate"></div>
+        <div class="delegate"></div>
+        <div class="delegate"></div>
+        <br>
+        <div class="resource card">
+          <div class="turmoil-icon"></div>
+        </div>
+        <div class="description">
+          Place 4 delegates. Draw a Turmoil card.
+        </div>
+      </div>
+`],
+[CardName.BY_ELECTION,`
+      <div class="content">
+        <div class="set-party-text">SET RULING PARTY</div>
+        + <div class="influence"></div>
+        <div class="description">
+          Set the ruling party to one of your choice. Gain +1 influence.
+        </div>
+      </div>
+`],
+
+
+// ares 
+[CardName.BIOENGINEERING_ENCLOSURE,`
+    <div class="card-number">A01</div>
+    <div class="content ">
+        <div class="requirements ">1 Science</div>
+        <div class="description " style="text-align:left;">
+            <div class="resource animal "></div><div class="resource animal "></div><br/>
+            <div class="resource animal "></div><span class="red-arrow"></span><div class="resource animal"></div><br/>
+            (Action: Remove 1 animal from this card to add 1 animal to another card.
+            Requires 1 science tag. Add 2 animals to this card.
+            OTHERS MAY NOT REMOVE ANIMALS FROM THIS CARD.)<br>
+        </div>
+    </div>
+`],
+[CardName.BIOFERTILIZER_FACILITY,`
+    <div class="card-number">A02</div>
+    <div class="content ">
+        <div class="requirements ">1 Science</div>
+        <div class="production-box production-box-size1a ">
+            <div class="production-prefix plus"></div><div class="plant production "></div>
+        </div>
+        <div class="microbe resource "></div><div class="microbe resource "></div>
+        <div class="ares-tile board-space-tile--biofertilizer_facility"></div>
+        <div class="description " style="text-align:left;">
+            (Requires 1 science tag. Increase your plant production 1 step. Add up to 2 microbes to any card. Place this tile which grants an <b>adjacency bonus</b> of 1 plant and 1 microbe.)<br>
+        </div>
+    </div>
+`],
+[CardName.BUTTERFLY_EFFECT,`
+    <div class="card-number">A03</div>
+    <div class="content ">
+        <div class="tile rating"></div><br/>
+        <div class="card-content-requirements">
+          <div class="globals-box">All four hazard markers</div>: -1 / 0 / +1
+        </div>
+        <div class="description " style="text-align:left;">
+            (Effect: Gain 1 TR. Move each individual hazard marker up to 1 step up or down.)<br>
+        </div>
+    </div>
+`],
+[CardName.DESPERATE_MEASURES,`
+    <div class="card-number">A04</div>
+    <div class="content ">
+        <div class="points ">-2</span></div>
+        <div class="tile temperature-tile"></div> / <div class="tile oxygen-tile"></div>
+        <div class="description " style="text-align:left;">
+            (Effect: Place a bronze cube on a dust storm tile and raise oxygen
+              1 step, or place a bronze cube on an erosion tile and raise the
+              temperature 1 step. The hazard tile with the bronze cube cannot be removed.)
+        </div>
+    </div>
+`],
+[CardName.ECOLOGICAL_SURVEY,`
+    <div class="card-number">A05</div>
+    <div class="content ">
+        <div class="requirements ">3 Forests</div>
+        <div><div class="ares-tile board-space-tile--empty-tile "></div>: +<div class="resource plant "></div><div class="resource animal "></div><div class="resource microbe "></div><br/>
+        </div><br/>
+        <div class="description " style="text-align:left;">
+            (Effect: When placing a tile grants you any plants, animals or microbes,
+              you gain one additional of each of those resources that you gain.
+            Requires 3 greeneries on Mars.)<br>
+        </div>
+    </div>
+`],
+[CardName.GEOLOGICAL_SURVEY,`
+    <div class="card-number">A06</div>
+    <div class="content ">
+        <div class="requirements ">Max 5 Forests</div>
+        <div><div class="ares-tile board-space-tile--empty-tile "></div>: +<div class="resource steel "></div><div class="resource titanium "></div><div class="resource heat "></div><br/>
+        </div><br/>
+        <div class="description " style="text-align:left;">
+            (Effect: When placing a tile grants you any steel, titanium, or heat,
+              you gain one additional of each of those resources that you gain.
+            Requires 5 or fewer greeneries on Mars.)<br>
+        </div>
+    </div>
+`],
+[CardName.MARKETING_EXPERTS,`
+    <div class="card-number">A07</div>
+    <div class="content ">
+        <div>
+          <div class="ares-tile board-space-tile--empty-tile "></div><div class="ares-tile board-space-tile--adjacency-tile "></div>: <span class=" money resource ">1</span><br/>
+          <div class="production-box">
+            <div class="money production">1</div>
+          </div>
+        </div><br/>
+        <div class="description " style="text-align:left;">
+            (Effect: When an <b>adjacency bonus</b> is collected from a tile you own, you gain 1M€. Increase your M€ production 1 step.)<br>
+        </div>
+    </div>
+`],
+[CardName.METALLIC_ASTEROID,`
+    <div class="card-number">A08</div>
+    <div class="content ">
+        <div class="tile temperature-tile"></div>
+        <div class="titanium resource "></div>
+        -4<div class="resource plant red-outline"></div>
+        <div class="ares-tile board-space-tile--metallic_asteroid"></div>
+        <div class="description " style="text-align:left;">
+            (Raise temperature 1 step and gain 1 titanium. Remove up to 4 plants from any player. Place this tile which grants an <b>adjacency bonus</b> of 1 titanium.)<br>
+        </div>
+    </div>
+`],
+[CardName.OCEAN_CITY,`
+    <div class="card-number">A09</div>
+    <div class="content ">
+        <div class="requirements ">6 Oceans</div>
+        <div class="ares-tile board-space-tile--ocean_city"></div>
+        
+        <div class="production-box production-box-size2 ">
+            <div class="production-prefix minus"></div><div class="energy production "></div><br>
+            <div class="production-prefix plus"></div><div class="money production ">3</div>
+        </div>
+
+        <div class="description " style="text-align:left;">
+          (Requires 6 ocean tiles. Decrease your Energy production 1 step and increase your MC production 3 steps.<br>
+            Place this tile on top of an existing ocean tile, IGNORING NORMAL PLACEMENT RESTRICTIONS FOR CITIES.
+            The tile counts as a city as well as an ocean.)
+     </div>
+    </div>
+`],
+[CardName.OCEAN_FARM,`
+    <div class="card-number">A10</div>
+    <div class="content ">
+        <div class="ares-tile board-space-tile--ocean_farm"></div>
+        <div class="requirements ">4 Oceans</div>
+        <div class="production-box production-box-size2 ">
+            <div class="production-prefix plus"></div><div class="heat production "></div>
+            <div class="production-prefix plus"></div><div class="plant production "></div>
+        </div>
+        <div class="description " style="text-align:left;">
+            (Requires 4 ocean tiles. Increase your heat production 1 step and increase your
+            plant production 1 step.<br>Place this tile on top of an existing ocean tile.
+            The tile grants an <b>adjacency bonus</b> of 1 plant.)
+        </div>
+    </div>
+`],
+[CardName.CAPITAL_ARES,`
+    <div class="card-number">A11</div>
+    <div class="content ">
+        <div class="points ">1/<span class="resource ocean-resource "></span></div>
+        <div class="requirements ">4 Oceans</div>
+        <div class="production-box production-box-size2a ">
+            <div class="production-prefix minus"></div><div class="energy production "></div><div class="energy production "></div><br>
+            <div class="production-prefix plus"></div><div class="money production ">5</div>
+        </div>
+        <div class="ares-tile board-space-tile--capital_ares"></div>
+        <div class="description " style="text-align:left;">
+            (Requires 4 ocean tiles. Place this tile which grants an <b>adjacency bonus</b> of 2M€. Decrease your Energy production 2 steps and increase your MC production 5 steps.<br>
+            <div style="font-size:9px;line-height:12px;margin-top:10px; width: 140px;">
+                1 ADDITIONAL VP FOR EACH OCEAN TILE ADJACENT TO THIS CITY TILE.
+            </div>
+        </div>
+    </div>
+`],
+[CardName.COMMERCIAL_DISTRICT_ARES,`
+    <div class="card-number">A12</div>
+    <div class="content ">
+      <div class="points big">1/<div class="tile city-tile-small"></div></div>
+      <div class="production-box production-box-size1a">
+          <div class="production-prefix minus"></div><div class="energy production"></div>
+          <div class="production-prefix plus"></div><div class="money production">4</div>
+      </div>
+      <div class="ares-tile board-space-tile--commercial_district_ares"></div>
+      <div class="description" style="margin-top:-5px">
+      (Decrease your energy production 1 step and increase your MC production 4 steps.
+      <br/><br/>
+      Place this tile which grants an <b>adjacency bonus</b> of 2M€. 1 VP PER ADJACENT CITY TILE.)
+      </div>
+    </div>
+`],
+[CardName.OCEAN_SANCTUARY,`
+    <div class="card-number">A13</div>
+    <div class="content ">
+        <div class="points big">1/<div class="resource animal"></div></div>
+        <div class="requirements ">5 Oceans</div>
+        <div class="ares-tile board-space-tile--ocean_sanctuary"></div>
+        <div class="resource animal "></div>
+        <div class="description " style="text-align:left;">
+            (Requires 5 ocean tiles. Place this tile on top of an existing ocean tile.
+              The tile grants an <b>adjacency bonus</b> of 1 animal.<br/>
+              Add 1 animal to this card. 1 VP per animal on this card.)
+        </div>
+    </div>
+`],
+[CardName.SOLAR_FARM,`
+    <div class="card-number">A14</div>
+    <div class="content ">
+        <div class="production-box production-box-size2a">
+          <div class="energy production"></div> / <div class="resource-tag tag-plant"></div>
+        </div>
+        <div class="ares-tile board-space-tile--solar_farm"></div>
+        <div class="description " style="text-align:left;">
+            Place this tile which grants an <b>adjacency bonus</b> of 2 power. Increase your power production 1 step for each plant tag on the area where you place the tile.<br>
+        </div>
+    </div>
+`],
+[CardName.ECOLOGICAL_ZONE_ARES,`
+    <div class="card-number">A15</div>
+    <div class="content">
+      <div class="points">1/2<div class="resource animal"></div></div>
+      <div class="requirements">Forest</div>
+      <div class="tag-animal resource-tag"></div> / <div class="tag-plant resource-tag"></div> : <div class="animal resource"></div>
+      <div class="ares-tile board-space-tile--ecological_zone_ares"></div>
+      <div class="description">
+        (Effect: When you play an animal or plant tag (including these), add an animal to this card.<br/><br/>
+        Requires that you have a greenery tile. Place this tile adjacent to any greenery tile. The tile grants an <b>adjacency bonus</b> of 1 animal. 1 VP per 2 Animals on this card.)
+      </div>
+    </div>
+`],
+[CardName.INDUSTRIAL_CENTER_ARES,`
+    <div class="card-number">A16</div>
+    <div class="content ">
+        <div class="money resource ">7</div> <div class="red-arrow "></div> <div class="production-box"><div class="steel production "></div></div>
+        <div class="description ">
+            (Action: Spend 7 MC to increase your steel production 1 step.)
+        </div><br>
+        <div class="ares-tile board-space-tile--industrial_center_ares"></div>
+        <div class="description ">
+            (Place this tile adjacent to a city tile. This tile grants an <b>adjacency bonus</b> of 1 steel.)
+        </div>
+    </div>
+`],
+[CardName.LAVA_FLOWS_ARES,`
+    <div class="card-number">A17</div>
+    <div class="content ">
+        <div class="tile temperature-tile "></div><div class="tile temperature-tile "></div><br>
+        <div class="ares-tile board-space-tile--lava_flows_ares"></div>
+        <div class="description ">
+          (Raise temperature 2 steps and place this tile ON EITHER THARSIS THOLUS, ASCRAEUS MONS, PAVONIS MONS OR ARSIA MONS. 
+          This tile grants an <b>adjacency bonus</b> of 2 heat.)
+        </div>
+    </div>
+`],
+[CardName.MINING_AREA_ARES,`
+    <div class="card-number">A18</div>
+    <div class="content">
+      <div class="ares-tile board-space-tile--mining_area_ares"></div>
+      <div class="production-box production-box-size3">
+        <div class="steel production"></div> OR <div class="titanium production"></div>
+      </div> *
+      <div class="description">
+        (Place one of these tiles on an area with a steel or titanium placement bonus, ADJACENT TO ANOTHER OF YOUR TILES.
+          This tile provides an <b>adjacency bonus</b> of the same resource as the area.
+          Increase your production of that resource 1 step.)
+      </div>
+    </div>
+`],
+[CardName.MINING_RIGHTS_ARES,`
+    <div class="card-number">A19</div>
+    <div class="content">
+      <div class="ares-tile board-space-tile--mining_rights_ares"></div>
+      <div class="production-box production-box-size3">
+        <div class="steel production"></div> OR <div class="titanium production"></div>
+      </div> *
+      <div class="description">
+        (Place one of these tiles on an area with a steel or titanium placement bonus.
+        This tile provides an <b>adjacency bonus</b> of the same resource as the area.
+        Increase your production of that resource 1 step.)      
+      </div>
+    </div>
+`],
+[CardName.MOHOLE_AREA_ARES,`
+    <div class="card-number">A20</div>
+    <div class="content">
+      <div class="production-box production-box-size1a">
+        4 <div class="heat production"></div>
+      </div><br>
+      <div class="ares-tile board-space-tile--mohole_area_ares"></div>
+      <div class="description">
+        (Increase your heat production 4 steps. Place this tile ON AN AREA RESERVED FOR OCEAN.
+          The tile grants an <b>adjacency bonus</b> of 2 heat.)
+      </div>
+    </div>
+`],
+[CardName.NATURAL_PRESERVE_ARES,`
+    <div class="card-number">A21</div>
+    <div class="content">
+      <div class="points points-big">1</div>
+      <div class="requirements requirements-max">max 4% O2</div>
+      <div class="production-box">
+        <div class="money production">1</div>
+      </div>
+      <div class="ares-tile board-space-tile--natural_preserve_ares"></div>
+      <div class="description">
+        (Oxygen must be 4% or less. Place this tile NEXT TO NO OTHER TILE. 
+          The tile grants an <b>adjacency bonus</b> of  of 1M€. Increase your MC production 1 step.)
+      </div>
+    </div>
+`],
+[CardName.NUCLEAR_ZONE_ARES,`
+    <div class="card-number">A22</div>
+    <div class="content">
+      <div class="points points-big">-2</div>
+      <div class="ares-tile board-space-tile--nuclear_zone_ares"></div>
+      <div class="tile temperature-tile"></div> <div class="tile temperature-tile"></div>
+      <div class="description">
+        (Raise the temperature two steps. Place this tile. Players must pay an additional 2M€
+          when they place a tile with their player marker on it adjacent to the Nuclear Zone.)
+      </div>
+    </div>
+`],
+[CardName.RESTRICTED_AREA_ARES,`
+    <div class="card-number">A23</div>
+    <div class="content ">
+        <div class="money resource ">2</div> <div class="red-arrow "></div> <div class="card resource "></div>
+        <div class="description ">
+            (Action: Spend 2 M€ to draw a card.)
+        </div><br>
+        <div class="ares-tile board-space-tile--restricted_area_ares"></div>
+        <div class="description ">
+          (Place this tile which grants an <b>adjacency bonus</b> of 1 card.)
+        </div>
+    </div>
 `],
 ]);
 

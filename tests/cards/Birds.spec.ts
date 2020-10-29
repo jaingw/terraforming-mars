@@ -17,21 +17,21 @@ describe("Birds", function () {
     });
 
     it("Cannot play without oxygen", function () {
-        expect(card.canPlay(player, game)).to.eq(false);
+        expect(card.canPlay(player, game)).is.not.true;
     });
 
     it("Should play", function () {
         const player3 = new Player("safe", Color.RED, false);
         const game = new Game("foobar", [player, player2, player3], player);
 
-        player2.setProduction(Resources.PLANTS,2);
-        player3.setProduction(Resources.PLANTS,7);
+        player2.addProduction(Resources.PLANTS,2);
+        player3.addProduction(Resources.PLANTS,7);
         (game as any).oxygenLevel = 13;
-        expect(card.canPlay(player, game)).to.eq(true);
+        expect(card.canPlay(player, game)).is.true;
 
         card.play(player, game);
-        expect(game.interrupts.length).to.eq(1);
-        const selectPlayer = game.interrupts[0].playerInput as SelectPlayer;
+        expect(game.deferredActions).has.lengthOf(1);
+        const selectPlayer = game.deferredActions.next()!.execute() as SelectPlayer;
         selectPlayer.cb(player2);
 
         expect(player2.getProduction(Resources.PLANTS)).to.eq(0);

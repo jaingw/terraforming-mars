@@ -50,7 +50,7 @@ export const Register = Vue.component("register", {
                                 <input class="form-input form-inline create-game-player-name register-input" :placeholder="'Password'" v-model="password"   />
                             </div>
                             <div class="register-action"> 
-                                <button class="btn btn-lg btn-success" v-on:click="register"  v-i18n>Register</button> 
+                                <button class="btn btn-lg btn-success" v-on:click="register" style="min-width: 80px;"  v-i18n>Register</button> 
                             </div>
                         </div>
                        

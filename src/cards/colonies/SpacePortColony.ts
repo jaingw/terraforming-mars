@@ -1,9 +1,10 @@
 import { IProjectCard } from "../IProjectCard";
 import { Tags } from "../Tags";
-import { CardType } from '../CardType';
+import { CardType } from "../CardType";
 import { Player } from "../../Player";
-import { CardName } from '../../CardName';
-import { Game } from '../../Game';
+import { CardName } from "../../CardName";
+import { Game } from "../../Game";
+import { BuildColony } from "../../deferredActions/BuildColony";
 
 export class SpacePortColony implements IProjectCard {
     public cost: number = 27;
@@ -20,15 +21,15 @@ export class SpacePortColony implements IProjectCard {
     }
 
     public play(player: Player, game: Game) {
-      game.addColonyInterrupt(player, true, "Select colony for Space Port Colony");
-      player.fleetSize++;
-      return undefined;
+        game.defer(new BuildColony(player, game, true, "Select colony for Space Port Colony"));
+        player.increaseFleetSize();
+        return undefined;
     }
 
     public getVictoryPoints(_player: Player, game: Game) {
         let coloniesCount: number = 0;
         game.colonies.forEach(colony => { 
-          coloniesCount += colony.colonies.length;
+            coloniesCount += colony.colonies.length;
         }); 
         return Math.floor(coloniesCount / 2);
     }
