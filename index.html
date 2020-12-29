@@ -2,7 +2,7 @@
 <html>
     <head>
         <title>Terraforming Mars</title>
-        <link rel="stylesheet" type="text/css" media="all" href="/styles.css?v=1025" />
+        <link rel="stylesheet" type="text/css" media="all" href="/styles.css?v=1229" />
         <meta name="viewport" content='width=1260, user-scalable=1'>
     </head>
     <body id="ts-preferences-target">
@@ -26,7 +26,6 @@
                 <game-end
                     v-else-if="screen === 'the-end'"
                     :player="player"
-                    :game="game"
                 ></game-end>
                 <games-overview
                     v-else-if="screen === 'games-overview'"
@@ -40,6 +39,6 @@
                 <donate v-if="screen === 'donate'"></donate>
             </div>
         </div>
-        <script src="/main.js?v=1029"></script>
+        <script src="/main.js?v=1229"></script>
     </body>
 </html>

@@ -1,50 +1,71 @@
-import { IProjectCard } from "../IProjectCard";
-import { IActionCard, IResourceCard } from "../ICard";
-import { Tags } from "../Tags";
-import { CardType } from "../CardType";
-import { Player } from "../../Player";
-import { ResourceType } from "../../ResourceType";
-import { OrOptions } from "../../inputs/OrOptions";
-import { SelectOption } from "../../inputs/SelectOption";
-import { Game } from "../../Game";
-import { CardName } from "../../CardName";
-import { MAX_VENUS_SCALE, REDS_RULING_POLICY_COST } from "../../constants";
-import { PartyHooks } from "../../turmoil/parties/PartyHooks";
-import { PartyName } from "../../turmoil/parties/PartyName";
+import {IProjectCard} from '../IProjectCard';
+import {IActionCard, IResourceCard} from '../ICard';
+import {Tags} from '../Tags';
+import {CardType} from '../CardType';
+import {Player} from '../../Player';
+import {ResourceType} from '../../ResourceType';
+import {OrOptions} from '../../inputs/OrOptions';
+import {SelectOption} from '../../inputs/SelectOption';
+import {Game} from '../../Game';
+import {CardName} from '../../CardName';
+import {MAX_VENUS_SCALE, REDS_RULING_POLICY_COST} from '../../constants';
+import {PartyHooks} from '../../turmoil/parties/PartyHooks';
+import {PartyName} from '../../turmoil/parties/PartyName';
+import {LogHelper} from '../../LogHelper';
+import {CardMetadata} from '../CardMetadata';
+import {CardRenderer} from '../render/CardRenderer';
+import {CardRenderItemSize} from '../render/CardRenderItemSize';
 
-export class ExtractorBalloons implements IActionCard,IProjectCard, IResourceCard {
-    public cost: number = 21;
-    public tags: Array<Tags> = [Tags.VENUS];
-    public name: CardName = CardName.EXTRACTOR_BALLOONS;
-    public cardType: CardType = CardType.ACTIVE;
-    public resourceType: ResourceType = ResourceType.FLOATER;
-    public resourceCount: number = 0;
+export class ExtractorBalloons implements IActionCard, IProjectCard, IResourceCard {
+  public cost = 21;
+  public tags = [Tags.VENUS];
+  public name = CardName.EXTRACTOR_BALLOONS;
+  public cardType = CardType.ACTIVE;
+  public resourceType = ResourceType.FLOATER;
+  public resourceCount: number = 0;
 
-    public play(player: Player) {
-        player.addResourceTo(this, 3);
+  public play(player: Player) {
+    player.addResourceTo(this, 3);
+    return undefined;
+  }
+  public canAct(): boolean {
+    return true;
+  }
+  public action(player: Player, game: Game) {
+    const venusMaxed = game.getVenusScaleLevel() === MAX_VENUS_SCALE;
+    const cannotAffordRed = PartyHooks.shouldApplyPolicy(game, PartyName.REDS) && !player.canAfford(REDS_RULING_POLICY_COST);
+    if (this.resourceCount < 2 || venusMaxed || cannotAffordRed) {
+      player.addResourceTo(this);
+      LogHelper.logAddResource(game, player, this);
+      return undefined;
+    }
+    return new OrOptions(
+      new SelectOption('Remove 2 floaters to raise Venus scale 1 step',
+        'Remove floaters', () => {
+          this.resourceCount -= 2;
+          game.increaseVenusScaleLevel(player, 1);
+          LogHelper.logVenusIncrease(game, player, 1);
+          return undefined;
+        }),
+      new SelectOption('Add 1 floater to this card', 'Add floater', () => {
+        player.addResourceTo(this);
+        LogHelper.logAddResource(game, player, this);
         return undefined;
-    }
-    public canAct(): boolean {
-        return true;
-    }   
-    public action(player: Player, game: Game) {
-        const venusMaxed = game.getVenusScaleLevel() === MAX_VENUS_SCALE;
-        const cannotAffordRed = PartyHooks.shouldApplyPolicy(game, PartyName.REDS) && !player.canAfford(REDS_RULING_POLICY_COST);
-        if (this.resourceCount < 2 || venusMaxed || cannotAffordRed) {
-            player.addResourceTo(this);
-            return undefined;
-        }
-        return new OrOptions(
-            new SelectOption("Remove 2 floaters to raise Venus scale 1 step", 
-            "Remove floaters", () => {
-                this.resourceCount -= 2;
-                game.increaseVenusScaleLevel(player,1);
-                return undefined;
-            }),
-            new SelectOption("Add 1 floater to this card", "Add floater", () => {
-                player.addResourceTo(this);
-                return undefined;
-            })
-        );
-    }
+      }),
+    );
+  }
+  public metadata: CardMetadata = {
+    cardNumber: '223',
+    description: 'Add 3 Floaters to this card',
+    renderData: CardRenderer.builder((b) => {
+      b.effectBox((eb) => {
+        eb.empty().startAction.floaters(1);
+        eb.description('Action: Add 1 Floater to this card.');
+      }).br;
+      b.effectBox((eb) => {
+        eb.or(CardRenderItemSize.SMALL).floaters(2).startAction.venus(1);
+        eb.description('Action: add 1 Floater to this card, or remove 2 Floaters here to raise Venus 1 step.');
+      }).br.floaters(3);
+    }),
+  }
 }

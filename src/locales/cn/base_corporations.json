@@ -39,7 +39,7 @@
   "Effect: Each time you get any steel or titanium as a placement bonus on the map, increase your steel production 1 step.":"效果:每当你因放置一个版块而获得钢铁资源或钛合金资源时,提升你的钢铁产能1级",
 
   "You start with 40MC. As your first action add a colony tile.":"起始获得40MC。作为你的第一个行动,将一个殖民地板块加入游戏",
-  "Effect: When you get a new type of tag in play (event cards do not count), increase your MC production 1 step.":"当你获得一个新的标志时(不计算事件卡),提升你的MC产能1级",
+  "Effect: When you get a new type of tag in play [event cards do not count], increase your MC production 1 step.":"当你获得一个新的标志时(不计算事件卡),提升你的MC产能1级",
 
   "You start with 45MC. As your first action, place a colony.":"起始获得45MC。作为你的第一个行动,放置一个殖民地",
   "Effect: When any colony is placed, including this, raise your MC production 1 step.":"任何殖民地放置时，增加你的MC产能1级，包括这个",
@@ -82,15 +82,15 @@
   "Action:If your Terraform Rating was raised this generation, you may pay 3 MC to raise it 1 step more.":"行动：如果你的改造度在本时代有过提升，你可以支付3元来提升一点改造度。",
   "You start with 40 MC.":"你起始拥有40元。",
 
-  "ACTION: PLACE A COMMUNITY (PLAYER MARKER) ON A NON-RESERVED AREA ADJACENT TO ONE OF YOUR TILES OR MARKED AREAS":"行动：将你的一个玩家标记放置在一个非保留区，并且和你的至少一个板块或者玩家标记相邻。",
-  "EFFECT: MARKED AREAS ARE RESERVED FOR YOU. WHEN YOU PLACE A TILE THERE, GAIN 3 MC":"效果：只有你能在拥有你的玩家标记的位置放置板块，当你如此做后，获得3元，",
+  "ACTION: PLACE A COMMUNITY (PLAYER MARKER) ON A NON-RESERVED AREA ADJACENT TO ONE OF YOUR TILES OR MARKED AREAS":"行动：将你的一个玩家标记放置在一个非保留区，并且和你的至少一个版块或者玩家标记相邻。",
+  "EFFECT: MARKED AREAS ARE RESERVED FOR YOU. WHEN YOU PLACE A TILE THERE, GAIN 3 MC":"效果：只有你能在拥有你的玩家标记的位置放置版块，当你如此做后，获得3元，",
   "You start with 40 MC and 10 steel. AS YOUR FIRST ACTION, PLACE A COMMUNITY (PLAYER MARKER) ON A NON-RESERVED AREA.":"你起始拥有40元和10个钢铁。作为游戏中的你的第一个行动，你必须你的一个玩家标记放置在一个非海洋保留区.",
   
   "Action: Increase your energy production 1 step IF YOU HAVE NO ENERGY RESOURCES, or spend 3MC to draw a building card.":"行动：提升1点你的电力产量(仅当你没有电力资源的时候)，或者，花3元搜索一张建筑卡。",
   "You start with 37 MC. Increase your steel production 1 step.":"你起始拥有37元和1点钢铁产能。",
   
   "Effect: Each new adjacency between your tile and an opponent's tile gives you a standard resource of your choice (regardless of who just placed a tile).":"效果：每次你的版块和任意对手的某个版块相邻，你获得一个标准资源，种类由你选择（不论是谁放置了新的版块）。",
-  "You start with 47 MC. As your first action, place a greenery tile and raise the oxygen 1 step.":"你起始拥有47元。作为你的第一个行动，放置一个绿化板块并提升1格氧气浓度。",
+  "You start with 47 MC. As your first action, place a greenery tile and raise the oxygen 1 step.":"你起始拥有47元。作为你的第一个行动，放置一个绿化版块并提升1格氧气浓度。",
   
   "Effect: When a player causes another player to decrease production or lose resources, pay 3MC to the victim, or as much as possible.":"效果：当某玩家使另一玩家产能/资源受损，你向产能/资源受损的玩家支付3元。若你拥有金钱不足3元则改为支付全部拥有的金钱。",
   "You start with 48 MC. Increase your MC production 4 steps. ALL OPPONENTS DECREASE THEIR MC PRODUCTION 2 STEPS. THIS DOES NOT TRIGGER THE EFFECT BELOW.":"你起始拥有48元。提升4点金钱产能。所有对手各减少2点金钱产能，本次产能受损不会触发公司卡牌上的效果。",

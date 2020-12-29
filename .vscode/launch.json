@@ -9,7 +9,7 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-            "program": "${workspaceFolder}/dist/server.js" 
+            "program": "${workspaceFolder}/build/server.js" 
         } ,
         {
             "type": "node",

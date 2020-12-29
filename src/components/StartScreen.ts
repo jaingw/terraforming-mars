@@ -1,26 +1,44 @@
-import Vue from "vue";
-import {LanguageSwitcher} from "./LanguageSwitcher";
-import { PreferencesManager } from "./PreferencesManager";
+import Vue from 'vue';
+import {LanguageSwitcher} from './LanguageSwitcher';
+import {PreferencesManager} from './PreferencesManager';
 
-export const StartScreen = Vue.component("start-screen", {
-    props: ["version"],
-    data: function () {
-        return {
-            userName: ""
-        }
+import * as raw_settings from '../../assets/settings.json';
+
+export const StartScreen = Vue.component('start-screen', {
+  props: {
+    version: {
+      type: String as () => typeof raw_settings.version,
     },
-    methods: {
-        palyVideo: function(){
-            (document.getElementById("video") as any).play();
-        }
-    },  
-    mounted: function() {
-        this.userName = PreferencesManager.loadValue("userName") ;
+  },
+  data: function() {
+    return {
+      userName: '',
+    };
+  },
+  methods: {
+    palyVideo: function() {
+      (document.getElementById('video') as any).play();
     },
-    components: {
-        LanguageSwitcher
+    getAppVersion(): string {
+      const versionParts = this.version.split(' ');
+      return versionParts[0];
     },
-    template: `
+    getAppDate(): string {
+      const versionParts = this.version.split(' ');
+      if (versionParts.length > 1) {
+        return versionParts.slice(1).join(' ');
+      }
+      return '';
+    },
+
+  },
+  mounted: function() {
+    this.userName = PreferencesManager.loadValue('userName');
+  },
+  components: {
+    LanguageSwitcher,
+  },
+  template: `
         <div class="start-screen">           
             <div v-i18n class="start-screen-links">
                 <div class="start-screen-header start-screen-link--title" v-if="userName">
@@ -41,11 +59,13 @@ export const StartScreen = Vue.component("start-screen", {
                 
                 <div class="start-screen-header  start-screen-link--languages">
                     <language-switcher />
-                    <div class="start-version">version: {{version}}</div>
+      <div class="start-screen-version-cont">
+        <div class="nowrap start-screen-date">deployed: {{getAppDate()}}</div>
+        <div class="nowrap start-screen-version">version: {{getAppVersion()}}</div>
+      </div>
                 </div>
             </div>
 
 
-        </div>
-    `
+</div>`,
 });

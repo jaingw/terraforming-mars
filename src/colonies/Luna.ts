@@ -1,28 +1,18 @@
-import { Colony, IColony } from './Colony';
-import { Player } from '../Player';
-import { ColonyName } from './ColonyName';
-import { Resources } from '../Resources';
-import { Game } from '../Game';
-import { LogHelper } from '../components/LogHelper';
+import {Colony} from './Colony';
+import {ColonyName} from './ColonyName';
+import {ColonyBenefit} from './ColonyBenefit';
+import {Resources} from '../Resources';
 
-export class Luna extends Colony implements IColony {
+export class Luna extends Colony {
     public name = ColonyName.LUNA;
-    public description: string = "MegaCredits";
-    public trade(player: Player, game: Game, usesTradeFleet: boolean = true): void {
-        if (usesTradeFleet) this.beforeTrade(this, player, game);
-        
-        const qty = this.trackPosition * 2 + Math.max(this.trackPosition - 2, 0) + Math.max(this.trackPosition - 5, 0);
-        player.megaCredits += qty;
-        LogHelper.logGainStandardResource(game, player, Resources.MEGACREDITS, qty);
-
-        if (usesTradeFleet) this.afterTrade(this, player, game);
-    }
-    public onColonyPlaced(player: Player, game: Game): undefined {
-        super.addColony(this, player, game);
-        player.addProduction(Resources.MEGACREDITS, 2);
-        return undefined;
-    }
-    public giveTradeBonus(player: Player): void {
-        player.megaCredits += 2;
-    }    
+    public description = 'MegaCredits';
+    public buildType = ColonyBenefit.GAIN_PRODUCTION;
+    public buildQuantity = [2, 2, 2];
+    public buildResource = Resources.MEGACREDITS;
+    public tradeType = ColonyBenefit.GAIN_RESOURCES;
+    public tradeQuantity = [1, 2, 4, 7, 10, 13, 17];
+    public tradeResource = Resources.MEGACREDITS;
+    public colonyBonusType = ColonyBenefit.GAIN_RESOURCES;
+    public colonyBonusQuantity = 2;
+    public colonyBonusResource = Resources.MEGACREDITS;
 }

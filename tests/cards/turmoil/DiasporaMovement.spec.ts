@@ -1,43 +1,42 @@
-import { expect } from "chai";
-import { DiasporaMovement } from "../../../src/cards/turmoil/DiasporaMovement";
-import { Player } from "../../../src/Player";
-import { Color } from "../../../src/Color";
-import { Resources } from "../../../src/Resources";
-import { GameOptions, Game } from '../../../src/Game';
-import { PartyName } from "../../../src/turmoil/parties/PartyName";
-import { ColonizerTrainingCamp } from "../../../src/cards/ColonizerTrainingCamp";
-import { MethaneFromTitan } from "../../../src/cards/MethaneFromTitan";
-import { Turmoil } from "../../../src/turmoil/Turmoil";
-import { IParty } from "../../../src/turmoil/parties/IParty";
-import { setCustomGameOptions } from "../../TestingUtils";
+import {expect} from 'chai';
+import {ColonizerTrainingCamp} from '../../../src/cards/base/ColonizerTrainingCamp';
+import {MethaneFromTitan} from '../../../src/cards/base/MethaneFromTitan';
+import {DiasporaMovement} from '../../../src/cards/turmoil/DiasporaMovement';
+import {Game} from '../../../src/Game';
+import {Player} from '../../../src/Player';
+import {Resources} from '../../../src/Resources';
+import {IParty} from '../../../src/turmoil/parties/IParty';
+import {PartyName} from '../../../src/turmoil/parties/PartyName';
+import {Turmoil} from '../../../src/turmoil/Turmoil';
+import {setCustomGameOptions, TestPlayers} from '../../TestingUtils';
 
-describe("DiasporaMovement", function () {
-    let card : DiasporaMovement, player : Player, player2 : Player, game : Game, turmoil: Turmoil, reds: IParty;
+describe('DiasporaMovement', function() {
+  let card : DiasporaMovement; let player : Player; let player2 : Player; let game : Game; let turmoil: Turmoil; let reds: IParty;
 
-    beforeEach(function() {
-        card = new DiasporaMovement();
-        player = new Player("test", Color.BLUE, false);
-        player2 = new Player("test2", Color.RED, false);
+  beforeEach(function() {
+    card = new DiasporaMovement();
+    player = TestPlayers.BLUE.newPlayer();
+    player2 = TestPlayers.RED.newPlayer();
 
-        const gameOptions = setCustomGameOptions() as GameOptions;
-        game = new Game("foobar", [player, player2], player, gameOptions);
-        turmoil = game.turmoil!;
-        reds  = turmoil.getPartyByName(PartyName.REDS)!;
-    });
+    const gameOptions = setCustomGameOptions();
+    game = Game.newInstance('foobar', [player, player2], player, gameOptions);
+    turmoil = game.turmoil!;
+    reds = turmoil.getPartyByName(PartyName.REDS)!;
+  });
 
-    it("Can't play", function () {
-        reds.sendDelegate(player, game);        
-        expect(card.canPlay(player, game)).is.not.true;
-    });
+  it('Can\'t play', function() {
+    reds.sendDelegate(player, game);
+    expect(card.canPlay(player, game)).is.not.true;
+  });
 
-    it("Should play", function () {
-        reds.sendDelegate(player, game);
-        reds.sendDelegate(player, game);
-        expect(card.canPlay(player, game)).is.true;
+  it('Should play', function() {
+    reds.sendDelegate(player, game);
+    reds.sendDelegate(player, game);
+    expect(card.canPlay(player, game)).is.true;
 
-        player.playedCards.push(new ColonizerTrainingCamp());
-        player2.playedCards.push(new MethaneFromTitan());
-        card.play(player, game);
-        expect(player.getResource(Resources.MEGACREDITS)).to.eq(3);
-    });
+    player.playedCards.push(new ColonizerTrainingCamp());
+    player2.playedCards.push(new MethaneFromTitan());
+    card.play(player, game);
+    expect(player.getResource(Resources.MEGACREDITS)).to.eq(3);
+  });
 });

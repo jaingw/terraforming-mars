@@ -1,29 +1,47 @@
-import { IProjectCard } from "../IProjectCard";
-import { Tags } from "../Tags";
-import { CardType } from "../CardType";
-import { Player } from "../../Player";
-import { ResourceType } from "../../ResourceType";
-import { Game } from '../../Game';
-import { CardName } from '../../CardName';
-import { IResourceCard } from '../ICard';
+import {IProjectCard} from '../IProjectCard';
+import {Tags} from '../Tags';
+import {CardType} from '../CardType';
+import {Player} from '../../Player';
+import {ResourceType} from '../../ResourceType';
+import {Game} from '../../Game';
+import {CardName} from '../../CardName';
+import {IResourceCard} from '../ICard';
+import {CardMetadata} from '../CardMetadata';
+import {CardRequirements} from '../CardRequirements';
+import {CardRenderer} from '../render/CardRenderer';
+import {CardRenderDynamicVictoryPoints} from '../render/CardRenderDynamicVictoryPoints';
+import {CardRenderItemSize} from '../render/CardRenderItemSize';
 
 export class VenusianAnimals implements IProjectCard, IResourceCard {
-    public cost: number = 15;
-    public tags: Array<Tags> = [Tags.VENUS, Tags.ANIMAL, Tags.SCIENCE];
-    public name: CardName = CardName.VENUSIAN_ANIMALS;
-    public cardType: CardType = CardType.ACTIVE;
-    public resourceType: ResourceType = ResourceType.ANIMAL;
+    public cost = 15;
+    public tags = [Tags.VENUS, Tags.ANIMAL, Tags.SCIENCE];
+    public name = CardName.VENUSIAN_ANIMALS;
+    public cardType = CardType.ACTIVE;
+    public resourceType = ResourceType.ANIMAL;
     public resourceCount: number = 0;
     public canPlay(player: Player, game: Game): boolean {
-        return game.getVenusScaleLevel() >= 18 - (2 * player.getRequirementsBonus(game, true));
+      return game.getVenusScaleLevel() >= 18 - (2 * player.getRequirementsBonus(game, true));
     }
     public play() {
-        return undefined;
+      return undefined;
     }
     public onCardPlayed(player: Player, _game: Game, card: IProjectCard): void {
-        player.addResourceTo(this, card.tags.filter((tag) => tag === Tags.SCIENCE).length);
-      } 
+      player.addResourceTo(this, card.tags.filter((tag) => tag === Tags.SCIENCE).length);
+    }
     public getVictoryPoints(): number {
-        return this.resourceCount;
+      return this.resourceCount;
+    }
+    public metadata: CardMetadata = {
+      cardNumber: '259',
+      requirements: CardRequirements.builder((b) => b.venus(18)),
+      renderData: CardRenderer.builder((b) => {
+        b.effectBox((eb)=> {
+          eb.science().played.startEffect.animals(1);
+          eb.description('Effect: when you play a Science tag, including this, add 1 Animal to this card.');
+        }).br;
+        b.text('1 VP per Animal on this card.', CardRenderItemSize.TINY, true);
+      }),
+      description: 'Requires Venus 18%',
+      victoryPoints: CardRenderDynamicVictoryPoints.animals(1, 1),
     }
 }

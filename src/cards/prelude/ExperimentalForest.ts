@@ -1,20 +1,29 @@
-import { Tags } from "../Tags";
-import { Player } from "../../Player";
-import { Game } from "../../Game";
-import { PreludeCard } from "./PreludeCard";
-import { IProjectCard } from "../IProjectCard";
-import { CardName } from "../../CardName";
-import { DrawCards } from "../../deferredActions/DrawCards";
-import { PlaceGreeneryTile } from "../../deferredActions/PlaceGreeneryTile";
+import {Tags} from '../Tags';
+import {Player} from '../../Player';
+import {Game} from '../../Game';
+import {PreludeCard} from './PreludeCard';
+import {IProjectCard} from '../IProjectCard';
+import {CardName} from '../../CardName';
+import {DrawCards} from '../../deferredActions/DrawCards';
+import {PlaceGreeneryTile} from '../../deferredActions/PlaceGreeneryTile';
+import {CardMetadata} from '../CardMetadata';
+import {CardRenderer} from '../render/CardRenderer';
 
 export class ExperimentalForest extends PreludeCard implements IProjectCard {
-    public tags: Array<Tags> = [Tags.PLANT];
-    public name: CardName = CardName.EXPERIMENTAL_FOREST
+    public tags = [Tags.PLANT];
+    public name = CardName.EXPERIMENTAL_FOREST
 
     public play(player: Player, game: Game) {
-        game.defer(new DrawCards(player, game, 2, Tags.PLANT));
-        game.defer(new PlaceGreeneryTile(player, game));
-        return undefined;
+      game.defer(new DrawCards(player, game, 2, Tags.PLANT));
+      game.defer(new PlaceGreeneryTile(player, game));
+      return undefined;
+    }
+    public metadata: CardMetadata = {
+      cardNumber: 'P12',
+      renderData: CardRenderer.builder((b) => {
+        b.greenery().secondaryTag('oxygen').cards(2).secondaryTag(Tags.PLANT);
+      }),
+      description: 'Place 1 Greenery Tile. Reveal cards until you reveal two cards with plant tags on them. Take them into your hand and discard the rest.',
     }
 }
 

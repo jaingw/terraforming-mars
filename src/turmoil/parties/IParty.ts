@@ -1,36 +1,37 @@
-import { PartyName } from "./PartyName";
-import { Player } from "../../Player";
-import { Game } from "../../Game";
-import { MarsFirst } from "./MarsFirst";
-import { Scientists } from "./Scientists";
-import { Unity } from "./Unity";
-import { Kelvinists } from "./Kelvinists";
-import { Reds } from "./Reds";
-import { Greens } from "./Greens";
+import {PartyName} from './PartyName';
+import {Player} from '../../Player';
+import {Game} from '../../Game';
+import {NeutralPlayer} from '../Turmoil';
+import {MarsFirst} from './MarsFirst';
+import {Scientists} from './Scientists';
+import {Unity} from './Unity';
+import {Kelvinists} from './Kelvinists';
+import {Reds} from './Reds';
+import {Greens} from './Greens';
 
 export interface IParty {
     name: PartyName;
     description: string;
-    delegates: Array<Player | "NEUTRAL">;
-    partyLeader: undefined | Player | "NEUTRAL";
-    sendDelegate: (player: Player | "NEUTRAL", game: Game) => void;
-    removeDelegate: (player: Player | "NEUTRAL", game: Game) => void;
+    delegates: Array<Player | NeutralPlayer>;
+    partyLeader: undefined | Player | NeutralPlayer;
+    sendDelegate: (player: Player | NeutralPlayer, game: Game) => void;
+    removeDelegate: (player: Player | NeutralPlayer, game: Game) => void;
     rulingBonus: (game: Game) => void;
-    //rulingPolicy: (player: Player, game: Game) => void;
-    getPresentPlayers(): Array<Player | "NEUTRAL">;
-    getDelegates:(player: Player | "NEUTRAL") => number;
+    // rulingPolicy: (player: Player, game: Game) => void;
+    getPresentPlayers(): Array<Player | NeutralPlayer>;
+    getDelegates:(player: Player | NeutralPlayer) => number;
 }
 
 interface IPartyFactory<T> {
     partyName: PartyName;
-    factory: new () => T
+    Factory: new () => T
 }
 
 export const ALL_PARTIES: Array<IPartyFactory<IParty>> = [
-    { partyName: PartyName.MARS, factory: MarsFirst },
-    { partyName: PartyName.SCIENTISTS, factory: Scientists },
-    { partyName: PartyName.UNITY, factory: Unity },
-    { partyName: PartyName.GREENS, factory: Greens },
-    { partyName: PartyName.REDS, factory: Reds },
-    { partyName: PartyName.KELVINISTS, factory: Kelvinists }
+  {partyName: PartyName.MARS, Factory: MarsFirst},
+  {partyName: PartyName.SCIENTISTS, Factory: Scientists},
+  {partyName: PartyName.UNITY, Factory: Unity},
+  {partyName: PartyName.GREENS, Factory: Greens},
+  {partyName: PartyName.REDS, Factory: Reds},
+  {partyName: PartyName.KELVINISTS, Factory: Kelvinists},
 ];

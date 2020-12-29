@@ -1,41 +1,41 @@
 
-import Vue from "vue";
+import Vue from 'vue';
 
-export const Register = Vue.component("register", {
-    data: function () {
-        return {
-            userName: "",
-            password: "" 
-        }  
-    },
-    methods: {
-        register: function () {
-            if(this.userName === undefined || this.userName.length <=1){
-                alert("Please enter more than 1 characters for userName");
-                return;
-            }
-            if(this.password === undefined || this.password.length <=1){
-                alert("Please enter more than 1 characters for password");
-                return;
-            }
-            const dataToSend = JSON.stringify({userName:this.userName, password:this.password});
+export const Register = Vue.component('register', {
+  data: function() {
+    return {
+      userName: '',
+      password: '',
+    };
+  },
+  methods: {
+    register: function() {
+      if (this.userName === undefined || this.userName.length <=1) {
+        alert('Please enter more than 1 characters for userName');
+        return;
+      }
+      if (this.password === undefined || this.password.length <=1) {
+        alert('Please enter more than 1 characters for password');
+        return;
+      }
+      const dataToSend = JSON.stringify({userName: this.userName, password: this.password});
 
-            const onSucces = (response: any) => {
-                if(!response.ok){
-                    response.text().then((msg: any) =>{
-                        alert(msg);
-                    })
-                }else{
-                    window.location.href = "/login";
-                }
-            }
-
-            fetch("/register", {method: "PUT", "body": dataToSend, headers: {"Content-Type": "application/json"}})
-                .then(onSucces)
-                .catch(_ => alert("Unexpected server response"));
+      const onSucces = (response: any) => {
+        if (!response.ok) {
+          response.text().then((msg: any) =>{
+            alert(msg);
+          });
+        } else {
+          window.location.href = '/login';
         }
+      };
+
+      fetch('/register', {'method': 'PUT', 'body': dataToSend, 'headers': {'Content-Type': 'application/json'}})
+        .then(onSucces)
+        .catch((_) => alert('Unexpected server response'));
     },
-    template: `
+  },
+  template: `
         <div id="create-game">
             <h1><span v-i18n>Terraforming Mars</span> — <span v-i18n>Register</span></h1>
            
@@ -58,6 +58,6 @@ export const Register = Vue.component("register", {
                 </div>
             </div>
         </div>
-    `
+    `,
 });
 

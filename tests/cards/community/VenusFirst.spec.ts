@@ -1,27 +1,27 @@
-import { expect } from "chai";
-import { Color } from "../../../src/Color";
-import { Player } from "../../../src/Player";
-import { VenusFirst } from "../../../src/cards/community/VenusFirst";
-import { Game, GameOptions } from "../../../src/Game";
-import { setCustomGameOptions } from "../../TestingUtils";
-import { Tags } from "../../../src/cards/Tags";
+import {expect} from 'chai';
+import {VenusFirst} from '../../../src/cards/community/VenusFirst';
+import {Tags} from '../../../src/cards/Tags';
+import {Game} from '../../../src/Game';
+import {Player} from '../../../src/Player';
+import {setCustomGameOptions} from '../../TestingUtils';
+import {TestPlayers} from '../../TestingUtils';
 
-describe("VenusFirst", function () {
-    let card : VenusFirst, player : Player, game : Game;
+describe('VenusFirst', function() {
+  let card : VenusFirst; let player : Player; let game : Game;
 
-    beforeEach(function() {
-        card = new VenusFirst();
-        player = new Player("test", Color.BLUE, false);
+  beforeEach(function() {
+    card = new VenusFirst();
+    player = TestPlayers.BLUE.newPlayer();
+    const redPlayer = TestPlayers.RED.newPlayer();
+    const gameOptions = setCustomGameOptions();
+    game = Game.newInstance('foobar', [player, redPlayer], player, gameOptions);
+  });
 
-        const gameOptions = setCustomGameOptions() as GameOptions;
-        game = new Game("foobar", [player, player], player, gameOptions);
-    });
+  it('Should play', function() {
+    card.play(player, game);
+    expect(game.getVenusScaleLevel()).to.eq(4);
+    expect(player.cardsInHand).has.lengthOf(2);
 
-    it("Should play", function () {
-        card.play(player, game);
-        expect(game.getVenusScaleLevel()).to.eq(4);
-        expect(player.cardsInHand).has.lengthOf(2);
-
-        player.cardsInHand.forEach((card) => expect(card.tags.indexOf(Tags.VENUS)).not.to.eq(-1));
-    });
+    player.cardsInHand.forEach((card) => expect(card.tags.indexOf(Tags.VENUS)).not.to.eq(-1));
+  });
 });

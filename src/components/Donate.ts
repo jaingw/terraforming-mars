@@ -1,14 +1,14 @@
-import Vue from "vue";
+import Vue from 'vue';
 
-export const Donate = Vue.component("donate", {
-    methods: {
-        goJump: function () {
-            let app = (this.$root as any);
-            app.screen  = app.oscreen ;
-            app.oscreen  = "empty" ;
-        },
+export const Donate = Vue.component('donate', {
+  methods: {
+    goJump: function() {
+      const app = (this.$root as any);
+      app.screen = app.oscreen;
+      app.oscreen = 'empty';
     },
-    template: `
+  },
+  template: `
         <div style="font-family: 'Microsoft YaHei'">
             <div id="mc" v-if="this.$root.oscreen  !== 'empty'">
                 <span id="jump2" style=""><a title="继续访问殖民火星" href="#" @click="goJump">点此返回</a></span>
@@ -34,5 +34,5 @@ export const Donate = Vue.component("donate", {
                 </div>
             </div>
         </div>
-    `
+    `,
 });

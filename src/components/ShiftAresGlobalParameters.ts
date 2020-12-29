@@ -1,37 +1,49 @@
 
-import Vue from "vue";
-import { IAresGlobalParametersResponse } from "../inputs/ShiftAresGlobalParameters";
+import Vue from 'vue';
+import {IAresGlobalParametersResponse} from '../inputs/ShiftAresGlobalParameters';
+import {PlayerInputModel} from '../models/PlayerInputModel';
 
-// @ts-ignorets-ignore - used in the template.
-const ADJUSTMENT_RANGE = [-1, 0, 1];
-
-export const ShiftAresGlobalParameters = Vue.component("shift-ares-global-parameters", {
-    props: ["playerinput", "onsave", "showsave", "showtitle"],
-    data: function () {
-        const hazardData = this.playerinput.aresData.hazardData;
-        return {
-            hazardData: hazardData,
-            lowOceanDelta: 0,
-            highOceanDelta: 0,
-            temperatureDelta: 0,
-            oxygenDelta: 0,
-        };
+export const ShiftAresGlobalParameters = Vue.component('shift-ares-global-parameters', {
+  props: {
+    playerinput: {
+      type: Object as () => Required<Pick<PlayerInputModel, 'aresData' | 'buttonLabel'>>,
     },
-    methods: {
-        saveData: function () {
-            const response: IAresGlobalParametersResponse = {
-                lowOceanDelta: this.$data.lowOceanDelta,
-                highOceanDelta: this.$data.highOceanDelta,
-                temperatureDelta: this.$data.temperatureDelta,
-                oxygenDelta: this.$data.oxygenDelta
-            };
-
-            this.onsave([[
-                JSON.stringify(response)
-            ]]);
-        }
+    onsave: {
+      type: Function as unknown as () => (out: Array<Array<string>>) => void,
     },
-    template: `
+    showsave: {
+      type: Boolean,
+    },
+    showtitle: {
+      type: Boolean,
+    },
+  },
+  data: function() {
+    const hazardData = this.playerinput.aresData.hazardData;
+    return {
+      hazardData: hazardData,
+      lowOceanDelta: 0,
+      highOceanDelta: 0,
+      temperatureDelta: 0,
+      oxygenDelta: 0,
+      ADJUSTMENT_RANGE: [-1, 0, 1],
+    };
+  },
+  methods: {
+    saveData: function() {
+      const response: IAresGlobalParametersResponse = {
+        lowOceanDelta: this.$data.lowOceanDelta,
+        highOceanDelta: this.$data.highOceanDelta,
+        temperatureDelta: this.$data.temperatureDelta,
+        oxygenDelta: this.$data.oxygenDelta,
+      };
+
+      this.onsave([[
+        JSON.stringify(response),
+      ]]);
+    },
+  },
+  template: `
 <div class="wf-component">
     <div v-if="hazardData.erosionOceanCount.available">
         Reveal erosions at:&nbsp;
@@ -73,6 +85,6 @@ export const ShiftAresGlobalParameters = Vue.component("shift-ares-global-parame
         <button class="btn btn-primary btn-submit" v-on:click="saveData">{{playerinput.buttonLabel}}</button>
     </div>
 </div>
-`
+`,
 });
 

@@ -1,17 +1,18 @@
-import { expect } from "chai";
-import { JovianEmbassy } from "../../../src/cards/promo/JovianEmbassy";
-import { Color } from "../../../src/Color";
-import { Player } from "../../../src/Player";
-import { Game } from "../../../src/Game";
+import {expect} from 'chai';
+import {JovianEmbassy} from '../../../src/cards/promo/JovianEmbassy';
+import {Game} from '../../../src/Game';
+import {TestPlayers} from '../../TestingUtils';
 
-describe("JovianEmbassy", function () {
-    it("Should play", function () {
-        const card = new JovianEmbassy();
-        const player = new Player("test", Color.BLUE, false);
-        const game = new Game("foobar", [player,player], player);
-        
-        card.play(player, game);
-        expect(player.getTerraformRating()).to.eq(21);
-        expect(card.getVictoryPoints()).to.eq(1);
-    });
+describe('JovianEmbassy', function() {
+  it('Should play', function() {
+    const card = new JovianEmbassy();
+    const player = TestPlayers.BLUE.newPlayer();
+    const redPlayer = TestPlayers.RED.newPlayer();
+
+    const game = Game.newInstance('foobar', [player, redPlayer], player);
+
+    card.play(player, game);
+    expect(player.getTerraformRating()).to.eq(21);
+    expect(card.getVictoryPoints()).to.eq(1);
+  });
 });

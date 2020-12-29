@@ -1,29 +1,50 @@
-import { IProjectCard } from "../IProjectCard";
-import { Tags } from "../Tags";
-import { CardType } from "../CardType";
-import { Player } from "../../Player";
-import { CardName } from '../../CardName';
+import {IProjectCard} from '../IProjectCard';
+import {Tags} from '../Tags';
+import {CardType} from '../CardType';
+import {Player} from '../../Player';
+import {CardName} from '../../CardName';
+import {CardMetadata} from '../CardMetadata';
+import {CardRenderer} from '../render/CardRenderer';
+import {CardRequirements} from '../CardRequirements';
 
 export class SkyDocks implements IProjectCard {
-    public cost: number = 18;
-    public tags: Array<Tags> = [Tags.SPACE, Tags.EARTH];
-    public name: CardName = CardName.SKY_DOCKS;
-    public cardType: CardType = CardType.ACTIVE;
+    public cost = 18;
+    public tags = [Tags.SPACE, Tags.EARTH];
+    public name = CardName.SKY_DOCKS;
+    public cardType = CardType.ACTIVE;
 
     public canPlay(player: Player): boolean {
-        return player.getTagCount(Tags.EARTH) >= 2;
+      return player.getTagCount(Tags.EARTH) >= 2;
     }
 
     public play(player: Player) {
-        player.increaseFleetSize();
-        return undefined;
+      player.increaseFleetSize();
+      return undefined;
     }
 
     public getCardDiscount() {
-        return 1;
+      return 1;
     }
 
     public getVictoryPoints() {
-        return 2;
+      return 2;
+    }
+
+    public onDiscard(player: Player): void {
+      player.decreaseFleetSize();
+    }
+
+    public metadata: CardMetadata = {
+      cardNumber: 'C36',
+      requirements: CardRequirements.builder((b) => b.tag(Tags.EARTH, 2)),
+      renderData: CardRenderer.builder((b) => {
+        b.effectBox((eb) => {
+          eb.empty().startEffect.megacredits(-1);
+          eb.description('Effect: When you play a card, you pay 1 MC less for it.');
+        }).br;
+        b.tradeFleet();
+      }),
+      description: 'Requires 2 Earth tags. Gain 1 Trade Fleet.',
+      victoryPoints: 2,
     }
 }

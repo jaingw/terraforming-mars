@@ -1,46 +1,46 @@
 
-import Vue from "vue";
-import { PreferencesManager } from "./PreferencesManager";
+import Vue from 'vue';
+import {PreferencesManager} from './PreferencesManager';
 
-export const Login = Vue.component("login", {
-    data: function () {
-        return {
-            userName: "",
-            password: "" 
-        }  
-    },
-    methods: {
-        login: function () {
-            if(this.userName === undefined || this.userName.length <=1){
-                alert("Please enter more than 1 characters for userName");
-                return;
-            }
-            if(this.password === undefined || this.password.length <=1){
-                alert("Please enter more than 1 characters for password");
-                return;
-            }
-            const dataToSend = JSON.stringify({userName:this.userName, password:this.password});
+export const Login = Vue.component('login', {
+  data: function() {
+    return {
+      userName: '',
+      password: '',
+    };
+  },
+  methods: {
+    login: function() {
+      if (this.userName === undefined || this.userName.length <=1) {
+        alert('Please enter more than 1 characters for userName');
+        return;
+      }
+      if (this.password === undefined || this.password.length <=1) {
+        alert('Please enter more than 1 characters for password');
+        return;
+      }
+      const dataToSend = JSON.stringify({userName: this.userName, password: this.password});
 
-            const onSucces = (response: any) => {
-                if(!response.ok){
-                    response.text().then((msg: string) =>{
-                        alert(msg);
-                    })
-                }else{
-                    response.json().then((data: { id: string; name: string; }) => {
-                        PreferencesManager.saveValue("userId",data.id);
-                        PreferencesManager.saveValue("userName",data.name);
-                        window.location.href = "/mygames";
-                    })
-                }
-            }
-
-            fetch("/login", {method: "POST", "body": dataToSend, headers: {"Content-Type": "application/json"}})
-                .then(onSucces)
-                .catch(_ => alert("Unexpected server response"));
+      const onSucces = (response: any) => {
+        if (!response.ok) {
+          response.text().then((msg: string) =>{
+            alert(msg);
+          });
+        } else {
+          response.json().then((data: { id: string; name: string; }) => {
+            PreferencesManager.saveValue('userId', data.id);
+            PreferencesManager.saveValue('userName', data.name);
+            window.location.href = '/mygames';
+          });
         }
+      };
+
+      fetch('/login', {'method': 'POST', 'body': dataToSend, 'headers': {'Content-Type': 'application/json'}})
+        .then(onSucces)
+        .catch((_) => alert('Unexpected server response'));
     },
-    template: `
+  },
+  template: `
         <div id="create-game">
             <h1><span v-i18n>Terraforming Mars</span> — <span v-i18n>Login</span></h1>
            
@@ -64,6 +64,6 @@ export const Login = Vue.component("login", {
                 </div>
             </div>
         </div>
-    `
+    `,
 });
 

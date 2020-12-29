@@ -1,72 +1,59 @@
-import { IProjectCard } from "./cards/IProjectCard";
-import { Phase } from "./Phase";
-import { ClaimedMilestone } from "./ClaimedMilestone";
-import { FundedAward } from "./FundedAward";
-import { IMilestone } from "./milestones/IMilestone";
-import { IAward } from "./awards/IAward";
-import { ColonyDealer } from "./colonies/ColonyDealer";
-import { DeferredAction } from "./deferredActions/DeferredAction";
-import { Board } from "./Board";
-import { CardName } from "./CardName";
-import { BoardName } from "./BoardName";
-import { SerializedColony } from "./SerializedColony";
-import { SerializedPlayer } from "./SerializedPlayer";
-import { SerializedDealer } from "./SerializedDealer";
-import { SerializedTurmoil } from "./turmoil/SerializedTurmoil";
-import { GameOptions } from "./Game";
-import { IAresData } from "./ares/IAresData";
+import {Phase} from './Phase';
+import {ClaimedMilestone} from './ClaimedMilestone';
+import {FundedAward} from './FundedAward';
+import {IMilestone} from './milestones/IMilestone';
+import {IAward} from './awards/IAward';
+import {ColonyDealer} from './colonies/ColonyDealer';
+import {DeferredAction} from './deferredActions/DeferredAction';
+import {SerializedColony} from './SerializedColony';
+import {SerializedPlayer} from './SerializedPlayer';
+import {SerializedDealer} from './SerializedDealer';
+import {SerializedTurmoil} from './turmoil/SerializedTurmoil';
+import {GameOptions} from './Game';
+import {IAresData} from './ares/IAresData';
+import {LogMessage} from './LogMessage';
+import {SerializedBoard} from './boards/SerializedBoard';
 
 export interface SerializedGame {
-    id: string;
-
-    lastSaveId: number;
-    seed: number
-    deferredActions: Array<DeferredAction>;
-    gameLog: Array<String>;
-    gameAge: number;
-    
-    generation: number;
-    phase: Phase;
-    dealer: SerializedDealer;
-    boardName: BoardName;
-    board: Board;
-    gameOptions: GameOptions;
-    
-    oxygenLevel: number;
-    temperature: number;
-    venusScaleLevel: number;
-
-    first: SerializedPlayer;
-    activePlayer: SerializedPlayer;
-    players: Array<SerializedPlayer>;
-    donePlayers: Set<SerializedPlayer>;
-    passedPlayers: Set<SerializedPlayer>;
-    researchedPlayers: Set<SerializedPlayer>;
-    draftedPlayers: Set<SerializedPlayer>;
-
     exitedPlayers: Array<SerializedPlayer> ;
-    draftVariant: boolean;
-    draftRound: number;
-    unDraftedCards: Map<SerializedPlayer, Array<IProjectCard>>;
-
-    claimedMilestones: Array<ClaimedMilestone>;
-    milestones: Array<IMilestone>;
-    fundedAwards: Array<FundedAward>;
+    activePlayer: SerializedPlayer;
+    aresData?: IAresData;
     awards: Array<IAward>;
-
-    venusNextExtension: boolean;
-    coloniesExtension: boolean;
+    board: SerializedBoard;
+    claimedMilestones: Array<ClaimedMilestone>;
+    clonedGamedId?: string;
     colonies: Array<SerializedColony>;
     colonyDealer: ColonyDealer | undefined;
-    preludeExtension: boolean;
-    turmoil: SerializedTurmoil;
-    aresData: IAresData;
-
+    dealer: SerializedDealer;
+    deferredActions: Array<DeferredAction>;
+    donePlayers: Array<SerializedPlayer>;
+    draftedPlayers: Array<SerializedPlayer>;
+    draftRound: number;
+    first: SerializedPlayer;
+    fundedAwards: Array<FundedAward>;
+    gameAge: number;
+    gameLog: Array<LogMessage>;
+    gameOptions: GameOptions;
+    generation: number;
+    id: string;
+    initialDraftIteration: number;
+    lastSaveId: number;
+    milestones: Array<IMilestone>;
     monsInsuranceOwner: SerializedPlayer | undefined;
-    someoneHasRemovedOtherPlayersPlants: boolean;
+    oxygenLevel: number;
+    passedPlayers: Array<SerializedPlayer>;
+    phase: Phase;
+    players: Array<SerializedPlayer>;
+    researchedPlayers: Array<SerializedPlayer>;
 
-    showOtherPlayersVP: boolean;
-    customCorporationsList: boolean;
-    corporationList: Array<CardName>;
+    seed: number
+    someoneHasRemovedOtherPlayersPlants: boolean;
+    temperature: number;
+    turmoil?: SerializedTurmoil;
+    venusScaleLevel: number;
+    venusNextExtension: boolean;
+
+    createtime :string;
+    updatetime :string;
 }
 

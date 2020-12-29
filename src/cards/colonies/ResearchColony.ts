@@ -1,23 +1,32 @@
-import { IProjectCard } from "../IProjectCard";
-import { Tags } from "../Tags";
-import { CardType } from "../CardType";
-import { Player } from "../../Player";
-import { CardName } from "../../CardName";
-import { Game } from "../../Game";
-import { BuildColony } from "../../deferredActions/BuildColony";
+import {IProjectCard} from '../IProjectCard';
+import {Tags} from '../Tags';
+import {CardType} from '../CardType';
+import {Player} from '../../Player';
+import {CardName} from '../../CardName';
+import {Game} from '../../Game';
+import {BuildColony} from '../../deferredActions/BuildColony';
+import {CardMetadata} from '../CardMetadata';
+import {CardRenderer} from '../render/CardRenderer';
 
 export class ResearchColony implements IProjectCard {
-    public cost: number = 20;
-    public tags: Array<Tags> = [Tags.SPACE, Tags.SCIENCE];
-    public name: CardName = CardName.RESEARCH_COLONY;
-    public cardType: CardType = CardType.AUTOMATED;
+    public cost = 20;
+    public tags = [Tags.SPACE, Tags.SCIENCE];
+    public name = CardName.RESEARCH_COLONY;
+    public cardType = CardType.AUTOMATED;
 
     public play(player: Player, game: Game) {
-        game.defer(new BuildColony(player, game, true, "Select colony for Research Colony"));
-        player.cardsInHand.push(
-            game.dealer.dealCard(),
-            game.dealer.dealCard()
-        );
-        return undefined;
+      game.defer(new BuildColony(player, game, true, 'Select colony for Research Colony'));
+      player.cardsInHand.push(
+        game.dealer.dealCard(),
+        game.dealer.dealCard(),
+      );
+      return undefined;
+    }
+    public metadata: CardMetadata = {
+      cardNumber: 'C34',
+      renderData: CardRenderer.builder((b) => {
+        b.colonies(1).asterix().nbsp.cards(2);
+      }),
+      description: 'Place a colony. MAY BE PLACED WHERE YOU ALREADY HAVE A COLONY. Draw 2 cards.',
     }
 }

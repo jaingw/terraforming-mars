@@ -1,9 +1,10 @@
 
-import { PlayerInputTypes } from "../PlayerInputTypes";
-import { CardModel } from "./CardModel";
-import { ColonyModel } from "./ColonyModel";
-import { IPayProductionModel } from "./IPayProductionUnitsModel";
-import { IAresData } from "../ares/IAresData";
+import {PlayerInputTypes} from '../PlayerInputTypes';
+import {CardModel} from './CardModel';
+import {ColonyModel} from './ColonyModel';
+import {IPayProductionModel} from './IPayProductionUnitsModel';
+import {IAresData} from '../ares/IAresData';
+import {Message} from '../Message';
 
 export interface PlayerInputModel {
     id: string | undefined;
@@ -15,16 +16,16 @@ export interface PlayerInputModel {
     cards: Array<CardModel> | undefined;
     inputType: PlayerInputTypes;
     options: Array<PlayerInputModel> | undefined;
+    min: number | undefined;
     max: number | undefined;
     maxCardsToSelect: number | undefined;
     microbes: number | undefined;
     floaters: number | undefined;
     minCardsToSelect: number | undefined;
     players: Array<string> | undefined;
-    title: string;
+    title: string | Message;
     buttonLabel: string;
     coloniesModel : Array<ColonyModel> | undefined;
-    payProduction : IPayProductionModel | undefined;
-    aresData: IAresData | undefined;
+    payProduction?: IPayProductionModel;
+    aresData?: IAresData;
 }
-

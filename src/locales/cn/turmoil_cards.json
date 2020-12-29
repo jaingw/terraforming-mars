@@ -36,7 +36,7 @@
   "Exchange one NEUTRAL NON-LEADER delegate with one of your own from the reserve.": "将场上的一个中立非领导者代表替换为你储备区的代表。",
 
   "Red Tourism Wave": "红色旅游风潮",
-  "Requires that Reds are ruling or that you have 2 delegates there. Gain 1 MC from each EMPTY AREA ADJACENT TO YOUR TILES.": "需要红党为执政党，或你在该党有至少2个代表。每有一个空白板块与你的板块相邻，你获得1点MC。",
+  "Requires that Reds are ruling or that you have 2 delegates there. Gain 1 MC from each EMPTY AREA ADJACENT TO YOUR TILES.": "需要红党为执政党，或你在该党有至少2个代表。每有一个空白区域与你的版块相邻，你获得1点MC。",
 
   "Sponsored Mohole": "莫霍计划赞助",
   "Requires that Kelvinists are ruling or that you have 2 delegates there. Increase your heat production 2 steps.": "需要开尔文主义党为执政党，或你在该党有至少2个代表。提升2点热能产量。",
@@ -45,10 +45,14 @@
   "Requires that Scientists are ruling or that you have 2 delegates there. Draw 2 cards.": "需要科学家党为执政党，或你在该党有至少2个代表。抽两张牌。",
 
   "Wildlife Dome": "野生生物穹顶",
-  "Requires that Greens are ruling or that you have 2 delegates there. Place a greenery tile and raise oxygen 1 step.": "需要绿党为执政党，或你在该党有至少2个代表。放置一片绿化板块。",
+  "Requires that Greens are ruling or that you have 2 delegates there. Place a greenery tile and raise oxygen 1 step.": "需要绿党为执政党，或你在该党有至少2个代表。放置一片绿化版块。",
 
   "Vote Of No Confidence": "不信任票",
   "Requires that you have a Party Leader in any party and that the sitting Chairman is neutral. Remove the NEUTRAL Chairman and move your own delegate(from the reserve) there instead. Gain 1 TR.": "需要你是一个政党的领导者且当前主席是中立代表。将中立主席替换为你储备区的一名代表。提升1点改造度。",
 
-  "Requires that you have 2 party leaders. Gain 1 TR.":"需要你是2个政党的领导者，获得1TR"
+  "2 Party Leaders":"成为2个党派领袖",
+  "Requires that you have 2 party leaders. Gain 1 TR.":"需要你是2个政党的领导者，获得1TR",
+
+  "Political Alliance":"政治结盟"
+
 }

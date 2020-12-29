@@ -1,42 +1,45 @@
-import { IProjectCard } from "../IProjectCard";
-import { Tags } from "../Tags";
-import { CardName } from "../../CardName";
-import { CardType } from "../CardType";
-import { Player } from "../../Player";
-import { Game } from "../../Game";
-import { OrOptions } from "../../inputs/OrOptions";
-import { SelectDelegate } from "../../inputs/SelectDelegate";
-import { IParty } from "../../turmoil/parties/IParty";
+import {IProjectCard} from '../IProjectCard';
+import {CardName} from '../../CardName';
+import {CardType} from '../CardType';
+import {Player} from '../../Player';
+import {Game} from '../../Game';
+import {OrOptions} from '../../inputs/OrOptions';
+import {SelectDelegate} from '../../inputs/SelectDelegate';
+import {IParty} from '../../turmoil/parties/IParty';
+import {CardMetadata} from '../CardMetadata';
+import {CardRequirements} from '../CardRequirements';
+import {CardRenderer} from '../render/CardRenderer';
+import {NeutralPlayer} from '../../turmoil/Turmoil';
 
 export class BannedDelegate implements IProjectCard {
-    public cost: number = 0;
-    public tags: Array<Tags> = [];
-    public name: CardName = CardName.BANNED_DELEGATE;
-    public cardType: CardType = CardType.EVENT;
+    public cost = 0;
+    public tags = [];
+    public name = CardName.BANNED_DELEGATE;
+    public cardType = CardType.EVENT;
 
     public canPlay(player: Player, game: Game): boolean {
-        if (game.turmoil !== undefined) {
-            return game.turmoil.chairman === player
-        }
-        return false;
+      if (game.turmoil !== undefined) {
+        return game.turmoil.chairman === player;
+      }
+      return false;
     }
 
     public play(player: Player, game: Game) {
-        let orOptions = new Array<SelectDelegate>();
+      const orOptions: Array<SelectDelegate> = [];
         // Take each party having more than just the party leader in the area
-        game.turmoil!.parties.forEach(party => {
-          if(party.delegates.length > 1) {
+        game.turmoil!.parties.forEach((party) => {
+          if (party.delegates.length > 1) {
             // Remove the party leader from available choices
             const delegates = party.delegates.slice();
-            delegates.splice(party.delegates.indexOf(party.partyLeader!),1);
-            const players = Array.from(new Set<Player | "NEUTRAL">(delegates));
+            delegates.splice(party.delegates.indexOf(party.partyLeader!), 1);
+            const players = Array.from(new Set<Player | 'NEUTRAL'>(delegates));
             if (players.length > 0) {
-              let selectDelegate = new SelectDelegate(players, "Select player delegate to remove from " + party.name + " party", (selectedPlayer: Player | "NEUTRAL") => {
+              const selectDelegate = new SelectDelegate(players, 'Select player delegate to remove from ' + party.name + ' party', (selectedPlayer: Player | 'NEUTRAL') => {
                 game.turmoil!.removeDelegateFromParty(selectedPlayer, party.name, game);
-                this.log(game, player, party);
+                this.log(game, player, party, selectedPlayer);
                 return undefined;
               });
-              selectDelegate.buttonLabel = "Remove delegate";
+              selectDelegate.buttonLabel = 'Remove delegate';
               orOptions.push(selectDelegate);
             }
           }
@@ -46,12 +49,24 @@ export class BannedDelegate implements IProjectCard {
         } else if (orOptions.length === 1) {
           return orOptions[0];
         } else {
-          let options = new OrOptions(...orOptions);   
+          const options = new OrOptions(...orOptions);
           return options;
         }
     }
 
-    private log(game: Game, player: Player, party: IParty) {
-      game.log("${0} removed a delegate from ${1}", b => b.player(player).party(party));
+    private log(game: Game, player: Player, party: IParty, selectedPlayer: Player | NeutralPlayer) {
+      if (selectedPlayer === 'NEUTRAL') {
+        game.log('${0} removed neutral delegate from ${1}', (b) => b.player(player).party(party));
+      } else {
+        game.log('${0} removed ${1}\'s delegate from ${2}', (b) => b.player(player).player(selectedPlayer).party(party));
+      }
     }
+    public metadata: CardMetadata = {
+      cardNumber: 'T02',
+      description: 'Requires that you are Chairman. Remove any NON-LEADER delegate.',
+      requirements: CardRequirements.builder((b) => b.chairman()),
+      renderData: CardRenderer.builder((b) => {
+        b.minus().delegates(1).any;
+      }),
+    };
 }

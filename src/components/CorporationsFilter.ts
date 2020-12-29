@@ -1,120 +1,149 @@
-import Vue from "vue";
+import Vue from 'vue';
 
-import { CardName } from "../CardName";
-import { CorporationGroup } from "../CorporationName";
- 
-import { COLONIES_CARD_MANIFEST } from "../cards/colonies/ColoniesCardManifest";
-import { COMMUNITY_CARD_MANIFEST } from "../cards/community/CommunityCardManifest";
-import { PRELUDE_CARD_MANIFEST } from "../cards/prelude/PreludeCardManifest";
-import { PROMO_CARD_MANIFEST } from "../cards/promo/PromoCardManifest";
-import {BASE_CARD_MANIFEST,CORP_ERA_CARD_MANIFEST,} from "../cards/StandardCardManifests";
-import { TURMOIL_CARD_MANIFEST } from "../cards/turmoil/TurmoilCardManifest";
-import { VENUS_CARD_MANIFEST } from "../cards/venusNext/VenusCardManifest";
+import {CardName} from '../CardName';
+import {CorporationGroup} from '../CorporationName';
+
+import {COLONIES_CARD_MANIFEST} from '../cards/colonies/ColoniesCardManifest';
+import {COMMUNITY_CARD_MANIFEST} from '../cards/community/CommunityCardManifest';
+import {PRELUDE_CARD_MANIFEST} from '../cards/prelude/PreludeCardManifest';
+import {PROMO_CARD_MANIFEST} from '../cards/promo/PromoCardManifest';
+import {BASE_CARD_MANIFEST, CORP_ERA_CARD_MANIFEST} from '../cards/StandardCardManifests';
+import {TURMOIL_CARD_MANIFEST} from '../cards/turmoil/TurmoilCardManifest';
+import {VENUS_CARD_MANIFEST} from '../cards/venusNext/VenusCardManifest';
 
 
 const allItems: Array<CardName> = [
-    ...BASE_CARD_MANIFEST.corporationCards.cards.concat(CORP_ERA_CARD_MANIFEST.corporationCards.cards).map((cf) => cf.cardName),
-    ...PRELUDE_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName),
-    ...VENUS_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName),
-    ...COLONIES_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName),
-    ...TURMOIL_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName),
-    ...PROMO_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName),
-    ...COMMUNITY_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName),
+  ...BASE_CARD_MANIFEST.corporationCards.cards.concat(CORP_ERA_CARD_MANIFEST.corporationCards.cards).map((cf) => cf.cardName),
+  ...PRELUDE_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName),
+  ...VENUS_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName),
+  ...COLONIES_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName),
+  ...TURMOIL_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName),
+  ...PROMO_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName),
+  ...COMMUNITY_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName),
 ];
 
-export const CorporationsFilter = Vue.component("corporations-filter", {
-    props: ["corporateEra", "prelude", "venusNext", "colonies", "turmoil", "promoCardsOption", "communityCardsOption"],
-    data: function () {
-        return {
-            customCorporationsList: false,
-            selectedCorporations: [
-                ...this.corporateEra ? BASE_CARD_MANIFEST.corporationCards.cards.concat(CORP_ERA_CARD_MANIFEST.corporationCards.cards).map((cf) => cf.cardName) : [],
-                ...this.prelude ? PRELUDE_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName) : [],
-                ...this.venusNext ? VENUS_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName) : [],
-                ...this.colonies ? COLONIES_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName) : [],
-                ...this.turmoil ? TURMOIL_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName) : [],
-                ...this.promoCardsOption ? PROMO_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName) : [],
-                ...this.communityCardsOption ? COMMUNITY_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName) : []
-            ],
-            corporationGroups: [
-                {"title": CorporationGroup.ORIGINAL, "items": BASE_CARD_MANIFEST.corporationCards.cards.concat(CORP_ERA_CARD_MANIFEST.corporationCards.cards).map((cf) => cf.cardName) },
-                {"title": CorporationGroup.PRELUDE, "items": PRELUDE_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName)},
-                {"title": CorporationGroup.VENUS_NEXT, "items": VENUS_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName)},
-                {"title": CorporationGroup.COLONIES, "items": COLONIES_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName)},
-                {"title": CorporationGroup.TURMOIL, "items": TURMOIL_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName)},
-                {"title": CorporationGroup.PROMO, "items": PROMO_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName)},
-                {"title": CorporationGroup.COMMUNITY, "items": COMMUNITY_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName)}
-            ]
-        }
+export const CorporationsFilter = Vue.component('corporations-filter', {
+  props: {
+    corporateEra: {
+      type: Boolean,
     },
-    methods: {
-        getItemsByGroup: function (group: string): Array<CardName> {
-            if (group === "All") return allItems.slice();
+    prelude: {
+      type: Boolean,
+    },
+    venusNext: {
+      type: Boolean,
+    },
+    colonies: {
+      type: Boolean,
+    },
+    turmoil: {
+      type: Boolean,
+    },
+    promoCardsOption: {
+      type: Boolean,
+    },
+    communityCardsOption: {
+      type: Boolean,
+    },
+  },
+  data: function() {
+    return {
+      customCorporationsList: false,
+      selectedCorporations: [
+        ...this.corporateEra ? BASE_CARD_MANIFEST.corporationCards.cards.concat(CORP_ERA_CARD_MANIFEST.corporationCards.cards).map((cf) => cf.cardName) : [],
+        ...this.prelude ? PRELUDE_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName) : [],
+        ...this.venusNext ? VENUS_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName) : [],
+        ...this.colonies ? COLONIES_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName) : [],
+        ...this.turmoil ? TURMOIL_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName) : [],
+        ...this.promoCardsOption ? PROMO_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName) : [],
+        ...this.communityCardsOption ? COMMUNITY_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName) : [],
+      ] as Array<CardName> | boolean /* v-model thinks this can be boolean */,
+      corporationGroups: [
+        {'title': CorporationGroup.ORIGINAL, 'items': BASE_CARD_MANIFEST.corporationCards.cards.concat(CORP_ERA_CARD_MANIFEST.corporationCards.cards).map((cf) => cf.cardName)},
+        {'title': CorporationGroup.PRELUDE, 'items': PRELUDE_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName)},
+        {'title': CorporationGroup.VENUS_NEXT, 'items': VENUS_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName)},
+        {'title': CorporationGroup.COLONIES, 'items': COLONIES_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName)},
+        {'title': CorporationGroup.TURMOIL, 'items': TURMOIL_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName)},
+        {'title': CorporationGroup.PROMO, 'items': PROMO_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName)},
+        {'title': CorporationGroup.COMMUNITY, 'items': COMMUNITY_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName)},
+      ],
+    };
+  },
+  methods: {
+    getSelected: function(): Array<CardName> {
+      if (Array.isArray(this.selectedCorporations)) {
+        return this.selectedCorporations;
+      }
+      console.warn('unexpectedly got boolean for selectedCorporations');
+      return [];
+    },
+    getItemsByGroup: function(group: string): Array<CardName> {
+      if (group === 'All') return allItems.slice();
 
-            const corps = this.corporationGroups.find((g) => g.title === group);
-            if (corps === undefined) return [];
-                        
-            return (corps.items as any).slice()
-        },
-        selectAll: function (group: string) {
-            const items = this.getItemsByGroup(group);
-            for (const idx in items) {
-                if ( ! this.selectedCorporations.includes(items[idx])) {
-                    this.selectedCorporations.push(items[idx]);
-                }
-            }
-        },
-        removeFromSelection: function (cardName: CardName) {
-            const itemIdx = this.selectedCorporations.indexOf(cardName)
-            if (itemIdx !== -1) {
-                this.selectedCorporations.splice(itemIdx, 1)
-            }
-        },
-        selectNone: function (group: string) {
-            const items = this.getItemsByGroup(group);
-            for (const idx in items) {
-                this.removeFromSelection(items[idx]);
-            }
-        },
-        invertSelection: function (group: string) {
-            const items = this.getItemsByGroup(group);
+      const corps = this.corporationGroups.find((g) => g.title === group);
+      if (corps === undefined) return [];
 
-            for (const idx in items) {
-                if (this.selectedCorporations.includes(items[idx])) {
-                    this.removeFromSelection(items[idx]);
-                } else {
-                    this.selectedCorporations.push(items[idx]);
-                }
-            }
-        }
+      return (corps.items as any).slice();
     },
-    watch: {
-        selectedCorporations: function (value) {
-            this.$emit("corporation-list-changed", value);
-        },
-        corporateEra: function (enabled) {
-            enabled ? this.selectAll(CorporationGroup.ORIGINAL) : this.selectNone(CorporationGroup.ORIGINAL);
-        },
-        prelude: function (enabled) {
-            enabled ? this.selectAll(CorporationGroup.PRELUDE) : this.selectNone(CorporationGroup.PRELUDE);
-        },
-        venusNext: function (enabled) {
-            enabled ? this.selectAll(CorporationGroup.VENUS_NEXT) : this.selectNone(CorporationGroup.VENUS_NEXT);
-        },
-        colonies: function (enabled) {
-            enabled ? this.selectAll(CorporationGroup.COLONIES) : this.selectNone(CorporationGroup.COLONIES);
-        },
-        turmoil: function (enabled) {
-            enabled ? this.selectAll(CorporationGroup.TURMOIL) : this.selectNone(CorporationGroup.TURMOIL);
-        },
-        promoCardsOption: function (enabled) {
-            enabled ? this.selectAll(CorporationGroup.PROMO) : this.selectNone(CorporationGroup.PROMO);
-        },
-        communityCardsOption: function (enabled) {
-            enabled ? this.selectAll(CorporationGroup.COMMUNITY) : this.selectNone(CorporationGroup.COMMUNITY);
+    selectAll: function(group: string) {
+      const items = this.getItemsByGroup(group);
+      for (const item of items) {
+        if (this.getSelected().includes(item) === false) {
+          this.getSelected().push(item);
         }
+      }
     },
-    template: `
+    removeFromSelection: function(cardName: CardName) {
+      const itemIdx = this.getSelected().indexOf(cardName);
+      if (itemIdx !== -1) {
+        this.getSelected().splice(itemIdx, 1);
+      }
+    },
+    selectNone: function(group: string) {
+      const items = this.getItemsByGroup(group);
+      for (const item of items) {
+        this.removeFromSelection(item);
+      }
+    },
+    invertSelection: function(group: string) {
+      const items = this.getItemsByGroup(group);
+
+      for (const idx in items) {
+        if (this.getSelected().includes(items[idx])) {
+          this.removeFromSelection(items[idx]);
+        } else {
+          this.getSelected().push(items[idx]);
+        }
+      }
+    },
+  },
+  watch: {
+    selectedCorporations: function(value) {
+      this.$emit('corporation-list-changed', value);
+    },
+    corporateEra: function(enabled) {
+      enabled ? this.selectAll(CorporationGroup.ORIGINAL) : this.selectNone(CorporationGroup.ORIGINAL);
+    },
+    prelude: function(enabled) {
+      enabled ? this.selectAll(CorporationGroup.PRELUDE) : this.selectNone(CorporationGroup.PRELUDE);
+    },
+    venusNext: function(enabled) {
+      enabled ? this.selectAll(CorporationGroup.VENUS_NEXT) : this.selectNone(CorporationGroup.VENUS_NEXT);
+    },
+    colonies: function(enabled) {
+      enabled ? this.selectAll(CorporationGroup.COLONIES) : this.selectNone(CorporationGroup.COLONIES);
+    },
+    turmoil: function(enabled) {
+      enabled ? this.selectAll(CorporationGroup.TURMOIL) : this.selectNone(CorporationGroup.TURMOIL);
+    },
+    promoCardsOption: function(enabled) {
+      enabled ? this.selectAll(CorporationGroup.PROMO) : this.selectNone(CorporationGroup.PROMO);
+    },
+    communityCardsOption: function(enabled) {
+      enabled ? this.selectAll(CorporationGroup.COMMUNITY) : this.selectNone(CorporationGroup.COMMUNITY);
+    },
+  },
+  template: `
     <div class="corporations-filter">
         <div class="corporations-filter-toolbox-cont">
             <h2>Corporations</h2>
@@ -141,5 +170,5 @@ export const CorporationsFilter = Vue.component("corporations-filter", {
             </div>
         </div>
     </div>
-    `
+    `,
 });

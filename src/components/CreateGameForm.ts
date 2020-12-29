@@ -1,20 +1,22 @@
-import Vue from "vue";
-import { Color } from "../Color";
-import { BoardName } from "../BoardName";
-import { CardName } from "../CardName";
-import { CorporationsFilter } from "./CorporationsFilter";
-import { $t } from "../directives/i18n";
-import { IGameData } from "../database/IDatabase";
-import { ColoniesFilter } from "./ColoniesFilter";
-import { ColonyName } from "../colonies/ColonyName";
-import { CardsFilter } from "./CardsFilter";
-import { Button } from "../components/common/Button";
-import { playerColorClass } from "../utils/utils";
-import { PreferencesManager } from "./PreferencesManager";
-import { RandomMAOptionType } from "../RandomMAOptionType";
+import Vue from 'vue';
+import {Color} from '../Color';
+import {BoardName} from '../boards/BoardName';
+import {CardName} from '../CardName';
+import {CorporationsFilter} from './CorporationsFilter';
+import {translateMessage} from '../directives/i18n';
+import {IGameData} from '../database/IDatabase';
+import {ColoniesFilter} from './ColoniesFilter';
+import {ColonyName} from '../colonies/ColonyName';
+import {CardsFilter} from './CardsFilter';
+import {Button} from '../components/common/Button';
+import {playerColorClass} from '../utils/utils';
+import {PreferencesManager} from './PreferencesManager';
+import {RandomMAOptionType} from '../RandomMAOptionType';
+import {LogMessageDataType} from '../LogMessageDataType';
 
 export interface CreateGameModel {
     isvip: boolean,
+    allOfficialExpansions: boolean;
     firstIndex: number;
     playersCount: number;
     players: Array<NewPlayerModel>;
@@ -36,7 +38,8 @@ export interface CreateGameModel {
     showColoniesList: boolean;
     showCardsBlackList: boolean;
     isSoloModePage: boolean;
-    board: BoardName | "random";
+    board: BoardName | 'random';
+    boards: Array<BoardName | 'random'>;
     seed: number;
     solarPhaseOption: boolean;
     shuffleMapOption: boolean;
@@ -44,6 +47,7 @@ export interface CreateGameModel {
     communityCardsOption: boolean;
     aresExtension: boolean;
     undoOption: boolean;
+    showTimers: boolean;
     fastModeOption: boolean;
     removeNegativeGlobalEventsOption: boolean;
     heatFor: boolean;
@@ -52,6 +56,7 @@ export interface CreateGameModel {
     startingCorporations: number;
     soloTR: boolean;
     clonedGameData: IGameData | undefined;
+    requiresVenusTrackCompletion: boolean;
     seededGame: boolean;
 }
 
@@ -64,366 +69,380 @@ export interface NewPlayerModel {
     first: boolean;
 }
 
-export const CreateGameForm = Vue.component("create-game-form", {
-    data: function () {
-        return {
-            isvip: false,
-            firstIndex: 1,
-            playersCount: 1,
-            players: [
-                {index: 1, name: "", color: Color.RED, beginner: false, handicap: 0, first: false},
-                {index: 2, name: "", color: Color.GREEN, beginner: false, handicap: 0, first: false},
-                {index: 3, name: "", color: Color.YELLOW, beginner: false, handicap: 0, first: false},
-                {index: 4, name: "", color: Color.BLUE, beginner: false, handicap: 0, first: false},
-                {index: 5, name: "", color: Color.BLACK, beginner: false, handicap: 0, first: false},
-                {index: 6, name: "", color: Color.PURPLE, beginner: false, handicap: 0, first: false}
-            ],
-            corporateEra: true,
-            prelude: true,
-            draftVariant: true,
-            initialDraft: false,
-            randomMA: RandomMAOptionType.LIMITED,
-            randomFirstPlayer: true,
-            showOtherPlayersVP: true,
-            beginnerOption: false,
-            venusNext: true,
-            colonies: true,
-            showColoniesList: false,
-            showCorporationList: false,
-            showCardsBlackList: false,
-            turmoil: true,
-            customCorporationsList: [],
-            customColoniesList: [],
-            cardsBlackList: [],
-            isSoloModePage: false,
-            board: "random",
-            boards: [
-                BoardName.ORIGINAL,
-                BoardName.HELLAS,
-                BoardName.ELYSIUM,
-                "random"
-            ],
-            seed: Math.random(),
-            seededGame: false,
-            solarPhaseOption: true,
-            shuffleMapOption: false,
-            promoCardsOption: true,
-            communityCardsOption: false,
-            aresExtension: false,
-            undoOption: true,
-            fastModeOption: true,
-            removeNegativeGlobalEventsOption: false,
-            heatFor: false,
-            breakthrough: false,
-            includeVenusMA: true,
-            startingCorporations: 4,
-            soloTR: false,
-            clonedGameData: undefined,
-            allOfficialExpansions: true
-        } as CreateGameModel
+export const CreateGameForm = Vue.component('create-game-form', {
+  data: function(): CreateGameModel {
+    return {
+      isvip: false,
+      firstIndex: 1,
+      playersCount: 1,
+      players: [
+        {index: 1, name: '', color: Color.RED, beginner: false, handicap: 0, first: false},
+        {index: 2, name: '', color: Color.GREEN, beginner: false, handicap: 0, first: false},
+        {index: 3, name: '', color: Color.YELLOW, beginner: false, handicap: 0, first: false},
+        {index: 4, name: '', color: Color.BLUE, beginner: false, handicap: 0, first: false},
+        {index: 5, name: '', color: Color.BLACK, beginner: false, handicap: 0, first: false},
+        {index: 6, name: '', color: Color.PURPLE, beginner: false, handicap: 0, first: false},
+      ],
+      corporateEra: true,
+      prelude: true,
+      draftVariant: true,
+      initialDraft: false,
+      randomMA: RandomMAOptionType.NONE,
+      randomFirstPlayer: true,
+      showOtherPlayersVP: true,
+      beginnerOption: false,
+      venusNext: true,
+      colonies: true,
+      showColoniesList: false,
+      showCorporationList: false,
+      showCardsBlackList: false,
+      turmoil: true,
+      customCorporationsList: [],
+      customColoniesList: [],
+      cardsBlackList: [],
+      isSoloModePage: false,
+      board: 'random',
+      boards: [
+        BoardName.ORIGINAL,
+        BoardName.HELLAS,
+        BoardName.ELYSIUM,
+        'random',
+      ],
+      seed: Math.random(),
+      seededGame: false,
+      solarPhaseOption: true,
+      shuffleMapOption: false,
+      promoCardsOption: true,
+      communityCardsOption: false,
+      aresExtension: false,
+      undoOption: true,
+      showTimers: true,
+      fastModeOption: true,
+      removeNegativeGlobalEventsOption: false,
+      heatFor: false,
+      breakthrough: false,
+      includeVenusMA: true,
+      startingCorporations: 4,
+      soloTR: false,
+      clonedGameData: undefined,
+      allOfficialExpansions: true,
+      requiresVenusTrackCompletion: false,
+    };
+  },
+  components: {
+    'corporations-filter': CorporationsFilter,
+    'colonies-filter': ColoniesFilter,
+    'cards-filter': CardsFilter,
+    'Button': Button,
+  },
+  mounted: function() {
+    if (window.location.pathname === '/solo') {
+      this.isSoloModePage = true;
+    }
+
+    const root = this.$root as any;
+    this.isvip = root.isvip;
+  },
+  methods: {
+    downloadCurrentSettings: function() {
+      const serializedData = this.serializeSettings();
+
+      if (serializedData) {
+        const a = document.createElement('a');
+        const blob = new Blob([serializedData], {'type': 'application/json'});
+        a.href = window.URL.createObjectURL(blob);
+        a.download = 'tm_settings.json';
+        a.click();
+      }
     },
-    components: {
-        "corporations-filter": CorporationsFilter,
-        "colonies-filter": ColoniesFilter,
-        "cards-filter": CardsFilter,
-        "Button": Button
+    handleSettingsUpload: function() {
+      const refs = this.$refs;
+      const file = (refs.file as any).files[0];
+      const reader = new FileReader();
+      const component = (this as any) as CreateGameModel;
+
+      reader.addEventListener('load', function() {
+        const readerResults = reader.result;
+        if (typeof(readerResults) === 'string') {
+          const results = JSON.parse(readerResults);
+
+          component.playersCount = results['players'].length;
+          component.showCorporationList = results['customCorporationsList'].length > 0;
+          component.showColoniesList = results['customColoniesList'].length > 0;
+          component.showCardsBlackList = results['cardsBlackList'].length > 0;
+
+          for (const k in results) {
+            if (['customCorporationsList', 'customColoniesList', 'cardsBlackList'].includes(k)) continue;
+            (component as any)[k] = results[k];
+          }
+
+          Vue.nextTick(() => {
+            if (component.showColoniesList) {
+              (refs.coloniesFilter as any).updateColoniesByNames(results['customColoniesList']);
+            }
+
+            if (component.showCorporationList) {
+              (refs.corporationsFilter as any).selectedCorporations = results['customCorporationsList'];
+            }
+
+            if (component.showCardsBlackList) {
+              (refs.cardsFilter as any).selectedCardNames = results['cardsBlackList'];
+            }
+          });
+        }
+      }, false);
+      if (file) {
+        if (/\.json$/i.test(file.name)) {
+          reader.readAsText(file);
+        }
+      }
     },
-    mounted: function () {
-        if (window.location.pathname === "/solo") {
-            this.isSoloModePage = true;
+    getPlayerNamePlaceholder: function(player: NewPlayerModel): string {
+      return translateMessage({
+        message: 'Player ${0} name',
+        data: [{
+          type: LogMessageDataType.RAW_STRING,
+          value: String(player.index),
+        }],
+      });
+    },
+    updateCustomCorporationsList: function(newCustomCorporationsList: Array<CardName>) {
+      const component = (this as any) as CreateGameModel;
+      component.customCorporationsList = newCustomCorporationsList;
+    },
+    updateCardsBlackList: function(newCardsBlackList: Array<CardName>) {
+      const component = (this as any) as CreateGameModel;
+      component.cardsBlackList = newCardsBlackList;
+    },
+    updateCustomColoniesList: function(newCustomColoniesList: Array<ColonyName>) {
+      const component = (this as any) as CreateGameModel;
+      component.customColoniesList = newCustomColoniesList;
+    },
+    getPlayers: function(): Array<NewPlayerModel> {
+      const component = (this as any) as CreateGameModel;
+      return component.players.slice(0, component.playersCount);
+    },
+    isRandomMAEnabled: function(): Boolean {
+      return this.randomMA !== RandomMAOptionType.NONE;
+    },
+    randomMAToggle: function() {
+      const component = (this as any) as CreateGameModel;
+      if (component.randomMA === RandomMAOptionType.NONE) {
+        component.randomMA = RandomMAOptionType.LIMITED;
+        this.randomMA = RandomMAOptionType.LIMITED;
+      } else {
+        component.randomMA = RandomMAOptionType.NONE;
+        this.randomMA = RandomMAOptionType.NONE;
+      }
+    },
+    getRandomMaOptionType: function(type: 'limited' | 'full'): RandomMAOptionType {
+      if (type === 'limited') {
+        return RandomMAOptionType.LIMITED;
+      } else if (type === 'full') {
+        return RandomMAOptionType.UNLIMITED;
+      } else {
+        return RandomMAOptionType.NONE;
+      }
+    },
+    isBeginnerToggleEnabled: function(): Boolean {
+      return !(this.initialDraft || this.prelude || this.venusNext || this.colonies || this.turmoil);
+    },
+    selectAll: function() {
+      this.corporateEra = this.$data.allOfficialExpansions;
+      this.prelude = this.$data.allOfficialExpansions;
+      this.venusNext = this.$data.allOfficialExpansions;
+      this.colonies = this.$data.allOfficialExpansions;
+      this.turmoil = this.$data.allOfficialExpansions;
+      this.promoCardsOption = this.$data.allOfficialExpansions;
+      this.solarPhaseOption = this.$data.allOfficialExpansions;
+    },
+    toggleVenusNext: function() {
+      this.solarPhaseOption = this.$data.venusNext;
+      if (this.$data.venusNext === false) {
+        this.requiresVenusTrackCompletion = false;
+      }
+    },
+    getBoardColorClass: function(boardName: string): string {
+      if (boardName === BoardName.ORIGINAL) {
+        return 'create-game-board-hexagon create-game-tharsis';
+      } else if (boardName === BoardName.HELLAS) {
+        return 'create-game-board-hexagon create-game-hellas';
+      } else if (boardName === BoardName.ELYSIUM) {
+        return 'create-game-board-hexagon create-game-elysium';
+      } else {
+        return 'create-game-board-hexagon create-game-random';
+      }
+    },
+    getPlayerCubeColorClass: function(color: string): string {
+      return playerColorClass(color.toLowerCase(), 'bg');
+    },
+    getPlayerContainerColorClass: function(color: string): string {
+      return playerColorClass(color.toLowerCase(), 'bg_transparent');
+    },
+    serializeSettings: function() {
+      const lastcreated = Number(PreferencesManager.loadValue('lastcreated')) || 0;
+      if (new Date().getTime() - lastcreated < 60000 && !this.isvip ) { // location.href.indexOf("localhost") < 0){
+        alert('请不要频繁创建游戏');
+        return;
+      }
+      PreferencesManager.saveValue('lastcreated', new Date().getTime().toString());
+      const component = (this as any) as CreateGameModel;
+
+      let players = component.players.slice(0, component.playersCount);
+
+      if (component.randomFirstPlayer) {
+        // Shuffle players array to assign each player a random seat around the table
+        players = players.map((a) => ({sort: Math.random(), value: a}))
+          .sort((a, b) => a.sort - b.sort)
+          .map((a) => a.value);
+        component.firstIndex = Math.floor(component.seed * component.playersCount) + 1;
+      }
+
+      // Auto assign an available color if there are duplicates
+      const uniqueColors = players.map((player) => player.color).filter((v, i, a) => a.indexOf(v) === i);
+      if (uniqueColors.length !== players.length) {
+        const allColors = [Color.BLUE, Color.RED, Color.YELLOW, Color.GREEN, Color.BLACK, Color.PURPLE];
+        players.forEach((player) => {
+          if (allColors.includes(player.color)) {
+            allColors.splice(allColors.indexOf(player.color), 1);
+          } else {
+            player.color = allColors.shift() as Color;
+          }
+        });
+      }
+
+      // Set player name automatically if not entered
+      const isSoloMode = component.playersCount === 1;
+
+      component.players.forEach((player) => {
+        if (player.name === '') {
+          if (isSoloMode) {
+            const userName = PreferencesManager.loadValue('userName');
+            if ( userName.length > 0) {
+              player.name = userName;
+            } else {
+              player.name = 'You';
+            }
+          } else {
+            const defaultPlayerName = player.color.charAt(0).toUpperCase() + player.color.slice(1);
+            player.name = defaultPlayerName;
+          }
+        }
+      });
+
+      players.map((player: any) => {
+        player.first = (component.firstIndex === player.index);
+        return player;
+      });
+
+      const corporateEra = component.corporateEra;
+      const prelude = component.prelude;
+      const draftVariant = component.draftVariant;
+      const initialDraft = component.initialDraft;
+      const randomMA = component.randomMA;
+      const showOtherPlayersVP = component.showOtherPlayersVP;
+      const venusNext = component.venusNext;
+      const colonies = component.colonies;
+      const turmoil = component.turmoil;
+      const solarPhaseOption = this.solarPhaseOption;
+      const shuffleMapOption = this.shuffleMapOption;
+      const customCorporationsList = component.customCorporationsList;
+      const customColoniesList = component.customColoniesList;
+      const cardsBlackList = component.cardsBlackList;
+      const board = component.board;
+      const seed = component.seed;
+      const promoCardsOption = component.promoCardsOption;
+      const communityCardsOption = component.communityCardsOption;
+      const aresExtension = component.aresExtension;
+      const undoOption = component.undoOption;
+      const showTimers = component.showTimers;
+      const fastModeOption = component.fastModeOption;
+      const removeNegativeGlobalEventsOption = this.removeNegativeGlobalEventsOption;
+      const heatFor = component.heatFor;
+      const breakthrough = component.breakthrough;
+      const includeVenusMA = component.includeVenusMA;
+      const startingCorporations = component.startingCorporations;
+      const soloTR = component.soloTR;
+      const beginnerOption = component.beginnerOption;
+      const randomFirstPlayer = component.randomFirstPlayer;
+      const requiresVenusTrackCompletion = component.requiresVenusTrackCompletion;
+      const clonedGamedId: undefined | string = undefined;
+
+      if (customColoniesList.length > 0) {
+        const playersCount = players.length;
+        let neededColoniesCount = playersCount + 2;
+        if (playersCount === 1) {
+          neededColoniesCount = 4;
+        } else if (playersCount === 2) {
+          neededColoniesCount = 5;
         }
 
-        const root = this.$root as any;
-        this.isvip = root.isvip;
-
-    },
-    methods: {
-        downloadCurrentSettings: function () {
-            const serializedData = this.serializeSettings();
-            if (serializedData) {
-                const a = document.createElement("a");
-                const blob = new Blob([serializedData], {"type": "application/json"});
-                a.href = window.URL.createObjectURL(blob);
-                a.download = "tm_settings.json";
-                a.click();
-            }
-        },
-        handleSettingsUpload: function () {
-            const refs  = this.$refs;
-            const file = (refs.file as any).files[0];
-            const reader  = new FileReader();
-            const component = (this as any) as CreateGameModel;
-
-            reader.addEventListener("load", function () {
-                const readerResults = reader.result;
-                if (typeof(readerResults) === "string") {
-                    const results = JSON.parse(readerResults);
-
-                    component.playersCount = results["players"].length;
-                    component.showCorporationList = results["customCorporationsList"].length > 0;
-                    component.showColoniesList = results["customColoniesList"].length > 0;
-                    component.showCardsBlackList = results["cardsBlackList"].length > 0;
-
-                    for (const k in results) {
-                        if (["customCorporationsList", "customColoniesList", "cardsBlackList"].includes(k)) continue;
-                        (component as any)[k] = results[k];
-                    }
-
-                    Vue.nextTick(() => {
-                        if (component.showColoniesList) {
-                            (refs.coloniesFilter as any).updateColoniesByNames(results["customColoniesList"]);
-                        }
-
-                        if (component.showCorporationList) {
-                            (refs.corporationsFilter as any).selectedCorporations = results["customCorporationsList"];
-                        }
-
-                        if (component.showCardsBlackList) {
-                            (refs.cardsFilter as any).selectedCardNames = results["cardsBlackList"];
-                        }
-                    });
-                }
-            }.bind(this), false);
-            if (file) {
-
-              if (/\.json$/i.test(file.name)) {
-                reader.readAsText(file);
-              }
-            }
-        },
-        getPlayerNamePlaceholder: function (player: NewPlayerModel): string {
-            return $t("Player " + player.index + " name");
-        },
-        updateCustomCorporationsList: function (newCustomCorporationsList: Array<CardName>) {
-            const component = (this as any) as CreateGameModel;
-            component.customCorporationsList = newCustomCorporationsList;
-        },
-        updateCardsBlackList: function (newCardsBlackList: Array<CardName>) {
-            const component = (this as any) as CreateGameModel;
-            component.cardsBlackList = newCardsBlackList;
-        },
-        updateCustomColoniesList: function (newCustomColoniesList: Array<ColonyName>) {
-            const component = (this as any) as CreateGameModel;
-            component.customColoniesList = newCustomColoniesList;
-        },
-        getPlayers: function (): Array<NewPlayerModel> {
-            const component = (this as any) as CreateGameModel;
-            return component.players.slice(0, component.playersCount);
-        },
-        isRandomMAEnabled: function (): Boolean {
-            return this.randomMA !== RandomMAOptionType.NONE;
-        },
-        randomMAToggle: function () {
-            const component = (this as any) as CreateGameModel;
-            if (component.randomMA === RandomMAOptionType.NONE){
-                component.randomMA = RandomMAOptionType.LIMITED;
-                this.randomMA = RandomMAOptionType.LIMITED;
-            } else {
-                component.randomMA = RandomMAOptionType.NONE;
-                this.randomMA = RandomMAOptionType.NONE;
-            }
-        },
-        getRandomMaOptionType: function(type: "limited" | "full"): RandomMAOptionType {
-            if (type === "limited") {
-                return RandomMAOptionType.LIMITED;
-            } else if (type === "full") {
-                return RandomMAOptionType.UNLIMITED;
-            } else {
-                return RandomMAOptionType.NONE;
-            }
-        },
-        isBeginnerToggleEnabled: function(): Boolean {
-            return !(this.initialDraft || this.prelude || this.venusNext || this.colonies || this.turmoil)
-        },
-        selectAll: function() {
-            this.corporateEra = this.$data.allOfficialExpansions;
-            this.prelude = this.$data.allOfficialExpansions;
-            this.venusNext = this.$data.allOfficialExpansions;
-            this.colonies = this.$data.allOfficialExpansions;
-            this.turmoil = this.$data.allOfficialExpansions;
-            this.promoCardsOption = this.$data.allOfficialExpansions;
-            this.solarPhaseOption = this.$data.allOfficialExpansions;
-        },
-        selectWGTwhenVenus: function() {
-            this.solarPhaseOption = this.$data.venusNext;
-        },
-        getBoardColorClass: function(boardName: string): string {
-            if (boardName === BoardName.ORIGINAL){
-                return "create-game-board-hexagon create-game-tharsis";
-            } else if (boardName === BoardName.HELLAS) {
-                return "create-game-board-hexagon create-game-hellas";
-            } else if (boardName === BoardName.ELYSIUM) {
-                return "create-game-board-hexagon create-game-elysium";
-            } else {
-                return "create-game-board-hexagon create-game-random";
-            }
-        },
-        getPlayerCubeColorClass: function(color: string): string{
-            return playerColorClass(color.toLowerCase(), "bg");
-        },
-        getPlayerContainerColorClass: function(color: string): string{
-            return playerColorClass(color.toLowerCase(), "bg_transparent");
-        },
-        serializeSettings: function () {
-            const lastcreated =  Number(PreferencesManager.loadValue("lastcreated")) ||  0 ;
-            if(new Date().getTime() - lastcreated < 60000 && !this.isvip ){     //location.href.indexOf("localhost") < 0){
-                alert("请不要频繁创建游戏");
-                return  ;
-            }
-            PreferencesManager.saveValue("lastcreated",new Date().getTime().toString());
-            const component = (this as any) as CreateGameModel;
-
-            let players = component.players.slice(0, component.playersCount);
-
-            if (component.randomFirstPlayer) {
-                // Shuffle players array to assign each player a random seat around the table
-                 players = players.map((a) => ({sort: Math.random(), value: a}))
-                    .sort((a, b) => a.sort - b.sort)
-                    .map((a) => a.value)
-                component.firstIndex = Math.floor(component.seed * component.playersCount) + 1;
-            }
-
-            // Auto assign an available color if there are duplicates
-            const uniqueColors = players.map((player) => player.color).filter((v, i, a) => a.indexOf(v) === i);
-            if (uniqueColors.length !== players.length) {
-                const allColors = [Color.BLUE, Color.RED, Color.YELLOW, Color.GREEN, Color.BLACK, Color.PURPLE];
-                players.forEach((player) => {
-                    if (allColors.includes(player.color)) {
-                        allColors.splice(allColors.indexOf(player.color), 1);
-                    } else {
-                        player.color = allColors.shift() as Color;
-                    }
-                })
-            }
-
-            // Set player name automatically if not entered
-            const isSoloMode = component.playersCount === 1;
-
-            component.players.forEach((player) => {
-                if (player.name === "") {
-                    if (isSoloMode) {
-                        const userName = PreferencesManager.loadValue("userName") ;
-                        if( userName.length > 0){
-                            player.name = userName;
-                        }else{
-                            player.name = "You";
-                        }
-                    } else {
-                        const defaultPlayerName = player.color.charAt(0).toUpperCase() + player.color.slice(1);
-                        player.name = defaultPlayerName;
-                    }
-                }
-            })
-
-            players.map((player: any) => {
-                player.first = (component.firstIndex === player.index);
-                return player;
-            });
-
-            const corporateEra = component.corporateEra;
-            const prelude = component.prelude;
-            const draftVariant = component.draftVariant;
-            const initialDraft = component.initialDraft;
-            const randomMA = component.randomMA;
-            const showOtherPlayersVP = component.showOtherPlayersVP;
-            const venusNext = component.venusNext;
-            const colonies = component.colonies;
-            const turmoil = component.turmoil;
-            const solarPhaseOption = this.solarPhaseOption;
-            const shuffleMapOption = this.shuffleMapOption;
-            const customCorporationsList = component.customCorporationsList;
-            const customColoniesList = component.customColoniesList;
-            const cardsBlackList = component.cardsBlackList;
-            const board =  component.board;
-            const seed = component.seed;
-            const promoCardsOption = component.promoCardsOption;
-            const communityCardsOption = component.communityCardsOption;
-            const aresExtension = component.aresExtension;
-            const undoOption = component.undoOption;
-            const fastModeOption = component.fastModeOption;
-            const removeNegativeGlobalEventsOption = this.removeNegativeGlobalEventsOption;
-            const heatFor = component.heatFor;
-            const breakthrough = component.breakthrough;
-            const includeVenusMA = component.includeVenusMA;
-            const startingCorporations = component.startingCorporations;
-            const soloTR = component.soloTR;
-            const beginnerOption = component.beginnerOption;
-            const clonedGamedId: undefined | string = undefined;
-
-            if (customColoniesList.length > 0) {
-                const playersCount = players.length;
-                let neededColoniesCount = playersCount + 2;
-                if (playersCount === 1) {
-                    neededColoniesCount = 4;
-                } else if (playersCount === 2) {
-                    neededColoniesCount = 5;
-                }
-
-                if (customColoniesList.length < neededColoniesCount) {
-                    window.alert("Must select at least " + neededColoniesCount + " colonies");
-                    return
-                }
-            }
-            const dataToSend = JSON.stringify({
-                players: players,
-                corporateEra,
-                prelude,
-                draftVariant,
-                showOtherPlayersVP,
-                venusNext,
-                colonies,
-                turmoil,
-                customCorporationsList,
-                customColoniesList,
-                cardsBlackList,
-                board,
-                seed,
-                solarPhaseOption,
-                promoCardsOption,
-                communityCardsOption,
-                aresExtension: aresExtension,
-                undoOption,
-                fastModeOption,
-                removeNegativeGlobalEventsOption,
-                heatFor, 
-                breakthrough,
-                includeVenusMA,
-                startingCorporations,
-                soloTR,
-                clonedGamedId,
-                initialDraft,
-                randomMA,
-                shuffleMapOption,
-		        userId : PreferencesManager.loadValue("userId"),
-                beginnerOption,
-            }, undefined, 4);
-
-            return dataToSend;
-        },
-        createGame: function () {
-            const dataToSend = this.serializeSettings();
-
-            if (dataToSend === undefined) return;
-
-            const onSucces = (response: any) => {
-                if (response.players.length === 1) {
-                    window.location.href = "/player?id=" + response.players[0].id;
-                    return;
-                } else {
-                    window.history.replaceState(response, "Teraforming Mars - Game", "/game?id=" + response.id);
-                    (this as any).$root.$data.game = response;
-                    (this as any).$root.$data.screen = "game-home";
-                }
-            }
-
-            fetch("/game", {method: "PUT", "body": dataToSend, headers: {"Content-Type": "application/json"}})
-                .then(response => response.json())
-                .then(onSucces)
-                .catch(_ => alert("Unexpected server response"));
+        if (customColoniesList.length < neededColoniesCount) {
+          window.alert('Must select at least ' + neededColoniesCount + ' colonies');
+          return;
         }
+      }
+      const dataToSend = JSON.stringify({
+        players: players,
+        corporateEra,
+        prelude,
+        draftVariant,
+        showOtherPlayersVP,
+        venusNext,
+        colonies,
+        turmoil,
+        customCorporationsList,
+        customColoniesList,
+        cardsBlackList,
+        board,
+        seed,
+        solarPhaseOption,
+        promoCardsOption,
+        communityCardsOption,
+        aresExtension: aresExtension,
+        undoOption,
+        showTimers,
+        fastModeOption,
+        removeNegativeGlobalEventsOption,
+        heatFor,
+        breakthrough,
+        includeVenusMA,
+        startingCorporations,
+        soloTR,
+        clonedGamedId,
+        initialDraft,
+        randomMA,
+        shuffleMapOption,
+        userId: PreferencesManager.loadValue('userId'),
+        beginnerOption,
+        randomFirstPlayer,
+        requiresVenusTrackCompletion,
+      }, undefined, 4);
+      return dataToSend;
     },
-    
-    template: `
+    createGame: function() {
+      const dataToSend = this.serializeSettings();
+
+      if (dataToSend === undefined) return;
+      const onSucces = (response: any) => {
+        if (response.players.length === 1) {
+          window.location.href = '/player?id=' + response.players[0].id;
+          return;
+        } else {
+          window.history.replaceState(response, 'Teraforming Mars - Game', '/game?id=' + response.id);
+          (this as any).$root.$data.game = response;
+          (this as any).$root.$data.screen = 'game-home';
+        }
+      };
+
+      fetch('/game', {'method': 'PUT', 'body': dataToSend, 'headers': {'Content-Type': 'application/json'}})
+        .then((response) => response.json())
+        .then(onSucces)
+        .catch((_) => alert('Unexpected server response'));
+    },
+  },
+
+  template: `
         <div id="create-game">
             <h1><span v-i18n>Terraforming Mars</span> — <span v-i18n>Create New Game</span></h1>
 
@@ -478,7 +497,7 @@ export const CreateGameForm = Vue.component("create-game-form", {
                                 <span v-i18n>Prelude</span>
                             </label>
 
-                            <input type="checkbox" name="venusNext" id="venusNext-checkbox" v-model="venusNext" v-on:change="selectWGTwhenVenus()">
+                            <input type="checkbox" name="venusNext" id="venusNext-checkbox" v-model="venusNext" v-on:change="toggleVenusNext()">
                             <label for="venusNext-checkbox" class="expansion-button">
                             <div class="create-game-expansion-icon expansion-icon-venus"></div>
                                 <span v-i18n>Venus Next</span>
@@ -508,7 +527,7 @@ export const CreateGameForm = Vue.component("create-game-form", {
                             <label for="heatFor-checkbox"  :class="{forbidden:!isvip}">
                                 <span v-i18n>7 Heat Into Temperature</span> 
                             </label>
-			    
+                
                             <input type="checkbox" name="breakthrough" id="breakthrough-checkbox" v-model="breakthrough"  v-if="isvip">
                             <label for="breakthrough-checkbox"  :class="{forbidden:!isvip}">
                                 <span v-i18n>BreakThrough</span> 
@@ -519,7 +538,7 @@ export const CreateGameForm = Vue.component("create-game-form", {
                                 <div class="create-game-expansion-icon expansion-icon-ares"></div>
                                 <span v-i18n>Ares</span>&nbsp;<a href="https://github.com/bafolts/terraforming-mars/wiki/Ares" class="tooltip" target="_blank">&#9432;</a>
                             </label>
-			    
+                
                             <input type="checkbox" name="community" id="communityCards-checkbox" v-model="communityCardsOption"  v-if="isvip">
                             <label for="communityCards-checkbox" class="expansion-button" :class="{forbidden:!isvip}">
                                 <div class="create-game-expansion-icon expansion-icon-community"></div>
@@ -563,6 +582,11 @@ export const CreateGameForm = Vue.component("create-game-form", {
                                 <span v-i18n>Allow undo</span>&nbsp;<a href="https://github.com/bafolts/terraforming-mars/wiki/Variants#allow-undo" class="tooltip" target="_blank">&#9432;</a>
                             </label>
 
+                            <input type="checkbox" v-model="showTimers" id="timer-checkbox">
+                            <label for="timer-checkbox">
+                                <span v-i18n>Show timers</span>
+                            </label>
+
                             <input type="checkbox" v-model="shuffleMapOption" id="shuffleMap-checkbox"  v-if="isvip">
                             <label for="shuffleMap-checkbox"  :class="{forbidden:!isvip}">
                                 <span v-i18n>Randomize board tiles</span>&nbsp;<a href="https://github.com/bafolts/terraforming-mars/wiki/Variants#randomize-board-tiles" class="tooltip" target="_blank">&#9432;</a>
@@ -577,7 +601,7 @@ export const CreateGameForm = Vue.component("create-game-form", {
                             </div>
 
 
-                            <div class="create-game-subsection-label">Filter</div>
+                            <div class="create-game-subsection-label" v-i18n>Filter</div>
 
                             <input type="checkbox" v-model="showCorporationList" id="customCorps-checkbox">
                             <label for="customCorps-checkbox">
@@ -735,6 +759,8 @@ export const CreateGameForm = Vue.component("create-game-form", {
                 ref="coloniesFilter"
                 v-if="showColoniesList"
                 v-on:colonies-list-changed="updateCustomColoniesList"
+                v-bind:venusNext="venusNext"
+                v-bind:turmoil="turmoil"
                 v-bind:communityCardsOption="communityCardsOption"
             ></colonies-filter>
 
@@ -744,6 +770,5 @@ export const CreateGameForm = Vue.component("create-game-form", {
                 v-on:cards-list-changed="updateCardsBlackList"
             ></cards-filter>
         </div>
-    `
+    `,
 });
-

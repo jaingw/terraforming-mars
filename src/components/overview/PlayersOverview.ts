@@ -1,102 +1,107 @@
-import Vue from "vue";
-import { PlayerInfo } from "./PlayerInfo";
-import { OverviewSettings } from "./OverviewSettings";
-import { OtherPlayer } from "../OtherPlayer";
-import { PlayerModel } from "../../models/PlayerModel";
-import { ActionLabel } from "./ActionLabel";
+import Vue from 'vue';
+import {PlayerInfo} from './PlayerInfo';
+import {OverviewSettings} from './OverviewSettings';
+import {OtherPlayer} from '../OtherPlayer';
+import {PlayerModel} from '../../models/PlayerModel';
+import {ActionLabel} from './ActionLabel';
 
 const SHOW_NEXT_LABEL_MIN = 2;
 
 export const getCurrentPlayerIndex = (
-    player: PlayerModel,
-    players: Array<PlayerModel>
+  player: PlayerModel,
+  players: Array<PlayerModel>,
 ): number => {
-    let currentPlayerIndex: number = 0;
-    players.forEach((p: PlayerModel, index: number) => {
-        if (p.color === player.color) {
-            currentPlayerIndex = index;
-        }
-    });
-    return currentPlayerIndex;
+  let currentPlayerIndex: number = 0;
+  players.forEach((p: PlayerModel, index: number) => {
+    if (p.color === player.color) {
+      currentPlayerIndex = index;
+    }
+  });
+  return currentPlayerIndex;
 };
 
-export const PlayersOverview = Vue.component("players-overview", {
-    props: ["player"],
-    components: {
-        "player-info": PlayerInfo,
-        "overview-settings": OverviewSettings,
-        "other-player": OtherPlayer,
+export const PlayersOverview = Vue.component('players-overview', {
+  props: {
+    player: {
+      type: Object as () => PlayerModel,
     },
-    data: function () {
-        return {};
+  },
+  components: {
+    'player-info': PlayerInfo,
+    'overview-settings': OverviewSettings,
+    'other-player': OtherPlayer,
+  },
+  data: function() {
+    return {};
+  },
+  methods: {
+    hasPlayers: function(): boolean {
+      return this.player.players.length > 0;
     },
-    methods: {
-        hasPlayers: function (): boolean {
-            return this.player.players.length > 0;
-        },
-        getPlayerOnFocus: function (): PlayerModel {
-            return this.player.players.filter(
-                (p: PlayerModel) => p.color === this.player.color
-            )[0];
-        },
-        getIsFirstForGen: function (player: PlayerModel): boolean {
-            return getCurrentPlayerIndex(player, this.player.players) === 0;
-        },
-        getPlayersInOrder: function (): Array<PlayerModel> {
-            const players = this.player.players;
-            let result: Array<PlayerModel> = [];
-            let currentPlayerOffset: number = 0;
-            const currentPlayerIndex: number = getCurrentPlayerIndex(
-                this.player,
-                this.player.players
-            );
-            
-            // shift the array by putting the player on focus at the tail
-            currentPlayerOffset = currentPlayerIndex + 1;
-            result = players
-                .slice(currentPlayerOffset)
-                .concat(players.slice(0, currentPlayerOffset));
-
-            // return all but the focused user
-            result = result.slice(0, -1);
-
-            //去除当前玩家之后，体退玩家放到最后一位
-            return result.filter(p => !p.exited).concat(result.filter(p => p.exited));
-        },
-        getActionLabel(player: PlayerModel): string {
-            if (player.exited){
-                return ActionLabel.RESIGNED;
-            }
-            if (this.player.passedPlayers.includes(player.color))
-                return ActionLabel.PASSED;
-            if (player.isActive) return ActionLabel.ACTIVE;
-            const notPassedPlayers = this.player.players.filter(
-                (p: PlayerModel) => !this.player.passedPlayers.includes(p.color)
-            );
-
-            const currentPlayerIndex: number = getCurrentPlayerIndex(
-                player,
-                notPassedPlayers
-            );
-            const prevPlayerIndex =
-                currentPlayerIndex === 0
-                    ? notPassedPlayers.length - 1
-                    : currentPlayerIndex - 1;
-            const isNext = notPassedPlayers[prevPlayerIndex].isActive;
-
-            if (isNext && this.player.players.length > SHOW_NEXT_LABEL_MIN) {
-                return ActionLabel.NEXT;
-            }
-
-            return ActionLabel.NONE;
-        },
+    getPlayerOnFocus: function(): PlayerModel {
+      return this.player.players.filter(
+        (p: PlayerModel) => p.color === this.player.color,
+      )[0];
     },
-    template: `
+    getIsFirstForGen: function(player: PlayerModel): boolean {
+      return getCurrentPlayerIndex(player, this.player.players) === 0;
+    },
+    getPlayersInOrder: function(): Array<PlayerModel> {
+      const players = this.player.players;
+      let result: Array<PlayerModel> = [];
+      let currentPlayerOffset: number = 0;
+      const currentPlayerIndex: number = getCurrentPlayerIndex(
+        this.player,
+        this.player.players,
+      );
+
+      // shift the array by putting the player on focus at the tail
+      currentPlayerOffset = currentPlayerIndex + 1;
+      result = players
+        .slice(currentPlayerOffset)
+        .concat(players.slice(0, currentPlayerOffset));
+
+      // return all but the focused user
+      result = result.slice(0, -1);
+
+      // 去除当前玩家之后，体退玩家放到最后一位
+      return result.filter((p) => !p.exited).concat(result.filter((p) => p.exited));
+    },
+    getActionLabel(player: PlayerModel): string {
+      if (player.exited) {
+        return ActionLabel.RESIGNED;
+      }
+      if (this.player.passedPlayers.includes(player.color)) {
+        return ActionLabel.PASSED;
+      }
+      if (player.isActive) return ActionLabel.ACTIVE;
+      const notPassedPlayers = this.player.players.filter(
+        (p: PlayerModel) => !this.player.passedPlayers.includes(p.color),
+      );
+
+      const currentPlayerIndex: number = getCurrentPlayerIndex(
+        player,
+        notPassedPlayers,
+      );
+      const prevPlayerIndex =
+                currentPlayerIndex === 0 ?
+                  notPassedPlayers.length - 1 :
+                  currentPlayerIndex - 1;
+      const isNext = notPassedPlayers[prevPlayerIndex].isActive;
+
+      if (isNext && this.player.players.length > SHOW_NEXT_LABEL_MIN) {
+        return ActionLabel.NEXT;
+      }
+
+      return ActionLabel.NONE;
+    },
+  },
+  template: `
         <div class="players-overview" v-if="hasPlayers()">
             <overview-settings />
             <div class="other_player" v-if="player.players.length > 1">
                 <div v-for="(otherPlayer, index) in getPlayersInOrder()" :key="otherPlayer.id">
-                    <other-player v-if="otherPlayer.id !== player.id || otherPlayer.color === player" :player="otherPlayer" :playerIndex="index"/>
+                    <other-player v-if="otherPlayer.id !== player.id || otherPlayer.color === player.color" :player="otherPlayer" :playerIndex="index"/>
                 </div>
             </div>
             <player-info v-for="(p, index) in getPlayersInOrder()" :activePlayer="player" :player="p"  :key="p.id" :firstForGen="getIsFirstForGen(p)" :actionLabel="getActionLabel(p)" :playerIndex="index"/>

@@ -1,19 +1,19 @@
-import { CardModel } from "./CardModel";
-import { ColonyModel } from "./ColonyModel";
-import { Color } from "../Color";
-// import { ClaimedMilestoneModel } from "./ClaimedMilestoneModel";
-import { VictoryPointsBreakdown } from "../VictoryPointsBreakdown";
-import { ITagCount } from "../ITagCount";
-import { TurmoilModel } from "./TurmoilModel";
-import { IProjectCard } from "../cards/IProjectCard";
-import { ClaimedMilestoneModel } from "./ClaimedMilestoneModel";
-import { CorporationCard } from "../cards/corporation/CorporationCard";
-import { FundedAwardModel } from "./FundedAwardModel";
-import { Phase } from "../Phase";
-import { PlayerInputModel } from "./PlayerInputModel";
-import { RandomMAOptionType } from "../RandomMAOptionType";
-import { SpaceModel } from "./SpaceModel";
-import { IAresData } from "../ares/IAresData";
+import {CardModel} from './CardModel';
+import {ColonyModel} from './ColonyModel';
+import {Color} from '../Color';
+import {VictoryPointsBreakdown} from '../VictoryPointsBreakdown';
+import {ITagCount} from '../ITagCount';
+import {TurmoilModel} from './TurmoilModel';
+import {IProjectCard} from '../cards/IProjectCard';
+import {ClaimedMilestoneModel} from './ClaimedMilestoneModel';
+import {CorporationCard} from '../cards/corporation/CorporationCard';
+import {FundedAwardModel} from './FundedAwardModel';
+import {Phase} from '../Phase';
+import {PlayerInputModel} from './PlayerInputModel';
+import {RandomMAOptionType} from '../RandomMAOptionType';
+import {SpaceModel} from './SpaceModel';
+import {IAresData} from '../ares/IAresData';
+import {SerializedTimer} from '../SerializedTimer';
 
 export interface PlayerModel {
     aresExtension: boolean;
@@ -70,10 +70,12 @@ export interface PlayerModel {
     victoryPointsBreakdown: VictoryPointsBreakdown;
     tags: Array<ITagCount>;
     showOtherPlayersVP: boolean;
+    showTimers: boolean;
     actionsThisGeneration: Array<string>;
     fleetSize: number;
     tradesThisTurn: number;
     selfReplicatingRobotsCards: Array<CardModel>;
+    gameId: string;
     dealtCorporationCards: Array<CorporationCard>;
     dealtPreludeCards: Array<IProjectCard>;
     dealtProjectCards: Array<IProjectCard>;
@@ -85,4 +87,8 @@ export interface PlayerModel {
     undoing :boolean;
     waitingFor: PlayerInputModel | undefined;
     exited?: boolean;
+    canExit?: boolean;
+    block?: boolean;
+    userName: string;
+    timer: SerializedTimer;
 }

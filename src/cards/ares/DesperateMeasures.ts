@@ -1,23 +1,23 @@
-import { CardName } from "../../CardName";
-import { Game } from "../../Game";
-import { Player } from "../../Player";
-import { CardType } from "../CardType";
-import { IProjectCard } from "../IProjectCard";
-import { Tags } from "../Tags";
-import { SelectSpace } from "../../inputs/SelectSpace";
-import { ISpace } from "../../ISpace";
-import { TileType } from "../../TileType";
-import { AresHandler } from "../../ares/AresHandler";
+import {CardName} from '../../CardName';
+import {Game} from '../../Game';
+import {Player} from '../../Player';
+import {CardType} from '../CardType';
+import {IProjectCard} from '../IProjectCard';
+import {SelectSpace} from '../../inputs/SelectSpace';
+import {ISpace} from '../../boards/ISpace';
+import {TileType} from '../../TileType';
+import {AresHandler} from '../../ares/AresHandler';
+import {CardMetadata} from '../CardMetadata';
+import {CardRenderer} from '../render/CardRenderer';
 
 export class DesperateMeasures implements IProjectCard {
-    public cost: number = 1;
-    public tags: Array<Tags> = [Tags.EVENT];
-    public cardType: CardType = CardType.EVENT;
-    public name: CardName = CardName.DESPERATE_MEASURES;
-    public hasRequirements = false;
+    public cost = 1;
+    public tags = [];
+    public cardType = CardType.EVENT;
+    public name = CardName.DESPERATE_MEASURES;
 
     private getHazardTiles(game: Game) {
-      return game.board.spaces.filter(space => AresHandler.hasHazardTile(space));
+      return game.board.spaces.filter((space) => AresHandler.hasHazardTile(space));
     }
 
     public canPlay(_player: Player, game: Game): boolean {
@@ -26,20 +26,29 @@ export class DesperateMeasures implements IProjectCard {
     }
 
     public play(player: Player, game: Game) {
-      return new SelectSpace("Select a hazard space to protect", this.getHazardTiles(game), (space: ISpace) => {
+      return new SelectSpace('Select a hazard space to protect', this.getHazardTiles(game), (space: ISpace) => {
         space.tile!.protectedHazard = true;
         const tileType = space.tile!.tileType;
-        if (TileType.DUST_STORM_MILD  === tileType || TileType.DUST_STORM_SEVERE === tileType) {
+        if (TileType.DUST_STORM_MILD === tileType || TileType.DUST_STORM_SEVERE === tileType) {
           game.increaseOxygenLevel(player, 1);
         } else {
           // is an erosion tile when the expression above is false.
           game.increaseTemperature(player, 1);
         }
         return undefined;
-    });
+      });
     }
 
     public getVictoryPoints() {
       return -2;
+    }
+    // TODO (chosta): add bronze cube visualization
+    public metadata: CardMetadata = {
+      cardNumber: 'A04',
+      description: 'Effect: Place a bronze cube on a dust storm tile and raise oxygen 1 step, or place a bronze cube on an erosion tile and raise the temperature 1 step. The hazard tile with the bronze cube cannot be removed.',
+      renderData: CardRenderer.builder((b) => {
+        b.temperature(1).slash().oxygen(1);
+      }),
+      victoryPoints: -2,
     }
 }

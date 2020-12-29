@@ -1,66 +1,66 @@
-import Vue from "vue";
+import Vue from 'vue';
 
-import {Phase} from "../Phase";
-import { PreferencesManager } from "./PreferencesManager";
+import {Phase} from '../Phase';
+import {PreferencesManager} from './PreferencesManager';
 
-export const MyGames = Vue.component("my-games", {
-    data: function () {
-        return {
-            userId: "",
-            userName: "",
-            games: [],
-            vipDate: ""
-        }
-    },
-    mounted: function() {
-        this.userId = PreferencesManager.loadValue("userId") ;
-        this.userName = PreferencesManager.loadValue("userName") ;
-        if(this.userId.length > 0){
-            this.getGames();
-        }
-    },
-    methods: {
-        getGames: function () {
-            const vueApp = this;
-            const xhr = new XMLHttpRequest();
-            xhr.open("GET", "/api/mygames?id="+this.userId);
-            xhr.onerror = function () {
-                alert("Error getting games data");
-            };
-            xhr.onload = () => {
-                if (xhr.status === 200) {
-                    const result = xhr.response;
-                    if (result && result.mygames && result.mygames instanceof Array) {
-                        (vueApp as any).games = result.mygames;
-                        if(result.vipDate){
-                            (vueApp as any).vipDate = result.vipDate;
-                        }
-                    } else {
-                        alert("Unexpected response fetching games from API");
-                    }
-                } else {
-                    alert("Unexpected response fetching games from API");
-                }
+export const MyGames = Vue.component('my-games', {
+  data: function() {
+    return {
+      userId: '',
+      userName: '',
+      games: [],
+      vipDate: '',
+    };
+  },
+  mounted: function() {
+    this.userId = PreferencesManager.loadValue('userId');
+    this.userName = PreferencesManager.loadValue('userName');
+    if (this.userId.length > 0) {
+      this.getGames();
+    }
+  },
+  methods: {
+    getGames: function() {
+      const vueApp = this;
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', '/api/mygames?id='+this.userId);
+      xhr.onerror = function() {
+        alert('Error getting games data');
+      };
+      xhr.onload = () => {
+        if (xhr.status === 200) {
+          const result = xhr.response;
+          if (result && result.mygames && result.mygames instanceof Array) {
+            (vueApp as any).games = result.mygames;
+            if (result.vipDate) {
+              (vueApp as any).vipDate = result.vipDate;
             }
-            xhr.responseType = "json";
-            xhr.send();            
-        },
-        isGameRunning: function (gamePhase: string): boolean {
-            return (gamePhase === Phase.END) ? false : true;
-        },
-        changeLogin: function (): void {
-            if(this.userName !== ""){
-                this.userId = "";
-                this.userName = "";
-                this.vipDate = "";
-                this.games = [];
-                PreferencesManager.loginOUt();
-            }else{
-                window.location.href = "/login" ;
-            }
+          } else {
+            alert('Unexpected response fetching games from API');
+          }
+        } else {
+          alert('Unexpected response fetching games from API');
         }
+      };
+      xhr.responseType = 'json';
+      xhr.send();
     },
-    template: `
+    isGameRunning: function(gamePhase: string): boolean {
+      return (gamePhase === Phase.END) ? false : true;
+    },
+    changeLogin: function(): void {
+      if (this.userName !== '') {
+        this.userId = '';
+        this.userName = '';
+        this.vipDate = '';
+        this.games = [];
+        PreferencesManager.loginOUt();
+      } else {
+        window.location.href = '/login';
+      }
+    },
+  },
+  template: `
         <div id="games-overview">
             <h1><span v-i18n>Terraforming Mars</span> — <span v-i18n>My Games</span> 
                 <span v-if="this.vipDate"><img src="assets/potato.png" style="height: 50px;vertical-align: middle;" />{{vipDate}}<img src="assets/potato.png" style="height: 50px;vertical-align: middle;" /></span> 
@@ -84,6 +84,6 @@ export const MyGames = Vue.component("my-games", {
                 </li>
             </ul>
         </div>
-    `
+    `,
 });
 

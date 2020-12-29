@@ -11,7 +11,7 @@
   "Gain 10 MC if you have 9 or more different tags. Influence counts as unique tags.": "计算你的不同标志数量加影响力,如果合计至少有9点,则获得10MC",
   "First player removes 1 ocean tile from the gameboard. Gain 1 standard resource per influence.": "起始玩家从游戏版图上移除1块海洋版块。每点影响力获得1个标准资源(自选)",
   "Lose all plants except 3 + influence.":"保留'3+影响力'个植物资源,丢弃多余的",
-  "Count your influence plus Building tags and City tiles (no limits). The player with most (or 10 in solo) gains 2 TR, the 2nd (or 5 in solo) gains 1 TR (ties are friendly).":  "计算'建筑标志+城市板块+影响力'的总数(无限制),点数最大的玩家获得2改造度(TR),第二名获得1改造度(TR),同分时两人都获得",
+  "Count your influence plus Building tags and City tiles (no limits). The player with most (or 10 in solo) gains 2 TR, the 2nd (or 5 in solo) gains 1 TR (ties are friendly).":  "计算'建筑标志+城市版块+影响力'的总数(无限制),点数最大的玩家获得2改造度(TR),第二名获得1改造度(TR),同分时两人都获得",
   "Gain 2 MC for each influence and set of 5 TR over 15 (max 5 sets).": "计算'影响力+(改造度-15)/5'的点数(最多5点),每点获得2MC",
   "Lose all heat. Lose 2 MC for each Building tag (max 5, then reduced by influence).": "损失所有热能资源。每有1个建筑标志,损失2MC(最多5个标志),每有1点影响力,少扣2MC",
   "Gain 2 MC for each Earth tag (max 5) and influence.": "每有1个地球标志(最多5个)和影响力,获得2MC",
@@ -34,5 +34,7 @@
   "Gain 2 MC for each City tile (max 5) and influence.": "每有1个城市版块(最多5个)和影响力,获得2MC",
   "Increase temperature 2 steps. Increase heat production 1 step per influence.": "提升火星温度2格。每有1点影响力,提升1格热能产能",
   "Reduce TR 4 steps. Each influence prevents 1 step.": "降低最多4改造度(TR)。每有1点影响力少降低1改造度(TR)",
-  "Diaspora": "流散"
+  "Diaspora": "流散",
+  "Lose 3 MC for each colony (max 5, then reduced by influence).":"每一个殖民地损失3MC（最多5），每有一点影响力少计算1个"
+
 }

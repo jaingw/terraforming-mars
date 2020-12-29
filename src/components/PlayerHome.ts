@@ -1,112 +1,125 @@
- 
-import Vue from "vue";
 
-import { Board } from "./Board";
-import { Card } from "./card/Card";
-import { Milestone } from "./Milestone";
-import { Award } from "./Award";
-import { PlayersOverview } from "./overview/PlayersOverview";
-import { WaitingFor } from "./WaitingFor";
-import { Preferences } from "./Preferences";
-import { PlayerModel } from "../models/PlayerModel";
-import { Colony } from "./Colony";
-import { LogPanel } from "./LogPanel";
-import { PlayerMixin } from "./PlayerMixin";
-import { Turmoil } from "./Turmoil";
-import { playerColorClass } from "../utils/utils";
-import { DynamicTitle } from "./common/DynamicTitle";
-import { Button } from "../components/common/Button";
-import { PreferencesManager } from "./PreferencesManager";
+import Vue from 'vue';
+
+import {Board} from './Board';
+import {Card} from './card/Card';
+import {Milestone} from './Milestone';
+import {Award} from './Award';
+import {PlayersOverview} from './overview/PlayersOverview';
+import {WaitingFor} from './WaitingFor';
+import {Preferences} from './Preferences';
+import {PlayerModel} from '../models/PlayerModel';
+import {Colony} from './Colony';
+import {LogPanel} from './LogPanel';
+import {PlayerMixin} from './PlayerMixin';
+import {Turmoil} from './Turmoil';
+import {playerColorClass} from '../utils/utils';
+import {DynamicTitle} from './common/DynamicTitle';
+import {Button} from './common/Button';
+import {PreferencesManager} from './PreferencesManager';
+import {SortableCards} from './SortableCards';
+import {TopBar} from './TopBar';
 
 
-const dialogPolyfill = require("dialog-polyfill");
+const dialogPolyfill = require('dialog-polyfill');
 
-export const PlayerHome = Vue.component("player-home", {
-    props: ["player", "settings"],
-    components: {
-        "board": Board,
-        "dynamic-title": DynamicTitle,
-        Card,
-        "players-overview": PlayersOverview,
-        "waiting-for": WaitingFor,
-        "milestone": Milestone,
-        "award": Award,
-        "preferences": Preferences,
-        "colony": Colony,
-        "log-panel": LogPanel,
-        "turmoil": Turmoil,
-        "Button": Button,
+import * as raw_settings from '../../assets/settings.json';
+
+export const PlayerHome = Vue.component('player-home', {
+  props: {
+    player: {
+      type: Object as () => PlayerModel,
     },
-    data: function () {
-        return {
-            soundtip: false,
-            userName: ""
-        }
-    }, 
-    mixins: [PlayerMixin],
-    methods: {
-        getPlayerCssForTurnOrder: (
-            player: PlayerModel,
-            highlightActive: boolean
-        ): string => {
-            const classes = ["highlighter_box"];
+    settings: {
+      type: Object as () => typeof raw_settings,
+    },
+  },
+  components: {
+    'board': Board,
+    'dynamic-title': DynamicTitle,
+    Card,
+    'players-overview': PlayersOverview,
+    'waiting-for': WaitingFor,
+    'milestone': Milestone,
+    'award': Award,
+    'preferences': Preferences,
+    'colony': Colony,
+    'log-panel': LogPanel,
+    'turmoil': Turmoil,
+    'Button': Button,
+    'sortable-cards': SortableCards,
+    'top-bar': TopBar,
+  },
+  data: function() {
+    return {
+      soundtip: false as boolean | unknown[],
+      userName: '',
+    };
+  },
+  mixins: [PlayerMixin],
+  methods: {
+    getPlayerCssForTurnOrder: (
+      player: PlayerModel,
+      highlightActive: boolean,
+    ): string => {
+      const classes = ['highlighter_box'];
 
-            if(player.exited){
-                classes.push("player_exited");
-            }
-	        if (highlightActive && player.isActive) {
-                classes.push("player_is_active");
-            }
-            // hilightActive 显示小框的高亮
-            if (!highlightActive &&  player.waitingFor !== undefined &&  
-                (!player.isActive || player.phase === "drafting" ||  player.phase === "research" )){
-                classes.push(" player_is_waiting");
-            }
-            if (highlightActive) {
-                classes.push(playerColorClass(player.color, "bg"));
-            }
-            return classes.join(" ");
-        },
-        getFleetsCountRange: function (player: PlayerModel): Array<number> {
-            const fleetsRange: Array<number> = [];
-            for (let i = 0; i < player.fleetSize - player.tradesThisTurn; i++) {
-                fleetsRange.push(i);
-            }
-            return fleetsRange;
-        },
-        getGenerationText: function (): string {
-            if (this.player.players.length === 1) {
-                const MAX_GEN = this.player.preludeExtension ? 12 : 14;
-                let retText =
-                    "generation " + this.player.generation + " of " + MAX_GEN;
-                if (MAX_GEN === this.player.generation) {
-                    retText =
-                        "<span class='last-generation blink-animation'>" +
+      if (player.exited) {
+        classes.push('player_exited');
+      }
+      if (highlightActive && player.isActive) {
+        classes.push('player_is_active');
+      }
+      // hilightActive 显示小框的高亮
+      if (!highlightActive && player.waitingFor !== undefined &&
+        (!player.isActive || player.phase === 'drafting' || player.phase === 'research' )) {
+        classes.push(' player_is_waiting');
+      }
+      if (highlightActive) {
+        classes.push(playerColorClass(player.color, 'bg'));
+      }
+      return classes.join(' ');
+    },
+    getFleetsCountRange: function(player: PlayerModel): Array<number> {
+      const fleetsRange: Array<number> = [];
+      for (let i = 0; i < player.fleetSize - player.tradesThisTurn; i++) {
+        fleetsRange.push(i);
+      }
+      return fleetsRange;
+    },
+    getGenerationText: function(): string {
+      if (this.player.players.length === 1) {
+        const MAX_GEN = this.player.preludeExtension ? 12 : 14;
+        let retText =
+                    'generation ' + this.player.generation + ' of ' + MAX_GEN;
+        if (MAX_GEN === this.player.generation) {
+          retText =
+                        '<span class=\'last-generation blink-animation\'>' +
                         retText +
-                        "</span>";
-                }
-
-                return retText;
-            }
-
-            return "generation " + this.player.generation;
-        },
-        updateTips: function(){
-            PreferencesManager.saveValue("enable_sounds",this.soundtip ? "1" : "0");
+                        '</span>';
         }
+
+        return retText;
+      }
+
+      return 'generation ' + this.player.generation;
     },
-    created() {
-        if(window.localStorage){
-            this.soundtip = PreferencesManager.loadValue("enable_sounds") === "1";
-            this.userName = PreferencesManager.loadValue("userName") ;
-        }
+    updateTips: function() {
+      PreferencesManager.saveValue('enable_sounds', this.soundtip ? '1' : '0');
     },
-    mounted: function () {
-        dialogPolyfill.default.registerDialog(
-            document.getElementById("dialog-default")
-        );
-    },
-    template: `
+  },
+  created() {
+    if (window.localStorage) {
+      this.soundtip = PreferencesManager.loadValue('enable_sounds') === '1';
+      this.userName = PreferencesManager.loadValue('userName');
+    }
+  },
+  mounted: function() {
+    dialogPolyfill.default.registerDialog(
+      document.getElementById('dialog-default'),
+    );
+  },
+  template: `
         <div id="player-home" :class="player.turmoil ? 'with-turmoil': ''">
             <h2 :class="'game-title player_color_'+ player.color">
                 <a :href="'/game?id='+ player.gameId" v-i18n>Terraforming Mars</a>
@@ -124,6 +137,8 @@ export const PlayerHome = Vue.component("player-home", {
                 </dialog>
             </section>
 
+            <top-bar :player="player" />
+
             <div v-if="player.phase === 'end'">
                 <div class="player_home_block">
                     <dynamic-title title="This game is over!" :color="player.color"/>
@@ -133,7 +148,6 @@ export const PlayerHome = Vue.component("player-home", {
 
             <preferences v-trim-whitespace
               :player="player" 
-              :player_name="player.name"
               :player_color="player.color"
               :generation="player.generation"
               :coloniesCount="player.colonies.length"
@@ -182,7 +196,7 @@ export const PlayerHome = Vue.component("player-home", {
 
                 <div class="player_home_block player_home_block--actions nofloat">
                     <a name="actions" class="player_home_anchor"></a>
-		            <dynamic-title title="Actions" :color="player.color" style="display: inline-block;"  />
+                    <dynamic-title title="Actions" :color="player.color" style="display: inline-block;"  />
                     <label class="form-switch" style="margin-left: 20px;display: inline-block;">
                         <input type="checkbox" name="soundtip" v-model="soundtip" v-on:change="updateTips" >
                         <i class="form-icon"></i> <span v-i18n>语音提示</span>
@@ -200,9 +214,7 @@ export const PlayerHome = Vue.component("player-home", {
                 <a name="cards" class="player_home_anchor"></a>
                 <div class="player_home_block player_home_block--hand" v-if="player.cardsInHand.length > 0">
                     <dynamic-title title="Cards In Hand" :color="player.color" :withAdditional="true" :additional="player.cardsInHandNbr.toString()" />
-                    <div v-for="card in player.cardsInHand" :key="card.name" class="cardbox">
-                        <Card :card="card"/>
-                    </div>
+                    <sortable-cards :playerId="player.id" :cards="player.cardsInHand" />
                 </div>
 
                 <div class="player_home_block player_home_block--cards">

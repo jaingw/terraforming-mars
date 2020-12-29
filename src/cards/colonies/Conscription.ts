@@ -1,31 +1,45 @@
-import { IProjectCard } from "../IProjectCard";
-import { CardType } from "../CardType";
-import { Tags } from "../Tags";
-import { Player } from "../../Player";
-import { Game } from "../../Game";
-import { CardName } from '../../CardName';
-
+import {IProjectCard} from '../IProjectCard';
+import {CardType} from '../CardType';
+import {Tags} from '../Tags';
+import {Player} from '../../Player';
+import {Game} from '../../Game';
+import {CardName} from '../../CardName';
+import {CardMetadata} from '../CardMetadata';
+import {CardRequirements} from '../CardRequirements';
+import {CardRenderer} from '../render/CardRenderer';
+import {CardRenderItemSize} from '../render/CardRenderItemSize';
 
 export class Conscription implements IProjectCard {
-    public cardType: CardType = CardType.EVENT;
-    public cost: number = 5;
-    public tags: Array<Tags> = [Tags.EARTH];
-    public name: CardName = CardName.CONSCRIPTION;
+    public cardType = CardType.EVENT;
+    public cost = 5;
+    public tags = [Tags.EARTH];
+    public name = CardName.CONSCRIPTION;
 
     public canPlay(player: Player): boolean {
-        return player.getTagCount(Tags.EARTH) >= 2;
+      return player.getTagCount(Tags.EARTH) >= 2;
     }
 
     public getCardDiscount(player: Player, _game: Game) {
-        if (player.lastCardPlayed !== undefined && player.lastCardPlayed.name === this.name) {
-            return 16;
-        }
-        return 0;
+      if (player.lastCardPlayed !== undefined && player.lastCardPlayed.name === this.name) {
+        return 16;
+      }
+      return 0;
     }
     public play() {
-        return undefined;
-    } 
+      return undefined;
+    }
     public getVictoryPoints() {
-        return -1;
+      return -1;
+    }
+    public metadata: CardMetadata = {
+      cardNumber: 'C05',
+      requirements: CardRequirements.builder((b) => b.tag(Tags.EARTH, 2)),
+      renderData: CardRenderer.builder((b) => {
+        b.effectBox((eb) => {
+          eb.text('next card', CardRenderItemSize.SMALL, true).startEffect.megacredits(-16);
+          eb.description('Requires 2 Earth tags. The next card you play this generation costs 16 MC less.');
+        });
+      }),
+      victoryPoints: -1,
     }
 }
