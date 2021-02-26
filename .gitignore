@@ -24,3 +24,5 @@ pid
 
 # Local Packages
 node_modules/
+/src/genfiles/
+/.eslintcache
