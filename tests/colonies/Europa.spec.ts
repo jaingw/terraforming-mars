@@ -19,24 +19,24 @@ describe('Europa', function() {
   });
 
   it('Should build', function() {
-    europa.addColony(player, game);
+    europa.addColony(player);
     expect(game.deferredActions).has.lengthOf(1);
-    const action = game.deferredActions.shift()!;
+    const action = game.deferredActions.pop()!;
     expect(action).to.be.an.instanceof(PlaceOceanTile);
     expect(action.player).to.eq(player);
   });
 
   it('Should trade', function() {
-    europa.trade(player, game);
+    europa.trade(player);
     expect(player.getProduction(Resources.MEGACREDITS)).to.eq(1);
     expect(player2.getProduction(Resources.MEGACREDITS)).to.eq(0);
   });
 
   it('Should give trade bonus', function() {
-    europa.addColony(player, game);
-    game.deferredActions.shift();
+    europa.addColony(player);
+    game.deferredActions.pop();
 
-    europa.trade(player2, game);
+    europa.trade(player2);
     game.deferredActions.runAll(() => {});
 
     expect(player.getProduction(Resources.MEGACREDITS)).to.eq(0);

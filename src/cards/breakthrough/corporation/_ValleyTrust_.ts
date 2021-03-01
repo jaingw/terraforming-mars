@@ -14,11 +14,12 @@ export class _ValleyTrust_ implements CorporationCard {
     public startingMegaCredits: number = 37;
     public cardType: CardType = CardType.CORPORATION;
 
-    public getCardDiscount(_player: Player, _game: Game, card: IProjectCard) {
+    public getCardDiscount(_player: Player, card: IProjectCard) {
       return card.tags.filter((tag) => tag === Tags.SCIENCE).length * 2;
     }
 
-    public initialAction(player: Player, game: Game) {
+    public initialAction(player: Player) {
+      const game:Game = player.game;
       if (game.gameOptions.preludeExtension) {
         const cardsDrawn: Array<IProjectCard> = [
           game.dealer.dealPreludeCard(),
@@ -27,7 +28,7 @@ export class _ValleyTrust_ implements CorporationCard {
           game.dealer.dealPreludeCard(),
         ];
         return new SelectCard('Choose prelude card to play', 'Play', cardsDrawn, (foundCards: Array<IProjectCard>) => {
-          return player.playCard(game, foundCards[0]);
+          return player.playCard(foundCards[0]);
         }, 1, 1);
       } else {
         console.warn('Prelude extension isn\'t selected.');
@@ -36,6 +37,10 @@ export class _ValleyTrust_ implements CorporationCard {
     }
 
     public play() {
+      return undefined;
+    }
+
+    public get metadata() {
       return undefined;
     }
 }

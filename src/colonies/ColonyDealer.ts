@@ -11,15 +11,15 @@ import {Miranda} from './Miranda';
 import {Pluto} from './Pluto';
 import {Enceladus} from './Enceladus';
 import {Iapetus} from '../cards/community/Iapetus';
-import {Mercury} from '../cards/community/Mercury';
 import {ColonyName} from './ColonyName';
-import {Hygiea} from '../cards/community/Hygiea';
 import {Titania} from '../cards/community/Titania';
 import {Venus} from '../cards/community/Venus';
 import {Leavitt} from '../cards/community/Leavitt';
 import {Pallas} from '../cards/community/Pallas';
 import {SerializedColony} from '../SerializedColony';
 import {Player} from '../Player';
+import {Mercury} from '../cards/community/Mercury';
+import {Hygiea} from '../cards/community/Hygiea';
 
 export interface IColonyFactory<T> {
     colonyName: ColonyName;
@@ -43,17 +43,22 @@ export const ALL_COLONIES_TILES: Array<IColonyFactory<Colony>> = [
 
 export const COMMUNITY_COLONIES_TILES: Array<IColonyFactory<Colony>> = [
   {colonyName: ColonyName.IAPETUS, Factory: Iapetus},
-  {colonyName: ColonyName.MERCURY, Factory: Mercury},
-  {colonyName: ColonyName.HYGIEA, Factory: Hygiea},
+  // {colonyName: ColonyName.MERCURY, Factory: Mercury},
+  // {colonyName: ColonyName.HYGIEA, Factory: Hygiea},
   {colonyName: ColonyName.TITANIA, Factory: Titania},
   {colonyName: ColonyName.VENUS, Factory: Venus},
   {colonyName: ColonyName.LEAVITT, Factory: Leavitt},
   {colonyName: ColonyName.PALLAS, Factory: Pallas},
 ];
 
+export const COMMUNITY_COLONIES_TILES_REMOVED: Array<IColonyFactory<Colony>> = [
+  {colonyName: ColonyName.MERCURY, Factory: Mercury},
+  {colonyName: ColonyName.HYGIEA, Factory: Hygiea},
+];
+
 // Function to return a card object by its name
 export function getColonyByName(colonyName: string): Colony | undefined {
-  const colonyTiles = ALL_COLONIES_TILES.concat(COMMUNITY_COLONIES_TILES);
+  const colonyTiles = ALL_COLONIES_TILES.concat(COMMUNITY_COLONIES_TILES).concat(COMMUNITY_COLONIES_TILES_REMOVED);
   const colonyFactory = colonyTiles.find((colonyFactory) => colonyFactory.colonyName === colonyName);
   if (colonyFactory !== undefined) {
     return new colonyFactory.Factory();
@@ -64,6 +69,10 @@ export function getColonyByName(colonyName: string): Colony | undefined {
 export function loadColoniesFromJSON(colonies: Array<SerializedColony>, players:Array<Player>): Array<Colony> {
   const result: Array<Colony> = [];
   for (const serialized of colonies) {
+    if (serialized === undefined || serialized === null) {
+      console.warn(`colony ${serialized} not found`);
+      continue;
+    }
     const colony = getColonyByName(serialized.name);
     if (colony !== undefined) {
       colony.isActive = serialized.isActive;

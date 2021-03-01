@@ -1,6 +1,5 @@
 import {Phase} from './Phase';
-import {ClaimedMilestone} from './ClaimedMilestone';
-import {FundedAward} from './FundedAward';
+import {ClaimedMilestone} from './milestones/ClaimedMilestone';
 import {IMilestone} from './milestones/IMilestone';
 import {IAward} from './awards/IAward';
 import {ColonyDealer} from './colonies/ColonyDealer';
@@ -13,6 +12,8 @@ import {GameOptions} from './Game';
 import {IAresData} from './ares/IAresData';
 import {LogMessage} from './LogMessage';
 import {SerializedBoard} from './boards/SerializedBoard';
+import {SerializedMoonData} from './moon/SerializedMoonData';
+import {FundedAward} from './awards/FundedAward';
 
 export interface SerializedGame {
     exitedPlayers: Array<SerializedPlayer> ;
@@ -40,6 +41,7 @@ export interface SerializedGame {
     lastSaveId: number;
     milestones: Array<IMilestone>;
     monsInsuranceOwner: SerializedPlayer | undefined;
+    moonData: SerializedMoonData | undefined;
     oxygenLevel: number;
     passedPlayers: Array<SerializedPlayer>;
     phase: Phase;
@@ -55,5 +57,11 @@ export interface SerializedGame {
 
     createtime :string;
     updatetime :string;
+    breakthrough: boolean;
+    heatFor: boolean,
+    loadState: string,
+    firstExited: boolean,
+    soloMode: boolean,
+    unDraftedCards: Map<Object, Object>,
 }
 

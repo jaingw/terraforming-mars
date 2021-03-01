@@ -3,5 +3,7 @@ export enum ActionLabel {
     PASSED = 'passed',
     RESIGNED = 'resigned ',
     NEXT = 'next',
-    NONE = '',
+    NONE = 'none',
+    DRAFTING = 'drafting',
+    RESEARCHING = 'researching',
 }

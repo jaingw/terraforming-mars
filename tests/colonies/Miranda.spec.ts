@@ -22,16 +22,16 @@ describe('Miranda', function() {
 
   it('Should activate', function() {
     expect(miranda.isActive).is.false;
-    player.playCard(game, pets);
+    player.playCard(pets);
     expect(miranda.isActive).is.true;
   });
 
   it('Should build', function() {
-    player.playCard(game, pets);
-    miranda.addColony(player, game);
+    player.playCard(pets);
+    miranda.addColony(player);
 
     expect(game.deferredActions).has.lengthOf(1);
-    const action = game.deferredActions.shift()!;
+    const action = game.deferredActions.pop()!;
     expect(action).to.be.an.instanceof(AddResourcesToCard);
     expect(action.player).to.eq(player);
     // Should directly add to Pets, since there's no other target
@@ -41,12 +41,14 @@ describe('Miranda', function() {
   });
 
   it('Should trade', function() {
-    player.playCard(game, pets);
-    miranda.trade(player, game);
+    player.playCard(pets);
+    miranda.trade(player);
 
-    // Should have AddResourcesToCard, GiveColonyBonus and decrease track
+    // Should have GiveColonyBonus, AddResourcesToCard and decrease track
     expect(game.deferredActions).has.lengthOf(3);
-    const action = game.deferredActions.shift()!;
+    game.deferredActions.pop(); // GiveColonyBonus
+
+    const action = game.deferredActions.pop()!; // AddResourcesToCard
     expect(action).to.be.an.instanceof(AddResourcesToCard);
     expect(action.player).to.eq(player);
     // Should directly add to Pets, since there's no other target
@@ -57,16 +59,14 @@ describe('Miranda', function() {
 
   it('Should give trade bonus', function() {
     const predators = new Predators();
-    player.playCard(game, pets);
-    player2.playCard(game, predators);
+    player.playCard(pets);
+    player2.playCard(predators);
 
-    miranda.addColony(player, game);
-    game.deferredActions.shift()!.execute(); // Gain placement animals
+    miranda.addColony(player);
+    game.deferredActions.pop()!.execute(); // Gain placement animals
 
-    miranda.trade(player2, game);
-    game.deferredActions.shift()!.execute(); // Gain trade animals
-
-    game.deferredActions.runAll(() => {}); // Trade bonus
+    miranda.trade(player2);
+    game.deferredActions.runAll(() => {}); // Gain Trade & Bonus
 
     expect(pets.resourceCount).to.eq(2);
     expect(predators.resourceCount).to.eq(1);

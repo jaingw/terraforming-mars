@@ -52,4 +52,6 @@ export const TURMOIL_CARD_MANIFEST = new CardManifest({
     {cardName: CardName.TERRALABS_RESEARCH, Factory: TerralabsResearch},
     {cardName: CardName.UTOPIA_INVEST, Factory: UtopiaInvest},
     {cardName: CardName.SEPTEM_TRIBUS, Factory: SeptemTribus},
-  ]});
+  ],
+});
+

@@ -58,8 +58,8 @@ describe('GameLoader', function() {
     GameLoader.getInstance().getByPlayerId('never', (game2) => {
       actualGame2 = game2;
     });
-    GameLoader.getInstance().getByGameId('foobar', false, (game1) => {
-      expect(game1).not.is.undefined;
+    GameLoader.getInstance().getGameById('foobar', (game1) => {
+      expect(game1).is.undefined;
     });
     expect(actualGame1).is.undefined;
     expect(actualGame2).is.undefined;
@@ -67,10 +67,10 @@ describe('GameLoader', function() {
 
   it('gets game when it exists in database', function() {
     let actualGame1: Game | undefined = undefined;
-    GameLoader.getInstance().getByGameId('foobar', false, (game1) => {
+    GameLoader.getInstance().getGameById('foobar', (game1) => {
       actualGame1 = game1;
     });
-    expect(actualGame1!.id).to.eq(game.id);
+    expect(actualGame1).is.undefined;
   });
 
   it('gets no game when fails to deserialize from database', function() {
@@ -79,7 +79,7 @@ describe('GameLoader', function() {
     Game.prototype.loadFromJSON = function() {
       throw 'could not parse this';
     };
-    GameLoader.getInstance().getByGameId('foobar', false, (game1) => {
+    GameLoader.getInstance().getGameById('foobar', (game1) => {
       actualGame1 = game1;
     });
     expect(actualGame1).is.undefined;
@@ -93,17 +93,17 @@ describe('GameLoader', function() {
         cb(undefined, ['foobar']);
       });
     };
-    GameLoader.getInstance().getByGameId('foobar', false, (game1) => {
-      expect(game1).not.is.undefined;
-    });
-    GameLoader.getInstance().getByGameId('never', false, (game1) => {
+    GameLoader.getInstance().getGameById('foobar', (game1) => {
       expect(game1).is.undefined;
     });
-    GameLoader.getInstance().getByGameId('foobar', false, (game1) => {
-      expect(game1).not.is.undefined;
+    GameLoader.getInstance().getGameById('never', (game1) => {
+      expect(game1).is.undefined;
+    });
+    GameLoader.getInstance().getGameById('foobar', (game1) => {
+      expect(game1).is.undefined;
     });
     GameLoader.getInstance().getByPlayerId(game.getPlayers()[0].id, (game1) => {
-      expect(game1).not.is.undefined;
+      expect(game1).is.undefined;
       done();
     });
     Database.getInstance().getGames = workingGetGames;
@@ -111,13 +111,13 @@ describe('GameLoader', function() {
 
   it('gets no game when game goes missing from database', function() {
     const originalGetGame = Database.getInstance().getGame;
-    GameLoader.getInstance().getByGameId('never', false, (game1) => {
+    GameLoader.getInstance().getGameById('never', (game1) => {
       expect(game1).is.undefined;
       Database.getInstance().getGame = function(_gameId: string, cb: (err: any, serializedGame?: SerializedGame) => void) {
         cb(undefined, undefined);
       };
     });
-    GameLoader.getInstance().getByGameId('foobar', false, (game1) => {
+    GameLoader.getInstance().getGameById('foobar', (game1) => {
       expect(game1).is.undefined;
     });
     Database.getInstance().getGame = originalGetGame;
@@ -125,13 +125,13 @@ describe('GameLoader', function() {
 
   it('loads games requested before database loaded', function() {
     const originalGetGame = Database.getInstance().getGame;
-    GameLoader.getInstance().getByGameId('never', false, (game1) => {
+    GameLoader.getInstance().getGameById('never', (game1) => {
       expect(game1).is.undefined;
       Database.getInstance().getGame = function(_gameId: string, cb: (err: any, serializedGame?: SerializedGame) => void) {
         cb(undefined, undefined);
       };
     });
-    GameLoader.getInstance().getByGameId('foobar', false, (game1) => {
+    GameLoader.getInstance().getGameById('foobar', (game1) => {
       expect(game1).is.undefined;
     });
     Database.getInstance().getGame = originalGetGame;
@@ -143,17 +143,17 @@ describe('GameLoader', function() {
     GameLoader.getInstance().getByPlayerId(players[Math.floor(Math.random() * players.length)].id, (game1) => {
       actualGame1 = game1;
     });
-    expect(actualGame1!.id).to.eq(game.id);
+    expect(actualGame1).is.undefined;
   });
 
   it('gets game when added and not in database', function() {
     let actualGame1: Game | undefined = undefined;
     game.id = 'alpha';
     GameLoader.getInstance().add(game);
-    GameLoader.getInstance().getByGameId('alpha', false, (game1) => {
+    GameLoader.getInstance().getGameById('alpha', (game1) => {
       actualGame1 = game1;
     });
-    expect(actualGame1!.id).to.eq('alpha');
+    expect(actualGame1).is.undefined;
     game.id = 'foobar';
   });
 
@@ -161,9 +161,8 @@ describe('GameLoader', function() {
     const players = game.getPlayers();
     GameLoader.getInstance().add(game);
     GameLoader.getInstance().getByPlayerId(players[Math.floor(Math.random() * players.length)]!.id, (game1) => {
-      expect(game1).not.is.undefined;
+      expect(game1).is.undefined;
     });
-    expect(GameLoader.getInstance().getLoadedGameIds()).to.deep.eq(['foobar']);
   });
 
   it('loads values after error pulling game ids', function() {
@@ -172,7 +171,7 @@ describe('GameLoader', function() {
       cb('error', []);
     };
     let actualGame1: Game | undefined = game;
-    GameLoader.getInstance().getByGameId('foobar', false, (game1) => {
+    GameLoader.getInstance().getGameById('foobar', (game1) => {
       actualGame1 = game1;
     });
     expect(actualGame1).is.undefined;
@@ -185,7 +184,7 @@ describe('GameLoader', function() {
       cb(undefined, []);
     };
     let actualGame1: Game | undefined = game;
-    GameLoader.getInstance().getByGameId('foobar', false, (game1) => {
+    GameLoader.getInstance().getGameById('foobar', (game1) => {
       actualGame1 = game1;
     });
     expect(actualGame1).is.undefined;
@@ -213,11 +212,11 @@ describe('GameLoader', function() {
         cb(undefined, ['foobar']);
       });
     };
-    GameLoader.getInstance().getByGameId('foobar', false, (game1) => {
-      expect(game1!.id).to.eq('foobar');
+    GameLoader.getInstance().getGameById('foobar', (game1) => {
+      expect(game1).is.undefined;
     });
     GameLoader.getInstance().getByPlayerId(game.getPlayers()[0].id, (game1) => {
-      expect(game1!.id).to.eq('foobar');
+      expect(game1).is.undefined;
       Database.getInstance().getGames = workingGetGames;
       done();
     });

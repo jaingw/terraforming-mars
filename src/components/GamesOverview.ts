@@ -3,9 +3,12 @@ import Vue from 'vue';
 import {Phase} from '../Phase';
 import {PreferencesManager} from './PreferencesManager';
 
+import * as constants from '../constants';
+
 export const GamesOverview = Vue.component('games-overview', {
   data: function() {
     return {
+      constants,
       serverId: '',
       games: {},
     };
@@ -68,12 +71,12 @@ export const GamesOverview = Vue.component('games-overview', {
   },
   template: `
         <div id="games-overview">
-            <h1>Terraforming Mars — Games Overview</h1>
+            <h1>{{ constants.APP_NAME }} — Games Overview</h1>
             <p>The following games are available on this server:</p>
             <ul>
                 <li v-for="game in games">
                     <a v-bind:href="'/game?id='+game.id" target="_blank" >{{game.id}}</a> 
-                    <span>{{game.createtime}}  {{game.updatetime}}  </span>
+                    <span>{{game.createtime.slice(5, 16)}}  {{game.updatetime.slice(5, 16)}}  </span>
                     age: {{game.gameAge}} 
                     with {{game.players.length}} player(s) : 
                     <span class="player_home_block nofloat" >

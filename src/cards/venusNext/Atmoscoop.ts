@@ -13,31 +13,47 @@ import {LogHelper} from '../../LogHelper';
 import * as constants from './../../constants';
 import {PartyHooks} from '../../turmoil/parties/PartyHooks';
 import {PartyName} from '../../turmoil/parties/PartyName';
-import {CardMetadata} from '../CardMetadata';
 import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
 import {CardRenderItemSize} from '../render/CardRenderItemSize';
+import {Card} from '../Card';
 
-export class Atmoscoop implements IProjectCard {
-  public cost = 22;
-  public tags = [Tags.JOVIAN, Tags.SPACE];
-  public name = CardName.ATMOSCOOP;
-  public cardType = CardType.AUTOMATED;
+export class Atmoscoop extends Card implements IProjectCard {
+  constructor() {
+    super({
+      cardType: CardType.AUTOMATED,
+      name: CardName.ATMOSCOOP,
+      cost: 22,
+      tags: [Tags.JOVIAN, Tags.SPACE],
 
-  public canPlay(player: Player, game: Game): boolean {
-    const meetsTagRequirements = player.getTagCount(Tags.SCIENCE) >= 3;
-    const remainingTemperatureSteps = (constants.MAX_TEMPERATURE - game.getTemperature()) / 2;
-    const remainingVenusSteps = (constants.MAX_VENUS_SCALE - game.getVenusScaleLevel()) / 2;
+      requirements: CardRequirements.builder((b) => b.tag(Tags.SCIENCE, 3)),
+      metadata: {
+        cardNumber: '217',
+        description: 'Requires 3 Science tags. Either raise the temperature 2 steps, or raise Venus 2 steps. Add 2 Floaters to ANY card.',
+        renderData: CardRenderer.builder((b) => {
+          b.temperature(2).or(CardRenderItemSize.SMALL).venus(2).br;
+          b.floaters(2).asterix();
+        }),
+        victoryPoints: 1,
+      },
+    });
+  }
+
+  public canPlay(player: Player): boolean {
+    const meetsTagRequirements = super.canPlay(player);
+    const remainingTemperatureSteps = (constants.MAX_TEMPERATURE - player.game.getTemperature()) / 2;
+    const remainingVenusSteps = (constants.MAX_VENUS_SCALE - player.game.getVenusScaleLevel()) / 2;
     const stepsRaised = Math.min(remainingTemperatureSteps, remainingVenusSteps, 2);
 
-    if (PartyHooks.shouldApplyPolicy(game, PartyName.REDS)) {
-      return player.canAfford(this.cost + constants.REDS_RULING_POLICY_COST * stepsRaised, game, false, true) && meetsTagRequirements;
+    if (PartyHooks.shouldApplyPolicy(player.game, PartyName.REDS)) {
+      return player.canAfford(this.cost + constants.REDS_RULING_POLICY_COST * stepsRaised, false, true) && meetsTagRequirements;
     }
 
     return meetsTagRequirements;
   }
 
-  public play(player: Player, game: Game) {
+  public play(player: Player) {
+    const game = player.game;
     const floaterCards = player.getResourceCards(ResourceType.FLOATER);
 
     if (this.temperatureIsMaxed(game) && this.venusIsMaxed(game) && floaterCards.length === 0) {
@@ -61,21 +77,21 @@ export class Atmoscoop implements IProjectCard {
       floaterCards,
       (foundCards: Array<ICard>) => {
         player.addResourceTo(foundCards[0], 2);
-        LogHelper.logAddResource(game, player, foundCards[0], 2);
+        LogHelper.logAddResource(player, foundCards[0], 2);
         return undefined;
       },
     );
 
     if (!this.temperatureIsMaxed(game) && this.venusIsMaxed(game)) {
-      game.increaseTemperature(player, 2);
+      player.game.increaseTemperature(player, 2);
     } else if (this.temperatureIsMaxed(game) && !this.venusIsMaxed(game)) {
-      game.increaseVenusScaleLevel(player, 2);
+      player.game.increaseVenusScaleLevel(player, 2);
     }
 
     switch (floaterCards.length) {
     case 1:
       player.addResourceTo(floaterCards[0], 2);
-      LogHelper.logAddResource(game, player, floaterCards[0], 2);
+      LogHelper.logAddResource(player, floaterCards[0], 2);
 
     case 0:
       if (!this.temperatureIsMaxed(game) && !this.venusIsMaxed(game)) {
@@ -103,15 +119,4 @@ export class Atmoscoop implements IProjectCard {
   private venusIsMaxed(game: Game) {
     return game.getVenusScaleLevel() === constants.MAX_VENUS_SCALE;
   }
-
-  public metadata: CardMetadata = {
-    cardNumber: '217',
-    description: 'Requires 3 Science tags. Either raise the temperature 2 steps, or raise Venus 2 steps. Add 2 Floaters to ANY card.',
-    requirements: CardRequirements.builder((b) => b.tag(Tags.SCIENCE, 3)),
-    renderData: CardRenderer.builder((b) => {
-      b.temperature(2).or(CardRenderItemSize.SMALL).venus(2).br;
-      b.floaters(2).asterix();
-    }),
-    victoryPoints: 1,
-  };
 }

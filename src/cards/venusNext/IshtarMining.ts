@@ -1,30 +1,34 @@
-import {IProjectCard} from '../IProjectCard';
 import {Tags} from '../Tags';
 import {CardType} from '../CardType';
 import {Player} from '../../Player';
-import {Game} from '../../Game';
 import {Resources} from '../../Resources';
 import {CardName} from '../../CardName';
-import {CardMetadata} from '../CardMetadata';
 import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
+import {GlobalParameter} from '../../GlobalParameter';
+import {Card} from '../Card';
 
-export class IshtarMining implements IProjectCard {
-    public cost = 5;
-    public tags = [Tags.VENUS];
-    public name = CardName.ISHTAR_MINING;
-    public cardType = CardType.AUTOMATED;
-    public canPlay(player: Player, game: Game): boolean {
-      return game.getVenusScaleLevel() >= 8 - (2 * player.getRequirementsBonus(game, true));
-    }
-    public play(player: Player) {
-      player.addProduction(Resources.TITANIUM);
-      return undefined;
-    }
-    public metadata: CardMetadata = {
-      cardNumber: '233',
+export class IshtarMining extends Card {
+  constructor() {
+    super({
+      name: CardName.ISHTAR_MINING,
+      cardType: CardType.AUTOMATED,
+      tags: [Tags.VENUS],
+      cost: 5,
+
       requirements: CardRequirements.builder((b) => b.venus(8)),
-      renderData: CardRenderer.builder((b) => b.productionBox((pb) => pb.titanium(1))),
-      description: 'Requires Venus 8%. Increase your titanium production 1 step.',
-    };
+      metadata: {
+        cardNumber: '233',
+        renderData: CardRenderer.builder((b) => b.production((pb) => pb.titanium(1))),
+        description: 'Requires Venus 8%. Increase your titanium production 1 step.',
+      },
+    });
+  }
+  public canPlay(player: Player): boolean {
+    return player.game.checkMinRequirements(player, GlobalParameter.VENUS, 8);
+  }
+  public play(player: Player) {
+    player.addProduction(Resources.TITANIUM);
+    return undefined;
+  }
 }

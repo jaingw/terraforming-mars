@@ -2,46 +2,50 @@ import {Player} from '../../Player';
 import {PreludeCard} from '../prelude/PreludeCard';
 import {IProjectCard} from '../IProjectCard';
 import {CardName} from '../../CardName';
-import {Game} from '../../Game';
 import {TURMOIL_CARD_MANIFEST} from '../turmoil/TurmoilCardManifest';
 import {SendDelegateToArea} from '../../deferredActions/SendDelegateToArea';
-import {CardMetadata} from '../CardMetadata';
 import {CardRenderer} from '../render/CardRenderer';
+import {AltSecondaryTag} from '../render/CardRenderItem';
 
 export class PoliticalUprising extends PreludeCard implements IProjectCard {
-    public tags = [];
-    public name = CardName.POLITICAL_UPRISING;
+  constructor() {
+    super({
+      name: CardName.POLITICAL_UPRISING,
 
-    public play(player: Player, game: Game) {
-      this.drawTurmoilCard(player, game);
+      metadata: {
+        cardNumber: 'Y03',
+        renderData: CardRenderer.builder((b) => {
+          b.delegates(4).br.br;
+          b.cards(1).secondaryTag(AltSecondaryTag.TURMOIL);
+        }),
+        description: 'Place 4 delegates. Draw a Turmoil card.',
+      },
+    });
+  }
 
-      for (let i = 0; i < 4; i++) {
-        game.defer(new SendDelegateToArea(player, game, 'Select where to send delegate', 1, undefined, undefined, false));
-      }
+  public play(player: Player) {
+    this.drawTurmoilCard(player);
 
-      return undefined;
+    for (let i = 0; i < 4; i++) {
+      player.game.defer(new SendDelegateToArea(player, 'Select where to send delegate', {source: 'reserve'}));
     }
 
-    private drawTurmoilCard(player: Player, game: Game) {
-      const turmoilCards = TURMOIL_CARD_MANIFEST.projectCards.cards.map((c) => c.cardName);
-      const drawnCard = game.dealer.deck.find((card) => turmoilCards.includes(card.name));
+    return undefined;
+  }
 
-      if (drawnCard) {
-        const cardIndex = game.dealer.deck.findIndex((c) => c.name === drawnCard.name);
-        game.dealer.deck.splice(cardIndex, 1);
+  private drawTurmoilCard(player: Player) {
+    const turmoilCards: Array<CardName> = [];
+    TURMOIL_CARD_MANIFEST.projectCards.factories.forEach((cf) => turmoilCards.push(cf.cardName));
+    const drawnCard = player.game.dealer.deck.find((card) => turmoilCards.includes(card.name));
 
-        player.cardsInHand.push(drawnCard);
-        game.log('${0} drew ${1}', (b) => b.player(player).card(drawnCard));
-      }
+    if (drawnCard) {
+      const cardIndex = player.game.dealer.deck.findIndex((c) => c.name === drawnCard.name);
+      player.game.dealer.deck.splice(cardIndex, 1);
 
-      return undefined;
+      player.cardsInHand.push(drawnCard);
+      player.game.log('${0} drew ${1}', (b) => b.player(player).card(drawnCard));
     }
-    public metadata: CardMetadata = {
-      cardNumber: 'Y03',
-      renderData: CardRenderer.builder((b) => {
-        b.delegates(4).br.br;
-        b.cards(1).secondaryTag('turmoil');
-      }),
-      description: 'Place 4 delegates. Draw a Turmoil card.',
-    }
+
+    return undefined;
+  }
 }

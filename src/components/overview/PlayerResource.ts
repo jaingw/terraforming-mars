@@ -1,10 +1,17 @@
 import Vue from 'vue';
+import {DEFAULT_STEEL_VALUE, DEFAULT_TITANIUM_VALUE} from '../../constants';
 import {Resources} from '../../Resources';
+import {TurmoilModel} from '../../models/TurmoilModel';
+import {PartyName} from '../../turmoil/parties/PartyName';
+import {PreferencesManager} from '../PreferencesManager';
 
 export const PlayerResource = Vue.component('player-resource', {
   props: {
     type: {
       type: String as () => Resources,
+    },
+    canUseHeatAsMegaCredits: {
+      type: Boolean || undefined,
     },
     count: {
       type: Number,
@@ -12,9 +19,29 @@ export const PlayerResource = Vue.component('player-resource', {
     production: {
       type: Number,
     },
+    plantsAreProtected: {
+      type: Boolean || undefined,
+    },
+    steelValue: {
+      type: Number,
+    },
+    titaniumValue: {
+      type: Number,
+    },
+    turmoil: {
+      type: Object as () => TurmoilModel || undefined,
+    },
   },
   data: function() {
-    return {};
+    // TODO: Update logic after PoliticalAgendas merge
+    const unityTitaniumBonusActive: boolean = this.turmoil !== undefined && this.turmoil.ruling === PartyName.UNITY;
+
+    let playerTitaniumValueWithOffset: number = this.titaniumValue;
+    if (unityTitaniumBonusActive) playerTitaniumValueWithOffset -= 1;
+
+    return {
+      playerAdjustedTitaniumValue: playerTitaniumValueWithOffset,
+    };
   },
   methods: {
     mainCSS: function(): string {
@@ -27,6 +54,33 @@ export const PlayerResource = Vue.component('player-resource', {
       if (this.production > 0) return '+';
       return '';
     },
+    displayPlantsProtectedIcon: function(): boolean {
+      return this.type === Resources.PLANTS && this.plantsAreProtected;
+    },
+    showResourceValue: function(): boolean {
+      const tutorialModeOn = PreferencesManager.loadValue('tutorial_mode') === '1';
+      switch (this.type) {
+      case Resources.STEEL:
+        return tutorialModeOn || this.steelValue > DEFAULT_STEEL_VALUE;
+      case Resources.TITANIUM:
+        return tutorialModeOn || this.titaniumValue > DEFAULT_TITANIUM_VALUE;
+      case Resources.HEAT:
+        return this.canUseHeatAsMegaCredits;
+      default:
+        return false;
+      }
+    },
+    getResourceValue: function(): string {
+      if (this.type === Resources.STEEL) {
+        return `${this.steelValue}`;
+      } else if (this.type === Resources.TITANIUM) {
+        return `${this.titaniumValue}`;
+      } else if (this.type === Resources.HEAT && this.canUseHeatAsMegaCredits) {
+        return '1';
+      } else {
+        return '';
+      }
+    },
   },
   template: `
         <div class="resource_item" :class="mainCSS()">
@@ -36,6 +90,8 @@ export const PlayerResource = Vue.component('player-resource', {
             </div>
             <div class="resource_item_prod">
                 <span class="resource_item_prod_count">{{ productionSign() }}{{ production }}</span>
+                <div v-if="displayPlantsProtectedIcon()" class="shield_icon"></div>
+                <div v-if="showResourceValue()" class="resource_icon--metalbonus" v-html="getResourceValue()"></div>
             </div>
         </div>
     `,

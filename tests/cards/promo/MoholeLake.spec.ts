@@ -10,40 +10,40 @@ import {Player} from '../../../src/Player';
 import {TestPlayers} from '../../TestingUtils';
 
 describe('MoholeLake', function() {
-  let card : MoholeLake; let player : Player; let game : Game;
+  let card : MoholeLake; let player : Player;
 
   beforeEach(function() {
     card = new MoholeLake();
     player = TestPlayers.BLUE.newPlayer();
     const redPlayer = TestPlayers.RED.newPlayer();
-    game = Game.newInstance('foobar', [player, redPlayer], player);
+    Game.newInstance('foobar', [player, redPlayer], player);
   });
 
   it('Can play', function() {
-    card.play(player, game);
+    card.play(player);
 
-    expect(game.deferredActions).has.lengthOf(1);
-    const selectSpace = game.deferredActions.next()!.execute() as SelectSpace;
+    expect(player.game.deferredActions).has.lengthOf(1);
+    const selectSpace = player.game.deferredActions.peek()!.execute() as SelectSpace;
     selectSpace.cb(selectSpace.availableSpaces[0]);
 
-    expect(game.getTemperature()).to.eq(-28);
-    expect(game.board.getOceansOnBoard()).to.eq(1);
+    expect(player.game.getTemperature()).to.eq(-28);
+    expect(player.game.board.getOceansOnBoard()).to.eq(1);
     expect(player.getTerraformRating()).to.eq(22);
     expect(player.plants).to.eq(3);
   });
 
-  it('Can\'t act', function() {
-    card.play(player, game);
-    expect(card.canAct(player)).is.not.true;
+  it('Can act - no target', function() {
+    expect(card.canAct()).is.true;
+    expect(card.action(player)).is.undefined;
   });
 
   it('Can act - single target', function() {
     const fish = new Fish();
     player.playedCards.push(fish);
 
-    card.play(player, game);
-    expect(card.canAct(player)).is.true;
-    card.action(player, game);
+    card.play(player);
+    expect(card.canAct()).is.true;
+    card.action(player);
     expect(fish.resourceCount).to.eq(1);
   });
 
@@ -52,9 +52,9 @@ describe('MoholeLake', function() {
     const ants = new Ants();
     player.playedCards.push(fish, ants);
 
-    card.play(player, game);
-    expect(card.canAct(player)).is.true;
-    const action = card.action(player, game) as SelectCard<ICard>;
+    card.play(player);
+    expect(card.canAct()).is.true;
+    const action = card.action(player) as SelectCard<ICard>;
 
     action.cb([ants]);
     expect(ants.resourceCount).to.eq(1);

@@ -4,7 +4,6 @@ import {Tags} from '../Tags';
 import {Resources} from '../../Resources';
 import {CardName} from '../../CardName';
 import {ITagCount} from '../../ITagCount';
-import {Game} from '../../Game';
 import {CardType} from '../CardType';
 import {CardMetadata} from '../CardMetadata';
 import {CardRenderer} from '../render/CardRenderer';
@@ -24,9 +23,9 @@ export class AgricolaInc implements CorporationCard {
       return undefined;
     }
 
-    public getVictoryPoints(player: Player, game: Game): number {
+    public getVictoryPoints(player: Player): number {
       const scorableTags : Array<Tags> = [Tags.CITY, Tags.EARTH, Tags.ENERGY, Tags.JOVIAN, Tags.MICROBE, Tags.PLANT, Tags.SCIENCE, Tags.SPACE, Tags.BUILDING, Tags.ANIMAL];
-      if (game.gameOptions.venusNextExtension) scorableTags.push(Tags.VENUS);
+      if (player.game.gameOptions.venusNextExtension) scorableTags.push(Tags.VENUS);
 
       const playerTags : ITagCount[] = player.getAllTags();
       let points = 0;
@@ -50,7 +49,7 @@ export class AgricolaInc implements CorporationCard {
       description: 'You start with 1 plant production, 1 MC production and 40 MC.',
       renderData: CardRenderer.builder((b) => {
         b.br.br;
-        b.productionBox((pb) => pb.megacredits(1).plants(1)).nbsp.megacredits(40);
+        b.production((pb) => pb.megacredits(1).plants(1)).nbsp.megacredits(40);
         b.corpBox('effect', (ce) => {
           ce.text('Effect: At game end, score -2 / 0 / 1 / 2 VP PER TAG TYPE for 0 / 1-2 / 3-4 / 5+ tags.', CardRenderItemSize.SMALL, true);
         });

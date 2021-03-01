@@ -1,18 +1,17 @@
-import {Game} from '../Game';
 import {Player} from '../Player';
 import {SelectSpace} from '../inputs/SelectSpace';
 import {ISpace} from '../boards/ISpace';
-import {DeferredAction} from './DeferredAction';
+import {DeferredAction, Priority} from './DeferredAction';
 
 export class PlaceGreeneryTile implements DeferredAction {
+  public priority = Priority.DEFAULT;
   constructor(
         public player: Player,
-        public game: Game,
         public title: string = 'Select space for greenery tile',
   ) {}
 
   public execute() {
-    const availableSpaces = this.game.board.getAvailableSpacesForGreenery(this.player);
+    const availableSpaces = this.player.game.board.getAvailableSpacesForGreenery(this.player);
     if (availableSpaces.length === 0) {
       return undefined;
     }
@@ -21,7 +20,7 @@ export class PlaceGreeneryTile implements DeferredAction {
       this.title,
       availableSpaces,
       (space: ISpace) => {
-        this.game.addGreenery(this.player, space.id);
+        this.player.game.addGreenery(this.player, space.id);
         return undefined;
       },
     );

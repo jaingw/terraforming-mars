@@ -7,14 +7,11 @@ import {HELLAS_BONUS_OCEAN_COST} from '../constants';
 import {SpaceType} from '../SpaceType';
 import {BoardBuilder} from './BoardBuilder';
 import {SerializedBoard} from './SerializedBoard';
+import {Random} from '../Random';
 
 export class HellasBoard extends Board {
-  private constructor(public spaces: Array<ISpace>) {
-    super();
-  }
-
-  public static newInstance(shuffle: boolean, seed: number, includeVenus: boolean): HellasBoard {
-    const builder = new BoardBuilder(seed, includeVenus);
+  public static newInstance(shuffle: boolean, rng: Random, includeVenus: boolean): HellasBoard {
+    const builder = new BoardBuilder(includeVenus);
 
     const PLANT = SpaceBonus.PLANT;
     const STEEL = SpaceBonus.STEEL;
@@ -43,7 +40,7 @@ export class HellasBoard extends Board {
     builder.land().land(HEAT, HEAT).land(SpaceBonus.OCEAN).doNotShuffleLastSpace().land(HEAT, HEAT).land();
 
     if (shuffle) {
-      builder.shuffle();
+      builder.shuffle(rng);
     }
 
     const spaces = builder.build();
@@ -72,5 +69,13 @@ export class HellasBoard extends Board {
 
   public getAvailableSpacesForGreenery(player: Player): Array<ISpace> {
     return this.filterHellas(player, super.getAvailableSpacesForGreenery(player));
+  }
+
+  public getVolcanicSpaceIds(): Array<string> {
+    return [];
+  }
+
+  public getNoctisCitySpaceIds(): Array<string> {
+    return [];
   }
 }

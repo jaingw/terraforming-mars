@@ -7,12 +7,14 @@ import {PlayerInputFactory} from './PlayerInputFactory';
 import {SelectAmount} from './SelectAmount';
 import {SelectCard} from './SelectCard';
 import {SelectHowToPay} from './SelectHowToPay';
-import {SelectHowToPayForCard} from './SelectHowToPayForCard';
+import {SelectHowToPayForProjectCard} from './SelectHowToPayForProjectCard';
+import {SelectInitialCards} from './SelectInitialCards';
 import {SelectOption} from './SelectOption';
 import {SelectPlayer} from './SelectPlayer';
 import {SelectSpace} from './SelectSpace';
 import {$t} from '../directives/i18n';
 import {SelectPartyPlayer} from './SelectPartyPlayer';
+import {SelectPartyToSendDelegate} from './SelectPartyToSendDelegate';
 import {PlayerInputModel} from '../models/PlayerInputModel';
 import {PlayerModel} from '../models/PlayerModel';
 import {PreferencesManager} from './PreferencesManager';
@@ -20,10 +22,13 @@ import {playActivePlayerSound} from '../SoundManager';
 import {SelectColony} from './SelectColony';
 import {SelectProductionToLose} from './SelectProductionToLose';
 import {ShiftAresGlobalParameters} from './ShiftAresGlobalParameters';
+import {WaitingForModel} from '../models/WaitingForModel';
 
-import * as raw_settings from '../../assets/settings.json';
+import * as constants from '../constants';
+import * as raw_settings from '../genfiles/settings.json';
 
-let ui_update_timeout_id: number | undefined = undefined;
+let ui_update_timeout_id: number | undefined;
+let documentTitleTimer: number | undefined;
 
 export const WaitingFor = Vue.component('waiting-for', {
   props: {
@@ -55,15 +60,27 @@ export const WaitingFor = Vue.component('waiting-for', {
     'select-card': SelectCard,
     'select-option': SelectOption,
     'select-how-to-pay': SelectHowToPay,
-    'select-how-to-pay-for-card': SelectHowToPayForCard,
+    'select-how-to-pay-for-project-card': SelectHowToPayForProjectCard,
+    'select-initial-cards': SelectInitialCards,
     'select-player': SelectPlayer,
     'select-space': SelectSpace,
     'select-party-player': SelectPartyPlayer,
+    'select-party-to-send-delegate': SelectPartyToSendDelegate,
     'select-colony': SelectColony,
     'select-production-to-lose': SelectProductionToLose,
     'shift-ares-global-parameters': ShiftAresGlobalParameters,
   },
   methods: {
+    animateTitle: function() {
+      const sequence = '\u25f7\u25f6\u25f5\u25f4';
+      const first = document.title[0];
+      const position = sequence.indexOf(first);
+      let next = sequence[0];
+      if (position !== -1 && position < sequence.length - 1) {
+        next = sequence[position + 1];
+      }
+      document.title = next + ' ' + $t(constants.APP_NAME);
+    },
     waitForUpdate: function(faster:boolean = false) {
       const root = this.$root as unknown as typeof mainAppSettings.methods;
       clearInterval(ui_update_timeout_id);
@@ -75,15 +92,15 @@ export const WaitingFor = Vue.component('waiting-for', {
         };
         xhr.onload = () => {
           if (xhr.status === 200) {
-            const result = xhr.response;
-            if (result['result'] === 'GO' && this.waitingfor === undefined ) {
+            const result = xhr.response as WaitingForModel;
+            if (result.result === 'GO' && this.waitingfor === undefined ) {
               root.updatePlayer();
 
               if (Notification.permission !== 'granted') {
                 Notification.requestPermission();
               }
               if (Notification.permission === 'granted') {
-                new Notification('Terraforming Mars Online', {
+                new Notification(constants.APP_NAME, {
                   icon: '/favicon.ico',
                   body: 'It\'s your turn!',
                 });
@@ -93,9 +110,10 @@ export const WaitingFor = Vue.component('waiting-for', {
 
               // We don't need to wait anymore - it's our turn
               return;
-            } else if (result['result'] === 'REFRESH') {
+            } else if (result.result === 'REFRESH') {
               // Something changed, let's refresh UI
               root.updatePlayer();
+
               return;
             }
           } else {
@@ -121,8 +139,13 @@ export const WaitingFor = Vue.component('waiting-for', {
     if (this.player.block) {
       return createElement('div', $t('Please Login with right user'));
     }
+    document.title = $t(constants.APP_NAME);
+    window.clearInterval(documentTitleTimer);
     if (this.waitingfor === undefined) {
       return createElement('div', $t('Not your turn to take any actions'));
+    }
+    if (this.player.players.length > 1 && this.player.waitingFor !== undefined) {
+      documentTitleTimer = window.setInterval(() => this.animateTitle(), 1000);
     }
     const input = new PlayerInputFactory().getPlayerInput(createElement, this.players, this.player, this.waitingfor, (out: Array<Array<string>>) => {
       const xhr = new XMLHttpRequest();

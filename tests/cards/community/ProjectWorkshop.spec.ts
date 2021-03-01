@@ -30,7 +30,7 @@ describe('ProjectWorkshop', function() {
     expect(player.steel).to.eq(1);
     expect(player.titanium).to.eq(1);
 
-    card.initialAction(player, game);
+    card.initialAction(player);
     expect(player.cardsInHand).has.lengthOf(1);
     expect(player.cardsInHand[0].cardType).to.eq(CardType.ACTIVE);
   });
@@ -44,7 +44,7 @@ describe('ProjectWorkshop', function() {
     player.megaCredits = 3;
 
     expect(card.canAct(player)).is.true;
-    card.action(player, game).cb();
+    card.action(player).cb();
     expect(player.cardsInHand).has.lengthOf(1);
     expect(player.cardsInHand[0].cardType).to.eq(CardType.ACTIVE);
   });
@@ -55,14 +55,14 @@ describe('ProjectWorkshop', function() {
     player.megaCredits = 0;
 
     expect(player.getSteelValue()).to.eq(3);
-    expect(player.getTitaniumValue(game)).to.eq(4);
+    expect(player.getTitaniumValue()).to.eq(4);
 
-    card.action(player, game).cb();
+    card.action(player).cb();
     expect(player.playedCards).has.lengthOf(0);
     expect(game.dealer.discarded.includes(advancedAlloys)).is.true;
     expect(player.cardsInHand).has.lengthOf(2);
     expect(player.getSteelValue()).to.eq(2);
-    expect(player.getTitaniumValue(game)).to.eq(3);
+    expect(player.getTitaniumValue()).to.eq(3);
   });
 
   it('Converts VP to TR correctly', function() {
@@ -75,7 +75,7 @@ describe('ProjectWorkshop', function() {
     const originalTR = player.getTerraformRating();
     player.playedCards.push(smallAnimals, extremophiles);
 
-    const selectOption = card.action(player, game);
+    const selectOption = card.action(player);
     expect(selectOption instanceof SelectOption).is.true;
 
     const selectCard = selectOption.cb() as SelectCard<ICard>;
@@ -92,7 +92,7 @@ describe('ProjectWorkshop', function() {
   it('Can select option if able to do both actions', function() {
     player.playedCards.push(advancedAlloys);
     player.megaCredits = 3;
-    const result = card.action(player, game);
+    const result = card.action(player);
     expect(result instanceof OrOptions).is.true;
   });
 });

@@ -1,7 +1,6 @@
 import {IActionCard} from '../ICard';
 import {Tags} from '../Tags';
 import {Player} from '../../Player';
-import {Game} from '../../Game';
 import {CorporationCard} from '../corporation/CorporationCard';
 import {CardName} from '../../CardName';
 import {CardType} from '../CardType';
@@ -17,13 +16,13 @@ export class SeptemTribus implements IActionCard, CorporationCard {
       return undefined;
     }
 
-    public canAct(_player: Player, game: Game): boolean {
-      return game.gameOptions.turmoilExtension;
+    public canAct(player: Player): boolean {
+      return player.game.gameOptions.turmoilExtension;
     }
 
-    public action(player: Player, game: Game) {
-      if (game.turmoil !== undefined) {
-        const partiesWithPresence = game.turmoil.parties.filter((party) => party.delegates.includes(player));
+    public action(player: Player) {
+      if (player.game.turmoil !== undefined) {
+        const partiesWithPresence = player.game.turmoil.parties.filter((party) => party.delegates.includes(player));
         player.megaCredits += partiesWithPresence.length * 2;
       }
 
@@ -37,9 +36,8 @@ export class SeptemTribus implements IActionCard, CorporationCard {
         b.br;
         b.megacredits(36);
         b.corpBox('action', (ce) => {
-          ce.effectBox((eb) => {
+          ce.action('Gain 2 MC for each party where you have at least 1 delegate.', (eb) => {
             eb.empty().startAction.megacredits(2).slash().delegates(1).asterix();
-            eb.description('Action: Gain 2 MC for each party where you have at least 1 delegate.');
           });
         });
       }),

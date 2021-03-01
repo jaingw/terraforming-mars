@@ -1,6 +1,5 @@
+import {Card} from '../Card';
 import {CardName} from '../../CardName';
-import {Game} from '../../Game';
-import {Player} from '../../Player';
 import {ResourceType} from '../../ResourceType';
 import {CardType} from '../CardType';
 import {IActionCard, IResourceCard} from '../ICard';
@@ -9,23 +8,35 @@ import {Tags} from '../Tags';
 import {ICard} from '../../cards/ICard';
 import {SelectCard} from '../../inputs/SelectCard';
 import {DeferredAction} from '../../deferredActions/DeferredAction';
-import {CardMetadata} from '../CardMetadata';
 import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
+import {Player} from '../../Player';
 
-export class BioengineeringEnclosure implements IProjectCard, IActionCard, IResourceCard {
-  public cost = 7;
-  public tags = [Tags.ANIMAL];
-  public cardType = CardType.ACTIVE;
-  public name = CardName.BIOENGINEERING_ENCLOSURE;
-  public resourceType = ResourceType.ANIMAL;
+export class BioengineeringEnclosure extends Card implements IProjectCard, IActionCard, IResourceCard {
+  constructor() {
+    super({
+      cardType: CardType.ACTIVE,
+      name: CardName.BIOENGINEERING_ENCLOSURE,
+      tags: [Tags.ANIMAL],
+      cost: 7,
+      resourceType: ResourceType.ANIMAL,
+
+      requirements: CardRequirements.builder((b) => b.tag(Tags.SCIENCE)),
+      metadata: {
+        description: 'Requires 1 science tag to play. Add 2 animals to this card. OTHERS MAY NOT REMOVE ANIMALS FROM THIS CARD.',
+        cardNumber: 'A01',
+        renderData: CardRenderer.builder((b) => {
+          b.action('Remove 1 animal from THIS card to add 1 animal to ANOTHER card.', (eb) => {
+            eb.animals(1).asterix().startAction.animals(1).asterix();
+          }).br;
+          b.animals(2);
+        }),
+      },
+    });
+  }
   public resourceCount = 0;
 
-  public canPlay(player: Player, _game: Game): boolean {
-    return player.getTagCount(Tags.SCIENCE) >= 1;
-  }
-
-  public play(player: Player, _game: Game) {
+  public play(player: Player) {
     player.addResourceTo(this, 2);
 
     return undefined;
@@ -36,8 +47,8 @@ export class BioengineeringEnclosure implements IProjectCard, IActionCard, IReso
     return this.resourceCount > 0 && player.getResourceCards(this.resourceType).length > 1;
   }
 
-  public action(player: Player, game: Game) {
-    game.defer(new DeferredAction(
+  public action(player: Player) {
+    player.game.defer(new DeferredAction(
       player,
       () => {
         const resourceCards = player.getResourceCards(this.resourceType).filter((card) => card.name !== CardName.BIOENGINEERING_ENCLOSURE);
@@ -49,7 +60,7 @@ export class BioengineeringEnclosure implements IProjectCard, IActionCard, IReso
         if (resourceCards.length === 1) {
           this.resourceCount--;
           player.addResourceTo(resourceCards[0], 1);
-          game.log('${0} moved 1 animal from Bioengineering Enclosure to ${1}.', (b) => b.player(player).card(resourceCards[0]));
+          player.game.log('${0} moved 1 animal from Bioengineering Enclosure to ${1}.', (b) => b.player(player).card(resourceCards[0]));
           return undefined;
         }
 
@@ -60,7 +71,7 @@ export class BioengineeringEnclosure implements IProjectCard, IActionCard, IReso
           (foundCards: Array<ICard>) => {
             this.resourceCount--;
             player.addResourceTo(foundCards[0], 1);
-            game.log('${0} moved 1 animal from Bioengineering Enclosure to ${1}.', (b) => b.player(player).card(foundCards[0]));
+            player.game.log('${0} moved 1 animal from Bioengineering Enclosure to ${1}.', (b) => b.player(player).card(foundCards[0]));
             return undefined;
           },
         );
@@ -68,13 +79,4 @@ export class BioengineeringEnclosure implements IProjectCard, IActionCard, IReso
     ));
     return undefined;
   }
-  public metadata: CardMetadata = {
-    description: 'Requires 1 science tag to play. Add 2 animals to this card. OTHERS MAY NOT REMOVE ANIMALS FROM THIS CARD.',
-    cardNumber: 'A01',
-    requirements: CardRequirements.builder((b) => b.tag(Tags.SCIENCE)),
-    renderData: CardRenderer.builder((b) => {
-      b.effectBox((eb) => eb.animals(1).asterix().startAction.animals(1).asterix().description('Action: Remove 1 animal from THIS card to add 1 animal to ANOTHER card.')).br;
-      b.animals(2);
-    }),
-  };
 }

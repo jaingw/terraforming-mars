@@ -38,6 +38,8 @@ export interface IGameData {
  * Finally, `players` as a number merely represents the number of players
  * in the game. Why, I have no idea, says kberg.
  */
+export type DbLoadCallback<T> = (err: Error | undefined, game: T | undefined) => void
+
 export interface IDatabase {
 
     /**
@@ -45,7 +47,12 @@ export interface IDatabase {
      * @param game_id the game id to load
      * @param cb called with game if exists, if game is undefined err will be truthy
      */
-    getGame(game_id: string, cb: (err: any, game?: SerializedGame) => void): void;
+    getGame(game_id: string, cb: (err: Error | undefined, game?: SerializedGame) => void): void;
+
+    /**
+     * Load a game at a specific save point.
+     */
+    getGameVersion(game_id: GameId, save_id: number, cb: DbLoadCallback<SerializedGame>): void;
 
     /**
      * Return a list of all `game_id`s.
@@ -55,7 +62,7 @@ export interface IDatabase {
      *
      * @param cb a callback either returning either an error or a list of all `game_id`s.
      */
-    getGames(cb:(err: any, allGames:Array<GameId>) => void): void;
+    getGames(cb:(err: Error | undefined, allGames:Array<GameId>) => void): void;
 
     /**
      * Load references to all games that can be cloned. Every game is cloneable,
@@ -68,7 +75,7 @@ export interface IDatabase {
      * @param cb a callback either returning either an error or a list of references
      * to cloneable games.
      */
-    getClonableGames(cb:(err: any, allGames:Array<IGameData>)=> void) : void;
+    getClonableGames(cb:(err: Error | undefined, allGames:Array<IGameData>)=> void) : void;
 
     /**
      * Saves the current state of the game at a supplied save point. Used for
@@ -133,4 +140,17 @@ export interface IDatabase {
     updateUser(user: User): void ;
     getUsers(cb:(err: any, allUsers:Array<User>)=> void): void ;
     refresh(): void ;
+
+        /**
+     * A maintenance task that purges abandoned solo games older
+     * than a given date range.
+     *
+     * This is currently also part of cleanSaves().
+     *
+     * Behavior when the environment variable is absent is system-dependent:
+     * * In PostgreSQL, it uses a default of 10 days
+     * * In Sqlite, it doesn't purge
+     * * This whole method is ignored in LocalFilesystem.
+     */
+    purgeUnfinishedGames(): void;
 }

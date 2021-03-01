@@ -1,26 +1,25 @@
-import {Game} from '../Game';
 import {Player} from '../Player';
 import {Resources} from '../Resources';
 import {OrOptions} from '../inputs/OrOptions';
 import {SelectOption} from '../inputs/SelectOption';
-import {DeferredAction} from './DeferredAction';
+import {DeferredAction, Priority} from './DeferredAction';
 
 export class RemoveAnyPlants implements DeferredAction {
+  public priority = Priority.ATTACK_OPPONENT;
   constructor(
         public player: Player,
-        public game: Game,
         public count: number = 1,
         public title: string = 'Select player to remove up to ' + count + ' plants',
   ) {}
 
   public execute() {
-    if (this.game.isSoloMode()) {
+    if (this.player.game.isSoloMode()) {
       // Crash site cleanup hook
-      this.game.someoneHasRemovedOtherPlayersPlants = true;
+      this.player.game.someoneHasRemovedOtherPlayersPlants = true;
       return undefined;
     }
 
-    const candidates = this.game.getPlayers().filter((p) => p.id !== this.player.id && !p.plantsAreProtected() && p.getResource(Resources.PLANTS) > 0);
+    const candidates = this.player.game.getPlayers().filter((p) => p.id !== this.player.id && !p.plantsAreProtected() && p.getResource(Resources.PLANTS) > 0);
 
     if (candidates.length === 0) {
       return undefined;
@@ -29,7 +28,7 @@ export class RemoveAnyPlants implements DeferredAction {
     const removalOptions = candidates.map((candidate) => {
       const qtyToRemove = Math.min(candidate.plants, this.count);
       return new SelectOption('Remove ' + qtyToRemove + ' plants from ' + candidate.name, 'Remove plants', () => {
-        candidate.setResource(Resources.PLANTS, -qtyToRemove, this.game, this.player);
+        candidate.setResource(Resources.PLANTS, -qtyToRemove, this.player.game, this.player);
         return undefined;
       });
     });

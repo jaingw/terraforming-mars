@@ -6,7 +6,7 @@ import {SpaceType} from '../../../src/SpaceType';
 import {TileType} from '../../../src/TileType';
 import {SelectSpace} from '../../../src/inputs/SelectSpace';
 import {Resources} from '../../../src/Resources';
-import {maxOutOceans, TestPlayers} from '../../TestingUtils';
+import {TestingUtils, TestPlayers} from '../../TestingUtils';
 import {Board} from '../../../src/boards/Board';
 
 describe('Capital', function() {
@@ -20,13 +20,13 @@ describe('Capital', function() {
   });
 
   it('Can\'t play without energy production', function() {
-    maxOutOceans(player, game);
-    expect(card.canPlay(player, game)).is.not.true;
+    TestingUtils.maxOutOceans(player);
+    expect(card.canPlay(player)).is.not.true;
   });
 
   it('Can\'t play if oceans requirement not met', function() {
     player.addProduction(Resources.ENERGY, 2);
-    expect(card.canPlay(player, game)).is.not.true;
+    expect(card.canPlay(player)).is.not.true;
   });
 
   it('Should play', function() {
@@ -35,14 +35,14 @@ describe('Capital', function() {
       oceanSpaces[i].tile = {tileType: TileType.OCEAN};
     }
     player.addProduction(Resources.ENERGY, 2);
-    expect(card.canPlay(player, game)).is.true;
+    expect(card.canPlay(player)).is.true;
 
-    const action = card.play(player, game);
+    const action = card.play(player);
     expect(action instanceof SelectSpace).is.true;
     expect(player.getProduction(Resources.ENERGY)).to.eq(0);
     expect(player.getProduction(Resources.MEGACREDITS)).to.eq(5);
 
-    const citySpace = game.board.getAdjacentSpaces(oceanSpaces[0])[0];
+    const citySpace = game.board.getAdjacentSpaces(oceanSpaces[0])[1];
     expect(citySpace.spaceType).to.eq(SpaceType.LAND);
     action.cb(citySpace);
 
@@ -50,7 +50,7 @@ describe('Capital', function() {
     expect(citySpace.player).to.eq(player);
     expect(citySpace.tile && citySpace.tile.tileType).to.eq(TileType.CAPITAL);
     expect(player.victoryPointsBreakdown.victoryPoints).to.eq(0);
-    expect(card.getVictoryPoints(player, game)).to.eq(1);
+    expect(card.getVictoryPoints(player)).to.eq(1);
     expect(citySpace.adjacency?.bonus).eq(undefined);
   });
 
@@ -69,6 +69,6 @@ describe('Capital', function() {
     // check VP
     const greenerySpace = game.board.getAdjacentSpaces(space).find((space) => space.spaceType === SpaceType.LAND);
     game.addGreenery(player, greenerySpace!.id);
-    expect(player.getVictoryPoints(game).city).to.eq(1); // 1 VP for Capital city
+    expect(player.getVictoryPoints().city).to.eq(1); // 1 VP for Capital city
   });
 });

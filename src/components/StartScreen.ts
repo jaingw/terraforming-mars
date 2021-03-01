@@ -2,7 +2,7 @@ import Vue from 'vue';
 import {LanguageSwitcher} from './LanguageSwitcher';
 import {PreferencesManager} from './PreferencesManager';
 
-import * as raw_settings from '../../assets/settings.json';
+import * as raw_settings from '../genfiles/settings.json';
 
 export const StartScreen = Vue.component('start-screen', {
   props: {
@@ -54,7 +54,7 @@ export const StartScreen = Vue.component('start-screen', {
                 <a class="start-screen-link start-screen-link--solo" href="/login" v-else v-i18n>Login</a>
                 <a class="start-screen-link start-screen-link--cards-list" href="/donate" v-i18n>Donate</a>
                 <a class="start-screen-link start-screen-link--board-game" href="https://docs.qq.com/doc/DQU5vYmtJeGRQaVpN"  target="_blank"  v-i18n>Help Translation</a>
-                <a class="start-screen-link start-screen-link--about" href="https://ssimeonoff.github.io/cards-list"  target="_blank"  v-i18n>Cards list</a>
+                <a class="start-screen-link start-screen-link--about" href="debug-ui"  target="_blank"  v-i18n>Cards list</a>
                 <a class="start-screen-link start-screen-link--changelog" href="https://boardgamegeek.com/boardgame/167791/terraforming-mars"  target="_blank"  v-i18n>Board game</a>
                 
                 <div class="start-screen-header  start-screen-link--languages">

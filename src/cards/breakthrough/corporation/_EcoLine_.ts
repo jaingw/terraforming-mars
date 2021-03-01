@@ -1,34 +1,48 @@
 
-import {CorporationCard} from '../../corporation/CorporationCard';
 import {Tags} from '../../Tags';
 import {Player} from '../../../Player';
 import {Resources} from '../../../Resources';
 import {CardName} from '../../../CardName';
 import {IProjectCard} from '../../IProjectCard';
-import {Game} from '../../../Game';
-import {CardType} from '../../CardType';
+import {EcoLine} from '../../corporation/EcoLine';
+import {CardMetadata} from '../../CardMetadata';
+import {CardRenderer} from '../../render/CardRenderer';
+import {CardRenderItemSize} from '../../render/CardRenderItemSize';
 
-export class _EcoLine_ implements CorporationCard {
-    public name: CardName = CardName._ECOLINE_;
-    public tags: Array<Tags> = [Tags.PLANT];
-    public startingMegaCredits: number = 36;
-    public cardType: CardType = CardType.CORPORATION;
+export class _EcoLine_ extends EcoLine {
+  public get name() {
+    return CardName._ECOLINE_;
+  }
 
-    public play(player: Player) {
-      player.addProduction(Resources.PLANTS, 2);
-      player.plants = 3;
-      player.plantsNeededForGreenery = 7;
-      return undefined;
-    }
-
-
-    public onCardPlayed(player: Player, _game: Game, card: IProjectCard) {
-      if (player.corporationCard !== undefined && player.corporationCard.name === this.name) {
-        for (const tag of card.tags) {
-          if (tag === Tags.PLANT) {
-            player.setResource(Resources.MEGACREDITS, 2);
-          }
+  public onCardPlayed(player: Player, card: IProjectCard) {
+    if (player.corporationCard !== undefined && player.corporationCard.name === this.name) {
+      for (const tag of card.tags) {
+        if (tag === Tags.PLANT) {
+          player.setResource(Resources.MEGACREDITS, 2);
         }
       }
     }
+  }
+
+  public get metadata(): CardMetadata {
+    return {
+      cardNumber: 'R17',
+      description: 'You start with 2 plant production, 3 plants, and 36 MC.',
+      renderData: CardRenderer.builder((b) => {
+        b.br;
+        b.production((pb) => pb.plants(2)).nbsp.megacredits(36).plants(3).digit;
+        b.corpBox('effect', (ce) => {
+          ce.effect(undefined, (eb) => {
+            ce.vSpace(CardRenderItemSize.LARGE);
+            eb.plants(7).digit.startAction.greenery();
+          });
+          ce.effect('You may pay 7 plants to place greenery. When play a plant tag card, gain 2 MC.', (eb) => {
+            eb.plants(1).played.startEffect.megacredits(2);
+          });
+        });
+      }),
+    };
+  }
 }
+
+

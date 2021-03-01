@@ -1,24 +1,28 @@
-import {AresHandler} from './ares/AresHandler';
 import {ELYSIUM_AWARDS, HELLAS_AWARDS, ORIGINAL_AWARDS, VENUS_AWARDS} from './awards/Awards';
 import {Board} from './boards/Board';
 import {BoardName} from './boards/BoardName';
 import {ElysiumBoard} from './boards/ElysiumBoard';
-import {GameOptions} from './Game';
+import {Game, GameId, GameOptions} from './Game';
 import {HellasBoard} from './boards/HellasBoard';
 import {ELYSIUM_MILESTONES, HELLAS_MILESTONES, ORIGINAL_MILESTONES, VENUS_MILESTONES} from './milestones/Milestones';
 import {OriginalBoard} from './boards/OriginalBoard';
 import {RandomMAOptionType} from './RandomMAOptionType';
-import {getRandomMilestonesAndAwards, IDrawnMilestonesAndAwards} from './MilestoneAwardSelector';
+import {getRandomMilestonesAndAwards} from './MilestoneAwardSelector';
+import {IDrawnMilestonesAndAwards} from './IDrawnMilestonesAndAwards';
 import {Player} from './Player';
 import {Resources} from './Resources';
 import {ColonyName} from './colonies/ColonyName';
+import {Color} from './Color';
+import {AresSetup} from './ares/AresSetup';
+import {TileType} from './TileType';
+import {Random} from './Random';
 
 export class GameSetup {
   public static chooseMilestonesAndAwards = function(gameOptions: GameOptions): IDrawnMilestonesAndAwards {
-    let drawnMilestonesAndAwards = {
+    let drawnMilestonesAndAwards: IDrawnMilestonesAndAwards = {
       milestones: [],
       awards: [],
-    } as IDrawnMilestonesAndAwards;
+    };
 
     const includeVenus = gameOptions.venusNextExtension && gameOptions.includeVenusMA;
     const requiredQty = includeVenus ? 6 : 5;
@@ -54,19 +58,19 @@ export class GameSetup {
     }
 
     if (gameOptions.aresExtension) {
-      AresHandler.setupMilestonesAwards(drawnMilestonesAndAwards);
+      AresSetup.setupMilestonesAwards(drawnMilestonesAndAwards);
     };
     return drawnMilestonesAndAwards;
   };
 
   // Function to construct the board and milestones/awards list
-  public static newBoard(boardName: BoardName, shuffle: boolean, seed: number, includeVenus: boolean): Board {
+  public static newBoard(boardName: BoardName, shuffle: boolean, rng: Random, includeVenus: boolean): Board {
     if (boardName === BoardName.ELYSIUM) {
-      return ElysiumBoard.newInstance(shuffle, seed, includeVenus);
+      return ElysiumBoard.newInstance(shuffle, rng, includeVenus);
     } else if (boardName === BoardName.HELLAS) {
-      return HellasBoard.newInstance(shuffle, seed, includeVenus);
+      return HellasBoard.newInstance(shuffle, rng, includeVenus);
     } else {
-      return OriginalBoard.newInstance(shuffle, seed, includeVenus);
+      return OriginalBoard.newInstance(shuffle, rng, includeVenus);
     }
   }
 
@@ -90,5 +94,32 @@ export class GameSetup {
     if (gameOptions.customColoniesList.includes(ColonyName.PALLAS)) return true;
 
     return false;
+  }
+
+  public static neutralPlayerFor(gameId: GameId): Player {
+    return new Player('neutral', Color.NEUTRAL, true, 0, gameId + '-neutral');
+  }
+
+  public static setupNeutralPlayer(game: Game) {
+    // Single player add neutral player
+    // put 2 neutrals cities on board with adjacent forest
+    const neutral = this.neutralPlayerFor(game.id);
+
+    function placeCityAndForest(game: Game, direction: -1 | 1) {
+      const board = game.board;
+      const citySpace = game.getSpaceByOffset(direction, TileType.CITY);
+      game.simpleAddTile(neutral, citySpace, {tileType: TileType.CITY});
+      const adjacentSpaces = board.getAdjacentSpaces(citySpace).filter((s) => game.board.canPlaceTile(s));
+      if (adjacentSpaces.length === 0) {
+        throw new Error('No space for forest');
+      }
+      let idx = game.discardForCost(TileType.GREENERY);
+      idx = Math.max(idx-1, 0); // Some cards cost zero.
+      const forestSpace = adjacentSpaces[idx%adjacentSpaces.length];
+      game.simpleAddTile(neutral, forestSpace, {tileType: TileType.GREENERY});
+    }
+
+    placeCityAndForest(game, 1);
+    placeCityAndForest(game, -1);
   }
 }

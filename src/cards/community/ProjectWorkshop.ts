@@ -3,7 +3,6 @@ import {Player} from '../../Player';
 import {Tags} from '../Tags';
 import {CardName} from '../../CardName';
 import {CardType} from '../CardType';
-import {Game} from '../../Game';
 import {LogHelper} from '../../LogHelper';
 import {IProjectCard} from '../IProjectCard';
 import {SelectCard} from '../../inputs/SelectCard';
@@ -13,6 +12,7 @@ import {SelectOption} from '../../inputs/SelectOption';
 import {CardMetadata} from '../CardMetadata';
 import {CardRenderer} from '../render/CardRenderer';
 import {CardRenderItemSize} from '../render/CardRenderItemSize';
+import {AltSecondaryTag} from '../render/CardRenderItem';
 
 export class ProjectWorkshop implements CorporationCard {
     public name = CardName.PROJECT_WORKSHOP;
@@ -27,11 +27,8 @@ export class ProjectWorkshop implements CorporationCard {
     }
 
     public initialActionText: string = 'Draw a blue card';
-    public initialAction(player: Player, game: Game) {
-      const drawnCard = game.drawCardsByType(CardType.ACTIVE, 1)[0];
-      player.cardsInHand.push(drawnCard);
-      this.logCardDraw(game, player, drawnCard);
-
+    public initialAction(player: Player) {
+      player.drawCard(1, {cardType: CardType.ACTIVE});
       return undefined;
     }
 
@@ -40,7 +37,7 @@ export class ProjectWorkshop implements CorporationCard {
       return activeCards.length > 0 || player.megaCredits >= 3;
     }
 
-    public action(player: Player, game: Game) {
+    public action(player: Player) {
       const activeCards = player.getCardsByCardType(CardType.ACTIVE);
 
       const flipBlueCard = new SelectOption(
@@ -48,37 +45,29 @@ export class ProjectWorkshop implements CorporationCard {
         'Select',
         () => {
           if (activeCards.length === 1) {
-            this.convertCardPointsToTR(player, game, activeCards[0]);
-            this.discardPlayedCard(player, game, activeCards[0]);
-            player.cardsInHand.push(game.dealer.dealCard());
-            player.cardsInHand.push(game.dealer.dealCard());
-
+            this.convertCardPointsToTR(player, activeCards[0]);
+            this.discardPlayedCard(player, activeCards[0]);
+            player.drawCard(2);
             return undefined;
           }
 
-          return new SelectCard(
+          return new SelectCard<IProjectCard>(
             'Select active card to discard',
             'Discard',
-                    activeCards as Array<ICard>,
-                    (foundCards: Array<ICard>) => {
-                      this.convertCardPointsToTR(player, game, foundCards[0]);
-                      this.discardPlayedCard(player, game, foundCards[0]);
-                      player.cardsInHand.push(game.dealer.dealCard());
-                      player.cardsInHand.push(game.dealer.dealCard());
-
-                      return undefined;
-                    },
+            activeCards,
+            (foundCards) => {
+              this.convertCardPointsToTR(player, foundCards[0]);
+              this.discardPlayedCard(player, foundCards[0]);
+              player.drawCard(2);
+              return undefined;
+            },
           );
         },
       );
 
       const drawBlueCard = new SelectOption('Spend 3 MC to draw a blue card', 'Draw card', () => {
         player.megaCredits -= 3;
-        player.cardsInHand.push(game.drawCardsByType(CardType.ACTIVE, 1)[0]);
-
-        const drawnCard = game.getCardsInHandByType(player, CardType.ACTIVE).slice(-1)[0];
-        this.logCardDraw(game, player, drawnCard);
-
+        player.drawCard(1, {cardType: CardType.ACTIVE});
         return undefined;
       });
 
@@ -88,47 +77,41 @@ export class ProjectWorkshop implements CorporationCard {
       return new OrOptions(drawBlueCard, flipBlueCard);
     }
 
-    private convertCardPointsToTR(player: Player, game: Game, card: ICard) {
+    private convertCardPointsToTR(player: Player, card: ICard) {
       if (card.getVictoryPoints !== undefined) {
-        const steps = card.getVictoryPoints(player, game);
-        player.increaseTerraformRatingSteps(steps, game);
-        LogHelper.logTRIncrease(game, player, steps);
+        const steps = card.getVictoryPoints(player);
+        player.increaseTerraformRatingSteps(steps);
+        LogHelper.logTRIncrease(player, steps);
       }
     }
 
-    private discardPlayedCard(player: Player, game: Game, card: ICard) {
+    private discardPlayedCard(player: Player, card: IProjectCard) {
       const cardIndex = player.playedCards.findIndex((c) => c.name === card.name);
       player.playedCards.splice(cardIndex, 1);
-      game.dealer.discard(card as IProjectCard);
+      player.game.dealer.discard(card);
 
       if (card.onDiscard) {
         card.onDiscard(player);
       }
 
-      game.log('${0} flipped and discarded ${1}', (b) => b.player(player).card(card));
-    }
-
-    private logCardDraw(game: Game, player: Player, drawnCard: IProjectCard) {
-      game.log('${0} drew ${1}', (b) => b.player(player).card(drawnCard));
+      player.game.log('${0} flipped and discarded ${1}', (b) => b.player(player).card(card));
     }
 
     public metadata: CardMetadata = {
       cardNumber: 'R45',
       description: 'You start with 39 MC, 1 steel and 1 titanium. As your first action, draw a blue card.',
       renderData: CardRenderer.builder((b) => {
-        b.megacredits(39).steel(1).titanium(1).cards(1).secondaryTag('blue');
+        b.megacredits(39).steel(1).titanium(1).cards(1).secondaryTag(AltSecondaryTag.BLUE);
         b.corpBox('action', (cb) => {
           cb.vSpace(CardRenderItemSize.LARGE);
-          cb.effectBox((eb) => {
-            eb.text('flip', CardRenderItemSize.SMALL, true).cards(1).secondaryTag('blue');
+          cb.action(undefined, (eb) => {
+            eb.text('flip', CardRenderItemSize.SMALL, true).cards(1).secondaryTag(AltSecondaryTag.BLUE);
             eb.startAction.text('?', CardRenderItemSize.MEDIUM, true).tr(1, CardRenderItemSize.SMALL);
             eb.cards(2).digit;
-            eb.description(undefined);
           });
           cb.vSpace(CardRenderItemSize.SMALL);
-          cb.effectBox((eb) => {
-            eb.or().megacredits(3).startAction.cards(1).secondaryTag('blue');
-            eb.description('Action: Flip and discard a played blue card to convert any VP on it into TR and draw 2 cards, or spend 3 MC to draw a blue card.');
+          cb.action('Flip and discard a played blue card to convert any VP on it into TR and draw 2 cards, or spend 3 MC to draw a blue card.', (eb) => {
+            eb.or().megacredits(3).startAction.cards(1).secondaryTag(AltSecondaryTag.BLUE);
           });
         });
       }),

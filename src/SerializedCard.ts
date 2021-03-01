@@ -1,11 +1,12 @@
 import {Resources} from './Resources';
 import {Tags} from './cards/Tags';
+import {CardName} from './CardName';
 
 export interface SerializedCard {
   allTags?: Array<Tags>;
   bonusResource?: Resources;
   isDisabled?: boolean;
-  name: string;
+  name: CardName;
   resourceCount?: number;
 }
 

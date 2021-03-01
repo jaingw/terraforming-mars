@@ -1,35 +1,24 @@
-import {CorporationCard} from '../../corporation/CorporationCard';
 import {Player} from '../../../Player';
 import {Tags} from '../../Tags';
-import {ResourceType} from '../../../ResourceType';
 import {IProjectCard} from '../../IProjectCard';
-import {Resources} from '../../../Resources';
-import {Game} from '../../../Game';
 import {CardName} from '../../../CardName';
-import {IResourceCard} from '../../ICard';
-import {CardType} from '../../CardType';
+import {Arklight} from '../../colonies/Arklight';
+import {CardMetadata} from '../../CardMetadata';
 
-export class _Arklight_ implements CorporationCard, IResourceCard {
+export class _Arklight_ extends Arklight {
     public name: CardName = CardName._ARKLIGHT_;
-    public tags: Array<Tags> = [Tags.ANIMAL];
-    public startingMegaCredits: number = 45;
-    public cardType: CardType = CardType.CORPORATION;
-    public resourceType: ResourceType = ResourceType.ANIMAL;
-    public resourceCount: number = 0;
 
-    public play(player: Player) {
-      player.addProduction(Resources.MEGACREDITS, 2);
-      player.addResourceTo(this);
-      return undefined;
-    }
-
-    public onCardPlayed(player: Player, _game: Game, card: IProjectCard): void {
+    public onCardPlayed(player: Player, card: IProjectCard): void {
       if (player.isCorporation(CardName._ARKLIGHT_)) {
-        player.addResourceTo(this, card.tags.filter((cardTag) => cardTag === Tags.ANIMAL || cardTag === Tags.PLANT).length);
+        const count = card.tags.filter((cardTag) => cardTag === Tags.ANIMAL || cardTag === Tags.PLANT).length;
+        if (count > 0 ) {
+          player.addResourceTo(this, count);
+        }
       }
     }
 
-    public getVictoryPoints(): number {
-      return Math.floor(this.resourceCount / 2);
-    }
+    // public get metadata() {
+    //   return undefined;
+    // }
+    public metadata?: CardMetadata = undefined;
 }

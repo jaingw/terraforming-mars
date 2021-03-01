@@ -1,9 +1,14 @@
+export type VictoryPoints = 'terraformRating' | 'milestones' | 'awards' | 'greenery' | 'city' | 'moon colony' | 'moon mine' | 'moon road' | 'victoryPoints';
+
 export class VictoryPointsBreakdown {
     public terraformRating: number = 0;
     public milestones: number = 0;
     public awards: number = 0;
     public greenery: number = 0;
     public city: number = 0;
+    public moonColonies: number = 0;
+    public moonMines: number = 0;
+    public moonRoads: number = 0;
     public victoryPoints = 0;
     public total = 0;
     public detailsCards: Array<string> = [];
@@ -17,10 +22,13 @@ export class VictoryPointsBreakdown {
       this.total += this.awards;
       this.total += this.greenery;
       this.total += this.city;
+      this.total += this.moonColonies;
+      this.total += this.moonMines;
+      this.total += this.moonRoads;
       this.total += this.victoryPoints;
     }
 
-    public setVictoryPoints(key: string, points: number, message?: string) {
+    public setVictoryPoints(key: VictoryPoints, points: number, message?: string) {
       switch (key) {
       case 'terraformRating':
         this.terraformRating += points;
@@ -42,6 +50,18 @@ export class VictoryPointsBreakdown {
       case 'victoryPoints':
         this.victoryPoints += points;
         if (message !== undefined) this.detailsCards.push(message+': '+points);
+        break;
+      case 'moon colony':
+        this.moonColonies += points;
+        break;
+      case 'moon mine':
+        this.moonMines += points;
+        break;
+      case 'moon road':
+        this.moonRoads += points;
+        break;
+      default:
+        console.warn('Unknown victory point constraint ' + key);
         break;
       }
     }

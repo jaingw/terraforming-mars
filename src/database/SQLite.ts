@@ -1,4 +1,4 @@
-import {IDatabase} from './IDatabase';
+import {IDatabase, DbLoadCallback} from './IDatabase';
 import {Game, GameId, GameOptions, Score} from '../Game';
 import {IGameData} from './IDatabase';
 import {SerializedGame} from '../SerializedGame';
@@ -24,7 +24,7 @@ export class SQLite implements IDatabase {
     this.db.run('CREATE TABLE IF NOT EXISTS game_results(game_id varchar not null, seed_game_id varchar, players integer, generations integer, game_options text, scores text,createtime timestamp default (datetime(CURRENT_TIMESTAMP,\'localtime\')), PRIMARY KEY (game_id))');
   }
 
-  getClonableGames(cb: (err: any, allGames: Array<IGameData>) => void) {
+  getClonableGames(cb: (err: Error | undefined, allGames: Array<IGameData>) => void) {
     const allGames: Array<IGameData> = [];
     const sql = 'SELECT distinct game_id game_id, game FROM games WHERE  save_id = 0 order by game_id asc';
 
@@ -39,12 +39,12 @@ export class SQLite implements IDatabase {
           };
           allGames.push(gameData);
         });
-        return cb(err, allGames);
+        return cb(err ?? undefined, allGames);
       }
     });
   }
 
-  getGames(cb: (err: any, allGames: Array<string>) => void) {
+  getGames(cb: (err: Error | undefined, allGames: Array<string>) => void) {
     const allGames: Array<string> = [];
     const sql: string = 'SELECT distinct game_id game_id FROM games ';
     this.db.all(sql, [], (err, rows) => {
@@ -52,14 +52,14 @@ export class SQLite implements IDatabase {
         rows.forEach((row) => {
           allGames.push(row.game_id);
         });
-        return cb(err, allGames);
+        return cb(err ?? undefined, allGames);
       }
     });
   }
 
   restoreReferenceGame(game_id: GameId, game: Game, cb: (err: any) => void) {
     // Retrieve first save from database
-    this.db.get('SELECT game_id game_id, game game FROM games WHERE game_id = ? AND save_id = 0', [game_id], (err: { message: any; }, row: { game_id: GameId, game: any; }) => {
+    this.db.get('SELECT game_id game_id, game game FROM games WHERE game_id = ? AND save_id = 0', [game_id], (err: Error | null, row: { game_id: GameId, game: any; }) => {
       if (row.game_id === undefined) {
         return cb(new Error('Game not found'));
       }
@@ -89,11 +89,11 @@ export class SQLite implements IDatabase {
     });
   }
 
-  getGame(game_id: string, cb: (err: any, game?: SerializedGame) => void) {
+  getGame(game_id: string, cb: (err: Error | undefined, game?: SerializedGame) => void): void {
     // Retrieve last save from database
-    this.db.get('SELECT game game ,createtime createtime  FROM games WHERE game_id = ? ORDER BY save_id DESC LIMIT 1', [game_id], (err: { message: any; }, row: { game: any, createtime: any; }) => {
+    this.db.get('SELECT game game   FROM games WHERE game_id = ? ORDER BY save_id DESC LIMIT 1', [game_id], (err: Error | null, row: { game: any, createtime: any; }) => {
       if (err) {
-        return cb(err);
+        return cb(err ?? undefined);
       }
       // Transform string to json
       const gameToRestore = JSON.parse(row.game);
@@ -101,26 +101,38 @@ export class SQLite implements IDatabase {
     });
   }
 
+  getGameVersion(game_id: GameId, save_id: number, cb: DbLoadCallback<SerializedGame>): void {
+    this.db.get('SELECT game game FROM games WHERE game_id = ? and save_id = ?', [game_id, save_id], (err: Error | null, row: { game: any; }) => {
+      if (err) {
+        return cb(err ?? undefined, undefined);
+      }
+      cb(undefined, JSON.parse(row.game));
+    });
+  }
+
   cleanSaves(game_id: GameId, save_id: number): void {
     // DELETE all saves except initial and last one
-    this.db.run('DELETE FROM games WHERE game_id = ? AND save_id < ? AND save_id > 0', [game_id, save_id], function(err: { message: any; }) {
+    this.db.run('DELETE FROM games WHERE game_id = ? AND save_id < ? AND save_id > 0', [game_id, save_id], function(err: Error | null) {
       if (err) {
         return console.warn(err.message);
       }
     });
     // Flag game as finished
-    this.db.run('UPDATE games SET status = \'finished\' WHERE game_id = ?', [game_id], function(err: { message: any; }) {
+    this.db.run('UPDATE games SET status = \'finished\' WHERE game_id = ?', [game_id], function(err: Error | null) {
       if (err) {
         return console.warn(err.message);
       }
     });
+  }
+
+  purgeUnfinishedGames(): void {
     // Purge unfinished games older than MAX_GAME_DAYS days. If this .env variable is not present, unfinished games will not be purged.
     // if (process.env.MAX_GAME_DAYS) {
-    // this.db.run("DELETE FROM games WHERE created_time < strftime('%s',date('now', '-? day')) and status = 'running'", [process.env.MAX_GAME_DAYS], function(err: { message: any; }) {
-    // if (err) {
-    // return console.warn(err.message);
-    // }
-    // });
+    //   this.db.run('DELETE FROM games WHERE created_time < strftime(\'%s\',date(\'now\', \'-? day\')) and status = \'running\'', [process.env.MAX_GAME_DAYS], function(err: Error | null) {
+    //     if (err) {
+    //       return console.warn(err.message);
+    //     }
+    //   });
     // }
   }
 
@@ -144,7 +156,7 @@ export class SQLite implements IDatabase {
 
   restoreGame(game_id: string, save_id: number, game: Game, playId: string): void {
     // Retrieve last save from database
-    this.db.get('SELECT game game ,createtime createtime  FROM games WHERE game_id = ? AND save_id = ? LIMIT 1', [game_id, save_id], (err: { message: any; }, row: { game: any, createtime: any; }) => {
+    this.db.get('SELECT game game ,createtime createtime  FROM games WHERE game_id = ? AND save_id = ? LIMIT 1', [game_id, save_id], (err: Error | null, row: { game: any, createtime: any; }) => {
       if (err) {
         return console.error('restoreGame '+err.message);
       }
@@ -166,7 +178,7 @@ export class SQLite implements IDatabase {
 
   saveGameState(game_id: string, save_id: number, game: string): void {
     // Insert
-    this.db.run('INSERT INTO games(game_id, save_id, game) VALUES(?, ?, ?)', [game_id, save_id, game], function(err: { message: any; }) {
+    this.db.run('INSERT INTO games(game_id, save_id, game) VALUES(?, ?, ?)', [game_id, save_id, game], function(err: Error | null) {
       if (err) {
         // Should be a duplicate, does not matter
         console.log('saveGameState' + err);
@@ -177,7 +189,7 @@ export class SQLite implements IDatabase {
 
   deleteGameNbrSaves(game_id: GameId, rollbackCount: number): void {
     if (rollbackCount > 0) {
-      this.db.run('DELETE FROM games WHERE rowid IN (SELECT rowid FROM games WHERE game_id = ? ORDER BY save_id DESC LIMIT ?)', [game_id, rollbackCount], function(err: { message: any; }) {
+      this.db.run('DELETE FROM games WHERE rowid IN (SELECT rowid FROM games WHERE game_id = ? ORDER BY save_id DESC LIMIT ?)', [game_id, rollbackCount], function(err: Error | null) {
         if (err) {
           return console.warn(err.message);
         }

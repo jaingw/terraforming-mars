@@ -17,12 +17,12 @@ describe('SulphurEatingBacteria', function() {
 
   it('Can\'t play', function() {
     (game as any).venusScaleLevel = 4;
-    expect(card.canPlay(player, game)).is.not.true;
+    expect(card.canPlay(player)).is.not.true;
   });
 
   it('Should play', function() {
     (game as any).venusScaleLevel = 6;
-    expect(card.canPlay(player, game)).is.true;
+    expect(card.canPlay(player)).is.true;
     expect(card.play()).is.undefined;
   });
 
@@ -30,8 +30,8 @@ describe('SulphurEatingBacteria', function() {
     player.playedCards.push(card);
     player.addResourceTo(card, 5);
 
-    const action = card.action(player, game) as OrOptions;
-    action.options[0].cb(3);
+    const action = card.action(player) as OrOptions;
+    action.options[1].cb(3);
     expect(player.megaCredits).to.eq(9);
     expect(card.resourceCount).to.eq(2);
   });
@@ -40,7 +40,7 @@ describe('SulphurEatingBacteria', function() {
     player.playedCards.push(card);
     expect(card.resourceCount).to.eq(0);
 
-    card.action(player, game);
+    card.action(player);
     expect(card.resourceCount).to.eq(1);
   });
 });

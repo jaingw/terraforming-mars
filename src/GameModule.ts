@@ -10,4 +10,5 @@ export enum GameModule {
     Breakthrough = 'breakthrough',
     Community = 'community',
     Ares = 'ares',
+    Moon = 'moon',
 }

@@ -8,14 +8,22 @@ import {TestPlayers} from '../TestingUtils';
 import {Board} from '../../src/boards/Board';
 import {Color} from '../../src/Color';
 import {SerializedBoard} from '../../src/boards/SerializedBoard';
+import {MoonSpaces} from '../../src/moon/MoonSpaces';
+import {Random} from '../../src/Random';
 
 describe('Board', function() {
   let board : OriginalBoard; let player : Player; let player2 : Player;
 
   beforeEach(function() {
-    board = OriginalBoard.newInstance(false, 0, false);
+    board = OriginalBoard.newInstance(false, new Random(0), false);
     player = TestPlayers.BLUE.newPlayer();
     player2 = TestPlayers.RED.newPlayer();
+  });
+
+  it('getSpace', () => {
+    expect(board.getSpace('01').spaceType).eq(SpaceType.COLONY);
+    expect(board.getSpace('01').id).eq('01');
+    expect(() => board.getSpace(MoonSpaces.LUNA_TRADE_STATION).id).to.throw(Error, /Can't find space with id m01/);
   });
 
   it('Can have greenery placed on any available land when player has no tile placed', function() {
@@ -42,6 +50,81 @@ describe('Board', function() {
     const availableSpaces = board.getAvailableSpacesForGreenery(player);
     expect(availableSpaces).has.lengthOf(1);
   });
+
+  it('getAdjacentSpaces', () => {
+    const expectedAdjacentSpaces: Map<string, Array<string>> = new Map([
+      ['01', []],
+      ['02', []],
+      ['03', ['04', '09', '08']],
+      ['04', ['05', '10', '09', '03']],
+      ['05', ['06', '11', '10', '04']],
+      ['06', ['07', '12', '11', '05']],
+      ['07', ['13', '12', '06']],
+      ['08', ['03', '09', '15', '14']],
+      ['09', ['03', '04', '10', '16', '15', '08']],
+      ['10', ['04', '05', '11', '17', '16', '09']],
+      ['11', ['05', '06', '12', '18', '17', '10']],
+      ['12', ['06', '07', '13', '19', '18', '11']],
+      ['13', ['07', '20', '19', '12']],
+      ['14', ['08', '15', '22', '21']],
+      ['15', ['08', '09', '16', '23', '22', '14']],
+      ['16', ['09', '10', '17', '24', '23', '15']],
+      ['17', ['10', '11', '18', '25', '24', '16']],
+      ['18', ['11', '12', '19', '26', '25', '17']],
+      ['19', ['12', '13', '20', '27', '26', '18']],
+      ['20', ['13', '28', '27', '19']],
+      ['21', ['14', '22', '30', '29']],
+      ['22', ['14', '15', '23', '31', '30', '21']],
+      ['23', ['15', '16', '24', '32', '31', '22']],
+      ['24', ['16', '17', '25', '33', '32', '23']],
+      ['25', ['17', '18', '26', '34', '33', '24']],
+      ['26', ['18', '19', '27', '35', '34', '25']],
+      ['27', ['19', '20', '28', '36', '35', '26']],
+      ['28', ['20', '37', '36', '27']],
+      ['29', ['21', '30', '38']],
+      ['30', ['21', '22', '31', '39', '38', '29']],
+      ['31', ['22', '23', '32', '40', '39', '30']],
+      ['32', ['23', '24', '33', '41', '40', '31']],
+      ['33', ['24', '25', '34', '42', '41', '32']],
+      ['34', ['25', '26', '35', '43', '42', '33']],
+      ['35', ['26', '27', '36', '44', '43', '34']],
+      ['36', ['27', '28', '37', '45', '44', '35']],
+      ['37', ['28', '45', '36']],
+      ['38', ['29', '30', '39', '46']],
+      ['39', ['30', '31', '40', '47', '46', '38']],
+      ['40', ['31', '32', '41', '48', '47', '39']],
+      ['41', ['32', '33', '42', '49', '48', '40']],
+      ['42', ['33', '34', '43', '50', '49', '41']],
+      ['43', ['34', '35', '44', '51', '50', '42']],
+      ['44', ['35', '36', '45', '52', '51', '43']],
+      ['45', ['36', '37', '52', '44']],
+      ['46', ['38', '39', '47', '53']],
+      ['47', ['39', '40', '48', '54', '53', '46']],
+      ['48', ['40', '41', '49', '55', '54', '47']],
+      ['49', ['41', '42', '50', '56', '55', '48']],
+      ['50', ['42', '43', '51', '57', '56', '49']],
+      ['51', ['43', '44', '52', '58', '57', '50']],
+      ['52', ['44', '45', '58', '51']],
+      ['53', ['46', '47', '54', '59']],
+      ['54', ['47', '48', '55', '60', '59', '53']],
+      ['55', ['48', '49', '56', '61', '60', '54']],
+      ['56', ['49', '50', '57', '62', '61', '55']],
+      ['57', ['50', '51', '58', '63', '62', '56']],
+      ['58', ['51', '52', '63', '57']],
+      ['59', ['53', '54', '60']],
+      ['60', ['54', '55', '61', '59']],
+      ['61', ['55', '56', '62', '60']],
+      ['62', ['56', '57', '63', '61']],
+      ['63', ['57', '58', '62']],
+      ['69', []],
+    ]);
+    board.spaces.forEach((space) => {
+      const expected = expectedAdjacentSpaces.get(space.id)!;
+      const actual = board.getAdjacentSpaces(space).map((s) => s.id);
+      expect(expected).to.eql(actual);
+    });
+  });
+
   it('getNthAvailableLandSpace', function() {
     // board spaces start at 03, and the top of the map looks like this
     //
@@ -67,6 +150,12 @@ describe('Board', function() {
         expect(board.getNthAvailableLandSpace(1, -1).id).eq('61');
         expect(board.getNthAvailableLandSpace(2, -1).id).eq('60');
         expect(board.getNthAvailableLandSpace(3, -1).id).eq('59');
+  });
+
+  it('getNthAvailableLandSpace throws if no spaces available', function() {
+    expect(function() {
+      board.getNthAvailableLandSpace(0, 1, undefined, () => false);
+    }).to.throw('no spaces available');
   });
 
   function expectSpace(space: ISpace, id: string, x: number, y: number) {
@@ -148,117 +237,22 @@ describe('Board', function() {
   });
 
   class TestBoard extends Board {
-    public constructor(public spaces: Array<ISpace>) {
-      super();
+    public constructor(spaces: Array<ISpace>) {
+      super(spaces);
     };
 
     public getSpaceById(id: string): ISpace | undefined {
       return this.spaces.find((space) => space.id === id);
     }
+
+    public getVolcanicSpaceIds(): Array<string> {
+      return [];
+    }
+
+    public getNoctisCitySpaceIds(): Array<string> {
+      return [];
+    }
   };
-
-  it('deserialize-backward compatible', () => {
-    const player1 = new Player('name-1', Color.RED, false, 0, 'name-1-id');
-    const player2 = new Player('name-2', Color.YELLOW, false, 0, 'name-2-id');
-    const json = {
-      'spaces': [
-        {
-          'id': '01',
-          'spaceType': 'colony',
-          'bonus': [],
-          'x': -1,
-          'y': -1,
-          'player': {
-            'name': 'name-1',
-            'color': 'blue',
-            'beginner': false,
-            'handicap': 0,
-            'usedUndo': false,
-            'id': 'name-1-id',
-          },
-          'tile': {
-            'tileType': 2,
-          },
-        },
-        {
-          'id': '03',
-          'spaceType': 'land',
-          'bonus': [
-            1,
-            1,
-          ],
-          'x': 4,
-          'y': 0,
-          'player': {
-            'name': 'name-2',
-            'color': 'green',
-            'beginner': false,
-            'handicap': 0,
-            'usedUndo': false,
-            'id': 'name-2-id',
-          },
-          'tile': {
-            'tileType': 0,
-          },
-        },
-        {
-          'id': '04',
-          'spaceType': 'ocean',
-          'bonus': [
-            1,
-            1,
-          ],
-          'x': 5,
-          'y': 0,
-          'tile': {
-            'tileType': 1,
-          },
-        },
-        {
-          'id': '05',
-          'spaceType': 'land',
-          'bonus': [],
-          'x': 6,
-          'y': 0,
-        },
-      ],
-    } as SerializedBoard;
-    const board = new TestBoard(Board.deserializeSpaces(json.spaces, [player1, player2]));
-    expect(board.getSpaceById('01')!.player).eq(player1);
-    expect(board.getSpaceById('03')!.player).eq(player2);
-
-    const serialized = board.serialize();
-    const boardJson = {
-      'spaces': [
-        {
-          'id': '01',
-          'spaceType': 'colony', 'adjacency': undefined, 'bonus': [],
-          'x': -1, 'y': -1, 'player': 'name-1-id',
-          'tile': {'tileType': 2},
-        },
-        {
-          'id': '03',
-          'spaceType': 'land', 'adjacency': undefined, 'bonus': [1, 1],
-          'x': 4, 'y': 0, 'player': 'name-2-id',
-          'tile': {'tileType': 0},
-        },
-        {
-          'id': '04',
-          'spaceType': 'ocean', 'adjacency': undefined, 'bonus': [1, 1],
-          'x': 5, 'y': 0, 'player': undefined,
-          'tile': {'tileType': 1},
-        },
-        {
-          'id': '05',
-          'spaceType': 'land', 'adjacency': undefined, 'bonus': [],
-          'x': 6, 'y': 0, 'player': undefined,
-          'tile': undefined,
-        },
-      ],
-    };
-    expect(serialized).deep.eq(boardJson);
-  });
-
 
   it('deserialize', () => {
     const boardJson = {
@@ -266,13 +260,13 @@ describe('Board', function() {
         {
           'id': '01',
           'spaceType': 'colony', 'bonus': [],
-          'x': -1, 'y': -1, 'player': 'name-1-id',
+          'x': -1, 'y': -1, 'player': {'id': 'name-1-id'},
           'tile': {'tileType': 2},
         },
         {
           'id': '03',
           'spaceType': 'land', 'bonus': [1, 1],
-          'x': 4, 'y': 0, 'player': 'name-2-id',
+          'x': 4, 'y': 0, 'player': {'id': 'name-2-id'},
           'tile': {'tileType': 0},
         },
         {

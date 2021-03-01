@@ -1,37 +1,42 @@
 import {IProjectCard} from '../IProjectCard';
 import {Tags} from '../Tags';
+import {Card} from '../Card';
 import {CardType} from '../CardType';
 import {Player} from '../../Player';
-import {Game} from '../../Game';
 import {Resources} from '../../Resources';
 import {CardName} from '../../CardName';
-import {CardMetadata} from '../CardMetadata';
 import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
+import {GlobalParameter} from '../../GlobalParameter';
 
-export class WavePower implements IProjectCard {
-    public tags = [Tags.ENERGY];
-    public cost = 8;
-    public name = CardName.WAVE_POWER;
-    public cardType = CardType.AUTOMATED;
-    public canPlay(player: Player, game: Game): boolean {
-      return game.board.getOceansOnBoard() >= 3 - player.getRequirementsBonus(game);
-    }
-    public play(player: Player) {
-      player.addProduction(Resources.ENERGY);
-      return undefined;
-    }
-    public getVictoryPoints() {
-      return 1;
-    }
-    public metadata: CardMetadata = {
-      cardNumber: '139',
+export class WavePower extends Card implements IProjectCard {
+  constructor() {
+    super({
+      cardType: CardType.AUTOMATED,
+      name: CardName.WAVE_POWER,
+      tags: [Tags.ENERGY],
+      cost: 8,
+
       requirements: CardRequirements.builder((b) => b.oceans(3)),
-      renderData: CardRenderer.builder((b) => {
-        b.productionBox((pb) => pb.energy(1));
-      }),
-      description: 'Requires 3 ocean tiles. Increase your energy production 1 step.',
-      victoryPoints: 1,
-    }
+      metadata: {
+        cardNumber: '139',
+        renderData: CardRenderer.builder((b) => {
+          b.production((pb) => pb.energy(1));
+        }),
+        description: 'Requires 3 ocean tiles. Increase your energy production 1 step.',
+        victoryPoints: 1,
+      },
+    });
+  }
+  public canPlay(player: Player): boolean {
+    return player.game.checkMinRequirements(player, GlobalParameter.OCEANS, 3);
+  }
+  public play(player: Player) {
+    player.addProduction(Resources.ENERGY);
+    return undefined;
+  }
+  public getVictoryPoints() {
+    return 1;
+  }
 }
 

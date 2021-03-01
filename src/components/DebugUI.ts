@@ -10,34 +10,44 @@ import {
 import {GameModule} from '../GameModule';
 import {ICard} from '../cards/ICard';
 import {ICardRenderDescription, isIDescription} from '../cards/render/ICardRenderDescription';
+import {CardName} from '../CardName';
+import {ICardFactory} from '../cards/ICardFactory';
+import {PreferencesManager} from './PreferencesManager';
 
-interface Entry {
-  card: ICard,
-  module: GameModule
-}
-const cards: Map<string, Entry> = new Map();
+const cards: Map<CardName, {card: ICard, module: GameModule, cardNumber: string}> = new Map();
+
 ALL_CARD_MANIFESTS.forEach((manifest) => {
-  manifest.projectCards.cards.forEach((card) =>
-    cards.set(card.cardName, {card: new card.Factory(), module: manifest.module}));
-  manifest.corporationCards.cards.forEach((card) =>
-    cards.set(card.cardName, {card: new card.Factory(), module: manifest.module}));
-  manifest.preludeCards.cards.forEach((card) =>
-    cards.set(card.cardName, {card: new card.Factory(), module: manifest.module}));
+  const module = manifest.module;
+  [
+    manifest.projectCards,
+    manifest.corporationCards,
+    manifest.preludeCards,
+    manifest.standardProjects].forEach((deck) => {
+    deck.factories.forEach((cf: ICardFactory<ICard>) => {
+      const card: ICard = new cf.Factory();
+      const cardNumber = card.metadata?.cardNumber || '';
+      cards.set(card.name, {card, module, cardNumber});
+    });
+  });
 });
 
 export interface DebugUIModel {
   filterText: string,
   filterDescription: boolean | unknown[],
+  sortById: boolean | unknown[],
   base: boolean | unknown[],
   corporateEra: boolean | unknown[],
   prelude: boolean | unknown[],
   venusNext: boolean | unknown[],
   colonies: boolean | unknown[],
   turmoil: boolean | unknown[],
+  breakthrough: boolean | unknown[],
   community: boolean | unknown[],
   ares: boolean | unknown[],
+  moon: boolean | unknown[],
   promo: boolean | unknown[],
 }
+
 export const DebugUI = Vue.component('debug-ui', {
   components: {
     Card,
@@ -46,16 +56,34 @@ export const DebugUI = Vue.component('debug-ui', {
     return {
       filterText: '',
       filterDescription: false,
+      sortById: false,
       base: true,
       corporateEra: true,
       prelude: true,
       venusNext: true,
       colonies: true,
       turmoil: true,
+      breakthrough: true,
       community: true,
       ares: true,
+      moon: true,
       promo: true,
     } as DebugUIModel;
+  },
+  mounted() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchString = urlParams.get('search');
+    if (searchString) {
+      this.filterText = searchString;
+    }
+  },
+  watch: {
+    filterText(newSearchString) {
+      if (window.history.pushState) {
+        const newurl = window.location.protocol + '//' + window.location.host + window.location.pathname + '?search=' + newSearchString;
+        window.history.pushState({path: newurl}, '', newurl);
+      }
+    },
   },
   methods: {
     toggleAll: function() {
@@ -66,34 +94,47 @@ export const DebugUI = Vue.component('debug-ui', {
       data.venusNext = !data.venusNext;
       data.colonies = !data.colonies;
       data.turmoil = !data.turmoil;
+      data.breakthrough = !data.breakthrough;
       data.community = !data.community;
       data.promo = !data.promo;
       data.ares = !data.ares;
+      data.moon = !data.moon;
+    },
+    sort: function(names: Array<CardName>): Array<CardName> {
+      if (this.$data.sortById) {
+        return names.sort((a: CardName, b: CardName) => {
+          const an = cards.get(a)?.cardNumber || '';
+          const bn = cards.get(b)?.cardNumber || '';
+          return an.localeCompare(bn);
+        });
+      } else {
+        return names.sort();
+      }
     },
     getAllStandardProjectCards: function() {
-      return ALL_STANDARD_PROJECT_CARD_NAMES.sort();
+      return this.sort(ALL_STANDARD_PROJECT_CARD_NAMES).filter((x) => this.filtered(x));
     },
     getAllProjectCards: function() {
-      return ALL_PROJECT_CARD_NAMES.sort();
+      return this.sort(ALL_PROJECT_CARD_NAMES).filter((x) => this.filtered(x));
     },
     getAllCorporationCards: function() {
-      return ALL_CORPORATION_CARD_NAMES.sort();
+      return this.sort(ALL_CORPORATION_CARD_NAMES).filter((x) => this.filtered(x));
     },
     getAllPreludeCards: function() {
-      return ALL_PRELUDE_CARD_NAMES.sort();
+      return this.sort(ALL_PRELUDE_CARD_NAMES).filter((x) => this.filtered(x));
     },
-    filtered: function(cardName: string): boolean {
+    filtered: function(cardName: CardName): boolean {
       const card = cards.get(cardName);
       const filterText = this.$data.filterText.toUpperCase();
       if (this.$data.filterText.length > 0) {
-        if (cardName.toUpperCase().indexOf(filterText) === -1) {
+        if (cardName.toUpperCase().includes(filterText) === false) {
           if (this.$data.filterDescription) {
             let desc: string | ICardRenderDescription | undefined = card?.card.metadata?.description;
             if (isIDescription(desc)) {
               desc = desc.text;
             }
             // TODO(kberg): optimize by having all the descriptions in upper case.
-            if (desc === undefined || desc.toUpperCase().indexOf(filterText) === -1) {
+            if (desc === undefined || desc.toUpperCase().includes(filterText) === false) {
               return false;
             }
           } else {
@@ -117,22 +158,37 @@ export const DebugUI = Vue.component('debug-ui', {
         return this.prelude === true;
       case GameModule.Turmoil:
         return this.turmoil === true;
+      case GameModule.Breakthrough:
+        return this.breakthrough === true;
       case GameModule.Community:
         return this.community === true;
       case GameModule.Ares:
         return this.ares === true;
+      case GameModule.Moon:
+        return this.moon === true;
       default:
         return true;
       }
     },
+    getLanguageCssClass() {
+      const language = PreferencesManager.loadValue('lang') || 'en';
+      return 'language-' + language;
+    },
   },
   template: `
-        <div class="debug-ui-container">
-            <input class="form-input form-input-line" placeholder="filter" v-model="filterText"></input>
-            <input type="checkbox" name="filterDescription" id="filterDescription-checkbox" v-model="filterDescription"></input>
-            <label for="filterDescription-checkbox">
-                <span v-i18n>Filter description</span>
-            </label>
+        <div class="debug-ui-container" :class="getLanguageCssClass()">
+            <h1>Debug UI</h1>
+            <div class="form-group">
+              <input class="form-input form-input-line" placeholder="filter" v-model="filterText"></input>
+              <input type="checkbox" name="filterDescription" id="filterDescription-checkbox" v-model="filterDescription"></input>
+              <label for="filterDescription-checkbox">
+                  <span v-i18n>Filter description</span>
+              </label>
+              <input type="checkbox" name="sortById" id="sortById-checkbox" v-model="sortById"></input>
+              <label for="sortById-checkbox">
+                  <span v-i18n>Sort by ID (work in progress)</span>
+              </label>
+            </div>
 
             <div class="create-game-page-column" style = "flex-flow: inherit; ">
             <button id="toggle-checkbox" v-on:click="toggleAll()">
@@ -173,7 +229,13 @@ export const DebugUI = Vue.component('debug-ui', {
                   <div class="create-game-expansion-icon expansion-icon-turmoil"></div>
                   <span v-i18n>Turmoil</span>
               </label>
-              
+
+              <input type="checkbox" name="breakthrough" id="breakthrough-checkbox" v-model="breakthrough"></input>
+              <label for="breakthrough-checkbox" class="expansion-button">
+                  <div class="create-game-expansion-icon expansion-icon-breakthrough"></div>
+                  <span v-i18n>Breakthrough</span>
+              </label>
+
               <input type="checkbox" name="promo" id="promo-checkbox" v-model="promo"></input>
               <label for="promo-checkbox" class="expansion-button">
                   <div class="create-game-expansion-icon expansion-icon-promo"></div>
@@ -191,32 +253,39 @@ export const DebugUI = Vue.component('debug-ui', {
                   <div class="create-game-expansion-icon expansion-icon-community"></div>
                   <span v-i18n>Community</span>
               </label><span/>
+
+              <input type="checkbox" name="moon" id="moon-checkbox" v-model="moon"></input>
+              <label for="moon-checkbox" class="expansion-button">
+                <div class="create-game-expansion-icon expansion-icon-themoon"></div>
+                <span v-i18n>The Moon</span>
+              </label><span/>
             </div>
+
             <section class="debug-ui-cards-list">
                 <h2>Project Cards</h2>
                 <div class="cardbox" v-for="card in getAllProjectCards()">
-                    <Card v-show="filtered(card)" :card="{'name': card}" />
+                    <Card :key="card"  :card="{'name': card}" />
                 </div>
             </section>
             <br>
             <section class="debug-ui-cards-list">
                 <h2>Corporations</h2>
                 <div class="cardbox" v-for="card in getAllCorporationCards()">
-                    <Card v-show="filtered(card)" :card="{'name': card}" />
+                    <Card :key="card" :card="{'name': card}" />
                 </div>
             </section>
             <br>
             <section class="debug-ui-cards-list">
                 <h2>Preludes</h2>
                 <div class="cardbox" v-for="card in getAllPreludeCards()">
-                    <Card v-show="filtered(card)" :card="{'name': card}" />
+                    <Card :key="card" :card="{'name': card}" />
                 </div>
             </section>
             <br>
             <section class="debug-ui-cards-list">
               <h2>Standard Projects</h2>
               <div class="cardbox" v-for="card in getAllStandardProjectCards()">
-                  <Card v-show="filtered(card)" :card="{'name': card}" />
+                  <Card :key="card" :card="{'name': card}" />
               </div>
             </section>
         </div>

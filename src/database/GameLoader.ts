@@ -30,6 +30,7 @@ export class GameLoader {
     public readonly userIdMap: Map<string, User> = new Map<string, User>();
     public readonly userNameMap: Map<string, User> = new Map<string, User>();
     public readonly usersToGames: Map<string, Array<string>> = new Map<string, Array<string>>();
+    public allGameIds:Array<string> = [];
 
     private static instance?: GameLoader;
 
@@ -104,6 +105,11 @@ export class GameLoader {
     public getByPlayerId(playerId: string, cb: LoadCallback): void {
       if (this.state === State.READY && this.playerToGame.has(playerId)) {
         const game:any = this.playerToGame.get(playerId);
+        if (this.games.get(game.id) === undefined) {
+          this.playerToGame.delete(game.id);
+          cb(game);
+          return;
+        }
         if (game.loadState === LoadState.LOADED) {
           cb(game);
           return;
@@ -127,11 +133,12 @@ export class GameLoader {
 
     private loadFullGame( game:Game ): void{
       const gameId = game.id;
+      console.log(`loadFullGame ${gameId}`);
       Database.getInstance().getGame(
         gameId,
         (err, serializedGame?) => {
           if (err || (serializedGame === undefined)) {
-            console.error(`unable to load game ${gameId}`, err);
+            console.error(`unable to load  game ${gameId}`, err);
             this.onGameLoaded( game, true);
           } else {
             game.loadFromJSON(serializedGame);
@@ -238,31 +245,42 @@ export class GameLoader {
         if (allGames.length === 0) {
           this.onAllGamesLoaded();
           cb();
+          return;
         };
-
-        let loaded = 0;
-        allGames.forEach((game_id) => {
-          const player = new Player('test', Color.BLUE, false, 0, '000');
-          const player2 = new Player('test2', Color.RED, false, 0, '111');
-          const gameToRebuild = Game.newInstance(game_id, [player, player2], player);
-          Database.getInstance().getGame(
-            game_id,
-            (err, serializedGame) => {
-              loaded++;
-              if (err || (serializedGame === undefined)) {
-                console.error(`unable to load game ${game_id}`, err);
-              } else {
-                gameToRebuild.loadFromJSON(serializedGame);
-                console.log(`load game ${game_id}`);
-                this.onGameLoaded(gameToRebuild);
-              }
-              if (loaded === allGames.length) {
-                this.onAllGamesLoaded();
-                cb();
-              }
-            },
-          );
-        });
+        console.log(`loading all games ${allGames.length}`);
+        this.allGameIds = allGames;
+        this.loadNextGame(cb);
       });
+    }
+
+    private loadNextGame(cb = () => {}) {
+      const game_id = this.allGameIds.shift();
+      if (game_id === undefined ) {
+        this.onAllGamesLoaded();
+        cb();
+        return;
+      }
+      const player = new Player('test', Color.BLUE, false, 0, '000');
+      const player2 = new Player('test2', Color.RED, false, 0, '111');
+      const gameToRebuild = Game.newInstance(game_id, [player, player2], player);
+      console.error(`ready to load game ${game_id}`);
+      Database.getInstance().getGame(
+        game_id,
+        (err, serializedGame) => {
+          if (err || (serializedGame === undefined)) {
+            console.error(`unable to load  game ${game_id}`, err);
+          } else {
+            if (process.env.PORT) {
+              // 测试环境  加载全部
+              gameToRebuild.loadFromJSON(serializedGame);
+            } else {
+              // 正式环境  加载部分
+              gameToRebuild.loadFromJSON(serializedGame, false);
+            }
+            this.onGameLoaded(gameToRebuild);
+          }
+          this.loadNextGame(cb);
+        },
+      );
     }
 }

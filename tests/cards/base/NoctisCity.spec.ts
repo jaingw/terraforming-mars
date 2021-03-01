@@ -18,18 +18,18 @@ describe('NoctisCity', function() {
   });
 
   it('Can\'t play without energy production', function() {
-    expect(card.canPlay(player, game)).is.not.true;
+    expect(card.canPlay(player)).is.not.true;
   });
 
   it('Should play', function() {
     player.addProduction(Resources.ENERGY);
-    expect(card.canPlay(player, game)).is.true;
+    expect(card.canPlay(player)).is.true;
 
-    card.play(player, game);
+    card.play(player);
     expect(player.getProduction(Resources.ENERGY)).to.eq(0);
     expect(player.getProduction(Resources.MEGACREDITS)).to.eq(3);
 
-    const noctis = game.getSpace(SpaceName.NOCTIS_CITY);
+    const noctis = game.board.getSpace(SpaceName.NOCTIS_CITY);
     expect(noctis.tile && noctis.tile.tileType).to.eq(TileType.CITY);
   });
 });

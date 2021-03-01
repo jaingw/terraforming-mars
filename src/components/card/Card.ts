@@ -1,8 +1,6 @@
 import Vue from 'vue';
 
-import {IProjectCard} from '../../cards/IProjectCard';
 import {ICard} from '../../cards/ICard';
-import {BeginnerCorporation} from '../../cards/corporation/BeginnerCorporation';
 import {HTML_DATA} from '../../HTML_data';
 import {CardModel} from '../../models/CardModel';
 import {CardTitle} from './CardTitle';
@@ -16,47 +14,9 @@ import {CardType} from '../../cards/CardType';
 import {CardContent} from './CardContent';
 import {CardMetadata} from '../../cards/CardMetadata';
 import {Tags} from '../../cards/Tags';
-import {
-  ALL_CARD_MANIFESTS,
-  ALL_CORPORATION_DECKS,
-  ALL_PRELUDE_DECKS,
-  ALL_PROJECT_DECKS,
-  ALL_STANDARD_PROJECT_DECKS,
-} from '../../cards/AllCards';
-import {CardTypes, Deck, Decks} from '../../Deck';
+import {ALL_CARD_MANIFESTS} from '../../cards/AllCards';
 import {GameModule} from '../../GameModule';
-
-function getCorporationCardByName(cardName: string): ICard | undefined {
-  if (cardName === new BeginnerCorporation().name) {
-    return new BeginnerCorporation();
-  }
-  return Decks.findByName(ALL_CORPORATION_DECKS, cardName);
-}
-
-export function getProjectCardByName(cardName: string): IProjectCard | undefined {
-  return Decks.findByName(ALL_PROJECT_DECKS.concat(ALL_PRELUDE_DECKS), cardName);
-}
-
-function getStandardProjectCardByName(cardName: string): ICard | undefined {
-  return Decks.findByName(ALL_STANDARD_PROJECT_DECKS, cardName);
-}
-
-export function getCardExpansionByName(cardName: string): GameModule {
-  const manifest = ALL_CARD_MANIFESTS.find((manifest) => {
-    const decks: Array<Deck<CardTypes>> = [
-      manifest.corporationCards,
-      manifest.projectCards,
-      manifest.preludeCards,
-      manifest.standardProjects,
-    ];
-    return Decks.findByName(decks, cardName);
-  });
-
-  if (manifest === undefined) {
-    throw new Error(`Can't find card ${cardName}`);
-  }
-  return manifest.module;
-}
+import {CardRequirements} from '../../cards/CardRequirements';
 
 function getCardContent(cardName: string): string {
   let htmlData: string | undefined = '';
@@ -77,22 +37,56 @@ export const Card = Vue.component('card', {
   },
   props: {
     'card': {
-      type: Object as () => ICard,
+      type: Object as () => CardModel,
       required: true,
     },
     'actionUsed': {
       type: Boolean,
     },
   },
+  data: function() {
+    let cardInstance: ICard | undefined;
+    const cardName = this.card.name;
+    let expansion: GameModule | undefined;
+    for (const manifest of ALL_CARD_MANIFESTS) {
+      const decks = [
+        manifest.corporationCards,
+        manifest.projectCards,
+        manifest.preludeCards,
+        manifest.standardProjects,
+        manifest.standardActions,
+      ];
+      for (const deck of decks) {
+        const factory = deck.findByCardName(cardName);
+        if (factory !== undefined) {
+          cardInstance = new factory.Factory();
+          expansion = manifest.module;
+          break;
+        }
+      }
+      if (expansion !== undefined) {
+        break;
+      }
+    }
+
+    if (cardInstance === undefined || expansion === undefined) {
+      throw new Error(`Can't find card ${cardName}`);
+    }
+
+    return {
+      cardInstance,
+      expansion,
+    };
+  },
   methods: {
     getCardContent: function() {
       return getCardContent(this.card.name);
     },
     getCardExpansion: function(): string {
-      return getCardExpansionByName(this.card.name);
+      return this.expansion;
     },
     getCard: function(): ICard | undefined {
-      return getProjectCardByName(this.card.name) || getCorporationCardByName(this.card.name) || getStandardProjectCardByName(this.card.name);
+      return this.cardInstance;
     },
     getTags: function(): Array<string> {
       let result: Array<string> = [];
@@ -110,7 +104,12 @@ export const Card = Vue.component('card', {
     getCost: function(): number | undefined {
       const cost = this.getCard()?.cost;
       const type = this.getCardType();
-      return cost === undefined || type === CardType.PRELUDE ? undefined : cost;
+      return cost === undefined || type === CardType.PRELUDE || type === CardType.CORPORATION ? undefined : cost;
+    },
+    getReducedCost: function(): number | undefined {
+      const cost = this.card.calculatedCost;
+      const type = this.getCardType();
+      return cost === undefined || type === CardType.PRELUDE || type === CardType.CORPORATION ? undefined : cost;
     },
     getCardType: function(): CardType | undefined {
       return this.getCard()?.cardType;
@@ -122,8 +121,8 @@ export const Card = Vue.component('card', {
       const classes = ['card-container', 'filterDiv', 'hover-hide-res'];
       classes.push('card-' + card.name.toLowerCase().replace(/ /g, '-'));
 
-      if (this.actionUsed) {
-        classes.push('cards-action-was-used');
+      if (this.actionUsed || card.isDisabled) {
+        classes.push('card-unavailable');
       }
       if (this.isStandardProject()) {
         classes.push('card-standard-project');
@@ -133,25 +132,28 @@ export const Card = Vue.component('card', {
     getCardMetadata: function(): CardMetadata | undefined {
       return this.getCard()?.metadata;
     },
+    getCardRequirements: function(): CardRequirements | undefined {
+      return this.getCard()?.requirements;
+    },
     getResourceAmount: function(card: CardModel): number {
       return card.resources !== undefined ? card.resources : 0;
     },
     isCorporationCard: function() : boolean {
-      return getCorporationCardByName(this.card.name) !== undefined;
+      return this.getCardType() === CardType.CORPORATION;
     },
     isStandardProject: function() : boolean {
-      return getStandardProjectCardByName(this.card.name) !== undefined;
+      return this.getCardType() === CardType.STANDARD_PROJECT || this.getCardType() === CardType.STANDARD_ACTION;
     },
   },
   template: `
         <div :class="getCardClasses(card)">
             <div class="card-content-wrapper" v-i18n>
                 <div v-if="!isStandardProject()" class="card-cost-and-tags">
-                    <CardCost :amount="getCost()" />
+                    <CardCost :amount="getCost()" :newCost="getReducedCost()" />
                     <CardTags :tags="getTags()" />
                 </div>
                 <CardTitle :title="card.name" :type="getCardType()"/>
-                <CardContent v-if="getCardMetadata() !== undefined" :metadata="getCardMetadata()" :isCorporation="isCorporationCard()"/>
+                <CardContent v-if="getCardMetadata() !== undefined" :metadata="getCardMetadata()" :requirements="getCardRequirements()" :isCorporation="isCorporationCard()"/>
                 <CardNumber v-if="getCardMetadata() !== undefined" :number="getCardNumber()"/>
                 <div v-else class="temporary-content-wrapper" v-html=this.getCardContent() />
             </div>

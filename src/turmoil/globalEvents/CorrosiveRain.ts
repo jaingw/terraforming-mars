@@ -12,10 +12,8 @@ export class CorrosiveRain implements IGlobalEvent {
     public currentDelegate = PartyName.GREENS;
     public resolve(game: Game, turmoil: Turmoil) {
       game.getPlayers().forEach((player) => {
-        for (let i = 0; i < turmoil.getPlayerInfluence(player); i++) {
-          player.cardsInHand.push(game.dealer.dealCard());
-        }
-        game.defer(new CorrosiveRainDeferredAction(player, game));
+        player.drawCard(turmoil.getPlayerInfluence(player));
+        game.defer(new CorrosiveRainDeferredAction(player));
       });
     }
 }

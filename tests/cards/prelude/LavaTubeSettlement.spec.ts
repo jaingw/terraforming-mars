@@ -7,7 +7,7 @@ import {Resources} from '../../../src/Resources';
 import {SpaceName} from '../../../src/SpaceName';
 import {SpaceType} from '../../../src/SpaceType';
 import {TileType} from '../../../src/TileType';
-import {resetBoard, TestPlayers} from '../../TestingUtils';
+import {TestingUtils, TestPlayers} from '../../TestingUtils';
 
 describe('LavaTubeSettlement', function() {
   let card : LavaTubeSettlement; let player : Player; let game : Game;
@@ -16,35 +16,35 @@ describe('LavaTubeSettlement', function() {
     card = new LavaTubeSettlement();
     player = TestPlayers.BLUE.newPlayer();
     game = Game.newInstance('foobar', [player], player);
-    resetBoard(game);
+    TestingUtils.resetBoard(game);
   });
 
   after(function() {
-    resetBoard(game);
+    TestingUtils.resetBoard(game);
   });
 
   it('Can\'t play without energy production', function() {
-    expect(card.canPlay(player, game)).is.not.true;
+    expect(card.canPlay(player)).is.not.true;
   });
 
   it('Can\'t play if no volcanic spaces left', function() {
     player.addProduction(Resources.ENERGY);
-    game.addTile(player, SpaceType.LAND, game.getSpace(SpaceName.THARSIS_THOLUS), {tileType: TileType.LAVA_FLOWS});
-    game.addTile(player, SpaceType.LAND, game.getSpace(SpaceName.ARSIA_MONS), {tileType: TileType.LAVA_FLOWS});
-    game.addTile(player, SpaceType.LAND, game.getSpace(SpaceName.PAVONIS_MONS), {tileType: TileType.LAVA_FLOWS});
+    game.addTile(player, SpaceType.LAND, game.board.getSpace(SpaceName.THARSIS_THOLUS), {tileType: TileType.LAVA_FLOWS});
+    game.addTile(player, SpaceType.LAND, game.board.getSpace(SpaceName.ARSIA_MONS), {tileType: TileType.LAVA_FLOWS});
+    game.addTile(player, SpaceType.LAND, game.board.getSpace(SpaceName.PAVONIS_MONS), {tileType: TileType.LAVA_FLOWS});
 
     const anotherPlayer = TestPlayers.RED.newPlayer();
-    game.getSpace(SpaceName.ASCRAEUS_MONS).player = anotherPlayer; // land claim
+    game.board.getSpace(SpaceName.ASCRAEUS_MONS).player = anotherPlayer; // land claim
 
-    expect(card.canPlay(player, game)).is.not.true;
+    expect(card.canPlay(player)).is.not.true;
   });
 
   it('Should play', function() {
     player.addProduction(Resources.ENERGY);
-    expect(card.canPlay(player, game)).is.true;
+    expect(card.canPlay(player)).is.true;
 
-    card.play(player, game);
-    const selectSpace = game.deferredActions.next()!.execute() as SelectSpace;
+    card.play(player);
+    const selectSpace = game.deferredActions.peek()!.execute() as SelectSpace;
     selectSpace.cb(selectSpace.availableSpaces[0]);
 
     expect(selectSpace.availableSpaces[0].tile && selectSpace.availableSpaces[0].tile.tileType).to.eq(TileType.CITY);

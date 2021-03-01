@@ -1,24 +1,16 @@
-import {DeferredAction} from './DeferredAction';
+import {DeferredAction, Priority} from './DeferredAction';
 import {Player} from '../Player';
 import {IAresGlobalParametersResponse, ShiftAresGlobalParameters} from '../inputs/ShiftAresGlobalParameters';
-import {Game} from '../Game';
 import {AresHandler} from '../ares/AresHandler';
 import {PlayerInput} from '../PlayerInput';
 
-// AresHandler.ifAres(game, aresData => {
-//     pi = new ShiftAresGlobalParameters(
-//         player,
-//         aresData,
-//         (response: IAresGlobalParametersResponse) => {
-//             const hazardData = aresData.hazardData;
-
 export class ShiftAresGlobalParametersDeferred implements DeferredAction {
+  public priority = Priority.DEFAULT;
   constructor(
-        private game: Game,
         public player: Player) { }
   public execute() {
     let pi: PlayerInput | undefined = undefined;
-    AresHandler.ifAres(this.game, (aresData) => {
+    AresHandler.ifAres(this.player.game, (aresData) => {
       pi = new ShiftAresGlobalParameters(
         this.player,
         aresData,
@@ -41,13 +33,13 @@ export class ShiftAresGlobalParametersDeferred implements DeferredAction {
           // first reduces the visual impact on players when this action simultaneously
           // reveals erosions and makes them severe.
           if (response.temperatureDelta !== 0) {
-            AresHandler.onTemperatureChange(this.game, aresData);
+            AresHandler.onTemperatureChange(this.player.game, aresData);
           }
           if (response.oxygenDelta !== 0) {
-            AresHandler.onOxygenChange(this.game, aresData);
+            AresHandler.onOxygenChange(this.player.game, aresData);
           }
           if (response.lowOceanDelta !== 0 || response.highOceanDelta !== 0) {
-            AresHandler.onOceanPlaced(this.game, aresData, this.player);
+            AresHandler.onOceanPlaced(aresData, this.player);
           }
           return undefined;
         });

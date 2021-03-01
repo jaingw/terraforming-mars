@@ -1,10 +1,8 @@
 import {CorporationCard} from '../corporation/CorporationCard';
 import {Player} from '../../Player';
 import {Tags} from '../Tags';
-import {Game} from '../../Game';
 import {CardName} from '../../CardName';
 import {CardType} from '../CardType';
-import {IProjectCard} from '../IProjectCard';
 import {CardMetadata} from '../CardMetadata';
 import {CardRenderer} from '../render/CardRenderer';
 
@@ -15,22 +13,12 @@ export class MorningStarInc implements CorporationCard {
     public cardType = CardType.CORPORATION;
 
     public initialActionText: string = 'Draw 3 Venus-tag cards';
-    public initialAction(player: Player, game: Game) {
-      if (game.hasCardsWithTag(Tags.VENUS, 3)) {
-        const drawnCards : Array<IProjectCard> = [];
-        for (const foundCard of game.drawCardsByTag(Tags.VENUS, 3)) {
-          player.cardsInHand.push(foundCard);
-          drawnCards.push(foundCard);
-        }
-
-        game.log('${0} drew ${1}, ${2} and ${3}', (b) =>
-          b.player(player).card(drawnCards[0]).card(drawnCards[1]).card(drawnCards[2]));
-      }
-
+    public initialAction(player: Player) {
+      player.drawCard(3, {tag: Tags.VENUS});
       return undefined;
     }
 
-    public getRequirementBonus(_player: Player, _game: Game, venusOnly?: boolean): number {
+    public getRequirementBonus(_player: Player, venusOnly?: boolean): number {
       if (venusOnly !== undefined && venusOnly) return 2;
       return 0;
     }
@@ -45,9 +33,8 @@ export class MorningStarInc implements CorporationCard {
       renderData: CardRenderer.builder((b) => {
         b.megacredits(50).nbsp.cards(3).secondaryTag(Tags.VENUS);
         b.corpBox('effect', (ce) => {
-          ce.effectBox((eb) => {
-            eb.venus(1).startEffect.text('+/- 2');
-            eb.description('Effect: Your Venus requirements are +/- 2 steps, your choice in each case.');
+          ce.effect('Your Venus requirements are +/- 2 steps, your choice in each case.', (eb) => {
+            eb.plate('Venus requirements').startEffect.text('+/- 2');
           });
         });
       }),

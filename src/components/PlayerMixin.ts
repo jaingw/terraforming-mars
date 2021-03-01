@@ -1,18 +1,21 @@
 import {CardModel} from '../models/CardModel';
 import {CardType} from '../cards/CardType';
 import {PlayerModel} from '../models/PlayerModel';
+import {sortActiveCards} from '../components/ActiveCardsSortingOrder';
+
 // Common code for player layouts
 
 export const PlayerMixin = {
   'name': 'PlayerMixin',
   'methods': {
+    sortActiveCards: sortActiveCards,
     getCardsByType: function(
       inCards: Array<CardModel>,
       cardType: Array<CardType>,
     ) {
       const cards: Array<CardModel> = [];
       for (let index = 0; index < inCards.length; index++) {
-        if (cardType.indexOf(inCards[index].cardType) !== -1) {
+        if (cardType.includes(inCards[index].cardType)) {
           cards.push(inCards[index]);
         }
       }
@@ -44,7 +47,7 @@ export const PlayerMixin = {
       return (
         (player !== undefined &&
                 player.actionsThisGeneration !== undefined &&
-                player.actionsThisGeneration.indexOf(card.name) !== -1) || card.isDisabled
+                player.actionsThisGeneration.includes(card.name)) || card.isDisabled
       );
     },
   },

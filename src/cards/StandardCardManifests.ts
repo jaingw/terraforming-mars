@@ -19,6 +19,7 @@ import {Asteroid} from './base/Asteroid';
 import {AsteroidMining} from './base/AsteroidMining';
 import {AsteroidMiningConsortium} from './base/AsteroidMiningConsortium';
 import {BeamFromAThoriumAsteroid} from './base/BeamFromAThoriumAsteroid';
+import {BeginnerCorporation} from './corporation/BeginnerCorporation';
 import {BigAsteroid} from './base/BigAsteroid';
 import {BiomassCombustors} from './base/BiomassCombustors';
 import {Birds} from './base/Birds';
@@ -221,13 +222,15 @@ import {WavePower} from './base/WavePower';
 import {Windmills} from './base/Windmills';
 import {Worms} from './base/Worms';
 import {Zeppelins} from './base/Zeppelins';
-import {Aquifer} from './standardProjects/Aquifer';
-import {City} from './standardProjects/City';
-import {PowerPlantStandard} from './standardProjects/PowerPlant';
-import {Greenery} from './standardProjects/Greenery';
-import {AsteroidStandard} from './standardProjects/Asteroid';
-import {BufferGas} from './standardProjects/BufferGas';
-import {SellPatents} from './standardProjects/SellPatents';
+import {AquiferStandardProject} from './base/standardProjects/AquiferStandardProject';
+import {CityStandardProject} from './base/standardProjects/CityStandardProject';
+import {PowerPlantStandardProject} from './base/standardProjects/PowerPlantStandardProject';
+import {GreeneryStandardProject} from './base/standardProjects/GreeneryStandardProject';
+import {AsteroidStandardProject} from './base/standardProjects/AsteroidStandardProject';
+import {SellPatentsStandardProject} from './base/standardProjects/SellPatentsStandardProject';
+import {ConvertPlants} from './base/standardActions/ConvertPlants';
+import {ConvertHeat} from './base/standardActions/ConvertHeat';
+import {BufferGasStandardProject} from './prelude/BufferGasStandardProject';
 
 export const BASE_CARD_MANIFEST = new CardManifest({
   module: GameModule.Base,
@@ -371,6 +374,7 @@ export const BASE_CARD_MANIFEST = new CardManifest({
     {cardName: CardName.ZEPPELINS, Factory: Zeppelins},
   ],
   corporationCards: [
+    {cardName: CardName.BEGINNER_CORPORATION, Factory: BeginnerCorporation},
     {cardName: CardName.CREDICOR, Factory: CrediCor},
     {cardName: CardName.ECOLINE, Factory: EcoLine},
     {cardName: CardName.HELION, Factory: Helion},
@@ -383,13 +387,17 @@ export const BASE_CARD_MANIFEST = new CardManifest({
     {cardName: CardName.UNITED_NATIONS_MARS_INITIATIVE, Factory: UnitedNationsMarsInitiative},
   ],
   standardProjects: [
-    {cardName: CardName.STANDARD_AQUIFER, Factory: Aquifer},
-    {cardName: CardName.STANDARD_CITY, Factory: City},
-    {cardName: CardName.STANDARD_POWER_PLANT, Factory: PowerPlantStandard},
-    {cardName: CardName.STANDARD_GREENERY, Factory: Greenery},
-    {cardName: CardName.STANDARD_ASTEROID, Factory: AsteroidStandard},
-    {cardName: CardName.STANDARD_BUFFER_GAS, Factory: BufferGas},
-    {cardName: CardName.STANDARD_SELL_PATENTS, Factory: SellPatents},
+    {cardName: CardName.AQUIFER_STANDARD_PROJECT, Factory: AquiferStandardProject},
+    {cardName: CardName.CITY_STANDARD_PROJECT, Factory: CityStandardProject},
+    {cardName: CardName.POWER_PLANT_STANDARD_PROJECT, Factory: PowerPlantStandardProject},
+    {cardName: CardName.GREENERY_STANDARD_PROJECT, Factory: GreeneryStandardProject},
+    {cardName: CardName.ASTEROID_STANDARD_PROJECT, Factory: AsteroidStandardProject},
+    {cardName: CardName.SELL_PATENTS_STANDARD_PROJECT, Factory: SellPatentsStandardProject},
+    {cardName: CardName.BUFFER_GAS_STANDARD_PROJECT, Factory: BufferGasStandardProject},
+  ],
+  standardActions: [
+    {cardName: CardName.CONVERT_PLANTS, Factory: ConvertPlants},
+    {cardName: CardName.CONVERT_HEAT, Factory: ConvertHeat},
   ],
 });
 

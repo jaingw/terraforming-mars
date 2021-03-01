@@ -1,7 +1,6 @@
 import {ICard} from './cards/ICard';
 import {ICardFactory} from './cards/ICardFactory';
 import {IProjectCard} from './cards/IProjectCard';
-import {BeginnerCorporation} from './cards/corporation/BeginnerCorporation';
 import {CardManifest} from './cards/CardManifest';
 import {BREAKTHROUGH_CARD_MANIFEST} from './cards/breakthrough/BreakthroughCardManifest';
 import {CardName} from './CardName';
@@ -14,7 +13,8 @@ import {TURMOIL_CARD_MANIFEST} from './cards/turmoil/TurmoilCardManifest';
 import {VENUS_CARD_MANIFEST} from './cards/venusNext/VenusCardManifest';
 import {COMMUNITY_CARD_MANIFEST} from './cards/community/CommunityCardManifest';
 import {ARES_CARD_MANIFEST} from './cards/ares/AresCardManifest';
-import {StandardProjectCard} from './cards/standardProjects/StandardProjectCard';
+import {MOON_CARD_MANIFEST} from './cards/moon/MoonCardManifest';
+import {Deck} from './Deck';
 
 export class CardFinder {
     private static decks: undefined | Array<CardManifest>;
@@ -31,83 +31,54 @@ export class CardFinder {
           BREAKTHROUGH_CARD_MANIFEST,
           ARES_CARD_MANIFEST,
           COMMUNITY_CARD_MANIFEST,
+          MOON_CARD_MANIFEST,
         ];
       }
       return CardFinder.decks;
     }
 
-    public getStandardProjectCardByName(cardName: string): StandardProjectCard | undefined {
-      let found : (ICardFactory<StandardProjectCard> | undefined);
-      CardFinder.getDecks().forEach((deck) => {
-        // Short circuit
-        if (found !== undefined) {
-          return;
-        }
-        found = deck.standardProjects.findByCardName(cardName);
-      });
-      if (found !== undefined) {
-        return new found.Factory();
-      }
-      console.warn(`standard project card not found ${cardName}`);
-      return undefined;
-    }
-
-    public getCorporationCardByName(cardName: string): CorporationCard | undefined {
-      if (cardName === CardName.BEGINNER_CORPORATION) {
-        return new BeginnerCorporation();
-      }
-      if (cardName === 'Septum Tribus') {
-        cardName = CardName.SEPTEM_TRIBUS;
-      }
-      let found : (ICardFactory<CorporationCard> | undefined);
-      CardFinder.getDecks().forEach((deck) => {
-        // Short circuit
-        if (found !== undefined) {
-          return;
-        }
-        found = deck.corporationCards.findByCardName(cardName);
-      });
-      if (found !== undefined) {
-        return new found.Factory();
-      }
-      console.warn(`corporation card not found ${cardName}`);
-      return undefined;
-    }
-
-    // Function to return a card object by its name
-    // NOTE(kberg): This replaces a larger function which searched for both Prelude cards amidst project cards
-    // TODO(kberg): Find the use cases where this is used to find Prelude cards and filter them out to
-    //              another function, perhaps?
-    public getProjectCardByName(cardName: string): IProjectCard | undefined {
-      // 确保loadFromJSON调用到了这里就行，恢复历史数据
-      if (cardName === 'MAxwell Base') {
-        cardName = 'Maxwell Base';
-      }
-      if (cardName === 'Great Dam Promo') {
-        cardName = 'Great Dam:promo';
-      }
-      if (cardName === 'Deimos Down Promo') {
-        cardName = 'Deimos Down:promo';
-      }
-      if (cardName === 'Magnetic Field Generators Promo') {
-        cardName = 'Magnetic Field Generators:promo';
-      }
-      let found : (ICardFactory<IProjectCard> | undefined);
-      CardFinder.getDecks().forEach((deck) => {
-        // Short circuit
-        if (found !== undefined) {
-          return;
-        }
-        found = deck.projectCards.findByCardName(cardName);
-        if (found === undefined) {
-          found = deck.preludeCards.findByCardName(cardName);
-        }
+    public getCardByName<T extends ICard>(cardName: CardName, decks: (manifest: CardManifest) => Array<Deck<T>>): T | undefined {
+      let found : (ICardFactory<T> | undefined);
+      CardFinder.getDecks().some((manifest) => {
+        decks(manifest).some((deck) => {
+          found = deck.findByCardName(cardName);
+          return found;
+        });
+        return found;
       });
       if (found !== undefined) {
         return new found.Factory();
       }
       console.warn(`card not found ${cardName}`);
       return undefined;
+    }
+
+    public getCorporationCardByName(cardName: CardName): CorporationCard | undefined {
+      if (cardName as string === 'Septum Tribus') {
+        cardName = CardName.SEPTEM_TRIBUS;
+      }
+      return this.getCardByName(cardName, (manifest) => [manifest.corporationCards]);
+    }
+
+    // Function to return a card object by its name
+    // NOTE(kberg): This replaces a larger function which searched for both Prelude cards amidst project cards
+    // TODO(kberg): Find the use cases where this is used to find Prelude cards and filter them out to
+    //              another function, perhaps?
+    public getProjectCardByName(cardName: CardName): IProjectCard | undefined {
+      // 确保loadFromJSON调用到了这里就行，恢复历史数据
+      if (cardName as string === 'MAxwell Base') {
+        cardName = CardName.MAXWELL_BASE;
+      }
+      if (cardName as string === 'Great Dam Promo') {
+        cardName = CardName.GREAT_DAM_PROMO;
+      }
+      if (cardName as string === 'Deimos Down Promo') {
+        cardName = CardName.DEIMOS_DOWN_PROMO;
+      }
+      if (cardName as string === 'Magnetic Field Generators Promo') {
+        cardName = CardName.MAGNETIC_FIELD_GENERATORS_PROMO;
+      }
+      return this.getCardByName(cardName, (manifest) => [manifest.projectCards, manifest.preludeCards]);
     }
 
     public cardsFromJSON(cards: Array<ICard>): Array<IProjectCard> {

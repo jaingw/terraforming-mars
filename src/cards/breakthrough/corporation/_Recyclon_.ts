@@ -3,7 +3,6 @@ import {Player} from '../../../Player';
 import {Tags} from '../../Tags';
 import {ResourceType} from '../../../ResourceType';
 import {Resources} from '../../../Resources';
-import {Game} from '../../../Game';
 import {IProjectCard} from '../../IProjectCard';
 import {SelectOption} from '../../../inputs/SelectOption';
 import {OrOptions} from '../../../inputs/OrOptions';
@@ -26,14 +25,14 @@ export class _Recyclon_ implements CorporationCard, IResourceCard {
       return undefined;
     }
 
-    public initialAction(player: Player, _game: Game) {
+    public initialAction(player: Player) {
       if (player.isCorporation(this.name)) {
         player.addResourceTo(this, 2);
       }
       return undefined;
     }
 
-    public onCardPlayed(player: Player, _game: Game, card: IProjectCard) {
+    public onCardPlayed(player: Player, card: IProjectCard) {
       if (card.tags.indexOf(Tags.BUILDING) === -1 || !player.isCorporation(this.name)) {
         return undefined;
       }
@@ -53,5 +52,9 @@ export class _Recyclon_ implements CorporationCard, IResourceCard {
         return undefined;
       });
       return new OrOptions(spendResource, addResource);
+    }
+
+    public get metadata() {
+      return undefined;
     }
 }

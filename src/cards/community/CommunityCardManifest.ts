@@ -13,6 +13,15 @@ import {TradeAdvance} from './TradeAdvance';
 import {PoliticalUprising} from './PoliticalUprising';
 import {ByElection} from './ByElection';
 import {Midas} from './Midas';
+import {ColonialOne} from './ColonialOne';
+import {Hotsprings} from './Hotsprings';
+import {JunkVentures} from './JunkVentures';
+import {Aristarchus} from './Aristarchus';
+import {LabourUnion} from './LabourUnion';
+import {UnitedNationsMissionOne} from './UnitedNationsMissionOne';
+import {AccumulatedKnowledge} from './AccumulatedKnowledge';
+import {NitrateReducers} from './NitrateReducers';
+import {VitalColony} from './VitalColony';
 
 export const COMMUNITY_CARD_MANIFEST = new CardManifest({
   module: GameModule.Community,
@@ -23,6 +32,13 @@ export const COMMUNITY_CARD_MANIFEST = new CardManifest({
     {cardName: CardName.INCITE, Factory: Incite, compatibility: GameModule.Turmoil},
     {cardName: CardName.PLAYWRIGHTS, Factory: Playwrights},
     {cardName: CardName.MIDAS, Factory: Midas},
+    {cardName: CardName.COLONIAL_ONE, Factory: ColonialOne, compatibility: GameModule.Colonies},
+    {cardName: CardName.HOTSPRINGS, Factory: Hotsprings},
+    {cardName: CardName.JUNK_VENTURES, Factory: JunkVentures},
+    {cardName: CardName.ARISTARCHUS, Factory: Aristarchus},
+    {cardName: CardName.LABOUR_UNION, Factory: LabourUnion},
+    {cardName: CardName.UNITED_NATIONS_MISSION_ONE, Factory: UnitedNationsMissionOne},
+
   ],
   preludeCards: [
     {cardName: CardName.RESEARCH_GRANT, Factory: ResearchGrant},
@@ -55,6 +71,20 @@ export const COMMUNITY_CARD_MANIFEST = new CardManifest({
       cardName: CardName.BY_ELECTION,
       Factory: ByElection,
       compatibility: GameModule.Turmoil,
+    },
+    {
+      cardName: CardName.ACCUMULATED_KNOWLEDGE,
+      Factory: AccumulatedKnowledge,
+    },
+    {
+      cardName: CardName.NITRATE_REDUCERS,
+      Factory: NitrateReducers,
+      compatibility: GameModule.Venus,
+    },
+    {
+      cardName: CardName.VITAL_COLONY,
+      Factory: VitalColony,
+      compatibility: GameModule.Colonies,
     },
   ],
 });

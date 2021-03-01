@@ -1,3 +1,6 @@
+/* eslint-disable guard-for-in */
+// Generates the files settings.json and translations.json, stored in src/genfiles
+
 require('dotenv').config();
 const child_process = require('child_process');
 const fs = require('fs');
@@ -20,7 +23,6 @@ function getAllTranslations() {
         const file = files[idx];
 
         if ( file === undefined || ! file.endsWith('.json')) continue;
-
         const dataJson = JSON.parse(fs.readFileSync(path.join(translationDir, file), 'utf8'));
 
         for (const phrase in dataJson) {
@@ -57,6 +59,12 @@ function getWaitingForTimeout() {
   return 5000;
 }
 
+function getLogLength() {
+  if (process.env.LOG_LENGTH) {
+    return Number(process.env.LOG_LENGTH);
+  }
+  return 50;
+}
 
 function _translationsCompare(translationsJSON) {
   const pathToTranslationsDir = path.resolve('src/locales');
@@ -95,12 +103,30 @@ function _translationsCompare(translationsJSON) {
 const translationsJSON = getAllTranslations();
 // translationsCompare(translationsJSON);
 
-fs.writeFileSync('assets/settings.json', JSON.stringify({
+if (!fs.existsSync('src/genfiles')) {
+  fs.mkdirSync('src/genfiles');
+}
+
+fs.writeFileSync('src/genfiles/settings.json', JSON.stringify({
   version: generateAppVersion(),
   waitingForTimeout: getWaitingForTimeout(),
+  logLength: getLogLength(),
 }));
 
-fs.writeFileSync('assets/translations.json', JSON.stringify(
+fs.writeFileSync('src/genfiles/translations.json', JSON.stringify(
   translationsJSON,
 ));
 
+if (!fs.existsSync('build/src/genfiles')) {
+  fs.mkdirSync('build/src/genfiles');
+}
+
+fs.writeFileSync('build/src/genfiles/settings.json', JSON.stringify({
+  version: generateAppVersion(),
+  waitingForTimeout: getWaitingForTimeout(),
+  logLength: getLogLength(),
+}));
+
+fs.writeFileSync('build/src/genfiles/translations.json', JSON.stringify(
+  translationsJSON,
+));

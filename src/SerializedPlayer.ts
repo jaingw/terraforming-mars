@@ -2,11 +2,10 @@ import {Color} from './Color';
 import {SerializedCard} from './SerializedCard';
 import {VictoryPointsBreakdown} from './VictoryPointsBreakdown';
 import {SerializedTimer} from './SerializedTimer';
-import {CorporationCard} from './cards/corporation/CorporationCard';
 import {IProjectCard} from './cards/IProjectCard';
 import {CardName} from './CardName';
+import {CorporationCard} from './cards/corporation/CorporationCard';
 
-// TODO(kberg): remove reference to CorporationCard by 2021-01-15
 export interface SerializedPlayer {
     actionsTakenThisRound: number;
     actionsThisGeneration: Array<CardName>;
@@ -30,8 +29,10 @@ export interface SerializedPlayer {
     fleetSize: number;
     handicap: number;
     hasIncreasedTerraformRatingThisGeneration: boolean;
+    hasTurmoilScienceTagBonus: boolean;
     heat: number;
     heatProduction: number;
+    heatProductionStepsIncreasedThisGeneration: number;
     id: string;
     lastCardPlayed?: IProjectCard;
     megaCreditProduction: number;
@@ -44,6 +45,7 @@ export interface SerializedPlayer {
     plants: number;
     plantsNeededForGreenery: number;
     playedCards: Array<SerializedCard>;
+    politicalAgendasActionUsedCount: number;
     preludeCardsInHand: Array<IProjectCard>;
     removedFromPlayCards: Array<IProjectCard>;
     removingPlayers: Array<string>;
@@ -58,7 +60,7 @@ export interface SerializedPlayer {
     titaniumProduction: number;
     titaniumValue: number;
     tradesThisTurn: number;
-    turmoilScientistsActionUsed: boolean;
+    turmoilPolicyActionUsed: boolean;
     victoryPointsBreakdown: VictoryPointsBreakdown;
     heatForTemperature: number;
     undoing : boolean ;

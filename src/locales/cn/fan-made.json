@@ -1,13 +1,73 @@
 {
   "You start with 1 plant production, 1 MC production and 40 MC.":"起始1点植物产量、1金钱产量和40元",
   "Effect: At game end, score -2 / 0 / 1 / 2 VP PER TAG TYPE for 0 / 1-2 / 3-4 / 5+ tags.":"效果：终局计分时，若你拥有每种标志0/1-2/3-4/5+个，得到-2/0/1/2 VP",
-  "You start with 39 MC, 1 steel and 1 titanium.":"起始拥有39元，1个钢铁及1个钛",
-  "As your first action, draw a blue card.":"作为你的第一个行动，抽取一张蓝色卡牌",
+
   "Action: Flip and discard a played blue card to convert any VP on it into TR and draw 2 cards, or spend 3 MC to draw a blue card.":"行动：翻面并弃掉一张蓝色卡牌，将卡牌上的分数转化为改造度并抽2张牌，或者花3元抽取一张蓝色卡牌",
+ 
   "You start with 32 MC. As your first action, place two delegates in one party.":"起始拥有32元，作为第一个行动，放置2个代表到1个党派上",
-  "Effect: You have influence +1. When you send a delegate from the reserve, you pay 2 MC less for it.":"影响力始终+1,当你从储备区派遣代表时，少支付2元",
-  "Action: Replay a played event from any player by paying its cost ONLY in MC (discounts and rebates apply), then REMOVE IT FROM PLAY.)":"行动：仅适用金钱支付费用来重复一个任意玩家已经打出的事件效果（适用减费与回钱），然后将其从游戏中移除",
+  "Effect: You have +1 influence. When you send a delegate using the lobbying action, you pay 2 MC less for it":"影响力始终+1,当你从储备区派遣代表时，少支付2元",
+
+  "Action: Replay a played event from any player by paying its cost ONLY in MC (discounts and rebates apply), then REMOVE IT FROM PLAY":"行动：仅适用金钱支付费用来重复一个任意玩家已经打出的事件效果（适用减费与回钱），然后将其从游戏中移除",
+  
   "You start with 38 MC and 1 Energy production.":"起始拥有38元和1点电力产量",
-  "Select event card to replay at cost in MC and remove from play":"使用金钱支付费用来选择要打出的事件并且移出游戏"
+
+  "Action: If you have exactly 0 MC, gain 10 MC":"Action: If you have exactly 0 MC, gain 10 MC",
+  "You start with 33 MC":"You start with 33 MC",
+
+  "Action: Increase or decrease any colony tile track 1 step, or spend 1 fighter resource on this card to trade for free":"Action: Increase or decrease any colony tile track 1 step, or spend 1 fighter resource on this card to trade for free",
+  "You start with 35 MC and 1 extra trade fleet. Add 3 fighter resources to this card":"You start with 35 MC and 1 extra trade fleet. Add 3 fighter resources to this card",
+
+  "Action: Increase your MC production 1 step if your heat production was raised 1 step this generation, or 2 steps if it was raised more than 1 step this generation":"Action: Increase your MC production 1 step if your heat production was raised 1 step this generation, or 2 steps if it was raised more than 1 step this generation",
+  "You start with 45 MC and 5 heat":"You start with 45 MC and 5 heat",
+
+  "ACTION: SHUFFLE THE DISCARD PILE, THEN DRAW 3 CARDS FROM IT. KEEP 1 AND DISCARD THE OTHER 2":"ACTION: SHUFFLE THE DISCARD PILE, THEN DRAW 3 CARDS FROM IT. KEEP 1 AND DISCARD THE OTHER 2",
+  "You start with 40 MC. As your first action, discard the top 3 cards of the deck":"You start with 40 MC. As your first action, discard the top 3 cards of the deck",
+
+  "MAX 8 AT GEN END":"MAX 8 AT GEN END",
+  "Effect: Standard Projects cost 4 MC less. At generation end, discard down to 8 cards":"Effect: Standard Projects cost 4 MC less. At generation end, discard down to 8 cards",
+  "You start with 55 MC":"You start with 55 MC",
+
+  "You start with 120 MC. Lower your TR 7 steps":"You start with 120 MC. Lower your TR 7 steps",
+
+  "replay":"replay",
+
+  "flip":"flip",
+  "You start with 39 MC, 1 steel and 1 titanium. As your first action, draw a blue card":"You start with 39 MC, 1 steel and 1 titanium. As your first action, draw a blue card",
+
+  "Effect: When any player takes an action or plays a card that increases TR, including this, gain 1 MC for each step":"Effect: When any player takes an action or plays a card that increases TR, including this, gain 1 MC for each step",
+  "You start with 39 MC. Increase your TR 1 step":"You start with 39 MC. Increase your TR 1 step",
+
+  "Accumulated Knowledge":"Accumulated Knowledge",
+  "Draw 4 cards. You may discard a card to draw a card":"Draw 4 cards. You may discard a card to draw a card",
+
+  "Aerospace Mission":"Aerospace Mission",
+  "Place 2 colonies. Pay 14 MC":"Place 2 colonies. Pay 14 MC",
+
+  "By-Election":"By-Election",
+  "set ruling party":"set ruling party",
+  "Set the ruling party to one of your choice. Gain 1 influence":"Set the ruling party to one of your choice. Gain 1 influence",
+
+  "Nitrate Reducers":"Nitrate Reducers",
+  "Draw 2 microbe cards. Increase your MC production 3 steps":"Draw 2 microbe cards. Increase your MC production 3 steps",
+
+  "Political Uprising":"Political Uprising",
+  "Place 4 delegates. Draw a Turmoil card":"Place 4 delegates. Draw a Turmoil card",
+
+  "Research Grant":"Research Grant",
+  "Gain 8 MC":"Gain 8 MC",
+
+  "Trade Advance":"Trade Advance",
+  "Trade all colonies with":"Trade all colonies with",
+  "Gain 2 MC [SOLO: Gain 10 MC]. Immediately trade with all active colonies. You may increase the Colony Tile track 1 step before each of these trades":"Gain 2 MC [SOLO: Gain 10 MC]. Immediately trade with all active colonies. You may increase the Colony Tile track 1 step before each of these trades",
+
+  "Valuable Gases":"Valuable Gases",
+  "Gain 6 MC. Play a Venus card from your hand and add 4 floaters to it":"Gain 6 MC. Play a Venus card from your hand and add 4 floaters to it",
+
+  "Venus First":"Venus First",
+  "Raise Venus 2 steps. Draw 2 Venus cards from the deck":"Raise Venus 2 steps. Draw 2 Venus cards from the deck",
+
+  "Vital Colony":"Vital Colony",
+  "Place a colony. Gain its placement bonus a second time. Pay 5 MC":"Place a colony. Gain its placement bonus a second time. Pay 5 MC"
+
 
 }

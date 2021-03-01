@@ -16,16 +16,46 @@ import {Turmoil} from './Turmoil';
 import {playerColorClass} from '../utils/utils';
 import {DynamicTitle} from './common/DynamicTitle';
 import {Button} from './common/Button';
-import {PreferencesManager} from './PreferencesManager';
 import {SortableCards} from './SortableCards';
 import {TopBar} from './TopBar';
-
+import {PreferencesManager} from './PreferencesManager';
+import {KeyboardNavigation} from '../../src/KeyboardNavigation';
+import {MoonBoard} from './moon/MoonBoard';
+import {Phase} from '../../src/Phase';
 
 const dialogPolyfill = require('dialog-polyfill');
 
-import * as raw_settings from '../../assets/settings.json';
+import * as raw_settings from '../genfiles/settings.json';
+
+export interface PlayerHomeModel {
+  hide_active_cards: string;
+  hide_automated_cards: string;
+  hide_event_cards: string;
+  soundtip: boolean | unknown[],
+  userName: string,
+}
 
 export const PlayerHome = Vue.component('player-home', {
+  data: function(): PlayerHomeModel {
+    return {
+      hide_active_cards: PreferencesManager.loadValue('hide_active_cards'),
+      hide_automated_cards: PreferencesManager.loadValue('hide_automated_cards'),
+      hide_event_cards: PreferencesManager.loadValue('hide_event_cards'),
+      soundtip: false as boolean | unknown[],
+      userName: '',
+    };
+  },
+  watch: {
+    hide_active_cards: function() {
+      PreferencesManager.saveValue('hide_active_cards', this.hide_active_cards);
+    },
+    hide_automated_cards: function() {
+      PreferencesManager.saveValue('hide_automated_cards', this.hide_automated_cards);
+    },
+    hide_event_cards: function() {
+      PreferencesManager.saveValue('hide_event_cards', this.hide_event_cards);
+    },
+  },
   props: {
     player: {
       type: Object as () => PlayerModel,
@@ -49,15 +79,38 @@ export const PlayerHome = Vue.component('player-home', {
     'Button': Button,
     'sortable-cards': SortableCards,
     'top-bar': TopBar,
-  },
-  data: function() {
-    return {
-      soundtip: false as boolean | unknown[],
-      userName: '',
-    };
+    'moonboard': MoonBoard,
   },
   mixins: [PlayerMixin],
   methods: {
+    navigatePage: function(event: KeyboardEvent) {
+      const inputSource = event.target as Element;
+      if (inputSource.nodeName.toLowerCase() !== 'input') {
+        let idSuffix: string | undefined = undefined;
+        switch (event.code) {
+        case KeyboardNavigation.GAMEBOARD:
+          idSuffix = 'board';
+          break;
+        case KeyboardNavigation.PLAYERSOVERVIEW:
+          idSuffix = 'playersoverview';
+          break;
+        case KeyboardNavigation.HAND:
+          idSuffix = 'hand';
+          break;
+        case KeyboardNavigation.COLONIES:
+          idSuffix = 'colonies';
+          break;
+        default:
+          return;
+        }
+        const el = document.getElementById('shortkey-' + idSuffix);
+        if (el) {
+          event.preventDefault();
+          const scrollingSpeed = PreferencesManager.loadValue('smooth_scrolling') === '1' ? 'smooth' : 'auto';
+          el.scrollIntoView({block: 'center', inline: 'center', behavior: scrollingSpeed});
+        }
+      }
+    },
     getPlayerCssForTurnOrder: (
       player: PlayerModel,
       highlightActive: boolean,
@@ -87,25 +140,52 @@ export const PlayerHome = Vue.component('player-home', {
       }
       return fleetsRange;
     },
-    getGenerationText: function(): string {
-      if (this.player.players.length === 1) {
-        const MAX_GEN = this.player.preludeExtension ? 12 : 14;
-        let retText =
-                    'generation ' + this.player.generation + ' of ' + MAX_GEN;
-        if (MAX_GEN === this.player.generation) {
-          retText =
-                        '<span class=\'last-generation blink-animation\'>' +
-                        retText +
-                        '</span>';
-        }
-
-        return retText;
-      }
-
-      return 'generation ' + this.player.generation;
-    },
     updateTips: function() {
       PreferencesManager.saveValue('enable_sounds', this.soundtip ? '1' : '0');
+    },
+    toggleActiveCardsHiding() {
+      this.hide_active_cards = this.isActiveCardShown() ? '1': '';
+    },
+    toggleAutomatedCardsHiding() {
+      this.hide_automated_cards = this.isAutomatedCardShown() ? '1': '';
+    },
+    toggleEventCardsHiding() {
+      this.hide_event_cards = this.isEventCardShown() ? '1': '';
+    },
+    isActiveCardShown(): boolean {
+      return this.hide_active_cards !== '1';
+    },
+    isAutomatedCardShown(): boolean {
+      return this.hide_automated_cards !== '1';
+    },
+    isEventCardShown(): boolean {
+      return this.hide_event_cards !== '1';
+    },
+    isInitialDraftingPhase(): boolean {
+      return (this.player.phase === Phase.INITIALDRAFTING) && this.player.gameOptions.initialDraftVariant;
+    },
+    getToggleLabel: function(hideType: string): string {
+      if (hideType === 'ACTIVE') {
+        return (this.isActiveCardShown() ? 'Hide' : 'Show') + ' active cards';
+      } else if (hideType === 'AUTOMATED') {
+        return (this.isAutomatedCardShown() ? 'Hide' : 'Show') + ' automated cards';
+      } else if (hideType === 'EVENT') {
+        return (this.isEventCardShown() ? 'Hide' : 'Show') + ' event cards';
+      } else {
+        return '';
+      }
+    },
+    getHideButtonClass: function(hideType: string): string {
+      const prefix = 'hiding-card-button ';
+      if (hideType === 'ACTIVE') {
+        return prefix + (this.isActiveCardShown() ? 'active' : 'active-transparent');
+      } else if (hideType === 'AUTOMATED') {
+        return prefix + (this.isAutomatedCardShown() ? 'automated' : 'automated-transparent');
+      } else if (hideType === 'EVENT') {
+        return prefix + (this.isEventCardShown() ? 'event' : 'event-transparent');
+      } else {
+        return '';
+      }
     },
   },
   created() {
@@ -114,13 +194,17 @@ export const PlayerHome = Vue.component('player-home', {
       this.userName = PreferencesManager.loadValue('userName');
     }
   },
+  destroyed: function() {
+    window.removeEventListener('keydown', this.navigatePage);
+  },
   mounted: function() {
     dialogPolyfill.default.registerDialog(
       document.getElementById('dialog-default'),
     );
+    window.addEventListener('keydown', this.navigatePage);
   },
   template: `
-        <div id="player-home" :class="player.turmoil ? 'with-turmoil': ''">
+        <div id="player-home" :class="(player.turmoil ? 'with-turmoil': '')">
             <h2 :class="'game-title player_color_'+ player.color">
                 <a :href="'/game?id='+ player.gameId" v-i18n>Terraforming Mars</a>
                 <a :href="'mygames'" v-if="userName">- {{userName}}</a>
@@ -155,7 +239,9 @@ export const PlayerHome = Vue.component('player-home', {
               :oxygen = "player.oxygenLevel"
               :oceans = "player.oceans"
               :venus = "player.venusScaleLevel"
-              :venusNextExtension ="player.venusNextExtension">
+              :turmoil = "player.turmoil"
+              :gameOptions = "player.gameOptions"
+              :playerNumber = "player.players.length">
                 <div class="deck-size">{{ player.deckSize }}</div>
             </preferences>
 
@@ -165,17 +251,20 @@ export const PlayerHome = Vue.component('player-home', {
                     <a name="board" class="player_home_anchor"></a>
                     <board
                         :spaces="player.spaces"
-                        :venusNextExtension="player.venusNextExtension"
+                        :venusNextExtension="player.gameOptions.venusNextExtension"
                         :venusScaleLevel="player.venusScaleLevel"
-                        :boardName ="player.boardName"
+                        :boardName ="player.gameOptions.boardName"
                         :oceans_count="player.oceans"
                         :oxygen_level="player.oxygenLevel"
                         :temperature="player.temperature"
                         :shouldNotify="true"
-                        :aresExtension="player.aresExtension"
-                        :aresData="player.aresData"></board>
+                        :aresExtension="player.gameOptions.aresExtension"
+                        :aresData="player.aresData"
+                        id="shortkey-board"></board>
 
                     <turmoil v-if="player.turmoil" :turmoil="player.turmoil"></turmoil>
+
+                    <moonboard v-if="player.gameOptions.moonExpansion" :model="player.moon"></moonboard>
 
                     <div v-if="player.players.length > 1" class="player_home_block--milestones-and-awards">
                         <milestone :milestones_list="player.milestones" />
@@ -183,15 +272,10 @@ export const PlayerHome = Vue.component('player-home', {
                     </div>
                 </div>
 
-                <players-overview class="player_home_block player_home_block--players nofloat:" :player="player" v-trim-whitespace />
+                <players-overview class="player_home_block player_home_block--players nofloat:" :player="player" v-trim-whitespace id="shortkey-playersoverview"/>
 
                 <div class="player_home_block player_home_block--log player_home_block--hide_log nofloat">
-                    <dynamic-title v-if="player.players.length > 1" title="Game log" :color="player.color" :withAdditional="true" :additional="'generation ' + player.generation" />
-                    <h2 v-else :class="'player_color_'+ player.color">
-                        <span v-i18n>Game log</span>
-                        <span class="label-additional" v-html="getGenerationText()"></span>
-                    </h2>
-                    <log-panel :id="player.id" :players="player.players"></log-panel>
+                    <log-panel :id="player.id" :players="player.players" :generation="player.generation" :color="player.color"></log-panel>
                 </div>
 
                 <div class="player_home_block player_home_block--actions nofloat">
@@ -212,22 +296,25 @@ export const PlayerHome = Vue.component('player-home', {
                 </div>
 
                 <a name="cards" class="player_home_anchor"></a>
-                <div class="player_home_block player_home_block--hand" v-if="player.cardsInHand.length > 0">
+                <div class="player_home_block player_home_block--hand" v-if="player.cardsInHand.length > 0" id="shortkey-hand">
                     <dynamic-title title="Cards In Hand" :color="player.color" :withAdditional="true" :additional="player.cardsInHandNbr.toString()" />
                     <sortable-cards :playerId="player.id" :cards="player.cardsInHand" />
                 </div>
 
-                <div class="player_home_block player_home_block--cards">
+                <div class="player_home_block player_home_block--cards"">
                     <dynamic-title title="Played Cards" :color="player.color" :withAdditional="true" :additional="getPlayerCardsPlayed(player, true).toString()" />
                     <div v-if="player.corporationCard !== undefined" class="cardbox">
                         <Card :card="player.corporationCard" :actionUsed="isCardActivated(player.corporationCard, player)"/>
                     </div>
-                    <div v-for="card in getCardsByType(player.playedCards, [getActiveCardType()])" :key="card.name" class="cardbox">
-                        <Card :card="card" :actionUsed="isCardActivated(card, player)"/> 
+                    <div v-show="isActiveCardShown()" v-for="card in sortActiveCards(getCardsByType(player.playedCards, [getActiveCardType()]))" :key="card.name" class="cardbox">
+                        <Card :card="card" :actionUsed="isCardActivated(card, player)"/>
                     </div>
 
-                    <stacked-cards class="player_home_block--non_blue_cards" :cards="getCardsByType(player.playedCards, [getAutomatedCardType(), getPreludeCardType()])" ></stacked-cards>
-                    <stacked-cards class="player_home_block--non_blue_cards" :cards="getCardsByType(player.playedCards, [getEventCardType()])" ></stacked-cards>                </div>
+                    <stacked-cards v-show="isAutomatedCardShown()" class="player_home_block--non_blue_cards" :cards="getCardsByType(player.playedCards, [getAutomatedCardType(), getPreludeCardType()])" ></stacked-cards>
+
+                    <stacked-cards v-show="isEventCardShown()" class="player_home_block--non_blue_cards" :cards="getCardsByType(player.playedCards, [getEventCardType()])" ></stacked-cards>
+
+                </div>
 
                 <div v-if="player.selfReplicatingRobotsCards.length > 0" class="player_home_block">
                     <dynamic-title title="Self-Replicating Robots cards" :color="player.color"/>
@@ -242,15 +329,15 @@ export const PlayerHome = Vue.component('player-home', {
 
             <div class="player_home_block player_home_block--setup nofloat"  v-if="!player.corporationCard">
 
-                <div v-for="card in player.dealtCorporationCards" :key="card.name" class="cardbox" v-if="player.initialDraft">
+                <div v-for="card in player.dealtCorporationCards" :key="card.name" class="cardbox" v-if="isInitialDraftingPhase()">
                     <Card :card="card"/>
                 </div>
 
-                <div v-for="card in player.dealtPreludeCards" :key="card.name" class="cardbox" v-if="player.initialDraft">
+                <div v-for="card in player.dealtPreludeCards" :key="card.name" class="cardbox" v-if="isInitialDraftingPhase()">
                     <Card :card="card"/>
                 </div>
 
-                <div v-for="card in player.dealtProjectCards" :key="card.name" class="cardbox" v-if="player.initialDraft">
+                <div v-for="card in player.dealtProjectCards" :key="card.name" class="cardbox" v-if="isInitialDraftingPhase()">
                     <Card :card="card"/>
                 </div>
 
@@ -261,7 +348,24 @@ export const PlayerHome = Vue.component('player-home', {
                     </div>
                 </div>
 
-                <dynamic-title title="Select initial cards:" :color="player.color"/>
+                <template v-if="player.pickedCorporationCard.length === 1">
+                  <dynamic-title title="Your selected cards:" :color="player.color"/>
+                  <div>
+                    <div class="cardbox">
+                      <Card :card="player.pickedCorporationCard[0]"/>
+                    </div>
+                    <div v-if="player.gameOptions.preludeExtension" v-for="card in player.preludeCardsInHand" :key="card.name" class="cardbox">
+                      <Card :card="card"/>
+                    </div>
+                  </div>
+                  <div>
+                    <div v-for="card in player.cardsInHand" :key="card.name" class="cardbox">
+                      <Card :card="card"/>
+                    </div>
+                  </div>
+                </template>
+
+                <dynamic-title v-if="player.pickedCorporationCard.length === 0" title="Select initial cards:" :color="player.color"/>
                 <waiting-for v-if="player.phase !== 'end'" :players="player.players" :player="player" :settings="settings" :waitingfor="player.waitingFor"></waiting-for>
 
                 <dynamic-title title="Game details" :color="player.color"/>
@@ -292,12 +396,12 @@ export const PlayerHome = Vue.component('player-home', {
                         </div>
                     </summary>
                     <div class="accordion-body">
-                        <board :spaces="player.spaces" :venusNextExtension="player.venusNextExtension" :venusScaleLevel="player.venusScaleLevel" :boardName ="player.boardName"></board>
+                        <board :spaces="player.spaces" :venusNextExtension="player.gameOptions.venusNextExtension" :venusScaleLevel="player.venusScaleLevel" :boardName ="player.gameOptions.boardName"></board>
                     </div>
                 </details>
             </div>
 
-            <div v-if="player.colonies.length > 0" class="player_home_block">
+            <div v-if="player.colonies.length > 0" class="player_home_block" ref="colonies" id="shortkey-colonies">
                 <a name="colonies" class="player_home_anchor"></a>
                 <dynamic-title title="Colonies" :color="player.color"/>
                 <div class="colonies-fleets-cont" v-if="player.corporationCard">

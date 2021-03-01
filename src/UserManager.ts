@@ -1,7 +1,7 @@
 
 import * as http from 'http';
 import * as querystring from 'querystring';
-import * as server from '../server';
+import * as server from './server';
 import {User} from './User';
 import {Database} from './database/Database';
 import {GameLoader} from './database/GameLoader';
@@ -201,7 +201,7 @@ export function register(req: http.IncomingMessage, res: http.ServerResponse): v
   });
 }
 
- 
+
 export function isvip(req: http.IncomingMessage, res: http.ServerResponse): void {
   const qs: string = req.url!.substring('/api/isvip?'.length);
   const queryParams = querystring.parse(qs);

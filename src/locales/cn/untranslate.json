@@ -3,6 +3,10 @@
     "CORPORATION": "CORPORATION",
     "ACTION": "ACTION",
     "Effect": "Effect",
-    "EFFECT": "EFFECT"
+    "EFFECT": "EFFECT",
+    "corporation": "corporation",
+    "effect": "effect",
+    "action": "action",
+    "prelude": "prelude"
 
 }

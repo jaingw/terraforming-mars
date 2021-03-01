@@ -145,6 +145,9 @@ export const CardRenderItemComponent = Vue.component('CardRenderItemComponent', 
       } else if (type === CardRenderItemType.DISEASE) {
         classes.push('card-resource');
         classes.push('card-resource-disease');
+      } else if (type === CardRenderItemType.DATA_RESOURCE) {
+        classes.push('card-resource');
+        classes.push('card-resource-data');
       }
 
       // round tags
@@ -237,8 +240,8 @@ export const CardRenderItemComponent = Vue.component('CardRenderItemComponent', 
         result = 'X';
       } else if (this.item.type === CardRenderItemType.PROJECT_REQUIREMENTS) {
         result += '<div class="card-project-requirements">';
-        result += '<div class="card-red-x">x</div>';
-        result += '<div class="card-requirements">Project Requirements</div>';
+        result += '<div class="card-x">x</div>';
+        result += '<div class="card-requirements">Global Requirements</div>';
         result += '</div>';
       }
       if (this.item.type === CardRenderItemType.SELF_REPLICATING) {
@@ -251,17 +254,43 @@ export const CardRenderItemComponent = Vue.component('CardRenderItemComponent', 
         result = '<div class="card-prelude-container"><span class="card-prelude-icon">prel</span></div>';
       }
       if (this.item.type === CardRenderItemType.AWARD) {
-        result = '<span class="card-award-icon">award</span>';
+        // iconography on card shows plural (awards)
+        result = '<span class="card-award-icon">awards</span>';
       }
       if (this.item.type === CardRenderItemType.VP) {
         result = '<div class="card-resource points-big card-vp-questionmark">?</div>';
       }
-      if (this.item.type === CardRenderItemType.DISEASE) {
-        result += 'D';
-      }
       // TODO(chosta): find a reasonable way to represent "?" (alphanumeric maybe)
       if (this.item.type === CardRenderItemType.MEGACREDITS && this.item.amount === 1000) {
         result = '?';
+      }
+      if (this.item.type === CardRenderItemType.MOON) {
+        return '<div class="card-tag-moon-on-card"></div>';
+      }
+      if (this.item.type === CardRenderItemType.RESOURCE_CUBE) {
+        return '<div class="board-cube--bronze"></div>';
+      }
+      if (this.item.type === CardRenderItemType.MOON_COLONY) {
+        return '<div class="card-play-moon-colony"></div>';
+      }
+      if (this.item.type === CardRenderItemType.MOON_COLONY_RATE) {
+        return '<div class="card-increase-colony-rate"></div>';
+      }
+      if (this.item.type === CardRenderItemType.MOON_MINE) {
+        return '<div class="card-play-moon-mine"></div>';
+      }
+      if (this.item.type === CardRenderItemType.MOON_MINING_RATE) {
+        return '<div class="card-increase-mining-rate"></div>';
+      }
+      if (this.item.type === CardRenderItemType.MOON_ROAD) {
+        return '<div class="card-play-moon-road"></div>';
+      }
+      if (this.item.type === CardRenderItemType.MOON_LOGISTICS_RATE) {
+        return '<div class="card-increase-logistics-rate"></div>';
+      }
+      // TODO(chosta): abstract once another case of cancel (X) on top of an item is needed
+      if (this.item.type === CardRenderItemType.TR && this.item.cancelled === true) {
+        result = '<div class="card-x">x</div>';
       }
 
       return result;

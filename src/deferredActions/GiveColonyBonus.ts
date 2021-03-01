@@ -1,15 +1,14 @@
 import {Player} from '../Player';
-import {Game} from '../Game';
 import {Colony} from '../colonies/Colony';
-import {DeferredAction} from './DeferredAction';
+import {DeferredAction, Priority} from './DeferredAction';
 import {Multiset} from '../utils/Multiset';
 
 export class GiveColonyBonus implements DeferredAction {
+    public priority = Priority.DEFAULT;
     public cb: () => void = () => {};
     private waitingFor: Multiset<Player> = new Multiset<Player>();
     constructor(
         public player: Player,
-        public game: Game,
         public colony: Colony,
     ) {}
 
@@ -24,21 +23,21 @@ export class GiveColonyBonus implements DeferredAction {
       }
 
       for (const entry of this.waitingFor.entries()) {
-        const player = entry[0];
-        this.giveColonyBonus(player, this.game);
+        const bonusPlayer = entry[0];
+        this.giveColonyBonus(bonusPlayer);
       }
 
       return undefined;
     }
 
-    public giveColonyBonus(player: Player, game: Game): void {
-      if (this.waitingFor.get(player) !== undefined && this.waitingFor.get(player)! > 0) {
+    private giveColonyBonus(player: Player): void {
+      if (this.waitingFor.get(player) !== undefined && this.waitingFor.get(player)! > 0 && player.exited === false) {
         this.waitingFor.subtract(player);
-        const input = this.colony.giveColonyBonus(player, game, true);
+        const input = this.colony.giveColonyBonus(player, true);
         if (input !== undefined) {
-          player.setWaitingFor(input, () => this.giveColonyBonus(player, game));
+          player.setWaitingFor(input, () => this.giveColonyBonus(player));
         } else {
-          this.giveColonyBonus(player, game);
+          this.giveColonyBonus(player);
         }
       } else {
         this.waitingFor.remove(player);

@@ -5,6 +5,8 @@ import {ColonyModel} from './ColonyModel';
 import {IPayProductionModel} from './IPayProductionUnitsModel';
 import {IAresData} from '../ares/IAresData';
 import {Message} from '../Message';
+import {PartyName} from '../turmoil/parties/PartyName';
+import {TurmoilModel} from './TurmoilModel';
 
 export interface PlayerInputModel {
     id: string | undefined;
@@ -28,4 +30,7 @@ export interface PlayerInputModel {
     coloniesModel : Array<ColonyModel> | undefined;
     payProduction?: IPayProductionModel;
     aresData?: IAresData;
+    selectBlueCardAction: boolean;
+    availableParties: Array<PartyName> | undefined;
+    turmoil?: TurmoilModel;
 }

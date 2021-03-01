@@ -1,7 +1,11 @@
 .board {
     width: 600px;
     height: 488px;
-    margin: 85px 0 0 93px;
+	margin: 85px 0 0 93px;
+
+	.board-space {
+		clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+	}
 }
 
 .board-cont {
@@ -32,7 +36,6 @@
 	font-size: 10px;
 	font-weight: bold;
 	fill: white;
-	fill-opacity: 0.5;
 	pointer-events: none;
 }
 
@@ -54,7 +57,7 @@
     width: 16px;
     height: 16px;
     margin: 0 0 0 2px;
-    border-radius: 2px;
+		border-radius: 2px;
 
 	&.board-space-bonus-pos--1 {
 		margin: 15px 0 0 5px;
@@ -200,6 +203,14 @@
 	background: url(assets/board_icons.png) -118px -91px no-repeat;
 }
 
+.board-cube--orange {
+	background: url(assets/board_icons.png) -1px -117px no-repeat;
+}
+
+.board-cube--pink {
+	background: url(assets/board_icons.png) -24px -117px no-repeat;
+}
+
 .board-cube--bronze {
 	background: url(assets/board_icons.png) -142px -91px no-repeat;
 }
@@ -215,7 +226,7 @@
 
 	.board-space-text {
 		font-size: 11px;
-		font-family: Prototype;
+		font-weight: bold;
 		line-height: 11px;
 		text-align: center;
 		position: absolute;
@@ -231,8 +242,6 @@
 
 	.board-space-bonuses {
 		position: absolute;
-
-
 	}
 
 	&.board-space--available {
@@ -253,6 +262,15 @@
 	background: url(assets/hex_white.png) no-repeat;
 }
 
+.board-space-type-land-volcanic {
+	background-image: url(assets/hex_volcanic.png);
+	background-color: #8305;
+}
+
+.board-space-type-land-noctis {
+	background-color: #fff6;
+}
+
 .board-space-type-ocean {
 	background: url(assets/hex_blue.png) no-repeat;
 	clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
@@ -264,3 +282,38 @@
     margin-bottom: -1px;
 }
 
+.board-hidden-tile{
+	opacity: 0.4;
+}
+
+
+.hide-tile-button-container {
+	position: relative;
+	width: 0px;
+	height: 0px;
+
+	.hide-tile-button {
+		position: absolute;
+    width: fit-content;
+    white-space: nowrap;
+    bottom: -560px;
+    text-transform: uppercase;
+    border-radius: 4px;
+    font-size: @font_size_small;
+    padding: 1px 5px;
+    color: black;
+    background: #666;
+    cursor: pointer;
+	}
+}
+
+.seasonal-perseverance{
+	background: url(assets/misc/perseverance.png);
+	background-size: 79px 158px;
+	width: 79px;
+	height: 158px;
+	position: absolute;
+	margin: -22px 0px 0px 253px;
+	filter: drop-shadow(2px 4px 6px #FFF);
+	transform: scale(0.9) rotate(-10deg);
+}

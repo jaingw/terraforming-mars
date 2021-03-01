@@ -1,10 +1,12 @@
 import Vue from 'vue';
 import {Tag} from './Tag';
+import {Tags} from '../cards/Tags';
+import {SpecialTags} from '../cards/SpecialTags';
 
 export const TagCount = Vue.component('tag-count', {
   props: {
     tag: {
-      type: String,
+      type: String as () => Tags|SpecialTags,
     },
     count: {
       type: Number,

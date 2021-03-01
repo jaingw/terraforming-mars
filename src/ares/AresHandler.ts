@@ -10,17 +10,14 @@ import {ResourceType} from '../ResourceType';
 import {SpaceBonus} from '../SpaceBonus';
 import {TileType} from '../TileType';
 import {ITile} from '../ITile';
-import {IAresData, IHazardConstraint, IMilestoneCount} from './IAresData';
+import {IAresData, IMilestoneCount} from './IAresData';
 import {IAdjacencyCost} from './IAdjacencyCost';
-import {ARES_MILESTONES} from '../milestones/Milestones';
-import {ARES_AWARDS} from '../awards/Awards';
 import {Multiset} from '../utils/Multiset';
 import {Phase} from '../Phase';
 import {DeferredAction} from '../deferredActions/DeferredAction';
-import {AddResourcesToCard} from '../deferredActions/AddResourcesToCard';
 import {SelectHowToPayDeferred} from '../deferredActions/SelectHowToPayDeferred';
 import {SelectProductionToLoseDeferred} from '../deferredActions/SelectProductionToLoseDeferred';
-import {IDrawnMilestonesAndAwards} from '../MilestoneAwardSelector';
+import {_AresHazardPlacement} from './AresHazards';
 
 export const OCEAN_UPGRADE_TILES = [TileType.OCEAN_CITY, TileType.OCEAN_FARM, TileType.OCEAN_SANCTUARY];
 export const HAZARD_TILES = [TileType.DUST_STORM_MILD, TileType.DUST_STORM_SEVERE, TileType.EROSION_MILD, TileType.EROSION_SEVERE];
@@ -34,27 +31,6 @@ export enum HazardSeverity {
 export class AresHandler {
   private constructor() {}
 
-  public static initialData(active: boolean, includeHazards: boolean, players: Player[]): IAresData {
-    return {
-      active: active,
-      includeHazards: includeHazards,
-      hazardData: {
-        erosionOceanCount: {threshold: 3, available: true}, // oceans: add erosion tiles
-        removeDustStormsOceanCount: {threshold: 6, available: true}, // oceans: remove dust storms
-        severeErosionTemperature: {threshold: -4, available: true}, // temperatore: severe erosion
-        severeDustStormOxygen: {threshold: 5, available: true}, // oxygen: severe dust storms
-      },
-      milestoneResults: players.map((p) => {
-        return {id: p.id, count: 0};
-      }),
-    };
-  }
-
-  public static setupMilestonesAwards(drawnMilestonesAndAwards: IDrawnMilestonesAndAwards) {
-    drawnMilestonesAndAwards.milestones.push(...ARES_MILESTONES);
-    drawnMilestonesAndAwards.awards.push(...ARES_AWARDS);
-  }
-
   public static ifAres(game: Game, cb: (aresData: IAresData) => void) {
     if (game.gameOptions.aresExtension) {
       if (game.aresData === undefined) {
@@ -66,11 +42,11 @@ export class AresHandler {
     }
   }
 
-  public static earnAdjacencyBonuses(game: Game, aresData: IAresData, player: Player, space: ISpace) {
+  public static earnAdjacencyBonuses(aresData: IAresData, player: Player, space: ISpace) {
     let incrementMilestone = false;
 
-    game.board.getAdjacentSpaces(space).forEach((adjacentSpace) => {
-      if (this.earnAdacencyBonus(game, adjacentSpace, player)) {
+    player.game.board.getAdjacentSpaces(space).forEach((adjacentSpace) => {
+      if (this.earnAdacencyBonus(adjacentSpace, player)) {
         incrementMilestone = true;
       }
     });
@@ -86,7 +62,7 @@ export class AresHandler {
 
   // |player| placed a tile next to |adjacentSpace|.
   // Returns true if the adjacent space contains a bonus for adjacency.
-  private static earnAdacencyBonus(game: Game, adjacentSpace: ISpace, player: Player): boolean {
+  private static earnAdacencyBonus(adjacentSpace: ISpace, player: Player): boolean {
     if (adjacentSpace.adjacency === undefined || adjacentSpace.adjacency.bonus.length === 0) {
       return false;
     }
@@ -95,13 +71,13 @@ export class AresHandler {
       throw new Error(`A tile with an adjacency bonus must have an owner (${adjacentSpace.x}, ${adjacentSpace.y}, ${adjacentSpace.adjacency.bonus}`);
     }
 
-    const addResourceToCard = function(game: Game, player: Player, resourceType: ResourceType, resourceAsText: string) {
+    const addResourceToCard = function(player: Player, resourceType: ResourceType, resourceAsText: string) {
       const availableCards = player.getResourceCards(resourceType);
       if (availableCards.length === 0) {
       } else if (availableCards.length === 1) {
         player.addResourceTo(availableCards[0]);
       } else if (availableCards.length > 1) {
-        game.defer(new DeferredAction(
+        player.game.defer(new DeferredAction(
           player,
           () => new SelectCard(
             'Select a card to add an ' + resourceAsText,
@@ -109,7 +85,7 @@ export class AresHandler {
             availableCards,
             (selected: ICard[]) => {
               player.addResourceTo(selected[0]);
-              LogHelper.logAddResource(game, player, selected[0], 1);
+              LogHelper.logAddResource(player, selected[0], 1);
               return undefined;
             },
           ),
@@ -123,7 +99,7 @@ export class AresHandler {
       bonuses.add(bonus);
       switch (bonus) {
       case SpaceBonus.ANIMAL:
-        addResourceToCard(game, player, ResourceType.ANIMAL, 'animal');
+        addResourceToCard(player, ResourceType.ANIMAL, 'animal');
         break;
 
       case SpaceBonus.MEGACREDITS:
@@ -135,18 +111,18 @@ export class AresHandler {
         break;
 
       case SpaceBonus.MICROBE:
-        addResourceToCard(game, player, ResourceType.MICROBE, 'microbe');
+        addResourceToCard(player, ResourceType.MICROBE, 'microbe');
         break;
 
       default:
-        game.grantSpaceBonus(player, bonus);
+        player.game.grantSpaceBonus(player, bonus);
         break;
       }
     });
 
-    const bonusText = bonuses.entries().map((elem) => `${elem[1]} ${bonusAsString(elem[0])}`).join(', ');
-    const tileText = tileTypeAsString(adjacentSpace.tile?.tileType);
-    game.log('${0} gains ${1} for placing next to ${2}', (b) => b.player(player).string(bonusText).string(tileText));
+    const bonusText = bonuses.entries().map((elem) => `${elem[1]} ${SpaceBonus.toString(elem[0])}`).join(', ');
+    const tileText = adjacentSpace.tile !== undefined ? TileType.toString(adjacentSpace.tile?.tileType) : 'no tile';
+    player.game.log('${0} gains ${1} for placing next to ${2}', (b) => b.player(player).string(bonusText).string(tileText));
 
     let ownerBonus = 1;
     if (adjacentPlayer.cardIsInEffect(CardName.MARKETING_EXPERTS)) {
@@ -154,92 +130,9 @@ export class AresHandler {
     };
 
     adjacentPlayer.megaCredits += ownerBonus;
-    game.log('${0} gains ${1} M€ for a tile placed next to ${2}', (b) => b.player(adjacentPlayer).number(ownerBonus).string(tileText));
+    player.game.log('${0} gains ${1} M€ for a tile placed next to ${2}', (b) => b.player(adjacentPlayer).number(ownerBonus).string(tileText));
 
     return true;
-  }
-
-  // Returns a map of resources and resource types to track, and the current count
-  // of each of these |player| has. Used with |rewardForPlacement|.
-  //
-  // This feature is part of Ecological Survey and Geological Survey.
-  //
-  public static beforeTilePlacement(player: Player): Multiset<Resources | ResourceType> {
-    const multiset: Multiset<Resources | ResourceType> = new Multiset();
-    if (player.playedCards.find((c) => c.name === CardName.ECOLOGICAL_SURVEY)) {
-      multiset.add(Resources.PLANTS, player.getResource(Resources.PLANTS));
-      multiset.add(ResourceType.ANIMAL, AresHandler.countResources(player, ResourceType.ANIMAL));
-      multiset.add(ResourceType.MICROBE, AresHandler.countResources(player, ResourceType.MICROBE));
-    }
-    if (player.playedCards.find((c) => c.name === CardName.GEOLOGICAL_SURVEY)) {
-      multiset.add(Resources.STEEL, player.getResource(Resources.STEEL));
-      multiset.add(Resources.TITANIUM, player.getResource(Resources.TITANIUM));
-      multiset.add(Resources.HEAT, player.getResource(Resources.HEAT));
-    }
-    return multiset;
-  }
-
-  // Used with Ecological and Geological Survey
-  public static afterTilePlacement(game: Game, player: Player, startingResources?: Multiset<Resources | ResourceType>): void {
-    if (startingResources === undefined) {
-      return;
-    }
-    if (game.phase === Phase.SOLAR) {
-      return;
-    }
-
-    function giveBonus(start: number | undefined, current: number): boolean {
-      return start !== undefined && current > start;
-    }
-
-    // Although this bit of code goes through all six resource types, the expected input map will only contain
-    // the three (or six) resources it is tracking.
-    [Resources.PLANTS, Resources.STEEL, Resources.TITANIUM, Resources.HEAT].forEach((resource) => {
-      if (giveBonus(startingResources.get(resource), player.getResource(resource))) {
-        player.setResource(resource, 1);
-
-        const cardName = resource === Resources.PLANTS ? CardName.ECOLOGICAL_SURVEY : CardName.GEOLOGICAL_SURVEY;
-        game.log('${0} gained a bonus ${1} because of ${2}', (b) => b.player(player).string(resource).cardName(cardName));
-      }
-    });
-    [ResourceType.MICROBE, ResourceType.ANIMAL].forEach((resourceType) => {
-      if (giveBonus(startingResources.get(resourceType), AresHandler.countResources(player, resourceType))) {
-        game.defer(new AddResourcesToCard(
-          player,
-          game,
-          resourceType,
-          1,
-        ));
-      }
-    });
-  }
-
-  private static countResources(player: Player, resourceType: ResourceType): number {
-    let count = player.playedCards
-      .map((c) => resourceType === c.resourceType ? c.resourceCount || 0 : 0)
-      .reduce((prior, current) => prior + current, 0);
-
-    if (resourceType === player.corporationCard?.resourceType) {
-      count += player.corporationCard.resourceCount || 0;
-    }
-    return count;
-  }
-
-  public static setupHazards(game: Game, playerCount: number) {
-    // The number of dust storms depends on the player count.
-    // I made up that the solo player has 3 dust storms. The rules
-    // don't take solo into account, nor if you played with more than
-    // five players.
-    if (playerCount >= 5) {
-      randomlyPlaceHazard(game, TileType.DUST_STORM_MILD, 1);
-    } else if (playerCount === 4) {
-      randomlyPlaceHazard(game, TileType.DUST_STORM_MILD, 1);
-      randomlyPlaceHazard(game, TileType.DUST_STORM_MILD, -1);
-    } else if (playerCount <= 3) {
-      randomlyPlaceHazard(game, TileType.DUST_STORM_MILD, 1);
-      randomlyPlaceHazard(game, TileType.DUST_STORM_MILD, 1);
-      randomlyPlaceHazard(game, TileType.DUST_STORM_MILD, -1);
-    }
   }
 
   public static hasHazardTile(space: ISpace): boolean {
@@ -296,11 +189,11 @@ export class AresHandler {
     return {megacredits: megaCreditCost, production: productionCost};
   }
 
-  public static assertCanPay(game: Game, player: Player, space: ISpace, subjectToHazardAdjacency: boolean): IAdjacencyCost {
-    if (game.phase === Phase.SOLAR) {
+  public static assertCanPay(player: Player, space: ISpace, subjectToHazardAdjacency: boolean): IAdjacencyCost {
+    if (player.game.phase === Phase.SOLAR) {
       return {megacredits: 0, production: 0};
     }
-    const cost = AresHandler.computeAdjacencyCosts(game, space, subjectToHazardAdjacency);
+    const cost = AresHandler.computeAdjacencyCosts(player.game, space, subjectToHazardAdjacency);
 
     // Make this more sophisticated, a player can pay for different adjacencies
     // with different production units, and, a severe hazard can't split payments.
@@ -321,17 +214,16 @@ export class AresHandler {
     }
   }
 
-  public static payAdjacencyAndHazardCosts(game: Game, player: Player, space: ISpace, subjectToHazardAdjacency: boolean) {
-    const cost = this.assertCanPay(game, player, space, subjectToHazardAdjacency);
+  public static payAdjacencyAndHazardCosts(player: Player, space: ISpace, subjectToHazardAdjacency: boolean) {
+    const cost = this.assertCanPay(player, space, subjectToHazardAdjacency);
 
     if (cost.production > 0) {
       // TODO(kberg): don't send interrupt if total is available.
-      game.defer(new SelectProductionToLoseDeferred(player, cost.production));
+      player.game.defer(new SelectProductionToLoseDeferred(player, cost.production));
     }
     if (cost.megacredits > 0) {
-      game.log('${0} placing a tile here costs ${1} M€', (b) => b.player(player).number(cost.megacredits));
-
-      game.defer(new SelectHowToPayDeferred(player, cost.megacredits, false, false, 'Select how to pay additional placement costs.'));
+      player.game.log('${0} placing a tile here costs ${1} M€', (b) => b.player(player).number(cost.megacredits));
+      player.game.defer(new SelectHowToPayDeferred(player, cost.megacredits, {title: 'Select how to pay additional placement costs.'}));
     }
   }
 
@@ -352,30 +244,19 @@ export class AresHandler {
   }
 
   public static onTemperatureChange(game: Game, aresData: IAresData) {
-    // This will have no effect if the erosions don't exist, but that's OK --
-    // the check for placing erosions will take this into account.
-    testConstraint(
-      aresData.hazardData.severeErosionTemperature,
-      game.getTemperature(),
-      () => {
-        makeSevere(game, TileType.EROSION_MILD, TileType.EROSION_SEVERE);
-      },
-    );
+    _AresHazardPlacement.onTemperatureChange(game, aresData);
   }
 
-  public static onOceanPlaced(game: Game, aresData: IAresData, player: Player) {
-    testToPlaceErosionTiles(game, aresData, player);
-    testToRemoveDustStorms(game, aresData, player);
+  public static onOceanPlaced(aresData: IAresData, player: Player) {
+    _AresHazardPlacement.onOceanPlaced(aresData, player);
   }
 
   public static onOxygenChange(game: Game, aresData: IAresData) {
-    testConstraint(aresData.hazardData.severeDustStormOxygen, game.getOxygenLevel(), () => {
-      makeSevere(game, TileType.DUST_STORM_MILD, TileType.DUST_STORM_SEVERE);
-    });
+    _AresHazardPlacement.onOxygenChange(game, aresData);
   }
 
-  public static grantBonusForRemovingHazard(game: Game, player: Player, initialTileType: TileType | undefined) {
-    if (game.phase === Phase.SOLAR) {
+  public static grantBonusForRemovingHazard(player: Player, initialTileType: TileType | undefined) {
+    if (player.game.phase === Phase.SOLAR) {
       return;
     }
     let steps: number;
@@ -393,140 +274,8 @@ export class AresHandler {
     default:
       return;
     }
-    player.increaseTerraformRatingSteps(steps, game);
-    game.log('${0}\'s TR increases ${1} step(s) for removing ${2}', (b) => b.player(player).number(steps).string(tileTypeAsString(initialTileType)));
-  }
-
-
-  public static putHazardAt(space: ISpace, tileType: TileType) {
-    space.tile = {tileType: tileType, protectedHazard: false};
+    player.increaseTerraformRatingSteps(steps);
+    player.game.log('${0}\'s TR increases ${1} step(s) for removing ${2}', (b) => b.player(player).number(steps).string(TileType.toString(initialTileType)));
   }
 }
 
-function randomlyPlaceHazard(game: Game, tileType: TileType, direction: 1 | -1) {
-  const space = game.getSpaceByOffset(direction, 'hazard');
-  AresHandler.putHazardAt(space, tileType);
-  return space;
-}
-
-
-function makeSevere(game: Game, from: TileType, to: TileType) {
-  game.board.spaces
-    .filter((s) => s.tile?.tileType === from)
-    .forEach((s) => {
-      AresHandler.putHazardAt(s, to);
-    });
-
-  game.log('${0} have upgraded to ${1}', (b) => b.string(tileTypeAsString(from)).string(tileTypeAsString(to)));
-}
-
-function testConstraint(constraint: IHazardConstraint, testValue: number, cb: () => void) {
-  if (!constraint.available) {
-    return;
-  }
-  if (testValue >= constraint.threshold) {
-    cb();
-    constraint.available = false;
-  }
-}
-
-function testToRemoveDustStorms(game: Game, aresData: IAresData, player: Player) {
-  testConstraint(
-    aresData.hazardData.removeDustStormsOceanCount,
-    game.board.getOceansOnBoard(),
-    () => {
-      game.board.spaces.forEach((space) => {
-        if (space.tile?.tileType === TileType.DUST_STORM_MILD || space.tile?.tileType === TileType.DUST_STORM_SEVERE) {
-          if (space.tile.protectedHazard !== true) {
-            space.tile = undefined;
-          }
-        }
-      });
-
-      if (game.phase !== Phase.SOLAR) {
-        player.increaseTerraformRating(game);
-        game.log('${0}\'s TR increases 1 step for eliminating dust storms.', (b) => b.player(player));
-      }
-    },
-  );
-}
-
-function testToPlaceErosionTiles(game: Game, aresData: IAresData, player: Player) {
-  testConstraint(
-    aresData.hazardData.erosionOceanCount,
-    game.board.getOceansOnBoard(),
-    () => {
-      let type = TileType.EROSION_MILD;
-      if (aresData.hazardData.severeErosionTemperature.available !== true) {
-        type = TileType.EROSION_SEVERE;
-      }
-
-      const space1 = randomlyPlaceHazard(game, type, 1);
-      const space2 = randomlyPlaceHazard(game, type, -1);
-      [space1, space2].forEach((space) => {
-        LogHelper.logTilePlacement(game, player, space, type);
-      });
-    },
-  );
-}
-
-// TODO(kberg): convert to a log message type
-const tileTypeToStringMap: Map<TileType, string> = new Map([
-  [TileType.GREENERY, 'greenery'],
-  [TileType.OCEAN, 'ocean'],
-  [TileType.CITY, 'city'],
-
-  [TileType.CAPITAL, CardName.CAPITAL],
-  [TileType.COMMERCIAL_DISTRICT, CardName.COMMERCIAL_DISTRICT],
-  [TileType.ECOLOGICAL_ZONE, CardName.ECOLOGICAL_ZONE],
-  [TileType.INDUSTRIAL_CENTER, CardName.INDUSTRIAL_CENTER],
-  [TileType.LAVA_FLOWS, CardName.LAVA_FLOWS],
-  [TileType.MINING_AREA, CardName.MINING_AREA],
-  [TileType.MINING_RIGHTS, CardName.MINING_RIGHTS],
-  [TileType.MOHOLE_AREA, CardName.MOHOLE_AREA],
-  [TileType.NATURAL_PRESERVE, CardName.NATURAL_PRESERVE],
-  [TileType.NUCLEAR_ZONE, CardName.NUCLEAR_ZONE],
-  [TileType.RESTRICTED_AREA, CardName.RESTRICTED_AREA],
-
-  // DEIMOS_DOWN, "",
-  // GREAT_DAM, "",
-  // MAGNETIC_FIELD_GENERATORS, "",
-
-  [TileType.BIOFERTILIZER_FACILITY, CardName.BIOFERTILIZER_FACILITY],
-  [TileType.METALLIC_ASTEROID, CardName.METALLIC_ASTEROID],
-  [TileType.SOLAR_FARM, CardName.SOLAR_FARM],
-  [TileType.OCEAN_CITY, CardName.OCEAN_CITY],
-  [TileType.OCEAN_FARM, CardName.OCEAN_FARM],
-  [TileType.OCEAN_SANCTUARY, CardName.OCEAN_SANCTUARY],
-  [TileType.DUST_STORM_MILD, 'Mild Dust Storm'],
-  [TileType.DUST_STORM_SEVERE, 'Severe Dust Storm'],
-  [TileType.EROSION_MILD, 'Mild Erosion'],
-  [TileType.EROSION_SEVERE, 'Severe Erosion'],
-  [TileType.MINING_STEEL_BONUS, 'Mining (Steel)'],
-  [TileType.MINING_TITANIUM_BONUS, 'Mining (Titanium)'],
-]);
-
-function tileTypeAsString(tileType: TileType | undefined): string {
-  if (tileType === undefined) {
-    return 'undefined';
-  };
-  return tileTypeToStringMap.get(tileType)|| 'special';
-}
-
-
-const bonusToStringMap: Map<SpaceBonus, string> = new Map([
-  [SpaceBonus.TITANIUM, 'Titanium'],
-  [SpaceBonus.STEEL, 'Steel'],
-  [SpaceBonus.PLANT, 'Plant'],
-  [SpaceBonus.DRAW_CARD, 'Card'],
-  [SpaceBonus.HEAT, 'Heat'],
-  [SpaceBonus.OCEAN, 'Ocean'],
-  [SpaceBonus.MEGACREDITS, 'MC'],
-  [SpaceBonus.ANIMAL, 'Animal'],
-  [SpaceBonus.MICROBE, 'Microbe'],
-  [SpaceBonus.POWER, 'Power'],
-]);
-
-function bonusAsString(bonus: SpaceBonus | undefined): string {
-  return (bonus === undefined) ? 'undefined' : (bonusToStringMap.get(bonus)|| 'special');
-}

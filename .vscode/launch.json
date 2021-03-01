@@ -9,7 +9,7 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-            "program": "${workspaceFolder}/build/server.js" 
+            "program": "${workspaceFolder}/build/src/server.js" 
         } ,
         {
             "type": "node",
@@ -20,7 +20,7 @@
                 "--timeout",
                 "999999",
                 "--colors",
-                "${workspaceFolder}/dist/tests/cards/community/**.spec.js"
+                "${workspaceFolder}/build/tests/cards/**/CardRequirements.spec.js"
             ],
             "cwd": "${workspaceFolder}/",
             "internalConsoleOptions": "openOnSessionStart",

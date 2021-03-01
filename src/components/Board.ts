@@ -8,6 +8,7 @@ import {SpaceType} from '../SpaceType';
 import {PreferencesManager} from './PreferencesManager';
 // @ts-ignore
 import {$t} from '../directives/i18n';
+import {SpaceId} from '../boards/ISpace';
 
 class GlobalParamLevel {
   constructor(public value: number, public isActive: boolean, public isDone: boolean, public strValue: string) {
@@ -58,6 +59,7 @@ export const Board = Vue.component('board', {
   data: function() {
     return {
       'constants': constants,
+      'isTileHidden': false,
     };
   },
   mounted: function() {
@@ -78,7 +80,7 @@ export const Board = Vue.component('board', {
         return s.spaceType !== SpaceType.COLONY;
       });
     },
-    getSpaceById: function(spaceId: string) {
+    getSpaceById: function(spaceId: SpaceId) {
       for (const space of this.spaces) {
         if (space.id === spaceId) {
           return space;
@@ -159,9 +161,22 @@ export const Board = Vue.component('board', {
     getGameBoardClassName: function():string {
       return this.venusNextExtension ? 'board-cont board-with-venus' : 'board-cont board-without-venus';
     },
+    toggleHideTile: function() {
+      this.isTileHidden = !this.isTileHidden;
+    },
+    toggleHideTileLabel: function(): string {
+      return this.isTileHidden ? 'show tiles' : 'hide tiles';
+    },
+    checkHideTile: function():boolean {
+      return this.isTileHidden;
+    },
   },
   template: `
     <div :class="getGameBoardClassName()">
+        <div class="hide-tile-button-container">
+        <div class="seasonal-perseverance" title="Mars Preserverance landing"></div>
+          <div class="hide-tile-button" v-on:click.prevent="toggleHideTile()">{{ toggleHideTileLabel() }}</div>
+        </div>
         <div class="board-outer-spaces">
             <board-space :space="getSpaceById('01')" text="Ganymede Colony"></board-space>
             <board-space :space="getSpaceById('02')" text="Phobos Space Haven"></board-space>
@@ -209,13 +224,15 @@ export const Board = Vue.component('board', {
         </div>
 
         <div class="board" id="main_board">
-            <board-space :space="curSpace" :is_selectable="true" :key="'board-space-'+curSpace.id" :aresExtension="aresExtension" v-for="curSpace in getAllSpacesOnMars()"></board-space>
+            <board-space :space="curSpace" :is_selectable="true" :key="'board-space-'+curSpace.id" :aresExtension="aresExtension" :isTileHidden="checkHideTile()" v-for="curSpace in getAllSpacesOnMars()"></board-space>
             <svg id="board_legend" height="550" width="630" class="board-legend">
                 <g v-if="boardName === 'tharsis'" id="ascraeus_mons" transform="translate(95, 192)">
                     <text class="board-caption">
                         <tspan dy="15">Ascraeus</tspan>
                         <tspan x="12" dy="12">Mons</tspan>
                     </text>
+                    <line x1="38" y1="20" x2="88" y2="26" class="board-line"></line>
+                    <text x="86" y="29" class="board-caption board_caption--black">●</text>
                 </g>
                 
                 <g v-if="boardName === 'tharsis'" id="pavonis_mons" transform="translate(90, 230)">
@@ -223,13 +240,18 @@ export const Board = Vue.component('board', {
                         <tspan dy="15">Pavonis</tspan>
                         <tspan x="4" dy="12">Mons</tspan>
                     </text>
+                    <line x1="35" y1="25" x2="72" y2="30" class="board-line" />
+                    <text x="66" y="33" class="board-caption board_caption--black">●</text>              
                 </g>
-                
+
+
                 <g v-if="boardName === 'tharsis'" id="arsia_mons" transform="translate(77, 275)">
                     <text class="board-caption">
                         <tspan dy="15">Arsia</tspan>
                         <tspan x="-2" dy="12">Mons</tspan>
                     </text>
+                    <line x1="25" y1="20" x2="49" y2="26" class="board-line" />
+                    <text x="47" y="29" class="board-caption board_caption--black">●</text>              
                 </g>
 
                 <g v-if="boardName === 'tharsis'" id="tharsis_tholus" transform="translate(85, 175)">

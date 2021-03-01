@@ -42,7 +42,6 @@
 }
 
 .create-game-form {
-    margin: 0 25px 25px 0;
     padding-top: 5px;
 }
 
@@ -230,9 +229,14 @@
 .create-game-playerblock-purple {
     background-color: fade(@player_purple, 60%);
 }
+.create-game-playerblock-orange {
+    background-color: fade(@player_orange, 60%);
+}
+.create-game-playerblock-pink {
+    background-color: fade(@player_pink, 60%);
+}
 
 .create-game-player-name {
-    width: 240px;
     height: 40px;
     border: none;
     color: #ccc;
@@ -298,6 +302,34 @@
     content: " ";
     background-color: rgb(199, 199, 199);
 }
+
+.create-game-page-column input[type="radio"]:checked + label.label-agendaStyle {
+    position: relative;
+}
+.create-game-page-column input[type="radio"]:checked + label.label-agendaStyle::after {
+    position: absolute;
+    width: 40px;
+    height: 12px;
+    top: -10px;
+    left: 50%;
+    margin-left: -20px;
+    content: " ";
+    background-color: rgb(199, 199, 199);
+}
+
+.agendaStyle-random {
+    width: 105px;
+    min-width: 105px !important;
+}
+
+.agendaStyle-chairman {
+    width: 115px;
+    min-width: 115px !important;
+}
+
+.agendas-text {
+    font-size: 22px;
+}
   
 .create-game-colorbox {
     width: 24px;
@@ -310,4 +342,9 @@
 
 .create-game-beginner-option-label {
     margin-top: 15px;
+}
+
+.create-game-discord-invite {
+    padding: 0px 15px;
+    font-size: 20px;
 }

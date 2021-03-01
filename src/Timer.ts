@@ -14,6 +14,10 @@ export class Timer implements ISerializable<SerializedTimer> {
     return new Timer();
   }
 
+  public toJSON() {
+    return this.serialize();
+  }
+
   public serialize(): SerializedTimer {
     return {
       sumElapsed: this.sumElapsed,
@@ -28,12 +32,12 @@ export class Timer implements ISerializable<SerializedTimer> {
   public static deserialize(d: SerializedTimer | undefined): Timer {
     const timer = new Timer();
     if (d !== undefined) {
-      timer.sumElapsed = d.sumElapsed;
-      timer.startedAt = d.startedAt;
-      timer.running = d.running;
-      timer.afterFirstAction = d.afterFirstAction;
+      timer.sumElapsed = d.sumElapsed || 0;
+      timer.startedAt = d.startedAt || 0;
+      timer.running = d.running || false;
+      timer.afterFirstAction = d.afterFirstAction || false;
 
-      Timer.lastStoppedAt = d.lastStoppedAt;
+      Timer.lastStoppedAt = d.lastStoppedAt || 0;
     }
     return timer;
   }
@@ -57,10 +61,15 @@ export class Timer implements ISerializable<SerializedTimer> {
     this.sumElapsed += Timer.lastStoppedAt - this.startedAt;
   }
 
-  // Converts Timer to hh:mm:ss format based on current time. Used to display the timer.
+  // Converts Timer to [hhh:]mm:ss format based on current time. Used to display the timer.
   public static toString(d: SerializedTimer) : string {
     const elapsed = d.sumElapsed + (d.running ? Date.now() - d.startedAt : 0);
-    return new Date(elapsed).toISOString().substr(11, 8);
+    const elapsedDate = new Date(elapsed);
+    const hours = elapsedDate.getUTCHours() + (elapsedDate.getUTCDate()-1)*24;
+    if (hours > 0) {
+      return String(hours)+elapsedDate.toISOString().substr(13, 6);
+    }
+    return elapsedDate.toISOString().substr(14, 5);
   }
 }
 

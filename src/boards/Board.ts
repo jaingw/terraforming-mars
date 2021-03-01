@@ -1,19 +1,52 @@
-import {ISpace} from './ISpace';
+import {ISpace, SpaceId} from './ISpace';
 import {Player} from '../Player';
 import {SpaceType} from '../SpaceType';
 import {TileType} from '../TileType';
 import {AresHandler} from '../ares/AresHandler';
 import {SerializedBoard, SerializedSpace} from './SerializedBoard';
 
+/**
+ * A representation of any hex board. This is normally Mars (Tharsis, Hellas, Elysium) but can also be The Moon.
+ *
+ * It also includes additional spaces, known as Colonies, that are not adjacent to other spaces.
+ */
 export abstract class Board {
-  public abstract spaces: Array<ISpace>;
-  public getAdjacentSpaces(space: ISpace): Array<ISpace> {
+  private maxX: number = 0;
+  private maxY: number = 0;
+
+  // stores adjacent spaces in clockwise order starting from the top left
+  private readonly adjacentSpaces = new Map<SpaceId, Array<ISpace>>();
+
+  protected constructor(public spaces: Array<ISpace>) {
+    this.maxX = Math.max(...spaces.map((s) => s.x));
+    this.maxY = Math.max(...spaces.map((s) => s.y));
+    spaces.forEach((space) => {
+      this.adjacentSpaces.set(space.id, this.computeAdjacentSpaces(space));
+    });
+  };
+
+  public abstract getVolcanicSpaceIds(): Array<string>;
+
+  public abstract getNoctisCitySpaceIds(): Array<string>;
+
+  /* Returns the space given a Space ID. */
+  public getSpace(id: string): ISpace {
+    const space = this.spaces.find((space) => space.id === id);
+    if (space === undefined) {
+      throw new Error(`Can't find space with id ${id}`);
+    }
+    return space;
+  }
+
+  protected computeAdjacentSpaces(space: ISpace): Array<ISpace> {
+    // Expects an odd number of rows. If a funny shape appears, it can be addressed.
+    const middleRow = this.maxY / 2;
     if (space.spaceType !== SpaceType.COLONY) {
-      if (space.y < 0 || space.y > 8) {
-        throw new Error('Unexpected space y value');
+      if (space.y < 0 || space.y > this.maxY) {
+        throw new Error('Unexpected space y value: ' + space.y);
       }
-      if (space.x < 0 || space.x > 8) {
-        throw new Error('Unexpected space x value');
+      if (space.x < 0 || space.x > this.maxX) {
+        throw new Error('Unexpected space x value: ' + space.x);
       }
       const leftSpace: Array<number> = [space.x - 1, space.y];
       const rightSpace: Array<number> = [space.x + 1, space.y];
@@ -21,28 +54,50 @@ export abstract class Board {
       const topRightSpace: Array<number> = [space.x, space.y - 1];
       const bottomLeftSpace: Array<number> = [space.x, space.y + 1];
       const bottomRightSpace: Array<number> = [space.x, space.y + 1];
-      if (space.y < 4) {
+      if (space.y < middleRow) {
         bottomLeftSpace[0]--;
         topRightSpace[0]++;
-      } else if (space.y === 4) {
+      } else if (space.y === middleRow) {
         bottomRightSpace[0]++;
         topRightSpace[0]++;
       } else {
         bottomRightSpace[0]++;
         topLeftSpace[0]--;
       }
-      return this.spaces.filter((adj) => {
-        return space !== adj && adj.spaceType !== SpaceType.COLONY && (
-          (adj.x === leftSpace[0] && adj.y === leftSpace[1]) ||
-          (adj.x === rightSpace[0] && adj.y === rightSpace[1]) ||
-          (adj.x === topLeftSpace[0] && adj.y === topLeftSpace[1]) ||
-          (adj.x === topRightSpace[0] && adj.y === topRightSpace[1]) ||
-          (adj.x === bottomLeftSpace[0] && adj.y === bottomLeftSpace[1]) ||
-          (adj.x === bottomRightSpace[0] && adj.y === bottomRightSpace[1])
+      // Coordinates are in clockwise order. Order only ever matters during solo game set-up when
+      // placing starting forests. Since that is the only case where ordering matters, it is
+      // adopted here.
+      const coords = [
+        topLeftSpace,
+        topRightSpace,
+        rightSpace,
+        bottomRightSpace,
+        bottomLeftSpace,
+        leftSpace,
+      ];
+      const spaces: Array<ISpace> = [];
+      for (const [x, y] of coords) {
+        const adj = this.spaces.find((adj) =>
+          space !== adj && adj.spaceType !== SpaceType.COLONY &&
+            adj.x === x && adj.y === y,
         );
-      });
+        if (adj !== undefined) {
+          spaces.push(adj);
+        }
+      }
+      return spaces;
     }
     return [];
+  }
+
+  // Returns adjacent spaces in clockwise order starting from the top left.
+  public getAdjacentSpaces(space: ISpace): Array<ISpace> {
+    const spaces = this.adjacentSpaces.get(space.id);
+    if (spaces === undefined) {
+      throw new Error(`Unexpected space ID ${space.id}`);
+    }
+    // Clone so that callers can't mutate our arrays
+    return [...spaces];
   }
 
   public getSpaceByTileCard(cardName: string): ISpace | undefined {
@@ -76,7 +131,7 @@ export abstract class Board {
   public getAvailableSpacesForCity(player: Player): Array<ISpace> {
     // A city cannot be adjacent to another city
     return this.getAvailableSpacesOnLand(player).filter(
-      (space) => this.getAdjacentSpaces(space).filter((adjacentSpace) => Board.isCitySpace(adjacentSpace)).length === 0,
+      (space) => this.getAdjacentSpaces(space).some((adjacentSpace) => Board.isCitySpace(adjacentSpace)) === false,
     );
   }
 
@@ -126,15 +181,6 @@ export abstract class Board {
     return landSpaces;
   }
 
-  protected shuffle(input: Array<ISpace>): Array<ISpace> {
-    const out: Array<ISpace> = [];
-    const copy = input.slice();
-    while (copy.length) {
-      out.push(copy.splice(Math.floor(Math.random() * copy.length), 1)[0]);
-    }
-    return out;
-  }
-
   // |distance| represents the number of eligible spaces from the top left (or bottom right)
   // to count. So distance 0 means the first available space.
   // If |direction| is 1, count from the top left. If -1, count from the other end of the map.
@@ -149,6 +195,9 @@ export abstract class Board {
       return this.canPlaceTile(space) && (space.player === undefined || space.player === player);
     }).filter(predicate);
     let idx = (direction === 1) ? distance : (spaces.length - (distance + 1));
+    if (spaces.length === 0) {
+      throw new Error('no spaces available');
+    }
     while (idx < 0) {
       idx += spaces.length;
     }
@@ -168,14 +217,6 @@ export abstract class Board {
 
   public canPlaceTile(space: ISpace): boolean {
     return space.tile === undefined && space.spaceType === SpaceType.LAND;
-  }
-
-  public getForestSpace(spaces: Array<ISpace>): ISpace {
-    const space = this.shuffle(spaces).find((s) => this.canPlaceTile(s));
-    if (space === undefined) {
-      throw new Error('Did not find space for forest');
-    }
-    return space;
   }
 
   public static isCitySpace(space: ISpace): boolean {
@@ -202,7 +243,7 @@ export abstract class Board {
           y: space.y,
         } as SerializedSpace;
       }),
-    } as SerializedBoard;
+    };
   }
 
   public static deserializeSpace(space: SerializedSpace, players: Array<Player>): ISpace {

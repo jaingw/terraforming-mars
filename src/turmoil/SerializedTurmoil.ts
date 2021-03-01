@@ -1,10 +1,11 @@
-import {IParty} from './parties/IParty';
-import {GlobalEventDealer} from './globalEvents/GlobalEventDealer';
 import {IGlobalEvent} from './globalEvents/IGlobalEvent';
 import {SerializedPlayer} from '../SerializedPlayer';
 import {PartyName} from './parties/PartyName';
 import {SerializedGlobalEventDealer} from './globalEvents/SerializedGlobalEventDealer';
+import {SerializedPoliticalAgendasData} from './PoliticalAgendas';
 import {NeutralPlayer} from './Turmoil';
+import {IParty} from './parties/IParty';
+import {GlobalEventDealer} from './globalEvents/GlobalEventDealer';
 
 export interface SerializedParty {
     name: PartyName;
@@ -12,8 +13,6 @@ export interface SerializedParty {
     partyLeader: undefined | string | NeutralPlayer;
 }
 
-// TODO(kberg): By 2021-01-15, remove delegeate_reserve, commingGlobalEvent, and uses
-// of IParty, GlobalEventDealer, and IGlobalEvent.
 export interface SerializedTurmoil {
     chairman: undefined | SerializedPlayer | NeutralPlayer;
     rulingParty: IParty ;
@@ -26,5 +25,7 @@ export interface SerializedTurmoil {
     globalEventDealer: GlobalEventDealer | SerializedGlobalEventDealer;
     distantGlobalEvent: IGlobalEvent | undefined;
     comingGlobalEvent: IGlobalEvent | undefined;
+    // TODO(kberg): By 2021-03-01, IGlobalEvent.
     currentGlobalEvent?: IGlobalEvent ;
+    politicalAgendasData: SerializedPoliticalAgendasData | undefined;
 }

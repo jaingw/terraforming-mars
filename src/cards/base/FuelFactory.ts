@@ -1,18 +1,35 @@
 import {IProjectCard} from '../IProjectCard';
+import {Card} from '../Card';
 import {CardType} from '../CardType';
 import {Player} from '../../Player';
 import {Tags} from '../Tags';
 import {Resources} from '../../Resources';
 import {CardName} from '../../CardName';
-import {CardMetadata} from '../CardMetadata';
 import {CardRenderer} from '../render/CardRenderer';
+import {Units} from '../../Units';
 
-export class FuelFactory implements IProjectCard {
-  public cost = 6;
-  public name = CardName.FUEL_FACTORY;
-  public tags = [Tags.BUILDING];
-  public cardType = CardType.AUTOMATED;
-  public hasRequirements = false;
+export class FuelFactory extends Card implements IProjectCard {
+  constructor() {
+    super({
+      cardType: CardType.AUTOMATED,
+      name: CardName.FUEL_FACTORY,
+      tags: [Tags.BUILDING],
+      cost: 6,
+      productionBox: Units.of({energy: -1, megacredits: 1, titanium: 1}),
+
+      metadata: {
+        cardNumber: '180',
+        renderData: CardRenderer.builder((b) => {
+          b.production((pb) => {
+            pb.minus().energy(1).br;
+            pb.plus().titanium(1).megacredits(1);
+          });
+        }),
+        description: 'Decrease your Energy production 1 step and increase your titanium and your MC production 1 step each.',
+      },
+    });
+  }
+
   public canPlay(player: Player): boolean {
     return player.getProduction(Resources.ENERGY) >= 1;
   }
@@ -21,15 +38,5 @@ export class FuelFactory implements IProjectCard {
     player.addProduction(Resources.TITANIUM);
     player.addProduction(Resources.MEGACREDITS);
     return undefined;
-  }
-  public metadata: CardMetadata = {
-    cardNumber: '180',
-    renderData: CardRenderer.builder((b) => {
-      b.productionBox((pb) => {
-        pb.minus().energy(1).br;
-        pb.plus().titanium(1).megacredits(1);
-      });
-    }),
-    description: 'Decrease your Energy production 1 step and increase your titanium and your MC production 1 step each.',
   }
 }

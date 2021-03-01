@@ -21,7 +21,8 @@ export class Aridor implements CorporationCard {
     public cardType = CardType.CORPORATION;
 
     public initialActionText: string = 'Add a colony tile';
-    public initialAction(player: Player, game: Game) {
+    public initialAction(player: Player) {
+      const game = player.game;
       if (game.colonyDealer === undefined || !game.gameOptions.coloniesExtension) return undefined;
 
       const availableColonies: Colony[] = game.colonyDealer.discardedColonies;
@@ -62,8 +63,13 @@ export class Aridor implements CorporationCard {
       });
     }
 
-    public onCardPlayed(player: Player, _game: Game, card: IProjectCard) {
-      if (card.cardType === CardType.EVENT || card.tags.filter((tag) => tag !== Tags.WILDCARD).length === 0 || !player.isCorporation(this.name)) return undefined;
+    public onCardPlayed(player: Player, card: IProjectCard) {
+      if (
+        card.cardType === CardType.EVENT ||
+        card.tags.filter((tag) => tag !== Tags.WILDCARD).length === 0 ||
+        !player.isCorporation(this.name)) {
+        return undefined;
+      }
 
       for (const tag of card.tags.filter((tag) => tag !== Tags.WILDCARD)) {
         const currentSize = this.allTags.size;
@@ -79,14 +85,13 @@ export class Aridor implements CorporationCard {
     }
     public metadata: CardMetadata = {
       cardNumber: 'R20',
-      description: 'You start with 40MC. As your first action add a colony tile.',
+      description: 'You start with 40MC. As your first action, put an additional Colony Tile of your choice into play',
       renderData: CardRenderer.builder((b) => {
         b.br.br;
         b.megacredits(40).nbsp.placeColony();
         b.corpBox('effect', (ce) => {
-          ce.effectBox((eb) => {
-            eb.diverseTag().startEffect.productionBox((pb) => pb.megacredits(1));
-            eb.description('When you get a new type of tag in play [event cards do not count], increase your MC production 1 step.');
+          ce.effect('When you get a new type of tag in play [event cards do not count], increase your MC production 1 step.', (eb) => {
+            eb.diverseTag().startEffect.production((pb) => pb.megacredits(1));
           });
         });
       }),
