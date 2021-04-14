@@ -139,12 +139,6 @@ player_home.css
     background-color: @player_gray_bg;
 }
 
-.players-overview {
-    .player-is-waiting{
-        border: 0.5px solid #fff;
-        padding: 0px 5px;
-    }
-}
 /**
 创建游戏界面的label框禁用
 */
@@ -166,4 +160,83 @@ game home 玩家名字
     border-radius: 4px;
     font-weight: bold;
     margin: 0px 12px;
+}
+
+
+
+
+
+/**
+qrcode
+*/
+
+.bottom_tools{position:fixed;z-index:1070;right:40px;bottom:40px;}
+.bottom_tools>*{font:0/0 a;display:block;margin-top:5px;color:transparent;border:0;background-color:transparent;text-shadow:none}
+
+.qr_imgwx{position:absolute;top:-430px;left:-370px;}
+
+.qr_wx{width: 34px;height: 32px;background-image:url(./assets/qrcode/qr_icon.png);background-position: 46px 0;cursor:pointer;}
+.qr_wx:hover {width: 34px;height: 32px;background-image: url(./assets/qrcode/qr_icon.png);background-position: 0 0px;}
+
+.qr_imgqq{position:absolute;top:-430px;left:-370px;}
+.qr_qq{width: 34px;height: 33px;background-image:url(./assets/qrcode/qr_icon.png);background-position:46px 40px;cursor:pointer;}
+.qr_qq:hover {width: 34px;height: 33px;background-image: url(./assets/qrcode/qr_icon.png);background-position: 1px 40px;}
+ 
+.qrhide {
+  animation: anim1 0.5s;
+  animation-fill-mode: forwards;
+}
+.qrshow {
+  animation: anim2 0.5s;
+  animation-fill-mode: forwards;
+}
+@keyframes anim1 {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+	display:none;
+  }
+}
+@keyframes anim2 {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+} 
+.hide{
+    display: none;
+}
+
+/* award */
+.award-chaos{
+    background: url(assets/eros/award-chaos.png) no-repeat;
+    position: absolute;
+    height: 53px;
+    width: 115px;
+    background-size: 100%;
+    z-index: 10;
+    left: -36px;
+    top: 6px;
+}
+.award-starcore{
+    background: url(assets/eros/award-starcore.png) no-repeat;
+    position: absolute;
+    height: 53px;
+    width: 115px;
+    background-size: 100%;
+    left: 62px;
+    top: 239px;
+}
+.award-incite{
+    background: url(assets/eros/award-incite.png) no-repeat;
+    position: absolute;
+    height: 53px;
+    width: 115px;
+    background-size: 100%;
+    left: 80px;
+    top: 6px;
 }

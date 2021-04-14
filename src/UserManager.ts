@@ -1,10 +1,11 @@
 
 import * as http from 'http';
 import * as querystring from 'querystring';
-import * as server from './server';
 import {User} from './User';
 import {Database} from './database/Database';
 import {GameLoader} from './database/GameLoader';
+import {generateRandomId} from './UserUtil';
+import {Server} from './models/ServerModel';
 
 const colorNames = ['Blue', 'Red', 'Yellow', 'Green', 'Black', 'Purple', 'You'];
 
@@ -23,43 +24,52 @@ export function apiGameBack(req: http.IncomingMessage, res: http.ServerResponse)
     notFound(req, res);
     return;
   }
+  let body = '';
+  req.on('data', function(data) {
+    body += data.toString();
+  });
+  req.once('end', function() {
+    try {
+      const userReq:any = JSON.parse(body);
+      const gameId = userReq['id'];
+      const userId = userReq['userId'];
+      if (gameId === undefined || gameId === '') {
+        console.warn('didn\'t find game id');
+        notFound(req, res);
+        return;
+      }
 
-  const qs: string = req.url!.substring('/api/gameback?'.length);
-  const queryParams = querystring.parse(qs);
-  const gameId = (queryParams as any)['id'];
-  const userId = (queryParams as any)['userId'];
+      if (userId === undefined || userId === '') {
+        console.warn('didn\'t find user id');
+        notFound(req, res);
+        return;
+      }
 
-  if (gameId === undefined || gameId === '') {
-    console.warn('didn\'t find game id');
-    notFound(req, res);
-    return;
-  }
+      const user = GameLoader.getInstance().userIdMap.get(userId);
+      if (user === undefined || !user.canRollback()) {
+        console.warn('didn\'t find user ');
+        notFound(req, res);
+        return;
+      }
+      const game = GameLoader.getInstance().games.get(gameId);
 
-  if (userId === undefined || userId === '') {
-    console.warn('didn\'t find user id');
-    notFound(req, res);
-    return;
-  }
-
-  const user = GameLoader.getInstance().userIdMap.get(userId);
-  if (user === undefined || !user.canRollback()) {
-    console.warn('didn\'t find user ');
-    notFound(req, res);
-    return;
-  }
-  const game = GameLoader.getInstance().games.get(gameId);
-
-  if (game === undefined) {
-    console.warn('game is undefined');
-    notFound(req, res);
-    return;
-  }
-  console.log('user:'+ user.name +' rollback game ' + game.id);
-  game.rollback();
-  user.reduceRollbackNum();
-  res.setHeader('Content-Type', 'application/json');
-  res.write('success');
-  res.end();
+      if (game === undefined) {
+        console.warn('game is undefined');
+        notFound(req, res);
+        return;
+      }
+      console.log('user:'+ user.name +' rollback game ' + game.id);
+      game.rollback();
+      user.reduceRollbackNum();
+      res.write('success');
+      res.end();
+    } catch (err) {
+      console.warn('error rollback', err);
+      res.writeHead(500);
+      res.write('Unable to rollback: ' + err.message);
+      res.end();
+    }
+  });
 }
 
 export function apiGetMyGames(req: http.IncomingMessage, res: http.ServerResponse): void {
@@ -104,7 +114,7 @@ export function apiGetMyGames(req: http.IncomingMessage, res: http.ServerRespons
           activePlayer: game.activePlayer.color,
           id: game.id,
           phase: game.phase,
-          players: game.getPlayers().map((player) => {
+          players: game.getAllPlayers().map((player) => {
             return {
               id: player.id,
               name: player.name,
@@ -140,8 +150,8 @@ export function login(req: http.IncomingMessage, res: http.ServerResponse): void
   req.once('end', function() {
     try {
       const userReq = JSON.parse(body);
-      const userName: string = userReq.userName;
-      const password: string = userReq.password;
+      const userName: string = userReq.userName.trim().toLowerCase();
+      const password: string = userReq.password.trim().toLowerCase();
       if (userName === undefined || userName.length <= 1) {
         throw new Error('UserName must not be empty and  be longer than 1');
       }
@@ -152,7 +162,7 @@ export function login(req: http.IncomingMessage, res: http.ServerResponse): void
       if (password === undefined || password.length <= 2) {
         throw new Error('Password must not be empty and  be longer than 2');
       }
-      if (password !== user.password) {
+      if (password !== user.password.trim().toLowerCase()) {
         throw new Error('Password error');
       }
       res.setHeader('Content-Type', 'application/json');
@@ -174,9 +184,9 @@ export function register(req: http.IncomingMessage, res: http.ServerResponse): v
   req.once('end', function() {
     try {
       const userReq = JSON.parse(body);
-      const userId = server.generateRandomId();
-      const userName: string = userReq.userName;
-      const password: string = userReq.password;
+      const userId = generateRandomId('');
+      const userName: string = userReq.userName ? userReq.userName.trim().toLowerCase() : '';
+      const password: string = userReq.password ? userReq.password.trim().toLowerCase() : '';
       if (userName === undefined || userName.length <= 1) {
         throw new Error('UserName must not be empty and  be longer than 1');
       }
@@ -269,8 +279,7 @@ export function resign(req: http.IncomingMessage, res: http.ServerResponse): voi
       }
       game.exitPlayer(player);
       res.setHeader('Content-Type', 'application/json');
-      res.write(server.getPlayerModelJSON(player, game, false));
-      res.end();
+      res.end(JSON.stringify(Server.getPlayerModel(player, false)));
     } catch (err) {
       console.warn('error resign', err);
       console.warn('error resign:', body);

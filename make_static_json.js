@@ -12,28 +12,30 @@ function getAllTranslations() {
   let translationDir = '';
 
   const dirs = fs.readdirSync(pathToTranslationsDir);
-  for (const idx in dirs) {
-    const lang = dirs[idx];
+  dirs.forEach((lang) => {
     const localeDir = path.join(pathToTranslationsDir, lang);
     if (lang.length === 2 && fs.statSync(localeDir).isDirectory()) {
       translationDir = path.resolve(path.join(pathToTranslationsDir, lang));
 
       const files = fs.readdirSync(translationDir);
-      for (const idx in files) {
-        const file = files[idx];
-
-        if ( file === undefined || ! file.endsWith('.json')) continue;
+      files.forEach((file) => {
+        if ( file === undefined || ! file.endsWith('.json')) return;
         const dataJson = JSON.parse(fs.readFileSync(path.join(translationDir, file), 'utf8'));
 
         for (const phrase in dataJson) {
-          if (translations[phrase] === undefined) {
-            translations[phrase] = {};
+          if (dataJson.hasOwnProperty(phrase)) {
+                    if (translations[phrase] === undefined) {
+                        translations[phrase] = {};
           }
-          translations[phrase][lang] = dataJson[phrase];
-        }
-      }
-    }
+          if (lang === 'cn' && translations[phrase][lang] !== undefined) {
+            console.log('重复翻译： '+ phrase);
+                    }
+                    translations[phrase][lang] = dataJson[phrase];
+                }
+            }
+      });
   }
+  });
 
   return translations;
 }
@@ -116,6 +118,10 @@ fs.writeFileSync('src/genfiles/settings.json', JSON.stringify({
 fs.writeFileSync('src/genfiles/translations.json', JSON.stringify(
   translationsJSON,
 ));
+
+if (!fs.existsSync('build/src/')) {
+  fs.mkdirSync('build/src/');
+}
 
 if (!fs.existsSync('build/src/genfiles')) {
   fs.mkdirSync('build/src/genfiles');

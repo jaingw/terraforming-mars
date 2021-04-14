@@ -6,6 +6,7 @@ export enum CorporationGroup {
   TURMOIL = 'Turmoil',
   PROMO = 'Promo',
   COMMUNITY = 'Community',
+  EROS = 'Eros',
   MOON = 'Moon'
 }
 

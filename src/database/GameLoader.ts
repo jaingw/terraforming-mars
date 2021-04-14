@@ -1,27 +1,15 @@
 
 import {Color} from '../Color';
 import {Database} from './Database';
-import {Game, LoadState} from '../Game';
+import {Game, LoadState, SpectatorId} from '../Game';
 import {Player} from '../Player';
 import {User} from '../User';
+import {IGameLoader, State} from './IGameLoader';
 
 type LoadCallback = (game: Game | undefined) => void;
-export enum State {
-  /**
-   * No id has been requested
-   */
-  WAITING,
-  /**
-   * Running query and populating ids
-   */
-  LOADING,
-  /**
-   * ids populated from database
-   */
-  READY
-}
 
-export class GameLoader {
+
+export class GameLoader implements IGameLoader {
     public state: State = State.WAITING;
     public readonly games = new Map<string, Game>();
     private readonly pendingGame = new Map<string, Array<LoadCallback>>();
@@ -64,7 +52,9 @@ export class GameLoader {
         if (user !== undefined) {
           let strings = this.usersToGames.get(user.id);
           if (strings !== undefined) {
-            strings.push(game.id);
+            if (strings.indexOf(game.id) < 0) {
+              strings.push(game.id);
+            }
           } else {
             strings = [];
             strings.push(game.id);
@@ -101,6 +91,10 @@ export class GameLoader {
         cb(undefined);
       }
     }
+
+    public getBySpectatorId(spectatorId: SpectatorId, cb: LoadCallback): void{
+      this.getByPlayerId(spectatorId, cb);
+    };
 
     public getByPlayerId(playerId: string, cb: LoadCallback): void {
       if (this.state === State.READY && this.playerToGame.has(playerId)) {
@@ -152,6 +146,7 @@ export class GameLoader {
       const gameId = game.id;
       console.log(`load game ${gameId}`);
       if (err) {
+        // 加载失败 移除game_id相关数据
         this.games.delete(gameId);
         for (const player of game.getAllPlayers()) {
           this.playerToGame.delete(player.id);
@@ -165,13 +160,18 @@ export class GameLoader {
         }
       } else {
         this.games.set(game.id, game);
+        if (game.spectatorId !== undefined) {
+          this.playerToGame.set(game.spectatorId, game);
+        }
         for (const player of game.getAllPlayers()) {
           this.playerToGame.set(player.id, game);
           const user = this.userNameMap.get(player.name);
           if (user !== undefined) {
             let strings = this.usersToGames.get(user.id);
             if (strings !== undefined) {
-              strings.push(game.id);
+              if (strings.indexOf(game.id) < 0) {
+                strings.push(game.id);
+              }
             } else {
               strings = [];
               strings.push(game.id);
@@ -230,7 +230,7 @@ export class GameLoader {
         }
         allUser.forEach((user) => {
           $this.userIdMap.set(user.id, user);
-          $this.userNameMap.set(user.name, user);
+          $this.userNameMap.set(user.name.trim().toLowerCase(), user);
         });
       });
 
@@ -270,14 +270,18 @@ export class GameLoader {
           if (err || (serializedGame === undefined)) {
             console.error(`unable to load  game ${game_id}`, err);
           } else {
-            if (process.env.PORT) {
-              // 测试环境  加载全部
-              gameToRebuild.loadFromJSON(serializedGame);
-            } else {
-              // 正式环境  加载部分
-              gameToRebuild.loadFromJSON(serializedGame, false);
+            try {
+              if (process.env.PORT) {
+                // 测试环境  加载全部
+                gameToRebuild.loadFromJSON(serializedGame);
+              } else {
+                // 正式环境  加载部分
+                gameToRebuild.loadFromJSON(serializedGame, false);
+              }
+              this.onGameLoaded(gameToRebuild);
+            } catch (err) {
+              console.error(`unable to load game ${game_id}`, err);
             }
-            this.onGameLoaded(gameToRebuild);
           }
           this.loadNextGame(cb);
         },

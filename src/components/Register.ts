@@ -30,7 +30,7 @@ export const Register = Vue.component('register', {
         }
       };
 
-      fetch('/register', {'method': 'PUT', 'body': dataToSend, 'headers': {'Content-Type': 'application/json'}})
+      fetch('/api/register', {'method': 'PUT', 'body': dataToSend, 'headers': {'Content-Type': 'application/json'}})
         .then(onSucces)
         .catch((_) => alert('Unexpected server response'));
     },

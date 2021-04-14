@@ -20,15 +20,27 @@
                 "--timeout",
                 "999999",
                 "--colors",
-                "${workspaceFolder}/build/tests/cards/**/CardRequirements.spec.js"
+                "${workspaceFolder}/build/tests/**/Game.spec.js"
             ],
             "cwd": "${workspaceFolder}/",
             "internalConsoleOptions": "openOnSessionStart",
             "skipFiles": [
                 "<node_internals>/**"
             ]
-        }
+        } ,
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "templates",
+            "program": "${workspaceFolder}/compile-vue-templates.js" 
+        } ,
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "make_static_json",
+            "program": "${workspaceFolder}/make_static_json.js" 
+        } ,
 
-       
+        
     ]
 }

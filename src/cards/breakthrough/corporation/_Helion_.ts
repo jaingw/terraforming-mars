@@ -31,8 +31,8 @@ export class _Helion_ implements CorporationCard {
             ce.vSpace(CardRenderItemSize.LARGE);
             eb.text('x').heat(1).startEffect.megacredits(0).multiplier;
           });
-          ce.effect('You may use heat as MC. You may not use MC as heat. Any player increase Temperature, that player gain 2 heat.', (eb) => {
-            eb.temperature(1).any.startEffect.heat(2);
+          ce.effect('You may use heat as MC. You may not use MC as heat. Any player increase Temperature, that player gain 1 heat.', (eb) => {
+            eb.temperature(1).any.startEffect.heat(1);
           });
         });
       }),

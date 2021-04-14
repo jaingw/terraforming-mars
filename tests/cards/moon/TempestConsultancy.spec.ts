@@ -7,7 +7,7 @@ import {TestPlayer} from '../../TestPlayer';
 import {TestPlayers} from '../../TestPlayers';
 import {SendDelegateToArea} from '../../../src/deferredActions/SendDelegateToArea';
 import {Greens} from '../../../src/turmoil/parties/Greens';
-import {setCustomGameOptions} from '../../TestingUtils';
+import {TestingUtils} from '../../TestingUtils';
 
 describe('TempestConsultancy', () => {
   let player: TestPlayer;
@@ -19,7 +19,7 @@ describe('TempestConsultancy', () => {
   beforeEach(() => {
     player = TestPlayers.BLUE.newPlayer();
     otherPlayer = TestPlayers.RED.newPlayer();
-    game = Game.newInstance('id', [player, otherPlayer], player, setCustomGameOptions());
+    game = Game.newInstance('id', [player, otherPlayer], player, TestingUtils.setCustomGameOptions());
     card = new TempestConsultancy();
     turmoil = game.turmoil!;
   });
@@ -34,7 +34,7 @@ describe('TempestConsultancy', () => {
 
   it('action, 1 delegate', () => {
     player.tagsForTest = {moon: 5};
-    expect(turmoil.getDelegates(player)).eq(6);
+    expect(turmoil.getDelegatesInReserve(player)).eq(6);
     // This test is brittle - it assumes mars first will be orOptions[0]. But OK.
     const marsFirst = turmoil.getPartyByName(PartyName.MARS)!;
     expect(marsFirst.getDelegates(player)).eq(0);
@@ -43,13 +43,13 @@ describe('TempestConsultancy', () => {
     const options = action.execute();
     options.cb(marsFirst.name);
 
-    expect(turmoil.getDelegates(player)).eq(5);
+    expect(turmoil.getDelegatesInReserve(player)).eq(5);
     expect(marsFirst.getDelegates(player)).eq(1);
   });
 
   it('action, 3 delegates', () => {
     player.tagsForTest = {moon: 16};
-    expect(turmoil.getDelegates(player)).eq(6);
+    expect(turmoil.getDelegatesInReserve(player)).eq(6);
     // This test is brittle - it assumes mars first will be orOptions[0]. But OK.
     const marsFirst = turmoil.getPartyByName(PartyName.MARS)!;
     expect(marsFirst.getDelegates(player)).eq(0);
@@ -58,7 +58,7 @@ describe('TempestConsultancy', () => {
     const options = action.execute();
     options.cb(marsFirst.name);
 
-    expect(turmoil.getDelegates(player)).eq(3);
+    expect(turmoil.getDelegatesInReserve(player)).eq(3);
     expect(marsFirst.getDelegates(player)).eq(3);
   });
 

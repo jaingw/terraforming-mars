@@ -1,12 +1,13 @@
 import {Game} from '../../../src/Game';
 import {Player} from '../../../src/Player';
-import {setCustomGameOptions, TestPlayers} from '../../TestingUtils';
+import {TestingUtils} from '../../TestingUtils';
+import {TestPlayers} from '../../TestPlayers';
 import {AncientShipyards} from '../../../src/cards/moon/AncientShipyards';
 import {expect} from 'chai';
 import {Resources} from '../../../src/Resources';
 import {OrOptions} from '../../../src/inputs/OrOptions';
 
-const MOON_OPTIONS = setCustomGameOptions({moonExpansion: true});
+const MOON_OPTIONS = TestingUtils.setCustomGameOptions({moonExpansion: true});
 
 describe('AncientShipyards', () => {
   let game: Game;
@@ -49,8 +50,8 @@ describe('AncientShipyards', () => {
     // Steal from red.
     orOptions.options[0].cb();
 
-    expect(bluePlayer.megaCredits).eq(8);
-    expect(redPlayer.megaCredits).eq(2);
+    expect(bluePlayer.megaCredits).eq(5);
+    expect(redPlayer.megaCredits).eq(5);
     expect(card.resourceCount).eq(1);
   });
 

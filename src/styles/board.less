@@ -171,6 +171,10 @@
 	background: url(assets/board_icons.png) -535px -83px no-repeat;
 }
 
+.board-space-tile--hot_spring {
+	background: url(assets/eros_icons.png) -438px -27px no-repeat;	
+}
+
 .board-cube {
 	position: absolute;
 	width: 21px;
@@ -178,6 +182,19 @@
 	z-index: 3;
 	margin: 25px 0 0 15px;
 	filter: drop-shadow(2px 2px 3px black);
+}
+
+.colony-cube {
+	transform: scale(1.6);
+	margin: 13px 0 0 15px;
+}
+
+.occupied-colony-space {
+	position: absolute;
+	background: rgba(0,0,0,0.7);
+	width: 53px;
+  height: 46px;
+	z-index: 1;
 }
 
 .board-cube--red {
@@ -294,26 +311,18 @@
 
 	.hide-tile-button {
 		position: absolute;
-    width: fit-content;
-    white-space: nowrap;
-    bottom: -560px;
-    text-transform: uppercase;
-    border-radius: 4px;
-    font-size: @font_size_small;
-    padding: 1px 5px;
-    color: black;
-    background: #666;
-    cursor: pointer;
+		bottom: -500px;
+		text-transform: uppercase;
+		font-size: 12px;
+		color: #e6e1e1;
+		background: url(assets/hex_white.png) no-repeat;
+		background-color: #444;
+		clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+		cursor: pointer;
+		width: 46px;
+		height: 51px;
+		line-height: 12px;
+		padding-top: 14px;
+		text-align: center;
 	}
-}
-
-.seasonal-perseverance{
-	background: url(assets/misc/perseverance.png);
-	background-size: 79px 158px;
-	width: 79px;
-	height: 158px;
-	position: absolute;
-	margin: -22px 0px 0px 253px;
-	filter: drop-shadow(2px 4px 6px #FFF);
-	transform: scale(0.9) rotate(-10deg);
 }

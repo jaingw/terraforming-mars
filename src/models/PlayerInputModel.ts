@@ -7,6 +7,7 @@ import {IAresData} from '../ares/IAresData';
 import {Message} from '../Message';
 import {PartyName} from '../turmoil/parties/PartyName';
 import {TurmoilModel} from './TurmoilModel';
+import {IGlobalEvent} from '../turmoil/globalEvents/IGlobalEvent';
 
 export interface PlayerInputModel {
     id: string | undefined;
@@ -31,6 +32,9 @@ export interface PlayerInputModel {
     payProduction?: IPayProductionModel;
     aresData?: IAresData;
     selectBlueCardAction: boolean;
+    showOnlyInLearnerMode?: boolean;
+    showOwner?: boolean;
     availableParties: Array<PartyName> | undefined;
     turmoil?: TurmoilModel;
+    globalEventCards?:Array<IGlobalEvent>;
 }

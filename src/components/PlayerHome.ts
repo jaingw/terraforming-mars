@@ -23,8 +23,6 @@ import {KeyboardNavigation} from '../../src/KeyboardNavigation';
 import {MoonBoard} from './moon/MoonBoard';
 import {Phase} from '../../src/Phase';
 
-const dialogPolyfill = require('dialog-polyfill');
-
 import * as raw_settings from '../genfiles/settings.json';
 
 export interface PlayerHomeModel {
@@ -106,17 +104,18 @@ export const PlayerHome = Vue.component('player-home', {
         const el = document.getElementById('shortkey-' + idSuffix);
         if (el) {
           event.preventDefault();
-          const scrollingSpeed = PreferencesManager.loadValue('smooth_scrolling') === '1' ? 'smooth' : 'auto';
-          el.scrollIntoView({block: 'center', inline: 'center', behavior: scrollingSpeed});
+          el.scrollIntoView({block: 'center', inline: 'center', behavior: 'auto'});
         }
       }
+    },
+    isPlayerActing: function(player: PlayerModel) : boolean {
+      return player.players.length > 1 && player.waitingFor !== undefined;
     },
     getPlayerCssForTurnOrder: (
       player: PlayerModel,
       highlightActive: boolean,
     ): string => {
       const classes = ['highlighter_box'];
-
       if (player.exited) {
         classes.push('player_exited');
       }
@@ -125,7 +124,7 @@ export const PlayerHome = Vue.component('player-home', {
       }
       // hilightActive 显示小框的高亮
       if (!highlightActive && player.waitingFor !== undefined &&
-        (!player.isActive || player.phase === 'drafting' || player.phase === 'research' )) {
+        (!player.isActive || player.phase === 'drafting' || player.phase === 'research' || player.phase === 'initial_drafting' )) {
         classes.push(' player_is_waiting');
       }
       if (highlightActive) {
@@ -135,7 +134,7 @@ export const PlayerHome = Vue.component('player-home', {
     },
     getFleetsCountRange: function(player: PlayerModel): Array<number> {
       const fleetsRange: Array<number> = [];
-      for (let i = 0; i < player.fleetSize - player.tradesThisTurn; i++) {
+      for (let i = 0; i < player.fleetSize - player.tradesThisGeneration; i++) {
         fleetsRange.push(i);
       }
       return fleetsRange;
@@ -166,11 +165,11 @@ export const PlayerHome = Vue.component('player-home', {
     },
     getToggleLabel: function(hideType: string): string {
       if (hideType === 'ACTIVE') {
-        return (this.isActiveCardShown() ? 'Hide' : 'Show') + ' active cards';
+        return (this.isActiveCardShown() ? '✔' : '');
       } else if (hideType === 'AUTOMATED') {
-        return (this.isAutomatedCardShown() ? 'Hide' : 'Show') + ' automated cards';
+        return (this.isAutomatedCardShown() ? '✔' : '');
       } else if (hideType === 'EVENT') {
-        return (this.isEventCardShown() ? 'Hide' : 'Show') + ' event cards';
+        return (this.isEventCardShown() ? '✔' : '');
       } else {
         return '';
       }
@@ -198,9 +197,6 @@ export const PlayerHome = Vue.component('player-home', {
     window.removeEventListener('keydown', this.navigatePage);
   },
   mounted: function() {
-    dialogPolyfill.default.registerDialog(
-      document.getElementById('dialog-default'),
-    );
     window.addEventListener('keydown', this.navigatePage);
   },
   template: `
@@ -209,18 +205,6 @@ export const PlayerHome = Vue.component('player-home', {
                 <a :href="'/game?id='+ player.gameId" v-i18n>Terraforming Mars</a>
                 <a :href="'mygames'" v-if="userName">- {{userName}}</a>
             </h2>
-            <section>
-                <dialog id="dialog-default">
-                    <form method="dialog">
-                        <p class="title" v-i18n>Error with input</p>
-                        <p id="dialog-default-message"></p>
-                        <menu class="dialog-menu centered-content">
-                            <button class="btn btn-lg btn-primary">OK</button>
-                        </menu>
-                    </form>
-                </dialog>
-            </section>
-
             <top-bar :player="player" />
 
             <div v-if="player.phase === 'end'">
@@ -231,6 +215,7 @@ export const PlayerHome = Vue.component('player-home', {
             </div>
 
             <preferences v-trim-whitespace
+              :acting_player="isPlayerActing(player)"
               :player="player" 
               :player_color="player.color"
               :generation="player.generation"
@@ -241,7 +226,8 @@ export const PlayerHome = Vue.component('player-home', {
               :venus = "player.venusScaleLevel"
               :turmoil = "player.turmoil"
               :gameOptions = "player.gameOptions"
-              :playerNumber = "player.players.length">
+              :playerNumber = "player.players.length"
+              :lastSoloGeneration = "player.lastSoloGeneration">
                 <div class="deck-size">{{ player.deckSize }}</div>
             </preferences>
 
@@ -274,8 +260,8 @@ export const PlayerHome = Vue.component('player-home', {
 
                 <players-overview class="player_home_block player_home_block--players nofloat:" :player="player" v-trim-whitespace id="shortkey-playersoverview"/>
 
-                <div class="player_home_block player_home_block--log player_home_block--hide_log nofloat">
-                    <log-panel :id="player.id" :players="player.players" :generation="player.generation" :color="player.color"></log-panel>
+                <div class="player_home_block nofloat">
+                    <log-panel :id="player.id" :players="player.players" :generation="player.generation" :lastSoloGeneration="player.lastSoloGeneration" :color="player.color"></log-panel>
                 </div>
 
                 <div class="player_home_block player_home_block--actions nofloat">
@@ -296,13 +282,16 @@ export const PlayerHome = Vue.component('player-home', {
                 </div>
 
                 <a name="cards" class="player_home_anchor"></a>
-                <div class="player_home_block player_home_block--hand" v-if="player.cardsInHand.length > 0" id="shortkey-hand">
-                    <dynamic-title title="Cards In Hand" :color="player.color" :withAdditional="true" :additional="player.cardsInHandNbr.toString()" />
-                    <sortable-cards :playerId="player.id" :cards="player.cardsInHand" />
+                <div class="player_home_block player_home_block--hand" v-if="player.cardsInHand.length + player.preludeCardsInHand.length > 0" id="shortkey-hand">
+                    <dynamic-title title="Cards In Hand" :color="player.color" :withAdditional="true" :additional="(player.cardsInHandNbr + player.preludeCardsInHand.length).toString()" />
+                    <sortable-cards :playerId="player.id" :cards="player.preludeCardsInHand.concat(player.cardsInHand)" />
                 </div>
 
                 <div class="player_home_block player_home_block--cards"">
-                    <dynamic-title title="Played Cards" :color="player.color" :withAdditional="true" :additional="getPlayerCardsPlayed(player, true).toString()" />
+                    <div class="hiding-card-button-row">
+                        <dynamic-title title="Played Cards" :color="player.color" />
+                        
+                    </div>
                     <div v-if="player.corporationCard !== undefined" class="cardbox">
                         <Card :card="player.corporationCard" :actionUsed="isCardActivated(player.corporationCard, player)"/>
                     </div>
@@ -310,9 +299,9 @@ export const PlayerHome = Vue.component('player-home', {
                         <Card :card="card" :actionUsed="isCardActivated(card, player)"/>
                     </div>
 
-                    <stacked-cards v-show="isAutomatedCardShown()" class="player_home_block--non_blue_cards" :cards="getCardsByType(player.playedCards, [getAutomatedCardType(), getPreludeCardType()])" ></stacked-cards>
+                    <stacked-cards v-show="isAutomatedCardShown()" :cards="getCardsByType(player.playedCards, [getAutomatedCardType(), getPreludeCardType()])" ></stacked-cards>
 
-                    <stacked-cards v-show="isEventCardShown()" class="player_home_block--non_blue_cards" :cards="getCardsByType(player.playedCards, [getEventCardType()])" ></stacked-cards>
+                    <stacked-cards v-show="isEventCardShown()" :cards="getCardsByType(player.playedCards, [getEventCardType()])" ></stacked-cards>
 
                 </div>
 

@@ -3,7 +3,7 @@ import {Color} from '../Color';
 import {BoardName} from '../boards/BoardName';
 import {CardName} from '../CardName';
 import {CorporationsFilter} from './CorporationsFilter';
-import {translateMessage} from '../directives/i18n';
+import {translateTextWithParams} from '../directives/i18n';
 import {IGameData} from '../database/IDatabase';
 import {ColoniesFilter} from './ColoniesFilter';
 import {ColonyName} from '../colonies/ColonyName';
@@ -12,11 +12,10 @@ import {Button} from '../components/common/Button';
 import {playerColorClass} from '../utils/utils';
 import {PreferencesManager} from './PreferencesManager';
 import {RandomMAOptionType} from '../RandomMAOptionType';
-import {LogMessageDataType} from '../LogMessageDataType';
 import {AgendaStyle} from '../turmoil/PoliticalAgendas';
 
 import * as constants from '../constants';
-import {$t} from '../directives/i18n';
+import {QrCode} from './QrCode';
 
 export interface CreateGameModel {
     isvip: boolean,
@@ -50,6 +49,7 @@ export interface CreateGameModel {
     shuffleMapOption: boolean;
     promoCardsOption: boolean;
     communityCardsOption: boolean;
+    erosCardsOption: boolean;
     aresExtension: boolean;
     politicalAgendasExtension: AgendaStyle;
     moonExpansion: boolean;
@@ -125,6 +125,7 @@ export const CreateGameForm = Vue.component('create-game-form', {
       shuffleMapOption: false,
       promoCardsOption: true,
       communityCardsOption: false,
+      erosCardsOption: false,
       aresExtension: false,
       politicalAgendasExtension: AgendaStyle.STANDARD,
       moonExpansion: false,
@@ -148,6 +149,7 @@ export const CreateGameForm = Vue.component('create-game-form', {
     'colonies-filter': ColoniesFilter,
     'cards-filter': CardsFilter,
     'Button': Button,
+    'qrcode': QrCode,
   },
   mounted: function() {
     if (window.location.pathname === '/solo') {
@@ -216,13 +218,10 @@ export const CreateGameForm = Vue.component('create-game-form', {
       }
     },
     getPlayerNamePlaceholder: function(player: NewPlayerModel): string {
-      return translateMessage({
-        message: 'Player ${0} name',
-        data: [{
-          type: LogMessageDataType.RAW_STRING,
-          value: String(player.index),
-        }],
-      });
+      return translateTextWithParams(
+        'Player ${0} name',
+        [String(player.index)],
+      );
     },
     updateCustomCorporationsList: function(newCustomCorporationsList: Array<CardName>) {
       const component = (this as any) as CreateGameModel;
@@ -330,12 +329,6 @@ export const CreateGameForm = Vue.component('create-game-form', {
       return playerColorClass(color.toLowerCase(), 'bg_transparent');
     },
     serializeSettings: function() {
-      const lastcreated = Number(PreferencesManager.loadValue('lastcreated')) || 0;
-      if (new Date().getTime() - lastcreated < 60000 && !this.isvip ) { // location.href.indexOf("localhost") < 0){
-        alert('请不要频繁创建游戏');
-        return;
-      }
-      PreferencesManager.saveValue('lastcreated', new Date().getTime().toString());
       const component = (this as any) as CreateGameModel;
 
       let players = component.players.slice(0, component.playersCount);
@@ -403,6 +396,7 @@ export const CreateGameForm = Vue.component('create-game-form', {
       const seed = component.seed;
       const promoCardsOption = component.promoCardsOption;
       const communityCardsOption = component.communityCardsOption;
+      const erosCardsOption = component.erosCardsOption;
       const aresExtension = component.aresExtension;
       const politicalAgendasExtension = this.politicalAgendasExtension;
       const moonExpansion = component.moonExpansion;
@@ -432,7 +426,7 @@ export const CreateGameForm = Vue.component('create-game-form', {
         }
 
         if (customColoniesList.length < neededColoniesCount) {
-          window.alert($t('Must select at least ') + neededColoniesCount + $t(' colonies'));
+          window.alert(translateTextWithParams('Must select at least ${0} colonies', [neededColoniesCount.toString()]));
           return;
         }
       }
@@ -442,7 +436,7 @@ export const CreateGameForm = Vue.component('create-game-form', {
         const neededCorpsCount = players.length * startingCorporations;
 
         if (customCorporationsList.length < neededCorpsCount) {
-          window.alert($t('Must select at least ') + neededCorpsCount + $t(' corporations'));
+          window.alert(translateTextWithParams('Must select at least ${0} corporations', [neededCorpsCount.toString()]));
           return;
         }
       }
@@ -463,6 +457,7 @@ export const CreateGameForm = Vue.component('create-game-form', {
         solarPhaseOption,
         promoCardsOption,
         communityCardsOption,
+        erosCardsOption,
         aresExtension: aresExtension,
         politicalAgendasExtension: politicalAgendasExtension,
         moonExpansion: moonExpansion,
@@ -488,6 +483,14 @@ export const CreateGameForm = Vue.component('create-game-form', {
       return dataToSend;
     },
     createGame: function() {
+      const lastcreated = Number(PreferencesManager.loadValue('lastcreated')) || 0;
+      const nowtime = new Date().getTime();
+      if (nowtime - lastcreated < 60000 && !this.isvip || nowtime - lastcreated < 1000 ) { // location.href.indexOf("localhost") < 0){
+        alert('请不要频繁创建游戏');
+        return;
+      }
+      PreferencesManager.saveValue('lastcreated', nowtime.toString());
+
       const dataToSend = this.serializeSettings();
 
       if (dataToSend === undefined) return;
@@ -512,8 +515,8 @@ export const CreateGameForm = Vue.component('create-game-form', {
   template: `
         <div id="create-game">
             <h1><span v-i18n>{{ constants.APP_NAME }}</span> — <span v-i18n>Create New Game</span></h1>
-            <div class="create-game-discord-invite" v-if="playersCount===1" v-i18n>
-                (Looking for people to play with? Join us qq group: 859050306.)
+            <div class="create-game-discord-invite" v-if="playersCount===1" >
+                <span v-i18n>Looking for people to play with</span>? Join us qq group: 859050306.
             </div>
 
             <div class="create-game-form create-game--block">
@@ -603,6 +606,12 @@ export const CreateGameForm = Vue.component('create-game-form', {
                                 <span v-i18n>BreakThrough</span>&nbsp;<a href="https://docs.qq.com/pdf/DS29QWFZLeUhWWlRR" class="tooltip" target="_blank">&#9432;</a>
                             </label>
 
+                            <input type="checkbox" name="eros" id="erosCards-checkbox" v-model="erosCardsOption"  v-if="isvip">
+                            <label for="erosCards-checkbox" class="expansion-button" :class="{forbidden:!isvip}">
+                                <div class="create-game-expansion-icon expansion-icon-eros"></div>
+                                <span v-i18n>Eros</span>&nbsp;<a href="https://docs.qq.com/doc/DS25WcXdnbHhib3Fy" class="tooltip" target="_blank">&#9432;</a>
+                            </label>
+                            
                             <input type="checkbox" name="ares" id="ares-checkbox" v-model="aresExtension"  v-if="isvip">
                             <label for="ares-checkbox" class="expansion-button" :class="{forbidden:!isvip}">
                                 <div class="create-game-expansion-icon expansion-icon-ares"></div>
@@ -615,16 +624,15 @@ export const CreateGameForm = Vue.component('create-game-form', {
                                 <span v-i18n>Community</span>&nbsp;<a href="https://docs.qq.com/pdf/DQUFZaHdMWHl2V21M" class="tooltip" target="_blank">&#9432;</a>
                             </label>
 
-                            <input type="checkbox" name="themoon" id="themoon-checkbox" v-model="moonExpansion">
-                            <label for="themoon-checkbox" class="expansion-button">
+                            <input type="checkbox" name="themoon" id="themoon-checkbox" v-model="moonExpansion"  v-if="isvip">
+                            <label for="themoon-checkbox" class="expansion-button" :class="{forbidden:!isvip}">
                                 <div class="create-game-expansion-icon expansion-icon-themoon"></div>
-                                <span v-i18n>The Moon</span>&nbsp;<a href="https://github.com/bafolts/terraforming-mars/wiki/The-Moon" class="tooltip" target="_blank">&#9432;</a>
-                                &nbsp;<span style="font-size: smaller;">α: alpha</span>
+                                <span v-i18n>The Moon</span>&nbsp;<span style="font-size: small;">(&beta;)</span>&nbsp;<a href="https://github.com/bafolts/terraforming-mars/wiki/The-Moon" class="tooltip" target="_blank">&#9432;</a>
                             </label>
 
                             <template v-if="turmoil">
-                                <input type="checkbox" name="politicalAgendas" id="politicalAgendas-checkbox" v-on:change="politicalAgendasExtensionToggle()">
-                                <label for="politicalAgendas-checkbox" class="expansion-button">
+                                <input type="checkbox" name="politicalAgendas" id="politicalAgendas-checkbox" v-on:change="politicalAgendasExtensionToggle()"  v-if="isvip">
+                                <label for="politicalAgendas-checkbox" class="expansion-button"  :class="{forbidden:!isvip}">
                                     <div class="create-game-expansion-icon expansion-icon-agendas"></div>
                                     <span v-i18n>Agendas</span>&nbsp;<a href="https://docs.qq.com/doc/DQUh4RlJFQUxwb09v?pub=1&dver=2.1.0" class="tooltip" target="_blank">&#9432;</a>
                                 </label>
@@ -853,6 +861,7 @@ export const CreateGameForm = Vue.component('create-game-form', {
                 v-bind:colonies="colonies"
                 v-bind:turmoil="turmoil"
                 v-bind:promoCardsOption="promoCardsOption"
+                v-bind:erosCardsOption="erosCardsOption"
                 v-bind:communityCardsOption="communityCardsOption"
                 v-bind:moonExpansion="moonExpansion"
             ></corporations-filter>
@@ -871,6 +880,8 @@ export const CreateGameForm = Vue.component('create-game-form', {
                 v-if="showCardsBlackList"
                 v-on:cards-list-changed="updateCardsBlackList"
             ></cards-filter>
+            
+          <qrcode/>
         </div>
     `,
 });

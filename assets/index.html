@@ -1,11 +1,24 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <link rel="stylesheet" type="text/css" media="all" href="/styles.css?v=0222" />
-        <meta name="viewport" content='width=1260, user-scalable=1'>
+        <link rel="stylesheet" type="text/css" media="all" href="/styles.css?v=VERSION" />
+		<title>Terraforming Mars</title>
+        <meta name="viewport" content='width=1260, user-scalable=1' />
+        <meta name="description" content="Terraforming Mars Open Source Web Application" />
     </head>
     <body id="ts-preferences-target">
         <div id="app" :class="'topmost-'+screen">
+            <section>
+                <dialog id="alert-dialog">
+                    <form method="dialog">
+                        <p class="title" v-i18n>Error with input</p>
+                        <p id="alert-dialog-message"></p>
+                        <menu class="dialog-menu centered-content">
+                            <button id="alert-dialog-button" class="btn btn-lg btn-primary">OK</button>
+                        </menu>
+                    </form>
+                </dialog>
+            </section>
             <div class="main-container">
                 <start-screen v-if="screen === 'start-screen'" :version="settings.version"></start-screen>
                 <create-game-form
@@ -22,6 +35,7 @@
                     :key="playerkey"
                     :settings="settings"
                 ></player-home>
+                <spectator-home v-else-if="screen === 'spectator-home'"></spectator-home>
                 <game-end
                     v-else-if="screen === 'the-end'"
                     :player="player"
@@ -29,7 +43,7 @@
                 <games-overview
                     v-else-if="screen === 'games-overview'"
                 ></games-overview>
-                <debug-ui v-else-if="screen === 'debug-ui'"></debug-ui>
+                <debug-ui v-else-if="screen === 'cards'"></debug-ui>
                 <help v-else-if="screen === 'help'"></help>
 				<debug-ui v-else-if="screen === 'debug-ui'"></debug-ui>
                 <login v-if="screen === 'login'"></login>
@@ -37,9 +51,8 @@
                 <register v-if="screen === 'register'"></register>
                 <donate v-if="screen === 'donate'"></donate>
                 <users v-if="screen === 'users'"></users>
-                <exec v-if="screen === 'exec'"></exec>
             </div>
         </div>
-        <script src="/main.js?v=0222"></script>
+        <script src="/main.js?v=VERSION"></script>
     </body>
 </html>

@@ -46,6 +46,7 @@ export interface DebugUIModel {
   ares: boolean | unknown[],
   moon: boolean | unknown[],
   promo: boolean | unknown[],
+  eros: boolean | unknown[],
 }
 
 export const DebugUI = Vue.component('debug-ui', {
@@ -57,17 +58,18 @@ export const DebugUI = Vue.component('debug-ui', {
       filterText: '',
       filterDescription: false,
       sortById: false,
-      base: true,
-      corporateEra: true,
-      prelude: true,
-      venusNext: true,
-      colonies: true,
-      turmoil: true,
-      breakthrough: true,
-      community: true,
-      ares: true,
-      moon: true,
-      promo: true,
+      base: false,
+      corporateEra: false,
+      prelude: false,
+      venusNext: false,
+      colonies: false,
+      turmoil: false,
+      breakthrough: false,
+      community: false,
+      ares: false,
+      moon: false,
+      promo: false,
+      eros: false,
     } as DebugUIModel;
   },
   mounted() {
@@ -98,6 +100,7 @@ export const DebugUI = Vue.component('debug-ui', {
       data.community = !data.community;
       data.promo = !data.promo;
       data.ares = !data.ares;
+      data.eros = !data.eros;
       data.moon = !data.moon;
     },
     sort: function(names: Array<CardName>): Array<CardName> {
@@ -164,6 +167,9 @@ export const DebugUI = Vue.component('debug-ui', {
         return this.community === true;
       case GameModule.Ares:
         return this.ares === true;
+
+      case GameModule.Eros:
+        return this.eros === true;
       case GameModule.Moon:
         return this.moon === true;
       default:
@@ -177,7 +183,10 @@ export const DebugUI = Vue.component('debug-ui', {
   },
   template: `
         <div class="debug-ui-container" :class="getLanguageCssClass()">
-            <h1>Debug UI</h1>
+            <h1>Cards List</h1>
+            <div class="legacy-anchor">
+              <a href="https://ssimeonoff.github.io/cards-list" target="_blank">legacy card UI</a>
+            </div>
             <div class="form-group">
               <input class="form-input form-input-line" placeholder="filter" v-model="filterText"></input>
               <input type="checkbox" name="filterDescription" id="filterDescription-checkbox" v-model="filterDescription"></input>
@@ -252,13 +261,19 @@ export const DebugUI = Vue.component('debug-ui', {
               <label for="community-checkbox" class="expansion-button">
                   <div class="create-game-expansion-icon expansion-icon-community"></div>
                   <span v-i18n>Community</span>
-              </label><span/>
+              </label>
+              
+              <input type="checkbox" name="eros" id="eros-checkbox" v-model="eros"></input>
+              <label for="eros-checkbox" class="expansion-button">
+                  <div class="create-game-expansion-icon expansion-icon-eros"></div>
+                  <span v-i18n>Eros</span>
+              </label>
 
               <input type="checkbox" name="moon" id="moon-checkbox" v-model="moon"></input>
               <label for="moon-checkbox" class="expansion-button">
                 <div class="create-game-expansion-icon expansion-icon-themoon"></div>
                 <span v-i18n>The Moon</span>
-              </label><span/>
+              </label>
             </div>
 
             <section class="debug-ui-cards-list">

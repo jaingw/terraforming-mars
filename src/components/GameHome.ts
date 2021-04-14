@@ -4,6 +4,7 @@ import {GameHomeModel} from '../models/GameHomeModel';
 import {Button} from '../components/common/Button';
 import {playerColorClass} from '../utils/utils';
 import {GameSetupDetail} from '../components/GameSetupDetail';
+import {QrCode} from './QrCode';
 
 // taken from https://stackoverflow.com/a/46215202/83336
 // The solution to copying to the clipboard in this case is
@@ -31,6 +32,7 @@ export const GameHome = Vue.component('game-home', {
   components: {
     Button,
     'game-setup-detail': GameSetupDetail,
+    'qrcode': QrCode,
   },
   data: function() {
     return {
@@ -91,8 +93,12 @@ export const GameHome = Vue.component('game-home', {
         <div class="spacing-setup"></div>
         <div v-if="game !== undefined">
           <h1 v-i18n>Game settings</h1>
-          <game-setup-detail :gameOptions="game.gameOptions" :playerNumber="game.players.length"></game-setup-detail>
+          <game-setup-detail :gameOptions="game.gameOptions" :playerNumber="game.players.length" :lastSoloGeneration="game.lastSoloGeneration" :game="game"></game-setup-detail>
         </div>
+
+        <qrcode/>
       </div>
+
+
     `,
 });

@@ -28,12 +28,22 @@ export const CardExtraContent = Vue.component('CardExtraContent', {
     miningTileOnTitanium: function(card: CardModel): boolean {
       return card.name === CardName.SEARCH_FOR_LIFE && card.resources !== undefined && card.resources > 0;
     },
+    awardCards: function(card: CardModel): boolean {
+      return card.name === CardName.STARCORE_PLUNDER;
+    },
+    awardClass: function(card: CardModel): string {
+      if (card.name === CardName.STARCORE_PLUNDER) {
+        return 'award-starcore';
+      }
+      return '';
+    },
   },
   template: `
     <div class="card-extra-content-container">
       <div v-if="lifeFound(card)" class="little-green-men" />
       <div v-if="isMiningTileOnMetal(card,'steel')" class="mined-metal mined-steel" />
       <div v-if="isMiningTileOnMetal(card,'titanium')" class="mined-metal mined-titanium" />
+      <div v-if="awardCards(card)" :class="awardClass(card)" />
     </div>
     `,
 });

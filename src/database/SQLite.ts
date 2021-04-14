@@ -205,22 +205,6 @@ export class SQLite implements IDatabase {
     });
   }
 
-  updateUser(user: User): void {
-    // update user
-    if (user.name === 'delete') {
-      this.db.run('delete from  users  WHERE id = ?', [user.id], function(err: { message: any; }) {
-        if (err) {
-          return console.warn(err.message);
-        }
-      });
-    } else {
-      this.db.run('UPDATE users SET name = ? , password = ? , prop = ? WHERE id = ?', [user.name, user.password, user.getProp(), user.id], function(err: { message: any; }) {
-        if (err) {
-          return console.warn(err.message);
-        }
-      });
-    }
-  }
 
   getUsers(cb:(err: any, allUsers:Array<User>)=> void): void {
     const allUsers:Array<User> = [];

@@ -132,6 +132,8 @@ export const CardRenderTileComponent = Vue.component('CardRenderTileComponent', 
           classes.push('card-tile-symbol-natural-preserve');
         } else if (type === TileType.NUCLEAR_ZONE) {
           classes.push('card-tile-symbol-nuclear-zone');
+        } else if (type === TileType.HOT_SPRING) {
+          classes.push('card-tile-symbol-hot-spring');
         } else if (type === TileType.LUNA_TRADE_STATION) {
           classes.push('card-tile-symbol-luna-trade-station');
         } else if (type === TileType.LUNA_MINING_HUB) {

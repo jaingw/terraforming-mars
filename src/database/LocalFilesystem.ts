@@ -106,9 +106,6 @@ export class Localfilesystem implements IDatabase {
   saveUser(_id: string, _name: string, _password: string, _prop: string): void {
     throw new Error('Method not implemented.');
   }
-  updateUser(_user: User): void {
-    throw new Error('Method not implemented.');
-  }
   getUsers(_cb: (err: any, allUsers: import('../User').User[]) => void): void {
     throw new Error('Method not implemented.');
   }

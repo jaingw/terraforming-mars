@@ -1,5 +1,4 @@
 import {CardModel} from './CardModel';
-import {GameOptionsModel} from './GameOptionsModel';
 import {ColonyModel} from './ColonyModel';
 import {Color} from '../Color';
 import {VictoryPointsBreakdown} from '../VictoryPointsBreakdown';
@@ -13,11 +12,13 @@ import {SpaceModel} from './SpaceModel';
 import {IAresData} from '../ares/IAresData';
 import {SerializedTimer} from '../SerializedTimer';
 import {MoonModel} from './MoonModel';
+import {GameOptions} from '../Game';
 
 export interface PlayerModel {
     actionsTakenThisRound: number;
     actionsThisGeneration: Array<string>;
     aresData: IAresData | undefined;
+    availableBlueCardActionCount: number;
     awards: Array<FundedAwardModel>;
     cardCost: number;
     cardsInHand: Array<CardModel>;
@@ -36,7 +37,7 @@ export interface PlayerModel {
     energyProduction: number;
     fleetSize: number;
     gameAge: number;
-    gameOptions: GameOptionsModel;
+    gameOptions: GameOptions;
     generation: number;
     heat: number;
     heatProduction: number;
@@ -44,13 +45,12 @@ export interface PlayerModel {
     influence: number;
     isActive: boolean;
     isSoloModeWin: boolean;
+    lastSoloGeneration: number,
     megaCredits: number;
     megaCreditProduction: number;
     milestones: Array<ClaimedMilestoneModel>;
     moon: MoonModel | undefined;
     name: string;
-    needsToDraft: boolean | undefined;
-    needsToResearch: boolean | undefined;
     noTagsCount: number;
     oceans: number;
     oxygenLevel: number;
@@ -65,6 +65,7 @@ export interface PlayerModel {
     preludeCardsInHand: Array<CardModel>;
     selfReplicatingRobotsCards: Array<CardModel>;
     spaces: Array<SpaceModel>;
+    spectatorId?: string;
     steel: number;
     steelProduction: number;
     steelValue: number;
@@ -75,8 +76,9 @@ export interface PlayerModel {
     titanium: number;
     titaniumProduction: number;
     titaniumValue: number;
-    tradesThisTurn: number;
+    tradesThisGeneration: number;
     turmoil: TurmoilModel | undefined;
+    undoCount: number;
     venusScaleLevel: number;
     victoryPointsBreakdown: VictoryPointsBreakdown;
     gameId: string;

@@ -137,7 +137,6 @@ export interface IDatabase {
     cleanGame(game_id: string): void;
     cleanGameSave(game_id: string, save_id: number): void;
     saveUser(id: string, name: string, password: string, prop: string): void ;
-    updateUser(user: User): void ;
     getUsers(cb:(err: any, allUsers:Array<User>)=> void): void ;
     refresh(): void ;
 

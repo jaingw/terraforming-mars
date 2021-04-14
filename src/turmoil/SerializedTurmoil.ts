@@ -1,4 +1,3 @@
-import {IGlobalEvent} from './globalEvents/IGlobalEvent';
 import {SerializedPlayer} from '../SerializedPlayer';
 import {PartyName} from './parties/PartyName';
 import {SerializedGlobalEventDealer} from './globalEvents/SerializedGlobalEventDealer';
@@ -6,6 +5,7 @@ import {SerializedPoliticalAgendasData} from './PoliticalAgendas';
 import {NeutralPlayer} from './Turmoil';
 import {IParty} from './parties/IParty';
 import {GlobalEventDealer} from './globalEvents/GlobalEventDealer';
+import {IGlobalEvent} from './globalEvents/IGlobalEvent';
 
 export interface SerializedParty {
     name: PartyName;
@@ -27,5 +27,5 @@ export interface SerializedTurmoil {
     comingGlobalEvent: IGlobalEvent | undefined;
     // TODO(kberg): By 2021-03-01, IGlobalEvent.
     currentGlobalEvent?: IGlobalEvent ;
-    politicalAgendasData: SerializedPoliticalAgendasData | undefined;
+    politicalAgendasData: SerializedPoliticalAgendasData ;
 }

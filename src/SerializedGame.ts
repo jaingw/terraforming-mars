@@ -8,7 +8,7 @@ import {SerializedColony} from './SerializedColony';
 import {SerializedPlayer} from './SerializedPlayer';
 import {SerializedDealer} from './SerializedDealer';
 import {SerializedTurmoil} from './turmoil/SerializedTurmoil';
-import {GameOptions} from './Game';
+import {GameOptions, SpectatorId} from './Game';
 import {IAresData} from './ares/IAresData';
 import {LogMessage} from './LogMessage';
 import {SerializedBoard} from './boards/SerializedBoard';
@@ -48,10 +48,13 @@ export interface SerializedGame {
     players: Array<SerializedPlayer>;
     researchedPlayers: Array<SerializedPlayer>;
 
-    seed: number
+    seed: number;
     someoneHasRemovedOtherPlayersPlants: boolean;
+    spectatorId: SpectatorId | undefined;
+    syndicatePirateRaider: string | undefined;
     temperature: number;
     turmoil?: SerializedTurmoil;
+    undoCount: number;
     venusScaleLevel: number;
     venusNextExtension: boolean;
 

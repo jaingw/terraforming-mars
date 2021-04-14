@@ -8,27 +8,25 @@ import {Resources} from '../../../Resources';
 import {CardRenderItemSize} from '../../render/CardRenderItemSize';
 
 export class _MorningStarInc_ extends MorningStarInc {
-    public name = CardName._MORNING_STAR_INC_;
-    public isUsed: boolean = false;
+  public isUsed: boolean = false;
+  public get name() {
+    return CardName._MORNING_STAR_INC_;
+  }
 
-    public getRequirementBonus(_player: Player, venusOnly?: boolean): number {
-      if (venusOnly !== undefined && venusOnly) return 2;
-      return 0;
-    }
-
-    public play() {
-      return undefined;
-    }
-    public canAct(): boolean {
-      if (this.isUsed !== true) return true;
-      return false;
-    }
-    public action(player: Player) {
-      player.addProduction(Resources.MEGACREDITS, player.getTagCount(Tags.VENUS));
-      this.isUsed = true;
-      return undefined;
-    }
-    public metadata: CardMetadata = {
+  public play() {
+    return undefined;
+  }
+  public canAct(): boolean {
+    if (this.isUsed !== true) return true;
+    return false;
+  }
+  public action(player: Player) {
+    player.addProduction(Resources.MEGACREDITS, player.getTagCount(Tags.VENUS));
+    this.isUsed = true;
+    return undefined;
+  }
+  public get metadata(): CardMetadata {
+    return {
       cardNumber: 'R06',
       description: 'You start with 50 MC. As your first action, reveal cards from the deck until you have revealed 3 Venus-tag cards. Take those into hand and discard the rest.',
       renderData: CardRenderer.builder((b) => {
@@ -43,5 +41,6 @@ export class _MorningStarInc_ extends MorningStarInc {
           });
         });
       }),
-    }
+    };
+  }
 }

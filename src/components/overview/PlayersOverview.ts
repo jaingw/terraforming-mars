@@ -73,13 +73,13 @@ export const PlayersOverview = Vue.component('players-overview', {
         return ActionLabel.RESIGNED;
       }
       if (this.player.phase === Phase.DRAFTING) {
-        if (player.needsToDraft) {
+        if (player.waitingFor !== undefined) {
           return ActionLabel.DRAFTING;
         } else {
           return ActionLabel.NONE;
         }
       } else if (this.player.phase === Phase.RESEARCH) {
-        if (player.needsToResearch) {
+        if (player.waitingFor !== undefined) {
           return ActionLabel.RESEARCHING;
         } else {
           return ActionLabel.NONE;

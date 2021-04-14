@@ -8,7 +8,7 @@ import * as constants from '../src/constants';
 import {Birds} from '../src/cards/base/Birds';
 import {WaterImportFromEuropa} from '../src/cards/base/WaterImportFromEuropa';
 import {Phase} from '../src/Phase';
-import {TestingUtils, setCustomGameOptions} from './TestingUtils';
+import {TestingUtils} from './TestingUtils';
 import {TestPlayers} from './TestPlayers';
 import {SaturnSystems} from '../src/cards/corporation/SaturnSystems';
 import {Resources} from '../src/Resources';
@@ -20,9 +20,11 @@ import {OrOptions} from '../src/inputs/OrOptions';
 import {BoardName} from '../src/boards/BoardName';
 import {SpaceType} from '../src/SpaceType';
 import {Helion} from '../src/cards/corporation/Helion';
-import {CardName} from '../src/CardName';
 import {Player} from '../src/Player';
 import {Color} from '../src/Color';
+import {RandomMAOptionType} from '../src/RandomMAOptionType';
+import {SpaceBonus} from '../src/SpaceBonus';
+import {TileType} from '../src/TileType';
 
 describe('Game', function() {
   it('should initialize with right defaults', function() {
@@ -36,7 +38,7 @@ describe('Game', function() {
   it('sets starting production if corporate era not selected', function() {
     const player = TestPlayers.BLUE.newPlayer();
 
-    const gameOptions = setCustomGameOptions({corporateEra: false});
+    const gameOptions = TestingUtils.setCustomGameOptions({corporateEra: false});
 
     Game.newInstance('foobar', [player], player, gameOptions);
     expect(player.getProduction(Resources.MEGACREDITS)).to.eq(1);
@@ -379,7 +381,7 @@ describe('Game', function() {
     // the neutral player can't claim the bonus ocean space before our player has a
     // chance.
     const secondPlayer = TestPlayers.RED.newPlayer();
-    const gameOptions = setCustomGameOptions({boardName: BoardName.HELLAS});
+    const gameOptions = TestingUtils.setCustomGameOptions({boardName: BoardName.HELLAS});
     const game = Game.newInstance('foobar', [player, secondPlayer], player, gameOptions);
 
     // Ensuring that HELLAS_OCEAN_TILE will be available for the test.
@@ -406,7 +408,7 @@ describe('Game', function() {
     // the neutral player can't claim the bonus ocean space before our player has a
     // chance.
     const secondPlayer = TestPlayers.RED.newPlayer();
-    const gameOptions = setCustomGameOptions({boardName: BoardName.HELLAS});
+    const gameOptions = TestingUtils.setCustomGameOptions({boardName: BoardName.HELLAS});
     const game = Game.newInstance('foobar', [player, secondPlayer], player, gameOptions);
     player.corporationCard = new Helion();
     player.canUseHeatAsMegaCredits = true;
@@ -433,7 +435,7 @@ describe('Game', function() {
   it('Generates random milestones and awards', function() {
     const player = TestPlayers.BLUE.newPlayer();
     const player2 = TestPlayers.RED.newPlayer();
-    const gameOptions = setCustomGameOptions({boardName: BoardName.HELLAS, randomMA: true});
+    const gameOptions = TestingUtils.setCustomGameOptions({boardName: BoardName.HELLAS, randomMA: RandomMAOptionType.UNLIMITED});
     const game = Game.newInstance('foobar', [player, player2], player, gameOptions);
 
     const prevMilestones = game.milestones.map((m) => m.name).sort();
@@ -448,23 +450,23 @@ describe('Game', function() {
     expect(prevAwards).to.not.eq(awards);
   });
 
-  it('specifically-requested corps override expansion corps', function() {
-    const player = TestPlayers.BLUE.newPlayer();
-    const player2 = TestPlayers.RED.newPlayer();
-    const corpsFromTurmoil = [
-      CardName.LAKEFRONT_RESORTS,
-      CardName.PRISTAR,
-      CardName.TERRALABS_RESEARCH,
-      CardName.UTOPIA_INVEST,
-    ];
-    const gameOptions = setCustomGameOptions({customCorporationsList: corpsFromTurmoil, turmoilExtension: true});
-    Game.newInstance('foobar', [player, player2], player, gameOptions);
+  // it('specifically-requested corps override expansion corps', function() {
+  //   const player = TestPlayers.BLUE.newPlayer();
+  //   const player2 = TestPlayers.RED.newPlayer();
+  //   const corpsFromTurmoil = [
+  //     CardName.LAKEFRONT_RESORTS,
+  //     CardName.PRISTAR,
+  //     CardName.TERRALABS_RESEARCH,
+  //     CardName.UTOPIA_INVEST,
+  //   ];
+  //   const gameOptions = TestingUtils.setCustomGameOptions({customCorporationsList: corpsFromTurmoil, turmoilExtension: false});
+  //   Game.newInstance('foobar', [player, player2], player, gameOptions);
 
-    const corpsAssignedToPlayers =
-            [...player.dealtCorporationCards, ...player2.dealtCorporationCards].map((c) => c.name);
+  //   const corpsAssignedToPlayers =
+  //           [...player.dealtCorporationCards, ...player2.dealtCorporationCards].map((c) => c.name);
 
-    expect(corpsAssignedToPlayers).has.members(corpsFromTurmoil);
-  });
+  //   expect(corpsAssignedToPlayers).has.members(corpsFromTurmoil);
+  // });
 
   it('fails when the same id appears in two players', () => {
     const player1 = new Player('name', Color.BLUE, false, 0, 'id3');
@@ -486,6 +488,23 @@ describe('Game', function() {
     expect(
       () => Game.newInstance('id', [player1, player2], player1))
       .to.throw(Error, /Duplicate color found/);
+  });
+
+  it('grant space bonus sanity test', () => {
+    const player = TestPlayers.BLUE.newPlayer();
+    const game = Game.newInstance('foobar', [player], player);
+    const space = game.board.getAvailableSpacesOnLand()[0];
+
+    space.bonus = [SpaceBonus.DRAW_CARD, SpaceBonus.DRAW_CARD, SpaceBonus.DRAW_CARD, SpaceBonus.DRAW_CARD, SpaceBonus.PLANT, SpaceBonus.TITANIUM];
+    expect(player.cardsInHand).has.length(0);
+    expect(player.plants).eq(0);
+    expect(player.titanium).eq(0);
+
+    game.addTile(player, space.spaceType, space, {tileType: TileType.GREENERY});
+
+    expect(player.cardsInHand).has.length(4);
+    expect(player.plants).eq(1);
+    expect(player.titanium).eq(1);
   });
 
   /**
@@ -514,7 +533,7 @@ describe('Game', function() {
 
   it('deserializing a game without moon data still loads', () => {
     const player = TestPlayers.BLUE.newPlayer();
-    const game = Game.newInstance('foobar', [player], player, setCustomGameOptions({moonExpansion: false}));
+    const game = Game.newInstance('foobar', [player], player, TestingUtils.setCustomGameOptions({moonExpansion: false}));
     const serialized = game.serialize();
     delete serialized['moonData'];
     const deserialized = game.loadFromJSON(serialized);

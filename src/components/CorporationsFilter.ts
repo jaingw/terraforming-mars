@@ -10,6 +10,8 @@ import {PROMO_CARD_MANIFEST} from '../cards/promo/PromoCardManifest';
 import {BASE_CARD_MANIFEST, CORP_ERA_CARD_MANIFEST} from '../cards/StandardCardManifests';
 import {TURMOIL_CARD_MANIFEST} from '../cards/turmoil/TurmoilCardManifest';
 import {VENUS_CARD_MANIFEST} from '../cards/venusNext/VenusCardManifest';
+
+import {EROS_CARD_MANIFEST} from '../cards/eros/ErosCardManifest';
 import {ARES_CARD_MANIFEST} from '../cards/ares/AresCardManifest';
 import {MOON_CARD_MANIFEST} from '../cards/moon/MoonCardManifest';
 
@@ -22,6 +24,7 @@ const allItems: Array<CardName> = [
   ...TURMOIL_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName),
   ...PROMO_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName),
   ...COMMUNITY_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName),
+  ...EROS_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName),
   ...ARES_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName),
   ...MOON_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName),
 ];
@@ -49,6 +52,9 @@ export const CorporationsFilter = Vue.component('corporations-filter', {
     communityCardsOption: {
       type: Boolean,
     },
+    erosCardsOption: {
+      type: Boolean,
+    },
     moonExpansion: {
       type: Boolean,
     },
@@ -64,6 +70,7 @@ export const CorporationsFilter = Vue.component('corporations-filter', {
         ...this.turmoil ? TURMOIL_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName) : [],
         ...this.promoCardsOption ? PROMO_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName) : [],
         ...this.communityCardsOption ? COMMUNITY_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName) : [],
+        ...this.erosCardsOption ? EROS_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName) : [],
         ...this.moonExpansion ? MOON_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName) : [],
       ] as Array<CardName> | boolean /* v-model thinks this can be boolean */,
       corporationGroups: [
@@ -74,6 +81,7 @@ export const CorporationsFilter = Vue.component('corporations-filter', {
         {'title': CorporationGroup.TURMOIL, 'items': TURMOIL_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName)},
         {'title': CorporationGroup.PROMO, 'items': PROMO_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName)},
         {'title': CorporationGroup.COMMUNITY, 'items': COMMUNITY_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName)},
+        {'title': CorporationGroup.EROS, 'items': EROS_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName)},
         {'title': CorporationGroup.MOON, 'items': MOON_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName)},
       ],
     };
@@ -148,6 +156,9 @@ export const CorporationsFilter = Vue.component('corporations-filter', {
     promoCardsOption: function(enabled) {
       enabled ? this.selectAll(CorporationGroup.PROMO) : this.selectNone(CorporationGroup.PROMO);
     },
+    erosCardsOption: function(enabled) {
+      enabled ? this.selectAll(CorporationGroup.EROS) : this.selectNone(CorporationGroup.EROS);
+    },
     communityCardsOption: function(enabled) {
       enabled ? this.selectAll(CorporationGroup.COMMUNITY) : this.selectNone(CorporationGroup.COMMUNITY);
     },
@@ -158,20 +169,20 @@ export const CorporationsFilter = Vue.component('corporations-filter', {
   template: `
     <div class="corporations-filter">
         <div class="corporations-filter-toolbox-cont">
-            <h2>Corporations</h2>
+            <h2 v-i18n>Corporations</h2>
             <div class="corporations-filter-toolbox corporations-filter-toolbox--topmost">
-                <a href="#" v-on:click.prevent="selectAll('All')">All</a> |
-                <a href="#" v-on:click.prevent="selectNone('All')">None</a> |
-                <a href="#" v-on:click.prevent="invertSelection('All')">Invert</a>
+                <a href="#" v-i18n v-on:click.prevent="selectAll('All')">All</a> |
+                <a href="#" v-i18n v-on:click.prevent="selectNone('All')">None</a> |
+                <a href="#" v-i18n v-on:click.prevent="invertSelection('All')">Invert</a>
             </div>
         </div>
         <div class="corporations-filter-group" v-for="group in corporationGroups">
             <div class="corporations-filter-toolbox-cont">
                 <h2>{{ group.title }}</h2>
                 <div class="corporations-filter-toolbox">
-                    <a href="#" v-on:click.prevent="selectAll(group.title)">All</a> | 
-                    <a href="#" v-on:click.prevent="selectNone(group.title)">None</a> | 
-                    <a href="#" v-on:click.prevent="invertSelection(group.title)">Invert</a>
+                    <a href="#" v-i18n v-on:click.prevent="selectAll(group.title)">All</a> | 
+                    <a href="#" v-i18n v-on:click.prevent="selectNone(group.title)">None</a> | 
+                    <a href="#" v-i18n v-on:click.prevent="invertSelection(group.title)">Invert</a>
                 </div>
             </div>
             <div v-for="corporation in group.items">

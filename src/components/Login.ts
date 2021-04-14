@@ -11,8 +11,8 @@ export const Login = Vue.component('login', {
   },
   methods: {
     login: function() {
-      if (this.userName === undefined || this.userName.length <=1) {
-        alert('Please enter more than 1 characters for userName');
+      if (this.userName === undefined || this.userName.length === 0) {
+        alert('Please enter userName');
         return;
       }
       if (this.password === undefined || this.password.length <=1) {
@@ -35,7 +35,7 @@ export const Login = Vue.component('login', {
         }
       };
 
-      fetch('/login', {'method': 'POST', 'body': dataToSend, 'headers': {'Content-Type': 'application/json'}})
+      fetch('/api/login', {'method': 'POST', 'body': dataToSend, 'headers': {'Content-Type': 'application/json'}})
         .then(onSucces)
         .catch((_) => alert('Unexpected server response'));
     },

@@ -45,7 +45,7 @@ export class AtmoCollectors extends Card implements IProjectCard, IResourceCard 
 
   public action(player: Player) {
     if (this.resourceCount < 1) {
-      player.addResourceTo(this);
+      player.addResourceTo(this, 1);
       return undefined;
     }
     return new OrOptions(
@@ -68,7 +68,7 @@ export class AtmoCollectors extends Card implements IProjectCard, IResourceCard 
         return undefined;
       }),
       new SelectOption('Add 1 floater to this card', 'Add floater', () => {
-        player.addResourceTo(this);
+        player.addResourceTo(this, 1);
         LogHelper.logAddResource(player, this);
         return undefined;
       }),

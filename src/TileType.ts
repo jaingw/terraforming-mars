@@ -33,6 +33,7 @@ export enum TileType {
     EROSION_SEVERE, // 26
     MINING_STEEL_BONUS, // 27
     MINING_TITANIUM_BONUS, // 28
+    HOT_SPRING,
 
     // The Moon
     MOON_MINE, // 29
@@ -82,6 +83,7 @@ const TO_STRING_MAP: Map<TileType, string> = new Map([
   [TileType.LUNA_MINING_HUB, 'Luna Mining Hub'],
   [TileType.LUNA_TRAIN_STATION, 'Luna Train Station'],
   [TileType.LUNAR_MINE_URBANIZATION, 'Lunar Mine Urbanization'],
+  [TileType.HOT_SPRING, 'Hot Spring'],
 ]);
 
 export namespace TileType {

@@ -15,7 +15,7 @@ export class SelectCard<T> implements PlayerInput {
         public selectBlueCardAction: boolean = false,
         public enabled?: Array<boolean>, // If provided, then the cards with false in `enabled` are not selectable and grayed out
         public played: boolean = true, // If true, then shows resources on those cards. If false than shows discounted price.
-        public showResouces: boolean = true, // 轮抽时不显示卡牌资源数
+        public showOwner?: boolean,
     ) {
       this.buttonLabel = buttonLabel;
     }

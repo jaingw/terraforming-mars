@@ -136,6 +136,7 @@ export class RoboticWorkforce extends Card implements IProjectCard {
     CardName.UNDERGROUND_CITY,
     CardName.URBANIZED_AREA,
     CardName.WINDMILLS,
+    CardName.MARS_HOT_SPRING,
   ];
 
   // Made public for availability in tests
@@ -149,6 +150,7 @@ export class RoboticWorkforce extends Card implements IProjectCard {
     CardName.RECYCLON,
     CardName._RECYCLON_,
     CardName.UTOPIA_INVEST,
+    CardName.CURIOSITY_II,
   ];
 
   private getAvailableCards(player: Player): Array<ICard> {
@@ -274,6 +276,7 @@ export class RoboticWorkforce extends Card implements IProjectCard {
       new Updater(CardName.SPINOFF_DEPARTMENT, {megacredits: 2}),
       new Updater(CardName.SPONSORED_MOHOLE, {heat: 2}),
       new Updater(CardName.UTOPIA_INVEST, {steel: 1, titanium: 1}),
+      new Updater(CardName.MARS_HOT_SPRING, {megacredits: 2, heat: 2}),
     ];
 
     const result: Updater | undefined = updaters.find((u) => u.name === cardName);

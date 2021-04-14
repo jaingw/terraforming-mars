@@ -54,14 +54,14 @@ export const StartScreen = Vue.component('start-screen', {
                 <a class="start-screen-link start-screen-link--solo" href="/login" v-else v-i18n>Login</a>
                 <a class="start-screen-link start-screen-link--cards-list" href="/donate" v-i18n>Donate</a>
                 <a class="start-screen-link start-screen-link--board-game" href="https://docs.qq.com/doc/DQU5vYmtJeGRQaVpN"  target="_blank"  v-i18n>Help Translation</a>
-                <a class="start-screen-link start-screen-link--about" href="debug-ui"  target="_blank"  v-i18n>Cards list</a>
+                <a class="start-screen-link start-screen-link--about" href="cards"  target="_blank"  v-i18n>Cards list</a>
                 <a class="start-screen-link start-screen-link--changelog" href="https://boardgamegeek.com/boardgame/167791/terraforming-mars"  target="_blank"  v-i18n>Board game</a>
                 
                 <div class="start-screen-header  start-screen-link--languages">
                     <language-switcher />
       <div class="start-screen-version-cont">
-        <div class="nowrap start-screen-date">deployed: {{getAppDate()}}</div>
-        <div class="nowrap start-screen-version">version: {{getAppVersion()}}</div>
+        <div class="nowrap start-screen-date"><span v-i18n>deployed</span>: {{getAppDate()}}</div>
+        <div class="nowrap start-screen-version"><span v-i18n>version</span>: {{getAppVersion()}}</div>
       </div>
                 </div>
             </div>

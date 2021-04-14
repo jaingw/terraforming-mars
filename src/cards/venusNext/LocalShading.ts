@@ -43,7 +43,7 @@ export class LocalShading extends Card implements IActionCard, IResourceCard {
   }
   public action(player: Player) {
     if (this.resourceCount < 1) {
-      player.addResourceTo(this);
+      player.addResourceTo(this, 1);
       return undefined;
     }
 
@@ -59,7 +59,7 @@ export class LocalShading extends Card implements IActionCard, IResourceCard {
   }
 
   private addResource(player: Player) {
-    player.addResourceTo(this);
+    player.addResourceTo(this, 1);
     return undefined;
   }
 

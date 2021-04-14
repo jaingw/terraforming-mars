@@ -32,6 +32,7 @@ const tileTypeToCssClass = new Map<TileType, string>([
   [TileType.EROSION_SEVERE, 'erosion_severe'],
   [TileType.MINING_STEEL_BONUS, 'mining_steel'],
   [TileType.MINING_TITANIUM_BONUS, 'mining_titanium'],
+  [TileType.HOT_SPRING, 'hot_spring'],
 ]);
 
 const tileTypeToCssClassAresOverride = new Map<TileType, string>([
@@ -129,6 +130,8 @@ export const BoardSpace = Vue.component('board-space', {
         ret = 'Mining: steel bonus';
       } else if (tileType === TileType.MINING_TITANIUM_BONUS) {
         ret = 'Mining: titanium bonus';
+      } else if (tileType === TileType.HOT_SPRING) {
+        ret = 'Hot spring';
       }
       return $t(ret);
     },

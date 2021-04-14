@@ -18,7 +18,7 @@ import {SelectPartyToSendDelegate} from './SelectPartyToSendDelegate';
 import {PlayerInputModel} from '../models/PlayerInputModel';
 import {PlayerModel} from '../models/PlayerModel';
 import {PreferencesManager} from './PreferencesManager';
-import {playActivePlayerSound} from '../SoundManager';
+import {SoundManager} from './SoundManager';
 import {SelectColony} from './SelectColony';
 import {SelectProductionToLose} from './SelectProductionToLose';
 import {ShiftAresGlobalParameters} from './ShiftAresGlobalParameters';
@@ -26,6 +26,7 @@ import {WaitingForModel} from '../models/WaitingForModel';
 
 import * as constants from '../constants';
 import * as raw_settings from '../genfiles/settings.json';
+import {SelectGlobalCard} from './SelectGlobalCard';
 
 let ui_update_timeout_id: number | undefined;
 let documentTitleTimer: number | undefined;
@@ -58,6 +59,7 @@ export const WaitingFor = Vue.component('waiting-for', {
     'or-options': OrOptions,
     'select-amount': SelectAmount,
     'select-card': SelectCard,
+    'select-global-card': SelectGlobalCard,
     'select-option': SelectOption,
     'select-how-to-pay': SelectHowToPay,
     'select-how-to-pay-for-project-card': SelectHowToPayForProjectCard,
@@ -72,7 +74,7 @@ export const WaitingFor = Vue.component('waiting-for', {
   },
   methods: {
     animateTitle: function() {
-      const sequence = '\u25f7\u25f6\u25f5\u25f4';
+      const sequence = '\u25D1\u25D2\u25D0\u25D3';
       const first = document.title[0];
       const position = sequence.indexOf(first);
       let next = sequence[0];
@@ -86,14 +88,14 @@ export const WaitingFor = Vue.component('waiting-for', {
       clearInterval(ui_update_timeout_id);
       const askForUpdate = () => {
         const xhr = new XMLHttpRequest();
-        xhr.open('GET', '/api/waitingfor' + window.location.search + '&prev-game-age=' + this.player.gameAge.toString());
+        xhr.open('GET', '/api/waitingfor' + window.location.search + '&gameAge=' + this.player.gameAge + '&undoCount=' + this.player.undoCount);
         xhr.onerror = function() {
-          alert('Error getting waitingfor data');
+          root.showAlert('Unable to reach the server. The server may be restarting or down for maintenance.', () => {});
         };
         xhr.onload = () => {
           if (xhr.status === 200) {
             const result = xhr.response as WaitingForModel;
-            if (result.result === 'GO' && this.waitingfor === undefined ) {
+            if (result.result === 'GO' && this.waitingfor === undefined && !this.player.block) {
               root.updatePlayer();
 
               if (Notification.permission !== 'granted') {
@@ -106,7 +108,7 @@ export const WaitingFor = Vue.component('waiting-for', {
                 });
               }
               const soundsEnabled = PreferencesManager.loadValue('enable_sounds') === '1';
-              if (soundsEnabled) playActivePlayerSound();
+              if (soundsEnabled) SoundManager.playActivePlayerSound();
 
               // We don't need to wait anymore - it's our turn
               return;
@@ -117,7 +119,7 @@ export const WaitingFor = Vue.component('waiting-for', {
               return;
             }
           } else {
-            alert('Unexpected server response');
+            root.showAlert(`Received unexpected response from server (${xhr.status}). This is often due to the server restarting.`, () => {});
           }
           // (vueApp as any).waitForUpdate();
         };
@@ -137,7 +139,12 @@ export const WaitingFor = Vue.component('waiting-for', {
     }
     (this as any).waitForUpdate();
     if (this.player.block) {
-      return createElement('div', $t('Please Login with right user'));
+      return createElement('div', [$t('Please Login with right user')+'  ', createElement('a', {
+        attrs: {
+          href: '/login',
+          class: 'player_name  player_bg_color_blue',
+        },
+      }, $t('Login'))]);
     }
     document.title = $t(constants.APP_NAME);
     window.clearInterval(documentTitleTimer);
@@ -150,6 +157,7 @@ export const WaitingFor = Vue.component('waiting-for', {
     const input = new PlayerInputFactory().getPlayerInput(createElement, this.players, this.player, this.waitingfor, (out: Array<Array<string>>) => {
       const xhr = new XMLHttpRequest();
       const root = this.$root as unknown as typeof mainAppSettings.data;
+      const showAlert = (this.$root as unknown as typeof mainAppSettings.methods).showAlert;
       if (root.isServerSideRequestInProgress) {
         console.warn('Server request in progress');
         return;
@@ -173,16 +181,9 @@ export const WaitingFor = Vue.component('waiting-for', {
             (window).location = (window).location;
           }
         } else if (xhr.status === 400 && xhr.responseType === 'json') {
-          const element: HTMLElement | null = document.getElementById('dialog-default');
-          const message: HTMLElement | null = document.getElementById('dialog-default-message');
-          if (message !== null && element !== null && (element as HTMLDialogElement).showModal !== undefined) {
-            message.innerHTML = xhr.response.message;
-            (element as HTMLDialogElement).showModal();
-          } else {
-            alert(xhr.response.message);
-          }
+          showAlert(xhr.response.message);
         } else {
-          alert('Error sending input');
+          showAlert('Unexpected response from server. Please try again.');
         }
         root.isServerSideRequestInProgress = false;
       };

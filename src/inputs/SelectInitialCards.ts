@@ -17,7 +17,6 @@ export class SelectInitialCards extends AndOptions implements PlayerInput {
       let corporation: CorporationCard;
       this.title = ' ';
       this.buttonLabel = 'Start';
-      // 轮抽时不显示卡牌资源数
       this.options.push(
         new SelectCard<CorporationCard>(
           'Select corporation', undefined, player.dealtCorporationCards,
@@ -46,7 +45,7 @@ export class SelectInitialCards extends AndOptions implements PlayerInput {
           (foundCards: Array<IProjectCard>) => {
             player.cardsInHand.push(...foundCards);
             return undefined;
-          }, 10, 0, false, undefined, true, false,
+          }, 10, 0,
         ),
       );
     }

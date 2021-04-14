@@ -19,6 +19,8 @@ const UNINITIALIZED_POLITICAL_AGENDAS_DATA: PoliticalAgendasData = {
     policyId: 'none',
   },
   staticAgendas: undefined,
+  agendas: new Map(),
+  agendaStyle: AgendaStyle.CHAIRMAN,
 };
 export class Turmoil implements ISerializable<SerializedTurmoil> {
     public chairman: undefined | Player | NeutralPlayer = undefined;
@@ -192,7 +194,9 @@ export class Turmoil implements ISerializable<SerializedTurmoil> {
       });
 
       // 2 - Global Event
+      // TODO: create a LogMessageDataType for Global Events, ref https://github.com/bafolts/terraforming-mars/issues/3057
       if (this.currentGlobalEvent) {
+        game.log('Global event "' + this.currentGlobalEvent.name + '" has been resolved.');
         this.currentGlobalEvent.resolve(game, this);
       }
 
@@ -214,7 +218,7 @@ export class Turmoil implements ISerializable<SerializedTurmoil> {
       this.lobby = new Set<string>();
 
       game.getPlayers().forEach((player) => {
-        if (this.getDelegates(player) > 0) {
+        if (this.getDelegatesInReserve(player) > 0) {
           const index = this.delegateReserve.indexOf(player);
           if (index > -1) {
             this.delegateReserve.splice(index, 1);
@@ -329,6 +333,13 @@ export class Turmoil implements ISerializable<SerializedTurmoil> {
           influence+= bonus;
         }
       }
+      if (player.isCorporation(CardName.INCITE_ENDER)) {
+        this.parties.filter((x) => x !== this.dominantParty).forEach((x) => {
+          if (x.partyLeader === player) {
+            influence++;
+          }
+        });
+      }
       return influence;
     }
 
@@ -363,8 +374,7 @@ export class Turmoil implements ISerializable<SerializedTurmoil> {
     }
 
     // Return number of delegates in reserve
-    // TODO(kberg): rename to getDelegatesInReserve()
-    public getDelegates(player: Player | NeutralPlayer): number {
+    public getDelegatesInReserve(player: Player | NeutralPlayer): number {
       const delegates = this.delegateReserve.filter((p) => p === player).length;
       return delegates;
     }
@@ -452,7 +462,7 @@ export class Turmoil implements ISerializable<SerializedTurmoil> {
       });
 
       // TODO(kberg): remove this test by 2021-02-01
-      turmoil.politicalAgendasData = PoliticalAgendas.deserialize(d.politicalAgendasData, turmoil);
+      turmoil.politicalAgendasData = PoliticalAgendas.deserialize(d.politicalAgendasData || UNINITIALIZED_POLITICAL_AGENDAS_DATA );
 
       // Rebuild party leader
       d.parties.forEach((element: IParty ) => {
@@ -485,7 +495,6 @@ export class Turmoil implements ISerializable<SerializedTurmoil> {
           turmoil.dominantParty = party;
         }
       });
-
       turmoil.playersInfluenceBonus = new Map<string, number>(d.playersInfluenceBonus);
 
       if (d.distantGlobalEvent) {

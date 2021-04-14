@@ -24,3 +24,4 @@ pid
 # Local Packages
 node_modules/
 /styles.css
+build/assets/index_ca.html

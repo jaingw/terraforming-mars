@@ -11,6 +11,10 @@ export class _RobinsonIndustries_ extends RobinsonIndustries {
     return CardName._ROBINSON_INDUSTRIES_;
   }
 
+  public canAct(player: Player): boolean {
+    return player.canAfford(2);
+  }
+
   public increaseAndLogProduction(player: Player, resource: Resources) {
     player.addProduction(resource);
     player.megaCredits -= 2;

@@ -6,9 +6,10 @@ const CARD_RENAMES = new Map<string, CardName>([
   // TODO(bafolts): remove after 02/15/2021 before 03/01/2021
   ['CEOs Favorite Project', CardName.CEOS_FAVORITE_PROJECT],
   // TODO(bafolts): remove after 02/15/2021 before 03/01/2021
-  ['Rad-chem Factory', CardName.RAD_CHEM_FACTORY],
+  ['Rad-Chem Factory', CardName.RAD_CHEM_FACTORY],
   // TODO(bafolts): remove after 02/15/2021 before 03/01/2021
   ['Titan Floater Launch-pad', CardName.TITAN_FLOATING_LAUNCHPAD],
+  ['Earth Embasy', CardName.EARTH_EMBASSY],
 ]);
 
 export class Deck<T extends ICard> {

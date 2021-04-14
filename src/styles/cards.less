@@ -1,3 +1,4 @@
+@charset "utf-8";
 .filterDiv,
 .filterDiv::after,
 .filterDiv::before,
@@ -38,9 +39,29 @@
     filter: brightness(0.55);
 }
 
+.card-hide {
+    display: none;
+}
+
 .nofloat {
     clear: both;
     margin-bottom: 15px;
+}
+
+.cardbox-with-owner-label {
+    padding-bottom: 25px;
+}
+
+.card-owner-label {
+    border-radius: 0px 0px 15px 15px;
+    margin: auto;
+    margin-top: 10px;
+    width: 60%;
+    padding: 3px 20px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
 }
 
 .card-warning {
@@ -367,12 +388,48 @@ input[type="radio"]:checked + .filterDiv::after {
     border-radius: 50%;
     box-shadow: 0 0 0 1px rgba(0,0,0,0.4);
     content: "A";
-  }
+}
+
+
+.moon-icon:after {
+  position: absolute;
+  color:#DDD;
+  border: 1px solid #222;
+  background: #999;
+  font-family: Prototype;
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 17px;
+  width: 16px;
+  height:16px;
+  text-align: center;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.4);
+  content: "M";
+}
 
 .button-icon:after {
     margin-top: -9px;
     margin-left: -9px;
 }
+
+.eros-icon:after {
+    position: absolute;
+    border: 1px solid black;
+    background: rgb(84, 150, 201);
+    font-weight: bold;
+    font-size: 14px;
+    line-height: 17px;
+    width: 16px;
+    height: 16px;
+    text-align: center;
+    color: white;
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4);
+    content: "Q";
+
+}
+
 
 .tag {
     box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6), 0 0 0 2px rgba(0, 0, 0, 0.3);
@@ -2474,6 +2531,9 @@ input[type="radio"]:checked + .filterDiv::after {
 .special-tile--restricted-area{
     background-image: url(./assets/tiles/special_tile_icons/restricted_area.png);
 }
+.special-tile--hot-spring{
+    background-image: url(./assets/tiles/special_tile_icons/hot_spring.png);
+}
 
 /*********** Prelude Styles ************/
 
@@ -2536,6 +2596,17 @@ input[type="radio"]:checked + .filterDiv::after {
 
 .expansion-icon-ares {
     background-image: url(./assets/expansion_icons/expansion_icon_ares.png);
+}
+
+.expansion-icon-eros {
+    background-image: url(./assets/expansion_icons/expansion_icon_eros.png);
+}
+
+.expansion-icon-agendas {
+    background-image: url(./assets/expansion_icons/expansion_icon_agendas.png);
+}
+.expansion-icon-themoon {
+    background-image: url(./assets/expansion_icons/expansion_icon_themoon.png);
 }
 
 .expansion-icon-agendas {
@@ -2691,8 +2762,8 @@ input[type="radio"]:checked + .filterDiv::after {
 }
 
 .card-standard-project {
-    height: 140px;
-    width: 200px;
+    height: 155px;
+    width: 235px;
     .card-content-wrapper {
         .card-cost-and-tags {
             position: absolute;

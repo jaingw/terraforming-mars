@@ -1,0 +1,77 @@
+{
+    "Eros":"群友扩",
+
+    "Sister Planet Sponsors":"姊妹星球赞助",
+    "Requires Venus and Earth tags. Increase your MC production 4 steps. ALL OPPONENTS increase their mc production 1 step":"需要你有1个金星标记和1个地球标记。提升你的MC产能4格。所有对手各提升MC产能1格",
+
+    "Mars Hot Spring":"火星温泉",
+    "Requires 3 ocean tiles. Increase your MC and Heat production 2 steps. Place this tile ADJACENT TO an ocean tile":"需要有3块海洋。提升你的MC产能和热能产能各2格，放置此版块到与海洋相邻的位置",
+  
+    "Solar Cosmic Rays":"太阳射线",
+    "Increase your energy production 1 steps. For each energy production in play, you increase your heat production 1 step[max 15]":"提升你的电力产能1格。全场每有1点电力产能，你提升你的热能产能1格（至多15）",
+
+    "Interplanetary Alliance":"星际联邦",
+
+    "Hydrothermal Vent Archaea":"深海热泉细菌",
+    "Effect: When you increase Temperature 1 step, add a microbe to this card":"效果：每当你提升温度1格，增加1个微生物资源到此卡",
+    "Requires 3 oceans":"需要有3块海洋",
+
+    "Waste Incinerator":"垃圾焚烧站",
+   
+    "Nitrogenrich Comet":"富氮彗星",
+    "Increase Temperature 1 step. Gain 4 plants":"提升温度1格。获得4个植物资源",
+  
+
+    "Cutting Edge Lab":"前沿实验室",
+
+    "Respiration Enhance":"呼吸作用增强",
+    "Effect: When you place a greenery, you can choose to imcrease temperature 1 step, intead of oxygen":"效果：每当你放置一片绿化版块，你可以选择提升温度1格而不是提升氧气",
+   
+    "Electric Sheep":"电子羊",
+    "Requires 4 Power tags. Decrease any Energy production 1 step":"需要你有4个科学标志。降低任意玩家电力产能1格",
+
+    "Ansible":"安塞波",
+    "Action: draw 3 cards. All OPPONENTS draw 1 card":"行动：抽3张牌。所有对手各抽1张牌",
+    "Requires 6 science tags":"需要你有6个科学标志",
+
+    "Large Ecological Reserve":"大型生态保护区",
+    "Requires a Plant tag, a Microbe tag, and an Animal tag. Place 2 greenery tiles and raise oxygen 2 steps":"需要你有1个植物标志，1个微生物标志，1个动物标志。放置2片绿化版块并提升氧气2格",
+    
+
+    "Clone Technology":"克隆科技",
+    "Duplicate the production box and plant resource of one of your plant cards":"复制你的一张植物牌的产能和植物资源",
+
+    "Energy Supply":"电力补给",
+    "Gain 3 energy":"获得3电力",
+
+    "Urgent Terraforming Command":"紧急改造令",
+    "IMMEDIATE PRODUCE":"立即生产",
+    "Requires that you have at least 25 TR":"要求你的TR≥25",
+
+    "Cow":"奶牛",
+    "Action: Spend 1 plants to add 1 Animal to this card and gain 5 MC":"行动：花费1个植物资源来向此卡增加1个动物资源并获得5MC",
+    "1 VP for each 2 Animals on this card":"此卡每有2个动物资源获得1分",
+    "Requires 5% oxygen":"需要5%氧气浓度",
+
+    "Starcore Plunter":"窃取星核",
+
+    "Jovian Expedition":"木星远征",
+    "Requires a colony. Add a colony tile(NOT TITANIA) and place a colony.":"需要你有1个殖民地。将一个殖民地加入游戏（不能是Titania）并放置一个殖民地",
+
+
+    "You start with 42 MC":"你起始获得42MC",
+    "Effect: When perform an action, each of your highest production can provide a wild tag; When producing, each of your highest tag number can provide a standard resource.":"效果：你的行动阶段，每个你全场唯一最高（至少为1）的产能为你提供一个问号标志；你的生产阶段，每个你全场唯一最多（至少为1）的标志为你生产一个标准资源。",
+    "Increase all production 3 steps.Decrease all production 2 steps(as low as 0) after being played 3 gens later.Can't be copied by other cards.Can't be played before Gen 3.":"增加所有产能3点。打出3时代后降低所有产能2点（最低至0）。不能被其他卡复制。不能在前2时代打出",
+    "Chaos effect: select ":"Chaos公司技能：选择",
+
+    "Action: inrease temperature/oxygen/venus 1step or spend 5MC to place an ocean":"行动：提升温度/氧气/金星参数一格或者花费5MC放置一片海洋",
+
+    "Community Worker":"社区工作者",
+    "Effect: When you play a card WITH NO TAGS, including this, you gain 4MC":"效果：当你打出无标志的卡牌时[包括此卡]获得4mc",
+
+    "You start with 48 MC. As your first action, place two delegates in one party.":"起始获得48MC.作为第一个行动，放置2个代表到1个党派上",
+    "Action: Look at the top 3 cards of global events deck and discard any of them.":"行动：查看全球事件牌堆顶的3张牌，弃置其中任意张，将剩余的按原顺序放回",
+    "Effect: Get 1 influence per leader of the Non-dominant party.":"效果：你的每个非主导政党的领导者也提供1点影响力"
+
+}
+

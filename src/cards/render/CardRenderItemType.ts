@@ -11,6 +11,7 @@ export enum CardRenderItemType {
   STEEL = 'steel',
   MEGACREDITS = 'megacredits',
   CARDS = 'cards',
+  GLOBALCARDS = 'global_cards',
   FLOATERS = 'floaters',
   ASTEROIDS = 'asteroids',
   MICROBES = 'microbes',
@@ -62,4 +63,5 @@ export enum CardRenderItemType {
   MOON_LOGISTICS_RATE = 'moon-logistics-rate',
   MOON_MINE = 'moon-mine',
   MOON_MINING_RATE = 'moon-mine-rate',
+  SYNDICATE_FLEET = 'syndicate-fleet',
 }

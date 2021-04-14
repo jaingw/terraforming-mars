@@ -12,6 +12,8 @@ import {CardRenderer} from '../render/CardRenderer';
 import {CardRenderDynamicVictoryPoints} from '../render/CardRenderDynamicVictoryPoints';
 import {Units} from '../../Units';
 import {MoonCard} from './MoonCard';
+import {CardRenderItemSize} from '../render/CardRenderItemSize';
+import {LogHelper} from '../../LogHelper';
 
 export class DarksideIncubationPlant extends MoonCard implements IActionCard, IProjectCard {
   constructor() {
@@ -23,15 +25,17 @@ export class DarksideIncubationPlant extends MoonCard implements IActionCard, IP
       resourceType: ResourceType.MICROBE,
 
       metadata: {
-        description: 'Spend 1 titanium. 1 VP per every 2 microbes here.',
+        description: {
+          text: 'Spend 1 titanium. 1 VP for every 2 microbes here.',
+          align: 'left',
+        },
         cardNumber: 'M45',
         renderData: CardRenderer.builder((b) => {
-          b.action('Add 1 microbe here', (eb) => {
+          b.action('Add 1 microbe here.', (eb) => {
             eb.empty().startAction.microbes(1);
           }).br;
-          b.or().br;
-          b.action('Spend 2 microbes to raise Colony Rate 1 step.', (eb) => {
-            eb.microbes(2).startAction.moonColonyRate(1);
+          b.action('Spend 2 microbes to raise the Colony Rate 1 step.', (eb) => {
+            eb.microbes(2).startAction.moonColonyRate({size: CardRenderItemSize.SMALL});
           });
 
           b.br;
@@ -57,17 +61,17 @@ export class DarksideIncubationPlant extends MoonCard implements IActionCard, IP
   public action(player: Player) {
     const options: Array<SelectOption> = [];
     options.push(new SelectOption('Add 1 microbe to this card', 'Select', () => {
-      this.resourceCount++;
+      player.addResourceTo(this, 1);
       return undefined;
     }));
     MoonExpansion.ifMoon(player.game, (moonData) => {
       if (this.resourceCount >= 2 && moonData.colonyRate < 8) {
         options.push(new SelectOption('Spend 2 microbes to raise the Colony Rate 1 step.', 'Select', () => {
-          this.resourceCount -= 2;
+          player.removeResourceFrom(this, 2);
+          LogHelper.logRemoveResource(player, this, 2, 'raise the Colony Rate');
           MoonExpansion.raiseColonyRate(player);
           return undefined;
         }));
-      } else {
       }
     });
     if (options.length === 1) {

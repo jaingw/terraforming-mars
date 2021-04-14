@@ -3,7 +3,7 @@ import {GameModule} from '../../GameModule';
 import {CardManifest} from '../CardManifest';
 import {AIControlledMineNetwork} from './AIControlledMineNetwork';
 import {AlgaeBioreactors} from './AlgaeBioreactors';
-import {AncientShipyards} from './AncientShipyards';
+// import {AncientShipyards} from './AncientShipyards';
 import {ArchimedesHydroponicsStation} from './ArchimedesHydroponicsStation';
 import {AristarchusRoadNetwork} from './AristarchusRoadNetwork';
 import {BasicInfrastructure} from './BasicInfrastructure';
@@ -92,9 +92,10 @@ import {SphereHabitats} from './SphereHabitats';
 import {StagingStationBehemoth} from './StagingStationBehemoth';
 import {SteelMarketMonopolists} from './SteelMarketMonopolists';
 import {SubterraneanHabitats} from './SubterraneanHabitats';
+import {SyndicatePirateRaids} from './SyndicatePirateRaids';
 import {TempestConsultancy} from './TempestConsultancy';
 import {TheArchaicFoundationInstitute} from './TheArchaicFoundationInstitute';
-import {TheDarksideofTheMoonSyndicate} from './TheDarksideofTheMoonSyndicate';
+// import {TheDarksideofTheMoonSyndicate} from './TheDarksideofTheMoonSyndicate';
 import {TheGrandLunaCapitalGroup} from './TheGrandLunaCapitalGroup';
 import {TheWomb} from './TheWomb';
 import {ThoriumRush} from './ThoriumRush';
@@ -127,7 +128,7 @@ export const MOON_CARD_MANIFEST = new CardManifest({
     {cardName: CardName.COLONIST_SHUTTLES, Factory: ColonistShuttles},
     {cardName: CardName.LUNAR_DUST_PROCESSING_PLANT, Factory: LunarDustProcessingPlant},
     {cardName: CardName.DEEP_LUNAR_MINING, Factory: DeepLunarMining},
-    {cardName: CardName.ANCIENT_SHIPYARDS, Factory: AncientShipyards},
+    // {cardName: CardName.ANCIENT_SHIPYARDS, Factory: AncientShipyards},
     {cardName: CardName.LUNA_PROJECT_OFFICE, Factory: LunaProjectOffice},
     {cardName: CardName.LUNA_RESORT, Factory: LunaResort},
     {cardName: CardName.LUNAR_OBSERVATION_POST, Factory: LunarObservationPost},
@@ -174,7 +175,7 @@ export const MOON_CARD_MANIFEST = new CardManifest({
     //   // {cardName: CardName.AN_OFFER_HE_CANNOT_REFUSE, Factory: AnOfferHeCannotRefuse, compatibility: GameModule.Turmoil},
     {cardName: CardName.PRELIMINARY_DARKSIDE, Factory: PreliminaryDarkside},
     //   {cardName: CardName.HOSTILE_TAKEOVER, Factory: HostileTakeover},
-    //   // {cardName: CardName.SYNDICATE_PIRATE_RAIDS, Factory: SyndicatePirateRaids, compatibility: GameModule.Colonies},
+    {cardName: CardName.SYNDICATE_PIRATE_RAIDS, Factory: SyndicatePirateRaids, compatibility: GameModule.Colonies},
     {cardName: CardName.DARKSIDE_MINING_SYNDICATE, Factory: DarksideMiningSyndicate},
     //   // {cardName: CardName.HE3_PROPULSION, Factory: HE3Propulsion, compatibility: GameModule.Colonies},
     {cardName: CardName.STAGING_STATION_BEHEMOTH, Factory: StagingStationBehemoth, compatibility: GameModule.Colonies},
@@ -203,7 +204,7 @@ export const MOON_CARD_MANIFEST = new CardManifest({
   corporationCards: [
     {cardName: CardName.NANOTECH_INDUSTRIES, Factory: NanotechIndustries},
     {cardName: CardName.TEMPEST_CONSULTANCY, Factory: TempestConsultancy, compatibility: GameModule.Turmoil},
-    {cardName: CardName.THE_DARKSIDE_OF_THE_MOON_SYNDICATE, Factory: TheDarksideofTheMoonSyndicate},
+    // {cardName: CardName.THE_DARKSIDE_OF_THE_MOON_SYNDICATE, Factory: TheDarksideofTheMoonSyndicate},
     {cardName: CardName.LUNA_HYPERLOOP_CORPORATION, Factory: LunaHyperloopCorporation},
     {cardName: CardName.CRESCENT_RESEARCH_ASSOCIATION, Factory: CrescentResearchAssociation},
     {cardName: CardName.LUNA_FIRST_INCORPORATED, Factory: LunaFirstIncorporated},

@@ -3,14 +3,21 @@ import {GameOptionsModel} from '../models/GameOptionsModel';
 import {BoardName} from '../boards/BoardName';
 import {RandomMAOptionType} from '../RandomMAOptionType';
 import {AgendaStyle} from '../turmoil/PoliticalAgendas';
+import {GameHomeModel} from '../models/GameHomeModel';
 
 export const GameSetupDetail = Vue.component('game-setup-detail', {
   props: {
     playerNumber: {
       type: Number,
     },
+    game: {
+      type: Object as () => GameHomeModel,
+    },
     gameOptions: {
       type: Object as () => GameOptionsModel,
+    },
+    lastSoloGeneration: {
+      type: Number,
     },
   },
   methods: {
@@ -50,6 +57,7 @@ export const GameSetupDetail = Vue.component('game-setup-detail', {
               <div v-if="gameOptions.aresExtension" class="create-game-expansion-icon expansion-icon-ares"></div>
               <div v-if="gameOptions.moonExpansion" class="create-game-expansion-icon expansion-icon-themoon"></div>
               <div v-if="gameOptions.communityCardsOption" class="create-game-expansion-icon expansion-icon-community"></div>
+              <div v-if="gameOptions.erosCardsOption" class="create-game-expansion-icon expansion-icon-eros"></div>
               <div v-if="isPoliticalAgendasOn()" class="create-game-expansion-icon expansion-icon-agendas"></div>
             </li>
 
@@ -71,7 +79,7 @@ export const GameSetupDetail = Vue.component('game-setup-detail', {
               <div v-if="isRandomMANone()" class="game-config generic" v-i18n>Board-defined</div>
               <div v-if="isRandomMALimited()" class="game-config generic" v-i18n>Randomized with limited synergy</div>
               <div v-if="isRandomMAUnlimited()" class="game-config generic" v-i18n>Full randomized</div>
-              <div v-if="isRandomMANone() && gameOptions.includeVenusMA" class="game-config generic" v-i18n>HoverLord & Venuphile</div>
+              <div v-if="isRandomMANone() && gameOptions.venusNextExtension" class="game-config generic" v-i18n>HoverLord & Venuphile</div>
               <div v-if="!isRandomMANone() && !gameOptions.includeVenusMA" class="game-config generic" v-i18n>(5 each)</div>
               <div v-if="!isRandomMANone() && gameOptions.includeVenusMA" class="game-config generic" v-i18n>(6 each)</div>
             </li>
@@ -91,8 +99,7 @@ export const GameSetupDetail = Vue.component('game-setup-detail', {
 
             <li v-if="playerNumber === 1">
               <div class="setup-item" v-i18n>Solo:</div>
-              <div v-if="gameOptions.preludeExtension" class="game-config generic" v-i18n>12 Gens</div>
-              <div v-else class="game-config generic" v-i18n>14 Gens</div>
+              <div class="game-config generic" v-i18n>{{ this.lastSoloGeneration }} Gens</div>
               <div v-if="gameOptions.soloTR" class="game-config generic" v-i18n>63 TR</div>
               <div v-else class="game-config generic" v-i18n>TR all</div>
             </li>
@@ -101,7 +108,9 @@ export const GameSetupDetail = Vue.component('game-setup-detail', {
               <div v-if="gameOptions.fastModeOption" class="game-config fastmode" v-i18n>fast mode</div>
               <div v-if="gameOptions.showTimers" class="game-config timer" v-i18n>timer</div>
               <div v-if="gameOptions.showOtherPlayersVP" class="game-config realtime-vp" v-i18n>real-time vp</div>
-              <div v-if="gameOptions.undoOption" class="game-config undo" v-i18n>undo</div>
+              <div v-if="gameOptions.undoOption" class="game-config undo" v-i18n>Allow undo</div>
+              <div v-if="game.heatFor" class="game-config generic" v-i18n>7 Heat Into Temperature</div>
+              <div v-if="game.breakthrough" class="game-config generic" v-i18n>BreakThrough</div>
             </li>
 
             <li v-if="gameOptions.cardsBlackList.length > 0"><div class="setup-item" v-i18n>Banned cards:</div>{{ gameOptions.cardsBlackList.join(', ') }}</li>

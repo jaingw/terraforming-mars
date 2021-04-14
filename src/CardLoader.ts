@@ -6,6 +6,8 @@ import {TURMOIL_CARD_MANIFEST} from './cards/turmoil/TurmoilCardManifest';
 import {VENUS_CARD_MANIFEST} from './cards/venusNext/VenusCardManifest';
 import {COMMUNITY_CARD_MANIFEST} from './cards/community/CommunityCardManifest';
 import {ARES_CARD_MANIFEST} from './cards/ares/AresCardManifest';
+/* 群友扩内容 */
+import {EROS_CARD_MANIFEST} from './cards/eros/ErosCardManifest';
 import {CardManifest} from './cards/CardManifest';
 import {CardName} from './CardName';
 import {ICard} from './cards/ICard';
@@ -32,6 +34,7 @@ export class CardLoader {
       [gameOptions.aresExtension, ARES_CARD_MANIFEST],
       [gameOptions.promoCardsOption, PROMO_CARD_MANIFEST],
       [gameOptions.communityCardsOption, COMMUNITY_CARD_MANIFEST],
+      [gameOptions.erosCardsOption, EROS_CARD_MANIFEST],
       [gameOptions.moonExpansion, MOON_CARD_MANIFEST],
     ];
 
@@ -69,8 +72,7 @@ export class CardLoader {
     return this.getCards((manifest) => manifest.projectCards);
   }
   public getStandardProjects() {
-    return this.getCards((manifest) => manifest.standardProjects)
-      .filter((card) => card.name !== CardName.BUFFER_GAS_STANDARD_PROJECT || this.gameOptions.soloTR);
+    return this.getCards((manifest) => manifest.standardProjects);
   }
   public getCorporationCards() {
     return this.getCards((manifest) => manifest.corporationCards)

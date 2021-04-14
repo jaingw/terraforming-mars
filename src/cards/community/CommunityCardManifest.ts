@@ -22,6 +22,7 @@ import {UnitedNationsMissionOne} from './UnitedNationsMissionOne';
 import {AccumulatedKnowledge} from './AccumulatedKnowledge';
 import {NitrateReducers} from './NitrateReducers';
 import {VitalColony} from './VitalColony';
+import {CuriosityII} from './CuriosityII';
 
 export const COMMUNITY_CARD_MANIFEST = new CardManifest({
   module: GameModule.Community,
@@ -31,6 +32,7 @@ export const COMMUNITY_CARD_MANIFEST = new CardManifest({
     {cardName: CardName.PROJECT_WORKSHOP, Factory: ProjectWorkshop},
     {cardName: CardName.INCITE, Factory: Incite, compatibility: GameModule.Turmoil},
     {cardName: CardName.PLAYWRIGHTS, Factory: Playwrights},
+    {cardName: CardName.CURIOSITY_II, Factory: CuriosityII},
     {cardName: CardName.MIDAS, Factory: Midas},
     {cardName: CardName.COLONIAL_ONE, Factory: ColonialOne, compatibility: GameModule.Colonies},
     {cardName: CardName.HOTSPRINGS, Factory: Hotsprings},

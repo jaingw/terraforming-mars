@@ -38,7 +38,6 @@ export interface SerializedPlayer {
     megaCreditProduction: number;
     megaCredits: number;
     name: string;
-    needsToDraft: boolean | undefined;
     oceanBonus: number;
     pickedCorporationCard: CorporationCard | undefined;
     plantProduction: number;
@@ -59,7 +58,8 @@ export interface SerializedPlayer {
     titanium: number;
     titaniumProduction: number;
     titaniumValue: number;
-    tradesThisTurn: number;
+    // TODO(kberg): change tradesThisTurn to tradeThisGeneration later
+    tradesThisGeneration: number;
     turmoilPolicyActionUsed: boolean;
     victoryPointsBreakdown: VictoryPointsBreakdown;
     heatForTemperature: number;

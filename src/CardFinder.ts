@@ -13,6 +13,8 @@ import {TURMOIL_CARD_MANIFEST} from './cards/turmoil/TurmoilCardManifest';
 import {VENUS_CARD_MANIFEST} from './cards/venusNext/VenusCardManifest';
 import {COMMUNITY_CARD_MANIFEST} from './cards/community/CommunityCardManifest';
 import {ARES_CARD_MANIFEST} from './cards/ares/AresCardManifest';
+/* 群友扩内容 */
+import {EROS_CARD_MANIFEST} from './cards/eros/ErosCardManifest';
 import {MOON_CARD_MANIFEST} from './cards/moon/MoonCardManifest';
 import {Deck} from './Deck';
 
@@ -31,6 +33,7 @@ export class CardFinder {
           BREAKTHROUGH_CARD_MANIFEST,
           ARES_CARD_MANIFEST,
           COMMUNITY_CARD_MANIFEST,
+          EROS_CARD_MANIFEST,
           MOON_CARD_MANIFEST,
         ];
       }

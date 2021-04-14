@@ -1,74 +1,54 @@
 
 import * as http from 'http';
-import * as querystring from 'querystring';
-import * as zlib from 'zlib';
 
-import {GameLoader} from '../database/GameLoader';
+import {IContext} from './IHandler';
 import {LogMessage} from '../LogMessage';
-import {Route} from './Route';
+import {LogMessageType} from '../LogMessageType';
 
-export class GameLogs extends Route {
-  public canHandle(url: string): boolean {
-    return url.startsWith('/api/game/logs?');
-  }
-
-  public static getLogMessageIndexByGen(data: Array<LogMessage>, generation: number, startIndex: number = 0): number | undefined {
-    let counter = 0;
-    for (let i = startIndex; i < data.length; i++) {
-      const logMsg: LogMessage = data[i];
-      if (logMsg.data.length > 0) {
-        if (data[i].message === 'Generation ${0}') {
-          counter++;
-          if (counter === generation) {
-            return i;
-          }
+export class GameLogs {
+  private getLogsForGeneration(messages: Array<LogMessage>, generation: number): Array<LogMessage> {
+    let foundStart = generation === 1;
+    const newMessages: Array<LogMessage> = [];
+    for (const message of messages) {
+      if (message.type === LogMessageType.NEW_GENERATION) {
+        const value = Number(message.data[0]?.value);
+        if (value === generation) {
+          foundStart = true;
+        } else if (value === generation + 1) {
+          break;
         }
-      } else {
-        return undefined;
+      }
+      if (foundStart === true) {
+        newMessages.push(message);
       }
     }
-    return undefined;
+    return newMessages;
   }
 
-  public handle(req: http.IncomingMessage, res: http.ServerResponse): void {
-    if (req.url === undefined) {
-      console.warn('url not defined');
-      this.notFound(req, res);
+  public handle(req: http.IncomingMessage, res: http.ServerResponse, ctx: IContext): void {
+    const id = ctx.url.searchParams.get('id');
+    const generation = ctx.url.searchParams.get('generation');
+    if (id === null) {
+      ctx.route.badRequest(req, res, 'must provide playerid');
       return;
     }
 
-    const params = querystring.parse(req.url.substring(req.url.indexOf('?') + 1));
-
-    const id = params.id;
-
-    if (id === undefined || Array.isArray(id)) {
-      this.badRequest(req, res);
-      return;
-    }
-
-    GameLoader.getInstance().getByPlayerId(id, (game) => {
+    ctx.gameLoader.getByPlayerId(id, (game) => {
       if (game === undefined) {
-        console.warn('game not found');
-        this.notFound(req, res);
+        ctx.route.notFound(req, res, 'game not found');
         return;
       }
+      let logs: Array<LogMessage> | undefined;
 
-      const data = Buffer.from(JSON.stringify(game.gameLog));
-
-      if (Route.supportsEncoding(req, 'gzip')) {
-        zlib.gzip(data, (err, compressed) => {
-          if (err !== null) {
-            this.internalServerError(req, res, err);
-            return;
-          }
-          res.setHeader('Content-Encoding', 'gzip');
-          res.setHeader('Content-Type', 'application/json');
-          res.end(compressed);
-        });
-      } else {
-        res.setHeader('Content-Type', 'application/json');
-        res.end(data);
+      // for most recent generation pull last 50 log messages
+      if (generation === null || Number(generation) === game.generation) {
+        logs = game.gameLog.slice(-50);
+      } else { // pull all logs for generation
+        logs = this.getLogsForGeneration(game.gameLog, Number(generation));
       }
+
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify(logs));
     });
   }
 }

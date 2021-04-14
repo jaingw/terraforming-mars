@@ -47,7 +47,6 @@ Database.getInstance = function() {
     cleanGame: () => {},
     cleanGameSave: () => {},
     saveUser: () => {},
-    updateUser: () => {},
     getUsers: () => {},
     refresh: () => {},
     purgeUnfinishedGames: () => {},

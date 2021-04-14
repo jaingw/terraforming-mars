@@ -22,6 +22,9 @@ export const Preferences = Vue.component('preferences', {
     player: {
       type: Object as () => PlayerModel,
     },
+    acting_player: {
+      type: Boolean,
+    },
     player_color: {
       type: String as () => Color,
     },
@@ -46,6 +49,9 @@ export const Preferences = Vue.component('preferences', {
     turmoil: {
       type: Object as () => TurmoilModel || undefined,
     },
+    lastSoloGeneration: {
+      type: Number,
+    },
   },
   components: {
     'game-setup-detail': GameSetupDetail,
@@ -61,30 +67,21 @@ export const Preferences = Vue.component('preferences', {
         'canresign': false,
         'gamesetup_detail_open': false,
       },
-      'hide_corporation': false as boolean | unknown[],
       'hide_hand': false as boolean | unknown[],
-      'hide_cards': false as boolean | unknown[],
       'hide_awards_and_milestones': false as boolean | unknown[],
-      'hide_tag_overview': false as boolean | unknown[],
-      'hide_turnorder': false as boolean | unknown[],
-      'hide_corporation_names': false as boolean | unknown[],
       'hide_top_bar': false as boolean | unknown[],
       'small_cards': false as boolean | unknown[],
       'remove_background': false as boolean | unknown[],
       'magnify_cards': true as boolean | unknown[],
-      'magnify_card_descriptions': true as boolean | unknown[],
       'show_alerts': true as boolean | unknown[],
-      'hide_ma_scores': false as boolean | unknown[],
-      'hide_non_blue_cards': false as boolean | unknown[],
-      'hide_log': false as boolean | unknown[],
       'lang': 'en',
       'langs': LANGUAGES,
       'enable_sounds': false as boolean | unknown[],
-      'smooth_scrolling': false as boolean | unknown[],
       'hide_tile_confirmation': false as boolean | unknown[],
       'show_card_number': false as boolean | unknown[],
-      'show_discount_on_cards': true as boolean | unknown[],
-      'tutorial_mode': true as boolean | unknown[],
+      'hide_discount_on_cards': false as boolean | unknown[],
+      'learner_mode': true as boolean | unknown[],
+      'hide_animated_sidebar': false as boolean | unknown[],
     };
   },
   methods: {
@@ -206,6 +203,12 @@ export const Preferences = Vue.component('preferences', {
       const senddata ={'playerId': this.player.id, 'userId': userId};
       xhr.send(JSON.stringify(senddata));
     },
+    getPlayerColorCubeClass: function(): string {
+      return this.acting_player && (PreferencesManager.loadBooleanValue('hide_animated_sidebar') === false) ? 'preferences_player_inner active' : 'preferences_player_inner';
+    },
+    getSideBarClass: function(): string {
+      return this.acting_player && (PreferencesManager.loadBooleanValue('hide_animated_sidebar') === false) ? 'preferences_acting_player' : 'preferences_nonacting_player';
+    },
     getGenMarker: function(): string {
       return `${this.generation}`;
     },
@@ -264,7 +267,7 @@ export const Preferences = Vue.component('preferences', {
             this.player.block === false;
   },
   template: `
-        <div class="preferences_cont" :data="syncPreferences()">
+        <div :class="'preferences_cont '+getSideBarClass()" :data="syncPreferences()">
                 <div class="preferences_tm">
                     <div class="preferences-gen-text">GEN</div>
                     <div class="preferences-gen-marker">{{ getGenMarker() }}</div>
@@ -285,7 +288,7 @@ export const Preferences = Vue.component('preferences', {
                   </div>
                 </div>
                 <div class="preferences_item preferences_player">
-                  <div class="preferences_player_inner" :class="'player_bg_color_' + player_color"></div>
+                  <div :class="getPlayerColorCubeClass()+' player_bg_color_' + player_color"></div>
                 </div>
                 <a  href="/donate" target="_blank">
                     <div class="preferences_item preferences_item_shortcut">
@@ -341,7 +344,7 @@ export const Preferences = Vue.component('preferences', {
                     <div class="info_panel" v-if="ui.gamesetup_detail_open">
                       <div class="info_panel-spacing"></div>
                       <div class="info-panel-title" v-i18n>Game Setup Details</div>
-                      <game-setup-detail :gameOptions="gameOptions" :playerNumber="playerNumber"></game-setup-detail>
+                      <game-setup-detail :gameOptions="gameOptions" :playerNumber="playerNumber" :lastSoloGeneration="lastSoloGeneration"></game-setup-detail>
 
                       <div class="info_panel_actions">
                         <button class="btn btn-lg btn-primary" v-on:click="ui.gamesetup_detail_open=false">Ok</button>
@@ -358,26 +361,8 @@ export const Preferences = Vue.component('preferences', {
                 <div class="preferences_panel" v-if="ui.preferences_panel_open">
                     <div class="preferences_panel_item">
                         <label class="form-switch">
-                            <input type="checkbox" v-on:change="updatePreferences" v-model="hide_turnorder" />
-                            <i class="form-icon"></i> <span v-i18n>Hide turn order</span>
-                        </label>
-                    </div>
-                    <div class="preferences_panel_item">
-                        <label class="form-switch">
                             <input type="checkbox" v-on:change="updatePreferences" v-model="hide_hand" />
                             <i class="form-icon"></i> <span v-i18n>Hide cards in hand</span>
-                        </label>
-                    </div>
-                    <div class="preferences_panel_item">
-                        <label class="form-switch">
-                            <input type="checkbox" v-on:change="updatePreferences" v-model="hide_cards" />
-                            <i class="form-icon"></i> <span v-i18n>Hide played cards</span>
-                        </label>
-                    </div>
-                    <div class="preferences_panel_item">
-                        <label class="form-switch">
-                            <input type="checkbox" v-on:change="updatePreferences" v-model="hide_non_blue_cards" />
-                            <i class="form-icon"></i> <span v-i18n>Hide non-blue played cards</span>
                         </label>
                     </div>
                     <div class="preferences_panel_item">
@@ -388,38 +373,8 @@ export const Preferences = Vue.component('preferences', {
                     </div>
                     <div class="preferences_panel_item">
                         <label class="form-switch">
-                            <input type="checkbox" v-on:change="updatePreferences" v-model="hide_log" />
-                            <i class="form-icon"></i> <span v-i18n>Hide log</span>
-                        </label>
-                    </div>
-                   <div class="preferences_panel_item">
-                        <label class="form-switch">
-                            <input type="checkbox" v-on:change="updatePreferences" v-model="hide_tag_overview" />
-                            <i class="form-icon"></i> <span v-i18n>Hide tag overview</span>
-                        </label>
-                    </div>
-                    <div class="preferences_panel_item">
-                        <label class="form-switch">
-                            <input type="checkbox" v-on:change="updatePreferences" v-model="hide_corporation_names" />
-                            <i class="form-icon"></i> <span v-i18n>Hide corporation names for players</span>
-                        </label>
-                    </div>
-                    <div class="preferences_panel_item">
-                        <label class="form-switch">
-                            <input type="checkbox" v-on:change="updatePreferences" v-model="hide_top_bar" />
-                            <i class="form-icon"></i> <span v-i18n>Hide sticky top bar</span>
-                        </label>
-                    </div>
-                    <div class="preferences_panel_item">
-                        <label class="form-switch">
                             <input type="checkbox" v-on:change="updatePreferences" v-model="small_cards" />
                             <i class="form-icon"></i> <span v-i18n>Smaller cards</span>
-                        </label>
-                    </div>
-                    <div class="preferences_panel_item">
-                        <label class="form-switch">
-                            <input type="checkbox" v-on:change="updatePreferences" v-model="remove_background" />
-                            <i class="form-icon"></i> <span v-i18n>Remove background image</span>
                         </label>
                     </div>
                     <div class="preferences_panel_item">
@@ -430,38 +385,8 @@ export const Preferences = Vue.component('preferences', {
                     </div>
                     <div class="preferences_panel_item">
                         <label class="form-switch">
-                            <input type="checkbox" v-on:change="updatePreferences" v-model="magnify_card_descriptions" />
-                            <i class="form-icon"></i> <span v-i18n>Magnify card descriptions on hover</span>
-                        </label>
-                    </div>
-                    <div class="preferences_panel_item">
-                        <label class="form-switch">
-                            <input type="checkbox" v-on:change="updatePreferences" v-model="show_alerts" />
-                            <i class="form-icon"></i> <span v-i18n>Show in-game alerts</span>
-                        </label>
-                    </div>
-                    <div class="preferences_panel_item">
-                        <label class="form-switch">
-                            <input type="checkbox" v-on:change="updatePreferences" v-model="hide_ma_scores" />
-                            <i class="form-icon"></i> <span v-i18n>Hide Milestones / Awards scores</span>
-                        </label>
-                    </div>
-                    <div class="preferences_panel_item">
-                        <label class="form-switch">
-                            <input type="checkbox" v-on:change="updatePreferences" v-model="smooth_scrolling" />
-                            <i class="form-icon"></i> <span v-i18n>Smooth hotkey scrolling</span>
-                        </label>
-                    </div>
-                    <div class="preferences_panel_item">
-                        <label class="form-switch">
-                            <input type="checkbox" v-on:change="updatePreferences" v-model="hide_tile_confirmation" />
-                            <i class="form-icon"></i> <span v-i18n>Hide tile confirmation</span>
-                        </label>
-                    </div>
-                    <div class="preferences_panel_item">
-                        <label class="form-switch">
-                            <input type="checkbox" v-on:change="updatePreferences" v-model="show_discount_on_cards" />
-                            <i class="form-icon"></i> <span v-i18n>Show discount on cards</span>
+                            <input type="checkbox" v-on:change="updatePreferences" v-model="hide_discount_on_cards" />
+                            <i class="form-icon"></i> <span v-i18n>Hide discount on cards</span>
                         </label>
                     </div>
                     <div class="preferences_panel_item">
@@ -472,8 +397,34 @@ export const Preferences = Vue.component('preferences', {
                     </div>
                     <div class="preferences_panel_item">
                         <label class="form-switch">
-                            <input type="checkbox" v-on:change="updatePreferences" v-model="tutorial_mode" />
-                            <i class="form-icon"></i> <span v-i18n>Tutorial Mode (req. refresh)</span>
+                            <input type="checkbox" v-on:change="updatePreferences" v-model="remove_background" />
+                            <i class="form-icon"></i> <span v-i18n>Remove background image</span>
+                        </label>
+                    </div>
+                    <div class="preferences_panel_item">
+                        <label class="form-switch">
+                            <input type="checkbox" v-on:change="updatePreferences" v-model="show_alerts" />
+                            <i class="form-icon"></i> <span v-i18n>Show in-game alerts</span>
+                        </label>
+                    </div>
+                    <div class="preferences_panel_item">
+                        <label class="form-switch">
+                            <input type="checkbox" v-on:change="updatePreferences" v-model="hide_animated_sidebar" />
+                            <i class="form-icon"></i> <span v-i18n>Hide sidebar notification</span>
+                        </label>
+                    </div>
+                    <div class="preferences_panel_item">
+                        <label class="form-switch">
+                            <input type="checkbox" v-on:change="updatePreferences" v-model="hide_tile_confirmation" />
+                            <i class="form-icon"></i> <span v-i18n>Hide tile confirmation</span>
+                        </label>
+                    </div>
+                    <div class="preferences_panel_item">
+                        <label class="form-switch">
+                            <input type="checkbox" v-on:change="updatePreferences" v-model="learner_mode" />
+                            <i class="form-icon"></i> 
+                            <span v-i18n>Learner Mode (req. refresh)</span>
+                            <span class="tooltip tooltip-left" data-tooltip="Show information that can be helpful\n to players who are still learning the games">&#9432;</span>
                         </label>
                     </div>
                     <div class="preferences_panel_item form-group">

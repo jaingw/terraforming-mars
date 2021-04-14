@@ -43,24 +43,24 @@
     
     "Action:If your TR was raised this generation, you may pay 5 MC to raise 1 step. When you raise TR in generation, gain 2 MC.":"行动：如果本时代你提升过改造度，则可以花费5MC额外提升1格。效果：你每在时代内提升了1格改造度，获得2MC。",
 
-    "Effect: Your Venus requirements are +/- 2 steps, your choice in each case. Once per game, increase your MC production 1 step for each Venus tag you have.":"效果:你打出的牌中,受到金星改造度条件限制时 +/- 2格。一局游戏限一次，你每有一个金星标志，获得1点钱产。",
+    "Effect: Your Venus requirements are +/- 2 steps, your choice in each case. Once per game, increase your MC production 1 step for each Venus tag you have.":"效果:你打出的牌中,受到金星改造度条件限制时 +/- 2格。一局游戏限一次，你每有一个金星标志，获得1点MC产能。",
 
     "Effect: Each time you get steel/titanium as placement bonus, increase 1 steel prod.You can use 4 steel to trade or pay for city standard project.":"效果:每当你因放置一个版块而获得钢铁资源或钛合金资源时,提升你的钢铁产能1级；你可以使用4铁贸易；你可以使用铁标动城市。",
 
     "You start with 40 MC and 10 steel. AS YOUR FIRST ACTION, PLACE A COMMUNITY [PLAYER MARKER] ON A NON-RESERVED AREA.":"起始拥有40MC和10个钢铁。作为你的第一个行动，你可以放置一个社区（你的玩家标记）到一个非保留区。",
 
-    "Effect: marked areas are reserved for you. when you place a tile there, gain 3 MC. When you place a tile, gain 1 MC for each tiles you own adjacent to it":"效果：只有你能在拥有你的玩家标记的位置放置版块，当你如此做后，获得3MC；当你放置板块时，你的每个与之相邻的板块为你提供1MC。",
+    "Effect: marked areas are reserved for you. when you place a tile there, gain 3 MC. When you place a tile, gain 1 MC for each tiles you own adjacent to it":"效果：只有你能在拥有你的玩家标记的位置放置版块，当你如此做后，获得3MC；当你放置版块时，你的每个与之相邻的版块为你提供1MC。",
     "Action: place a community on a non-reserved area adjacent to one of your tiles or marked areas.":"行动：将一个玩家标记放置在非保留区，需要和你的版块或者玩家标记相邻。",
 
     "Effect: Buying cards to hand costs 1MC. You can draw 5 cards in research phase (keep 2 in first turn if drafting)":"效果:购买卡牌到手牌的价格变为1MC。研究阶段，你可以抽取5张手牌而非4张，如果是轮抽模式则在第一轮轮抽选择保留2张。",
 
-    "Effect: When any city tile is placed, increase your MC production 1 step. When you place a city tile, gain 3 MC.":"效果:每当一个城市版块被放置,提升你的金钱产能1级。每当你放置一个城市版块,获得3MC。",
+    "Effect: When any city tile is placed, increase your MC production 1 step. When you place a city tile, gain 3 MC.":"效果:每当一个城市版块被放置,提升你的MC产能1级。每当你放置一个城市版块,获得3MC。",
 
     "Effect: When you buy a card to hand, pay 5MC instead of 3, including the starting hand. When you sell patent, you gain 3 instead of 1.":"效果:当你购买手牌时,你需要支付5MC而非原本的3MC,包括起始的手牌。当你贩卖专利时，每张卡牌价值3MC而非1MC。",
 
     "Effect: Your tags on event work the same as green or blue card. Event tag is a new tag for you. Each time you play an event, you gain 3 MC.":"效果:每次你打出事件卡时,获得3MC。你事件卡上的标志同样加入标志数量计算。事件标志对于你而言是一种新的标志类型。",
 
-    "Effect: You may use heat as MC. You may not use MC as heat. Any player increase Temperature, that player gain 2 heat.":"效果：你的热可当钱，但钱不能当热。每当有玩家提升1格温度，该玩家获得2热。",
+    "Effect: You may use heat as MC. You may not use MC as heat. Any player increase Temperature, that player gain 1 heat.":"效果：你可以用热能资源代替MC使用,但不用用MC代替热能资源使用。每当有玩家提升1格温度，该玩家获得1热能资源。",
 
     "Action: Spend 2 MC to increase (one of) your LOWEST production 1 step.":"行动：花费2MC提升你最低（或最低之一）的产能1点。"
 

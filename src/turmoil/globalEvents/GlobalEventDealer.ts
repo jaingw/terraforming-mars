@@ -173,6 +173,12 @@ export class GlobalEventDealer implements ISerializable<SerializedGlobalEventDea
     return undefined;
   }
 
+  public putback(globalEvent: IGlobalEvent | undefined) {
+    if (globalEvent) {
+      this.globalEventsDeck.push(globalEvent);
+    }
+  }
+
   public serialize(): SerializedGlobalEventDealer {
     return {
       globalEventsDeck: this.globalEventsDeck,
