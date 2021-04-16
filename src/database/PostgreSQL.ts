@@ -4,7 +4,6 @@ import {IGameData} from './IDatabase';
 import {SerializedGame} from '../SerializedGame';
 
 import {Client, ClientConfig, QueryResult} from 'pg';
-import {User} from '../User';
 
 export class PostgreSQL implements IDatabase {
   private client: Client;

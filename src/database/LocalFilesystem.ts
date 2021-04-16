@@ -3,7 +3,6 @@ import {Game, GameId, GameOptions, Score} from '../Game';
 import {IGameData} from './IDatabase';
 import {SerializedGame} from '../SerializedGame';
 import {Dirent} from 'fs';
-import {User} from '../User';
 
 const path = require('path');
 const fs = require('fs');
