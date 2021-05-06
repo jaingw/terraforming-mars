@@ -15,12 +15,6 @@ export class _RobinsonIndustries_ extends RobinsonIndustries {
     return player.canAfford(2);
   }
 
-  public increaseAndLogProduction(player: Player, resource: Resources) {
-    player.addProduction(resource);
-    player.megaCredits -= 2;
-    LogHelper.logGainProduction(player, resource);
-  }
-
   public get metadata() {
     return {
       cardNumber: 'R27',
@@ -29,11 +23,19 @@ export class _RobinsonIndustries_ extends RobinsonIndustries {
         b.br.br.br;
         b.megacredits(47);
         b.corpBox('action', (ce) => {
-          ce.action('Spend 2 MC to increase (one of) your LOWEST production 1 step.', (eb) => {
-            eb.megacredits(2).startAction.production((pb) => pb.wild(1).asterix());
+          ce.action('Spend 3 MC to increase (one of) your LOWEST production 1 step.And you will product this resource immediately(MC production ignore TR).', (eb) => {
+            eb.megacredits(3).startAction.production((pb) => pb.wild(1).asterix()).asterix();
           });
         });
       }),
     };
+  }
+
+  public increaseAndLogProduction(player: Player, resource: Resources) {
+    player.addProduction(resource);
+    const number = player.getProduction(resource);
+    player.setResource(resource, number);
+    player.megaCredits -= 3;
+    LogHelper.logGainProduction(player, resource);
   }
 }
