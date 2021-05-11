@@ -4,43 +4,43 @@
     "You start with 10 titanium and 23 MC.As your first action, draw 2 space cards.":"起始拥有23MC和10个钛合金，作为你的第一个行动，抽取2张带有空间标志的卡牌",
 
     "Effect: Your temperature, oxygen and ocean requirements are +3 or -3 steps, your choice in each case.":"效果：你出牌时享受全球参数+3格或-3格修正",
-    
+
     "You start with 2 energy production and 44 MC.":"起始拥有2电力产量和44MC",
-    
+
     "You start with 3 heat production and 48 MC.":"起始拥有3点热产量和48MC",
-    
+
     "You start with 55 MC. As your first action, draw 1 earth tag card.":"起始拥有55MC，作为第一个行动，抽取1张带有地球标志的卡牌",
-    
+
     "Effect: You may pay 7 plants to place greenery. When play a plant tag card, gain 2 MC.":"可以用7个植物资源放置绿化版块，当你打出1个植物标志时，包括本卡，得到2MC",
-    
+
     "Effect: Whenever Venus is terraformed 1 step, you gain 2 plant.":"每当金星改造度提升一格，你获得2点植物资源。",
-    
+
     "You start with 40 MC. As your first action, raise Venus Scale 2 steps.":"起始拥有40MC，作为第一个行动，提升金星改造度2格。",
-    
+
     "You start with 45 MC. Increase your steel production 1 step.":"起手拥有45MC以及1点钢铁产量",
-    
+
     "Effect: Each time you get steel/titanium as placement bonus, increase 1 steel prod.You can use 4 steel to trade.You can use steel to pay for city standard project.":"当你从版块放置奖励中得到钢铁/钛时，提升1点钢铁产量。你可以使用4个钢铁进行贸易。可以使用钢铁支付标准行动-建造城市",
-    
+
     "You start with 38 MC and 1 steel production. As your first action, add 2 mocrobed to this card":"起始拥有38MC及1点钢铁产量，作为第一个行动，增加2个微生物到本牌上",
-    
+
     "Action: Spend 2 MC to increase (one of) your LOWEST PRODUCTION 1 step.":"行动：花2MC提升最低的1种产量1格",
-    
+
     "You start with 44 MC. As your first action, reveal cards until you have revealed 2 microbe tag. Take these cards into hand and discard the rest.":"起始拥有44MC，作为第一个行动，抽取2张带有微生物标志的卡牌",
-    
+
     "You start with 20 MC. Lower your TR 1 step.":"起始拥有20MC，-1改造度",
-    
+
     "Action: If your TR was raised this generation, you may pay 5 MC to raise 1 step. When you raise TR in generation, gain 2 MC":"行动：如果本回合你提升过改造度，你可以花5MC提升1改造度。当你提升改造度时，得到2MC",
-    
+
     "You start with 37 MC. As your first action, draw 4 Prelude cards, and play one of them. Discard the other three.":"你起始拥有37MC，作为游戏中的你的第一个行动，你必须抽四张前序卡，打出其中一张，然后弃掉剩余三张。",
-    
+
     "Action: Add a floater to ANY card. When you gain a floater to ANY CARD, gain 1 MC. 1 VP per 3 floaters on this card.":"行动：放置云资源到任意卡牌上。每当你得到1个云资源，获得1MC，本卡上每3个云资源为你提供1VP，",
-    
+
     "You start with 42 MC. As your first action, draw 2 floater-icon cards.":"起始拥有42MC，作为第一个行动，抽取2张带有云资源图标的卡",
-    
+
     "Effect: When you play an animal or plant tag, including this, add 1 animal to this card. When you gain an animal to ANY CARD, gain 1 MC.":"每打出1个动物标志或植物标志，包括本卡，增加1动物资源到本卡上。每当你得到1个动物资源时，获得1MC",
-    
+
     "Action: Add a floater to ANY card.Effect: Floaters on this card may be used as 2 heat each.":"行动：放置云资源到任意卡牌上。本卡上的云资源可以当做2点热能使用",
-    
+
     "Action:If your TR was raised this generation, you may pay 5 MC to raise 1 step. When you raise TR in generation, gain 2 MC.":"行动：如果本时代你提升过改造度，则可以花费5MC额外提升1格。效果：你每在时代内提升了1格改造度，获得2MC。",
 
     "Effect: Your Venus requirements are +/- 2 steps, your choice in each case. Once per game, increase your MC production 1 step for each Venus tag you have.":"效果:你打出的牌中,受到金星改造度条件限制时 +/- 2格。一局游戏限一次，你每有一个金星标志，获得1点MC产能。",
@@ -62,7 +62,8 @@
 
     "Effect: You may use heat as MC. You may not use MC as heat. Any player increase Temperature, that player gain 1 heat.":"效果：你可以用热能资源代替MC使用,但不用用MC代替热能资源使用。每当有玩家提升1格温度，该玩家获得1热能资源。",
 
-    "Action: Spend 2 MC to increase (one of) your LOWEST production 1 step.":"行动：花费2MC提升你最低（或最低之一）的产能1点。"
+    "Action: Spend 3 MC to increase (one of) your LOWEST production 1 step.And you will product this resource immediately(MC production ignore TR).":"行动：花费3MC提升你最低（或最低之一）的产能1点。然后立即生产该资源一次（MC生产忽略改造度）。"
+
 
 
 
