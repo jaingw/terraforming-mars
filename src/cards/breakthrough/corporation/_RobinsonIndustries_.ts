@@ -12,7 +12,7 @@ export class _RobinsonIndustries_ extends RobinsonIndustries {
   }
 
   public canAct(player: Player): boolean {
-    return player.canAfford(2);
+    return player.canAfford(3);
   }
 
   public get metadata() {
