@@ -12,7 +12,7 @@ export class _RobinsonIndustries_ extends RobinsonIndustries {
   }
 
   public canAct(player: Player): boolean {
-    return player.canAfford(2);
+    return player.canAfford(3);
   }
 
   public get metadata() {
@@ -32,10 +32,10 @@ export class _RobinsonIndustries_ extends RobinsonIndustries {
   }
 
   public increaseAndLogProduction(player: Player, resource: Resources) {
+    player.megaCredits -= 3;
     player.addProduction(resource);
     const number = player.getProduction(resource);
     player.setResource(resource, number);
-    player.megaCredits -= 3;
     LogHelper.logGainProduction(player, resource);
   }
 }
