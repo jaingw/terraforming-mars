@@ -21,8 +21,9 @@ module.exports = {
   module: {
     rules: [
       {test: /\.vue$/, loader: 'vue-loader'},
-      {test: /\.tsx?$/, loader: 'ts-loader', options: {appendTsSuffixTo: [/\.vue$/]}}
+      {test: /\.tsx?$/, loader: 'ts-loader', options: {appendTsSuffixTo: [/\.vue$/]}},
     ],
+  },
   plugins: [
     new VueLoaderPlugin(),
     // new webpack.NoEmitOnErrorsPlugin(),

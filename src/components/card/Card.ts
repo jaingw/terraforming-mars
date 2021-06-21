@@ -58,8 +58,9 @@ export const Card = Vue.component('card', {
     let expansion: GameModule | undefined;
 
 
-    if (name === CardName.WG_PARTERNSHIP ) {
+    if (cardName === CardName.WG_PARTERNSHIP ) {
       cardInstance = new WGParternship;
+      expansion = GameModule.Eros;
       return {
         cardInstance,
         expansion,
