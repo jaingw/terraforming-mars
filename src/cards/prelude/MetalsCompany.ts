@@ -15,14 +15,14 @@ export class MetalsCompany extends PreludeCard implements IProjectCard {
         renderData: CardRenderer.builder((b) => {
           b.production((pb) => pb.megacredits(1).steel(1).titanium(1));
         }),
-        description: 'Increase your MC, steel and titanium production 1 step.',
+        description: 'Increase your M€, steel and titanium production 1 step.',
       },
     });
   }
   public play(player: Player) {
-    player.addProduction(Resources.MEGACREDITS);
-    player.addProduction(Resources.TITANIUM);
-    player.addProduction(Resources.STEEL);
+    player.addProduction(Resources.MEGACREDITS, 1);
+    player.addProduction(Resources.TITANIUM, 1);
+    player.addProduction(Resources.STEEL, 1);
     return undefined;
   }
 }

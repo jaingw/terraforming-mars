@@ -9,21 +9,24 @@ import {SelectCard} from './SelectCard';
 
 export class SelectInitialCards extends AndOptions implements PlayerInput {
     public inputType = PlayerInputTypes.SELECT_INITIAL_CARDS;
-    constructor(player: Player, cb: (corporation: CorporationCard) => undefined) {
+    constructor(player: Player, doubleCorp : boolean, cb: (corporation: CorporationCard, corporation2: CorporationCard | undefined) => undefined) {
       super(() => {
-        cb(corporation);
+        cb(corporation, corporation2);
         return undefined;
       });
       let corporation: CorporationCard;
+      let corporation2: CorporationCard;
       this.title = ' ';
       this.buttonLabel = 'Start';
+      const corpNum = doubleCorp? 2:1;
       this.options.push(
         new SelectCard<CorporationCard>(
           'Select corporation', undefined, player.dealtCorporationCards,
           (foundCards: Array<CorporationCard>) => {
             corporation = foundCards[0];
+            corporation2 = foundCards[1];
             return undefined;
-          }, 1, 1, false, undefined, true, false,
+          }, corpNum, corpNum, false, undefined, true, false,
         ),
       );
 

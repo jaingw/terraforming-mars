@@ -22,14 +22,20 @@ export class MedicalLab extends Card implements IProjectCard {
             pb.megacredits(1).slash().building(2).played;
           });
         }),
-        description: 'Increase your MC production 1 step for every 2 Building tags you have, including this.',
+        description: 'Increase your M€ production 1 step for every 2 Building tags you have, including this.',
         victoryPoints: 1,
       },
     });
   }
 
+  public produce(player: Player) {
+    // Include this when the card is first played, and not when it is called by Robotic Workforce.
+    const includeThis = !player.cardIsInEffect(this.name);
+    const tagCount = player.getTagCount(Tags.BUILDING) + (includeThis ? 1 : 0);
+    player.addProduction(Resources.MEGACREDITS, Math.floor(tagCount / 2));
+  }
   public play(player: Player) {
-    player.addProduction(Resources.MEGACREDITS, Math.floor((player.getTagCount(Tags.BUILDING) + 1) / 2));
+    this.produce(player);
     return undefined;
   }
   public getVictoryPoints() {

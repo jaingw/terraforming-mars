@@ -1,12 +1,10 @@
 import {CardType} from '../CardType';
 import {Player} from '../../Player';
-import {ResourceType} from '../../ResourceType';
 import {CardName} from '../../CardName';
 import {Resources} from '../../Resources';
-import {LogHelper} from '../../LogHelper';
 import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
-import {CardRenderItemSize} from '../render/CardRenderItemSize';
+import {Size} from '../render/Size';
 import {Card} from '../Card';
 
 
@@ -20,21 +18,17 @@ export class AerosportTournament extends Card {
       requirements: CardRequirements.builder((b) => b.floaters(5)),
       metadata: {
         cardNumber: '214',
-        description: 'Requires that you have 5 Floaters. Gain 1 MC per each City tile in play.',
+        description: 'Requires that you have 5 Floaters. Gain 1 M€ per each City tile in play.',
         renderData: CardRenderer.builder((b) => {
-          b.megacredits(1).slash().city(CardRenderItemSize.SMALL).any;
+          b.megacredits(1).slash().city(Size.SMALL).any;
         }),
         victoryPoints: 1,
       },
     });
   };
-  public canPlay(player: Player): boolean {
-    return player.getResourceCount(ResourceType.FLOATER) >= 5;
-  }
+
   public play(player: Player) {
-    const amount = player.game.getCitiesInPlay();
-    player.megaCredits += amount;
-    LogHelper.logGainStandardResource(player, Resources.MEGACREDITS, amount);
+    player.addResource(Resources.MEGACREDITS, player.game.getCitiesInPlay(), {log: true});
     return undefined;
   }
 

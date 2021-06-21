@@ -16,24 +16,25 @@ export class MagneticShield extends Card implements IProjectCard {
       cardType: CardType.AUTOMATED,
       name: CardName.MAGNETIC_SHIELD,
       tags: [Tags.SPACE],
-      cost: 26,
+      cost: 24,
 
-      requirements: CardRequirements.builder((b) => b.tag(Tags.ENERGY, 2)),
+      requirements: CardRequirements.builder((b) => b.tag(Tags.ENERGY, 3)),
       metadata: {
-        cardNumber: 'X20',
+        cardNumber: 'X24',
         renderData: CardRenderer.builder((b) => b.tr(4).digit),
-        description: 'Requires 2 power tags. Raise your TR 4 steps.',
+        description: 'Requires 3 power tags. Raise your TR 4 steps.',
       },
     });
   }
 
   public canPlay(player: Player): boolean {
-    const hasEnergyTags = player.getTagCount(Tags.ENERGY) >= 2;
-    if (PartyHooks.shouldApplyPolicy(player.game, PartyName.REDS)) {
-      return player.canAfford(player.getCardCost(this) + REDS_RULING_POLICY_COST * 4, false, true) && hasEnergyTags;
+    if (!super.canPlay(player)) {
+      return false;
     }
-
-    return hasEnergyTags;
+    if (PartyHooks.shouldApplyPolicy(player.game, PartyName.REDS)) {
+      return player.canAfford(player.getCardCost(this) + REDS_RULING_POLICY_COST * 4, {titanium: true});
+    }
+    return true;
   }
 
   public play(player: Player) {

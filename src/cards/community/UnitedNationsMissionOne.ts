@@ -18,13 +18,13 @@ export class UnitedNationsMissionOne extends Card implements CorporationCard {
 
       metadata: {
         cardNumber: 'R50',
-        description: 'You start with 39 MC. Increase your TR 1 step.',
+        description: 'You start with 39 M€. Increase your TR 1 step.',
         renderData: CardRenderer.builder((b) => {
           b.br.br.br;
           b.megacredits(39).nbsp.tr(1);
           b.corpBox('effect', (ce) => {
             ce.vSpace();
-            ce.effect('When any player takes an action or plays a card that increases TR, including this, gain 1 MC for each step.', (eb) => {
+            ce.effect('When any player takes an action or plays a card that increases TR, including this, gain 1 M€ for each step.', (eb) => {
               eb.tr(1).any.startEffect.megacredits(1);
             });
           });
@@ -35,6 +35,7 @@ export class UnitedNationsMissionOne extends Card implements CorporationCard {
 
   public play(player: Player) {
     player.game.unitedNationsMissionOneOwner = player.id;
+    player.increaseTerraformRating();
     return undefined;
   }
 

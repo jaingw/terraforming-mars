@@ -1,68 +1,68 @@
 {
-    "You start with 32 MC.":"起始拥有32MC",
-    "Effect: When you play a card, gain 2 MC for each tag on that card that you already have.":"你打出一张牌时，这张牌的每一个标志，如果你之前获得过，你得到2MC",
-    "You start with 10 titanium and 23 MC.As your first action, draw 2 space cards.":"起始拥有23MC和10个钛合金，作为你的第一个行动，抽取2张带有空间标志的卡牌",
+    "You start with 32 M€.":"起始拥有32M€",
+    "Effect: When you play a card, gain 2 M€ for each tag on that card that you already have.":"你打出一张牌时，这张牌的每一个标志，如果你之前获得过，你得到2M€",
+    "You start with 10 titanium and 23 M€.As your first action, draw 2 space cards.":"起始拥有23M€和10个钛合金，作为你的第一个行动，抽取2张带有空间标志的卡牌",
 
-    "Effect: Your temperature, oxygen and ocean requirements are +3 or -3 steps, your choice in each case.":"效果：你出牌时享受全球参数+3格或-3格修正",
+    "Effect: Your temperature, oxygen, ocean, and Venus requirements are +3 or -3 steps, your choice in each case.":"效果：你出牌时享受全球参数+3格或-3格修正",
 
-    "You start with 2 energy production and 44 MC.":"起始拥有2电力产量和44MC",
+    "You start with 2 energy production and 44 M€.":"起始拥有2电力产量和44M€",
 
-    "You start with 3 heat production and 48 MC.":"起始拥有3点热产量和48MC",
+    "You start with 3 heat production and 48 M€.":"起始拥有3点热产量和48M€",
 
-    "You start with 55 MC. As your first action, draw 1 earth tag card.":"起始拥有55MC，作为第一个行动，抽取1张带有地球标志的卡牌",
+    "You start with 55 M€. As your first action, draw 1 earth tag card.":"起始拥有55M€，作为第一个行动，抽取1张带有地球标志的卡牌",
 
-    "Effect: You may pay 7 plants to place greenery. When play a plant tag card, gain 2 MC.":"可以用7个植物资源放置绿化版块，当你打出1个植物标志时，包括本卡，得到2MC",
+    "Effect: You may pay 7 plants to place greenery. When play a plant tag card, gain 2 M€.":"可以用7个植物资源放置绿化版块，当你打出1个植物标志时，包括本卡，得到2M€",
 
     "Effect: Whenever Venus is terraformed 1 step, you gain 2 plant.":"每当金星改造度提升一格，你获得2点植物资源。",
 
-    "You start with 40 MC. As your first action, raise Venus Scale 2 steps.":"起始拥有40MC，作为第一个行动，提升金星改造度2格。",
+    "You start with 40 M€. As your first action, raise Venus Scale 2 steps.":"起始拥有40M€，作为第一个行动，提升金星改造度2格。",
 
-    "You start with 45 MC. Increase your steel production 1 step.":"起手拥有45MC以及1点钢铁产量",
+    "You start with 45 M€. Increase your steel production 1 step.":"起手拥有45M€以及1点钢铁产量",
 
     "Effect: Each time you get steel/titanium as placement bonus, increase 1 steel prod.You can use 4 steel to trade.You can use steel to pay for city standard project.":"当你从版块放置奖励中得到钢铁/钛时，提升1点钢铁产量。你可以使用4个钢铁进行贸易。可以使用钢铁支付标准行动-建造城市",
 
-    "You start with 38 MC and 1 steel production. As your first action, add 2 mocrobed to this card":"起始拥有38MC及1点钢铁产量，作为第一个行动，增加2个微生物到本牌上",
+    "You start with 38 M€ and 1 steel production. As your first action, add 2 mocrobed to this card":"起始拥有38M€及1点钢铁产量，作为第一个行动，增加2个微生物到本牌上",
 
-    "Action: Spend 2 MC to increase (one of) your LOWEST PRODUCTION 1 step.":"行动：花2MC提升最低的1种产量1格",
+    "Action: Spend 2 M€ to increase (one of) your LOWEST PRODUCTION 1 step.":"行动：花2M€提升最低的1种产量1格",
 
-    "You start with 44 MC. As your first action, reveal cards until you have revealed 2 microbe tag. Take these cards into hand and discard the rest.":"起始拥有44MC，作为第一个行动，抽取2张带有微生物标志的卡牌",
+    "You start with 44 M€. As your first action, reveal cards until you have revealed 2 microbe tag. Take these cards into hand and discard the rest.":"起始拥有44M€，作为第一个行动，抽取2张带有微生物标志的卡牌",
 
-    "You start with 20 MC. Lower your TR 1 step.":"起始拥有20MC，-1改造度",
+    "You start with 20 M€. Lower your TR 1 step.":"起始拥有20M€，-1改造度",
 
-    "Action: If your TR was raised this generation, you may pay 5 MC to raise 1 step. When you raise TR in generation, gain 2 MC":"行动：如果本回合你提升过改造度，你可以花5MC提升1改造度。当你提升改造度时，得到2MC",
+    "Action: If your TR was raised this generation, you may pay 5 M€ to raise 1 step. When you raise TR in generation, gain 2 M€":"行动：如果本回合你提升过改造度，你可以花5M€提升1改造度。当你提升改造度时，得到2M€",
 
-    "You start with 37 MC. As your first action, draw 4 Prelude cards, and play one of them. Discard the other three.":"你起始拥有37MC，作为游戏中的你的第一个行动，你必须抽四张前序卡，打出其中一张，然后弃掉剩余三张。",
+    "You start with 37 M€. As your first action, draw 4 Prelude cards, and play one of them. Discard the other three.":"你起始拥有37M€，作为游戏中的你的第一个行动，你必须抽四张前序卡，打出其中一张，然后弃掉剩余三张。",
 
-    "Action: Add a floater to ANY card. When you gain a floater to ANY CARD, gain 1 MC. 1 VP per 3 floaters on this card.":"行动：放置云资源到任意卡牌上。每当你得到1个云资源，获得1MC，本卡上每3个云资源为你提供1VP，",
+    "Effect: When you gain a floater to ANY CARD, gain 1 M€. 1 VP per 3 floaters on this card":"效果:每当你得到1个云资源，获得1M€，本卡上每3个云资源为你提供1VP",
 
-    "You start with 42 MC. As your first action, draw 2 floater-icon cards.":"起始拥有42MC，作为第一个行动，抽取2张带有云资源图标的卡",
+    "You start with 42 M€. As your first action, draw 2 floater-icon cards.":"起始拥有42M€，作为第一个行动，抽取2张带有云资源图标的卡",
 
-    "Effect: When you play an animal or plant tag, including this, add 1 animal to this card. When you gain an animal to ANY CARD, gain 1 MC.":"每打出1个动物标志或植物标志，包括本卡，增加1动物资源到本卡上。每当你得到1个动物资源时，获得1MC",
+    "Effect: When you play an animal or plant tag, including this, add 1 animal to this card. When you gain an animal to ANY CARD, gain 1 M€.":"每打出1个动物标志或植物标志，包括本卡，增加1动物资源到本卡上。每当你得到1个动物资源时，获得1M€",
 
-    "Action: Add a floater to ANY card.Effect: Floaters on this card may be used as 2 heat each.":"行动：放置云资源到任意卡牌上。本卡上的云资源可以当做2点热能使用",
 
-    "Action:If your TR was raised this generation, you may pay 5 MC to raise 1 step. When you raise TR in generation, gain 2 MC.":"行动：如果本时代你提升过改造度，则可以花费5MC额外提升1格。效果：你每在时代内提升了1格改造度，获得2MC。",
+    "Action:If your TR was raised this generation, you may pay 5 M€ to raise 1 step. When you raise TR in generation, gain 2 M€.":"行动：如果本时代你提升过改造度，则可以花费5M€额外提升1格。效果：你每在时代内提升了1格改造度，获得2M€。",
 
-    "Effect: Your Venus requirements are +/- 2 steps, your choice in each case. Once per game, increase your MC production 1 step for each Venus tag you have.":"效果:你打出的牌中,受到金星改造度条件限制时 +/- 2格。一局游戏限一次，你每有一个金星标志，获得1点MC产能。",
+    "Effect: Your Venus requirements are +/- 2 steps, your choice in each case. Once per game, increase your M€ production 1 step for each Venus tag you have.":"效果:你打出的牌中,受到金星改造度条件限制时 +/- 2格。一局游戏限一次，你每有一个金星标志，获得1点M€产能。",
 
     "Effect: Each time you get steel/titanium as placement bonus, increase 1 steel prod.You can use 4 steel to trade or pay for city standard project.":"效果:每当你因放置一个版块而获得钢铁资源或钛合金资源时,提升你的钢铁产能1级；你可以使用4铁贸易；你可以使用铁标动城市。",
 
-    "You start with 40 MC and 10 steel. AS YOUR FIRST ACTION, PLACE A COMMUNITY [PLAYER MARKER] ON A NON-RESERVED AREA.":"起始拥有40MC和10个钢铁。作为你的第一个行动，你可以放置一个社区（你的玩家标记）到一个非保留区。",
+    "You start with 40 M€ and 10 steel. AS YOUR FIRST ACTION, PLACE A COMMUNITY [PLAYER MARKER] ON A NON-RESERVED AREA.":"起始拥有40M€和10个钢铁。作为你的第一个行动，你可以放置一个社区（你的玩家标记）到一个非保留区。",
 
-    "Effect: marked areas are reserved for you. when you place a tile there, gain 3 MC. When you place a tile, gain 1 MC for each tiles you own adjacent to it":"效果：只有你能在拥有你的玩家标记的位置放置版块，当你如此做后，获得3MC；当你放置版块时，你的每个与之相邻的版块为你提供1MC。",
+    "Effect: marked areas are reserved for you. when you place a tile there, gain 3 M€. When you place a tile, gain 1 M€ for each tiles you own adjacent to it":"效果：只有你能在拥有你的玩家标记的位置放置版块，当你如此做后，获得3M€；当你放置版块时，你的每个与之相邻的版块为你提供1M€。",
     "Action: place a community on a non-reserved area adjacent to one of your tiles or marked areas.":"行动：将一个玩家标记放置在非保留区，需要和你的版块或者玩家标记相邻。",
 
-    "Effect: Buying cards to hand costs 1MC. You can draw 5 cards in research phase (keep 2 in first turn if drafting)":"效果:购买卡牌到手牌的价格变为1MC。研究阶段，你可以抽取5张手牌而非4张，如果是轮抽模式则在第一轮轮抽选择保留2张。",
+    "Effect: Buying cards to hand costs 1M€. You can draw 5 cards in research phase (keep 2 in first turn if drafting)":"效果:购买卡牌到手牌的价格变为1M€。研究阶段，你可以抽取5张手牌而非4张，如果是轮抽模式则在第一轮轮抽选择保留2张。",
 
-    "Effect: When any city tile is placed, increase your MC production 1 step. When you place a city tile, gain 3 MC.":"效果:每当一个城市版块被放置,提升你的MC产能1级。每当你放置一个城市版块,获得3MC。",
+    "Effect: When any city tile is placed, increase your M€ production 1 step. When you place a city tile, gain 3 M€.":"效果:每当一个城市版块被放置,提升你的M€产能1级。每当你放置一个城市版块,获得3M€。",
 
-    "Effect: When you buy a card to hand, pay 5MC instead of 3, including the starting hand. When you sell patent, you gain 3 instead of 1.":"效果:当你购买手牌时,你需要支付5MC而非原本的3MC,包括起始的手牌。当你贩卖专利时，每张卡牌价值3MC而非1MC。",
+    "Effect: When you buy a card to hand, pay 5M€ instead of 3, including the starting hand. When you sell patent, you gain 3 instead of 1.":"效果:当你购买手牌时,你需要支付5M€而非原本的3M€,包括起始的手牌。当你贩卖专利时，每张卡牌价值3M€而非1M€。",
 
-    "Effect: Your tags on event work the same as green or blue card. Event tag is a new tag for you. Each time you play an event, you gain 3 MC.":"效果:每次你打出事件卡时,获得3MC。你事件卡上的标志同样加入标志数量计算。事件标志对于你而言是一种新的标志类型。",
+    "You start with 50 M€":"起始拥有50M€",
+    "Effect: Your tags on event work the same as green or blue card. Event tag is a new tag for you. Each time you play an event, you gain 3 M€.":"效果:每次你打出事件卡时,获得3M€。你事件卡上的标志同样加入标志数量计算。事件标志对于你而言是一种新的标志类型。",
 
-    "Effect: You may use heat as MC. You may not use MC as heat. Any player increase Temperature, that player gain 1 heat.":"效果：你可以用热能资源代替MC使用,但不用用MC代替热能资源使用。每当有玩家提升1格温度，该玩家获得1热能资源。",
+    "Effect: You may use heat as M€. You may not use M€ as heat. Any player increase Temperature, that player gain 1 heat.":"效果：你可以用热能资源代替M€使用,但不用用M€代替热能资源使用。每当有玩家提升1格温度，该玩家获得1热能资源。",
 
-    "Action: Spend 3 MC to increase (one of) your LOWEST production 1 step.And you will product this resource immediately(MC production ignore TR).":"行动：花费3MC提升你最低（或最低之一）的产能1点。然后立即生产该资源一次（MC生产忽略改造度）。"
+    "Action: Spend 3 M€ to increase (one of) your LOWEST production 1 step.And you will product this resource immediately(M€ production ignore TR).":"行动：花费3M€提升你最低（或最低之一）的产能1点。然后立即生产该资源一次（M€生产忽略改造度）。"
 
 
 

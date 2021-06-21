@@ -3,11 +3,13 @@ import * as http from 'http';
 import * as querystring from 'querystring';
 import {User} from './User';
 import {Database} from './database/Database';
+import {getDate, getDay} from './UserUtil';
 import {GameLoader} from './database/GameLoader';
 import {generateRandomId} from './UserUtil';
 import {Server} from './models/ServerModel';
+import {PlayerBlockModel} from './models/PlayerModel';
 
-const colorNames = ['Blue', 'Red', 'Yellow', 'Green', 'Black', 'Purple', 'You'];
+const colorNames = ['Blue', 'Red', 'Yellow', 'Green', 'Black', 'Purple', 'You', 'blue', 'red', 'yellow', 'green', 'black', 'purple', 'you'];
 
 function notFound(req: http.IncomingMessage, res: http.ServerResponse): void {
   if ( ! process.argv.includes('hide-not-found-warnings')) {
@@ -152,8 +154,8 @@ export function login(req: http.IncomingMessage, res: http.ServerResponse): void
       const userReq = JSON.parse(body);
       const userName: string = userReq.userName.trim().toLowerCase();
       const password: string = userReq.password.trim().toLowerCase();
-      if (userName === undefined || userName.length <= 1) {
-        throw new Error('UserName must not be empty and  be longer than 1');
+      if (userName === undefined || userName.length === 0) {
+        throw new Error('UserName must not be empty ');
       }
       const user = GameLoader.getInstance().userNameMap.get(userName);
       if (user === undefined) {
@@ -198,6 +200,7 @@ export function register(req: http.IncomingMessage, res: http.ServerResponse): v
       }
       Database.getInstance().saveUser(userId, userName, password, '{}');
       const user: User = new User(userName, password, userId);
+      user.createtime = getDay();
       GameLoader.getInstance().userNameMap.set(userName, user);
       GameLoader.getInstance().userIdMap.set(userId, user);
       res.setHeader('Content-Type', 'application/json');
@@ -229,7 +232,7 @@ export function isvip(req: http.IncomingMessage, res: http.ServerResponse): void
     notFound(req, res);
     return;
   }
-
+  user.accessDate = getDate();
   try {
     res.setHeader('Content-Type', 'application/json');
     if ( user.isvip()) {
@@ -267,7 +270,7 @@ export function resign(req: http.IncomingMessage, res: http.ServerResponse): voi
         notFound(req, res);
         return;
       }
-      const userPlayer = GameLoader.getInstance().userNameMap.get(player.name);
+      const userPlayer = GameLoader.getUserByPlayer(player);
       const user = GameLoader.getInstance().userIdMap.get(userId);
       if (user === undefined || !user.isvip()) {
         notFound(req, res);
@@ -279,7 +282,12 @@ export function resign(req: http.IncomingMessage, res: http.ServerResponse): voi
       }
       game.exitPlayer(player);
       res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify(Server.getPlayerModel(player, false)));
+      const playerBlockModel : PlayerBlockModel ={
+        block: false,
+        isme: true,
+        showhandcards: user.showhandcards,
+      };
+      res.end(JSON.stringify(Server.getPlayerModel(player, playerBlockModel)));
     } catch (err) {
       console.warn('error resign', err);
       console.warn('error resign:', body);
@@ -289,3 +297,5 @@ export function resign(req: http.IncomingMessage, res: http.ServerResponse): voi
     }
   });
 }
+
+

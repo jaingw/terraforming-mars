@@ -26,27 +26,25 @@ export class PROffice extends Card implements IProjectCard {
           b.tr(1).br;
           b.megacredits(1).slash().earth().played;
         }),
-        description: 'Requires that Unity are ruling or that you have 2 delegates there. Gain 1 TR. Gain 1 MC for each Earth tag you have, including this.',
+        description: 'Requires that Unity are ruling or that you have 2 delegates there. Gain 1 TR. Gain 1 M€ for each Earth tag you have, including this.',
       },
     });
   }
 
   public canPlay(player: Player): boolean {
-    if (player.game.turmoil !== undefined) {
-      const meetsPartyRequirements = player.game.turmoil.canPlay(player, PartyName.UNITY);
-      if (PartyHooks.shouldApplyPolicy(player.game, PartyName.REDS)) {
-        return player.canAfford(player.getCardCost(this) + REDS_RULING_POLICY_COST) && meetsPartyRequirements;
-      }
-
-      return meetsPartyRequirements;
+    if (!super.canPlay(player)) {
+      return false;
     }
-    return false;
+    if (PartyHooks.shouldApplyPolicy(player.game, PartyName.REDS)) {
+      return player.canAfford(player.getCardCost(this) + REDS_RULING_POLICY_COST);
+    }
+    return true;
   }
 
   public play(player: Player) {
     player.increaseTerraformRating();
     const amount = player.getTagCount(Tags.EARTH) + 1;
-    player.setResource(Resources.MEGACREDITS, amount);
+    player.addResource(Resources.MEGACREDITS, amount);
     return undefined;
   }
 }

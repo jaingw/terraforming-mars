@@ -3,13 +3,13 @@ import Vue from 'vue';
 import {ICard} from '../../cards/ICard';
 import {HTML_DATA} from '../../HTML_data';
 import {CardModel} from '../../models/CardModel';
-import {CardTitle} from './CardTitle';
+import CardTitle from './CardTitle.vue';
 import {CardNumber} from './CardNumber';
 import {CardResourceCounter} from './CardResourceCounter';
-import {CardCost} from './CardCost';
+import CardCost from './CardCost.vue';
 import {CardExtraContent} from './CardExtraContent';
 import {CardExpansion} from './CardExpansion';
-import {CardTags} from './CardTags';
+import CardTags from './CardTags.vue';
 import {CardType} from '../../cards/CardType';
 import {CardContent} from './CardContent';
 import {CardMetadata} from '../../cards/CardMetadata';
@@ -19,6 +19,8 @@ import {GameModule} from '../../GameModule';
 import {CardRequirements} from '../../cards/CardRequirements';
 import {PreferencesManager} from '../PreferencesManager';
 import {OwnerModel} from '../../components/SelectCard';
+import {CardName} from '../../CardName';
+import {WGParternship} from '../../cards/eros/corp/WGParternship';
 
 
 function getCardContent(cardName: string): string {
@@ -54,6 +56,15 @@ export const Card = Vue.component('card', {
     let cardInstance: ICard | undefined;
     const cardName = this.card.name;
     let expansion: GameModule | undefined;
+
+
+    if (name === CardName.WG_PARTERNSHIP ) {
+      cardInstance = new WGParternship;
+      return {
+        cardInstance,
+        expansion,
+      };
+    }
     for (const manifest of ALL_CARD_MANIFESTS) {
       const decks = [
         manifest.corporationCards,
@@ -133,7 +144,7 @@ export const Card = Vue.component('card', {
       if (this.isStandardProject()) {
         classes.push('card-standard-project');
       }
-      const learnerModeOff = PreferencesManager.loadValue('learner_mode') === '0';
+      const learnerModeOff = PreferencesManager.load('learner_mode') === '0';
       if (learnerModeOff && this.isStandardProject() && card.isDisabled) {
         classes.push('card-hide');
       }

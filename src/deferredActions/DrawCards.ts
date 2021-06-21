@@ -58,7 +58,9 @@ export class DrawCards<T extends undefined | SelectCard<IProjectCard>> implement
     if (logType === LogType.DREW_VERBOSE) {
       LogHelper.logDrawnCards(player, cards);
     } else {
-      LogHelper.logCardChange(player, logType, cards.length);
+      player.game.log('${0} ${1} ${2} card(s)', (b) => b.player(player).string(logType).number(cards.length));
+      // 什么智障 买牌居然在日志中显示卡牌名称
+      // LogHelper.logDrawnCards(player, cards, /* privateMessage */ true);
     }
     return undefined;
   }

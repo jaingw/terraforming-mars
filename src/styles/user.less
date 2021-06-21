@@ -37,7 +37,7 @@
 }
 .donate-screen-links{
     margin: 0 auto;
-    width: 630px;
+    width: 695px;
 }
 #mc {
     background: #222;
@@ -69,14 +69,14 @@
     }
 }
 
-.preferences_icon--donate{
+.sidebar_icon--donate{
     background-image: url(assets/preferences_donate.png);
     .deck-size {
         margin: 33px 0 0 0;
     }
 }
 
-.preferences_icon--resign {
+.sidebar_icon--resign {
     background-image: url(assets/preferences_resign.png);
     .deck-size {
         margin: 33px 0 0 0;
@@ -140,6 +140,41 @@ player_home.css
 }
 
 /**
+players_overview.css 双公司名称显示调整
+*/
+.players-overview{
+    .player-info-top{
+        display: flex;
+        margin: 10px 0 -10px 0;
+    }
+    .player-info-dcorp {
+        border-radius: 0 8px 8px 8px;
+    }
+    .player-corp-left{
+        font-size: 18px;
+        padding: 0px 18px;
+        margin-right: 6px;
+        line-height: 32px;
+        border-radius: 8px 0px 0px 0px;
+        height: 32px;
+        color: #ccc;
+        font-family: 'Prototype';
+    }
+    
+    .player-corp-right{
+        font-size: 18px;
+        padding: 0px 18px;
+        margin-right: 6px;
+        line-height: 32px;
+        border-radius: 0px  8px 0px 0px;
+        height: 32px;
+        color: #ccc;
+        font-family: 'Prototype';
+    }
+}
+
+
+/**
 创建游戏界面的label框禁用
 */
 .create-game-page-column label.forbidden{
@@ -161,7 +196,30 @@ game home 玩家名字
     font-weight: bold;
     margin: 0px 12px;
 }
-
+.player-info-name{
+    .icon_vip1{
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        box-shadow: 0 0 4px rgba(0,0,0,0.3);
+        vertical-align: -2px;
+        display: inline-block;
+        background-image: url(assets/qrcode/vip_icon.png);
+        background-repeat: no-repeat;
+        background-position: 0px -0px;
+    }
+    .icon_vip2{
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        box-shadow: 0 0 4px rgba(0,0,0,0.3);
+        vertical-align: -2px;
+        display: inline-block;
+        background-image: url(assets/qrcode/vip_icon.png);
+        background-repeat: no-repeat;
+        background-position: 0px -25px;
+    }
+}
 
 
 
@@ -239,4 +297,11 @@ qrcode
     background-size: 100%;
     left: 80px;
     top: 6px;
+}
+
+/** 帮助指引 */
+.help-img{
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

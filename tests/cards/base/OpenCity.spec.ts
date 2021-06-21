@@ -1,12 +1,12 @@
 import {expect} from 'chai';
 import {OpenCity} from '../../../src/cards/base/OpenCity';
 import {Game} from '../../../src/Game';
-import {Player} from '../../../src/Player';
+import {TestPlayer} from '../../TestPlayer';
 import {Resources} from '../../../src/Resources';
 import {TestPlayers} from '../../TestPlayers';
 
 describe('OpenCity', function() {
-  let card : OpenCity; let player : Player; let game : Game;
+  let card : OpenCity; let player : TestPlayer; let game : Game;
 
   beforeEach(function() {
     card = new OpenCity();
@@ -20,13 +20,13 @@ describe('OpenCity', function() {
   });
 
   it('Can\'t play if oxygen level too low', function() {
-    player.addProduction(Resources.ENERGY);
+    player.addProduction(Resources.ENERGY, 1);
     (game as any).oxygenLevel = 11;
     expect(card.canPlay(player)).is.not.true;
   });
 
   it('Should play', function() {
-    player.addProduction(Resources.ENERGY);
+    player.addProduction(Resources.ENERGY, 1);
     (game as any).oxygenLevel = 12;
     expect(card.canPlay(player)).is.true;
 

@@ -28,12 +28,10 @@ export class GreatEscarpmentConsortium extends Card implements IProjectCard {
       },
     });
   }
-  public canPlay(player: Player): boolean {
-    return player.getProduction(Resources.STEEL) >= 1;
-  }
+
   public play(player: Player) {
     player.game.defer(new DecreaseAnyProduction(player, Resources.STEEL, 1));
-    player.addProduction(Resources.STEEL);
+    player.addProduction(Resources.STEEL, 1);
     return undefined;
   }
 }

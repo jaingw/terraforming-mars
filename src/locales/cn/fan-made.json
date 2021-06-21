@@ -1,79 +1,77 @@
 {
-  "You start with 1 plant production, 1 MC production and 40 MC.":"起始1点植物产量、1MC产量和40MC",
+  "You start with 1 plant production, 1 M€ production and 40 M€.":"起始1点植物产量、1M€产量和40M€",
   "Effect: At game end, score -2 / 0 / 1 / 2 VP PER TAG TYPE for 0 / 1-2 / 3-4 / 5+ tags.":"效果：终局计分时，若你拥有每种标志0/1-2/3-4/5+个，得到-2/0/1/2 VP",
 
-  "Action: Flip and discard a played blue card to convert any VP on it into TR and draw 2 cards, or spend 3 MC to draw a blue card.":"行动：翻面并弃掉一张已打出的蓝色卡牌，将卡牌上的分数转化为改造度并抽2张牌，或者花3MC抽取一张蓝色卡牌",
+  "Action: Flip and discard a played blue card to convert any VP on it into TR and draw 2 cards, or spend 3 M€ to draw a blue card.":"行动：翻面并弃掉一张已打出的蓝色卡牌，将卡牌上的分数转化为改造度并抽2张牌，或者花3M€抽取一张蓝色卡牌",
  
-  "You start with 32 MC. As your first action, place two delegates in one party.":"起始拥有32MC，作为第一个行动，放置2个代表到1个党派上",
-  "Effect: You have +1 influence. When you send a delegate using the lobbying action, you pay 2 MC less for it":"影响力始终+1,当你从储备区派遣代表时，少支付2MC",
+  "You start with 32 M€. As your first action, place two delegates in one party.":"起始拥有32M€，作为第一个行动，放置2个代表到1个党派上",
+  "Effect: You have +1 influence. When you send a delegate using the lobbying action, you pay 2 M€ less for it":"影响力始终+1,当你从储备区派遣代表时，少支付2M€",
 
-  "Action: Replay a played event from any player by paying its cost ONLY in MC (discounts and rebates apply), then REMOVE IT FROM PLAY":"行动：仅适用MC支付费用来重复一个任意玩家已经打出的事件效果（适用减费与回钱），然后将其从游戏中移除",
+  "Action: Replay a played event from any player by paying its cost ONLY in M€ (discounts and rebates apply), then REMOVE IT FROM PLAY":"行动：仅适用M€支付费用来重复一个任意玩家已经打出的事件效果（适用减费与回钱），然后将其从游戏中移除",
   
-  "You start with 38 MC and 1 Energy production.":"起始拥有38MC和1点电力产量",
+  "You start with 38 M€ and 1 Energy production.":"起始拥有38M€和1点电力产量",
 
 
-  "Action: If you have exactly 0 MC, gain 10 MC":"行动：如果你的MC为0，获得10MC",
-  "You start with 33 MC":"起始获得33MC",
+  "Action: If you have exactly 0 M€, gain 10 M€":"行动：如果你的M€为0，获得10M€",
+  "You start with 33 M€":"起始获得33M€",
 
   "Action: Increase or decrease any colony tile track 1 step, or spend 1 fighter resource on this card to trade for free":"行动：增加/减少任意殖民地轨道标记一格，或花费一个此卡上的飞行器资源来免费贸易一次",
-  "You start with 35 MC and 1 extra trade fleet. Add 3 fighter resources to this card":"起始获得35MC和一个贸易飞船。增加3个飞行器资源到这张卡上。",
+  "You start with 35 M€ and 1 extra trade fleet. Add 3 fighter resources to this card":"起始获得35M€和一个贸易飞船。增加3个飞行器资源到这张卡上。",
 
-  "Action: Increase your MC production 1 step if your heat production was raised 1 step this generation, or 2 steps if it was raised more than 1 step this generation":"行动：如果本时代你的热能产量增加了1级，获得1级MC产量；如果热能产量增加了1级以上，则获得2级MC产量",
-  "You start with 45 MC and 5 heat":"起始获得45MC和5点热能",
+  "Action: Increase your M€ production 1 step if your heat production was raised 1 step this generation, or 2 steps if it was raised more than 1 step this generation":"行动：如果本时代你的热能产量增加了1级，获得1级M€产量；如果热能产量增加了1级以上，则获得2级M€产量",
+  "You start with 45 M€ and 5 heat":"起始获得45M€和5点热能",
 
   "ACTION: SHUFFLE THE DISCARD PILE, THEN DRAW 3 CARDS FROM IT. KEEP 1 AND DISCARD THE OTHER 2":"行动：随机抽取弃牌堆中的3张卡，保留其中的1张，弃掉其余2张",
-  "You start with 40 MC. As your first action, discard the top 3 cards of the deck":"起始获得40MC。第一个行动时弃掉牌堆顶的3张卡。",
+  "You start with 40 M€. As your first action, discard the top 3 cards of the deck":"起始获得40M€。第一个行动时弃掉牌堆顶的3张卡。",
 
   "MAX 8 AT GEN END":"时代结束时最多8张",
-  "Effect: Standard Projects cost 4 MC less. At generation end, discard down to 8 cards":"效果：标准行动减少4MC。时代结束时，至多保留8张牌。",
-  "You start with 55 MC":"起始获得55MC",
+  "Effect: Standard Projects cost 4 M€ less. At generation end, discard down to 8 cards":"效果：标准行动减少4M€。时代结束时，至多保留8张牌。",
+  "You start with 55 M€":"起始获得55M€",
 
-  "You start with 120 MC. Lower your TR 7 steps":"起始获得120MC，降低7点改造度",
+  "You start with 120 M€. Lower your TR 7 steps":"起始获得120M€，降低7点改造度",
 
   "replay":"replay",
 
   "flip":"flip",
 
-  "You start with 39 MC, 1 steel and 1 titanium. As your first action, draw a blue card":"起始获得39MC，一个铁和一个钛。第一个行动时抽一张蓝色牌。",
+  "You start with 39 M€, 1 steel and 1 titanium. As your first action, draw a blue card":"起始获得39M€，一个铁和一个钛。第一个行动时抽一张蓝色牌。",
 
-  "Effect: When any player takes an action or plays a card that increases TR, including this, gain 1 MC for each step":"效果：每当有玩家打出一张卡或进行行动增加改造度时（包括这张卡），每一点改造度获得一点MC。",
-  "You start with 39 MC. Increase your TR 1 step":"起始获得39MC。增加一点改造度。",
+  "Effect: When any player takes an action or plays a card that increases TR, including this, gain 1 M€ for each step":"效果：每当有玩家打出一张卡或进行行动增加改造度时（包括这张卡），每一点改造度获得一点M€。",
+  "You start with 39 M€. Increase your TR 1 step":"起始获得39M€。增加一点改造度。",
 
   "Accumulated Knowledge":"积累知识",
   "Draw 4 cards. You may discard a card to draw a card":"抽四张卡。你可以弃掉一张卡再抽一张卡。",
 
   "Aerospace Mission":"航天任务",
-  "Place 2 colonies. Pay 14 MC":"放置2个殖民地。花费14MC。",
+  "Place 2 colonies. Pay 14 M€":"放置2个殖民地。花费14M€。",
 
   "By-Election":"By-Election",
   "set ruling party":"set ruling party",
   "Set the ruling party to one of your choice. Gain 1 influence":"选择一个政党立即成为执政党并结算执政奖励.获得1影响力",
 
   "Nitrate Reducers":"硝酸盐还原剂",
-  "Draw 2 microbe cards. Increase your MC production 3 steps":"抽2张微生物卡。增加3点MC产量。",
+  "Draw 2 microbe cards. Increase your M€ production 3 steps":"抽2张微生物卡。增加3点M€产量。",
 
   "Political Uprising":"政变",
   "Place 4 delegates. Draw a Turmoil card":"派遣4名议员。抽一张动荡卡",
 
   "Research Grant":"研发资助",
-  "Gain 8 MC":"获得8MC",
+  "Gain 8 M€":"获得8M€",
 
   "Trade Advance":"Trade Advance",
   "Trade all colonies with":"Trade all colonies with",
-  "Gain 2 MC [SOLO: Gain 10 MC]. Immediately trade with all active colonies. You may increase the Colony Tile track 1 step before each of these trades":"获得2MC [SOLO: 获得10MC]. 立即贸易所有已激活的殖民地各一次. 每次贸易之前，你可以提升该殖民地轨道标记一格",
+  "Gain 2 M€ [SOLO: Gain 10 M€]. Immediately trade with all active colonies. You may increase the Colony Tile track 1 step before each of these trades":"获得2M€ [SOLO: 获得10M€]. 立即贸易所有已激活的殖民地各一次，在这些贸易之前，你可以分别选择先提升该殖民地轨道标记一格",
 
   "Valuable Gases":"贵重气体",
-  "Gain 6 MC. Play a Venus card from your hand and add 4 floaters to it":"获得6MC。从手牌中打出一张金星卡，并放置4个云资源。",
+  "Gain 6 M€. Play a Venus card from your hand and add 4 floaters to it":"获得6M€。从手牌中打出一张金星卡，并放置4个云资源。",
 
   "Venus First":"金星优先",
   "Raise Venus 2 steps. Draw 2 Venus cards from the deck":"增加2点金星改造等级。抽两张金星卡",
 
   "Vital Colony":"重点殖民地",
-  "Place a colony. Gain its placement bonus a second time. Pay 5 MC":"放置一个殖民地。再获得一次殖民地上的资源。花费5MC。"
+  "Place a colony. Gain its placement bonus a second time. Pay 5 M€":"放置一个殖民地。再获得一次殖民地上的资源。花费5M€。",
 
-
-
-
-
+  "Effect: When you place a tile on an area that has a RESOURCE placement bonus, or on top of another tile, you may pay 2 M€ to draw a card":"效果：当你在版图上有资源（非卡牌）奖励的位置或者另一个版块之上放置版块时，你可以花2 M€抽一张牌",
+  "You start with 40 M€ and 2 steel production":"起始获得40M€，2点刚铁产量。"
 
 }

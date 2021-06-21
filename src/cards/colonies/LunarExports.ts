@@ -8,8 +8,7 @@ import {OrOptions} from '../../inputs/OrOptions';
 import {SelectOption} from '../../inputs/SelectOption';
 import {Card} from '../Card';
 import {CardRenderer} from '../render/CardRenderer';
-import {CardRenderItemSize} from '../render/CardRenderItemSize';
-import {LogHelper} from '../../LogHelper';
+import {Size} from '../render/Size';
 
 export class LunarExports extends Card implements IProjectCard {
   constructor() {
@@ -23,24 +22,22 @@ export class LunarExports extends Card implements IProjectCard {
         cardNumber: 'C21',
         renderData: CardRenderer.builder((b) => {
           b.production((pb) => {
-            pb.plants(2).or(CardRenderItemSize.SMALL).megacredits(5);
+            pb.plants(2).or(Size.SMALL).megacredits(5);
           });
         }),
-        description: 'Increase your plant production 2 steps, or your MC production 5 steps.',
+        description: 'Increase your plant production 2 steps, or your M€ production 5 steps.',
       },
     });
   }
 
   public play(player: Player) {
     return new OrOptions(
-      new SelectOption('Increase your MC production by 5', 'Increase +MC', () => {
-        player.addProduction(Resources.MEGACREDITS, 5);
-        LogHelper.logGainProduction(player, Resources.MEGACREDITS, 5);
+      new SelectOption('Increase your M€ production by 5', 'Increase +M€', () => {
+        player.addProduction(Resources.MEGACREDITS, 5, {log: true});
         return undefined;
       }),
       new SelectOption('Increase your plant production by 2', 'Increase +plants', () => {
-        player.addProduction(Resources.PLANTS, 2);
-        LogHelper.logGainProduction(player, Resources.PLANTS, 2);
+        player.addProduction(Resources.PLANTS, 2, {log: true});
         return undefined;
       }),
     );

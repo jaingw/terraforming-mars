@@ -7,7 +7,6 @@ import {playerColorClass} from '../../utils/utils';
 import {mainAppSettings} from '../App';
 import {range} from '../../utils/utils';
 import {PlayerMixin} from '../PlayerMixin';
-import {PreferencesManager} from '../PreferencesManager';
 
 const isPinned = (root: any, playerIndex: number): boolean => {
   return (root as any).getVisibilityState('pinned_player_' + playerIndex);
@@ -52,6 +51,9 @@ export const PlayerInfo = Vue.component('player-info', {
       if (this.player.exited) {
         classes.push('player_overview_bg_color_gray');
       }
+      if (this.player.corporationCard2) {
+        classes.push('player-info-dcorp');
+      }
       return classes.join(' ');
     },
     getPlayerStatusAndResClasses: function(): string {
@@ -86,7 +88,7 @@ export const PlayerInfo = Vue.component('player-info', {
       // for active player => scroll to cards UI
       if (this.player.color === this.activePlayer.color) {
         const el: HTMLElement = document.getElementsByClassName(
-          'preferences_icon--cards',
+          'sidebar_icon--cards',
         )[0] as HTMLElement;
         el.click();
 
@@ -101,16 +103,13 @@ export const PlayerInfo = Vue.component('player-info', {
     getAvailableBlueActionCount: function(): number {
       return this.player.availableBlueCardActionCount;
     },
-    isLearnerModeOff: function(): boolean {
-      return PreferencesManager.loadBooleanValue('learner_mode') === false;
-    },
   },
-  template: ` 
+  template: `
       <div :class="getClasses()">
         <div :class="getPlayerStatusAndResClasses()">
         <div class="player-status">
           <div class="player-info-details">
-            <div class="player-info-name">{{ player.name }}</div>
+            <div class="player-info-name">{{ player.name }} <em title="vip" v-if="player.isvip" :class="'icon_vip'+player.isvip" /></div>
             <div class="icon-first-player" v-if="firstForGen && activePlayer.players.length > 1">1st</div>
             <div class="player-info-corp" v-if="player.corporationCard !== undefined" :title="player.corporationCard.name">{{ player.corporationCard.name }}</div>
           </div>
@@ -123,8 +122,8 @@ export const PlayerInfo = Vue.component('player-info', {
                 <div class="played-cards-icon hiding-card-button active"></div>
                 <div class="played-cards-icon hiding-card-button automated"></div>
                 <div class="played-cards-icon hiding-card-button event"></div>
-                <div class="played-cards-count"> 
-                  {{ 
+                <div class="played-cards-count">
+                  {{
                     getNrPlayedCards()
                   }}
                 </div>
@@ -132,7 +131,7 @@ export const PlayerInfo = Vue.component('player-info', {
             </div>
             <Button class="played-cards-button" size="tiny" :onClick="togglePlayerDetails" :title="buttonLabel()" />
           </div>
-          <div v-if="isLearnerModeOff()" class="tag-display player-board-blue-action-counter tooltip tooltip-top" data-tooltip="The number of available active card actions">
+          <div class="tag-display player-board-blue-action-counter tooltip tooltip-top" data-tooltip="The number of available actions on active cards">
             <div class="tag-count tag-action-card">
               <div class="blue-stripe"></div>
               <div class="red-arrow"></div>

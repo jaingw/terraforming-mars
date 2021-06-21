@@ -143,7 +143,7 @@ describe('CardRequirements', function() {
   it('satisfies properly for floaters', function() {
     const requirements = CardRequirements.builder((b) => b.floaters(2));
     const corp = new Celestic();
-    player.corporationCard = corp;
+    player.corpCard = corp;
     corp.action(player);
     expect(requirements.satisfies(player)).eq(false);
     corp.action(player);
@@ -185,7 +185,7 @@ describe('CardRequirements', function() {
   it('satisfies properly for production', function() {
     const requirements = CardRequirements.builder((b) => b.production(Resources.PLANTS));
     expect(requirements.satisfies(player)).eq(false);
-    player.addProduction(Resources.PLANTS);
+    player.addProduction(Resources.PLANTS, 1);
     expect(requirements.satisfies(player)).eq(true);
   });
 

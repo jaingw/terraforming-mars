@@ -18,7 +18,7 @@ describe('Astrodrill', function() {
     Game.newInstance('foobar', [player, redPlayer], player);
 
     card.play();
-    player.corporationCard = card;
+    player.corpCard = card;
   });
 
   it('Starts with 3 asteroid resources', function() {

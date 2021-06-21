@@ -26,7 +26,7 @@ export class ForcedPrecipitation extends Card implements IActionCard, IResourceC
       metadata: {
         cardNumber: '226',
         renderData: CardRenderer.builder((b) => {
-          b.action('Spend 2 MC to add 1 Floater to THIS card.', (eb) => {
+          b.action('Spend 2 M€ to add 1 Floater to THIS card.', (eb) => {
             eb.megacredits(2).startAction.floaters(1).asterix;
           }).br;
           b.or().br;
@@ -77,8 +77,7 @@ export class ForcedPrecipitation extends Card implements IActionCard, IResourceC
 
   private addResource(player: Player) {
     player.game.defer(new SelectHowToPayDeferred(player, 2, {title: 'Select how to pay for action'}));
-    player.addResourceTo(this);
-    LogHelper.logAddResource(player, this);
+    player.addResourceTo(this, {log: true});
     return undefined;
   }
 

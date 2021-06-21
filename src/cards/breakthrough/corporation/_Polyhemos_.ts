@@ -16,18 +16,17 @@ export class _Polyphemos_ implements CorporationCard {
 
     public play(player: Player) {
       player.addProduction(Resources.MEGACREDITS, 5);
-      player.titanium = 5;
-      player.cardCost = 5;
+      player.titanium += 5;
       return undefined;
     }
     public metadata: CardMetadata = {
       cardNumber: 'R11',
-      description: 'You start with 50MC. Increase your MC production 5 steps. Gain 5 titanium.',
+      description: 'You start with 50 M€. Increase your M€ production 5 steps. Gain 5 titanium.',
       renderData: CardRenderer.builder((b) => {
         b.br;
         b.megacredits(50).nbsp.production((pb) => pb.megacredits(5)).nbsp.titanium(5).digit;
         b.corpBox('effect', (ce) => {
-          ce.effect('When you buy a card to hand, pay 5MC instead of 3, including the starting hand. When you sell patent, you gain 3 instead of 1.', (eb) => {
+          ce.effect('When you buy a card to hand, pay 5M€ instead of 3, including the starting hand. When you sell patent, you gain 3 instead of 1.', (eb) => {
             eb.cards(1).asterix().startEffect.megacredits(5).slash().megacredits(3);
           });
         });

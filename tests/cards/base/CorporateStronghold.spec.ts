@@ -2,13 +2,13 @@ import {expect} from 'chai';
 import {CorporateStronghold} from '../../../src/cards/base/CorporateStronghold';
 import {Game} from '../../../src/Game';
 import {SelectSpace} from '../../../src/inputs/SelectSpace';
-import {Player} from '../../../src/Player';
+import {TestPlayer} from '../../TestPlayer';
 import {Resources} from '../../../src/Resources';
 import {TileType} from '../../../src/TileType';
 import {TestPlayers} from '../../TestPlayers';
 
 describe('CorporateStronghold', function() {
-  let card : CorporateStronghold; let player : Player;
+  let card : CorporateStronghold; let player : TestPlayer;
 
   beforeEach(function() {
     card = new CorporateStronghold();
@@ -22,7 +22,7 @@ describe('CorporateStronghold', function() {
   });
 
   it('Should play', function() {
-    player.addProduction(Resources.ENERGY);
+    player.addProduction(Resources.ENERGY, 1);
     expect(card.canPlay(player)).is.true;
 
     const action = card.play(player);

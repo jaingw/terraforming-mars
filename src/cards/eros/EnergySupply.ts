@@ -23,7 +23,7 @@ export class EnergySupply extends Card implements IProjectCard {
     });
   };
   public play(player: Player) {
-    player.setResource(Resources.ENERGY, 3);
+    player.addResource(Resources.ENERGY, 3);
     return undefined;
   }
 }

@@ -1,72 +1,72 @@
 {
-  "You start with 1 titanium production and 42 MC.":"你起始获得42MC和提升钛合金产能1级",
-  "Effect: Each time any Jovian tag is put into play, including this, increase your MC production 1 step.":"效果:每次当有木星标志牌被打出时(包括本牌),提升你的MC产能1级",
-
-  
+  "You start with 1 titanium production and 42 M€.":"你起始获得42M€和提升钛合金产能1级",
+  "Effect: Each time any Jovian tag is put into play, including this, increase your M€ production 1 step.":"效果:每次当有木星标志牌被打出时(包括本牌),提升你的M€产能1级",
 
 
-  "You start with 1 energy production and 48 MC.":"起始获得48MC,提升电力产能1级",
-  "Effect: When playing a power card OR THE STANDARD PROJECT POWER PLANT, you pay 3 MC less for it.":"效果:每当你打出带有电力标志,或执行标准行动中建立发电厂行动时,均可少支付3MC",
 
-  "You start with 60 MC.":"起始获得60MC",
-  "Effect: When playing an Earth card, you pay 3 MC less for it.":"效果:当你打出带有地球标志的牌时,你少支付3MC",
 
-  "You start with 2 plant production, 3 plants, and 36 MC.":"起始获得36MC,提升植物产能2级,获得3个植物资源",
+  "You start with 1 energy production and 48 M€.":"起始获得48M€,提升电力产能1级",
+  "Effect: When playing a power card OR THE STANDARD PROJECT POWER PLANT, you pay 3 M€ less for it.":"效果:每当你打出带有电力标志,或执行标准行动中建立发电厂行动时,均可少支付3M€",
+
+  "You start with 60 M€.":"起始获得60M€",
+  "Effect: When playing an Earth card, you pay 3 M€ less for it.":"效果:当你打出带有地球标志的牌时,你少支付3M€",
+
+  "You start with 2 plant production, 3 plants, and 36 M€.":"起始获得36M€,提升植物产能2级,获得3个植物资源",
   "Effect: You may always pay 7 plants, instead of 8, to place greenery.":"效果:你可以用7个植物资源(而不是8)来放置一个绿化版块",
 
-  "You start with 3 heat production and 42 MC.":"起始获得42MC,提升热能产能3级",
-  "Effect: You may use heat as MC. You may not use MC as heat.":"效果:你可以用热能资源代替MC使用,但不用用MC代替热能资源使用",
+  "You start with 3 heat production and 42 M€.":"起始获得42M€,提升热能产能3级",
+  "Effect: You may use heat as M€. You may not use M€ as heat.":"效果:你可以用热能资源代替M€使用,但不用用M€代替热能资源使用",
 
 
 
 
-  "You start with 30 MC, 5 steel and 1 steel production.":"起始获得30MC,5个钢铁资源,提升钢铁产能1级",
+  "You start with 30 M€, 5 steel and 1 steel production.":"起始获得30M€,5个钢铁资源,提升钢铁产能1级",
   "Effect: Each time you get any steel or titanium as a placement bonus on the map, increase your steel production 1 step.":"效果:每当你因放置一个版块而获得钢铁资源或钛合金资源时,提升你的钢铁产能1级",
 
-  "You start with 40 MC. As your first action in the game,place a city tile.":"起始获得40MC。作为你的第一个行动,放置一个城市版块",
-  "Effect: When any city tile is placed ON MARS, increase your MC production 1 step. When you place a city tile, gain 3 MC.":"效果:每当一个城市版块放置到火星上,提升你的MC产能1级。每当你放置一个城市版块,获得3MC",
+  "You start with 40 M€. As your first action in the game, place a city tile.":"起始获得40 M€。作为你的第一个行动,放置一个城市版块",
+  "Effect: When any city tile is placed ON MARS, increase your M€ production 1 step. When you place a city tile, gain 3 M€.":"效果:每当一个城市版块放置到火星上,提升你的M€产能1级。每当你放置一个城市版块,获得3 M€",
 
 
-  "You start with 1 titanium production, and 38 MC.":"起始获得38MC,提升钛合金产能1级",
-
-  "As your first action in the game, draw 3 cards. Start with 45MC.":"起始获得45MC。作为你的第一个行动,抽3张牌",
-  "Effect: Your temperature, oxygen, ocean, and Venus requirements are +2 or -2 steps, your choice in each case.":"效果:你打牌时的 温度/氧气浓度/海洋 要求 +2格或-2格",
-
-  "You start with 20 steel and 30 MC.":"起始获得30MC和20个钢铁资源",
-  "Effect: Each time you play an event, you gain 2 MC.":"效果:每次你打出事件卡时,获得2MC",
-
-  "You start with 10 titanium and 23 MC.":"起始获得23MC和10个钛合金资源",
-  "Effect: Your titanium resources are each worth 1 MC extra.":"效果:你的钛合金资源价值额外+1",
-
-  "You start with 57 MC.":"起始获得57MC",
-  "Effect: After you pay for a card or standard project with a basic cost of 20MC or more, you gain 4MC.":"效果:当你打出一张20MC以上的卡,或执行一个20MC以上的标准行动时,你获得4MC",
+  "You start with 1 titanium production, and 38 M€.":"起始获得38M€,提升钛合金产能1级",
 
  
+  "As your first action in the game, draw 3 cards. Start with 45 M€.":"起始获得45M€。作为你的第一个行动,抽3张牌",
+  "Effect: Your temperature, oxygen, ocean, and Venus requirements are +2 or -2 steps, your choice in each case.":"效果：你出牌时享受全球参数+2格或-2格修正",
 
- 
-  "Effect: When you play a Science tag, you pay 2MC less for it":"效果：你打出的牌上每有一个科学标志，你少为其支付2MC。",
- 
-  "Action: If your Terraform Rating was raised this generation, you may pay 3 MC to raise it 1 step more.":"行动：如果你的改造度在本时代有过提升，你可以支付3MC来提升一点改造度。",
-  "You start with 40 MC.":"你起始拥有40MC。",
+  "You start with 20 steel and 30 M€.":"起始获得30M€和20个钢铁资源",
+  "Effect: Each time you play an event, you gain 2 M€.":"效果:每次你打出事件卡时,获得2M€",
+
+  "You start with 10 titanium and 23 M€.":"起始获得23M€和10个钛合金资源",
+  "Effect: Your titanium resources are each worth 1 M€ extra.":"效果:你的钛合金资源价值额外+1",
+
+  "You start with 57 M€.":"起始获得57M€",
+  "Effect: After you pay for a card or standard project with a basic cost of 20M€ or more, you gain 4 M€.":"效果:当你打出一张20M€以上的卡,或执行一个20M€以上的标准行动时,你获得4M€",
+
+  
+
+  
+  "Effect: When you play a Science tag, you pay 2M€ less for it":"效果：你打出的牌上每有一个科学标志，你少为其支付2M€。",
+  "Action: If your Terraform Rating was raised this generation, you may pay 3 M€ to raise it 1 step more.":"行动：如果你的改造度在本时代有过提升，你可以支付3M€来提升一点改造度。",
+  "You start with 40 M€.":"你起始拥有40M€。",
 
   "ACTION: PLACE A COMMUNITY (PLAYER MARKER) ON A NON-RESERVED AREA ADJACENT TO ONE OF YOUR TILES OR MARKED AREAS":"行动：将你的一个玩家标记放置在一个非保留区，并且和你的至少一个版块或者玩家标记相邻。",
-  "EFFECT: MARKED AREAS ARE RESERVED FOR YOU. WHEN YOU PLACE A TILE THERE, GAIN 3 MC":"效果：只有你能在拥有你的玩家标记的位置放置版块，当你如此做后，获得3MC，",
-  "You start with 40 MC and 10 steel. AS YOUR FIRST ACTION, PLACE A COMMUNITY (PLAYER MARKER) ON A NON-RESERVED AREA.":"你起始拥有40MC和10个钢铁。作为游戏中的你的第一个行动，你必须你的一个玩家标记放置在一个非海洋保留区.",
+  "EFFECT: MARKED AREAS ARE RESERVED FOR YOU. WHEN YOU PLACE A TILE THERE, GAIN 3 M€":"效果：只有你能在拥有你的玩家标记的位置放置版块，当你如此做后，获得3M€，",
+  "You start with 40 M€ and 10 steel. AS YOUR FIRST ACTION, PLACE A COMMUNITY (PLAYER MARKER) ON A NON-RESERVED AREA.":"你起始拥有40M€和10个钢铁。作为游戏中的你的第一个行动，你必须你的一个玩家标记放置在一个非海洋保留区.",
   
-  "Action: Increase your energy production 1 step IF YOU HAVE NO ENERGY RESOURCES, or spend 3MC to draw a building card.":"行动：提升1点你的电力产量(仅当你没有电力资源的时候)，或者，花3MC搜索一张建筑卡。",
-  "You start with 37 MC. Increase your steel production 1 step.":"你起始拥有37MC和1点钢铁产能。",
+  "Action: Increase your energy production 1 step IF YOU HAVE NO ENERGY RESOURCES, or spend 3M€ to draw a building card.":"行动：提升1点你的电力产量(仅当你没有电力资源的时候)，或者，花3M€搜索一张建筑卡。",
+  "You start with 37 M€. Increase your steel production 1 step.":"你起始拥有37M€和1点钢铁产能。",
   
   "Effect: Each new adjacency between your tile and an opponent's tile gives you a standard resource of your choice [regardless of who just placed a tile]":"效果：每次你的版块和任意对手的某个版块相邻，你获得一个标准资源，种类由你选择（不论是谁放置了新的版块）。",
-  "You start with 47 MC. As your first action, place a greenery tile and raise the oxygen 1 step.":"你起始拥有47MC。作为你的第一个行动，放置一个绿化版块并提升1格氧气浓度。",
+  "You start with 47 M€. As your first action, place a greenery tile and raise the oxygen 1 step.":"你起始拥有47M€。作为你的第一个行动，放置一个绿化版块并提升1格氧气浓度。",
   
-  "Effect: When a player causes another player to decrease production or lose resources, pay 3MC to the victim, or as much as possible.":"效果：当某玩家使另一玩家产能/资源受损，你向产能/资源受损的玩家支付3MC。若你拥有MC不足3MC则改为支付全部拥有的MC。",
-  "You start with 48 MC. Increase your MC production 4 steps. ALL OPPONENTS DECREASE THEIR MC PRODUCTION 2 STEPS. THIS DOES NOT TRIGGER THE EFFECT BELOW.":"你起始拥有48MC。提升4点MC产能。所有对手各减少2点MC产能，本次产能受损不会触发公司卡牌上的效果。",
-  
+  "Effect: When a player causes another player to decrease production or lose resources, pay 3M€ to the victim, or as much as possible.":"效果：当某玩家使另一玩家产能/资源受损，你向产能/资源受损的玩家支付3M€。若你拥有M€不足3M€则改为支付全部拥有的M€。",
+  "You start with 48 M€. Increase your M€ production 4 steps. ALL OPPONENTS DECREASE THEIR M€ production 2 STEPS. THIS DOES NOT TRIGGER THE EFFECT BELOW.":"你起始拥有48M€。提升4点M€产能。所有对手各减少2点M€产能，本次产能受损不会触发公司卡牌上的效果。",
+
   "Effect: When you play a building tag, including this, gain 1 microbe to this card, or remove 2 microbes here and raise your plant production 1 step.":"效果：每当你打出1个建筑标志，包括本卡上的建筑标志，放置1个微生资源到本卡上，或移除本卡上2个微生物资源以提升1点植物产能。",
-  "You start with 38 MC and 1 steel production.":"你起始拥有38MC及1点钢铁产能。",
+  "You start with 38 M€ and 1 steel production.":"你起始拥有38M€及1点钢铁产能。",
   
-  "Effect: when a microbe tag is played, incl. this, THAT PLAYER gains 2 MC, or adds a microbe to THAT card, and you gain 2 MC.":"效果：当任何玩家打出1个微生物标志，包括本卡上的微生物标志，那名玩家获得2MC，或放置1个微生物资源在那张卡上，而你获得2MC。",
-  "You start with 44 MC. As your first action, reveal cards until you have revealed a microbe tag. Take it and discard the rest":"你起始拥有44MC。作为你的第一个行动，亮出牌堆顶的牌直至有微生物标志被亮出。获得那张带微生物标志的牌并弃置其余亮出的牌。"
+  "Effect: when a microbe tag is played, incl. this, THAT PLAYER gains 2 M€, or adds a microbe to THAT card, and you gain 2 M€.":"效果：当任何玩家打出1个微生物标志，包括本卡上的微生物标志，那名玩家获得2M€，或放置1个微生物资源在那张卡上，而你获得2M€。",
+  "You start with 44 M€. As your first action, reveal cards until you have revealed a microbe tag. Take it and discard the rest":"你起始拥有44M€。作为你的第一个行动，亮出牌堆顶的牌直至有微生物标志被亮出。获得那张带微生物标志的牌并弃置其余亮出的牌。"
 
 
 }

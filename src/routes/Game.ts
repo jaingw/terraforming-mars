@@ -8,8 +8,13 @@ import {Player} from '../Player';
 import {Server} from '../models/ServerModel';
 import {ServeAsset} from './ServeAsset';
 import {generateRandomId} from '../UserUtil';
+import {RandomMAOptionType} from '../RandomMAOptionType';
+import {AgendaStyle} from '../turmoil/PoliticalAgendas';
 
 // Oh, this could be called Game, but that would introduce all kinds of issues.
+
+// Calling get() feeds the game to the player (I think, and calling put creates a game.)
+// So, that should be fixed, you know.
 export class GameHandler extends Handler {
   public static readonly INSTANCE = new GameHandler();
   private constructor() {
@@ -35,13 +40,18 @@ export class GameHandler extends Handler {
         const gameId = generateRandomId('g');
         const spectatorId = generateRandomId('s');
         const players = gameReq.players.map((obj: any) => {
-          return new Player(
+          const player = new Player(
             obj.name,
             obj.color,
             obj.beginner,
             Number(obj.handicap), // For some reason handicap is coming up a string.
             generateRandomId('p'),
           );
+          const user = GameLoader.getUserByPlayer(player);
+          if (user !== undefined) {
+            player.userId = user.id;
+          }
+          return player;
         });
         let firstPlayerIdx: number = 0;
         for (let i = 0; i < gameReq.players.length; i++) {
@@ -92,6 +102,7 @@ export class GameHandler extends Handler {
           customColoniesList: gameReq.customColoniesList,
           heatFor: gameReq.heatFor,
           breakthrough: gameReq.breakthrough,
+          doubleCorp: gameReq.doubleCorp,
           requiresVenusTrackCompletion: gameReq.requiresVenusTrackCompletion,
           requiresMoonTrackCompletion: gameReq.requiresMoonTrackCompletion,
         };
@@ -111,12 +122,15 @@ export class GameHandler extends Handler {
             aresExtension: false,
             communityCardsOption: false,
             moonExpansion: false,
-            politicalAgendasExtensionToggle: false,
+            politicalAgendasExtension: AgendaStyle.STANDARD,
+
             shuffleMapOption: false,
-            showCardsBlackList: false,
-            showColoniesList: false,
             removeNegativeGlobalEventsOption: false,
-            randomMAToggle: false,
+            randomMA: RandomMAOptionType.NONE,
+            doubleCorp: false,
+            // 这俩参数跟前端CreateGameForm页面不一样
+            cardsBlackList: [],
+            customColoniesList: [],
           };
           gameOptions = Object.assign(gameOptions, vipOptions);
         }

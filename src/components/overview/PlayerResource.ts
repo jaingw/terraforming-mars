@@ -1,8 +1,6 @@
 import Vue from 'vue';
 import {DEFAULT_STEEL_VALUE, DEFAULT_TITANIUM_VALUE} from '../../constants';
 import {Resources} from '../../Resources';
-import {TurmoilModel} from '../../models/TurmoilModel';
-import {PartyName} from '../../turmoil/parties/PartyName';
 import {PreferencesManager} from '../PreferencesManager';
 
 export const PlayerResource = Vue.component('player-resource', {
@@ -28,19 +26,9 @@ export const PlayerResource = Vue.component('player-resource', {
     titaniumValue: {
       type: Number,
     },
-    turmoil: {
-      type: Object as () => TurmoilModel || undefined,
-    },
   },
   data: function() {
-    // TODO: Update logic after PoliticalAgendas merge
-    const unityTitaniumBonusActive: boolean = this.turmoil !== undefined && this.turmoil.ruling === PartyName.UNITY;
-
-    let playerTitaniumValueWithOffset: number = this.titaniumValue;
-    if (unityTitaniumBonusActive) playerTitaniumValueWithOffset -= 1;
-
     return {
-      playerAdjustedTitaniumValue: playerTitaniumValueWithOffset,
     };
   },
   methods: {
@@ -58,7 +46,7 @@ export const PlayerResource = Vue.component('player-resource', {
       return this.type === Resources.PLANTS && this.plantsAreProtected;
     },
     showResourceValue: function(): boolean {
-      const learnerModeOn = PreferencesManager.loadValue('learner_mode') === '1';
+      const learnerModeOn = PreferencesManager.load('learner_mode') === '1';
       switch (this.type) {
       case Resources.STEEL:
         return learnerModeOn || this.steelValue > DEFAULT_STEEL_VALUE;
@@ -91,7 +79,7 @@ export const PlayerResource = Vue.component('player-resource', {
             <div class="resource_item_prod">
                 <span class="resource_item_prod_count">{{ productionSign() }}{{ production }}</span>
                 <div v-if="displayPlantsProtectedIcon()" class="shield_icon"></div>
-                <div v-if="showResourceValue()" class="resource_icon--metalbonus" v-html="getResourceValue()"></div>
+                <div v-if="showResourceValue()" class="resource_icon--metalbonus">{{ getResourceValue() }}</div>
             </div>
         </div>
     `,

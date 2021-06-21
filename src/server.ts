@@ -112,6 +112,10 @@ function processRequest(req: http.IncomingMessage, res: http.ServerResponse): vo
       UserManager.login(req, res);
     } else if (req.url.indexOf('/player/resign') === 0) {
       UserManager.resign(req, res);
+    } else if (req.url.indexOf('/api/showHand') === 0) {
+      UserManager.showHand(req, res);
+    } else if (req.url.indexOf('/api/sitDown') === 0) {
+      UserManager.sitDown(req, res);
     } else if (req.url.indexOf('/api/gameback') === 0) {
       UserManager.apiGameBack(req, res);
     }

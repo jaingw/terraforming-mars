@@ -208,11 +208,11 @@ export class SQLite implements IDatabase {
 
   getUsers(cb:(err: any, allUsers:Array<User>)=> void): void {
     const allUsers:Array<User> = [];
-    const sql: string = 'SELECT distinct id, name, password, prop FROM users ';
+    const sql: string = 'SELECT distinct id, name, password, prop, createtime FROM users ';
     this.db.all(sql, [], (err, rows) => {
       if (rows) {
         rows.forEach((row) => {
-          allUsers.push( Object.assign(new User('', '', ''), {id: row.id, name: row.name, password: row.password}, JSON.parse(row.prop) ));
+          allUsers.push( Object.assign(new User('', '', ''), {id: row.id, name: row.name, password: row.password, createtime: row.createtime}, JSON.parse(row.prop) ));
         });
         return cb(err, allUsers);
       };

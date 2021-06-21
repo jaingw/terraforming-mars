@@ -16,15 +16,15 @@ export class InciteEnder extends Card implements ICard, CorporationCard {
     super({
       name: CardName.INCITE_ENDER,
       tags: [Tags.SCIENCE],
-      startingMegaCredits: 48,
+      startingMegaCredits: 54,
       cardType: CardType.CORPORATION,
 
       metadata: {
         cardNumber: 'Q24',
-        description: `You start with 48 MC. As your first action, place two delegates in one party.`,
+        description: `You start with 54 M€. As your first action, place two delegates in one party.`,
         renderData: CardRenderer.builder((b) => {
           b.br;
-          b.megacredits(48).nbsp.delegates(2);
+          b.megacredits(54).nbsp.delegates(2);
           b.corpBox('action', (ce) => {
             ce.vSpace();
             ce.action('Look at the top 3 cards of global events deck and discard any of them.', (eb) => {
@@ -63,14 +63,27 @@ export class InciteEnder extends Card implements ICard, CorporationCard {
 
     const cards: Array<IGlobalEvent> = [];
     const globalEventDealer = player.game.turmoil.globalEventDealer;
-    cards.unshift(globalEventDealer.draw()!);
-    cards.unshift(globalEventDealer.draw()!);
-    cards.unshift(globalEventDealer.draw()!);
+    let card = globalEventDealer.draw();
+    if (card !== undefined) {
+      cards.unshift(card);
+    }
+    card = globalEventDealer.draw();
+    if (card !== undefined) {
+      cards.unshift(card);
+    }
+    card = globalEventDealer.draw();
+    if (card !== undefined) {
+      cards.unshift(card);
+    }
 
     const cb = (selected: Array<IGlobalEvent>) => {
-      const cards2 = cards.filter((x) => !selected.includes(x));
-      while (cards2.length > 0) {
-        globalEventDealer.putback(cards2.shift());
+      const chosecards = cards.filter((x) => !selected.includes(x));
+      while (chosecards.length > 0) {
+        globalEventDealer.putback(chosecards.shift());
+      }
+      const unchosecards = cards.filter((x) => selected.includes(x));
+      while (unchosecards.length > 0) {
+        globalEventDealer.putbottom(unchosecards.shift());
       }
       return undefined;
     };

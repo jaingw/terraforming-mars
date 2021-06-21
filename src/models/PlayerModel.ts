@@ -1,91 +1,83 @@
 import {CardModel} from './CardModel';
-import {ColonyModel} from './ColonyModel';
 import {Color} from '../Color';
 import {VictoryPointsBreakdown} from '../VictoryPointsBreakdown';
 import {ITagCount} from '../ITagCount';
-import {TurmoilModel} from './TurmoilModel';
-import {ClaimedMilestoneModel} from './ClaimedMilestoneModel';
-import {FundedAwardModel} from './FundedAwardModel';
-import {Phase} from '../Phase';
 import {PlayerInputModel} from './PlayerInputModel';
-import {SpaceModel} from './SpaceModel';
-import {IAresData} from '../ares/IAresData';
 import {SerializedTimer} from '../SerializedTimer';
-import {MoonModel} from './MoonModel';
-import {GameOptions} from '../Game';
+import {GameModel} from './GameModel';
 
-export interface PlayerModel {
-    actionsTakenThisRound: number;
-    actionsThisGeneration: Array<string>;
-    aresData: IAresData | undefined;
-    availableBlueCardActionCount: number;
-    awards: Array<FundedAwardModel>;
-    cardCost: number;
-    cardsInHand: Array<CardModel>;
-    cardsInHandNbr: number;
-    citiesCount: number;
-    colonies: Array<ColonyModel>;
-    coloniesCount: number;
-    color: Color;
-    corporationCard: CardModel | undefined;
-    dealtCorporationCards: Array<CardModel>;
-    dealtPreludeCards: Array<CardModel>;
-    dealtProjectCards: Array<CardModel>;
-    deckSize: number;
-    draftedCards: Array<CardModel>;
-    energy: number;
-    energyProduction: number;
-    fleetSize: number;
-    gameAge: number;
-    gameOptions: GameOptions;
-    generation: number;
-    heat: number;
-    heatProduction: number;
-    id: string; // PlayerId
-    influence: number;
-    isActive: boolean;
-    isSoloModeWin: boolean;
-    lastSoloGeneration: number,
-    megaCredits: number;
-    megaCreditProduction: number;
-    milestones: Array<ClaimedMilestoneModel>;
-    moon: MoonModel | undefined;
-    name: string;
-    noTagsCount: number;
-    oceans: number;
-    oxygenLevel: number;
-    passedPlayers: Array<Color>;
-    phase: Phase;
-    pickedCorporationCard: Array<CardModel>;
-    plants: number;
-    plantProduction: number;
-    plantsAreProtected: boolean;
-    playedCards: Array<CardModel>;
-    players: Array<PlayerModel>;
-    preludeCardsInHand: Array<CardModel>;
-    selfReplicatingRobotsCards: Array<CardModel>;
-    spaces: Array<SpaceModel>;
-    spectatorId?: string;
-    steel: number;
-    steelProduction: number;
-    steelValue: number;
-    tags: Array<ITagCount>;
-    temperature: number;
-    terraformRating: number;
-    timer: SerializedTimer;
-    titanium: number;
-    titaniumProduction: number;
-    titaniumValue: number;
-    tradesThisGeneration: number;
-    turmoil: TurmoilModel | undefined;
-    undoCount: number;
-    venusScaleLevel: number;
-    victoryPointsBreakdown: VictoryPointsBreakdown;
-    gameId: string;
-    undoing :boolean;
-    waitingFor: PlayerInputModel | undefined;
-    exited?: boolean;
-    canExit?: boolean;
-    block?: boolean;
-    userName: string;
+export interface PublicPlayerModel {
+  actionsTakenThisRound: number;
+  actionsThisGeneration: Array<string /* CardName */>;
+  availableBlueCardActionCount: number;
+  cardCost: number;
+  cardsInHandNbr: number;
+  citiesCount: number;
+  coloniesCount: number;
+  color: Color;
+  corporationCard: CardModel | undefined;
+  corporationCard2: CardModel | undefined;
+  energy: number;
+  energyProduction: number;
+  fleetSize: number;
+  heat: number;
+  heatProduction: number;
+  id: string; // PlayerId
+  influence: number;
+  isActive: boolean;
+  megaCredits: number;
+  megaCreditProduction: number;
+  name: string;
+  noTagsCount: number;
+  plants: number;
+  plantProduction: number;
+  plantsAreProtected: boolean;
+  playedCards: Array<CardModel>;
+  preludeCardsInHand: Array<CardModel>;
+  selfReplicatingRobotsCards: Array<CardModel>;
+  steel: number;
+  steelProduction: number;
+  steelValue: number;
+  tags: Array<ITagCount>;
+  terraformRating: number;
+  timer: SerializedTimer;
+  titanium: number;
+  titaniumProduction: number;
+  titaniumValue: number;
+  tradesThisGeneration: number;
+  victoryPointsBreakdown: VictoryPointsBreakdown;
+
+  exited?: boolean;
+  waitingFor: PlayerInputModel | undefined;
+}
+
+export interface PlayerModel extends PublicPlayerModel {
+  availableBlueCardActionCount: number;
+  cardCost: number;
+  cardsInHand: Array<CardModel>;
+  dealtCorporationCards: Array<CardModel>;
+  dealtPreludeCards: Array<CardModel>;
+  dealtProjectCards: Array<CardModel>;
+  draftedCards: Array<CardModel>;
+  game: GameModel;
+  influence: number;
+  pickedCorporationCard: Array<CardModel>; // Why Array?
+  pickedCorporationCard2: Array<CardModel>; // Why Array?
+  players: Array<PublicPlayerModel>;
+  preludeCardsInHand: Array<CardModel>;
+  timer: SerializedTimer;
+  gameId: string;
+  undoing :boolean;
+  canExit?: boolean;
+  block: boolean;
+  userName: string;
+  isme: boolean;
+  showhandcards: boolean;
+  isvip:number ;
+}
+
+export interface PlayerBlockModel {
+    block: boolean;
+    isme: boolean;
+    showhandcards: boolean;
 }

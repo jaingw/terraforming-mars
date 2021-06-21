@@ -32,11 +32,11 @@ export class DawnCity extends Card {
     });
   };
   public canPlay(player: Player): boolean {
-    return player.getTagCount(Tags.SCIENCE) >= 4 && player.getProduction(Resources.ENERGY) >= 1;
+    return super.canPlay(player) && player.getProduction(Resources.ENERGY) >= 1;
   }
   public play(player: Player) {
     player.addProduction(Resources.ENERGY, -1);
-    player.addProduction(Resources.TITANIUM);
+    player.addProduction(Resources.TITANIUM, 1);
     player.game.addCityTile(player, SpaceName.DAWN_CITY, SpaceType.COLONY);
     return undefined;
   }

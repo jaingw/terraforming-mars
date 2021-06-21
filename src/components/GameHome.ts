@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import {PreferencesManager} from './PreferencesManager';
-import {GameHomeModel} from '../models/GameHomeModel';
+import {SimpleGameModel} from '../models/SimpleGameModel';
 import {Button} from '../components/common/Button';
 import {playerColorClass} from '../utils/utils';
 import {GameSetupDetail} from '../components/GameSetupDetail';
@@ -26,7 +26,7 @@ const DEFAULT_COPIED_PLAYER_ID = '-1';
 export const GameHome = Vue.component('game-home', {
   props: {
     game: {
-      type: Object as () => GameHomeModel,
+      type: Object as () => SimpleGameModel,
     },
   },
   components: {
@@ -36,7 +36,7 @@ export const GameHome = Vue.component('game-home', {
   },
   data: function() {
     return {
-      userId: PreferencesManager.loadValue('userId'),
+      userId: PreferencesManager.load('userId'),
       // Variable to keep the state for the current copied player id. Used to display message of which button and which player playable link is currently in the clipboard
       urlCopiedPlayerId: DEFAULT_COPIED_PLAYER_ID as string,
     };
@@ -93,7 +93,7 @@ export const GameHome = Vue.component('game-home', {
         <div class="spacing-setup"></div>
         <div v-if="game !== undefined">
           <h1 v-i18n>Game settings</h1>
-          <game-setup-detail :gameOptions="game.gameOptions" :playerNumber="game.players.length" :lastSoloGeneration="game.lastSoloGeneration" :game="game"></game-setup-detail>
+          <game-setup-detail :gameOptions="game.gameOptions" :playerNumber="game.players.length" :lastSoloGeneration="game.lastSoloGeneration"  ></game-setup-detail>
         </div>
 
         <qrcode/>

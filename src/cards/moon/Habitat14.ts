@@ -17,9 +17,10 @@ export class Habitat14 extends MoonCard {
       tags: [Tags.CITY, Tags.MOON],
       cost: 5,
       productionBox: Units.of({energy: -1, megacredits: -1}),
+      reserveUnits: Units.of({titanium: 1}),
 
       metadata: {
-        description: 'Decrease your energy production 1 step and your MC production 1 step. Spend 1 titanium. Place a colony tile on the Moon and raise the Colony Rate 1 step.',
+        description: 'Decrease your energy production 1 step and your M€ production 1 step. Spend 1 titanium. Place a colony tile on the Moon and raise the Colony Rate 1 step.',
         cardNumber: 'M05',
         renderData: CardRenderer.builder((b) => {
           b.production((pb) => {
@@ -30,7 +31,6 @@ export class Habitat14 extends MoonCard {
         }),
       },
     }, {
-      reserveUnits: Units.of({titanium: 1}),
       tilesBuilt: [TileType.MOON_COLONY],
     });
   }

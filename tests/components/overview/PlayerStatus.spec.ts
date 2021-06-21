@@ -23,7 +23,7 @@ describe('PlayerStatus', function() {
           id: 'foobar',
         },
         player: {
-          corporationCard: {},
+          corpCard: {},
           id: 'foobar',
           playedCards: [],
           gameOptions: {

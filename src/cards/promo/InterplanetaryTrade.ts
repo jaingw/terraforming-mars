@@ -21,7 +21,7 @@ export class InterplanetaryTrade extends Card implements IProjectCard {
           b.production((pb) => pb.megacredits(1));
           b.slash().diverseTag();
         }),
-        description: 'Increase your MC production 1 step per different tag you have in play, including this.',
+        description: 'Increase your M€ production 1 step per different tag you have in play, including this.',
         victoryPoints: 1,
       },
     });
@@ -33,8 +33,8 @@ export class InterplanetaryTrade extends Card implements IProjectCard {
     // Only count wildcards up to the max amount of tag types existing (minus events and wildcards)
     const existingTags = Object.keys(Tags).length - 2;
     // 事件公司的标志上限是12
-    if (player.isCorporation(CardName._INTERPLANETARY_CINEMATICS_) && player.playedCards.filter((card) => card.cardType === CardType.EVENT ).length > 0) player.addProduction(Resources.MEGACREDITS, Math.min(availableTags+1, existingTags));
-    else player.addProduction(Resources.MEGACREDITS, Math.min(availableTags, existingTags));
+    if (player.isCorporation(CardName._INTERPLANETARY_CINEMATICS_) && player.playedCards.filter((card) => card.cardType === CardType.EVENT ).length > 0) player.addProduction(Resources.MEGACREDITS, Math.min(availableTags+1, existingTags), {log: true});
+    else player.addProduction(Resources.MEGACREDITS, Math.min(availableTags, existingTags), {log: true});
     return undefined;
   }
 

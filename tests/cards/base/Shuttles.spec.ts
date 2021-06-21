@@ -3,12 +3,12 @@ import {Bushes} from '../../../src/cards/base/Bushes';
 import {Shuttles} from '../../../src/cards/base/Shuttles';
 import {TollStation} from '../../../src/cards/base/TollStation';
 import {Game} from '../../../src/Game';
-import {Player} from '../../../src/Player';
+import {TestPlayer} from '../../TestPlayer';
 import {Resources} from '../../../src/Resources';
 import {TestPlayers} from '../../TestPlayers';
 
 describe('Shuttles', function() {
-  let card : Shuttles; let player : Player; let game : Game;
+  let card : Shuttles; let player : TestPlayer; let game : Game;
 
   beforeEach(function() {
     card = new Shuttles();
@@ -23,14 +23,14 @@ describe('Shuttles', function() {
   });
 
   it('Can\'t play if oxygen level too low', function() {
-    player.addProduction(Resources.ENERGY);
+    player.addProduction(Resources.ENERGY, 1);
     (game as any).oxygenLevel = 4;
     expect(card.canPlay(player)).is.not.true;
   });
 
   it('Should play', function() {
     (game as any).oxygenLevel = 5;
-    player.addProduction(Resources.ENERGY);
+    player.addProduction(Resources.ENERGY, 1);
     expect(card.canPlay(player)).is.true;
 
     card.play(player);

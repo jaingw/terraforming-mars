@@ -17,7 +17,7 @@ export class EcoLine extends Card implements CorporationCard {
 
       metadata: {
         cardNumber: 'R17',
-        description: 'You start with 2 plant production, 3 plants, and 36 MC.',
+        description: 'You start with 2 plant production, 3 plants, and 36 M€.',
         renderData: CardRenderer.builder((b) => {
           b.br;
           b.production((pb) => pb.plants(2)).nbsp.megacredits(36).plants(3).digit;
@@ -32,7 +32,7 @@ export class EcoLine extends Card implements CorporationCard {
   }
   public play(player: Player) {
     player.addProduction(Resources.PLANTS, 2);
-    player.plants = 3;
+    player.plants += 3;
     player.plantsNeededForGreenery = 7;
     return undefined;
   }

@@ -73,7 +73,7 @@ export class JovianExpedition extends Card implements IProjectCard {
   private checkActivation(colony: Colony, game: Game): void {
     if (colony.resourceType === undefined) return;
     game.getPlayers().forEach((player) => {
-      if (player.corporationCard !== undefined && player.corporationCard.resourceType === colony.resourceType) {
+      if (player.corpResourceType(colony.resourceType!)) {
         colony.isActive = true;
         return;
       }

@@ -28,8 +28,8 @@ export const Login = Vue.component('login', {
           });
         } else {
           response.json().then((data: { id: string; name: string; }) => {
-            PreferencesManager.saveValue('userId', data.id);
-            PreferencesManager.saveValue('userName', data.name);
+            PreferencesManager.save('userId', data.id);
+            PreferencesManager.save('userName', data.name);
             window.location.href = '/mygames';
           });
         }

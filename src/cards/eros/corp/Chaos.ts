@@ -4,7 +4,7 @@ import {CardName} from '../../../CardName';
 import {CardType} from '../../CardType';
 import {CardMetadata} from '../../CardMetadata';
 import {CardRenderer} from '../../render/CardRenderer';
-import {CardRenderItemSize} from '../../render/CardRenderItemSize';
+import {Size} from '../../render/Size';
 import {Game} from '../../../Game';
 import {SelectAmount} from '../../../inputs/SelectAmount';
 import {ITagCount} from '../../../ITagCount';
@@ -113,10 +113,10 @@ export class Chaos implements CorporationCard {
       renderData: CardRenderer.builder((b) => {
         b.br;
         b.megacredits(42);
-        b.text('(You start with 42 MC.)', CardRenderItemSize.TINY, false, false);
+        b.text('(You start with 42 M€.)', Size.TINY, false, false);
         b.corpBox('effect', (ce) => {
           ce.effect(undefined, (eb) => {
-            ce.vSpace(CardRenderItemSize.LARGE);
+            ce.vSpace(Size.LARGE);
             eb.production((pb) => pb.wild(1)).startEffect.wild(1).played.asterix();
           });
           ce.vSpace();

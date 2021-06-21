@@ -14,7 +14,7 @@ describe('PointLuna', function() {
     card = new PointLuna();
     player = TestPlayers.BLUE.newPlayer();
     Game.newInstance('foobar', [player], player);
-    player.corporationCard = card;
+    player.corpCard = card;
   });
 
   it('Gets card when earth tag played', function() {

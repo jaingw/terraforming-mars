@@ -85,6 +85,7 @@
                 letter-spacing: 1px;
                 background: linear-gradient(to right, #000089, dodgerblue, deepskyblue);
                 -webkit-background-clip: text;
+                background-clip: text;
                 -webkit-text-fill-color: transparent;
                 -webkit-transform: scale(2, 1);
                 -moz-transform: scale(2, 1);
@@ -202,6 +203,15 @@
             }
             .card-inventrix-logo {
                 top: 16px;
+                left: 8px;
+                color: #020202;
+                font-size: 24px;
+                text-shadow: 6px 6px 5px grey;
+                position: absolute;
+                position: absolute;
+            }
+            .card-inventrix-breakthrough-logo {
+                top: 36px;
                 left: 8px;
                 color: #020202;
                 font-size: 24px;
@@ -805,8 +815,8 @@
             .card-the-darkside-of-the-moon-syndicate-logo {
                 background-image: url(./assets/moon/corp-logo-darkside.png);
                 height: 50px;
-                width: 50px;
-                background-size: 50px 50px;
+                width: 187px;
+                background-size: 187px;
                 margin-top: 10px;
             }
             .card-luna-hyperloop-corporation-logo {
@@ -833,22 +843,23 @@
             .card-the-grand-luna-capital-group-logo {
                 background-image: url(./assets/moon/corp-logo-grand-luna.png);
                 height: 50px;
-                width: 150px;
-                background-size: 150px 50px;
+                width: 143px;
+                background-size: 143px 50px;
                 margin-top: 10px;
+                border-radius: 5px;
             }
             .card-intragen-sanctuary-headquarters-logo {
                 background-image: url(./assets/moon/corp-logo-intragen.png);
-                height: 50px;
-                width: 150px;
-                background-size: 150px 50px;
+                height: 45px;
+                width: 142px;
+                background-size: 142px 45px;
                 margin-top: 10px;
             }
             .card-the-archaic-foundation-institute-logo {
                 background-image: url(./assets/moon/corp-logo-archaic-foundation.png);
                 height: 50px;
-                width: 150px;
-                background-size: 150px 50px;
+                width: 180px;
+                background-size: 180px 50px;
                 margin-top: 10px;
             }
             .card-chaos-logo {
@@ -873,6 +884,21 @@
                 transform:scale(1.2,1); /* W3C */
                 box-shadow:  6px 6px 5px  grey;
             }
+            .card-idfront-logo{
+                font-size:14px;
+                color:white;
+                line-height:80px;
+                background: #000000;
+                margin-left:-20px;
+                padding-top:8px;
+                padding-bottom:8px;
+                padding-left:20px;
+                padding-right:20px;
+                border-radius:50%;
+                font-weight:normal;
+                border:2px solid white;
+                box-shadow:  6px 6px 5px  grey;
+            }
             .card-wgparternship-logo{
                 position: absolute;
                 top: 24px;
@@ -891,6 +917,25 @@
                 position: absolute;
                 top: 9px;
                 left: 0px;
+            }
+            .card-trade-navigator-logo {
+                background-image: url(./assets/eros/corp-logo-tradeNavigator.png);
+                height: 80px;
+                width: 80px;
+                background-size: 100%;
+                background-repeat: no-repeat;
+                position: absolute;
+                top: 9px;
+                left: 0px;
+            }
+            .card-mutant-logo{
+                background-image: url(./assets/eros/corp-logo-mutant.png);
+                height: 52px;
+                width: 52px;
+                background-size: 100%;
+                background-repeat: no-repeat;
+                position: absolute;
+                margin-top: 10px;
             }
         }
         .card-content-corporation {
@@ -1099,6 +1144,10 @@
                 color: #0000 !important;
                 background-image: url(./assets/resources/syndicate-fleet.png);
             }
+            .card-resource-cube {
+                color: #0000 !important;
+                background-image: url(./assets/cube.png);
+            }
             .card-resource-diverse {
                 background: linear-gradient(to bottom right, green, yellow, red);
             }
@@ -1151,6 +1200,11 @@
             }
             .card-or--small, .card-slash--small {
                 font-size: @font_size_small;
+                margin-left: 2px;
+                margin-right: 2px;
+            }
+            .card-or--tiny, .card-slash--tiny {
+                font-size: @font_size_tiny;
                 margin-left: 2px;
                 margin-right: 2px;
             }
@@ -1217,6 +1271,18 @@
                 background-repeat: no-repeat;
                 background-position: 0px;
             }
+            .card-red-arrow--small {
+                background-image: url(./assets/misc/short-arrow.png);
+                background-size: 15px;
+                width: 15px;
+                height: 15px;
+                vertical-align: middle;
+                display: inline-block;
+                background-repeat: no-repeat;
+                background-position: 0px;
+            }
+
+
             /*colony special*/
             .card-resource-trade {
                 background-image: url(./assets/tiles/trade.png);
@@ -1678,6 +1744,12 @@
                 position: relative;
                 left: -2px;
                 top: -1px;
+            }
+            .card-tile-symbol-waste {
+                background-image: url(./assets/tiles/special_tile_icons/waste.png);
+                position: relative;
+                left: -2px;
+                top: 0px;
             }
             .city-tile--M {
                 background-image: url(./assets/tiles/city.png);

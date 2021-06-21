@@ -19,7 +19,7 @@ describe('AirRaid', function() {
     Game.newInstance('foobar', [player, player2], player);
 
     corpo = new StormCraftIncorporated();
-    player.corporationCard = corpo;
+    player.corpCard = corpo;
   });
 
   it('Can\'t play', function() {

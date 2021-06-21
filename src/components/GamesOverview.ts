@@ -21,7 +21,7 @@ export const GamesOverview = Vue.component('games-overview', {
     getGames: function() {
       const vueApp = this;
       const xhr = new XMLHttpRequest();
-      xhr.open('GET', '/api/games?serverId='+this.serverId+'&userId='+ PreferencesManager.loadValue('userId'));
+      xhr.open('GET', '/api/games?serverId='+this.serverId+'&userId='+ PreferencesManager.load('userId'));
       xhr.onerror = function() {
         alert('Error getting games data');
       };

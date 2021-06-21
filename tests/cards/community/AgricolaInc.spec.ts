@@ -18,7 +18,7 @@ describe('AgricolaInc', function() {
     Game.newInstance('foobar', [player, redPlayer], player);
 
     card.play(player);
-    player.corporationCard = card;
+    player.corpCard = card;
   });
 
   it('Starts with correct production', function() {

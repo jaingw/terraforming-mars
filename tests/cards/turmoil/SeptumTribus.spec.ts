@@ -15,7 +15,7 @@ describe('SeptumTribus', function() {
     const game = Game.newInstance('foobar', [player, player2], player, gameOptions);
     card.play();
 
-    player.corporationCard = card;
+    player.corpCard = card;
     player.megaCredits = 0;
 
     const turmoil = game.turmoil;
@@ -43,7 +43,7 @@ describe('SeptumTribus', function() {
     Game.newInstance('foobar', [player], player, gameOptions);
     card.play();
 
-    player.corporationCard = card;
+    player.corpCard = card;
     expect(card.canAct(player)).is.not.true;
   });
 });

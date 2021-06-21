@@ -20,7 +20,7 @@ export class SkyDocks extends Card implements IProjectCard {
       metadata: {
         cardNumber: 'C36',
         renderData: CardRenderer.builder((b) => {
-          b.effect('When you play a card, you pay 1 MC less for it.', (eb) => {
+          b.effect('When you play a card, you pay 1 M€ less for it.', (eb) => {
             eb.empty().startEffect.megacredits(-1);
           }).br;
           b.tradeFleet();
@@ -29,10 +29,6 @@ export class SkyDocks extends Card implements IProjectCard {
         victoryPoints: 2,
       },
     });
-  }
-
-  public canPlay(player: Player): boolean {
-    return player.getTagCount(Tags.EARTH) >= 2;
   }
 
   public play(player: Player) {

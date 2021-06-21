@@ -11,6 +11,8 @@ import {IParty} from './turmoil/parties/IParty';
 import {LogMessage} from './LogMessage';
 import {TileType} from './TileType';
 import {SpaceBonus} from './SpaceBonus';
+import {IGlobalEvent} from './turmoil/globalEvents/IGlobalEvent';
+import {GlobalEventName} from './turmoil/globalEvents/GlobalEventName';
 
 export class LogBuilder {
     private message: string;
@@ -96,7 +98,16 @@ export class LogBuilder {
       return this;
     }
 
-    public logMessage(): LogMessage {
+    public globalEvent(value: IGlobalEvent): LogBuilder {
+      return this.globalEventName(value.name);
+    }
+
+    public globalEventName(value: GlobalEventName): LogBuilder {
+      this.parameters.push(new LogMessageData(LogMessageDataType.GLOBAL_EVENT, value.toString()));
+      return this;
+    }
+
+    public build(): LogMessage {
       return new LogMessage(this.type, this.message, this.parameters);
     }
 }

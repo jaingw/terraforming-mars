@@ -36,6 +36,9 @@ export const MAXIMUM_COLONY_RATE = 8;
 export const MAXIMUM_MINING_RATE = 8;
 export const MAXIMUM_LOGISTICS_RATE = 8;
 
+// Double Corp
+export const STARTING_MEGA_CREDITS_SUB = 42; // 双将组合公司初始MC扣除
+
 export const LANGUAGES = [
   {'id': 'cn', 'title': 'Chinese'},
   {'id': 'en', 'title': 'English'},
@@ -44,6 +47,8 @@ export const LANGUAGES = [
   {'id': 'ru', 'title': 'Russian'},
   {'id': 'pl', 'title': 'Polish'},
   {'id': 'es', 'title': 'Spanish'},
+  {'id': 'br', 'title': 'Português Brasileiro'},
+  {'id': 'it', 'title': 'Italian'},
 ];
 
 export const APP_NAME = 'Terraforming Mars';

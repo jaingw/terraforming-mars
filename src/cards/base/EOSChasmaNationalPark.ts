@@ -8,7 +8,6 @@ import {SelectCard} from '../../inputs/SelectCard';
 import {Resources} from '../../Resources';
 import {CardName} from '../../CardName';
 import {ResourceType} from '../../ResourceType';
-import {LogHelper} from '../../LogHelper';
 import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
 import {Units} from '../../Units';
@@ -25,7 +24,7 @@ export class EosChasmaNationalPark extends Card implements IProjectCard {
       requirements: CardRequirements.builder((b) => b.temperature(-12)),
       metadata: {
         cardNumber: '026',
-        description: 'Requires -12 C or warmer. Add 1 Animal TO ANY ANIMAL CARD. Gain 3 Plants. Increase your MC production 2 steps.',
+        description: 'Requires -12 C or warmer. Add 1 Animal TO ANY ANIMAL CARD. Gain 3 Plants. Increase your M€ production 2 steps.',
         renderData: CardRenderer.builder((b) => {
           b.animals(1).asterix().plants(3).br;
           b.production((pb) => pb.megacredits(2));
@@ -43,14 +42,12 @@ export class EosChasmaNationalPark extends Card implements IProjectCard {
     if ( cards.length < 1 ) return undefined;
 
     if (cards.length === 1) {
-      player.addResourceTo(cards[0], 1);
-      LogHelper.logAddResource(player, cards[0]);
+      player.addResourceTo(cards[0], {qty: 1, log: true});
       return undefined;
     }
 
     return new SelectCard('Add 1 animal to a card', 'Add animal', cards, (foundCards: Array<ICard>) => {
-      player.addResourceTo(foundCards[0], 1);
-      LogHelper.logAddResource(player, foundCards[0]);
+      player.addResourceTo(foundCards[0], {log: true});
       return undefined;
     });
   }

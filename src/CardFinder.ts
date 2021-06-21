@@ -17,6 +17,8 @@ import {ARES_CARD_MANIFEST} from './cards/ares/AresCardManifest';
 import {EROS_CARD_MANIFEST} from './cards/eros/ErosCardManifest';
 import {MOON_CARD_MANIFEST} from './cards/moon/MoonCardManifest';
 import {Deck} from './Deck';
+import {StarcorePlunder} from './cards/eros/StarcorePlunder';
+import {WGParternship} from './cards/eros/corp/WGParternship';
 
 export class CardFinder {
     private static decks: undefined | Array<CardManifest>;
@@ -60,6 +62,9 @@ export class CardFinder {
       if (cardName as string === 'Septum Tribus') {
         cardName = CardName.SEPTEM_TRIBUS;
       }
+      if (cardName === CardName.WG_PARTERNSHIP) {
+        return new WGParternship;
+      }
       return this.getCardByName(cardName, (manifest) => [manifest.corporationCards]);
     }
 
@@ -80,6 +85,9 @@ export class CardFinder {
       }
       if (cardName as string === 'Magnetic Field Generators Promo') {
         cardName = CardName.MAGNETIC_FIELD_GENERATORS_PROMO;
+      }
+      if (cardName === CardName.STARCORE_PLUNDER) {
+        return new StarcorePlunder;
       }
       return this.getCardByName(cardName, (manifest) => [manifest.projectCards, manifest.preludeCards]);
     }
@@ -109,9 +117,6 @@ export class CardFinder {
       const result: Array<CorporationCard> = [];
       cards.forEach((element: ICard) => {
         if (!element ) return;
-        if ((element.name as string) === 'Septum Tribus') {
-          element.name = CardName.SEPTEM_TRIBUS;
-        }
         const card = this.getCorporationCardByName(element.name);
         if (card !== undefined) {
           result.push(card);

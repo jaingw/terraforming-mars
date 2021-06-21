@@ -27,12 +27,9 @@ export class ApiPlayer extends Handler {
         ctx.route.notFound(req, res);
         return;
       }
-      let block = false;
-      const user = GameLoader.getInstance().userNameMap.get(player.name);
-      if (user !== undefined && user.id !== userId) {
-        block = true;
-      }
-      ctx.route.writeJson(res, Server.getPlayerModel(player, block));
+
+      const playerBlockModel = Server.getPlayerBlock(player, userId);
+      ctx.route.writeJson(res, Server.getPlayerModel(player, playerBlockModel));
     });
   }
 }

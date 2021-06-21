@@ -25,7 +25,7 @@ export class _Aphrodite_ extends Aphrodite {
   public get metadata(): CardMetadata {
     return {
       cardNumber: 'R01',
-      description: 'You start with 40 MC. As your first action, raise Venus Scale 2 steps.',
+      description: 'You start with 40 M€. As your first action, raise Venus Scale 2 steps.',
       renderData: CardRenderer.builder((b) => {
         b.br;
         b.megacredits(40).nbsp.venus(1).venus(1);

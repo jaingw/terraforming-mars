@@ -13,7 +13,7 @@ import {ColonyModel} from '../../models/ColonyModel';
 import {DeferredAction} from '../../deferredActions/DeferredAction';
 import {Card} from '../Card';
 import {CardRenderer} from '../render/CardRenderer';
-import {CardRenderItemSize} from '../render/CardRenderItemSize';
+import {Size} from '../render/Size';
 
 export class ColonialOne extends Card implements CorporationCard {
   constructor() {
@@ -26,17 +26,17 @@ export class ColonialOne extends Card implements CorporationCard {
 
       metadata: {
         cardNumber: 'R42',
-        description: 'You start with 35 MC and 1 extra trade fleet. Add 3 fighter resources to this card.',
+        description: 'You start with 35 M€ and 1 extra trade fleet. Add 3 fighter resources to this card.',
         renderData: CardRenderer.builder((b) => {
           b.br.br;
           b.megacredits(35).tradeFleet().fighter(3);
           b.corpBox('action', (ce) => {
-            ce.vSpace(CardRenderItemSize.LARGE);
+            ce.vSpace(Size.LARGE);
             ce.action(undefined, (eb) => {
-              eb.empty().startAction.text('+/-', CardRenderItemSize.LARGE).colonies(1, CardRenderItemSize.SMALL).text(' TRACK', CardRenderItemSize.SMALL);
+              eb.empty().startAction.text('+/-', Size.LARGE).colonies(1, Size.SMALL).text(' TRACK', Size.SMALL);
             });
             ce.action('Increase or decrease any colony tile track 1 step, or spend 1 fighter resource on this card to trade for free.', (eb) => {
-              eb.or(CardRenderItemSize.MEDIUM).nbsp.fighter().startAction.trade();
+              eb.or(Size.MEDIUM).nbsp.fighter().startAction.trade();
             });
           });
         }),

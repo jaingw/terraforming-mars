@@ -22,7 +22,7 @@ export class SisterPlanetSponsors extends Card implements IProjectCard {
         renderData: CardRenderer.builder((b) => {
           b.production((pb) => pb.megacredits(4).nbsp.megacredits(1).any.asterix());
         }),
-        description: 'Requires Venus and Earth tags. Increase your MC production 4 steps. ALL OPPONENTS increase their mc production 1 step.',
+        description: 'Requires Venus and Earth tags. Increase your M€ production 4 steps. ALL OPPONENTS increase their M€ production 1 step.',
         victoryPoints: 1,
       },
     });

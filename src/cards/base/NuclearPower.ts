@@ -25,7 +25,7 @@ export class NuclearPower extends Card implements IProjectCard {
             pb.plus().energy(3);
           });
         }),
-        description: 'Decrease your MC production 2 steps and increase your Energy production 3 steps.',
+        description: 'Decrease your M€ production 2 steps and increase your Energy production 3 steps.',
       },
     });
   }
@@ -35,7 +35,7 @@ export class NuclearPower extends Card implements IProjectCard {
   }
   public play(player: Player) {
     if (player.getProduction(Resources.MEGACREDITS) < -3) {
-      throw 'Not enough mega credit production';
+      throw 'Not enough M€ production';
     }
     player.addProduction(Resources.MEGACREDITS, -2);
     player.addProduction(Resources.ENERGY, 3);

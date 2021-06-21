@@ -102,8 +102,11 @@ export class CloneTechnology extends Card implements IProjectCard {
       return false;
     });
 
-    if (player.corporationCard !== undefined && this.corporationCardsNames.includes(player.corporationCard.name)) {
-      availableCards.push(player.corporationCard);
+    if (player.corpCard !== undefined && this.corporationCardsNames.includes(player.corpCard.name)) {
+      availableCards.push(player.corpCard);
+    }
+    if (player.corpCard2 !== undefined && this.corporationCardsNames.includes(player.corpCard2.name)) {
+      availableCards.push(player.corpCard2);
     }
 
     return availableCards;
@@ -158,6 +161,8 @@ export class CloneTechnology extends Card implements IProjectCard {
         new Updater(CardName.POTATOES, 0, 2, 0, 0, -2),
         new Updater(CardName.MOSS, 0, 0, 1, 0, -1),
         new Updater(CardName.NITROPHILIC_MOSS, 0, 0, 2, 0, -2),
+        new Updater(CardName.ECOLINE, 0, 0, 2, 0, 3),
+        new Updater(CardName._ECOLINE_, 0, 0, 2, 0, 3),
       ];
 
       const result:Updater = updaters.filter((u) => u.name === foundCard.name)[0];
@@ -180,7 +185,7 @@ export class CloneTechnology extends Card implements IProjectCard {
       player.addProduction(Resources.MEGACREDITS, result.megaCreditProduction);
       player.addProduction(Resources.PLANTS, result.plantProduction);
       player.addProduction(Resources.HEAT, result.heatProduction);
-      player.setResource(Resources.PLANTS, result.plantResource);
+      player.addResource(Resources.PLANTS, result.plantResource);
 
       player.game.log('${0} copied ${1} production and plant resource with ${2}', (b) =>
         b.player(player).cardName(result.name).card(this));

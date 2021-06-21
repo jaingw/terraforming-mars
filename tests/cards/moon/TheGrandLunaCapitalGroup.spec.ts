@@ -35,7 +35,7 @@ describe('TheGrandLunaCapitalGroup', () => {
 
     // Test 1: place non-colony
     player.megaCredits = 0;
-    player.corporationCard = card;
+    player.corpCard = card;
     // Trigger the effect.
     MoonExpansion.addMineTile(player, centerSpace.id);
     expect(player.megaCredits).eq(0);
@@ -44,7 +44,7 @@ describe('TheGrandLunaCapitalGroup', () => {
     centerSpace.tile = undefined;
     centerSpace.player = undefined;
     player.megaCredits = 0;
-    player.corporationCard = card;
+    player.corpCard = card;
     // Trigger the effect.
     MoonExpansion.addColonyTile(player, centerSpace.id);
     expect(player.megaCredits).eq(4);

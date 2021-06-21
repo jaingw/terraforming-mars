@@ -21,13 +21,11 @@ export class SisterPlanetSupport extends Card {
         renderData: CardRenderer.builder((b) => {
           b.production((pb) => pb.megacredits(3));
         }),
-        description: 'Requires Venus and Earth tags. Increase your MC production 3 steps.',
+        description: 'Requires Venus and Earth tags. Increase your M€ production 3 steps.',
       },
     });
   };
-  public canPlay(player: Player): boolean {
-    return player.checkMultipleTagPresence([Tags.VENUS, Tags.EARTH]);
-  }
+
   public play(player: Player) {
     player.addProduction(Resources.MEGACREDITS, 3);
     return undefined;

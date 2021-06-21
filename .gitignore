@@ -25,3 +25,4 @@ pid
 node_modules/
 /styles.css
 build/assets/index_ca.html
+/yarn.lock

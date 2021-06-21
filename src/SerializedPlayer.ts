@@ -1,6 +1,5 @@
 import {Color} from './Color';
 import {SerializedCard} from './SerializedCard';
-import {VictoryPointsBreakdown} from './VictoryPointsBreakdown';
 import {SerializedTimer} from './SerializedTimer';
 import {IProjectCard} from './cards/IProjectCard';
 import {CardName} from './CardName';
@@ -18,8 +17,10 @@ export interface SerializedPlayer {
     colonyTradeOffset: number;
     colonyVictoryPoints: number;
     color: Color;
-    corporationCard: CorporationCard | undefined;
-    corporationInitialActionDone: boolean;
+    // corporationCard: CorporationCard | undefined;
+    corpCard: CorporationCard | undefined;
+    corpCard2: CorporationCard | undefined;
+    // corporationInitialActionDone: boolean;
     dealtCorporationCards: Array<CorporationCard>;
     dealtPreludeCards: Array<IProjectCard>;
     dealtProjectCards: Array<IProjectCard>;
@@ -40,6 +41,7 @@ export interface SerializedPlayer {
     name: string;
     oceanBonus: number;
     pickedCorporationCard: CorporationCard | undefined;
+    pickedCorporationCard2?: CorporationCard | undefined;
     plantProduction: number;
     plants: number;
     plantsNeededForGreenery: number;
@@ -61,7 +63,6 @@ export interface SerializedPlayer {
     // TODO(kberg): change tradesThisTurn to tradeThisGeneration later
     tradesThisGeneration: number;
     turmoilPolicyActionUsed: boolean;
-    victoryPointsBreakdown: VictoryPointsBreakdown;
     heatForTemperature: number;
     undoing : boolean ;
     exited : boolean ;// 是否体退

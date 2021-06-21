@@ -14,7 +14,7 @@ describe('Manutech', function() {
     player = TestPlayers.BLUE.newPlayer();
     const redPlayer = TestPlayers.RED.newPlayer();
     game = Game.newInstance('foobar', [player, redPlayer], player);
-    player.corporationCard = card;
+    player.corpCard = card;
   });
 
   it('Should play', function() {

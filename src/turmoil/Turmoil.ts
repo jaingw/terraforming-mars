@@ -9,16 +9,12 @@ import {SerializedTurmoil} from './SerializedTurmoil';
 import {PLAYER_DELEGATES_COUNT} from '../constants';
 import {AgendaStyle, PoliticalAgendasData, PoliticalAgendas} from './PoliticalAgendas';
 import {CardName} from '../CardName';
+import {DeferredAction} from '../deferredActions/DeferredAction';
 import {SerializedPlayer} from '../SerializedPlayer';
 export type NeutralPlayer = 'NEUTRAL';
 
 
 const UNINITIALIZED_POLITICAL_AGENDAS_DATA: PoliticalAgendasData = {
-  currentAgenda: {
-    bonusId: 'none',
-    policyId: 'none',
-  },
-  staticAgendas: undefined,
   agendas: new Map(),
   agendaStyle: AgendaStyle.CHAIRMAN,
 };
@@ -73,7 +69,7 @@ export class Turmoil implements ISerializable<SerializedTurmoil> {
         turmoil.delegateReserve.push('NEUTRAL');
       }
 
-      turmoil.politicalAgendasData = PoliticalAgendas.newInstance(agendaStyle, turmoil.parties, turmoil.rulingParty);
+      turmoil.politicalAgendasData = PoliticalAgendas.newInstance(agendaStyle, turmoil.parties);
       // Note: this call relies on an instance of Game that will not be fully formed.
       // TODO(kberg): split newInstance into create/set-up so this can be done once the whole thing is ready.
       turmoil.onAgendaSelected(game);
@@ -131,6 +127,23 @@ export class Turmoil implements ISerializable<SerializedTurmoil> {
         this.delegateReserve.push(player);
         party.removeDelegate(player, game);
         this.checkDominantParty(party);
+      } else {
+        throw 'Party not found';
+      }
+    }
+
+    // Use to replace a delegate from a specific party with another delegate with NO DOMINANCE CHANGE
+    public replaceDelegateFromParty(
+      outgoingPlayer: Player | NeutralPlayer,
+      incomingPlayer: Player | NeutralPlayer,
+      source: 'lobby' | 'reserve' = 'lobby',
+      partyName: PartyName,
+      game: Game): void {
+      const party = this.getPartyByName(partyName);
+      if (party) {
+        this.delegateReserve.push(outgoingPlayer);
+        party.removeDelegate(outgoingPlayer, game);
+        this.sendDelegateToParty(incomingPlayer, partyName, game, source);
       } else {
         throw 'Party not found';
       }
@@ -194,10 +207,10 @@ export class Turmoil implements ISerializable<SerializedTurmoil> {
       });
 
       // 2 - Global Event
-      // TODO: create a LogMessageDataType for Global Events, ref https://github.com/bafolts/terraforming-mars/issues/3057
-      if (this.currentGlobalEvent) {
-        game.log('Global event "' + this.currentGlobalEvent.name + '" has been resolved.');
-        this.currentGlobalEvent.resolve(game, this);
+      if (this.currentGlobalEvent !== undefined) {
+        const currentGlobalEvent: IGlobalEvent = this.currentGlobalEvent;
+        game.log('Resolving global event ${0}', (b) => b.globalEvent(currentGlobalEvent));
+        currentGlobalEvent.resolve(game, this);
       }
 
       // 3 - New Government
@@ -272,14 +285,17 @@ export class Turmoil implements ISerializable<SerializedTurmoil> {
         PoliticalAgendas.setNextAgenda(this, game);
 
         // Finally, award Chairman TR
-        if (this.chairman !== 'NEUTRAL') {
-          if (this.chairman instanceof Player) {
-            const player = this.chairman;
-            // Tempest Consultancy Hook (gains an additional TR when they become chairman)
-            const steps = player.corporationCard?.name === CardName.TEMPEST_CONSULTANCY ? 2 :1;
+        if (this.chairman !== 'NEUTRAL' && this.chairman instanceof Player) {
+          const player = this.chairman;
+          // Tempest Consultancy Hook (gains an additional TR when they become chairman)
+          const steps = player.corpName(CardName.TEMPEST_CONSULTANCY) ? 2 :1;
+
+          // Raise TR but after resolving the new policy
+          game.defer(new DeferredAction(player, () => {
             player.increaseTerraformRatingSteps(steps);
-            game.log('${0} is the new chairman and gained ${1} TR', (b) => b.player(player).number(steps));
-          }
+            game.log('${0} is the new chairman and gains ${1} TR', (b) => b.player(player).number(steps));
+            return undefined;
+          }));
         } else {
           game.log('A neutral delegate is the new chairman.');
         }
@@ -292,20 +308,20 @@ export class Turmoil implements ISerializable<SerializedTurmoil> {
       const rulingParty = this.rulingParty;
 
       // Resolve Ruling Bonus
-      const bonusId = this.politicalAgendasData.currentAgenda.bonusId;
+      const bonusId = PoliticalAgendas.currentAgenda(this).bonusId;
       const bonus = rulingParty.bonuses.find((b) => b.id === bonusId);
       if (bonus === undefined) {
         throw new Error(`Bonus id ${bonusId} not found in party ${rulingParty.name}`);
       }
-      game.log('The ruling bonus is ${0}', (b) => b.string(bonus.description).string(bonusId));
+      game.log('The ruling bonus is: ${0}', (b) => b.string(bonus.description));
       bonus.grant(game);
 
-      const policyId = this.politicalAgendasData.currentAgenda.policyId;
+      const policyId = PoliticalAgendas.currentAgenda(this).policyId;
       const policy = rulingParty.policies.find((p) => p.id === policyId);
       if (policy === undefined) {
         throw new Error(`Policy id ${policyId} not found in party ${rulingParty.name}`);
       }
-      game.log('The ruling policy is ${0}', (b) => b.string(policy.description).string(policyId));
+      game.log('The ruling policy is: ${0}', (b) => b.string(policy.description));
       // Resolve Ruling Policy for Scientists P4
       if (policy.apply !== undefined) {
         policy.apply(game);

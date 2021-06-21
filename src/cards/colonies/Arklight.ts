@@ -22,7 +22,7 @@ export class Arklight extends Card implements CorporationCard, IResourceCard {
 
       metadata: {
         cardNumber: 'R04',
-        description: 'You start with 45 MC. Increase your MC production 2 steps. 1 VP per 2 animals on this card.',
+        description: 'You start with 45 M€. Increase your M€ production 2 steps. 1 VP per 2 animals on this card.',
         renderData: CardRenderer.builder((b) => {
           b.megacredits(45).nbsp.production((pb) => pb.megacredits(2));
           b.corpBox('effect', (ce) => {
@@ -49,6 +49,10 @@ export class Arklight extends Card implements CorporationCard, IResourceCard {
       if (player.isCorporation(CardName.ARKLIGHT)) {
         player.addResourceTo(this, card.tags.filter((cardTag) => cardTag === Tags.ANIMAL || cardTag === Tags.PLANT).length);
       }
+    }
+
+    public onCorpCardPlayed(player: Player, card: CorporationCard) {
+      return this.onCardPlayed(player, card as IProjectCard);
     }
 
     public getVictoryPoints(): number {

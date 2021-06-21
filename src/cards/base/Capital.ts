@@ -15,6 +15,7 @@ import {CardMetadata} from '../CardMetadata';
 import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
 import {CardRenderDynamicVictoryPoints} from '../render/CardRenderDynamicVictoryPoints';
+import {Units} from '../../Units';
 
 export class Capital extends Card implements IProjectCard {
   constructor(
@@ -23,7 +24,7 @@ export class Capital extends Card implements IProjectCard {
     metadata: CardMetadata = {
       cardNumber: '008',
       description: {
-        text: 'Requires 4 ocean tiles. Place this tile. Decrease your Energy production 2 steps and increase your MC production 5 steps.',
+        text: 'Requires 4 ocean tiles. Place this tile. Decrease your Energy production 2 steps and increase your M€ production 5 steps.',
         align: 'left',
       },
       renderData: CardRenderer.builder((b) => {
@@ -42,6 +43,7 @@ export class Capital extends Card implements IProjectCard {
       tags: [Tags.CITY, Tags.BUILDING],
       cost: 26,
       adjacencyBonus,
+      productionBox: Units.of({energy: -2, megacredits: 5}),
 
       requirements: CardRequirements.builder((b) => b.oceans(4)),
       metadata,

@@ -14,21 +14,22 @@ export class _InterplanetaryCinematics_ implements CorporationCard {
     public cardType = CardType.CORPORATION;
 
     public onCardPlayed(player: Player, card: IProjectCard) {
-      if (player.corporationCard !== undefined && player.corporationCard.name === this.name && card.cardType === CardType.EVENT) {
+      if (player.corpName(this.name) && card.cardType === CardType.EVENT) {
         player.megaCredits += 3;
       }
     }
-    public play() {
+    public play(player: Player) {
+      player.drawCard(2, {cardType: CardType.EVENT});
       return undefined;
     }
     public metadata: CardMetadata = {
       cardNumber: 'R19',
-      description: 'You start with 50 MC.',
+      description: 'You start with 50 M€. As your first action, draw 2 event cards.',
       renderData: CardRenderer.builder((b) => {
         b.br.br.br;
-        b.megacredits(50);
+        b.megacredits(50).nbsp.cards(2).secondaryTag(Tags.EVENT);
         b.corpBox('effect', (ce) => {
-          ce.effect('Your tags on event work the same as green or blue card. Event tag is a new tag for you. Each time you play an event, you gain 3 MC.', (eb) => {
+          ce.effect('Your tags on event work the same as green or blue card. Event tag is a new tag for you. Each time you play an event, you gain 3 M€.', (eb) => {
             eb.event().played.startEffect.megacredits(3);
             eb.description();
           });

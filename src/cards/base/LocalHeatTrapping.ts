@@ -8,9 +8,9 @@ import {SelectCard} from '../../inputs/SelectCard';
 import {ResourceType} from '../../ResourceType';
 import {ICard} from '../ICard';
 import {CardName} from '../../CardName';
-import {LogHelper} from '../../LogHelper';
 import {Resources} from '../../Resources';
 import {CardRenderer} from '../render/CardRenderer';
+import {Units} from '../../Units';
 
 export class LocalHeatTrapping extends Card implements IProjectCard {
   constructor() {
@@ -18,6 +18,7 @@ export class LocalHeatTrapping extends Card implements IProjectCard {
       cardType: CardType.EVENT,
       name: CardName.LOCAL_HEAT_TRAPPING,
       cost: 1,
+      reserveUnits: Units.of({heat: 5}),
 
       metadata: {
         cardNumber: '190',
@@ -30,23 +31,12 @@ export class LocalHeatTrapping extends Card implements IProjectCard {
       },
     });
   }
-  public canPlay(player: Player): boolean {
-    const requiredHeatAmt = 5;
-
-    // Helion must be able to pay for both the card and its effect
-    if (player.canUseHeatAsMegaCredits) {
-      return (player.heat >= requiredHeatAmt) && (player.heat + player.megaCredits >= requiredHeatAmt + player.getCardCost(this));
-    }
-
-    return player.availableHeat >= requiredHeatAmt;
-  }
   public play(player: Player) {
     const animalCards: Array<ICard> = player.getResourceCards(ResourceType.ANIMAL);
     const availableActions = new OrOptions();
 
     const gain4Plants = function() {
-      player.plants += 4;
-      LogHelper.logGainStandardResource(player, Resources.PLANTS, 4);
+      player.addResource(Resources.PLANTS, 4, {log: true});
       return undefined;
     };
     if (animalCards.length === 0) {
@@ -56,16 +46,14 @@ export class LocalHeatTrapping extends Card implements IProjectCard {
       availableActions.options.push(
         new SelectOption('Gain 4 plants', 'Gain plants', gain4Plants),
         new SelectOption('Add 2 animals to ' + targetCard.name, 'Add animals', () => {
-          player.addResourceTo(targetCard, 2);
-          LogHelper.logAddResource(player, targetCard, 2);
+          player.addResourceTo(targetCard, {qty: 2, log: true});
           return undefined;
         }));
     } else {
       availableActions.options.push(
         new SelectOption('Gain 4 plants', 'Gain plants', gain4Plants),
         new SelectCard('Select card to add 2 animals', 'Add animals', animalCards, (foundCards: Array<ICard>) => {
-          player.addResourceTo(foundCards[0], 2);
-          LogHelper.logAddResource(player, foundCards[0], 2);
+          player.addResourceTo(foundCards[0], {qty: 2, log: true});
           return undefined;
         }));
     }

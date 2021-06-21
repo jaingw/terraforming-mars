@@ -14,7 +14,7 @@ describe('Aridor', function() {
     Game.newInstance('foobar', [player, player2], player);
     const play = card.play();
     expect(play).is.undefined;
-    player.corporationCard = card;
+    player.corpCard = card;
     card.onCardPlayed(player, new Predators());
     expect(player.getProduction(Resources.MEGACREDITS)).to.eq(1);
     card.onCardPlayed(player2, new ResearchOutpost());

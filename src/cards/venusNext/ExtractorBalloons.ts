@@ -11,7 +11,7 @@ import {PartyHooks} from '../../turmoil/parties/PartyHooks';
 import {PartyName} from '../../turmoil/parties/PartyName';
 import {LogHelper} from '../../LogHelper';
 import {CardRenderer} from '../render/CardRenderer';
-import {CardRenderItemSize} from '../render/CardRenderItemSize';
+import {Size} from '../render/Size';
 import {Card} from '../Card';
 
 export class ExtractorBalloons extends Card implements IActionCard, IResourceCard {
@@ -31,7 +31,7 @@ export class ExtractorBalloons extends Card implements IActionCard, IResourceCar
             eb.empty().startAction.floaters(1);
           }).br;
           b.action('Remove 2 Floaters here to raise Venus 1 step.', (eb) => {
-            eb.or(CardRenderItemSize.SMALL).floaters(2).startAction.venus(1);
+            eb.or(Size.SMALL).floaters(2).startAction.venus(1);
           }).br.floaters(3);
         }),
       },
@@ -51,8 +51,7 @@ export class ExtractorBalloons extends Card implements IActionCard, IResourceCar
     const venusMaxed = player.game.getVenusScaleLevel() === MAX_VENUS_SCALE;
     const cannotAffordRed = PartyHooks.shouldApplyPolicy(player.game, PartyName.REDS) && !player.canAfford(REDS_RULING_POLICY_COST);
     if (this.resourceCount < 2 || venusMaxed || cannotAffordRed) {
-      player.addResourceTo(this);
-      LogHelper.logAddResource(player, this);
+      player.addResourceTo(this, {log: true});
       return undefined;
     }
     return new OrOptions(
@@ -64,8 +63,7 @@ export class ExtractorBalloons extends Card implements IActionCard, IResourceCar
           return undefined;
         }),
       new SelectOption('Add 1 floater to this card', 'Add floater', () => {
-        player.addResourceTo(this);
-        LogHelper.logAddResource(player, this);
+        player.addResourceTo(this, {log: true});
         return undefined;
       }),
     );

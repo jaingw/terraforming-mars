@@ -6,7 +6,6 @@ import {Tags} from '../Tags';
 import {Player} from '../../Player';
 import {SelectAmount} from '../../inputs/SelectAmount';
 import {CardName} from '../../CardName';
-import {LogHelper} from '../../LogHelper';
 import {Resources} from '../../Resources';
 import {CardRenderer} from '../render/CardRenderer';
 
@@ -21,7 +20,7 @@ export class PowerInfrastructure extends Card implements IActionCard, IProjectCa
       metadata: {
         cardNumber: '194',
         renderData: CardRenderer.builder((b) => {
-          b.action('Spend any amount of Energy and gain that amount of MC.', (eb) => {
+          b.action('Spend any amount of Energy and gain that amount of M€.', (eb) => {
             eb.text('x').energy(1).startAction.megacredits(0).multiplier;
           });
         }),
@@ -40,9 +39,8 @@ export class PowerInfrastructure extends Card implements IActionCard, IProjectCa
       'Select amount of energy to spend',
       'Spend energy',
       (amount: number) => {
-        player.energy -= amount;
-        player.megaCredits += amount;
-        LogHelper.logGainStandardResource(player, Resources.MEGACREDITS, amount);
+        player.deductResource(Resources.ENERGY, amount);
+        player.addResource(Resources.MEGACREDITS, amount, {log: true});
         return undefined;
       },
       1,

@@ -2,8 +2,9 @@ import Vue from 'vue';
 import {HelpIconology} from './HelpIconology';
 import {HelpPhases} from './HelpPhases';
 import {HelpStandardProjects} from './HelpStandardProjects';
+import {HelpOperation} from './HelpOperation';
 
-type Tab = 'iconology' | 'standard projects' | 'phases' | 'hotkeys';
+type Tab = 'iconology' | 'standard projects' | 'phases' | 'hotkeys' | 'help-operation';
 
 export interface HelpPageModel {
     currentPage: Tab;
@@ -12,13 +13,14 @@ export interface HelpPageModel {
 export const Help = Vue.component('help', {
   data: function(): HelpPageModel {
     return {
-      currentPage: 'iconology',
+      currentPage: 'help-operation',
     };
   },
   components: {
     'iconology': HelpIconology,
     'standard-projects': HelpStandardProjects,
     'phases': HelpPhases,
+    'help-operation': HelpOperation,
   },
   methods: {
     setTab: function(tab: Tab): void {
@@ -32,7 +34,11 @@ export const Help = Vue.component('help', {
     <div class="help-container">
 
         <div class="help-tabs">
-            <input type="radio" name="help-tab" id="radio-symbols" checked>
+            <input type="radio" name="help-tab" id="radio-help-operation" checked>
+            <label for="radio-help-operation" v-on:click="setTab('help-operation')">
+                <span v-i18n>Operation</span>
+            </label>
+            <input type="radio" name="help-tab" id="radio-symbols" >
             <label for="radio-symbols" v-on:click="setTab('iconology')">
                 <span v-i18n>Game Iconology</span>
             </label>
@@ -49,6 +55,8 @@ export const Help = Vue.component('help', {
                 <span v-i18n>Hot Keys</span>
             </label>
         </div>
+        
+        <help-operation v-if="isOpen('help-operation')"></help-operation>
 
         <help-iconology v-if="isOpen('iconology')"></help-iconology>
 

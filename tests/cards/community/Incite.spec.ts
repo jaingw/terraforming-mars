@@ -19,7 +19,7 @@ describe('Incite', function() {
     game = Game.newInstance('foobar', [player], player, gameOptions);
 
     card.play(player);
-    player.corporationCard = card;
+    player.corpCard = card;
   });
 
   it('Starts with +1 influence', function() {

@@ -13,7 +13,7 @@ describe('LakefrontResorts', function() {
     const game = Game.newInstance('foobar', [player, player2], player);
     const play = card2.play(player);
     expect(play).is.undefined;
-    player.corporationCard = card2;
+    player.corpCard = card2;
     game.addOceanTile(player, '06');
     game.addOceanTile(player, '07');
     TestingUtils.runAllActions(game);

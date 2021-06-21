@@ -89,7 +89,7 @@ export abstract class Colony implements SerializedColony {
       // Poseidon hook
       const poseidon = player.game.getPlayers().find((player) => player.isCorporation(CardName.POSEIDON));
       if (poseidon !== undefined) {
-        poseidon.addProduction(Resources.MEGACREDITS);
+        poseidon.addProduction(Resources.MEGACREDITS, 1);
       }
     }
 
@@ -123,16 +123,29 @@ export abstract class Colony implements SerializedColony {
 
     private handleTrade(player: Player, usesTradeFleet: boolean, decreaseTrackAfterTrade: boolean, giveColonyBonuses: boolean = true) {
       const resource = Array.isArray(this.tradeResource) ? this.tradeResource[this.trackPosition] : this.tradeResource;
-
-      this.giveBonus(player, this.tradeType, this.tradeQuantity[this.trackPosition], resource);
+      const num = this.tradeQuantity[this.trackPosition];
+      this.giveBonus(player, this.tradeType, num, resource);
 
       if (giveColonyBonuses) {
+        // 殖民者贸易奖励
         player.game.defer(new GiveColonyBonus(player, this));
       }
 
       if (usesTradeFleet) {
         this.visitor = player;
+        // TradeNavigator
         player.tradesThisGeneration++;
+        if (player.game.finishFirstTrading === false) {
+          player.game.finishFirstTrading = true;
+          const TradingNavigator = player.game.getPlayers()
+            .find((player) => player.isCorporation(CardName.TRADE_NAVIGATOR));
+          if (TradingNavigator !== undefined) {
+            this.giveBonus(TradingNavigator, this.tradeType, num, resource);
+            if (giveColonyBonuses) {
+              player.game.defer(new GiveColonyBonus(player, this));
+            }
+          }
+        }
       }
 
       if (decreaseTrackAfterTrade) {
@@ -147,7 +160,7 @@ export abstract class Colony implements SerializedColony {
       return this.giveBonus(player, this.colonyBonusType!, this.colonyBonusQuantity!, this.colonyBonusResource, isGiveColonyBonus);
     }
 
-
+    // 殖民收入 贸易收入
     public giveBonus(player: Player, bonusType: ColonyBenefit, quantity: number, resource: Resources | undefined, isGiveColonyBonus: boolean = false): undefined | PlayerInput {
       const game = player.game;
 
@@ -199,19 +212,17 @@ export abstract class Colony implements SerializedColony {
 
       case ColonyBenefit.GAIN_CARD_DISCOUNT:
         player.cardDiscount += 1;
-        game.log('Cards played by ${0} cost 1 MC less this generation', (b) => b.player(player));
+        game.log('Cards played by ${0} cost 1 M€ less this generation', (b) => b.player(player));
         break;
 
       case ColonyBenefit.GAIN_PRODUCTION:
         if (resource === undefined) throw new Error('Resource cannot be undefined');
-        player.addProduction(resource, quantity);
-        LogHelper.logGainProduction(player, resource, quantity);
+        player.addProduction(resource, quantity, {log: true});
         break;
 
       case ColonyBenefit.GAIN_RESOURCES:
         if (resource === undefined) throw new Error('Resource cannot be undefined');
-        player.setResource(resource, quantity);
-        LogHelper.logGainStandardResource(player, resource, quantity);
+        player.addResource(resource, quantity, {log: true});
         break;
 
       case ColonyBenefit.GAIN_SCIENCE_TAG:
@@ -248,8 +259,7 @@ export abstract class Colony implements SerializedColony {
           if (game.turmoil.lobby.has(player.id)) partyDelegateCount--;
           if (game.turmoil.chairman === player.id) partyDelegateCount--;
 
-          player.setResource(Resources.MEGACREDITS, partyDelegateCount);
-          LogHelper.logGainStandardResource(player, Resources.MEGACREDITS, partyDelegateCount);
+          player.addResource(Resources.MEGACREDITS, partyDelegateCount, {log: true});
         }
         break;
 
@@ -274,7 +284,7 @@ export abstract class Colony implements SerializedColony {
 
       case ColonyBenefit.LOSE_RESOURCES:
         if (resource === undefined) throw new Error('Resource cannot be undefined');
-        player.setResource(resource, -quantity);
+        player.deductResource(resource, quantity);
         break;
 
       case ColonyBenefit.OPPONENT_DISCARD:

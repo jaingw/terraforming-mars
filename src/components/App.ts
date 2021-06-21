@@ -1,5 +1,5 @@
 import {GameEnd} from './GameEnd';
-import {CreateGameForm} from './CreateGameForm';
+import {CreateGameForm} from './create/CreateGameForm';
 import {GameHome} from './GameHome';
 import {GamesOverview} from './GamesOverview';
 import {PlayerHome} from './PlayerHome';
@@ -8,7 +8,7 @@ import {PlayerModel} from '../models/PlayerModel';
 import {StartScreen} from './StartScreen';
 import {LoadGameForm} from './LoadGameForm';
 import {DebugUI} from './DebugUI';
-import {GameHomeModel} from '../models/GameHomeModel';
+import {SimpleGameModel} from '../models/SimpleGameModel';
 import {Help} from './help/Help';
 
 import {$t} from '../directives/i18n';
@@ -42,7 +42,7 @@ interface MainAppData {
     settings: typeof raw_settings;
     isServerSideRequestInProgress: boolean;
     componentsVisibility: {[x: string]: boolean};
-    game: GameHomeModel | undefined;
+    game: SimpleGameModel | undefined;
 }
 
 export const mainAppSettings = {
@@ -63,7 +63,7 @@ export const mainAppSettings = {
       'pinned_player_4': false,
       'turmoil_parties': false,
     } as {[x: string]: boolean},
-    game: undefined as GameHomeModel | undefined,
+    game: undefined as SimpleGameModel | undefined,
     isvip: false, // 页面加载时刷新isvip, 之后都可以根据这个值判断是否vip
     oscreen: 'empty', // 跳转赞助页面前的页面
     logPaused: false,
@@ -114,7 +114,7 @@ export const mainAppSettings = {
       const xhr = new XMLHttpRequest();
       const app = this as unknown as typeof mainAppSettings.data;
 
-      const userId = PreferencesManager.loadValue('userId');
+      const userId = PreferencesManager.load('userId');
       let url = '/api/player' + window.location.search.replace('&noredirect', '');
       if (userId.length > 0) {
         url += '&userId=' + userId;
@@ -138,7 +138,7 @@ export const mainAppSettings = {
           app.player = xhr.response as PlayerModel;
           app.playerkey++;
           if (
-            app.player.phase === 'end' &&
+            app.player.game.phase === 'end' &&
                         window.location.search.includes('&noredirect') === false
           ) {
             app.screen = 'the-end';
@@ -168,8 +168,8 @@ export const mainAppSettings = {
     },
     udpatevip: function(userId : string) {
       const app = (this as any);
-      const vip = PreferencesManager.loadValue('vip');
-      // let vipupdate = PreferencesManager.loadValue("vipupdate");
+      const vip = PreferencesManager.load('vip');
+      // let vipupdate = PreferencesManager.load("vipupdate");
       // 每天更新一次vip
       // if(vipupdate < getDay()){
       const xhr = new XMLHttpRequest();
@@ -182,17 +182,20 @@ export const mainAppSettings = {
           const resp = xhr.response;
           if (resp === 'success') {
             app.isvip = true;
-            PreferencesManager.saveValue('vip', 'true');
+            PreferencesManager.save('vip', 'true');
           } else {
             app.isvip = false;
-            PreferencesManager.saveValue('vip', 'false');
+            PreferencesManager.save('vip', 'false');
             app.showdonate();// 根据用户id获取到vip到期，调用赞助页面方法
           }
         } else {
+          if (xhr.status === 404) {
+            PreferencesManager.loginOut();
+          }
           app.isvip = false;
-          PreferencesManager.saveValue('vip', 'false');
+          PreferencesManager.save('vip', 'false');
         }
-        PreferencesManager.saveValue('vipupdate', getDay());
+        PreferencesManager.save('vipupdate', getDay());
       };
       xhr.send();
       // }
@@ -203,24 +206,24 @@ export const mainAppSettings = {
     showdonate: function() {
       const app = (this as any);
       const r = Math.random() * 10 > 9;// 10分之一概率弹出
-      const d = PreferencesManager.loadValue('donateupdate');
+      const d = PreferencesManager.load('donateupdate');
       const threeday = new Date().getTime() - 3*24*3600000;// 每3天弹出一次
       if (d < threeday.toString() && r && app.screen !== 'donate' && app.screen !== 'start-screen' && !app.isvip ) {
         app.oscreen = app.screen;
         app.screen = 'donate';
-        PreferencesManager.saveValue('donateupdate', new Date().getTime().toString());
+        PreferencesManager.save('donateupdate', new Date().getTime().toString());
       }
     },
   },
   'mounted': function() {
-    document.title = constants.APP_NAME;
+    // document.title = constants.APP_NAME;
     dialogPolyfill.default.registerDialog(document.getElementById('alert-dialog'));
     const currentPathname: string = window.location.pathname;
     const app = this as unknown as (typeof mainAppSettings.data) & (typeof mainAppSettings.methods);
-    const userId = PreferencesManager.loadValue('userId');
+    const userId = PreferencesManager.load('userId');
     if (userId !== '') {
       if (currentPathname === '/') {// 首页强制更新vip
-        PreferencesManager.saveValue('vipupdate', '');
+        PreferencesManager.save('vipupdate', '');
       }
       app.udpatevip(userId);
     }
@@ -241,7 +244,7 @@ export const mainAppSettings = {
             `${constants.APP_NAME} - Game`,
             '/game?id=' + xhr.response.id,
           );
-          app.game = xhr.response as GameHomeModel;
+          app.game = xhr.response as SimpleGameModel;
         } else {
           alert('Unexpected server response');
         }

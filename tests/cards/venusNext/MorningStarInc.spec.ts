@@ -11,7 +11,7 @@ describe('MorningStarInc', function() {
     const player = TestPlayers.BLUE.newPlayer();
     const redPlayer = TestPlayers.RED.newPlayer();
     const game = Game.newInstance('foobar', [player, redPlayer], player);
-    player.corporationCard = corp;
+    player.corpCard = corp;
     game.increaseVenusScaleLevel(player, 3);
     expect(card.canPlay(player)).is.true;
     expect(game.getVenusScaleLevel()).to.eq(6);

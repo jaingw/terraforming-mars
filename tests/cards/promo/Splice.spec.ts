@@ -24,7 +24,7 @@ describe('Splice', function() {
     const play = card.play();
     expect(play).is.undefined;
 
-    player.corporationCard = card;
+    player.corpCard = card;
 
     player2.playedCards.push(card2);
     const action = card.onCardPlayed(player2, card2);
@@ -42,9 +42,9 @@ describe('Splice', function() {
   it('Should play with multiple microbe tags', function() {
     const card2 = new PharmacyUnion();
     const play = card.play();
-    player.corporationCard = card;
+    player.corpCard = card;
     const play2 = card2.play(player);
-    player2.corporationCard = card2;
+    player2.corpCard = card2;
     expect(play).is.undefined;
     expect(play2).is.undefined;
 
@@ -67,21 +67,21 @@ describe('Splice', function() {
     pi2.options[1].cb([]);
     pi2.cb();
 
-    // Default resource on Recyclon and player2's MC
+    // Default resource on Recyclon and player2's M€
     expect(card2.resourceCount).to.eq(1);
     expect(player2.megaCredits).to.eq(38);
 
-    // Player 2 should have the option to pick a microbe or 2 MC
+    // Player 2 should have the option to pick a microbe or 2 M€
     const pi3 = player2.getWaitingFor() as OrOptions;
     expect(pi3.options).has.lengthOf(2);
     expect(pi3.options[0].title).to.eq('Add a microbe resource to this card');
-    expect(pi3.options[1].title).to.eq('Gain 2 MC');
+    expect(pi3.options[1].title).to.eq('Gain 2 M€');
 
     // Pick the microbe
     pi3.options[0].cb();
     expect(card2.resourceCount).to.eq(2);
 
-    // Pick 2 MC
+    // Pick 2 M€
     pi3.options[1].cb();
     expect(player2.megaCredits).to.eq(40);
   });

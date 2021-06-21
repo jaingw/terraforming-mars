@@ -9,6 +9,7 @@ import {ISpace} from '../../boards/ISpace';
 import {CardRenderer} from '../render/CardRenderer';
 import {CardRequirements} from '../CardRequirements';
 import {Card} from '../Card';
+import {Units} from '../../Units';
 
 export class SpacePort extends Card implements IProjectCard {
   constructor() {
@@ -17,6 +18,7 @@ export class SpacePort extends Card implements IProjectCard {
       tags: [Tags.CITY, Tags.BUILDING],
       name: CardName.SPACE_PORT,
       cardType: CardType.AUTOMATED,
+      productionBox: Units.of({energy: -1, megacredits: 4}),
 
       requirements: CardRequirements.builder((b) => b.colonies()),
       metadata: {
@@ -28,7 +30,7 @@ export class SpacePort extends Card implements IProjectCard {
           }).nbsp.city().br;
           b.tradeFleet();
         }),
-        description: 'Requires 1 colony. Decrease your Energy production 1 step and increase your MC production 4 steps. Place a City tile. Gain 1 Trade Fleet.',
+        description: 'Requires 1 colony. Decrease your Energy production 1 step and increase your M€ production 4 steps. Place a City tile. Gain 1 Trade Fleet.',
       },
     });
   }

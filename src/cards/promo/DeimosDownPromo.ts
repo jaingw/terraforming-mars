@@ -22,7 +22,7 @@ export class DeimosDownPromo extends Card implements IProjectCard {
       cost: 31,
 
       metadata: {
-        cardNumber: '039',
+        cardNumber: 'X31',
         description: 'Raise temperature 3 steps and gain 4 steel. Place this tile ADJACENT TO no other city tile. Remove up to 6 Plants from any player.',
         renderData: CardRenderer.builder((b) => {
           b.temperature(3).br;
@@ -39,7 +39,7 @@ export class DeimosDownPromo extends Card implements IProjectCard {
     const stepsRaised = Math.min(remainingTemperatureSteps, 3);
 
     if (PartyHooks.shouldApplyPolicy(player.game, PartyName.REDS)) {
-      return player.canAfford(player.getCardCost(this) + REDS_RULING_POLICY_COST * stepsRaised, false, true) && canPlaceTile;
+      return player.canAfford(player.getCardCost(this) + REDS_RULING_POLICY_COST * stepsRaised, {titanium: true}) && canPlaceTile;
     }
 
     return canPlaceTile;

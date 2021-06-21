@@ -38,7 +38,7 @@ describe('Cloner', function() {
     expect(player.terraformRatingAtGenerationStart).eq(14);
     expect(newPlayerZero.handicap).eq(3);
 
-    expect(player.dealtCorporationCards, 'dealtCorporationCards').deep.eq(newPlayerZero.dealtCorporationCards);
+    expect(player.dealtCorporationCards, 'dealtcorpCards').deep.eq(newPlayerZero.dealtCorporationCards);
     expect(player.dealtProjectCards, 'dealtProjectCards').deep.eq(newPlayerZero.dealtProjectCards);
     expect(player.dealtPreludeCards, 'dealtPreludeCards').deep.eq(newPlayerZero.dealtPreludeCards);
     expect(player.cardsInHand, 'cardsInHand').deep.eq(newPlayerZero.cardsInHand);

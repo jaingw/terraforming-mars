@@ -85,29 +85,35 @@ export const WaitingFor = Vue.component('waiting-for', {
     },
     waitForUpdate: function(faster:boolean = false) {
       const root = this.$root as unknown as typeof mainAppSettings.methods;
+      const rootdata = this.$root as unknown as typeof mainAppSettings.data;
       clearInterval(ui_update_timeout_id);
+      let failednum = 0;
       const askForUpdate = () => {
         const xhr = new XMLHttpRequest();
-        xhr.open('GET', '/api/waitingfor' + window.location.search + '&gameAge=' + this.player.gameAge + '&undoCount=' + this.player.undoCount);
+        xhr.open('GET', '/api/waitingfor' + window.location.search + '&gameAge=' + this.player.game.gameAge + '&undoCount=' + this.player.game.undoCount);
         xhr.onerror = function() {
           root.showAlert('Unable to reach the server. The server may be restarting or down for maintenance.', () => {});
         };
         xhr.onload = () => {
           if (xhr.status === 200) {
+            if (rootdata.player?.game.phase === 'end') {
+              clearInterval(ui_update_timeout_id);
+              return;
+            }
             const result = xhr.response as WaitingForModel;
             if (result.result === 'GO' && this.waitingfor === undefined && !this.player.block) {
               root.updatePlayer();
 
               if (Notification.permission !== 'granted') {
                 Notification.requestPermission();
-              }
-              if (Notification.permission === 'granted') {
+              } else if (Notification.permission === 'granted') {
                 new Notification(constants.APP_NAME, {
                   icon: '/favicon.ico',
                   body: 'It\'s your turn!',
                 });
               }
-              const soundsEnabled = PreferencesManager.loadValue('enable_sounds') === '1';
+
+              const soundsEnabled = PreferencesManager.load('enable_sounds') === '1';
               if (soundsEnabled) SoundManager.playActivePlayerSound();
 
               // We don't need to wait anymore - it's our turn
@@ -120,6 +126,11 @@ export const WaitingFor = Vue.component('waiting-for', {
             }
           } else {
             root.showAlert(`Received unexpected response from server (${xhr.status}). This is often due to the server restarting.`, () => {});
+            failednum ++;
+            if (failednum >= 5) {
+              // 失败5次不再发送请求 需手动刷新
+              clearInterval(ui_update_timeout_id);
+            }
           }
           // (vueApp as any).waitForUpdate();
         };
@@ -164,7 +175,7 @@ export const WaitingFor = Vue.component('waiting-for', {
       }
 
       root.isServerSideRequestInProgress = true;
-      const userId = PreferencesManager.loadValue('userId');
+      const userId = PreferencesManager.load('userId');
       let url = '/player/input?id=' + (this.$parent as any).player.id;
       if (userId.length > 0) {
         url += '&userId=' + userId;
@@ -177,7 +188,7 @@ export const WaitingFor = Vue.component('waiting-for', {
           root.player = xhr.response;
           root.playerkey++;
           root.screen = 'player-home';
-          if (this.player.phase === 'end' && window.location.pathname !== '/the-end') {
+          if (root?.player?.game.phase === 'end' && window.location.pathname !== '/the-end') {
             (window).location = (window).location;
           }
         } else if (xhr.status === 400 && xhr.responseType === 'json') {

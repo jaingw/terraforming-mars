@@ -7,13 +7,12 @@ import {ResourceType} from '../../ResourceType';
 import {OrOptions} from '../../inputs/OrOptions';
 import {SelectOption} from '../../inputs/SelectOption';
 import {IResourceCard} from '../ICard';
-import {LogHelper} from '../../LogHelper';
 import {Resources} from '../../Resources';
 import {AddResourcesToCard} from '../../deferredActions/AddResourcesToCard';
 import {CardRequirements} from '../CardRequirements';
 import {Card} from '../Card';
 import {CardRenderer} from '../render/CardRenderer';
-import {CardRenderItemSize} from '../render/CardRenderItemSize';
+import {Size} from '../render/Size';
 
 export class JupiterFloatingStation extends Card implements IProjectCard, IResourceCard {
   constructor() {
@@ -32,9 +31,9 @@ export class JupiterFloatingStation extends Card implements IProjectCard, IResou
             eb.empty().startAction.floaters(1).secondaryTag(Tags.JOVIAN);
           }).br;
           b.or().br;
-          b.action('Gain 1 MC for every floater here [MAX 4].', (eb) => {
+          b.action('Gain 1 M€ for every floater here [MAX 4].', (eb) => {
             eb.empty().startAction;
-            eb.megacredits(1).slash().floaters(1).text('[max 4]', CardRenderItemSize.SMALL);
+            eb.megacredits(1).slash().floaters(1).text('[max 4]', Size.SMALL);
           });
         }),
         description: {
@@ -48,10 +47,6 @@ export class JupiterFloatingStation extends Card implements IProjectCard, IResou
 
   public resourceCount: number = 0;
 
-  public canPlay(player: Player): boolean {
-    return player.getTagCount(Tags.SCIENCE) >= 3;
-  }
-
   public canAct(): boolean {
     return true;
   }
@@ -64,10 +59,8 @@ export class JupiterFloatingStation extends Card implements IProjectCard, IResou
         }));
         return undefined;
       }),
-      new SelectOption('Gain 1 MC per floater here (max 4) ', 'Gain MC', () => {
-        const amount = Math.min(this.resourceCount, 4);
-        player.megaCredits += amount;
-        LogHelper.logGainStandardResource(player, Resources.MEGACREDITS, amount);
+      new SelectOption('Gain 1 M€ per floater here (max 4) ', 'Gain M€', () => {
+        player.addResource(Resources.MEGACREDITS, Math.min(this.resourceCount, 4), {log: true});
         return undefined;
       }),
     );

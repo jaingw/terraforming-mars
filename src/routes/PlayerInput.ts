@@ -27,12 +27,12 @@ export class PlayerInput extends Handler {
         ctx.route.notFound(req, res);
         return;
       }
-      const user = GameLoader.getInstance().userNameMap.get(player.name);
+      const user = GameLoader.getUserByPlayer(player);
       if (user !== undefined && user.id !== userId) {
         ctx.route.notFound(req, res);
         return;
       }
-      this.processInput(req, res, ctx, player);
+      this.processInput(req, res, ctx, player, userId);
     });
   }
 
@@ -41,6 +41,7 @@ export class PlayerInput extends Handler {
     res: http.ServerResponse,
     ctx: IContext,
     player: Player,
+    userId: string,
   ): void {
     let body = '';
     req.on('data', function(data) {
@@ -50,7 +51,8 @@ export class PlayerInput extends Handler {
       try {
         const entity = JSON.parse(body);
         player.process(entity);
-        ctx.route.writeJson(res, Server.getPlayerModel(player, false));
+        const playerBlockModel = Server.getPlayerBlock(player, userId);
+        ctx.route.writeJson(res, Server.getPlayerModel(player, playerBlockModel));
       } catch (err) {
         res.writeHead(400, {
           'Content-Type': 'application/json',

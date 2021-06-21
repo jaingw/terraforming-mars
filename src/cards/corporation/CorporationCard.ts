@@ -14,4 +14,5 @@ export interface CorporationCard extends ICard {
     ) => OrOptions | void;
     onProductionPhase?: (player: Player) => undefined;
     isDisabled?: boolean;
+    isUsed?: boolean;
 }

@@ -7,7 +7,7 @@ import {CardName} from '../../../CardName';
 import {CardType} from '../../CardType';
 import {CardMetadata} from '../../CardMetadata';
 import {CardRenderer} from '../../render/CardRenderer';
-import {CardRenderItemSize} from '../../render/CardRenderItemSize';
+import {Size} from '../../render/Size';
 
 export class _Helion_ implements CorporationCard {
     public name: CardName = CardName._HELION_;
@@ -23,15 +23,15 @@ export class _Helion_ implements CorporationCard {
 
     public metadata: CardMetadata = {
       cardNumber: 'R18',
-      description: 'You start with 3 heat production and 48 MC.',
+      description: 'You start with 3 heat production and 48 M€.',
       renderData: CardRenderer.builder((b) => {
         b.production((pb) => pb.heat(3)).nbsp.megacredits(48);
         b.corpBox('effect', (ce) => {
           ce.effect(undefined, (eb) => {
-            ce.vSpace(CardRenderItemSize.LARGE);
+            ce.vSpace(Size.LARGE);
             eb.text('x').heat(1).startEffect.megacredits(0).multiplier;
           });
-          ce.effect('You may use heat as MC. You may not use MC as heat. Any player increase Temperature, that player gain 1 heat.', (eb) => {
+          ce.effect('You may use heat as M€. You may not use M€ as heat. Any player increase Temperature, that player gain 1 heat.', (eb) => {
             eb.temperature(1).any.startEffect.heat(1);
           });
         });

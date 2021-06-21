@@ -12,7 +12,6 @@ import {CardRenderer} from '../render/CardRenderer';
 import {CardRenderDynamicVictoryPoints} from '../render/CardRenderDynamicVictoryPoints';
 import {Units} from '../../Units';
 import {MoonCard} from './MoonCard';
-import {CardRenderItemSize} from '../render/CardRenderItemSize';
 import {LogHelper} from '../../LogHelper';
 
 export class DarksideIncubationPlant extends MoonCard implements IActionCard, IProjectCard {
@@ -23,6 +22,7 @@ export class DarksideIncubationPlant extends MoonCard implements IActionCard, IP
       tags: [Tags.MICROBE, Tags.MOON],
       cost: 11,
       resourceType: ResourceType.MICROBE,
+      reserveUnits: Units.of({titanium: 1}),
 
       metadata: {
         description: {
@@ -35,7 +35,7 @@ export class DarksideIncubationPlant extends MoonCard implements IActionCard, IP
             eb.empty().startAction.microbes(1);
           }).br;
           b.action('Spend 2 microbes to raise the Colony Rate 1 step.', (eb) => {
-            eb.microbes(2).startAction.moonColonyRate({size: CardRenderItemSize.SMALL});
+            eb.microbes(2).startAction.moonColonyRate();
           });
 
           b.br;
@@ -43,8 +43,6 @@ export class DarksideIncubationPlant extends MoonCard implements IActionCard, IP
         }),
         victoryPoints: CardRenderDynamicVictoryPoints.microbes(1, 2),
       },
-    }, {
-      reserveUnits: Units.of({titanium: 1}),
     });
   };
   public resourceCount = 0;

@@ -40,6 +40,9 @@ export const OtherPlayer = Vue.component('other-player', {
                         <div v-if="player.corporationCard !== undefined" class="cardbox">
                             <Card :card="player.corporationCard" :actionUsed="isCardActivated(player.corporationCard, player)"/>
                         </div>
+                        <div v-if="player.corporationCard2 !== undefined" class="cardbox">
+                            <Card :card="player.corporationCard2" :actionUsed="isCardActivated(player.corporationCard2, player)"/>
+                        </div>
                         <div v-for="card in sortActiveCards(getCardsByType(player.playedCards, [getActiveCardType()]))" :key="card.name" class="cardbox">
                             <Card :card="card" :actionUsed="isCardActivated(card, player)"/>
                         </div>

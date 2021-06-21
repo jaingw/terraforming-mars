@@ -12,6 +12,7 @@ import {Board} from '../../boards/Board';
 import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
 import {Card} from '../Card';
+import {Units} from '../../Units';
 
 export class MarsHotSpring extends Card implements IProjectCard {
   constructor() {
@@ -20,6 +21,7 @@ export class MarsHotSpring extends Card implements IProjectCard {
       cardType: CardType.AUTOMATED,
       tags: [Tags.BUILDING],
       cost: 12,
+      productionBox: Units.of({heat: 2, megacredits: 2}),
 
       requirements: CardRequirements.builder((b) => b.oceans(3)),
       metadata: {
@@ -28,7 +30,7 @@ export class MarsHotSpring extends Card implements IProjectCard {
           b.production((pb) => pb.megacredits(2).nbsp.heat(2).digit).br;
           b.tile(TileType.HOT_SPRING, true, false).asterix();
         }),
-        description: 'Requires 3 ocean tiles. Increase your MC and Heat production 2 steps. Place this tile ADJACENT TO an ocean tile.',
+        description: 'Requires 3 ocean tiles. Increase your M€ and Heat production 2 steps. Place this tile ADJACENT TO an ocean tile.',
       },
     });
   };

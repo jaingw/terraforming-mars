@@ -1,23 +1,15 @@
-
 import Vue from 'vue';
 import * as constants from '../constants';
 import {BoardSpace} from './BoardSpace';
 import {IAresData} from '../ares/IAresData';
 import {SpaceModel} from '../models/SpaceModel';
 import {SpaceType} from '../SpaceType';
-import {PreferencesManager} from './PreferencesManager';
-// @ts-ignore
-import {$t} from '../directives/i18n';
 import {SpaceId} from '../boards/ISpace';
+import {TranslateMixin} from './TranslateMixin';
 
 class GlobalParamLevel {
   constructor(public value: number, public isActive: boolean, public isDone: boolean, public strValue: string) {
-
   }
-}
-
-class AlertDialog {
-    static shouldAlert = true;
 }
 
 export const Board = Vue.component('board', {
@@ -43,9 +35,6 @@ export const Board = Vue.component('board', {
     temperature: {
       type: Number,
     },
-    shouldNotify: {
-      type: Boolean,
-    },
     aresExtension: {
       type: Boolean,
     },
@@ -62,12 +51,7 @@ export const Board = Vue.component('board', {
       'isTileHidden': false,
     };
   },
-  mounted: function() {
-    if (this.marsIsTerraformed() && this.shouldNotify && AlertDialog.shouldAlert && PreferencesManager.loadValue('show_alerts') === '1') {
-      alert('Mars is Terraformed!');
-      AlertDialog.shouldAlert = false;
-    };
-  },
+  mixins: [TranslateMixin],
   methods: {
     getAllSpacesOnMars: function(): Array<SpaceModel> {
       const boardSpaces: Array<SpaceModel> = this.spaces;
@@ -137,18 +121,6 @@ export const Board = Vue.component('board', {
       }
       return css;
     },
-    marsIsTerraformed: function() {
-      const temperatureMaxed = this.temperature === constants.MAX_TEMPERATURE;
-      const oceansMaxed = this.oceans_count === constants.MAX_OCEAN_TILES;
-      const oxygenMaxed = this.oxygen_level === constants.MAX_OXYGEN_LEVEL;
-      const venusMaxed = this.venusScaleLevel === constants.MAX_VENUS_SCALE;
-
-      if (this.venusNextExtension) {
-        return temperatureMaxed && oceansMaxed && oxygenMaxed && venusMaxed;
-      } else {
-        return temperatureMaxed && oceansMaxed && oxygenMaxed;
-      }
-    },
     oceansValue: function() {
       const oceans_count = this.oceans_count || 0;
       const leftover = constants.MAX_OCEAN_TILES - oceans_count;
@@ -199,7 +171,13 @@ export const Board = Vue.component('board', {
                 <div :class="getScaleCSS(lvl)" v-for="lvl in getValuesForParameter('venus')">{{ lvl.strValue }}</div>
             </div>
 
-            <div class="global-numbers-oceans" v-html="oceansValue()">
+            <div class="global-numbers-oceans">
+              <span v-if="this.oceans_count === this.constants.MAX_OCEAN_TILES">
+                <img width="26" src="/assets/misc/circle-checkmark.png" class="board-ocean-checkmark" :alt="$t('Completed!')">
+              </span>
+              <span v-else>
+                {{this.oceans_count}}/{{this.constants.MAX_OCEAN_TILES}}
+              </span>
             </div>
 
             <div v-if="aresExtension && aresData !== undefined">
@@ -233,14 +211,14 @@ export const Board = Vue.component('board', {
                     <line x1="38" y1="20" x2="88" y2="26" class="board-line"></line>
                     <text x="86" y="29" class="board-caption board_caption--black">●</text>
                 </g>
-                
+
                 <g v-if="boardName === 'tharsis'" id="pavonis_mons" transform="translate(90, 230)">
                     <text class="board-caption">
                         <tspan dy="15">Pavonis</tspan>
                         <tspan x="4" dy="12">Mons</tspan>
                     </text>
                     <line x1="35" y1="25" x2="72" y2="30" class="board-line" />
-                    <text x="66" y="33" class="board-caption board_caption--black">●</text>              
+                    <text x="66" y="33" class="board-caption board_caption--black">●</text>
                 </g>
 
 
@@ -250,7 +228,7 @@ export const Board = Vue.component('board', {
                         <tspan x="-2" dy="12">Mons</tspan>
                     </text>
                     <line x1="25" y1="20" x2="49" y2="26" class="board-line" />
-                    <text x="47" y="29" class="board-caption board_caption--black">●</text>              
+                    <text x="47" y="29" class="board-caption board_caption--black">●</text>
                 </g>
 
                 <g v-if="boardName === 'tharsis'" id="tharsis_tholus" transform="translate(85, 175)">
@@ -261,7 +239,7 @@ export const Board = Vue.component('board', {
                     <line y1="-3" x2="160" y2="2" class="board-line" x1="90"></line>
                     <text x="158" y="5" class="board-caption board_caption--black">&#x25cf;</text>
                 </g>
-                
+
                 <g v-if="boardName === 'tharsis'" id="noctis_city" transform="translate(85, 320)">
                     <text class="board-caption">
                         <tspan dy="15">Noctis</tspan>

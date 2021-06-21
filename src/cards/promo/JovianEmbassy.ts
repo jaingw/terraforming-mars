@@ -18,7 +18,7 @@ export class JovianEmbassy extends Card implements IProjectCard {
       cost: 14,
 
       metadata: {
-        cardNumber: 'X24',
+        cardNumber: 'X23',
         renderData: CardRenderer.builder((b) => {
           b.tr(1);
         }),
@@ -30,7 +30,7 @@ export class JovianEmbassy extends Card implements IProjectCard {
 
   public canPlay(player: Player): boolean {
     if (PartyHooks.shouldApplyPolicy(player.game, PartyName.REDS)) {
-      return player.canAfford(player.getCardCost(this) + REDS_RULING_POLICY_COST, true);
+      return player.canAfford(player.getCardCost(this) + REDS_RULING_POLICY_COST, {steel: true});
     }
 
     return true;

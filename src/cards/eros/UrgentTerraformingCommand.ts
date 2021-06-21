@@ -6,7 +6,7 @@ import {Resources} from '../../Resources';
 import {CardName} from '../../CardName';
 import {CardRenderer} from '../render/CardRenderer';
 import {CardRequirements} from '../CardRequirements';
-import {CardRenderItemSize} from '../render/CardRenderItemSize';
+import {Size} from '../render/Size';
 import {Card} from '../Card';
 
 export class UrgentTerraformingCommand extends Card implements IProjectCard {
@@ -21,10 +21,10 @@ export class UrgentTerraformingCommand extends Card implements IProjectCard {
       metadata: {
         cardNumber: 'Q16',
         renderData: CardRenderer.builder((b) => {
-          b.text('IMMEDIATE PRODUCE', CardRenderItemSize.SMALL, true).br;
-          b.production((pb) => pb.plants(1).nbsp.heat(1));
+          b.text('IMMEDIATE PRODUCE', Size.SMALL, true).br;
+          b.plants(1).asterix().nbsp.heat(1).asterix();
         }),
-        description: 'Requires that you have at least 25 TR.',
+        description: 'Requires that you have at least 25 TR.you gain plants and heat equal to your plants and heat production',
       },
     });
   };
@@ -32,8 +32,8 @@ export class UrgentTerraformingCommand extends Card implements IProjectCard {
     return player.getTerraformRating() >= 25;
   }
   public play(player: Player) {
-    player.setResource(Resources.PLANTS, player.getProduction(Resources.PLANTS));
-    player.setResource(Resources.HEAT, player.getProduction(Resources.HEAT));
+    player.addResource(Resources.PLANTS, player.getProduction(Resources.PLANTS));
+    player.addResource(Resources.HEAT, player.getProduction(Resources.HEAT));
     return undefined;
   }
 }

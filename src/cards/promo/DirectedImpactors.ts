@@ -26,9 +26,9 @@ export class DirectedImpactors extends Card implements IActionCard, IProjectCard
       resourceType: ResourceType.ASTEROID,
 
       metadata: {
-        cardNumber: 'X18',
+        cardNumber: 'X19',
         renderData: CardRenderer.builder((b) => {
-          b.action('Spend 6 MC to add 1 asteroid to ANY CARD (titanium may be used to pay for this).', (eb) => {
+          b.action('Spend 6 M€ to add 1 asteroid to ANY CARD (titanium may be used to pay for this).', (eb) => {
             eb.megacredits(6).titanium(1).brackets.startAction.asteroids(1).asterix();
           }).br;
           b.or().br;
@@ -47,7 +47,7 @@ export class DirectedImpactors extends Card implements IActionCard, IProjectCard
 
     public canAct(player: Player): boolean {
       const cardHasResources = this.resourceCount > 0;
-      const canPayForAsteroid = player.canAfford(6, false, true);
+      const canPayForAsteroid = player.canAfford(6, {titanium: true});
 
       if (player.game.getTemperature() === MAX_TEMPERATURE && cardHasResources) return true;
       if (canPayForAsteroid) return true;
@@ -76,7 +76,7 @@ export class DirectedImpactors extends Card implements IActionCard, IProjectCard
         return this.addResource(player, asteroidCards);
       }
 
-      if (player.canAfford(6, false, true)) {
+      if (player.canAfford(6, {titanium: true})) {
         opts.push(addResource);
       } else {
         return this.spendResource(player);
@@ -89,8 +89,7 @@ export class DirectedImpactors extends Card implements IActionCard, IProjectCard
       player.game.defer(new SelectHowToPayDeferred(player, 6, {canUseTitanium: true, title: 'Select how to pay for Directed Impactors action'}));
 
       if (asteroidCards.length === 1) {
-        player.addResourceTo(this);
-        LogHelper.logAddResource(player, this);
+        player.addResourceTo(this, {log: true});
         return undefined;
       }
 
@@ -99,8 +98,7 @@ export class DirectedImpactors extends Card implements IActionCard, IProjectCard
         'Add asteroid',
         asteroidCards,
         (foundCards: Array<ICard>) => {
-          player.addResourceTo(foundCards[0]);
-          LogHelper.logAddResource(player, foundCards[0]);
+          player.addResourceTo(foundCards[0], {log: true});
           return undefined;
         },
       );

@@ -9,13 +9,13 @@ import {PlaceHazardTile} from '../../deferredActions/PlaceHazardTile';
 import {ISpace} from '../../boards/ISpace';
 import {SelectOption} from '../../inputs/SelectOption';
 import {OrOptions} from '../../inputs/OrOptions';
-import {HAZARD_TILES} from '../../ares/AresHandler';
 import {SelectSpace} from '../../inputs/SelectSpace';
 import {LogHelper} from '../../LogHelper';
 import {Card} from '../Card';
 import {CardRenderer} from '../render/CardRenderer';
 import {AltSecondaryTag} from '../render/CardRenderItem';
-import {CardRenderItemSize} from '../render/CardRenderItemSize';
+import {Size} from '../render/Size';
+import {isAresTile} from '../../TileType';
 
 export class Eris extends Card implements CorporationCard {
   constructor() {
@@ -28,13 +28,13 @@ export class Eris extends Card implements CorporationCard {
 
       metadata: {
         cardNumber: 'R47',
-        description: 'You start with 46 MC. As your first action, draw an Ares card.',
+        description: 'You start with 46 M€. As your first action, draw an Ares card.',
         renderData: CardRenderer.builder((b) => {
           b.br.br;
           b.megacredits(46).nbsp.cards(1).secondaryTag(AltSecondaryTag.ARES);
           b.corpBox('action', (ce) => {
             ce.action('Place a new hazard tile adjacent to NO OTHER TILE, OR remove a hazard tile to gain 1 TR.', (eb) => {
-              eb.empty().startAction.plus().hazardTile().slash().minus().hazardTile().any.colon().tr(1, CardRenderItemSize.SMALL);
+              eb.empty().startAction.plus().hazardTile().slash().minus().hazardTile().any.colon().tr(1, Size.SMALL);
             });
           });
         }),
@@ -115,7 +115,7 @@ export class Eris extends Card implements CorporationCard {
 
   private getAllUnprotectedHazardSpaces(game: Game): Array<ISpace> {
     return game.board.spaces.filter(
-      (space) => space.tile && HAZARD_TILES.includes(space.tile.tileType) && space.tile.protectedHazard === false,
+      (space) => space.tile && isAresTile(space.tile.tileType) && space.tile.protectedHazard === false,
     );
   }
 }

@@ -12,6 +12,7 @@ import {PartyHooks} from '../../turmoil/parties/PartyHooks';
 import {PartyName} from '../../turmoil/parties/PartyName';
 import {REDS_RULING_POLICY_COST} from '../../constants';
 import {CardRenderer} from '../render/CardRenderer';
+import {Units} from '../../Units';
 
 export class MagneticFieldGeneratorsPromo extends Card implements IProjectCard {
   constructor() {
@@ -20,9 +21,10 @@ export class MagneticFieldGeneratorsPromo extends Card implements IProjectCard {
       name: CardName.MAGNETIC_FIELD_GENERATORS_PROMO,
       tags: [Tags.BUILDING],
       cost: 22,
+      productionBox: Units.of({energy: -4, plants: 2}),
 
       metadata: {
-        cardNumber: '165',
+        cardNumber: 'X33',
         renderData: CardRenderer.builder((b) => {
           b.production((pb) => {
             pb.minus().energy(4).digit.br;
@@ -30,7 +32,7 @@ export class MagneticFieldGeneratorsPromo extends Card implements IProjectCard {
           }).br;
           b.tr(3).digit.tile(TileType.MAGNETIC_FIELD_GENERATORS, true).asterix();
         }),
-        description: 'Decrease your Energy production 4 steps and increase your Plant production 2 step. Raise your TR 3 step.',
+        description: 'Decrease your Energy production 4 steps and increase your Plant production 2 steps. Raise your TR 3 steps.',
       },
     });
   }
@@ -39,7 +41,7 @@ export class MagneticFieldGeneratorsPromo extends Card implements IProjectCard {
     const canPlaceTile = player.game.board.getAvailableSpacesOnLand(player).length > 0;
 
     if (PartyHooks.shouldApplyPolicy(player.game, PartyName.REDS)) {
-      return player.canAfford(player.getCardCost(this) + REDS_RULING_POLICY_COST * 3, true) && meetsEnergyRequirements && canPlaceTile;
+      return player.canAfford(player.getCardCost(this) + REDS_RULING_POLICY_COST * 3, {steel: true}) && meetsEnergyRequirements && canPlaceTile;
     }
 
     return meetsEnergyRequirements && canPlaceTile;

@@ -17,6 +17,7 @@ export const CardCorporationLogo = Vue.component('CardCorporationLogo', {
       case CardName._APHRODITE_:
         return '<div class="card-aphrodite-logo">APHRODITE</div>';
       case CardName.ARKLIGHT:
+      case CardName._ARKLIGHT_:
         return '<div class="card-arklight-logo">ARKLIGHT</div>';
       case CardName.POSEIDON:
         return '<div class="card-poseidon-logo">POSEIDON</div>';
@@ -25,6 +26,7 @@ export const CardCorporationLogo = Vue.component('CardCorporationLogo', {
         SATURN <span style="font-size:20px;display:inline-block;">&#x25CF;</span> SYSTEMS
         </div>`;
       case CardName.CELESTIC:
+      case CardName._CELESTIC_:
         return `<div class="card-celestic-logo">
         <span style="background: linear-gradient(to right, rgb(251,192,137),rgb(251,192,137),rgb(23,185,236));padding-left: 5px;">CEL</span>
         <span style="background:linear-gradient(to right,rgb(23,185,236),rgb(251,192,137))">ES</span>
@@ -58,6 +60,10 @@ export const CardCorporationLogo = Vue.component('CardCorporationLogo', {
         return `<span class="card-inventrix-logo">
         <span style="color: #020202;background-color:#6bb5c7;padding-left:4px;padding-right:4px;font-size:26px;box-shadow: 6px 6px 10px grey;">X</span>
         INVENTRIX</span>`;
+      case CardName._INVENTRIX_:
+        return `<span class="card-inventrix-breakthrough-logo">
+        <span style="color: #020202;background-color:#6bb5c7;padding-left:4px;padding-right:4px;font-size:26px;box-shadow: 6px 6px 10px grey;">X</span>
+        INVENTRIX</span>`;
       case CardName.PHOBOLOG:
       case CardName._PHOBOLOG_:
         return '<span class="card-phobolog-logo">PHOBOLOG</span>';
@@ -73,8 +79,10 @@ export const CardCorporationLogo = Vue.component('CardCorporationLogo', {
         return `<div style="font-size: 13px;left:32px;top:10px;font-family:Prototype;color:#222;transform:scale(2,1);position:absolute;">TERRALABS</div>
         <div style="position:absolute;top:28px;left:46px;font-size:8px;letter-spacing:2px;font-family:Prototype;transform:scale(2,1)">RESEARCH</div>`;
       case CardName.THORGATE:
+      case CardName._THORGATE_:
         return '<span class="card-thorgate-logo">THORGATE</span>';
       case CardName.VIRON:
+      case CardName._VIRON_:
         return '<span class="card-viron-logo">VIRON</span>';
       case CardName.ARIDOR:
         return '<span class="card-aridor-logo">ARIDOR</span>';
@@ -101,6 +109,7 @@ export const CardCorporationLogo = Vue.component('CardCorporationLogo', {
       case CardName.PHILARES:
         return '<div class="card-philares-logo">PHIL<span style="color:#ff5858">A</span>RES</div>';
       case CardName.RECYCLON:
+      case CardName._RECYCLON_:
         return '<div class="card-recyclon-logo">Recyclon</div>';
       case CardName.ROBINSON_INDUSTRIES:
       case CardName._ROBINSON_INDUSTRIES_:
@@ -114,11 +123,13 @@ export const CardCorporationLogo = Vue.component('CardCorporationLogo', {
         <div STYLE="font-size:10px;line-height:18px;">TACTICAL GENOMICS</div>
         </div>`;
       case CardName.STORMCRAFT_INCORPORATED:
+      case CardName._STORMCRAFT_INCORPORATED_:
         return `<div class="card-stormcraft-logo">
         <div class="stormcraft1">STORM</div><div class="stormcraft2">CRAFT</div>
         <div class="stormcraft3">INCOR</div><div class="stormcraft4">PORATED</div>
         </div>`;
       case CardName.TERACTOR:
+      case CardName._TERACTOR_:
         return '<span class="card-teractor-logo">TERACTOR</span>';
       case CardName.THARSIS_REPUBLIC:
       case CardName._THARSIS_REPUBLIC_:
@@ -135,6 +146,7 @@ export const CardCorporationLogo = Vue.component('CardCorporationLogo', {
         <div class="utopia-corp-name-2">INVEST</div>
         </div>`;
       case CardName.VALLEY_TRUST:
+      case CardName._VALLEY_TRUST_:
         return `<div class="card-valley-trust-logo">
         <div style="display:inline-block;margin-left:25px;padding-top: 2px;margin-bottom:0px;font-size:26px;text-shadow: 2px 2px #ccc;text-align:center">VALLEY<br/> TRUST</div>
         </div>`;
@@ -162,7 +174,7 @@ export const CardCorporationLogo = Vue.component('CardCorporationLogo', {
       case CardName.TEMPEST_CONSULTANCY:
         return '<div class="card-tempest-consultancy-logo"></div>';
       case CardName.THE_DARKSIDE_OF_THE_MOON_SYNDICATE:
-        return '<div class="card-the-darkside-of-the-moon-syndicate-logo">The Darkside of the Moon Syndicate</div>';
+        return '<div class="card-the-darkside-of-the-moon-syndicate-logo"></div>';
       case CardName.LUNA_HYPERLOOP_CORPORATION:
         return '<div class="card-luna-hyperloop-corporation-logo"></div>';
       case CardName.CRESCENT_RESEARCH_ASSOCIATION:
@@ -191,10 +203,16 @@ export const CardCorporationLogo = Vue.component('CardCorporationLogo', {
         return '<span class="card-unmo-logo">UNITED NATIONS<br/>MISSION ONE</span>';
       case CardName.CHAOS:
         return '<span class="card-chaos-logo">CHAOS</span><div class="award-chaos"></div>';
+      case CardName.IDO_FRONT:
+        return '<span class="card-idfront-logo">Id Front <span style="font-size:20px;display:inline-block;">&#x25CF;</span> 前线基地</span>';
       case CardName.WG_PARTERNSHIP:
         return '<span class="card-wgparternship-logo">WG Parternship</span>';
       case CardName.INCITE_ENDER:
         return '<div class="card-incite-ender-logo"></div><div class="award-incite"></div>';
+      case CardName.TRADE_NAVIGATOR:
+        return '<div class="card-trade-navigator-logo"></div>';
+      case CardName.BROTHERHOOD_OF_MUTANTS:
+        return '<div class="card-mutant-logo"></div>';
       case CardName.CURIOSITY_II:
         return '<div class="card-curiosity-ii-logo">Curiosity II</div>';
       }

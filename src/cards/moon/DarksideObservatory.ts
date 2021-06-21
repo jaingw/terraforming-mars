@@ -22,7 +22,7 @@ export class DarksideObservatory extends Card implements IProjectCard, IActionCa
         cardNumber: 'M75',
         renderData: CardRenderer.builder((b) => {
           b.action('Add 1 Science to ANY card [EXCEPT those giving 2 VP or more per science resource.]', (ab) => {
-            ab.empty().startAction.science(1);
+            ab.empty().startAction.science(1).asterix();
           }).br;
           b.or().br;
           b.action('Add 2 Data to ANY card.', (ab) => {
@@ -38,24 +38,32 @@ export class DarksideObservatory extends Card implements IProjectCard, IActionCa
   }
 
   public canAct(player: Player) {
-    return player.playedCards.some((c) => this.include(c));
+    return player.playedCards.some((c) => this.include(c)) || (player.corpCard !== undefined && this.include(player.corpCard)) ||
+    (player.corpCard2 !== undefined && this.include(player.corpCard2));
   }
 
-  private addResource(card: IProjectCard, player: Player): void {
+  private addResource(card: ICard, player: Player): void {
     if (card.resourceType === ResourceType.DATA) {
-      player.addResourceTo(card, 2);
+      player.addResourceTo(card, {qty: 2, log: true});
     }
     if (card.resourceType === ResourceType.SCIENCE) {
-      player.addResourceTo(card, 1);
+      player.addResourceTo(card, {qty: 1, log: true});
     }
   }
 
   public action(player: Player) {
-    const playableCards = player.playedCards.filter((c) => this.include(c));
+    const playableCards: Array<ICard> = player.playedCards.filter((c) => this.include(c));
+    if (player.corpCard !== undefined && this.include(player.corpCard)) {
+      playableCards.push(player.corpCard);
+    }
+    if (player.corpCard2 !== undefined && this.include(player.corpCard2)) {
+      playableCards.push(player.corpCard2);
+    }
+
 
     return new SelectCard(
-      'Select card to add 1 Science resource OR 2 Data resources',
-      'Add resource',
+      'Select card to add EITHER 1 Science resource OR 2 Data resources',
+      'Add',
       playableCards,
       (card) => {
         this.addResource(card[0], player);

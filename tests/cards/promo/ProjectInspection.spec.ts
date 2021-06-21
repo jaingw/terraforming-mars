@@ -35,7 +35,7 @@ describe('ProjectInspection', function() {
 
   it('Should play', function() {
     player.playedCards.push(restrictedArea);
-    player.setResource(Resources.MEGACREDITS, 2);
+    player.addResource(Resources.MEGACREDITS, 2);
     player.setActionsThisGeneration(restrictedArea.name);
     expect(card.canPlay(player)).is.true;
 
@@ -45,7 +45,7 @@ describe('ProjectInspection', function() {
 
   it('Can\'t play with Playwrights if there\'s no other card to chain', function() {
     const playwrights = new Playwrights();
-    player.corporationCard = playwrights;
+    player.corpCard = playwrights;
 
     player.setActionsThisGeneration(playwrights.name);
     expect(card.canPlay(player)).is.false; // PI -> PW -> ???
@@ -54,7 +54,7 @@ describe('ProjectInspection', function() {
   it('Can be used to play Playwrights into another available event card', function() {
     const playwrights = new Playwrights();
     const indenturedWorkers = new IndenturedWorkers();
-    player.corporationCard = playwrights;
+    player.corpCard = playwrights;
     player.playedCards.push(indenturedWorkers);
     player.setActionsThisGeneration(playwrights.name);
     expect(card.canPlay(player)).is.true; // PI -> PW -> PI -> PW -> IW
@@ -86,12 +86,12 @@ describe('ProjectInspection', function() {
 
   it('Can be played by Playwrights into different blue card', function() {
     const playwrights = new Playwrights();
-    player.corporationCard = playwrights;
+    player.corpCard = playwrights;
     player.playedCards.push(card);
     player.playedCards.push(restrictedArea);
     player.setActionsThisGeneration(restrictedArea.name);
     player.setActionsThisGeneration(playwrights.name);
-    player.setResource(Resources.MEGACREDITS, 2);
+    player.addResource(Resources.MEGACREDITS, 2);
     expect(playwrights.canAct(player)).is.true; // PW -> PI -> RA
 
     const action1 = playwrights.action(player) as SelectCard<ICard>;
@@ -110,11 +110,11 @@ describe('ProjectInspection', function() {
   it('Can be played by Playwrights into Playwrights into another available event card', function() {
     const playwrights = new Playwrights();
     const indenturedWorkers = new IndenturedWorkers();
-    player.corporationCard = playwrights;
+    player.corpCard = playwrights;
     player.playedCards.push(card);
     player.playedCards.push(indenturedWorkers);
     player.setActionsThisGeneration(playwrights.name);
-    player.setResource(Resources.MEGACREDITS, 2);
+    player.addResource(Resources.MEGACREDITS, 2);
     expect(playwrights.canAct(player)).is.true; // PW -> PI -> PW -> IW
 
     const action1 = playwrights.action(player) as SelectCard<ICard>;

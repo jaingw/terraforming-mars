@@ -9,6 +9,7 @@ export interface PlayerInput {
     options?: Array<PlayerInput>;
     title: string | Message;
     cb: (...item: any) => PlayerInput | undefined;
+    maxByDefault?: boolean;
 }
 
 export namespace PlayerInput {

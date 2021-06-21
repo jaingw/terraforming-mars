@@ -13,8 +13,8 @@ export const MyGames = Vue.component('my-games', {
     };
   },
   mounted: function() {
-    this.userId = PreferencesManager.loadValue('userId');
-    this.userName = PreferencesManager.loadValue('userName');
+    this.userId = PreferencesManager.load('userId');
+    this.userName = PreferencesManager.load('userName');
     if (this.userId.length > 0) {
       this.getGames();
     }
@@ -54,7 +54,7 @@ export const MyGames = Vue.component('my-games', {
         this.userName = '';
         this.vipDate = '';
         this.games = [];
-        PreferencesManager.loginOUt();
+        PreferencesManager.loginOut();
       } else {
         window.location.href = '/login';
       }

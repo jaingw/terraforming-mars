@@ -9,7 +9,7 @@ import {SelectCard} from '../../inputs/SelectCard';
 import {CardName} from '../../CardName';
 import {LogHelper} from '../../LogHelper';
 import {CardRenderer} from '../render/CardRenderer';
-import {CardRenderItemSize} from '../render/CardRenderItemSize';
+import {Size} from '../render/Size';
 import {Card} from '../Card';
 
 export class AerialMappers extends Card implements IActionCard, IResourceCard {
@@ -27,7 +27,7 @@ export class AerialMappers extends Card implements IActionCard, IResourceCard {
           b.action('Add floater to ANY card.', (be) => {
             be.empty().startAction.floaters(1).asterix();
           }).br;
-          b.or(CardRenderItemSize.SMALL).br;
+          b.or(Size.SMALL).br;
           b.action('Spend one floater here to draw 1 card.', (be) => {
             be.floaters(1).startAction.cards(1);
           });
@@ -53,20 +53,17 @@ export class AerialMappers extends Card implements IActionCard, IResourceCard {
 
     // only one valid target - itself
     if (floaterCards.length === 1 && this.resourceCount === 0) {
-      player.addResourceTo(this, 1);
-      LogHelper.logAddResource(player, floaterCards[0]);
+      player.addResourceTo(this, {qty: 1, log: true});
       return undefined;
     }
 
     const addResourceToSelf = new SelectOption('Add 1 floater to this card', 'Add floater', () => {
-      player.addResourceTo(this, 1);
-      LogHelper.logAddResource(player, floaterCards[0]);
+      player.addResourceTo(this, {qty: 1, log: true});
       return undefined;
     });
 
     const addResource = new SelectCard('Select card to add 1 floater', 'Add floater', floaterCards, (foundCards: Array<ICard>) => {
-      player.addResourceTo(foundCards[0], 1);
-      LogHelper.logAddResource(player, foundCards[0]);
+      player.addResourceTo(foundCards[0], {log: true});
       return undefined;
     });
 

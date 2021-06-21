@@ -24,7 +24,7 @@ export class Cow extends Card implements IActionCard, IProjectCard, IResourceCar
       metadata: {
         cardNumber: 'Q15',
         renderData: CardRenderer.builder((b) => {
-          b.action('Spend 1 plants to dd 1 Animal to this card and gain 5 MC.', (eb) => {
+          b.action('Spend 1 plant to add 1 Animal to this card and gain 5 M€.', (eb) => {
             eb.plants(1).startAction.megacredits(5).nbsp.animals(1);
           }).br;
           b.vpText('1 VP for each 2 Animals on this card.');
@@ -49,8 +49,8 @@ export class Cow extends Card implements IActionCard, IProjectCard, IResourceCar
     }
     public action(player: Player) {
       player.addResourceTo(this, 1);
-      player.setResource(Resources.PLANTS, -1);
-      player.setResource(Resources.MEGACREDITS, 5);
+      player.addResource(Resources.PLANTS, -1);
+      player.addResource(Resources.MEGACREDITS, 5);
       return undefined;
     }
 }

@@ -37,7 +37,7 @@ describe('Vitor', function() {
   });
 
   it('Give mega credits when card played', function() {
-    player.corporationCard = card;
+    player.corpCard = card;
 
     card.onCardPlayed(player, new Ants());
     expect(player.megaCredits).to.eq(3);

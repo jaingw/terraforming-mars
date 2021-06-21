@@ -16,7 +16,7 @@ export class RespirationEnhance extends Card implements IProjectCard {
       metadata: {
         cardNumber: 'Q10',
         renderData: CardRenderer.builder((b) => {
-          b.effect('When you place a greenery, you can choose to imcrease temperature 1 step, intead of oxygen.', (eb) => {
+          b.effect('When you place a greenery, you can choose to increase temperature 1 step, intead of oxygen.', (eb) => {
             eb.greenery().asterix().startEffect.temperature(1);
           }).br;
         }),

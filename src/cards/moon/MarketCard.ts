@@ -63,19 +63,19 @@ export abstract class MarketCard extends Card implements IActionCard {
     limit = Math.min(limit, terms.limit);
 
     return new SelectAmount(
-      `Select a number of trades (${terms.from} MC => ${terms.to} ${this.tradeResource}, max ${limit})`,
+      `Select a number of trades (${terms.from} M€ => ${terms.to} ${this.tradeResource}, max ${limit})`,
       `Buy ${this.tradeResource}`,
       (tradesRequested: number) => {
         const cashDue = tradesRequested * terms.from;
         const unitsEarned = tradesRequested * terms.to;
         if (player.canUseHeatAsMegaCredits) {
           const howToPay = new SelectHowToPayDeferred(player, cashDue, {afterPay: () => {
-            player.setResource(this.tradeResource, unitsEarned);
+            player.addResource(this.tradeResource, unitsEarned);
           }});
           player.game.defer(howToPay);
         } else {
-          player.setResource(Resources.MEGACREDITS, -cashDue);
-          player.setResource(this.tradeResource, unitsEarned);
+          player.deductResource(Resources.MEGACREDITS, cashDue);
+          player.addResource(this.tradeResource, unitsEarned);
         }
 
         player.game.log('${0} gained ${1} ${2}', (b) => b.player(player).number(tradesRequested).string(this.tradeResource));
@@ -95,12 +95,12 @@ export abstract class MarketCard extends Card implements IActionCard {
     limit = Math.min(limit, terms.limit);
 
     return new SelectAmount(
-      `Select a number of trades (${terms.from} ${this.tradeResource} => ${terms.to} MC, max ${limit})`,
+      `Select a number of trades (${terms.from} ${this.tradeResource} => ${terms.to} M€, max ${limit})`,
       `Sell ${this.tradeResource}`,
       (unitsSold: number) => {
         const cashEarned = unitsSold * terms.to;
-        player.setResource(Resources.MEGACREDITS, cashEarned);
-        player.setResource(this.tradeResource, -unitsSold);
+        player.addResource(Resources.MEGACREDITS, cashEarned);
+        player.deductResource(this.tradeResource, unitsSold);
 
         player.game.log('${0} sold ${1} ${2}', (b) => b.player(player).number(unitsSold).string(this.tradeResource));
         return undefined;

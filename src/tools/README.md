@@ -23,7 +23,7 @@ Result will be something like this:
 ```
 Effect: When you play an animal or plant tag, including<br> this, add 1 animal<br> to this card.
     missing ru
-You start with 3 MC production and 44 MC.
+You start with 3 M€ production and 44 M€.
     missing ru
     missing cn
 ...
@@ -45,8 +45,11 @@ as result you will see the warnings for Chinese and Russian languages only.
 This tool extracts the entire history of a game from a database and stores it in the local filesystem database.
 
 If you plan to extract from the local SQLite database, have no environemnt variables. If you're extracting
-from PostgreSQL, use the POSTGRES_HOST environment variable. You cannot export from a local filesystem database.
+from PostgreSQL, use the `POSTGRES_HOST` environment variable. You cannot export from a local filesystem database.
 You might as well then just run `cp -R`
+
+(Read https://github.com/bafolts/terraforming-mars/wiki/Databases#maintenance
+to get advice on setting up your `POSTGRES_HOST` environment variable.)
 
 ## Analyze MA
 

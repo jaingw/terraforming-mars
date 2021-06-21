@@ -16,14 +16,14 @@ describe('CuriosityII', function() {
     card = new CuriosityII();
     player = TestPlayers.BLUE.newPlayer();
     player2 = TestPlayers.RED.newPlayer();
-    game = Game.newInstance('foobar', [player, player2], player);
+    game = Game.newInstance('foobar', [player, player2], player, TestingUtils.setCustomGameOptions({aresExtension: true, aresHazards: false}));
     game.phase = Phase.ACTION;
 
-    player.corporationCard = card;
+    player.corpCard = card;
     player.megaCredits = 2;
   });
 
-  it('Can pay 2 MC to draw card when placing a tile on a non-empty space', function() {
+  it('Can pay 2 M€ to draw card when placing a tile on a non-empty space', function() {
     const nonEmptySpace = game.board.getAvailableSpacesOnLand(player).find((space) => space.bonus.length > 0)!;
     game.addCityTile(player, nonEmptySpace.id);
     player.cardsInHand = [];
@@ -35,7 +35,7 @@ describe('CuriosityII', function() {
     expect(player.cardsInHand).is.empty;
     expect(player.megaCredits).to.eq(2);
 
-    orOptions.options[0].cb(); // Pay 2 MC to draw a card
+    orOptions.options[0].cb(); // Pay 2 M€ to draw a card
     TestingUtils.runAllActions(game);
     expect(player.cardsInHand).has.lengthOf(1);
     expect(player.megaCredits).to.eq(0);
@@ -69,7 +69,7 @@ describe('CuriosityII', function() {
     action.cb(oceanSpace);
 
     const orOptions = game.deferredActions.pop()!.execute() as OrOptions;
-    orOptions.options[0].cb(); // Pay 2 MC to draw a card
+    orOptions.options[0].cb(); // Pay 2 M€ to draw a card
     TestingUtils.runAllActions(game);
 
     expect(player.cardsInHand).has.lengthOf(1);

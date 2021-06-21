@@ -60,8 +60,6 @@ export const MoonBoard = Vue.component('moonboard', {
         throw 'Wrong parameter to get values from';
       }
 
-      console.log(`parameter ${targetParameter}, value ${curValue}`);
-
       const values: Array<MoonParamLevel> = [];
       for (let value: number = 8; value >= 0; value -= 1) {
         const strValue = value.toString();
@@ -122,7 +120,7 @@ export const MoonBoard = Vue.component('moonboard', {
       </svg>
 
       <div class="board-outer-spaces">
-        <moon-space :space="getSpaceById('m01')" text="Luna Space Station"></moon-space>
+        <moon-space :space="getSpaceById('m01')" text="Luna Trade Station"></moon-space>
         <moon-space :space="getSpaceById('m37')" text="Momentum Virium Habitat"></moon-space>
       </div>
 

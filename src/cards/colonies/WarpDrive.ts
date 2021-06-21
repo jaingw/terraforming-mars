@@ -20,7 +20,7 @@ export class WarpDrive extends Card implements IProjectCard {
       metadata: {
         cardNumber: 'C49',
         renderData: CardRenderer.builder((b) => {
-          b.effect('When you play a Space card, you pay 4 MC less for it.', (eb) => {
+          b.effect('When you play a Space card, you pay 4 M€ less for it.', (eb) => {
             eb.space().played.startEffect.megacredits(-4);
           });
         }),
@@ -35,10 +35,6 @@ export class WarpDrive extends Card implements IProjectCard {
       return 4;
     }
     return 0;
-  }
-
-  public canPlay(player: Player): boolean {
-    return player.getTagCount(Tags.SCIENCE) >= 5;
   }
 
   public play() {

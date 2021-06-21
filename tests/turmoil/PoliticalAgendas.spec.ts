@@ -5,7 +5,6 @@ import {Game} from '../../src/Game';
 import {TestingUtils} from '../TestingUtils';
 import {TestPlayers} from '../TestPlayers';
 import {AgendaStyle, PoliticalAgendas} from '../../src/turmoil/PoliticalAgendas';
-import {AndOptions} from '../../src/inputs/AndOptions';
 import {OrOptions} from '../../src/inputs/OrOptions';
 
 describe('PoliticalAgendas', function() {
@@ -34,8 +33,8 @@ describe('PoliticalAgendas', function() {
       }
       const turmoil = game.turmoil!;
 
-      expect(turmoil.politicalAgendasData.currentAgenda.bonusId).eq('gb01');
-      expect(turmoil.politicalAgendasData.currentAgenda.policyId).eq('gp01');
+      expect(PoliticalAgendas.currentAgenda(turmoil).bonusId).eq('gb01');
+      expect(PoliticalAgendas.currentAgenda(turmoil).policyId).eq('gp01');
 
       const newParty = turmoil.getPartyByName(PartyName.KELVINISTS)!;
       turmoil.rulingParty = newParty;
@@ -43,8 +42,8 @@ describe('PoliticalAgendas', function() {
       PoliticalAgendas.setNextAgenda(turmoil, game);
       TestingUtils.runAllActions(game);
 
-      expect(turmoil.politicalAgendasData.currentAgenda.bonusId).eq('kb01');
-      expect(turmoil.politicalAgendasData.currentAgenda.policyId).eq('kp01');
+      expect(PoliticalAgendas.currentAgenda(turmoil).bonusId).eq('kb01');
+      expect(PoliticalAgendas.currentAgenda(turmoil).policyId).eq('kp01');
     });
 
     it('Chairman mode, human chairperson' + suffix, () => {
@@ -59,8 +58,7 @@ describe('PoliticalAgendas', function() {
       }
       const turmoil = game.turmoil!;
 
-      expect(turmoil.politicalAgendasData.currentAgenda.bonusId).eq('gb02');
-      expect(turmoil.politicalAgendasData.currentAgenda.policyId).eq('gp02');
+      expect(PoliticalAgendas.currentAgenda(turmoil)).deep.eq({bonusId: 'gb02', policyId: 'gp02'});
 
       const newParty = turmoil.getPartyByName(PartyName.KELVINISTS)!;
       turmoil.rulingParty = newParty;
@@ -69,19 +67,20 @@ describe('PoliticalAgendas', function() {
       PoliticalAgendas.setNextAgenda(turmoil, game);
       TestingUtils.runAllActions(game);
 
-      // Nothing's changed yet.
-      expect(turmoil.politicalAgendasData.currentAgenda.bonusId).eq('gb02');
-      expect(turmoil.politicalAgendasData.currentAgenda.policyId).eq('gp02');
+      // The new ruling party is lined up.
+      expect(PoliticalAgendas.currentAgenda(turmoil)).deep.eq({bonusId: 'kb02', policyId: 'kp02'});
 
-      const waitingFor = player2.getWaitingFor() as AndOptions;
+      const waitingFor = player2.getWaitingFor() as OrOptions;
       const bonusOptions = waitingFor.options[0] as OrOptions;
       bonusOptions.options[0].cb();
+
+      expect(PoliticalAgendas.currentAgenda(turmoil)).deep.eq({bonusId: 'kb01', policyId: 'kp02'});
+
+      // In the real world only one of these two is selectable, but to keep the test simple, invoke both.
       const policyOptions = waitingFor.options[1] as OrOptions;
       policyOptions.options[3].cb();
-      waitingFor.cb();
 
-      expect(turmoil.politicalAgendasData.currentAgenda.bonusId).eq('kb01');
-      expect(turmoil.politicalAgendasData.currentAgenda.policyId).eq('kp04');
+      expect(PoliticalAgendas.currentAgenda(turmoil)).deep.eq({bonusId: 'kb01', policyId: 'kp04'});
     });
 
     it('Chairman mode, neutral chairperson' + suffix, () => {
@@ -94,8 +93,8 @@ describe('PoliticalAgendas', function() {
       }
       const turmoil = game.turmoil!;
 
-      expect(turmoil.politicalAgendasData.currentAgenda.bonusId).eq('gb02');
-      expect(turmoil.politicalAgendasData.currentAgenda.policyId).eq('gp02');
+      expect(PoliticalAgendas.currentAgenda(turmoil).bonusId).eq('gb02');
+      expect(PoliticalAgendas.currentAgenda(turmoil).policyId).eq('gp02');
 
       const newParty = turmoil.getPartyByName(PartyName.KELVINISTS)!;
       turmoil.rulingParty = newParty;
@@ -103,8 +102,8 @@ describe('PoliticalAgendas', function() {
       PoliticalAgendas.setNextAgenda(turmoil, game);
       TestingUtils.runAllActions(game);
 
-      expect(turmoil.politicalAgendasData.currentAgenda.bonusId).eq('kb02');
-      expect(turmoil.politicalAgendasData.currentAgenda.policyId).eq('kp02');
+      expect(PoliticalAgendas.currentAgenda(turmoil).bonusId).eq('kb02');
+      expect(PoliticalAgendas.currentAgenda(turmoil).policyId).eq('kp02');
     });
   });
 });

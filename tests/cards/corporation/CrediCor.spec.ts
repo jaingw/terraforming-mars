@@ -22,7 +22,7 @@ describe('CrediCor', function() {
   it('Should play', function() {
     const action = card.play();
     expect(action).is.undefined;
-    player.corporationCard = card;
+    player.corpCard = card;
     card.onStandardProject(player, new AsteroidStandardProject());
     card.onStandardProject(player, new CityStandardProject());
     card.onStandardProject(player, new GreeneryStandardProject());
@@ -30,7 +30,7 @@ describe('CrediCor', function() {
   });
 
   it('Runs onCardPlayed', function() {
-    player.corporationCard = card;
+    player.corpCard = card;
     expect(player.megaCredits).to.eq(0);
     card.onCardPlayed(player, new GiantIceAsteroid());
     expect(player.megaCredits).to.eq(4);

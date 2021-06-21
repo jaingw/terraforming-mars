@@ -3,6 +3,7 @@ import {Colony} from '../colonies/Colony';
 import {DeferredAction, Priority} from './DeferredAction';
 import {Multiset} from '../utils/Multiset';
 
+// 殖民者贸易奖励
 export class GiveColonyBonus implements DeferredAction {
     public priority = Priority.DEFAULT;
     public cb: () => void = () => {};

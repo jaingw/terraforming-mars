@@ -3,7 +3,7 @@ import {RandomMAOptionType} from '../RandomMAOptionType';
 import {AgendaStyle} from '../turmoil/PoliticalAgendas';
 import {CardName} from '../CardName';
 
-export interface GameOptionsModel {
+export interface GameOptionsModel_ {
   aresExtension: boolean,
   boardName: BoardName,
   cardsBlackList: Array<CardName>;

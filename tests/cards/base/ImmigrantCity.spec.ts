@@ -23,7 +23,7 @@ describe('ImmigrantCity', function() {
   });
 
   it('Should play', function() {
-    player.addProduction(Resources.ENERGY);
+    player.addProduction(Resources.ENERGY, 1);
     const action = card.play(player);
     action.cb(action.availableSpaces[0]);
     TestingUtils.runAllActions(game);
@@ -37,8 +37,8 @@ describe('ImmigrantCity', function() {
     expect(player.getProduction(Resources.MEGACREDITS)).to.eq(-1);
   });
 
-  it('Can play at -4 MC production', function() {
-    player.addProduction(Resources.ENERGY);
+  it('Can play at -4 M€ production', function() {
+    player.addProduction(Resources.ENERGY, 1);
     player.addProduction(Resources.MEGACREDITS, -4);
     expect(card.canPlay(player)).is.true;
 
@@ -56,9 +56,9 @@ describe('ImmigrantCity', function() {
     expect(player.getProduction(Resources.MEGACREDITS)).to.eq(-4);
   });
 
-  it('Tharsis can play at -5 MC production', function() {
-    player.corporationCard = new TharsisRepublic();
-    player.addProduction(Resources.ENERGY);
+  it('Tharsis can play at -5 M€ production', function() {
+    player.corpCard = new TharsisRepublic();
+    player.addProduction(Resources.ENERGY, 1);
     player.addProduction(Resources.MEGACREDITS, -5);
     expect(card.canPlay(player)).is.true;
 

@@ -9,7 +9,7 @@ import {PartyHooks} from '../../../turmoil/parties/PartyHooks';
 import {REDS_RULING_POLICY_COST} from '../../../constants';
 import {PartyName} from '../../../turmoil/parties/PartyName';
 import {CardRenderer} from '../../render/CardRenderer';
-import {CardRenderItemSize} from '../../render/CardRenderItemSize';
+import {Size} from '../../render/Size';
 
 export class _UnitedNationsMarsInitiative_ implements IActionCard, CorporationCard {
     public name: CardName = CardName._UNITED_NATIONS_MARS_INITIATIVE_;
@@ -40,20 +40,20 @@ export class _UnitedNationsMarsInitiative_ implements IActionCard, CorporationCa
     public get metadata() {
       return {
         cardNumber: 'R32',
-        description: 'You start with 40 MC.',
+        description: 'You start with 40 M€.',
         renderData: CardRenderer.builder((b) => {
         // TODO(chosta): find a not so hacky solutions to spacing
           b.br.br.br;
           b.empty().nbsp.nbsp.nbsp.nbsp.megacredits(40);
           b.corpBox('action', (ce) => {
             ce.effect(undefined, (eb) => {
-              ce.vSpace(CardRenderItemSize.LARGE);
-              eb.megacredits(5).startAction.tr(1, CardRenderItemSize.SMALL).asterix();
+              ce.vSpace(Size.LARGE);
+              eb.megacredits(5).startAction.tr(1, Size.SMALL).asterix();
               eb.description(undefined);
             });
             ce.vSpace();
-            ce.action('If your TR was raised this generation, you may pay 5 MC to raise 1 step. When you raise TR in generation, gain 2 MC.', (eb) => {
-              eb.tr(1, CardRenderItemSize.SMALL).asterix().startEffect.megacredits(2);
+            ce.action('If your TR was raised this generation, you may pay 5 M€ to raise 1 step. When you raise TR in generation, gain 2 M€.', (eb) => {
+              eb.tr(1, Size.SMALL).asterix().startEffect.megacredits(2);
             });
           });
         }),

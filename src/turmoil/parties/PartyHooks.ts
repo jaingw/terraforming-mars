@@ -8,12 +8,13 @@ import {Resources} from '../../Resources';
 import {ISpace} from '../../boards/ISpace';
 import {GREENS_POLICY_1} from './Greens';
 import {TurmoilPolicy} from '../TurmoilPolicy';
+import {PoliticalAgendas} from '../PoliticalAgendas';
 
 export class PartyHooks {
   static applyMarsFirstRulingPolicy(player: Player, spaceType: SpaceType) {
     if (this.shouldApplyPolicy(player.game, PartyName.MARS, TurmoilPolicy.MARS_FIRST_DEFAULT_POLICY) &&
         spaceType !== SpaceType.COLONY) {
-      player.setResource(Resources.STEEL, 1);
+      player.addResource(Resources.STEEL, 1);
     }
   }
 
@@ -44,7 +45,7 @@ export class PartyHooks {
 
     const currentPolicyId: PolicyId = (turmoil.politicalAgendasData === undefined) ?
       rulingParty.policies[0].id :
-      turmoil.politicalAgendasData.currentAgenda.policyId;
+      PoliticalAgendas.currentAgenda(turmoil).policyId;
 
     return rulingParty.name === partyName && currentPolicyId === policyId;
   }

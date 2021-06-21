@@ -125,5 +125,9 @@ function simpleGameOptions(): GameOptions {
     includeVenusMA: false,
     moonExpansion: false,
     randomMA: RandomMAOptionType.NONE,
+
+    heatFor: false, //  七热升温
+    breakthrough: false, // 界限突破
+    doubleCorp: false, // 双将
   };
 }

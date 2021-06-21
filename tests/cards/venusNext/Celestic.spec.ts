@@ -12,7 +12,7 @@ describe('Celestic', function() {
     const play = card.play();
     expect(play).is.undefined;
 
-    player.corporationCard = card;
+    player.corpCard = card;
 
     const action = card.action(player);
     expect(action).is.undefined;

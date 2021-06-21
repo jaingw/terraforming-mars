@@ -6,9 +6,8 @@ import {CardType} from '../CardType';
 import {Player} from '../../Player';
 import {CardName} from '../../CardName';
 import {Resources} from '../../Resources';
-import {LogHelper} from '../../LogHelper';
 import {CardRenderer} from '../render/CardRenderer';
-import {CardRenderItemSize} from '../render/CardRenderItemSize';
+import {Size} from '../render/Size';
 
 export class MartianRails extends Card implements IActionCard, IProjectCard {
   constructor() {
@@ -21,9 +20,9 @@ export class MartianRails extends Card implements IActionCard, IProjectCard {
       metadata: {
         cardNumber: '007',
         renderData: CardRenderer.builder((b) => {
-          b.action('Spend 1 Energy to gain 1 MC for each City tile ON MARS.', (eb) => {
+          b.action('Spend 1 Energy to gain 1 M€ for each City tile ON MARS.', (eb) => {
             eb.energy(1).startAction.megacredits(1).slash();
-            eb.city(CardRenderItemSize.SMALL).any.asterix();
+            eb.city(Size.SMALL).any.asterix();
           }).br;
         }),
       },
@@ -37,11 +36,8 @@ export class MartianRails extends Card implements IActionCard, IProjectCard {
     return player.energy >= 1;
   }
   public action(player: Player) {
-    const gainedMC = player.game.getCitiesInPlayOnMars();
-    player.energy--;
-    player.megaCredits += gainedMC;
-    LogHelper.logGainStandardResource(player, Resources.MEGACREDITS, gainedMC);
-
+    player.deductResource(Resources.ENERGY, 1);
+    player.addResource(Resources.MEGACREDITS, player.game.getCitiesInPlayOnMars(), {log: true});
     return undefined;
   }
 }

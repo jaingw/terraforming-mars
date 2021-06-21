@@ -1,20 +1,16 @@
 import Vue from 'vue';
-import {GameOptionsModel} from '../models/GameOptionsModel';
 import {BoardName} from '../boards/BoardName';
 import {RandomMAOptionType} from '../RandomMAOptionType';
 import {AgendaStyle} from '../turmoil/PoliticalAgendas';
-import {GameHomeModel} from '../models/GameHomeModel';
+import {GameOptions} from '../Game';
 
 export const GameSetupDetail = Vue.component('game-setup-detail', {
   props: {
     playerNumber: {
       type: Number,
     },
-    game: {
-      type: Object as () => GameHomeModel,
-    },
     gameOptions: {
-      type: Object as () => GameOptionsModel,
+      type: Object as () => GameOptions,
     },
     lastSoloGeneration: {
       type: Number,
@@ -109,8 +105,9 @@ export const GameSetupDetail = Vue.component('game-setup-detail', {
               <div v-if="gameOptions.showTimers" class="game-config timer" v-i18n>timer</div>
               <div v-if="gameOptions.showOtherPlayersVP" class="game-config realtime-vp" v-i18n>real-time vp</div>
               <div v-if="gameOptions.undoOption" class="game-config undo" v-i18n>Allow undo</div>
-              <div v-if="game.heatFor" class="game-config generic" v-i18n>7 Heat Into Temperature</div>
-              <div v-if="game.breakthrough" class="game-config generic" v-i18n>BreakThrough</div>
+              <div v-if="gameOptions.heatFor" class="game-config generic" v-i18n>7 Heat Into Temperature</div>
+              <div v-if="gameOptions.breakthrough" class="game-config generic" v-i18n>BreakThrough</div>
+              <div v-if="gameOptions.doubleCorp" class="game-config generic" v-i18n>Double Corp</div>
             </li>
 
             <li v-if="gameOptions.cardsBlackList.length > 0"><div class="setup-item" v-i18n>Banned cards:</div>{{ gameOptions.cardsBlackList.join(', ') }}</li>

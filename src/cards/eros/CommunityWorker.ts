@@ -15,9 +15,9 @@ export class CommunityWorker extends Card implements IProjectCard {
       cost: 9,
 
       metadata: {
-        cardNumber: 'Q19',
+        cardNumber: 'Q20',
         renderData: CardRenderer.builder((b) => {
-          b.effect('When you play a card WITH NO TAGS, including this, you gain 4MC.', (eb) => {
+          b.effect('When you play a card WITH NO TAGS, including this, you gain 4M€.', (eb) => {
             eb.noTags().played.startEffect.megacredits(4);
           });
         }),

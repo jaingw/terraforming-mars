@@ -7,7 +7,8 @@ import {Playwrights} from '../community/Playwrights';
 import {ICard} from '../ICard';
 import {SelectCard} from '../../inputs/SelectCard';
 import {CardRenderer} from '../render/CardRenderer';
-import {CardRenderItemSize} from '../render/CardRenderItemSize';
+import {Size} from '../render/Size';
+import {CorporationCard} from '../corporation/CorporationCard';
 
 export class ProjectInspection extends Card implements IProjectCard {
   constructor() {
@@ -19,7 +20,7 @@ export class ProjectInspection extends Card implements IProjectCard {
       metadata: {
         cardNumber: 'X02',
         renderData: CardRenderer.builder((b) => {
-          b.text('Use a card action that has been used this generation.', CardRenderItemSize.SMALL, true);
+          b.text('Use a card action that has been used this generation.', Size.SMALL, true);
         }),
       },
     });
@@ -27,15 +28,13 @@ export class ProjectInspection extends Card implements IProjectCard {
   private getActionCards(player: Player): Array<ICard> {
     const result: Array<ICard> = [];
 
-    if (player.corporationCard !== undefined && player.getActionsThisGeneration().has(player.corporationCard.name)) {
-      if (player.corporationCard.name !== CardName.PLAYWRIGHTS || (player.corporationCard as Playwrights).getCheckLoops() < 2) {
-        if (player.corporationCard.action !== undefined &&
-              player.corporationCard.canAct !== undefined &&
-              player.corporationCard.canAct(player)) {
-          result.push(player.corporationCard);
-        }
-      }
+    if (this.addCorpCard(player.corpCard, player)) {
+      result.push(player.corpCard!);
     }
+    if (this.addCorpCard(player.corpCard2, player)) {
+      result.push(player.corpCard2!);
+    }
+
 
     for (const playedCard of player.playedCards) {
       if (playedCard.action !== undefined && playedCard.canAct !== undefined && playedCard.canAct(player) && player.getActionsThisGeneration().has(playedCard.name)) {
@@ -43,6 +42,19 @@ export class ProjectInspection extends Card implements IProjectCard {
       }
     }
     return result;
+  }
+
+  private addCorpCard(corp:CorporationCard |undefined, player: Player): boolean {
+    if (corp !== undefined && player.getActionsThisGeneration().has(corp.name)) {
+      if (corp.name !== CardName.PLAYWRIGHTS || (corp as Playwrights).getCheckLoops() < 2) {
+        if (corp.action !== undefined &&
+          corp.canAct !== undefined &&
+          corp.canAct(player)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   public canPlay(player: Player): boolean {

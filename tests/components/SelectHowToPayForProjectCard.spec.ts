@@ -7,39 +7,31 @@ import {SelectHowToPayForProjectCard} from '../../src/components/SelectHowToPayF
 import {PlayerInputModel} from '../../src/models/PlayerInputModel';
 import {PlayerModel} from '../../src/models/PlayerModel';
 import {Units} from '../../src/Units';
+import {FakeLocalStorage} from './FakeLocalStorage';
 
-describe('SelectHowToPayForProjectCard', function() {
+describe('SelectHowToPayForProjectCard', () => {
+  let localStorage: FakeLocalStorage;
+
+  beforeEach(() => {
+    localStorage = new FakeLocalStorage();
+    FakeLocalStorage.register(localStorage);
+  });
+  afterEach(() => {
+    FakeLocalStorage.deregister(localStorage);
+  });
+
   function getLocalVue() {
     const localVue = createLocalVue();
     localVue.directive('i18n', {});
     localVue.directive('trim-whitespace', {});
     return localVue;
   }
-  let expectedStorage: {[x: string]: string} = {};
-  before(function() {
-    (global as any).localStorage = {
-      getItem: function(key: string) {
-        if (expectedStorage[key] === undefined) {
-          return null;
-        }
-        return expectedStorage[key];
-      },
-      setItem: function(key: string, value: string) {
-        expectedStorage[key] = value;
-      },
-    };
-  });
-  after(function() {
-    (global as any).localStorage = undefined;
-  });
-  beforeEach(function() {
-    expectedStorage = {};
-  });
-  it('uses sort order for cards', async function() {
-    expectedStorage['cardOrderfoo'] = JSON.stringify({
+
+  it('uses sort order for cards', async () => {
+    localStorage.setItem('cardOrderfoo', JSON.stringify({
       [CardName.ANTS]: 2,
       [CardName.BIRDS]: 1,
-    });
+    }));
     const sortable = mount(SelectHowToPayForProjectCard, {
       localVue: getLocalVue(),
       propsData: {
@@ -62,7 +54,7 @@ describe('SelectHowToPayForProjectCard', function() {
             name: CardName.BIRDS,
           }],
         },
-        onsave: function() {},
+        onsave: () => {},
         showsave: true,
         showtitle: true,
       },
@@ -75,8 +67,8 @@ describe('SelectHowToPayForProjectCard', function() {
     expect(cards.at(1).props().card.name).to.eq(CardName.ANTS);
   });
 
-  it('select how to pay uses heat', async function() {
-    // Birds will cost 10. Player has 7MC and will use 3 of the 4 available heat units.
+  it('select how to pay uses heat', async () => {
+    // Birds will cost 10. Player has 7M€ and will use 3 of the 4 available heat units.
     const wrapper = setupCardForPurchase(
       CardName.BIRDS, 10,
       {heat: 4, megaCredits: 7},
@@ -90,8 +82,31 @@ describe('SelectHowToPayForProjectCard', function() {
     expect(heatTextBox.value).eq('3');
   });
 
-  it('select how to pay uses microbes', async function() {
-    // Moss will cost 10. Player has 7MC and will 2 of the 4 available microbes units.
+  it('select how to pay uses heat with reserve', async () => {
+    // Birds will cost 10. Player has 10 MC and 4 heat. It will select 10MC
+    //
+    // Then when clicking the 'max' button for heat, the algorithm will switch to 8 M€ and 2 heat.
+
+    const wrapper = setupCardForPurchase(
+      CardName.BIRDS, 10,
+      {heat: 4, megaCredits: 10, titaniumValue: 1, steelValue: 1},
+      {canUseHeat: true},
+      Units.of({heat: 2}));
+
+    const vm = wrapper.vm;
+    await vm.$nextTick();
+
+    expect(vm.megaCredits).eq(10);
+    expect(vm.heat).eq(0);
+    const maxButton = wrapper.find('[title~=Heat] ~ .btn-max');
+    await maxButton.trigger('click');
+
+    expect(vm.megaCredits).eq(8);
+    expect(vm.heat).eq(2);
+  });
+
+  it('select how to pay uses microbes', async () => {
+    // Moss will cost 10. Player has 7M€ and will 2 of the 4 available microbes units.
     const wrapper = setupCardForPurchase(
       CardName.MOSS, 10,
       {megaCredits: 7},
@@ -105,8 +120,8 @@ describe('SelectHowToPayForProjectCard', function() {
     expect(microbesTextBox.value).eq('2');
   });
 
-  it('select how to pay uses floaters', async function() {
-    // Forced Precipitation will cost 10. Player has 7MC and will 2 of the 4 available floaters.
+  it('select how to pay uses floaters', async () => {
+    // Forced Precipitation will cost 10. Player has 7M€ and will 2 of the 4 available floaters.
     const wrapper = setupCardForPurchase(
       CardName.FORCED_PRECIPITATION, 10,
       {megaCredits: 6},
@@ -120,9 +135,9 @@ describe('SelectHowToPayForProjectCard', function() {
     expect(floatersTextBox.value).eq('2');
   });
 
-  it('select how to pay uses steel', async function() {
-    // Regoplastic will cost 10. Player has 7MC and 4 steels.
-    // They should spend at least enough to pay for the card, that is 6 mc and 2 steel.
+  it('select how to pay uses steel', async () => {
+    // Regoplastic will cost 10. Player has 7M€ and 4 steels.
+    // They should spend at least enough to pay for the card, that is 6 M€ and 2 steel.
     const wrapper = setupCardForPurchase(
       CardName.REGO_PLASTICS, 10,
       {steel: 4, megaCredits: 7, steelValue: 2},
@@ -136,14 +151,14 @@ describe('SelectHowToPayForProjectCard', function() {
     expect(steelTextBox.value).eq('2');
   });
 
-  it('select how to pay uses titanium metal bonus', async function() {
-    // Solar Wind Power will cost 11. Player has 2MC and 4 Ti. The titanium is
-    // artificially inflated to be worth 7MC each.
+  it('select how to pay uses titanium metal bonus', async () => {
+    // Solar Wind Power will cost 11. Player has 2M€ and 4 Ti. The titanium is
+    // artificially inflated to be worth 7M€ each.
     // The algorithm will try to spend 2 mc. Then spend as much Ti as possible.
-    // This will come down to 2 MC and 2 Ti (at value 7). So we are effectively spending 16.
-    // That is overspending by 5 mc. The algorithm will try to spend 5 mc less if possible.
+    // This will come down to 2 M€ and 2 Ti (at value 7). So we are effectively spending 16.
+    // That is overspending by 5 mc. The algorithm will try to spend 5 M€ less if possible.
     // It is not, so it will try to overspend as little mc as it can.
-    // The final answer should be 0mc and 2 Ti (at value 7).
+    // The final answer should be 0M€ and 2 Ti (at value 7).
     const wrapper = setupCardForPurchase(
       CardName.SOLAR_WIND_POWER, 11,
       {megaCredits: 2, titanium: 4, titaniumValue: 7},
@@ -158,9 +173,9 @@ describe('SelectHowToPayForProjectCard', function() {
     expect(titaniumTextBox.value).eq('2');
   });
 
-  it('select how to pay uses steel and titanium with metal bonus', async function() {
+  it('select how to pay uses steel and titanium with metal bonus', async () => {
     // Space Elevator will cost 27. Player has 1MC, 4 steels (at value 3), and 6 Ti. The titanium is
-    // artificially inflated to be worth 6MC each.
+    // artificially inflated to be worth 6M€ each.
     // The algorithm will try to spend 1 mc. Then spend as much steel as possible. Then spend as much Ti as possible.
     // This will come down to 1 MC, 4 steels (at value 3), and 3 Ti (at value 6). So we are effectively spending 31.
     // That is overspending by 4 mc.
@@ -183,9 +198,9 @@ describe('SelectHowToPayForProjectCard', function() {
     expect(titaniumTextBox.value).eq('3');
   });
 
-  it('select how to pay uses steel and microbes', async function() {
+  it('select how to pay uses steel and microbes', async () => {
     // Protected Valley will cost 23. Player has no mc, 5 microbes, and 10 steels The steel is
-    // artificially inflated to be worth 4MC each.
+    // artificially inflated to be worth 4M€ each.
     // The algorithm will try to spend no mc. Then spend as much microbes as possible. Then spend as much steel as possible.
     // This will come down to 0 MC, 5 microbes (at value 2), and 4 steels (at value 4). So we are effectively spending 26.
     // That is overspending by 4 mc.
@@ -208,7 +223,7 @@ describe('SelectHowToPayForProjectCard', function() {
     expect(microbesTextBox.value).eq('4');
   });
 
-  it('select how to pay uses floater and microbes', async function() {
+  it('select how to pay uses floater and microbes', async () => {
     // Freyja Biodomes will cost 14. Player has 1 mc, 6 microbes, and 4 floater.
     // The algorithm will try to spend 1 mc. Then spend as much microbes as possible. Then spend as much floater as possible.
     // This will come down to 1 MC, 6 microbes (at value 2), and 1 floater (at value 3). So we are effectively spending 16.
@@ -232,7 +247,7 @@ describe('SelectHowToPayForProjectCard', function() {
     expect(floatersTextBox.value).eq('1');
   });
 
-  it('select how to pay uses floater and titanium', async function() {
+  it('select how to pay uses floater and titanium', async () => {
     // Giant Solar Shade will cost 27. Player has 1 mc, 8 floaters, and 6 ti.
     // The algorithm will try to spend 1 mc. Then spend as much floaters as possible. Then spend as much ti as possible.
     // This will come down to 1 MC, 8 floaters (at value 3), and 1 ti (at value 7). So we are effectively spending 32.
@@ -257,11 +272,11 @@ describe('SelectHowToPayForProjectCard', function() {
   });
 
   it('select Luna Train Station limits how much steel you can use', async () => {
-    // Luna Train Station costs 20, and will need 2 steel. Player has 20 MC and 4 steel.
+    // Luna Train Station costs 20, and will need 2 steel. Player has 20 M€ and 4 steel.
     //
     // The algorithm will select 20 MC,
     //
-    // Then when clicking the 'max' button for steel, the algorithm will switch to 16 MC and 2 steel.
+    // Then when clicking the 'max' button for steel, the algorithm will switch to 16 M€ and 2 steel.
     const wrapper = setupCardForPurchase(
       CardName.LUNA_TRAIN_STATION, 20,
       {
@@ -285,16 +300,16 @@ describe('SelectHowToPayForProjectCard', function() {
     expect(vm.steel).eq(2);
   });
 
-  it('select how to pay uses titanium metal bonus without using steel', async function() {
+  it('select how to pay uses titanium metal bonus without using steel', async () => {
     // Io Mining Industries cost 41 mc. Player has 10 MC, 2 Steel and 13 Ti.
-    // The steel is artificially inflated to be worth 4 MC each.
-    // The titanium is artificially inflated to be worth 5 MC each.
+    // The steel is artificially inflated to be worth 4 M€ each.
+    // The titanium is artificially inflated to be worth 5 M€ each.
     // The algorithm will try to spend 10 mc. Then spend as much Ti as possible.
-    // This will come down to 10 MC and 7 Ti (at value 5). So we are effectively spending 45 MC.
-    // That is overspending by 4 mc. The algorithm will try to spend 4 mc less if possible.
+    // This will come down to 10 M€ and 7 Ti (at value 5). So we are effectively spending 45 MC.
+    // That is overspending by 4 mc. The algorithm will try to spend 4 M€ less if possible.
     // IT WILL NOT TRY TO SPEND LESS STEEL EVEN IF IT HAS STEEL AND STEEL VALUE IS 4.
     // It will reduce the amount of MC.
-    // The final answer should be 6mc and 7 Ti (at value 5).
+    // The final answer should be 6M€ and 7 Ti (at value 5).
     const wrapper = setupCardForPurchase(
       CardName.IO_MINING_INDUSTRIES, 41,
       {megaCredits: 10, titanium: 13, titaniumValue: 5, steel: 2, steelValue: 4},
@@ -342,7 +357,7 @@ describe('SelectHowToPayForProjectCard', function() {
       propsData: {
         player: player,
         playerinput: playerInput,
-        onsave: function() {},
+        onsave: () => {},
         showsave: true,
         showtitle: true,
       },

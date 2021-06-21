@@ -1,11 +1,11 @@
 import {expect} from 'chai';
 import {FoodFactory} from '../../../src/cards/base/FoodFactory';
-import {Player} from '../../../src/Player';
+import {TestPlayer} from '../../TestPlayer';
 import {Resources} from '../../../src/Resources';
 import {TestPlayers} from '../../TestPlayers';
 
 describe('FoodFactory', function() {
-  let card : FoodFactory; let player : Player;
+  let card : FoodFactory; let player : TestPlayer;
 
   beforeEach(function() {
     card = new FoodFactory();
@@ -17,7 +17,7 @@ describe('FoodFactory', function() {
   });
 
   it('Should play', function() {
-    player.addProduction(Resources.PLANTS);
+    player.addProduction(Resources.PLANTS, 1);
     expect(card.canPlay(player)).is.true;
 
     card.play(player);

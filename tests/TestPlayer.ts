@@ -1,9 +1,12 @@
 import {Player} from '../src/Player';
+import {PlayerInput} from '../src/PlayerInput';
 import {Color} from '../src/Color';
 import {Units} from '../src/Units';
 import {Tags} from '../src/cards/Tags';
+import {VictoryPointsBreakdown} from '../src/VictoryPointsBreakdown';
 
 export class TestPlayer extends Player {
+  public victoryPointsBreakdown = new VictoryPointsBreakdown();
   constructor(color: Color) {
     super('player-' + color, color, false, 0, color + '-id');
   }
@@ -29,17 +32,37 @@ export class TestPlayer extends Player {
     }
   }
 
-  public tagsForTest: Partial<TagsForTest> | undefined = undefined;
+  public getVictoryPoints(): VictoryPointsBreakdown {
+    this.victoryPointsBreakdown = super.getVictoryPoints();
+    return this.victoryPointsBreakdown;
+  }
 
   public getStandardProjectOption() {
     return super.getStandardProjectOption();
   }
+
+  public tagsForTest: Partial<TagsForTest> | undefined = undefined;
 
   public getTagCount(tag: Tags, includeEventsTags:boolean = false, includeWildcardTags:boolean = true): number {
     if (this.tagsForTest !== undefined) {
       return this.tagsForTest[tag] || 0;
     }
     return super.getTagCount(tag, includeEventsTags, includeWildcardTags);
+  }
+
+  public runInput(input: ReadonlyArray<ReadonlyArray<string>>, pi: PlayerInput): void {
+    super.runInput(input, pi);
+  }
+
+  public purse(): Units {
+    return Units.of({
+      megacredits: this.megaCredits,
+      steel: this.steel,
+      titanium: this.titanium,
+      plants: this.plants,
+      energy: this.energy,
+      heat: this.heat,
+    });
   }
 }
 

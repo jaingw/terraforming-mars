@@ -6,6 +6,7 @@ import {CardName} from '../../CardName';
 import {Resources} from '../../Resources';
 import {CardRenderer} from '../render/CardRenderer';
 import {Card} from '../Card';
+import {Units} from '../../Units';
 
 export class SpinoffDepartment extends Card implements IProjectCard {
   constructor() {
@@ -14,16 +15,17 @@ export class SpinoffDepartment extends Card implements IProjectCard {
       tags: [Tags.BUILDING],
       name: CardName.SPINOFF_DEPARTMENT,
       cardType: CardType.ACTIVE,
+      productionBox: Units.of({megacredits: 2}),
 
       metadata: {
         cardNumber: 'C41',
         renderData: CardRenderer.builder((b) => {
-          b.effect('WHEN PLAYING A CARD WITH A BASIC COST OF 20MC OR MORE, draw a card.', (eb) => {
+          b.effect('WHEN PLAYING A CARD WITH A BASIC COST OF 20M€ OR MORE, draw a card.', (eb) => {
             eb.megacredits(20).asterix().startEffect.cards(1);
           }).br;
           b.production((pb) => pb.megacredits(2));
         }),
-        description: 'Increase your MC production 2 steps.',
+        description: 'Increase your M€ production 2 steps.',
       },
     });
   }

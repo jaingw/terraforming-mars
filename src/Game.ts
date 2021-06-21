@@ -71,6 +71,7 @@ import {BoardType} from './boards/BoardType';
 import {Multiset} from './utils/Multiset';
 import {SelectOption} from './inputs/SelectOption';
 import {StarcorePlunder} from './cards/eros/StarcorePlunder';
+import {SelectCard} from './inputs/SelectCard';
 
 export type GameId = string;
 export type SpectatorId = string;
@@ -83,8 +84,10 @@ export enum LoadState {
 
 export interface Score {
   corporation: String;
+  corporation2?: String;
   playerScore: number;
   player: String;
+  userId: String|undefined;
 }
 
 export interface GameOptions {
@@ -124,8 +127,9 @@ export interface GameOptions {
   customCorporationsList: Array<CardName>;
   cardsBlackList: Array<CardName>;
   customColoniesList: Array<ColonyName>;
-  heatFor?: boolean;
-  breakthrough?: boolean;
+  heatFor: boolean; //  七热升温
+  breakthrough: boolean;// 界限突破
+  doubleCorp: boolean; // 双将
   requiresVenusTrackCompletion: boolean; // Venus must be completed to end the game
   requiresMoonTrackCompletion: boolean; // Moon must be completed to end the game
 }
@@ -165,6 +169,7 @@ const DEFAULT_GAME_OPTIONS: GameOptions = {
   venusNextExtension: false,
   heatFor: false,
   breakthrough: false,
+  doubleCorp: false,
 };
 
 export class Game implements ISerializable<SerializedGame> {
@@ -234,6 +239,8 @@ export class Game implements ISerializable<SerializedGame> {
   public cardDrew: boolean = false;
   // 星核打出的时代数
   public starCoreGen = 0;
+  // 星际领航者的殖民判定
+  public finishFirstTrading: boolean = false;
   // Syndicate Pirate Raids
   public syndicatePirateRaider: string | undefined = undefined;
 
@@ -403,7 +410,7 @@ export class Game implements ISerializable<SerializedGame> {
           }
         }
       } else {
-        game.playerHasPickedCorporationCard(player, new BeginnerCorporation());
+        game.playerHasPickedCorporationCard(player, new BeginnerCorporation(), undefined);
       }
     }
 
@@ -411,6 +418,10 @@ export class Game implements ISerializable<SerializedGame> {
     if (players.length === 1) {
       game.log('The id of this game is ${0}', (b) => b.rawString(id));
     }
+
+    players.forEach((player) => {
+      game.log('Good luck ${0}!', (b) => b.player(player), {reservedFor: player});
+    });
 
     game.log('Generation ${0}', (b) => b.forNewGeneration().number(game.generation));
 
@@ -553,7 +564,7 @@ export class Game implements ISerializable<SerializedGame> {
 
   public milestoneClaimed(milestone: IMilestone): boolean {
     return this.claimedMilestones.find(
-      (claimedMilestone) => claimedMilestone.milestone === milestone,
+      (claimedMilestone) => claimedMilestone.milestone.name === milestone.name,
     ) !== undefined;
   }
 
@@ -648,7 +659,7 @@ export class Game implements ISerializable<SerializedGame> {
 
   public hasBeenFunded(award: IAward): boolean {
     return this.fundedAwards.find(
-      (fundedAward) => fundedAward.award === award,
+      (fundedAward) => fundedAward.award.name === award.name,
     ) !== undefined;
   }
 
@@ -666,41 +677,66 @@ export class Game implements ISerializable<SerializedGame> {
     return this.claimedMilestones.length >= constants.MAX_MILESTONES;
   }
 
-  private playerHasPickedCorporationCard(player: Player, corporationCard: CorporationCard) {
+  private playerHasPickedCorporationCard(player: Player, corporationCard: CorporationCard, corporationCard2: CorporationCard | undefined) {
     player.pickedCorporationCard = corporationCard;
+    player.pickedCorporationCard2 = corporationCard2;
     // if all players picked corporationCard
     if (this.players.every((p) => p.pickedCorporationCard !== undefined)) {
-      for (const somePlayer of this.getPlayers()) {
-        this.playCorporationCard(somePlayer, somePlayer.pickedCorporationCard!);
+      if (this.gameOptions.doubleCorp) {
+        const game = this;
+        const chooseFirstCorp = function() {
+          for (const somePlayer of game.getPlayers()) {
+            if (somePlayer.corpCard === undefined) {
+              somePlayer.setWaitingFor(new SelectCard(
+                'Select corp card to play first',
+                'Play',
+                [somePlayer.pickedCorporationCard!, somePlayer.pickedCorporationCard2!],
+                (foundCards: Array<CorporationCard>) => {
+                  game.playCorporationCard(somePlayer, foundCards[0], false);
+                  game.playCorporationCard(somePlayer, somePlayer.pickedCorporationCard?.name === foundCards[0].name ? somePlayer.pickedCorporationCard2! : somePlayer.pickedCorporationCard!, true);
+                  game.playerIsFinishedWithResearchPhase(somePlayer);
+                  return undefined;
+                },
+              ), () => {
+                chooseFirstCorp();
+              });
+              break;
+            }
+          }
+        };
+        chooseFirstCorp();
+      } else {
+        for (const somePlayer of this.getPlayers()) {
+          this.playCorporationCard(somePlayer, somePlayer.pickedCorporationCard!, false);
+          this.playerIsFinishedWithResearchPhase(somePlayer);
+        }
       }
     }
   }
 
-  private playCorporationCard(
-    player: Player, corporationCard: CorporationCard,
-  ): void {
-    player.corporationCard = corporationCard;
-    player.megaCredits = corporationCard.startingMegaCredits;
-    if (corporationCard.cardCost !== undefined) {
-      player.cardCost = corporationCard.cardCost;
-    }
-
-    if (corporationCard.name !== CardName.BEGINNER_CORPORATION) {
-      player.megaCredits -= player.cardsInHand.length * player.cardCost;
+  private playCorporationCard(player: Player, corporationCard: CorporationCard, corp2 : boolean): void {
+    corp2 ? player.corpCard2 = corporationCard : player.corpCard = corporationCard;
+    if (corporationCard.name === CardName.BEGINNER_CORPORATION) {
+      player.megaCredits = corporationCard.startingMegaCredits;
     }
     corporationCard.play(player);
     this.log('${0} played ${1}', (b) => b.player(player).card(corporationCard));
 
     // trigger other corp's effect, e.g. SaturnSystems,PharmacyUnion,Splice
     for (const somePlayer of this.getPlayers()) {
-      if (somePlayer !== player && somePlayer.corporationCard !== undefined && somePlayer.corporationCard.onCorpCardPlayed !== undefined) {
+      if (somePlayer.corpCard !== undefined && somePlayer.corpCard !== corporationCard && somePlayer.corpCard.onCorpCardPlayed !== undefined) {
         this.defer(new DeferredAction(
           player,
           () => {
-            if (somePlayer.corporationCard !== undefined && somePlayer.corporationCard.onCorpCardPlayed !== undefined) {
-              return somePlayer.corporationCard.onCorpCardPlayed(player, corporationCard) || undefined;
-            }
-            return undefined;
+            return somePlayer.corpCard!.onCorpCardPlayed!(player, corporationCard) || undefined;
+          },
+        ));
+      }
+      if (somePlayer.corpCard2 !== undefined && somePlayer.corpCard2 !== corporationCard && somePlayer.corpCard2.onCorpCardPlayed !== undefined) {
+        this.defer(new DeferredAction(
+          player,
+          () => {
+            return somePlayer.corpCard2!.onCorpCardPlayed!(player, corporationCard) || undefined;
           },
         ));
       }
@@ -721,17 +757,40 @@ export class Game implements ISerializable<SerializedGame> {
       }
     }
 
-    this.playerIsFinishedWithResearchPhase(player);
     player.dealtCorporationCards = [];
     player.dealtPreludeCards = [];
     player.dealtProjectCards = [];
   }
 
   private pickCorporationCard(player: Player): PlayerInput {
-    return new SelectInitialCards(player, (corporation: CorporationCard) => {
+    return new SelectInitialCards(player, this.gameOptions.doubleCorp, (corporationCard: CorporationCard, corporationCard2: CorporationCard | undefined) => {
+      if (corporationCard.cardCost !== undefined) {
+        player.cardCost = corporationCard.cardCost;
+      }
+      if (corporationCard2?.cardCost !== undefined) {
+        // 双公司 买牌费用平均一下
+        if (player.cardCost === constants.CARD_COST) {
+          player.cardCost = corporationCard2.cardCost;
+        } else if (corporationCard2.cardCost !== constants.CARD_COST) {
+          player.cardCost = (corporationCard2.cardCost + player.cardCost) /2;
+        }
+      }
+
+      // 起始资金
+      let startingMegaCredits = corporationCard.startingMegaCredits;
+      if (corporationCard2 !== undefined) {
+        startingMegaCredits += corporationCard2.startingMegaCredits - constants.STARTING_MEGA_CREDITS_SUB;
+      }
+
+      // 买完牌的资金
+      if (corporationCard.name !== CardName.BEGINNER_CORPORATION) {
+        const diff = player.cardsInHand.length * player.cardCost;
+        startingMegaCredits -= diff;
+      }
+      player.megaCredits = startingMegaCredits;
+
       // Check for negative M€
-      const cardCost = corporation.cardCost !== undefined ? corporation.cardCost : player.cardCost;
-      if (corporation.name !== CardName.BEGINNER_CORPORATION && player.cardsInHand.length * cardCost > corporation.startingMegaCredits) {
+      if (startingMegaCredits <= 0) {
         player.cardsInHand = [];
         player.preludeCardsInHand = [];
         throw new Error('Too many cards selected');
@@ -743,7 +802,7 @@ export class Game implements ISerializable<SerializedGame> {
         }
       });
 
-      this.playerHasPickedCorporationCard(player, corporation); return undefined;
+      this.playerHasPickedCorporationCard(player, corporationCard, corporationCard2); return undefined;
     });
   }
 
@@ -793,7 +852,7 @@ export class Game implements ISerializable<SerializedGame> {
     this.phase = Phase.RESEARCH;
     for (const player of this.players) {
       if (player.pickedCorporationCard === undefined && player.dealtCorporationCards.length > 0) {
-        player.setWaitingFor(this.pickCorporationCard(player), () => {});
+        player.setWaitingFor(this.pickCorporationCard(player));
       }
     }
     if (this.players.length === 1 && this.gameOptions.coloniesExtension) {
@@ -830,6 +889,10 @@ export class Game implements ISerializable<SerializedGame> {
     return this.marsIsTerraformed();
   }
 
+  public isDoneWithFinalProduction(): boolean {
+    return this.phase === Phase.END || (this.gameIsOver() && this.phase === Phase.PRODUCTION);
+  }
+
   private gotoProductionPhase(): void {
     this.phase = Phase.PRODUCTION;
     this.passedPlayers.clear();
@@ -840,6 +903,7 @@ export class Game implements ISerializable<SerializedGame> {
     });
 
     if (this.gameIsOver()) {
+      this.log('Final greenery placement', (b) => b.forNewGeneration());
       this.gotoFinalGreeneryPlacement();
       return;
     }
@@ -894,7 +958,8 @@ export class Game implements ISerializable<SerializedGame> {
     this.generation++;
     this.log('Generation ${0}', (b) => b.forNewGeneration().number(this.generation));
     this.incrementFirstPlayer();
-
+    // TradeNavigator
+    this.finishFirstTrading = false;
     this.players.forEach((player) => {
       player.hasIncreasedTerraformRatingThisGeneration = false;
       player.heatProductionStepsIncreasedThisGeneration = 0;
@@ -960,14 +1025,14 @@ export class Game implements ISerializable<SerializedGame> {
   }
 
   public playerIsFinishedWithResearchPhase(player: Player): void {
-    this.researchedPlayers.add(player);
-    if (this.allPlayersHaveFinishedResearch()) {
-      this.deferredActions.runAll(() => {
+    this.deferredActions.runAllFor(player, () => {
+      this.researchedPlayers.add(player);
+      if (this.allPlayersHaveFinishedResearch()) {
         this.phase = Phase.ACTION;
         this.passedPlayers.clear();
         this.startActionsForPlayer(this.first);
-      });
-    }
+      }
+    });
   }
 
   public playerIsFinishedWithDraftingPhase(initialDraft: boolean, player: Player, cards : Array<IProjectCard>): void {
@@ -1127,10 +1192,15 @@ export class Game implements ISerializable<SerializedGame> {
     const players = this.getAllPlayers();
     players.forEach((player) => {
       let corponame: String = '';
-      if (player.corporationCard !== undefined) {
-        corponame = player.corporationCard.name;
+      let corponame2: String = '';
+      const vpb = player.getVictoryPoints();
+      if (player.corpCard !== undefined) {
+        corponame = player.corpCard.name;
       }
-      scores.push({corporation: corponame, playerScore: player.victoryPointsBreakdown.total, player: player.name});
+      if (player.corpCard2 !== undefined) {
+        corponame2 = player.corpCard2.name;
+      }
+      scores.push({corporation: corponame, corporation2: corponame2, playerScore: vpb.total, player: player.name, userId: player.userId});
     });
     if (this.players.length > 1) {
       Database.getInstance().saveGameResults(this.id, players.length, this.generation, this.gameOptions, scores);
@@ -1138,49 +1208,39 @@ export class Game implements ISerializable<SerializedGame> {
     return;
   }
 
+  // Part of final greenery placement.
   public canPlaceGreenery(player: Player): boolean {
     return !this.donePlayers.has(player) &&
             player.plants >= player.plantsNeededForGreenery &&
             this.board.getAvailableSpacesForGreenery(player).length > 0;
   }
 
+  // Called when a player has chosen not to place any more greeneries.
   public playerIsDoneWithGame(player: Player): void {
     this.donePlayers.add(player);
     this.gotoFinalGreeneryPlacement();
   }
 
-  private gotoFinalGreeneryPlacement(): void {
-    const players: Player[] = [];
+  // Well, this isn't just "go to the final greenery placement". It finds the next player
+  // who might be able to place a final greenery.
+  // Rename to takeNextFinalGreeneryAction?
 
-    this.players.forEach((player) => {
+  public /* for testing */ gotoFinalGreeneryPlacement(): void {
+    // this.getPlayers returns in turn order -- a necessary rule for final greenery placement.
+    for (const player of this.getPlayers()) {
+      if (this.donePlayers.has(player)) {
+        continue;
+      }
       if (this.canPlaceGreenery(player)) {
-        players.push(player);
+        this.startFinalGreeneryPlacement(player);
+        return;
+      } else if (player.getWaitingFor() !== undefined) {
+        return;
       } else {
         this.donePlayers.add(player);
       }
-    });
-
-    // If no players can place greeneries we are done
-    if (players.length === 0) {
-      this.gotoEndGame();
-      return;
-    }
-
-    // iterate through players in order and allow them to convert plants
-    // into greenery if possible, there needs to be spaces available for
-    // greenery and the player needs enough plants
-    let firstPlayer: Player | undefined = this.first;
-    while (
-      firstPlayer !== undefined && players.includes(firstPlayer) === false
-    ) {
-      firstPlayer = this.getPlayerAfter(firstPlayer);
-    }
-
-    if (firstPlayer !== undefined) {
-      this.startFinalGreeneryPlacement(firstPlayer);
-    } else {
-      throw new Error('Was no player left to place final greenery');
-    }
+    };
+    this.gotoEndGame();
   }
 
   private startFinalGreeneryPlacement(player: Player) {
@@ -1291,18 +1351,19 @@ export class Game implements ISerializable<SerializedGame> {
     // Literal typing makes |increments| a const
     const steps = Math.min(increments, (constants.MAX_TEMPERATURE - this.temperature) / 2);
 
-    // 热公司突破：任何人升温得1热。
-    const helion = this.players.find((player) => player.isCorporation(CardName._HELION_));
-    if (helion !== undefined) {
-      player.heat += steps * 1;
-    }
     if (this.phase !== Phase.SOLAR) {
+      // 热公司突破：任何人升温得1热。
+      const helion = this.players.find((player) => player.isCorporation(CardName._HELION_));
+      if (helion !== undefined) {
+        player.heat += steps * 1;
+      }
+
       // BONUS FOR HEAT PRODUCTION AT -20 and -24
       if (this.temperature < -24 && this.temperature + steps * 2 >= -24) {
-        player.addProduction(Resources.HEAT);
+        player.addProduction(Resources.HEAT, 1);
       }
       if (this.temperature < -20 && this.temperature + steps * 2 >= -20) {
-        player.addProduction(Resources.HEAT);
+        player.addProduction(Resources.HEAT, 1);
       }
       // 群友扩hook,热泉微生物hook
       const foundCard = player.playedCards.find((card) => card.name === CardName.HYDROTHERMAL_VENT_ARCHAEA);
@@ -1452,7 +1513,8 @@ export class Game implements ISerializable<SerializedGame> {
     }
 
     this.players.forEach((p) => {
-      p.corporationCard?.onTilePlaced?.(p, player, space, BoardType.MARS);
+      p.corpCard?.onTilePlaced?.(p, player, space, BoardType.MARS);
+      p.corpCard2?.onTilePlaced?.(p, player, space, BoardType.MARS);
       p.playedCards.forEach((playedCard) => {
         playedCard.onTilePlaced?.(p, player, space, BoardType.MARS);
       });
@@ -1473,13 +1535,13 @@ export class Game implements ISerializable<SerializedGame> {
     if (spaceBonus === SpaceBonus.DRAW_CARD) {
       player.drawCard(count);
     } else if (spaceBonus === SpaceBonus.PLANT) {
-      player.plants += count;
+      player.addResource(Resources.PLANTS, count, {log: true});
     } else if (spaceBonus === SpaceBonus.STEEL) {
-      player.steel += count;
+      player.addResource(Resources.STEEL, count, {log: true});
     } else if (spaceBonus === SpaceBonus.TITANIUM) {
-      player.titanium += count;
+      player.addResource(Resources.TITANIUM, count, {log: true});
     } else if (spaceBonus === SpaceBonus.HEAT) {
-      player.heat += count;
+      player.addResource(Resources.HEAT, count, {log: true});
     }
   }
 
@@ -1566,6 +1628,7 @@ export class Game implements ISerializable<SerializedGame> {
     space.player = undefined;
   }
 
+  // 不包含体退玩家  有玩家体退之后可能出错，慎用
   public getPlayers(): Array<Player> {
     // We always return them in turn order
     const ret: Array<Player> = [];
@@ -1581,6 +1644,7 @@ export class Game implements ISerializable<SerializedGame> {
     return ret;
   }
 
+  // 包含体退玩家
   public getAllPlayers(): Array<Player> {
     return this.getPlayers().concat(this.exitedPlayers);
   }
@@ -1594,7 +1658,7 @@ export class Game implements ISerializable<SerializedGame> {
         }
       }
       // Check player corporation
-      if (player.corporationCard !== undefined && player.corporationCard.name === name) {
+      if (player.corpName(name as CardName)) {
         return player;
       }
     }
@@ -1619,12 +1683,18 @@ export class Game implements ISerializable<SerializedGame> {
     return player.cardsInHand.filter((card) => card.cardType === cardType);
   }
 
-  public log(message: string, f?: (builder: LogBuilder) => void) {
+  public log(message: string, f?: (builder: LogBuilder) => void, options?: {reservedFor?: Player}) {
+    if (options !== undefined && options.reservedFor !== undefined) {
+      // 玩家独有的日志会暴露敏感信息，其他玩家可以看到 该种日志一律隐藏
+      return;
+    }
     const builder = new LogBuilder(message);
     if (f) {
       f(builder);
     }
-    this.gameLog.push(builder.logMessage());
+    const logMessage = builder.build();
+    logMessage.playerId = options?.reservedFor?.id;
+    this.gameLog.push(logMessage);
     this.gameAge++;
   }
 
@@ -1918,7 +1988,7 @@ export class Game implements ISerializable<SerializedGame> {
 
 
     // Still in Draft or Research of generation 1
-    if (this.generation === 1 && this.players.some((p) => p.corporationCard === undefined)) {
+    if (this.generation === 1 && this.players.some((p) => p.corpCard === undefined)) {
       if (this.phase === Phase.INITIALDRAFTING) {
         this.draftRound = 1;
         this.initialDraftIteration = 1;
@@ -2033,5 +2103,17 @@ export class Game implements ISerializable<SerializedGame> {
     } else {
       throw new Error('this player can\'t resign');
     }
+  }
+
+  public logIllegalState(description: string, metadata: {}) {
+    const gameMetadata = {
+      gameId: this.id,
+      lastSaveId: this.lastSaveId,
+      logAge: this.gameLog.length,
+      currentPlayer: this.activePlayer.id,
+
+      metadata: metadata,
+    };
+    console.warn('Illegal state: ' + description, JSON.stringify(gameMetadata, this.replacer, ' '));
   }
 }

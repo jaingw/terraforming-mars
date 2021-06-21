@@ -15,7 +15,7 @@ describe('StormCraftIncorporated', function() {
     const redPlayer = TestPlayers.RED.newPlayer();
     Game.newInstance('foobar', [player, redPlayer], player);
 
-    player.corporationCard = card;
+    player.corpCard = card;
   });
 
   it('Should play', function() {

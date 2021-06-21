@@ -23,7 +23,7 @@ describe('SaturnSystems', function() {
   });
 
   it('Runs onCardPlayed', function() {
-    player.corporationCard = card;
+    player.corpCard = card;
     card.onCardPlayed(player, new MirandaResort());
     expect(player.getProduction(Resources.MEGACREDITS)).to.eq(1);
   });
@@ -31,7 +31,7 @@ describe('SaturnSystems', function() {
   it('Runs onCardPlayed when other player plays card', function() {
     const player2 = TestPlayers.RED.newPlayer();
     Game.newInstance('foobar', [player, player2], player);
-    player.corporationCard = card;
+    player.corpCard = card;
 
     card.onCardPlayed(player2, new MirandaResort());
     expect(player.getProduction(Resources.MEGACREDITS)).to.eq(1);

@@ -37,7 +37,7 @@ export class LargeEcologicalReserve extends Card implements IProjectCard {
     const oxygenIncreased = Math.min(MAX_OXYGEN_LEVEL-player.game.getOxygenLevel(), 2);
 
     if (PartyHooks.shouldApplyPolicy(player.game, PartyName.REDS) && !oxygenMaxed) {
-      return player.canAfford(player.getCardCost(this) + oxygenIncreased*REDS_RULING_POLICY_COST, false, false, false, true) && canPlaceTile && player.checkMultipleTagPresence([Tags.PLANT, Tags.ANIMAL, Tags.MICROBE]); ;
+      return player.canAfford(player.getCardCost(this) + oxygenIncreased*REDS_RULING_POLICY_COST, {microbes: true}) && canPlaceTile && player.checkMultipleTagPresence([Tags.PLANT, Tags.ANIMAL, Tags.MICROBE]); ;
     }
 
     return canPlaceTile && player.checkMultipleTagPresence([Tags.PLANT, Tags.ANIMAL, Tags.MICROBE]); ;

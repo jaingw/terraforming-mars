@@ -5,24 +5,29 @@ import {StandardProjectCard} from '../StandardProjectCard';
 import {MoonExpansion} from '../../moon/MoonExpansion';
 import {PlaceMoonRoadTile} from '../../moon/PlaceMoonRoadTile';
 import {Units} from '../../Units';
+import {IMoonCard} from './IMoonCard';
+import {TileType} from '../../TileType';
+import {AltSecondaryTag} from '../render/CardRenderItem';
 
-export class MoonRoadStandardProject extends StandardProjectCard {
+export class MoonRoadStandardProject extends StandardProjectCard implements IMoonCard {
   constructor() {
     super({
       name: CardName.MOON_ROAD_STANDARD_PROJECT,
       cost: 18,
+      reserveUnits: Units.of({steel: 1}),
+
       metadata: {
         cardNumber: '',
         renderData: CardRenderer.builder((b) =>
-          b.standardProject('Spend 18 MC and 1 steel to place a road on the moon and raise the Logistics Rate 1 step.', (eb) => {
-            eb.megacredits(18).steel(1).startAction.moonRoad();
+          b.standardProject('Spend 18 M€ and 1 steel to place a road on the moon and raise the Logistics Rate 1 step.', (eb) => {
+            eb.megacredits(18).steel(1).startAction.moonRoad().secondaryTag(AltSecondaryTag.MOON_LOGISTICS_RATE);
           }),
         ),
       },
     });
   }
 
-  public reserveUnits = Units.of({steel: 1});
+  public tilesBuilt = [TileType.MOON_ROAD];
 
   protected discount(player: Player): number {
     if (player.playedCards.find((card) => card.name === CardName.MOONCRATE_BLOCK_FACTORY)) {
@@ -39,7 +44,7 @@ export class MoonRoadStandardProject extends StandardProjectCard {
       return false;
     }
 
-    return player.canAfford(this.cost) && player.hasUnits(this.reserveUnits);
+    return super.canAct(player);
   }
 
   actionEssence(player: Player): void {

@@ -342,6 +342,7 @@ export enum CardName {
 
     // Corps:
     BEGINNER_CORPORATION = 'Beginner Corporation',
+    DOUBLE_CORPORATION = 'Double Corporation',
     CREDICOR = 'CrediCor',
     ECOLINE = 'EcoLine',
     HELION = 'Helion',
@@ -464,6 +465,7 @@ export enum CardName {
     MAGNETIC_FIELD_GENERATORS_PROMO = 'Magnetic Field Generators:promo',
     ASTEROID_RIGHTS = 'Asteroid Rights',
     BIO_PRINTING_FACILITY = 'Bio Printing Facility',
+    BACTOVIRAL_RESEARCH = 'Bactoviral Research',
 
 
     // /// breakthrough
@@ -570,7 +572,7 @@ export enum CardName {
     INTERPLANETARY_ALLIANCE = 'Interplanetary Alliance',
     HYDROTHERMAL_VENT_ARCHAEA = 'Hydrothermal Vent Archaea',
     WASTE_INCINERATOR = 'Waste Incinerator',
-    NITROGENRICH_COMET = 'Nitrogenrich Comet',
+    FALL_OF_SUNRISE = 'Fall of Sunrise',
     CUTTING_EDGE_LAB = 'Cutting Edge Lab',
     UNMANNED_AERIAL_VEHICLE = 'Unmanned Aerial Vehicle',
     RESPIRATION_ENHANCE = 'Respiration Enhance',
@@ -587,6 +589,10 @@ export enum CardName {
     WG_PARTERNSHIP = 'WG Parternship',
     COMMUNITY_WORKER = 'Community Worker',
     INCITE_ENDER = 'Incite Ender',
+    TRADE_NAVIGATOR = 'Trade Navigator',
+    BROTHERHOOD_OF_MUTANTS = 'Brotherhood of Mutants',
+    STARCORE_MINING = 'Starcore Mining',
+    EM_DRIVE = 'EM Drive',
 
     // The Moon.
     MARE_NECTARIS_MINE = 'Mare Nectaris Mine',
@@ -696,5 +702,5 @@ export enum CardName {
     MINING_COMPLEX = 'Mining Complex',
     MOON_ROAD_STANDARD_PROJECT = 'Road Infrastructure',
     MOON_MINE_STANDARD_PROJECT = 'Lunar Mine',
-    MOON_COLONY_STANDARD_PROJECT = 'Lunar Habitat',
+    MOON_COLONY_STANDARD_PROJECT = 'Lunar Habitat'
 }

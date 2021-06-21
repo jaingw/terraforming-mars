@@ -37,6 +37,7 @@
     "Show timers": "显示计时器",
     "7 Heat Into Temperature": "七热升温",
     "BreakThrough": "界限突破",
+    "Double Corp": "双公司",
     "NEXT CARD:": "下一张卡:",
     "Fast mode": "强制两动",
     "Remove negative Global Events": "移除负面动荡事件",
@@ -83,7 +84,7 @@
     "Landlord": "地产大亨",
     "Owning the most tiles in play": "拥有最多建筑物版块",
     "Banker": "金融巨头",
-    "Having the highest MC production": "拥有最高的MC产能",
+    "Having the highest M€ production": "拥有最高的M€产能",
     "Scientist": "科技巨擘",
     "Having the most science tags in play": "拥有最多科学标志",
     "Thermalist": "热能魁首",
@@ -114,6 +115,9 @@
     "Having the most Venus tags in play": "拥有最多金星标志",
 
     "Actions": "可执行行动",
+    "Soundtip": "语音提示",
+    "Show cards in hand to others": "开放手牌展示",
+    "Sit down": "坐下",
     "Played Cards": "已打出的项目卡",
     "Hide active cards": "隐藏蓝卡",
     "Show active cards": "显示蓝卡",
@@ -136,7 +140,7 @@
     "Save": "保存操作",
     "Create game": "创建游戏",
 
-    "Select which cards to take into hand": "选择保留到手牌的牌(每张3MC)",
+    "Select which cards to take into hand": "选择保留到手牌的牌(每张3M€)",
 
     "Convert 7 heat into temperature": "7热升温",
     "Convert 8 heat into temperature": "8热升温",
@@ -153,21 +157,22 @@
     "Play project card": "打出项目卡",
     "Sell patents": "贩卖专利",
     "Fund an award": "选择一项奖项进行资助",
-    "Take action for action phase, select one available action.": "行动阶段,执行一个合法行动",
+    "Take your first action": "行动阶段,执行一个合法行动",
+    "Take your next action": "行动阶段,执行一个合法行动",
     "Undo last action": "撤回操作",
     "End Turn": "结束本轮操作",
     "Perform an action from a played card": "执行一个已打出卡牌上的行动",
-    "Power plant (11 MC)": "建造发电厂 (11 MC) - 提升一格电产",
-    "Asteroid (14 MC)": "导引小行星 (14 MC) - 提升火星温度",
-    "Aquifer (18 MC)": "开发含水层 (18 MC)",
-    "Greenery (23 MC)": "绿化 (23 MC)",
-    "City (25 MC)": "建造城市 (25 MC)",
-    "Build colony (17 MC)": "建立殖民地 (17 MC)",
-    "Air scrapping (15 MC)": "建设金星(15 MC)",
-    "Buffer Gas (16 MC)": "缓冲气体 (16 MC) - 提升1TR",
+    "Power plant (11 M€)": "建造发电厂 (11 M€) - 提升一格电产",
+    "Asteroid (14 M€)": "导引小行星 (14 M€) - 提升火星温度",
+    "Aquifer (18 M€)": "开发含水层 (18 M€)",
+    "Greenery (23 M€)": "绿化 (23 M€)",
+    "City (25 M€)": "建造城市 (25 M€)",
+    "Build colony (17 M€)": "建立殖民地 (17 M€)",
+    "Air scrapping (15 M€)": "建设金星(15 M€)",
+    "Buffer Gas (16 M€)": "缓冲气体 (16 M€) - 提升1TR",
     "Power plant": "建造发电厂",
     "Aquifer": "开发含水层",
-    "Pay 9 MC": "支付 9 MC",
+    "Pay 9 M€": "支付 9 M€",
     "Pay 3 Energy": "支付 3 个电力资源",
     "Pay 3 Titanium": "支付 3 个钛合金资源",
     "Trade with a colony tile": "与殖民星球贸易",
@@ -183,7 +188,7 @@
     "Also, take into account these small hints to win:":"同时，也请考虑这些获胜的小技巧",
     "Concentrate more on Global parameters, not on Victory Points":"多关注星球参数，而非胜利点数",
     "Don't be greedy on cards selection":"不要在卡牌选择上贪婪",
-    "Try to increase Heat production, not Megacredits":"尝试提升热能产量，而非MC产量",
+    "Try to increase Heat production, not Megacredits":"尝试提升热能产量，而非M€产量",
     "Try to start with Beginner corporation":"尝试以新手公司开始游戏",
     "You win!":"胜利",
     "But it isn't the reason to stop making Mars better.":"但这不是停止改善火星的理由",
@@ -221,8 +226,9 @@
     "Donate": "赞助火星",
     "LoginOut": "登出",
     "Help Translation": "帮助翻译",
-    
-        
+    "Help": "操作指引",
+
+
     "Toggle all": "全部切换",
     "Base": "基础",
     "Agendas": "议会扩",
@@ -239,7 +245,7 @@
     "Filter description": "过滤叙述",
     "Sort by ID": "按编号排序",
 
- 
+
 
      "Remove colony": "移除殖民地",
      "Select colony tile to remove":  "选择你想移除的殖民地",
@@ -255,34 +261,34 @@
      "Remove floaters": "移除云资源",
      "Add floater": "增加云资源",
      "Select card to take into hand": "选择卡牌将牌拿到手里",
-     "Send a delegate in an area (5 MC)": "派出额外代表到某个区域（花费5MC）",
-     "Pay 10 MC to draw 3 cards (Turmoil Scientists)": "花费10MC摸三张牌(科学家党)",
+     "Send a delegate in an area (5 M€)": "派出额外代表到某个区域（花费5M€）",
+     "Pay 10 M€ to draw 3 cards (Turmoil Scientists)": "花费10M€摸三张牌(科学家党)",
      "Select a space with a steel or titanium bonus": "选择一个钢铁奖励或者钛奖励的地块",
      "Select one option": "选择一项执行",
      "Add 1 floater to this card": "在这张卡增加1云资源",
      "Remove 2 floaters to raise Venus scale 1 step": "移除 2 云资源来增加1金星改造度",
      "You cannot pay for this card": "你不能为此牌支付",
      "Select card(s) to buy":"选择你需要购买的牌",
-   
-    "Starting Megacredits:":"起始MC：",
-    "After Preludes:":"前序牌打出后MC：",
-    
-    
+
+    "Starting Megacredits:":"起始M€：",
+    "After Preludes:":"前序牌打出后M€：",
+
+
     "Air Scrapping": "建设金星",
     "Buffer Gas": "缓冲气体",
-    "(Spend 16 MC to increase your TR 1 step. Solo games only.)": "花费16MC来提升改造度1格，仅Solo用。",
+    "(Spend 16 M€ to increase your TR 1 step. Solo games only.)": "花费16M€来提升改造度1格，仅Solo用。",
     "Sell Patents": "贩卖专利",
-    "(Discard any number of cards to gain that amount of MC.)": "丢弃任意数量的卡牌来获得对应数量的MC",
-    "(Spend 11 MC to increase your Energy production 1 step.)": "花费11MC来增加你的电力产能1格",
-    "(Spend 14 MC to raise temperature 1 step.)":"花费14MC来提升温度1格",
-    "(Spend 15 MC to raise Venus 1 step.)": "花费15MC来提升金星改造度1格",
-    "(Spend 17 MC to place a colony.)":"花费17MC来放置1个殖民地",
-    "(Spend 18 MC to place an ocean tile.)":"花费18MC来放置一块海洋版块",
-    "(Spend 23 MC to place a greenery tile and raise oxygen 1 step.)":"花费23MC来放置一块绿化版块并增加一格氧气",
-    "(Spend 25 MC to place a city tile and increase your MC production 1 step.)":"花费25MC来放置一个城市版块并增加你的MC产量1格",
+    "(Discard any number of cards to gain that amount of M€.)": "丢弃任意数量的卡牌来获得对应数量的M€",
+    "(Spend 11 M€ to increase your Energy production 1 step.)": "花费11M€来增加你的电力产能1格",
+    "(Spend 14 M€ to raise temperature 1 step.)":"花费14M€来提升温度1格",
+    "(Spend 15 M€ to raise Venus 1 step.)": "花费15M€来提升金星改造度1格",
+    "(Spend 17 M€ to place a colony.)":"花费17M€来放置1个殖民地",
+    "(Spend 18 M€ to place an ocean tile.)":"花费18M€来放置一块海洋版块",
+    "(Spend 23 M€ to place a greenery tile and raise oxygen 1 step.)":"花费23M€来放置一块绿化版块并增加一格氧气",
+    "(Spend 25 M€ to place a city tile and increase your M€ production 1 step.)":"花费25M€来放置一个城市版块并增加你的M€产量1格",
 
-    
-    
+
+
     "Select a card to keep and pass the rest to ${0}": "选择一张你需要留下的牌然后将其余传递给玩家->${0}",
     "Game Home": "游戏主页",
     "Send players their links below. As game administrator pick your link to use.": "请将名字上的链接复制给其他小伙伴进行游戏，如果你是游戏创建者请选择你的名字进行游戏",
@@ -291,8 +297,8 @@
     "hide": "隐藏",
     "Game log": "游戏记录",
 
-        
-    "All": "全选",   
+
+    "All": "全选",
     "Corporate Era": "公司时代",
     "Set Predefined Game": "读取未完成游戏",
     "Ares": "Ares玩家扩",
@@ -308,9 +314,9 @@
     "TR Boost": "提升初始TR",
     "Player ${0} name": "输入玩家${0}名字",
     "Multiplayer Options": "多人玩家游戏选项",
-    
-    
-    
+
+
+
      "Terraforming Mars - Game finished!": "殖民火星 - 游戏结束!",
      "Go to main page": "回到主页",
      "Victory points breakdown after ${0} generations": "${0} 回合获胜点数",
@@ -321,6 +327,6 @@
      "Victory points details": "获胜点数详情",
      "${0} won!": "${0}获胜！！！"
    
-      
-    
+
+
 }

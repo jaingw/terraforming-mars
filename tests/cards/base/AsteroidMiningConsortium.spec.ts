@@ -2,12 +2,12 @@ import {expect} from 'chai';
 import {AsteroidMiningConsortium} from '../../../src/cards/base/AsteroidMiningConsortium';
 import {Game} from '../../../src/Game';
 import {SelectPlayer} from '../../../src/inputs/SelectPlayer';
-import {Player} from '../../../src/Player';
+import {TestPlayer} from '../../TestPlayer';
 import {Resources} from '../../../src/Resources';
 import {TestPlayers} from '../../TestPlayers';
 
 describe('AsteroidMiningConsortium', function() {
-  let card : AsteroidMiningConsortium; let player : Player; let player2 : Player; let game : Game;
+  let card : AsteroidMiningConsortium; let player : TestPlayer; let player2 : TestPlayer; let game : Game;
 
   beforeEach(function() {
     card = new AsteroidMiningConsortium();
@@ -21,12 +21,12 @@ describe('AsteroidMiningConsortium', function() {
   });
 
   it('Can play if player has titanium production', function() {
-    player.addProduction(Resources.TITANIUM);
+    player.addProduction(Resources.TITANIUM, 1);
     expect(card.canPlay(player)).is.true;
   });
 
   it('Should play - auto select if single target', function() {
-    player.addProduction(Resources.TITANIUM);
+    player.addProduction(Resources.TITANIUM, 1);
     card.play(player); // can decrease own production
     const input = game.deferredActions.peek()!.execute();
     expect(input).is.undefined;
@@ -34,8 +34,8 @@ describe('AsteroidMiningConsortium', function() {
   });
 
   it('Should play - multiple targets', function() {
-    player.addProduction(Resources.TITANIUM);
-    player2.addProduction(Resources.TITANIUM);
+    player.addProduction(Resources.TITANIUM, 1);
+    player2.addProduction(Resources.TITANIUM, 1);
     card.play(player);
     expect(player.getProduction(Resources.TITANIUM)).to.eq(2);
 

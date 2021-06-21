@@ -14,11 +14,14 @@ import {CardMetadata} from './CardMetadata';
 import {CardName} from '../CardName';
 import {SelectHowToPayDeferred} from '../deferredActions/SelectHowToPayDeferred';
 import {Card} from './Card';
+import {MoonExpansion} from '../moon/MoonExpansion';
+import {Units} from '../Units';
 
 interface StaticStandardProjectCardProperties {
   name: CardName,
   cost: number,
   metadata: CardMetadata,
+  reserveUnits?: Units,
 }
 
 export abstract class StandardProjectCard extends Card implements IActionCard, ICard {
@@ -41,8 +44,11 @@ export abstract class StandardProjectCard extends Card implements IActionCard, I
   protected abstract actionEssence(player: Player): void
 
   public onStandardProject(player: Player): void {
-    if (player.corporationCard?.onStandardProject !== undefined) {
-      player.corporationCard.onStandardProject(player, this);
+    if (player.corpCard?.onStandardProject !== undefined) {
+      player.corpCard.onStandardProject(player, this);
+    }
+    if (player.corpCard2?.onStandardProject !== undefined) {
+      player.corpCard2.onStandardProject(player, this);
     }
 
     for (const playedCard of player.playedCards) {
@@ -53,7 +59,7 @@ export abstract class StandardProjectCard extends Card implements IActionCard, I
   }
 
   public canAct(player: Player): boolean {
-    return player.canAfford(this.cost - this.discount(player));
+    return player.canAfford(this.cost - this.discount(player), {reserveUnits: MoonExpansion.adjustedReserveCosts(player, this)});
   }
 
   protected projectPlayed(player: Player) {

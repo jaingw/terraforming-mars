@@ -31,7 +31,7 @@ export const HelpPhases = Vue.component('help-phases', {
               <label for="initial-research" v-i18n><span v-i18n>Initial Research Phase (Generation 1 only)</span></label>
               <ul>
                 <li v-i18n>Select which corporation, 2 preludes and project cards to keep.</li>
-                <li v-i18n>In turn order, play the corporation and pay 3 mc for each of the project cards bought.</li>
+                <li v-i18n>In turn order, play the corporation and pay 3 M€ for each of the project cards bought.</li>
                 <li>
                   <span v-i18n>In turn order, play both preludes.</span>
                   <div class="expansion-icon expansion-icon-prelude"></div>
@@ -66,11 +66,11 @@ export const HelpPhases = Vue.component('help-phases', {
                     <li v-i18n>claim milestone</li>
                     <li v-i18n>fund award</li>
                     <li>
-                      <span v-i18n>trade with 9 mc, 3 Ti, or 3 energy</span>
+                      <span v-i18n>trade with 9 M€, 3 Ti, or 3 energy</span>
                       <div class="expansion-icon expansion-icon-colony"></div>
                     </li>
                     <li>
-                      <span v-i18n>send delegate: free from lobby, 5 mc from reserve</span>
+                      <span v-i18n>send delegate: free from lobby, 5 M€ from reserve</span>
                       <div class="expansion-icon expansion-icon-turmoil"></div>
                     </li>
                   </ul>
@@ -118,7 +118,7 @@ export const HelpPhases = Vue.component('help-phases', {
                       <span v-i18n>3. New Government</span>
                       <ul>
                         <li v-i18n>Change policy tile</li>
-                        <li v-i18n>Rerform the ruling bonus of the dominant party</li>
+                        <li v-i18n>Perform the ruling bonus of the dominant party</li>
                         <li v-i18n>The dominant party leader becomes chairman, earning 1 TR.</li>
                         <li v-i18n>Move the old chairman and all other delegates from the dominant party to the reserves.</li>
                         <li v-i18n>Shift the dominance marker. In case of tie, the party closest to the left of the previous dominant party becomes dominant.</li>

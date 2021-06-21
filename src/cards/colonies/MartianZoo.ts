@@ -8,6 +8,7 @@ import {IResourceCard} from '../ICard';
 import {CardRequirements} from '../CardRequirements';
 import {Card} from '../Card';
 import {CardRenderer} from '../render/CardRenderer';
+import {Resources} from '../../Resources';
 
 export class MartianZoo extends Card implements IProjectCard, IResourceCard {
   constructor() {
@@ -25,7 +26,7 @@ export class MartianZoo extends Card implements IProjectCard, IResourceCard {
           b.effect('When you play an Earth tag, place an animal here.', (eb) => {
             eb.earth().played.startEffect.animals(1);
           }).br;
-          b.action('Gain 1MC per animal here.', (eb) => {
+          b.action('Gain 1M€ per animal here.', (eb) => {
             eb.empty().startAction.megacredits(1).slash().animals(1);
           });
         }),
@@ -46,16 +47,12 @@ export class MartianZoo extends Card implements IProjectCard, IResourceCard {
     }
   }
 
-  public canPlay(player: Player): boolean {
-    return player.game.getCitiesInPlay() >= 2;
-  }
-
   public canAct(): boolean {
     return this.resourceCount > 0;
   }
 
   public action(player: Player) {
-    player.megaCredits += this.resourceCount;
+    player.addResource(Resources.MEGACREDITS, this.resourceCount, {log: true});
     return undefined;
   }
 

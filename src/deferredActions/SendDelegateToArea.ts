@@ -55,9 +55,10 @@ export class SendDelegateToArea implements DeferredAction {
       } else {
         for (let i = 0; i < numDelegateToSend; i++) {
           if (this.options.replace) {
-            turmoil.removeDelegateFromParty(this.options.replace, partyName, this.player.game);
+            turmoil.replaceDelegateFromParty(this.options.replace, this.player, source, partyName, this.player.game);
+          } else {
+            turmoil.sendDelegateToParty(this.player, partyName, this.player.game, source);
           }
-          turmoil.sendDelegateToParty(this.player, partyName, this.player.game, source);
         }
       }
 

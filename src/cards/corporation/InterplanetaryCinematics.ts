@@ -17,12 +17,12 @@ export class InterplanetaryCinematics extends Card implements CorporationCard {
 
       metadata: {
         cardNumber: 'R19',
-        description: 'You start with 20 steel and 30 MC.',
+        description: 'You start with 20 steel and 30 M€.',
         renderData: CardRenderer.builder((b) => {
           b.br.br.br;
           b.megacredits(30).nbsp.steel(20).digit;
           b.corpBox('effect', (ce) => {
-            ce.effect('Each time you play an event, you gain 2 MC.', (eb) => {
+            ce.effect('Each time you play an event, you gain 2 M€.', (eb) => {
               eb.event().played.startEffect.megacredits(2);
             });
           });
@@ -31,7 +31,7 @@ export class InterplanetaryCinematics extends Card implements CorporationCard {
     });
   }
   public onCardPlayed(player: Player, card: IProjectCard) {
-    if (player.corporationCard !== undefined && player.corporationCard.name === this.name && card.cardType === CardType.EVENT) {
+    if (player.corpName(this.name) && card.cardType === CardType.EVENT) {
       player.megaCredits += 2;
     }
   }
