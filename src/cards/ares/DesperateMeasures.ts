@@ -1,12 +1,12 @@
 import {Card} from '../Card';
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {Game} from '../../Game';
 import {Player} from '../../Player';
-import {CardType} from '../CardType';
+import {CardType} from '../../common/cards/CardType';
 import {IProjectCard} from '../IProjectCard';
 import {SelectSpace} from '../../inputs/SelectSpace';
 import {ISpace} from '../../boards/ISpace';
-import {TileType} from '../../TileType';
+import {TileType} from '../../common/TileType';
 import {AresHandler} from '../../ares/AresHandler';
 import {CardRenderer} from '../render/CardRenderer';
 
@@ -16,15 +16,15 @@ export class DesperateMeasures extends Card implements IProjectCard {
       cardType: CardType.EVENT,
       name: CardName.DESPERATE_MEASURES,
       cost: 1,
+      victoryPoints: -2,
 
       metadata: {
         cardNumber: 'A04',
-        description: 'Effect: Place a bronze cube on a dust storm tile and raise oxygen 1 step, or place a bronze cube on an erosion tile and raise the temperature 1 step. The hazard tile with the bronze cube cannot be removed.',
+        description: 'Place a bronze cube on a dust storm tile and raise oxygen 1 step, or place a bronze cube on an erosion tile and raise the temperature 1 step. The hazard tile with the bronze cube cannot be removed.',
         renderData: CardRenderer.builder((b) => {
           b.resourceCube().asterix().br;
           b.temperature(1).slash().oxygen(1);
         }),
-        victoryPoints: -2,
       },
     });
   }
@@ -33,7 +33,7 @@ export class DesperateMeasures extends Card implements IProjectCard {
     return game.board.spaces.filter((space) => AresHandler.hasHazardTile(space));
   }
 
-  public canPlay(player: Player): boolean {
+  public override canPlay(player: Player): boolean {
     // You can't play desperate measures if there isn't a hazard marker in play.
     return this.getHazardTiles(player.game).length > 0;
   }
@@ -50,9 +50,5 @@ export class DesperateMeasures extends Card implements IProjectCard {
         }
         return undefined;
     });
-  }
-
-  public getVictoryPoints() {
-    return -2;
   }
 }

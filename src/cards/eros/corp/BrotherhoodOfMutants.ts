@@ -1,8 +1,4 @@
-import {CorporationCard} from '../../corporation/CorporationCard';
-import {CardName} from '../../../CardName';
-import {CardType} from '../../CardType';
 import {CardRenderer} from '../../render/CardRenderer';
-import {Tags} from '../../Tags';
 import {Card} from '../../Card';
 import {ICard} from '../../ICard';
 import {Player} from '../../../Player';
@@ -11,9 +7,14 @@ import {OrOptions} from '../../../inputs/OrOptions';
 import {SelectOption} from '../../../inputs/SelectOption';
 import {SelectAmount} from '../../../inputs/SelectAmount';
 import {AndOptions} from '../../../inputs/AndOptions';
-import {Size} from '../../render/Size';
+import {all} from '../../Options';
+import {CardName} from '../../../common/cards/CardName';
+import {CardType} from '../../../common/cards/CardType';
+import {Size} from '../../../common/cards/render/Size';
+import {Tags} from '../../../common/cards/Tags';
+import {ICorporationCard} from '../../corporation/ICorporationCard';
 
-export class BrotherhoodOfMutants extends Card implements ICard, CorporationCard {
+export class BrotherhoodOfMutants extends Card implements ICard, ICorporationCard {
   public isUsed: boolean = false;
   constructor() {
     super({
@@ -24,19 +25,17 @@ export class BrotherhoodOfMutants extends Card implements ICard, CorporationCard
 
       metadata: {
         cardNumber: 'Q26',
+        description: 'You start with 36 M€.',
         renderData: CardRenderer.builder((b) => {
-          b.megacredits(36, Size.TINY);
-          b.text('(Start with 36 MC.', Size.TINY, false, false);
+          b.br.br;
+          b.megacredits(36, {size: Size.TINY});
           b.corpBox('action', (ce) => {
             ce.vSpace(Size.LARGE);
             ce.action('draw cards or gain standard resources equal to your influences', (eb) => {
-              eb.empty().startAction.wild(1).text('or').cards(1).slash().influence(1);
-            });
-            ce.effect('Your influece +1.', (eb) => {
-              eb.startEffect.plus().influence(1);
+              eb.empty().startAction.wild(1).text('or').cards(1).slash().influence({amount: 1});
             });
             ce.action('replace all neutral delegates with your delegates, once per game.', (eb) => {
-              eb.empty().startAction.minus().delegates(1).any.plus().delegates(1);
+              eb.empty().startAction.minus().delegates(1, {all}).plus().delegates(1);
             });
           });
         }),
@@ -44,10 +43,11 @@ export class BrotherhoodOfMutants extends Card implements ICard, CorporationCard
     });
   }
 
-  public play(player: Player) {
-    if (player.game.turmoil) {
-      player.game.turmoil.addInfluenceBonus(player);
-    }
+  public play(_player: Player) {
+    // 去掉影响力
+    // if (player.game.turmoil) {
+    //   player.game.turmoil.addInfluenceBonus(player);
+    // }
     return undefined;
   }
 

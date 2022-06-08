@@ -1,4 +1,4 @@
-import {SpaceBonus} from '../SpaceBonus';
+import {SpaceBonus} from '../common/boards/SpaceBonus';
 import {SpaceName} from '../SpaceName';
 import {Board} from './Board';
 import {Player} from '../Player';
@@ -6,10 +6,11 @@ import {ISpace} from './ISpace';
 import {BoardBuilder} from './BoardBuilder';
 import {SerializedBoard} from './SerializedBoard';
 import {Random} from '../Random';
+import {GameOptions} from '../Game';
 
 export class OriginalBoard extends Board {
-  public static newInstance(shuffle: boolean, rng: Random, includeVenus: boolean): OriginalBoard {
-    const builder = new BoardBuilder(includeVenus);
+  public static newInstance(gameOptions: GameOptions, rng: Random): OriginalBoard {
+    const builder = new BoardBuilder(gameOptions.venusNextExtension, gameOptions.pathfindersExpansion);
 
     const PLANT = SpaceBonus.PLANT;
     const STEEL = SpaceBonus.STEEL;
@@ -37,7 +38,7 @@ export class OriginalBoard extends Board {
     // y=8
     builder.land(STEEL).land(STEEL, STEEL).land().land().ocean(TITANIUM, TITANIUM);
 
-    if (shuffle) {
+    if (gameOptions.shuffleMapOption) {
       builder.shuffle(rng, SpaceName.NOCTIS_CITY, SpaceName.THARSIS_THOLUS, SpaceName.ASCRAEUS_MONS, SpaceName.ARSIA_MONS, SpaceName.PAVONIS_MONS);
     }
     const spaces = builder.build();
@@ -48,15 +49,15 @@ export class OriginalBoard extends Board {
     return new OriginalBoard(Board.deserializeSpaces(board.spaces, players));
   }
 
-  public getNonReservedLandSpaces(): Array<ISpace> {
+  public override getNonReservedLandSpaces(): Array<ISpace> {
     return super.getNonReservedLandSpaces().filter((space) => space.id !== SpaceName.NOCTIS_CITY);
   }
 
-  public getAvailableSpacesOnLand(player: Player): Array<ISpace> {
+  public override getAvailableSpacesOnLand(player: Player): Array<ISpace> {
     return super.getAvailableSpacesOnLand(player).filter((space) => space.id !== SpaceName.NOCTIS_CITY);
   }
 
-  public canPlaceTile(space: ISpace): boolean {
+  public override canPlaceTile(space: ISpace): boolean {
     return super.canPlaceTile(space) && space.id !== SpaceName.NOCTIS_CITY;
   }
 

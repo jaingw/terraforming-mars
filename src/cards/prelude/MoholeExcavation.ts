@@ -1,11 +1,11 @@
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Player} from '../../Player';
 import {PreludeCard} from './PreludeCard';
 import {IProjectCard} from '../IProjectCard';
-import {Resources} from '../../Resources';
-import {CardName} from '../../CardName';
+import {Resources} from '../../common/Resources';
+import {CardName} from '../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
-import {Units} from '../../Units';
+import {Units} from '../../common/Units';
 
 export class MoholeExcavation extends PreludeCard implements IProjectCard {
   constructor() {

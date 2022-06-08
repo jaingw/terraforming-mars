@@ -1,13 +1,13 @@
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {Player} from '../../Player';
-import {CardType} from '../CardType';
+import {CardType} from '../../common/cards/CardType';
 import {PlaceMoonRoadTile} from '../../moon/PlaceMoonRoadTile';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {CardRenderer} from '../render/CardRenderer';
-import {Units} from '../../Units';
-import {TileType} from '../../TileType';
+import {Units} from '../../common/Units';
+import {TileType} from '../../common/TileType';
 import {MoonCard} from './MoonCard';
-import {AltSecondaryTag} from '../render/CardRenderItem';
+import {AltSecondaryTag} from '../../common/cards/render/AltSecondaryTag';
 
 export class SinusIridiumRoadNetwork extends MoonCard {
   constructor() {
@@ -18,6 +18,7 @@ export class SinusIridiumRoadNetwork extends MoonCard {
       cost: 15,
       productionBox: Units.of({energy: -1, megacredits: 3}),
       reserveUnits: Units.of({steel: 1}),
+      tr: {moonLogistics: 1},
 
       metadata: {
         description: 'Decrease your energy production 1 step and increase your M€ production 3 steps. ' +
@@ -29,7 +30,7 @@ export class SinusIridiumRoadNetwork extends MoonCard {
           b.production((pb) => {
             pb.minus().energy(1).nbsp.megacredits(3);
           }).br;
-          b.moonRoad().secondaryTag(AltSecondaryTag.MOON_LOGISTICS_RATE);
+          b.moonRoad({secondaryTag: AltSecondaryTag.MOON_LOGISTICS_RATE});
         }),
       },
     }, {
@@ -37,7 +38,7 @@ export class SinusIridiumRoadNetwork extends MoonCard {
     });
   }
 
-  public play(player: Player) {
+  public override play(player: Player) {
     super.play(player);
     player.game.defer(new PlaceMoonRoadTile(player));
     return undefined;

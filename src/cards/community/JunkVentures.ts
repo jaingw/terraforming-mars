@@ -1,16 +1,16 @@
-import {CorporationCard} from '../corporation/CorporationCard';
 import {Player} from '../../Player';
-import {CardName} from '../../CardName';
-import {CardType} from '../CardType';
 import {CardRenderer} from '../render/CardRenderer';
-import {Size} from '../render/Size';
-import {Card} from '../Card';
 import {LogHelper} from '../../LogHelper';
 import {DrawCards} from '../../deferredActions/DrawCards';
 import {DeferredAction} from '../../deferredActions/DeferredAction';
 import {Dealer} from '../../Dealer';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
+import {Size} from '../../common/cards/render/Size';
+import {Card} from '../Card';
+import {ICorporationCard} from '../corporation/ICorporationCard';
 
-export class JunkVentures extends Card implements CorporationCard {
+export class JunkVentures extends Card implements ICorporationCard {
   constructor() {
     super({
       cardType: CardType.CORPORATION,

@@ -1,8 +1,8 @@
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Player} from '../../Player';
 import {PreludeCard} from '../prelude/PreludeCard';
 import {IProjectCard} from '../IProjectCard';
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
 
 export class ResearchGrant extends PreludeCard implements IProjectCard {
@@ -10,6 +10,7 @@ export class ResearchGrant extends PreludeCard implements IProjectCard {
     super({
       name: CardName.RESEARCH_GRANT,
       tags: [Tags.SCIENCE, Tags.SCIENCE],
+      startingMegacredits: 8,
 
       metadata: {
         cardNumber: 'Y04',

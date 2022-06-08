@@ -1,14 +1,15 @@
 import {Card} from '../Card';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Player} from '../../Player';
-import {CorporationCard} from './CorporationCard';
+import {ICorporationCard} from './ICorporationCard';
 import {IProjectCard} from '../IProjectCard';
-import {Resources} from '../../Resources';
-import {CardName} from '../../CardName';
-import {CardType} from '../CardType';
+import {Resources} from '../../common/Resources';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
 import {CardRenderer} from '../render/CardRenderer';
+import {all, played} from '../Options';
 
-export class SaturnSystems extends Card implements CorporationCard {
+export class SaturnSystems extends Card implements ICorporationCard {
   constructor() {
     super({
       cardType: CardType.CORPORATION,
@@ -24,7 +25,7 @@ export class SaturnSystems extends Card implements CorporationCard {
           b.production((pb) => pb.titanium(1)).nbsp.megacredits(42);
           b.corpBox('effect', (ce) => {
             ce.effect('Each time any Jovian tag is put into play, including this, increase your M€ production 1 step.', (eb) => {
-              eb.jovian().played.any.startEffect.production((pb) => pb.megacredits(1));
+              eb.jovian({played, all}).startEffect.production((pb) => pb.megacredits(1));
             });
           });
         }),
@@ -36,14 +37,14 @@ export class SaturnSystems extends Card implements CorporationCard {
     this._onCardPlayed(player, card);
   }
 
-  public onCorpCardPlayed(player: Player, card: CorporationCard) {
+  public onCorpCardPlayed(player: Player, card: ICorporationCard) {
     return this._onCardPlayed(player, card);
   }
 
-  private _onCardPlayed(player: Player, card: IProjectCard | CorporationCard) {
+  private _onCardPlayed(player: Player, card: IProjectCard | ICorporationCard) {
     for (const tag of card.tags) {
       if (tag === Tags.JOVIAN) {
-        player.game.getCardPlayer(this.name).addProduction(Resources.MEGACREDITS, 1);
+        player.game.getCardPlayer(this.name)?.addProduction(Resources.MEGACREDITS, 1, {log: true});
       }
     }
   }

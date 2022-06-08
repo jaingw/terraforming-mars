@@ -1,16 +1,17 @@
 import {IProjectCard} from '../IProjectCard';
 import {IActionCard, ICard} from '../ICard';
 import {Card} from '../Card';
-import {CardName} from '../../CardName';
-import {CardType} from '../CardType';
-import {ResourceType} from '../../ResourceType';
-import {Tags} from '../Tags';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
+import {ResourceType} from '../../common/ResourceType';
+import {Tags} from '../../common/cards/Tags';
 import {Player} from '../../Player';
-import {Resources} from '../../Resources';
+import {Resources} from '../../common/Resources';
 import {SelectCard} from '../../inputs/SelectCard';
 import {OrOptions} from '../../inputs/OrOptions';
 import {SelectOption} from '../../inputs/SelectOption';
 import {CardRenderer} from '../render/CardRenderer';
+import {digit} from '../Options';
 
 export class BioPrintingFacility extends Card implements IActionCard, IProjectCard {
   constructor() {
@@ -24,7 +25,7 @@ export class BioPrintingFacility extends Card implements IActionCard, IProjectCa
         cardNumber: 'X36',
         renderData: CardRenderer.builder((b) => {
           b.action('Spend 2 energy to gain 2 plants OR to add 1 animal to ANOTHER card.', (eb) => {
-            eb.energy(2).digit.startAction.plants(2);
+            eb.energy(2, {digit}).startAction.plants(2);
             eb.or().animals(1).asterix();
           });
         }),

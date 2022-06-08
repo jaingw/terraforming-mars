@@ -1,18 +1,19 @@
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Player} from '../../Player';
 import {IProjectCard} from '../IProjectCard';
 import {Card} from '../Card';
-import {CorporationCard} from '../corporation/CorporationCard';
+import {ICorporationCard} from '../corporation/ICorporationCard';
 import {SelectOption} from '../../inputs/SelectOption';
 import {OrOptions} from '../../inputs/OrOptions';
-import {ResourceType} from '../../ResourceType';
-import {CardName} from '../../CardName';
-import {CardType} from '../CardType';
+import {ResourceType} from '../../common/ResourceType';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
 import {CardRenderer} from '../render/CardRenderer';
-import {Size} from '../render/Size';
-import {Resources} from '../../Resources';
+import {Size} from '../../common/cards/render/Size';
+import {Resources} from '../../common/Resources';
+import {all, played} from '../Options';
 
-export class Splice extends Card implements CorporationCard {
+export class Splice extends Card implements ICorporationCard {
   constructor() {
     super({
       cardType: CardType.CORPORATION,
@@ -25,16 +26,16 @@ export class Splice extends Card implements CorporationCard {
         cardNumber: 'R28',
         description: 'You start with 44 M€. As your first action, reveal cards until you have revealed a microbe tag. Take it and discard the rest.',
         renderData: CardRenderer.builder((b) => {
-          b.megacredits(44).nbsp.cards(1).secondaryTag(Tags.MICROBE);
+          b.megacredits(44).nbsp.cards(1, {secondaryTag: Tags.MICROBE});
           b.corpBox('effect', (ce) => {
             ce.vSpace(Size.LARGE);
             ce.effect(undefined, (eb) => {
-              eb.microbes(1).played.any.startEffect;
-              eb.megacredits(2).any.or().microbes(1).any.asterix();
+              eb.microbes(1, {played, all}).startEffect;
+              eb.megacredits(2, {all}).or().microbes(1, {all}).asterix();
             });
             ce.vSpace();
             ce.effect('when a microbe tag is played, incl. this, THAT PLAYER gains 2 M€, or adds a microbe to THAT card, and you gain 2 M€.', (eb) => {
-              eb.microbes(1).played.any.startEffect;
+              eb.microbes(1, {played, all}).startEffect;
               eb.megacredits(2);
             });
           });
@@ -52,11 +53,11 @@ export class Splice extends Card implements CorporationCard {
     return this._onCardPlayed(player, card);
   }
 
-  public onCorpCardPlayed(player: Player, card: CorporationCard) {
+  public onCorpCardPlayed(player: Player, card: ICorporationCard) {
     return this._onCardPlayed(player, card);
   }
 
-  private _onCardPlayed(player: Player, card: IProjectCard | CorporationCard): OrOptions | undefined {
+  private _onCardPlayed(player: Player, card: IProjectCard | ICorporationCard): OrOptions | undefined {
     if (card.tags.includes(Tags.MICROBE) === false) {
       return undefined;
     }
@@ -75,7 +76,7 @@ export class Splice extends Card implements CorporationCard {
     });
 
     // Splice owner get 2M€ per microbe tag
-    player.game.getCardPlayer(this.name).addResource(Resources.MEGACREDITS, megacreditsGain, {log: true});
+    player.game.getCardPlayer(this.name)?.addResource(Resources.MEGACREDITS, megacreditsGain, {log: true});
 
     // Card player choose between 2 M€ and a microbe on card, if possible
     if (card.resourceType !== undefined && card.resourceType === ResourceType.MICROBE) {

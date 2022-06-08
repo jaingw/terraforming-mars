@@ -1,30 +1,37 @@
-import {Color} from './Color';
+import {CardName} from './common/cards/CardName';
+import {Color} from './common/Color';
 import {SerializedCard} from './SerializedCard';
 import {SerializedTimer} from './SerializedTimer';
-import {IProjectCard} from './cards/IProjectCard';
-import {CardName} from './CardName';
-import {CorporationCard} from './cards/corporation/CorporationCard';
 
+export interface SerializedPlayerId {
+    id: string;
+}
+export interface SerializedGameId {
+    id: string;
+}
 export interface SerializedPlayer {
+    actionsTakenThisGame: number;
     actionsTakenThisRound: number;
     actionsThisGeneration: Array<CardName>;
     beginner: boolean;
     canUseHeatAsMegaCredits: boolean;
     cardCost: number;
     cardDiscount: number;
-    cardsInHand: Array<IProjectCard>;
+    cardsInHand: Array<SerializedCard>;
     colonyTradeDiscount: number;
     colonyTradeOffset: number;
     colonyVictoryPoints: number;
     color: Color;
-    // corporationCard: CorporationCard | undefined;
-    corpCard: CorporationCard | undefined;
-    corpCard2: CorporationCard | undefined;
+    // corporationCard:ICorporationCard | undefined;
+    corpCard: SerializedCard | undefined;
+    corpCard2: SerializedCard | undefined;
     // corporationInitialActionDone: boolean;
-    dealtCorporationCards: Array<CorporationCard>;
-    dealtPreludeCards: Array<IProjectCard>;
-    dealtProjectCards: Array<IProjectCard>;
-    draftedCards: Array<IProjectCard>;
+    corpInitialActionDone: boolean,
+    corp2InitialActionDone: boolean,
+    dealtCorporationCards: Array<SerializedCard>;
+    dealtPreludeCards: Array<SerializedCard>;
+    dealtProjectCards: Array<SerializedCard>;
+    draftedCards: Array<SerializedCard>;
     energy: number;
     energyProduction: number;
     fleetSize: number;
@@ -35,20 +42,20 @@ export interface SerializedPlayer {
     heatProduction: number;
     heatProductionStepsIncreasedThisGeneration: number;
     id: string;
-    lastCardPlayed?: IProjectCard;
+    lastCardPlayed?: CardName;
     megaCreditProduction: number;
     megaCredits: number;
     name: string;
     oceanBonus: number;
-    pickedCorporationCard: CorporationCard | undefined;
-    pickedCorporationCard2?: CorporationCard | undefined;
+    pickedCorporationCard: SerializedCard | undefined;
+    pickedCorporationCard2?: SerializedCard | undefined;
     plantProduction: number;
     plants: number;
     plantsNeededForGreenery: number;
     playedCards: Array<SerializedCard>;
     politicalAgendasActionUsedCount: number;
-    preludeCardsInHand: Array<IProjectCard>;
-    removedFromPlayCards: Array<IProjectCard>;
+    preludeCardsInHand: Array<SerializedCard>;
+    removedFromPlayCards: Array<SerializedCard>;
     removingPlayers: Array<string>;
     scienceTagCount: number;
     steel: number;
@@ -67,4 +74,7 @@ export interface SerializedPlayer {
     undoing : boolean ;
     exited : boolean ;// 是否体退
     canExit : boolean ;// 能否体退： 行动阶段、当前行动玩家、没有未执行的拦截器
+
+    _game:SerializedGameId;
+    userId?:string;
 }

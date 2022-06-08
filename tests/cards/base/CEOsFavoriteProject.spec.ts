@@ -37,16 +37,16 @@ describe('CEOsFavoriteProject', function() {
     player.addResourceTo(birds);
 
     const action = card.play(player);
-    expect(action instanceof SelectCard).is.true;
+    expect(action).instanceOf(SelectCard);
 
     action.cb([searchForLife]);
-    expect(player.getResourcesOnCard(searchForLife)).to.eq(2);
+    expect(searchForLife.resourceCount).to.eq(2);
     action.cb([birds]);
-    expect(player.getResourcesOnCard(birds)).to.eq(2);
+    expect(birds.resourceCount).to.eq(2);
     action.cb([decomposers]);
-    expect(player.getResourcesOnCard(decomposers)).to.eq(2);
+    expect(decomposers.resourceCount).to.eq(2);
     action.cb([securityFleet]);
-    expect(player.getResourcesOnCard(securityFleet)).to.eq(2);
+    expect(securityFleet.resourceCount).to.eq(2);
   });
 
   it('Can play on SelfReplicatingRobots cards', function() {
@@ -55,7 +55,7 @@ describe('CEOsFavoriteProject', function() {
     player.playedCards.push(srr);
     srr.targetCards.push({card: birds, resourceCount: 0});
     const action = card.play(player);
-    expect(action instanceof SelectCard).is.true;
+    expect(action).instanceOf(SelectCard);
     action.cb([birds]);
     expect(srr.targetCards[0].resourceCount).to.eq(1);
   });

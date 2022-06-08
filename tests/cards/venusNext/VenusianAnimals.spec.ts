@@ -17,20 +17,20 @@ describe('VenusianAnimals', function() {
 
   it('Can\'t play', function() {
     (game as any).venusScaleLevel = 16;
-    expect(card.canPlay(player)).is.not.true;
+    expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
 
   it('Should play', function() {
     (game as any).venusScaleLevel = 18;
-    expect(card.canPlay(player)).is.true;
+    expect(player.canPlayIgnoringCost(card)).is.true;
     player.playedCards.push(card);
     card.play();
 
     card.onCardPlayed(player, card);
-    expect(player.getResourcesOnCard(card)).to.eq(1);
+    expect(card.resourceCount).to.eq(1);
 
     card.onCardPlayed(player, new Research());
-    expect(player.getResourcesOnCard(card)).to.eq(3);
+    expect(card.resourceCount).to.eq(3);
 
     expect(card.getVictoryPoints()).to.eq(3);
   });

@@ -1,6 +1,6 @@
 import {Player} from '../../Player';
 import {PreludeCard} from './PreludeCard';
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {SelectHowToPayDeferred} from '../../deferredActions/SelectHowToPayDeferred';
 import {CardRenderer} from '../render/CardRenderer';
 
@@ -8,6 +8,8 @@ export class HugeAsteroid extends PreludeCard {
   constructor() {
     super({
       name: CardName.HUGE_ASTEROID,
+
+      startingMegacredits: -5,
 
       metadata: {
         cardNumber: 'P15',
@@ -19,7 +21,7 @@ export class HugeAsteroid extends PreludeCard {
       },
     });
   }
-  public canPlay(player: Player) {
+  public override canPlay(player: Player) {
     return player.canAfford(5);
   }
   public play(player: Player) {

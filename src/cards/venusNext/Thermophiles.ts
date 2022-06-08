@@ -1,15 +1,13 @@
 import {IActionCard, ICard, IResourceCard} from '../ICard';
-import {Tags} from '../Tags';
-import {CardType} from '../CardType';
+import {Tags} from '../../common/cards/Tags';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {ResourceType} from '../../ResourceType';
+import {ResourceType} from '../../common/ResourceType';
 import {OrOptions} from '../../inputs/OrOptions';
 import {SelectOption} from '../../inputs/SelectOption';
-import {MAX_VENUS_SCALE, REDS_RULING_POLICY_COST} from '../../constants';
+import {MAX_VENUS_SCALE} from '../../common/constants';
 import {SelectCard} from '../../inputs/SelectCard';
-import {CardName} from '../../CardName';
-import {PartyHooks} from '../../turmoil/parties/PartyHooks';
-import {PartyName} from '../../turmoil/parties/PartyName';
+import {CardName} from '../../common/cards/CardName';
 import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
 import {Card} from '../Card';
@@ -28,7 +26,7 @@ export class Thermophiles extends Card implements IActionCard, IResourceCard {
         cardNumber: '253',
         renderData: CardRenderer.builder((b) => {
           b.action('Add 1 Microbe to ANY Venus CARD.', (eb) => {
-            eb.empty().startAction.microbes(1).secondaryTag(Tags.VENUS);
+            eb.empty().startAction.microbes(1, {secondaryTag: Tags.VENUS});
           }).br;
           b.or().br;
           b.action('Spend 2 Microbes here to raise Venus 1 step.', (eb) => {
@@ -38,8 +36,8 @@ export class Thermophiles extends Card implements IActionCard, IResourceCard {
         description: 'Requires Venus 6%',
       },
     });
-  };
-  public resourceCount: number = 0;
+  }
+  public override resourceCount: number = 0;
 
   public play() {
     return undefined;
@@ -80,10 +78,8 @@ export class Thermophiles extends Card implements IActionCard, IResourceCard {
       return undefined;
     });
 
-    const redsAreRuling = PartyHooks.shouldApplyPolicy(player.game, PartyName.REDS);
-
     if (canRaiseVenus) {
-      if (!redsAreRuling || (redsAreRuling && player.canAfford(REDS_RULING_POLICY_COST))) {
+      if (player.canAfford(0, {tr: {venus: 1}})) {
         opts.push(spendResource);
       }
     } else {

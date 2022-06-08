@@ -1,15 +1,15 @@
-import {Tags} from '../../Tags';
-import {CardMetadata} from '../../CardMetadata';
 import {CardRenderer} from '../../render/CardRenderer';
-import {Size} from '../../render/Size';
 import {Factorum} from '../../promo/Factorum';
-import {CardName} from '../../../CardName';
+import {CardName} from '../../../common/cards/CardName';
+import {ICardMetadata} from '../../../common/cards/ICardMetadata';
+import {Size} from '../../../common/cards/render/Size';
+import {Tags} from '../../../common/cards/Tags';
 
 export class _Factorum_ extends Factorum {
-  public get name() {
+  public override get name() {
     return CardName._FACTORUM_;
   }
-  public get startingMegaCredits() : number {
+  public override get startingMegaCredits() : number {
     return 45;
   }
 
@@ -17,7 +17,7 @@ export class _Factorum_ extends Factorum {
     super();
   }
 
-  public get metadata(): CardMetadata {
+  public override get metadata(): ICardMetadata {
     return {
       cardNumber: 'R22',
       description: 'You start with 45 M€. Increase your steel production 1 step.',
@@ -27,7 +27,7 @@ export class _Factorum_ extends Factorum {
           ce.vSpace(Size.LARGE);
           ce.action('Increase your energy production 1 step IF YOU HAVE NO ENERGY RESOURCES, or spend 3M€ to draw a building card.', (eb) => {
             eb.empty().arrow().production((pb) => pb.energy(1));
-            eb.or().megacredits(3).startAction.cards(1).secondaryTag(Tags.BUILDING);
+            eb.or().megacredits(3).startAction.cards(1, {secondaryTag: Tags.BUILDING});
           });
         });
       }),

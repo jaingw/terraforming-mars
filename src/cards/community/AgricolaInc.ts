@@ -1,22 +1,24 @@
-import {CorporationCard} from '../corporation/CorporationCard';
+import {ICorporationCard} from '../corporation/ICorporationCard';
 import {Player} from '../../Player';
-import {Tags} from '../Tags';
-import {Resources} from '../../Resources';
+import {Tags} from '../../common/cards/Tags';
+import {Resources} from '../../common/Resources';
 import {Card} from '../Card';
-import {CardName} from '../../CardName';
-import {ITagCount} from '../../ITagCount';
-import {CardType} from '../CardType';
+import {CardName} from '../../common/cards/CardName';
+import {ITagCount} from '../../common/cards/ITagCount';
+import {CardType} from '../../common/cards/CardType';
 import {CardRenderer} from '../render/CardRenderer';
-import {Size} from '../render/Size';
+import {Size} from '../../common/cards/render/Size';
 import {CardRenderDynamicVictoryPoints} from '../render/CardRenderDynamicVictoryPoints';
 
-export class AgricolaInc extends Card implements CorporationCard {
+export class AgricolaInc extends Card implements ICorporationCard {
   constructor() {
     super({
       name: CardName.AGRICOLA_INC,
       tags: [Tags.PLANT],
       startingMegaCredits: 40,
       cardType: CardType.CORPORATION,
+
+      victoryPoints: 'special',
 
       metadata: {
         cardNumber: 'R36',
@@ -40,7 +42,7 @@ export class AgricolaInc extends Card implements CorporationCard {
     return undefined;
   }
 
-  public getVictoryPoints(player: Player): number {
+  public override getVictoryPoints(player: Player): number {
     const scorableTags : Array<Tags> = [Tags.CITY, Tags.EARTH, Tags.ENERGY, Tags.JOVIAN, Tags.MICROBE, Tags.PLANT, Tags.SCIENCE, Tags.SPACE, Tags.BUILDING, Tags.ANIMAL];
     if (player.game.gameOptions.venusNextExtension) scorableTags.push(Tags.VENUS);
 

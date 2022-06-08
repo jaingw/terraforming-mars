@@ -1,12 +1,13 @@
-import {Tags} from '../Tags';
-import {CardType} from '../CardType';
+import {Tags} from '../../common/cards/Tags';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {Priority} from '../../deferredActions/DeferredAction';
 import {DiscardCards} from '../../deferredActions/DiscardCards';
 import {CardRenderer} from '../render/CardRenderer';
 import {DrawCards} from '../../deferredActions/DrawCards';
 import {Card} from '../Card';
+import {all, digit} from '../Options';
 
 export class SponsoredAcademies extends Card {
   constructor() {
@@ -16,18 +17,19 @@ export class SponsoredAcademies extends Card {
       tags: [Tags.EARTH, Tags.SCIENCE],
       cost: 9,
 
+      victoryPoints: 1,
+
       metadata: {
         cardNumber: '247',
         renderData: CardRenderer.builder((b) => {
           b.minus().cards(1).br;
-          b.plus().cards(3).digit.asterix().nbsp.plus().cards(1).any.asterix();
+          b.plus().cards(3, {digit}).asterix().nbsp.plus().cards(1, {all}).asterix();
         }),
         description: 'Discard 1 card from your hand and THEN draw 3 cards. All OPPONENTS draw 1 card.',
-        victoryPoints: 1,
       },
     });
-  };
-  public canPlay(player: Player): boolean {
+  }
+  public override canPlay(player: Player): boolean {
     return player.cardsInHand.length > 1; // this card and at least another
   }
 
@@ -39,9 +41,5 @@ export class SponsoredAcademies extends Card {
       player.game.defer(DrawCards.keepAll(p));
     }
     return undefined;
-  }
-
-  public getVictoryPoints() {
-    return 1;
   }
 }

@@ -1,15 +1,16 @@
 import * as http from 'http';
 import {Handler} from './Handler';
 import {IContext} from './IHandler';
-import {BoardName} from '../boards/BoardName';
+import {BoardName} from '../common/boards/BoardName';
+import {RandomBoardOption} from '../common/boards/RandomBoardOption';
 import {GameLoader} from '../database/GameLoader';
-import {Game, LoadState} from '../Game';
+import {Game, LoadState, GameOptions} from '../Game';
 import {Player} from '../Player';
 import {Server} from '../models/ServerModel';
 import {ServeAsset} from './ServeAsset';
 import {generateRandomId} from '../UserUtil';
-import {RandomMAOptionType} from '../RandomMAOptionType';
-import {AgendaStyle} from '../turmoil/PoliticalAgendas';
+import {RandomMAOptionType} from '../common/ma/RandomMAOptionType';
+import {AgendaStyle} from '../common/turmoil/Types';
 
 // Oh, this could be called Game, but that would introduce all kinds of issues.
 
@@ -21,15 +22,25 @@ export class GameHandler extends Handler {
     super();
   }
 
+  public static boardOptions(board: string) {
+    const allBoards = Object.values(BoardName);
 
-  public get(req: http.IncomingMessage, res: http.ServerResponse, ctx: IContext): void {
+    if (board === RandomBoardOption.ALL) return allBoards;
+    if (board === RandomBoardOption.OFFICIAL) {
+      return allBoards.filter((name) => {
+        return name !== BoardName.ARABIA_TERRA && name !== BoardName.VASTITAS_BOREALIS;
+      });
+    }
+    return [board];
+  }
+  public override get(req: http.IncomingMessage, res: http.ServerResponse, ctx: IContext): void {
     req.url = '/build/assets/index_ca.html';
     ServeAsset.INSTANCE.get(req, res, ctx);
   }
 
   // TODO(kberg): much of this code can be moved outside of handler, and that
   // would be better.
-  public put(req: http.IncomingMessage, res: http.ServerResponse, ctx: IContext): void {
+  public override put(req: http.IncomingMessage, res: http.ServerResponse, ctx: IContext): void {
     let body = '';
     req.on('data', function(data) {
       body += data.toString();
@@ -61,12 +72,10 @@ export class GameHandler extends Handler {
           }
         }
 
-        if (gameReq.board === 'random') {
-          const boards = Object.values(BoardName);
-          gameReq.board = boards[Math.floor(Math.random() * boards.length)];
-        }
+        const boards = GameHandler.boardOptions(gameReq.board);
+        gameReq.board = boards[Math.floor(Math.random() * boards.length)];
 
-        let gameOptions = {
+        let gameOptions : GameOptions = {
           boardName: gameReq.board,
           clonedGamedId: gameReq.clonedGamedId,
 
@@ -84,6 +93,7 @@ export class GameHandler extends Handler {
           aresHazards: true, // Not a runtime option.
           politicalAgendasExtension: gameReq.politicalAgendasExtension,
           moonExpansion: gameReq.moonExpansion,
+          pathfindersExpansion: gameReq.pathfindersExpansion,
           promoCardsOption: gameReq.promoCardsOption,
           erosCardsOption: gameReq.erosCardsOption,
           communityCardsOption: gameReq.communityCardsOption,
@@ -105,6 +115,13 @@ export class GameHandler extends Handler {
           doubleCorp: gameReq.doubleCorp,
           requiresVenusTrackCompletion: gameReq.requiresVenusTrackCompletion,
           requiresMoonTrackCompletion: gameReq.requiresMoonTrackCompletion,
+          moonStandardProjectVariant: gameReq.moonStandardProjectVariant,
+          initialCorpDraftVariant: gameReq.initialCorpDraftVariant,
+          altVenusBoard: gameReq.altVenusBoard,
+          escapeVelocityMode: gameReq.escapeVelocityMode,
+          escapeVelocityThreshold: gameReq.escapeVelocityThreshold,
+          escapeVelocityPeriod: gameReq.escapeVelocityPeriod,
+          escapeVelocityPenalty: gameReq.escapeVelocityPenalty,
         };
         const userId = gameReq.userId;
         let isvip = false;
@@ -139,7 +156,7 @@ export class GameHandler extends Handler {
         const game = Game.newInstance(gameId, players, players[firstPlayerIdx], gameOptions, seed, spectatorId, false);
         game.loadState = LoadState.LOADED;
         GameLoader.getInstance().add(game);
-        ctx.route.writeJson(res, Server.getGameModel(game, gameReq.userId));
+        ctx.route.writeJson(res, Server.getSimpleGameModel(game));
       } catch (error) {
         ctx.route.internalServerError(req, res, error);
       }

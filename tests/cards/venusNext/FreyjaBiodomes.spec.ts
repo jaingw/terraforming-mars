@@ -6,7 +6,7 @@ import {VenusianAnimals} from '../../../src/cards/venusNext/VenusianAnimals';
 import {Game} from '../../../src/Game';
 import {SelectCard} from '../../../src/inputs/SelectCard';
 import {Player} from '../../../src/Player';
-import {Resources} from '../../../src/Resources';
+import {Resources} from '../../../src/common/Resources';
 import {TestPlayers} from '../../TestPlayers';
 
 describe('FreyjaBiodomes', function() {
@@ -21,13 +21,13 @@ describe('FreyjaBiodomes', function() {
 
   it('Can\'t play without energy production', function() {
     (game as any).venusScaleLevel = 10;
-    expect(card.canPlay(player)).is.not.true;
+    expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
 
   it('Can\'t play if Venus requirement not met', function() {
     player.addProduction(Resources.ENERGY, 1);
     (game as any).venusScaleLevel = 8;
-    expect(card.canPlay(player)).is.not.true;
+    expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
 
   it('Should play - single target', function() {
@@ -36,12 +36,12 @@ describe('FreyjaBiodomes', function() {
 
     player.addProduction(Resources.ENERGY, 1);
     (game as any).venusScaleLevel = 10;
-    expect(card.canPlay(player)).is.true;
+    expect(player.canPlayIgnoringCost(card)).is.true;
 
     card.play(player);
     expect(player.getProduction(Resources.ENERGY)).to.eq(0);
     expect(player.getProduction(Resources.MEGACREDITS)).to.eq(2);
-    expect(player.getResourcesOnCard(card2)).to.eq(2);
+    expect(card2.resourceCount).to.eq(2);
   });
 
   it('Should play - multiple targets', function() {
@@ -51,11 +51,11 @@ describe('FreyjaBiodomes', function() {
     player.playedCards.push(card2, card3);
 
     const action = card.play(player) as SelectCard<ICard>;
-    expect(action instanceof SelectCard).is.true;
+    expect(action).instanceOf(SelectCard);
 
     action.cb([card2]);
     expect(player.getProduction(Resources.ENERGY)).to.eq(0);
     expect(player.getProduction(Resources.MEGACREDITS)).to.eq(2);
-    expect(player.getResourcesOnCard(card2)).to.eq(2);
+    expect(card2.resourceCount).to.eq(2);
   });
 });

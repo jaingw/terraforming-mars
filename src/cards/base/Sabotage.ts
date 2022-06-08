@@ -1,13 +1,14 @@
 import {IProjectCard} from '../IProjectCard';
 import {Card} from '../Card';
-import {CardType} from '../CardType';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
 import {OrOptions} from '../../inputs/OrOptions';
-import {Resources} from '../../Resources';
-import {CardName} from '../../CardName';
+import {Resources} from '../../common/Resources';
+import {CardName} from '../../common/cards/CardName';
 import {SelectOption} from '../../inputs/SelectOption';
 import {CardRenderer} from '../render/CardRenderer';
-import {Size} from '../render/Size';
+import {Size} from '../../common/cards/render/Size';
+import {all, digit} from '../Options';
 
 export class Sabotage extends Card implements IProjectCard {
   constructor() {
@@ -19,9 +20,9 @@ export class Sabotage extends Card implements IProjectCard {
       metadata: {
         cardNumber: '121',
         renderData: CardRenderer.builder((b) => {
-          b.minus().titanium(3).digit.any.nbsp.or(Size.SMALL).nbsp;
-          b.minus().steel(4).digit.any.br.or(Size.SMALL).nbsp;
-          b.minus().megacredits(7).any;
+          b.minus().titanium(3, {all, digit}).nbsp.or(Size.SMALL).nbsp;
+          b.minus().steel(4, {all, digit}).br.or(Size.SMALL).nbsp;
+          b.minus().megacredits(7, {all});
         }),
         description: 'Remove up to 3 titanium from any player, or 4 steel, or 7 M€.',
       },

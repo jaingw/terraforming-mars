@@ -20,7 +20,7 @@ export abstract class Party {
 
     // Check if you are the new party leader
     public checkPartyLeader(newPlayer: Player | NeutralPlayer, game: Game): void {
-      // If there is a party leader
+    // If there is a party leader
       if (this.partyLeader) {
         if (game) {
           const sortedPlayers = [...this.getPresentPlayers()].sort(
@@ -40,7 +40,7 @@ export abstract class Party {
 
             // Manage if it's the first player or the last
             if (game.getPlayers().length === 1 || currentIndex === 0) {
-              playersToCheck = game.getPlayers();
+              playersToCheck = game.getPlayers().slice();
             } else if (currentIndex === game.getPlayers().length - 1) {
               playersToCheck = game.getPlayers().slice(0, currentIndex);
               playersToCheck.unshift(game.getPlayers()[currentIndex]);

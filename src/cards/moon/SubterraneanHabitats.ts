@@ -1,8 +1,8 @@
-import {CardName} from '../../CardName';
-import {CardType} from '../CardType';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
 import {IProjectCard} from '../IProjectCard';
 import {CardRenderer} from '../render/CardRenderer';
-import {Units} from '../../Units';
+import {Units} from '../../common/Units';
 import {MoonExpansion} from '../../moon/MoonExpansion';
 import {Player} from '../../Player';
 import {MoonCard} from './MoonCard';
@@ -14,6 +14,7 @@ export class SubterraneanHabitats extends MoonCard implements IProjectCard {
       cardType: CardType.ACTIVE,
       cost: 12,
       reserveUnits: Units.of({steel: 2}),
+      tr: {moonColony: 1},
 
       metadata: {
         description: 'Spend 2 steel. Raise the Colony Rate 1 step.',
@@ -27,9 +28,9 @@ export class SubterraneanHabitats extends MoonCard implements IProjectCard {
         }),
       },
     });
-  };
+  }
 
-  public play(player: Player) {
+  public override play(player: Player) {
     super.play(player);
     MoonExpansion.raiseColonyRate(player);
     return undefined;

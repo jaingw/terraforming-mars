@@ -1,13 +1,14 @@
 import {Card} from '../Card';
-import {CardType} from '../CardType';
+import {CardType} from '../../common/cards/CardType';
 import {IActionCard} from '../ICard';
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Player} from '../../Player';
 import {SelectAmount} from '../../inputs/SelectAmount';
-import {CardName} from '../../CardName';
-import {Resources} from '../../Resources';
+import {CardName} from '../../common/cards/CardName';
+import {Resources} from '../../common/Resources';
 import {CardRenderer} from '../render/CardRenderer';
+import {multiplier} from '../Options';
 
 export class PowerInfrastructure extends Card implements IActionCard, IProjectCard {
   constructor() {
@@ -21,7 +22,7 @@ export class PowerInfrastructure extends Card implements IActionCard, IProjectCa
         cardNumber: '194',
         renderData: CardRenderer.builder((b) => {
           b.action('Spend any amount of Energy and gain that amount of M€.', (eb) => {
-            eb.text('x').energy(1).startAction.megacredits(0).multiplier;
+            eb.text('x').energy(1).startAction.megacredits(0, {multiplier});
           });
         }),
       },

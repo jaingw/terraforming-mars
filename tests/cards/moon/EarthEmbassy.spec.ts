@@ -4,11 +4,11 @@ import {TestPlayers} from '../../TestPlayers';
 import {TestPlayer} from '../../TestPlayer';
 import {EarthEmbassy} from '../../../src/cards/moon/EarthEmbassy';
 import {expect} from 'chai';
-import {Tags} from '../../../src/cards/Tags';
-import {CardType} from '../../../src/cards/CardType';
-import {CardName} from '../../../src/CardName';
+import {Tags} from '../../../src/common/cards/Tags';
+import {CardType} from '../../../src/common/cards/CardType';
+import {CardName} from '../../../src/common/cards/CardName';
 import {IProjectCard} from '../../../src/cards/IProjectCard';
-import {CardMetadata} from '../../../src/cards/CardMetadata';
+import {ICardMetadata} from '../../../src/common/cards/ICardMetadata';
 
 const MOON_OPTIONS = TestingUtils.setCustomGameOptions({moonExpansion: true});
 
@@ -29,19 +29,22 @@ describe('EarthEmbassy', () => {
       cardType: CardType.AUTOMATED,
       name: CardName.ZEPPELINS,
       tags: tags,
-      metadata: {} as CardMetadata,
+      metadata: {} as ICardMetadata,
+      canPlay: () => true,
       play: () => undefined,
+      getVictoryPoints: () => 0,
+      resourceCount: 0,
     };
 
     player.playedCards = [fakeCard];
-    expect(player.getTagCount(Tags.EARTH, false, false)).eq(1);
-    expect(player.getTagCount(Tags.EARTH, false, true)).eq(1);
+    expect(player.getTagCount(Tags.EARTH, 'raw')).eq(1);
+    expect(player.getTagCount(Tags.EARTH, 'default')).eq(1);
 
     // This changes the results because Earth Embassy has one earth tag and one moon tag.
     // [ Earth Embassy: earth/moon, Fake Card: earth/moon/moon ]
     player.playedCards.push(earthEmbassy);
-    expect(player.getTagCount(Tags.EARTH, false, false)).eq(2);
-    expect(player.getTagCount(Tags.EARTH, false, true)).eq(5);
+    expect(player.getTagCount(Tags.EARTH, 'raw')).eq(2);
+    expect(player.getTagCount(Tags.EARTH, 'default')).eq(5);
   });
 });
 

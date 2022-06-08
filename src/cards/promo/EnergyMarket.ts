@@ -1,15 +1,16 @@
 import {IProjectCard} from '../IProjectCard';
 import {Card} from '../Card';
-import {CardName} from '../../CardName';
-import {CardType} from '../CardType';
-import {Tags} from '../Tags';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
+import {Tags} from '../../common/cards/Tags';
 import {Player} from '../../Player';
-import {Resources} from '../../Resources';
+import {Resources} from '../../common/Resources';
 import {SelectOption} from '../../inputs/SelectOption';
 import {OrOptions} from '../../inputs/OrOptions';
 import {SelectAmount} from '../../inputs/SelectAmount';
 import {SelectHowToPayDeferred} from '../../deferredActions/SelectHowToPayDeferred';
 import {CardRenderer} from '../render/CardRenderer';
+import {multiplier} from '../Options';
 
 export class EnergyMarket extends Card implements IProjectCard {
   constructor() {
@@ -23,7 +24,7 @@ export class EnergyMarket extends Card implements IProjectCard {
         cardNumber: 'X03',
         renderData: CardRenderer.builder((b) => {
           b.action('Spend 2X M€ to gain X energy.', (eb) => {
-            eb.megacredits(2).multiplier.startAction.text('x').energy(1);
+            eb.megacredits(2, {multiplier}).startAction.text('x').energy(1);
           }).br;
           b.or().br;
           b.action('Decrease energy production 1 step to gain 8 M€.', (eb) => {

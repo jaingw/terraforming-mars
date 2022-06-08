@@ -1,9 +1,12 @@
-import {ISpace, SpaceId} from './ISpace';
+import {ISpace} from './ISpace';
 import {Player} from '../Player';
-import {SpaceType} from '../SpaceType';
-import {TileType} from '../TileType';
+import {SpaceId} from '../common/Types';
+import {SpaceType} from '../common/boards/SpaceType';
+import {BASE_OCEAN_TILES as UNCOVERED_OCEAN_TILES, CITY_TILES, GREENERY_TILES, OCEAN_TILES, OCEAN_UPGRADE_TILES, TileType} from '../common/TileType';
 import {AresHandler} from '../ares/AresHandler';
 import {SerializedBoard, SerializedSpace} from './SerializedBoard';
+import {SpaceName} from '../SpaceName';
+import {CardName} from '../common/cards/CardName';
 
 /**
  * A representation of any hex board. This is normally Mars (Tharsis, Hellas, Elysium) but can also be The Moon.
@@ -23,7 +26,7 @@ export abstract class Board {
     spaces.forEach((space) => {
       this.adjacentSpaces.set(space.id, this.computeAdjacentSpaces(space));
     });
-  };
+  }
 
   public abstract getVolcanicSpaceIds(): Array<string>;
 
@@ -100,27 +103,45 @@ export abstract class Board {
     return [...spaces];
   }
 
-  public getSpaceByTileCard(cardName: string): ISpace | undefined {
+  public getSpaceByTileCard(cardName: CardName): ISpace | undefined {
     return this.spaces.find(
       (space) => space.tile !== undefined && space.tile.card === cardName,
     );
   }
 
-  public getOceansOnBoard(countUpgradedOceans: boolean = true): number {
-    return this.getOceansTiles(countUpgradedOceans).length;
+  /*
+   * Returns the number of oceans on the board.
+   *
+   * The default condition is to return those oceans used to count toward the global parameter, so
+   * upgraded oceans are included, but Wetlands is not. That's why the boolean values have different defaults.
+   */
+  public getOceanCount(include?: {upgradedOceans?: boolean, wetlands?: boolean}): number {
+    return this.getOceanSpaces(include).length;
   }
 
-  public getOceansTiles(countUpgradedOceans: boolean): Array<ISpace> {
-    if (!countUpgradedOceans) {
-      return this.spaces.filter((space) => space.tile !== undefined &&
-                      space.tile.tileType === TileType.OCEAN,
-      );
-    } else {
-      return this.spaces.filter((space) => Board.isOceanSpace(space));
-    }
+  /*
+   * Returns spaces on the board with ocean tiless.
+   *
+   * The default condition is to return those oceans used to count toward the global parameter, so
+   * upgraded oceans are included, but Wetlands is not. That's why the boolean values have different defaults.
+   */
+  public getOceanSpaces(include?: {upgradedOceans?: boolean, wetlands?: boolean}): Array<ISpace> {
+    const spaces = this.spaces.filter((space) => {
+      if (!Board.isOceanSpace(space)) return false;
+      if (space.tile?.tileType === undefined) return false;
+      const tileType = space.tile.tileType;
+      if (OCEAN_UPGRADE_TILES.has(tileType)) {
+        return include?.upgradedOceans ?? true;
+      }
+      if (tileType === TileType.WETLANDS) {
+        return include?.wetlands ?? false;
+      }
+      return true;
+    });
+    return spaces;
   }
 
-  public getSpaces(spaceType: SpaceType, _player?: Player): Array<ISpace> {
+  public getSpaces(spaceType: SpaceType, _player : Player): Array<ISpace> {
     return this.spaces.filter((space) => space.spaceType === spaceType);
   }
 
@@ -147,15 +168,23 @@ export abstract class Board {
   }
 
   public getAvailableSpacesForGreenery(player: Player): Array<ISpace> {
-    const spacesForGreenery = this.getAvailableSpacesOnLand(player)
-      .filter((space) => this.getAdjacentSpaces(space).find((adj) => adj.tile !== undefined && adj.player === player && adj.tile.tileType !== TileType.OCEAN) !== undefined);
+    let spacesOnLand = this.getAvailableSpacesOnLand(player);
+    // Spaces next to Red City are always unavialable.
+    if (player.game.gameOptions.pathfindersExpansion === true) {
+      spacesOnLand = spacesOnLand.filter((space) => {
+        return !this.getAdjacentSpaces(space).some((neighbor) => neighbor.tile?.tileType === TileType.RED_CITY);
+      });
+    }
+
+    const spacesForGreenery = spacesOnLand
+      .filter((space) => this.getAdjacentSpaces(space).find((adj) => adj.tile !== undefined && adj.player === player && adj.tile.tileType !== TileType.OCEAN && !AresHandler.hasHazardTile(adj)) !== undefined);
 
     // Spaces next to tiles you own
     if (spacesForGreenery.length > 0) {
       return spacesForGreenery;
     }
     // Place anywhere if no space owned
-    return this.getAvailableSpacesOnLand(player);
+    return spacesOnLand;
   }
 
   public getAvailableSpacesForOcean(player: Player): Array<ISpace> {
@@ -166,7 +195,7 @@ export abstract class Board {
       );
   }
 
-  public getAvailableSpacesOnLand(player?: Player): Array<ISpace> {
+  public getAvailableSpacesOnLand(player: Player): Array<ISpace> {
     const landSpaces = this.getSpaces(SpaceType.LAND, player).filter((space) => {
       const hasPlayerMarker = space.player !== undefined;
       // A space is available if it doesn't have a player marker on it or it belongs to |player|
@@ -181,6 +210,7 @@ export abstract class Board {
     return landSpaces;
   }
 
+  // 放中立板块用
   // |distance| represents the number of eligible spaces from the top left (or bottom right)
   // to count. So distance 0 means the first available space.
   // If |direction| is 1, count from the top left. If -1, count from the other end of the map.
@@ -209,7 +239,7 @@ export abstract class Board {
 
   public getNonReservedLandSpaces(): Array<ISpace> {
     return this.spaces.filter((space) => {
-      return space.spaceType === SpaceType.LAND &&
+      return (space.spaceType === SpaceType.LAND || space.spaceType === SpaceType.COVE) &&
         (space.tile === undefined || AresHandler.hasHazardTile(space)) &&
         space.player === undefined;
     });
@@ -220,13 +250,30 @@ export abstract class Board {
   }
 
   public static isCitySpace(space: ISpace): boolean {
-    const cityTileTypes = [TileType.CITY, TileType.CAPITAL, TileType.OCEAN_CITY];
-    return space.tile !== undefined && cityTileTypes.includes(space.tile.tileType);
+    return space.tile !== undefined && CITY_TILES.has(space.tile.tileType);
   }
 
+  // Returns true when the space has an ocean tile or any derivative tiles (ocean city, wetlands)
   public static isOceanSpace(space: ISpace): boolean {
-    const oceanTileTypes = [TileType.OCEAN, TileType.OCEAN_CITY, TileType.OCEAN_FARM, TileType.OCEAN_SANCTUARY];
-    return space.tile !== undefined && oceanTileTypes.includes(space.tile.tileType);
+    return space.tile !== undefined && OCEAN_TILES.has(space.tile.tileType);
+  }
+
+  // Returns true when the space is an ocean tile that is not used to cover another ocean.
+  // Used for benefits associated with "when a player places an ocean tile"
+  public static isUncoveredOceanSpace(space: ISpace): boolean {
+    return space.tile !== undefined && UNCOVERED_OCEAN_TILES.has(space.tile.tileType);
+  }
+
+  public static isGreenerySpace(space: ISpace): boolean {
+    return space.tile !== undefined && GREENERY_TILES.has(space.tile.tileType);
+  }
+
+  public static ownedBy(player: Player): (space: ISpace) => boolean {
+    return (space: ISpace) => space.player?.id === player.id;
+  }
+
+  public static spaceOwnedBy(space: ISpace, player: Player): boolean {
+    return Board.ownedBy(player)(space);
   }
 
   public serialize(): SerializedBoard {
@@ -236,7 +283,7 @@ export abstract class Board {
           id: space.id,
           spaceType: space.spaceType,
           tile: space.tile,
-          player: space.player?.id,
+          player: space.player?.serializeId(),
           bonus: space.bonus,
           adjacency: space.adjacency,
           x: space.x,
@@ -254,6 +301,17 @@ export abstract class Board {
       // Prevent loss of "neutral" player tile ownership across reloads
       player = player ? player : space.player;
     }
+    // Patch for games with a broken spacetype for noctis city.
+    // TODO(kberg): Remove this patch by 2022-04-01
+    // See https://github.com/terraforming-mars/terraforming-mars/issues/4056
+    if (space.spaceType === undefined) {
+      console.log(`Undefined space type for ${space.id}`);
+      if (space.id === SpaceName.NOCTIS_CITY) {
+        space.spaceType = SpaceType.LAND;
+      }
+    }
+
+
     return {
       id: space.id,
       spaceType: space.spaceType,
@@ -268,5 +326,28 @@ export abstract class Board {
 
   public static deserializeSpaces(spaces: Array<SerializedSpace>, players: Array<Player>): Array<ISpace> {
     return spaces.map((space) => Board.deserializeSpace(space, players));
+  }
+}
+
+export function nextToNoOtherTileFn(board: Board): (space: ISpace) => boolean {
+  return (space: ISpace) => board.getAdjacentSpaces(space).every((space) => space.tile === undefined);
+}
+
+export function playerTileFn(player: Player) {
+  return (space: ISpace) => space.player?.id === player.id;
+}
+
+export function isSpecialTile(space: ISpace): boolean {
+  switch (space.tile?.tileType) {
+  case TileType.GREENERY:
+  case TileType.OCEAN:
+  case TileType.CITY:
+  case TileType.MOON_COLONY:
+  case TileType.MOON_MINE:
+  case TileType.MOON_ROAD:
+  case undefined:
+    return false;
+  default:
+    return true;
   }
 }

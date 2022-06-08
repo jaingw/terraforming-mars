@@ -1,11 +1,8 @@
 import {Player} from '../../../Player';
-import {CardName} from '../../../CardName';
+import {CardName} from '../../../common/cards/CardName';
 import {CardRenderer} from '../../render/CardRenderer';
-import {REDS_RULING_POLICY_COST} from '../../../constants';
 import {StandardProjectCard} from '../../StandardProjectCard';
-import {PartyHooks} from '../../../turmoil/parties/PartyHooks';
-import {PartyName} from '../../../turmoil/parties/PartyName';
-import * as constants from '../../../constants';
+import * as constants from '../../../common/constants';
 
 export class AsteroidStandardProject extends StandardProjectCard {
   constructor() {
@@ -23,11 +20,13 @@ export class AsteroidStandardProject extends StandardProjectCard {
     });
   }
 
-  public canAct(player: Player): boolean {
-    let asteroidCost = this.cost;
-    if (PartyHooks.shouldApplyPolicy(player.game, PartyName.REDS)) asteroidCost += REDS_RULING_POLICY_COST;
-
-    return player.canAfford(asteroidCost- super.discount(player)) && player.game.getTemperature() < constants.MAX_TEMPERATURE;
+  public override canAct(player: Player): boolean {
+    if (player.game.getTemperature() === constants.MAX_TEMPERATURE) {
+      return false;
+    }
+    return player.canAfford(this.cost, {
+      tr: {temperature: 1},
+    });
   }
 
   actionEssence(player: Player): void {

@@ -1,16 +1,17 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Card} from '../Card';
-import {CardType} from '../CardType';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
 import {OrOptions} from '../../inputs/OrOptions';
 import {PlayerInput} from '../../PlayerInput';
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {SelectOption} from '../../inputs/SelectOption';
-import {ResourceType} from '../../ResourceType';
+import {ResourceType} from '../../common/ResourceType';
 import {RemoveAnyPlants} from '../../deferredActions/RemoveAnyPlants';
 import {RemoveResourcesFromCard} from '../../deferredActions/RemoveResourcesFromCard';
 import {CardRenderer} from '../render/CardRenderer';
+import {all, digit} from '../Options';
 
 export class Virus extends Card implements IProjectCard {
   constructor() {
@@ -23,15 +24,15 @@ export class Virus extends Card implements IProjectCard {
       metadata: {
         cardNumber: '050',
         renderData: CardRenderer.builder((b) => {
-          b.minus().animals(2).any.digit.nbsp;
-          b.or().nbsp.minus().plants(5).any.digit;
+          b.minus().animals(2, {all, digit}).nbsp;
+          b.or().nbsp.minus().plants(5, {all, digit});
         }),
         description: 'Remove up to 2 Animals or 5 Plants from any player.',
       },
     });
   }
   public play(player: Player): PlayerInput | undefined {
-    if (player.game.getPlayers().length === 1) {
+    if (player.game.isSoloMode()) {
       player.game.someoneHasRemovedOtherPlayersPlants = true;
       return undefined;
     }

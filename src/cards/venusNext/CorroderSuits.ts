@@ -1,11 +1,10 @@
-import {Tags} from '../Tags';
-import {CardType} from '../CardType';
+import {Tags} from '../../common/cards/Tags';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {Resources} from '../../Resources';
-import {ResourceType} from '../../ResourceType';
+import {Resources} from '../../common/Resources';
 import {SelectCard} from '../../inputs/SelectCard';
 import {ICard} from '../ICard';
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
 import {Card} from '../Card';
 
@@ -23,11 +22,11 @@ export class CorroderSuits extends Card {
         renderData: CardRenderer.builder((b) => {
           b.production((pb) => {
             pb.megacredits(2);
-          }).wild(1).secondaryTag(Tags.VENUS);
+          }).wild(1, {secondaryTag: Tags.VENUS});
         }),
       },
     });
-  };
+  }
 
   public play(player: Player) {
     player.addProduction(Resources.MEGACREDITS, 2);
@@ -51,9 +50,6 @@ export class CorroderSuits extends Card {
     );
   }
   public static getVenusResCards(player: Player): ICard[] {
-    let resourceCards = player.getResourceCards(ResourceType.FLOATER);
-    resourceCards = resourceCards.concat(player.getResourceCards(ResourceType.MICROBE));
-    resourceCards = resourceCards.concat(player.getResourceCards(ResourceType.ANIMAL));
-    return resourceCards.filter((card) => card.tags.includes(Tags.VENUS));
+    return player.getResourceCards().filter((card) => card.tags.includes(Tags.VENUS));
   }
 }

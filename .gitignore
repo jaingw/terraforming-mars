@@ -10,7 +10,6 @@ src/genfiles/
 dist/
 *.swp
 .nyc_output/
-.vscode/
 db/*
 *.pem
 
@@ -20,9 +19,12 @@ db/*
 pid
 *.log
 .eslintcache
+tsconfig.tsbuildinfo
+assets/locales
 
 # Local Packages
 node_modules/
 /styles.css
 build/assets/index_ca.html
 /yarn.lock
+/tsconfig.tsbuildinfo

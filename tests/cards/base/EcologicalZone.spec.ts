@@ -3,9 +3,9 @@ import {EcologicalZone} from '../../../src/cards/base/EcologicalZone';
 import {EcologyExperts} from '../../../src/cards/prelude/EcologyExperts';
 import {Game} from '../../../src/Game';
 import {SelectSpace} from '../../../src/inputs/SelectSpace';
-import {Phase} from '../../../src/Phase';
+import {Phase} from '../../../src/common/Phase';
 import {Player} from '../../../src/Player';
-import {TileType} from '../../../src/TileType';
+import {TileType} from '../../../src/common/TileType';
 import {TestPlayers} from '../../TestPlayers';
 
 describe('EcologicalZone', function() {
@@ -18,7 +18,7 @@ describe('EcologicalZone', function() {
     game = Game.newInstance('foobar', [player, redPlayer], player);
   });
 
-  it('Can\'t play', function() {
+  it('Cannot play', function() {
     expect(card.canPlay(player)).is.not.true;
   });
 
@@ -28,7 +28,7 @@ describe('EcologicalZone', function() {
     expect(card.canPlay(player)).is.true;
 
     const action = card.play(player);
-    expect(action instanceof SelectSpace).is.true;
+    expect(action).instanceOf(SelectSpace);
 
     const adjacentSpace = action.availableSpaces[0];
     action.cb(adjacentSpace);

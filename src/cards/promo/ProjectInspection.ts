@@ -1,14 +1,14 @@
 import {IProjectCard} from '../IProjectCard';
 import {Card} from '../Card';
-import {CardType} from '../CardType';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {Playwrights} from '../community/Playwrights';
-import {ICard} from '../ICard';
+import {ICard, isIActionCard} from '../ICard';
 import {SelectCard} from '../../inputs/SelectCard';
 import {CardRenderer} from '../render/CardRenderer';
-import {Size} from '../render/Size';
-import {CorporationCard} from '../corporation/CorporationCard';
+import {Size} from '../../common/cards/render/Size';
+import {ICorporationCard} from '../corporation/ICorporationCard';
 
 export class ProjectInspection extends Card implements IProjectCard {
   constructor() {
@@ -37,18 +37,17 @@ export class ProjectInspection extends Card implements IProjectCard {
 
 
     for (const playedCard of player.playedCards) {
-      if (playedCard.action !== undefined && playedCard.canAct !== undefined && playedCard.canAct(player) && player.getActionsThisGeneration().has(playedCard.name)) {
+      if (isIActionCard(playedCard) && playedCard.canAct(player) && player.getActionsThisGeneration().has(playedCard.name)) {
         result.push(playedCard);
       }
     }
     return result;
   }
 
-  private addCorpCard(corp:CorporationCard |undefined, player: Player): boolean {
+  private addCorpCard(corp: ICorporationCard |undefined, player: Player): boolean {
     if (corp !== undefined && player.getActionsThisGeneration().has(corp.name)) {
       if (corp.name !== CardName.PLAYWRIGHTS || (corp as Playwrights).getCheckLoops() < 2) {
-        if (corp.action !== undefined &&
-          corp.canAct !== undefined &&
+        if (isIActionCard(corp) &&
           corp.canAct(player)) {
           return true;
         }
@@ -57,7 +56,7 @@ export class ProjectInspection extends Card implements IProjectCard {
     return false;
   }
 
-  public canPlay(player: Player): boolean {
+  public override canPlay(player: Player): boolean {
     return this.getActionCards(player).length > 0;
   }
 

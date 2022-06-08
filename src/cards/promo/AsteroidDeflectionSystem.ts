@@ -1,16 +1,17 @@
 import {IProjectCard} from '../IProjectCard';
 import {IActionCard, IResourceCard} from '../ICard';
 import {Card} from '../Card';
-import {CardName} from '../../CardName';
-import {CardType} from '../CardType';
-import {ResourceType} from '../../ResourceType';
-import {Tags} from '../Tags';
+import {VictoryPoints} from '../ICard';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
+import {ResourceType} from '../../common/ResourceType';
+import {Tags} from '../../common/cards/Tags';
 import {Player} from '../../Player';
-import {Resources} from '../../Resources';
+import {Resources} from '../../common/Resources';
 import {CardRenderer} from '../render/CardRenderer';
-import {CardRenderDynamicVictoryPoints} from '../render/CardRenderDynamicVictoryPoints';
-import {Size} from '../render/Size';
-import {Units} from '../../Units';
+import {Size} from '../../common/cards/render/Size';
+import {Units} from '../../common/Units';
+import {played} from '../Options';
 
 export class AsteroidDeflectionSystem extends Card implements IActionCard, IProjectCard, IResourceCard {
   constructor() {
@@ -19,14 +20,16 @@ export class AsteroidDeflectionSystem extends Card implements IActionCard, IProj
       name: CardName.ASTEROID_DEFLECTION_SYSTEM,
       tags: [Tags.SPACE, Tags.EARTH, Tags.BUILDING],
       cost: 13,
+
       resourceType: ResourceType.ASTEROID,
+      victoryPoints: VictoryPoints.resource(1, 1),
       productionBox: Units.of({energy: -1}),
 
       metadata: {
         cardNumber: 'X14',
         renderData: CardRenderer.builder((b) => {
           b.action('REVEAL AND DISCARD the top card of the deck. If it has a space tag, add an asteroid here.', (eb) => {
-            eb.empty().startAction.cards(1).asterix().nbsp.space().played.colon().asteroids(1);
+            eb.empty().startAction.cards(1).asterix().nbsp.space({played}).colon().asteroids(1);
           }).br;
           b.production((pb) => pb.minus().energy(1)).text('opponents may not remove your plants', Size.SMALL, true);
         }),
@@ -34,13 +37,12 @@ export class AsteroidDeflectionSystem extends Card implements IActionCard, IProj
           text: 'Decrease your energy production 1 step. 1VP per asteroid on this card.',
           align: 'left',
         },
-        victoryPoints: CardRenderDynamicVictoryPoints.asteroids(1, 1),
       },
     });
   }
-  public resourceCount = 0;
+  public override resourceCount = 0;
 
-  public canPlay(player: Player): boolean {
+  public override canPlay(player: Player): boolean {
     return player.getProduction(Resources.ENERGY) >= 1;
   }
 
@@ -59,9 +61,5 @@ export class AsteroidDeflectionSystem extends Card implements IActionCard, IProj
     player.game.log('${0} revealed and discarded ${1}', (b) => b.player(player).card(topCard));
     player.game.dealer.discard(topCard);
     return undefined;
-  }
-
-  public getVictoryPoints(): number {
-    return this.resourceCount;
   }
 }

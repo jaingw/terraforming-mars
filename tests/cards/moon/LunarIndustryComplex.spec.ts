@@ -6,8 +6,8 @@ import {LunarIndustryComplex} from '../../../src/cards/moon/LunarIndustryComplex
 import {expect} from 'chai';
 import {MoonExpansion} from '../../../src/moon/MoonExpansion';
 import {IMoonData} from '../../../src/moon/IMoonData';
-import {Units} from '../../../src/Units';
-import {Resources} from '../../../src/Resources';
+import {Units} from '../../../src/common/Units';
+import {Resources} from '../../../src/common/Resources';
 import {PlaceMoonMineTile} from '../../../src/moon/PlaceMoonMineTile';
 
 const MOON_OPTIONS = TestingUtils.setCustomGameOptions({moonExpansion: true});

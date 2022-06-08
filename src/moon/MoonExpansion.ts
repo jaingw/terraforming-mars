@@ -2,18 +2,18 @@ import {Game} from '../Game';
 import {ITile} from '../ITile';
 import {MoonBoard} from './MoonBoard';
 import {Player} from '../Player';
-import {TileType} from '../TileType';
-import {SpaceType} from '../SpaceType';
+import {TileType} from '../common/TileType';
+import {SpaceType} from '../common/boards/SpaceType';
 import {IMoonData} from './IMoonData';
-import {CardName} from '../CardName';
+import {CardName} from '../common/cards/CardName';
 import {IProjectCard} from '../cards/IProjectCard';
-import {Units} from '../Units';
+import {Units} from '../common/Units';
 import {IMoonCard} from '../cards/moon/IMoonCard';
-import {Tags} from '../cards/Tags';
+import {Tags} from '../common/cards/Tags';
 import {ISpace} from '../boards/ISpace';
-import {MAXIMUM_COLONY_RATE, MAXIMUM_LOGISTICS_RATE, MAXIMUM_MINING_RATE} from '../constants';
-import {Resources} from '../Resources';
-import {Phase} from '../Phase';
+import {MAXIMUM_COLONY_RATE, MAXIMUM_LOGISTICS_RATE, MAXIMUM_MINING_RATE} from '../common/constants';
+import {Resources} from '../common/Resources';
+import {Phase} from '../common/Phase';
 import {BoardType} from '../boards/BoardType';
 import {VictoryPointsBreakdown} from '../VictoryPointsBreakdown';
 
@@ -161,7 +161,7 @@ export class MoonExpansion {
       const increment = Math.min(count, available);
       if (increment > 0) {
         if (player.game.phase === Phase.SOLAR) {
-          player.game.log('The World Government raised the mining rate ${1} step(s)', (b) => b.player(player).number(increment));
+          player.game.log('${0} acted as World Government and raised the mining rate ${1} step(s)', (b) => b.player(player).number(increment));
           this.activateLunaFirst(undefined, player.game, increment);
         } else {
           player.game.log('${0} raised the mining rate ${1} step(s)', (b) => b.player(player).number(increment));
@@ -185,7 +185,7 @@ export class MoonExpansion {
       const increment = Math.min(count, available);
       if (increment > 0) {
         if (player.game.phase === Phase.SOLAR) {
-          player.game.log('The World Government raised the colony rate ${1} step(s)', (b) => b.player(player).number(increment));
+          player.game.log('${0} acted as World Government and raised the colony rate ${1} step(s)', (b) => b.player(player).number(increment));
           this.activateLunaFirst(undefined, player.game, count);
         } else {
           player.game.log('${0} raised the moon colony rate ${1} step(s)', (b) => b.player(player).number(increment));
@@ -194,7 +194,7 @@ export class MoonExpansion {
             player.drawCard();
           });
           this.bonus(moonData.colonyRate, increment, 6, () => {
-            player.drawCard();
+            player.addProduction(Resources.ENERGY, 1, {log: true});
           });
           this.activateLunaFirst(player, player.game, count);
         }
@@ -209,7 +209,7 @@ export class MoonExpansion {
       const increment = Math.min(count, available);
       if (increment > 0) {
         if (player.game.phase === Phase.SOLAR) {
-          player.game.log('The World Government raised the logistic rate ${1} step(s)', (b) => b.player(player).number(increment));
+          player.game.log('${0} acted as World Government and raised the logistic rate ${1} step(s)', (b) => b.player(player).number(increment));
           this.activateLunaFirst(undefined, player.game, increment);
         } else {
           player.game.log('${0} raised the logistic rate ${1} step(s)', (b) => b.player(player).number(increment));
@@ -258,7 +258,7 @@ export class MoonExpansion {
    *
    * Special tiles such as Lunar Mine Urbanization, are especially included.
    */
-  public static tiles(
+  public static spaces(
     game: Game,
     tileType?: TileType,
     options?: {

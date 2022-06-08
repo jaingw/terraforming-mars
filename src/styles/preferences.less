@@ -95,13 +95,30 @@
     height: 36px;
     background-size: 32px 36px;
     margin-left: 14px;
-    margin-top: 10px;
+    margin-top: 5px;
+    margin-bottom: 5px;
   }
 
   .moon_params_value {
     text-align: center;
     font-family: "Prototype";
     font-size: 15px;
+    .colony {
+      background-color: #0e7a99;
+      padding: 2px;
+      border-radius: 2px;
+    }
+    .logistics {
+      background-color: rgb(192, 192, 192);
+      color: black;
+      padding: 2px;
+      border-radius: 2px;
+    }
+    .mining {
+      background-color: #915d26;
+      padding: 2px;
+      border-radius: 2px;
+    }
   }
 }
 
@@ -301,6 +318,11 @@
 .preferences_magnify_cards .cards-stack-first:hover {
     z-index: 2;
     transform: scale(1);
+}
+
+.preferences_magnify_cards .global-event:hover {
+    transform: scale(1.2);
+    z-index: 2;
 }
 
 /* Magnify the wee little cards in a special way, if requested */

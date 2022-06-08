@@ -1,8 +1,8 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
-import {CardType} from '../CardType';
-import {CardName} from '../../CardName';
-import {CardMetadata} from '../CardMetadata';
+import {Tags} from '../../common/cards/Tags';
+import {CardType} from '../../common/cards/CardType';
+import {CardName} from '../../common/cards/CardName';
+import {ICardMetadata} from '../../common/cards/ICardMetadata';
 
 export class ScienceTagCard implements IProjectCard {
   public get cost() {
@@ -17,10 +17,22 @@ export class ScienceTagCard implements IProjectCard {
   public get cardType() {
     return CardType.PROXY;
   }
-  public get metadata(): CardMetadata {
+  public canPlay() {
+    return false;
+  }
+  public get metadata(): ICardMetadata {
     throw new Error('ScienceTagCard is a proxy card, not a real card. Should not render');
   }
   public play() {
     return undefined;
+  }
+  public get resourceCount() {
+    return 0;
+  }
+  public set resourceCount(_n:number) {
+
+  }
+  public getVictoryPoints() {
+    return 0;
   }
 }

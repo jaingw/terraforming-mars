@@ -1,24 +1,30 @@
-import {CorporationCard} from '../../corporation/CorporationCard';
 import {Player} from '../../../Player';
-import {Tags} from '../../Tags';
-import {CardName} from '../../../CardName';
-import {CardType} from '../../CardType';
-import {CardMetadata} from '../../CardMetadata';
 import {CardRenderer} from '../../render/CardRenderer';
+import {Card} from '../../Card';
+import {CardName} from '../../../common/cards/CardName';
+import {CardType} from '../../../common/cards/CardType';
+import {ICardMetadata} from '../../../common/cards/ICardMetadata';
+import {Tags} from '../../../common/cards/Tags';
+import {ICorporationCard} from '../../corporation/ICorporationCard';
 
-export class _TerralabsResearch_ implements CorporationCard {
-    public name: CardName = CardName._TERRALABS_RESEARCH_;
-    public tags: Array<Tags> = [Tags.SCIENCE, Tags.EARTH];
-    public startingMegaCredits: number = 20;
-    public cardType: CardType = CardType.CORPORATION;
-    public cardCost = 1;
+export class _TerralabsResearch_ extends Card implements ICorporationCard {
+  constructor() {
+    super({
+      cardType: CardType.CORPORATION,
+      name: CardName._TERRALABS_RESEARCH_,
+      tags: [Tags.SCIENCE, Tags.EARTH],
+      startingMegaCredits: 20,
+      cardCost: 1,
+    });
+  }
 
-    public play(player: Player) {
-      player.decreaseTerraformRating();
-      player.cardCost = 1;
-      return undefined;
-    }
-    public metadata: CardMetadata = {
+  public play(player: Player) {
+    player.decreaseTerraformRating();
+    player.cardCost = 1;
+    return undefined;
+  }
+  public override get metadata(): ICardMetadata {
+    return {
       cardNumber: 'R14',
       description: 'You start with 20 M€. Lower your TR 1 step.',
       renderData: CardRenderer.builder((b) => {
@@ -30,5 +36,6 @@ export class _TerralabsResearch_ implements CorporationCard {
           });
         });
       }),
-    }
+    };
+  }
 }

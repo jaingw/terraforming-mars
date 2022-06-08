@@ -1,13 +1,13 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
-import {CardType} from '../CardType';
 import {Player} from '../../Player';
-import {Resources} from '../../Resources';
-import {CardName} from '../../CardName';
 import {CardRenderer} from '../render/CardRenderer';
 import {CardRequirements} from '../CardRequirements';
-import {Size} from '../render/Size';
 import {Card} from '../Card';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
+import {Size} from '../../common/cards/render/Size';
+import {Tags} from '../../common/cards/Tags';
+import {Resources} from '../../common/Resources';
 
 export class UrgentTerraformingCommand extends Card implements IProjectCard {
   constructor() {
@@ -27,8 +27,8 @@ export class UrgentTerraformingCommand extends Card implements IProjectCard {
         description: 'Requires that you have at least 25 TR.you gain plants and heat equal to your plants and heat production',
       },
     });
-  };
-  public canPlay(player: Player): boolean {
+  }
+  public override canPlay(player: Player): boolean {
     return player.getTerraformRating() >= 25;
   }
   public play(player: Player) {

@@ -4,20 +4,23 @@ import {IDatabase} from './IDatabase';
 import {Localfilesystem} from './LocalFilesystem';
 
 export class Database {
-    private static instance: IDatabase;
+  private static instance: IDatabase;
 
-    private constructor() {}
+  private constructor() {}
 
-    public static getInstance() {
-      if (!Database.instance) {
-        if (process.env.POSTGRES_HOST !== undefined) {
-          Database.instance = new PostgreSQL();
-        } else if (process.env.LOCAL_FS_DB !== undefined) {
-          Database.instance = new Localfilesystem();
-        } else {
-          Database.instance = new SQLite();
-        }
+  public static getInstance() {
+    if (!Database.instance) {
+      if (process.env.POSTGRES_HOST !== undefined) {
+        console.log('Connecting to Postgres database.');
+        Database.instance = new PostgreSQL();
+      } else if (process.env.LOCAL_FS_DB !== undefined) {
+        console.log('Connecting to local filesystem database.');
+        Database.instance = new Localfilesystem();
+      } else {
+        console.log('Connecting to SQLite database.');
+        Database.instance = new SQLite();
       }
-      return Database.instance;
     }
+    return Database.instance;
+  }
 }

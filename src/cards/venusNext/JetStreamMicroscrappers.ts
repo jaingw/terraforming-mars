@@ -1,14 +1,12 @@
 import {IActionCard, IResourceCard} from '../ICard';
-import {Tags} from '../Tags';
-import {CardType} from '../CardType';
+import {Tags} from '../../common/cards/Tags';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {ResourceType} from '../../ResourceType';
+import {ResourceType} from '../../common/ResourceType';
 import {OrOptions} from '../../inputs/OrOptions';
 import {SelectOption} from '../../inputs/SelectOption';
-import {MAX_VENUS_SCALE, REDS_RULING_POLICY_COST} from '../../constants';
-import {CardName} from '../../CardName';
-import {PartyHooks} from '../../turmoil/parties/PartyHooks';
-import {PartyName} from '../../turmoil/parties/PartyName';
+import {MAX_VENUS_SCALE} from '../../common/constants';
+import {CardName} from '../../common/cards/CardName';
 import {LogHelper} from '../../LogHelper';
 import {CardRenderer} from '../render/CardRenderer';
 import {Card} from '../Card';
@@ -35,8 +33,8 @@ export class JetStreamMicroscrappers extends Card implements IActionCard, IResou
         }),
       },
     });
-  };
-  public resourceCount: number = 0;
+  }
+  public override resourceCount: number = 0;
 
   public play() {
     return undefined;
@@ -46,11 +44,7 @@ export class JetStreamMicroscrappers extends Card implements IActionCard, IResou
     const venusMaxed = player.game.getVenusScaleLevel() === MAX_VENUS_SCALE;
     const canSpendResource = this.resourceCount > 1 && !venusMaxed;
 
-    if (PartyHooks.shouldApplyPolicy(player.game, PartyName.REDS) && !venusMaxed) {
-      return player.titanium > 0 || (canSpendResource && player.canAfford(REDS_RULING_POLICY_COST));
-    }
-
-    return player.titanium > 0 || canSpendResource;
+    return player.titanium > 0 || (canSpendResource && player.canAfford(0, {tr: {venus: 1}}));
   }
 
   public action(player: Player) {

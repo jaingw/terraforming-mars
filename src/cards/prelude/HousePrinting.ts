@@ -1,11 +1,11 @@
-import {Tags} from '../Tags';
-import {CardType} from '../CardType';
+import {Tags} from '../../common/cards/Tags';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {Resources} from '../../Resources';
+import {Resources} from '../../common/Resources';
 import {Card} from '../Card';
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
-import {Units} from '../../Units';
+import {Units} from '../../common/Units';
 
 export class HousePrinting extends Card {
   constructor() {
@@ -15,6 +15,7 @@ export class HousePrinting extends Card {
       tags: [Tags.BUILDING],
       cost: 10,
       productionBox: Units.of({steel: 1}),
+      victoryPoints: 1,
 
       metadata: {
         cardNumber: 'P36',
@@ -22,15 +23,11 @@ export class HousePrinting extends Card {
           b.production((pb) => pb.steel(1));
         }),
         description: 'Increase your steel production 1 step.',
-        victoryPoints: 1,
       },
     });
   }
   public play(player: Player) {
     player.addProduction(Resources.STEEL, 1);
     return undefined;
-  }
-  public getVictoryPoints() {
-    return 1;
   }
 }

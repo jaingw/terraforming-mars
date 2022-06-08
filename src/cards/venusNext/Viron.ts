@@ -1,14 +1,14 @@
-import {CorporationCard} from '../corporation/CorporationCard';
+import {ICorporationCard} from '../corporation/ICorporationCard';
 import {Player} from '../../Player';
-import {Tags} from '../Tags';
-import {ICard} from '../ICard';
+import {Tags} from '../../common/cards/Tags';
+import {ICard, isIActionCard} from '../ICard';
 import {SelectCard} from '../../inputs/SelectCard';
 import {Card} from '../Card';
-import {CardName} from '../../CardName';
-import {CardType} from '../CardType';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
 import {CardRenderer} from '../render/CardRenderer';
 
-export class Viron extends Card implements ICard, CorporationCard {
+export class Viron extends Card implements ICard, ICorporationCard {
   constructor() {
     super({
       name: CardName.VIRON,
@@ -54,9 +54,7 @@ export class Viron extends Card implements ICard, CorporationCard {
     }
 
     for (const playedCard of player.playedCards) {
-      if (
-        playedCard.action !== undefined &&
-                    playedCard.canAct !== undefined &&
+      if (isIActionCard(playedCard) &&
                     player.getActionsThisGeneration().has(playedCard.name) &&
                     playedCard.canAct(player)) {
         result.push(playedCard);

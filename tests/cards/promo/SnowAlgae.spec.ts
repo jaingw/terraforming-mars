@@ -2,7 +2,7 @@ import {expect} from 'chai';
 import {SnowAlgae} from '../../../src/cards/promo/SnowAlgae';
 import {Game} from '../../../src/Game';
 import {Player} from '../../../src/Player';
-import {Resources} from '../../../src/Resources';
+import {Resources} from '../../../src/common/Resources';
 import {TestingUtils} from '../../TestingUtils';
 import {TestPlayers} from '../../TestPlayers';
 
@@ -17,12 +17,12 @@ describe('SnowAlgae', function() {
 
   it('Can\'t play', function() {
     TestingUtils.maxOutOceans(player, 1);
-    expect(card.canPlay(player)).is.not.true;
+    expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
 
   it('Should play', function() {
     TestingUtils.maxOutOceans(player, 2);
-    expect(card.canPlay(player)).is.true;
+    expect(player.canPlayIgnoringCost(card)).is.true;
 
     card.play(player);
     expect(player.getProduction(Resources.PLANTS)).to.eq(1);

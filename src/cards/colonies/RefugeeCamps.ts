@@ -1,14 +1,14 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
-import {CardType} from '../CardType';
+import {Tags} from '../../common/cards/Tags';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {CardName} from '../../CardName';
-import {ResourceType} from '../../ResourceType';
-import {Resources} from '../../Resources';
+import {CardName} from '../../common/cards/CardName';
+import {Resources} from '../../common/Resources';
+import {ResourceType} from '../../common/ResourceType';
 import {IResourceCard} from '../ICard';
 import {CardRenderer} from '../render/CardRenderer';
 import {Card} from '../Card';
-import {CardRenderDynamicVictoryPoints} from '../render/CardRenderDynamicVictoryPoints';
+import {VictoryPoints} from '../ICard';
 
 export class RefugeeCamps extends Card implements IProjectCard, IResourceCard {
   constructor() {
@@ -18,6 +18,7 @@ export class RefugeeCamps extends Card implements IProjectCard, IResourceCard {
       name: CardName.REFUGEE_CAMP,
       cardType: CardType.ACTIVE,
       resourceType: ResourceType.CAMP,
+      victoryPoints: VictoryPoints.resource(1, 1),
 
       metadata: {
         cardNumber: 'C33',
@@ -28,12 +29,11 @@ export class RefugeeCamps extends Card implements IProjectCard, IResourceCard {
           }).br;
           b.vpText('1 VP for each camp resource on this card.');
         }),
-        victoryPoints: CardRenderDynamicVictoryPoints.camps(1, 1),
       },
     });
   }
 
-  public resourceCount: number = 0;
+  public override resourceCount: number = 0;
 
   public canAct(player: Player): boolean {
     return player.getProduction(Resources.MEGACREDITS) >= -4;
@@ -47,10 +47,6 @@ export class RefugeeCamps extends Card implements IProjectCard, IResourceCard {
 
   public play() {
     return undefined;
-  }
-
-  public getVictoryPoints(): number {
-    return this.resourceCount;
   }
 }
 

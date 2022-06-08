@@ -1,12 +1,13 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Card} from '../Card';
-import {CardType} from '../CardType';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {Resources} from '../../Resources';
-import {CardName} from '../../CardName';
+import {Resources} from '../../common/Resources';
+import {CardName} from '../../common/cards/CardName';
 import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
+import {played} from '../Options';
 
 export class Worms extends Card implements IProjectCard {
   constructor() {
@@ -20,7 +21,7 @@ export class Worms extends Card implements IProjectCard {
       metadata: {
         cardNumber: '129',
         renderData: CardRenderer.builder((b) => {
-          b.production((pb) => pb.plants(1).slash().microbes(2).played);
+          b.production((pb) => pb.plants(1).slash().microbes(2, {played}));
         }),
         description: 'Requires 4% oxygen. Increase your Plant production 1 step for every 2 Microbe tags you have, including this.',
       },

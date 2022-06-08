@@ -1,24 +1,23 @@
 import {expect} from 'chai';
 import {CardRequirements} from '../../src/cards/CardRequirements';
-import {Player} from '../../src/Player';
 import {TestingUtils} from '../TestingUtils';
 import {TestPlayers} from '../TestPlayers';
 import {Game} from '../../src/Game';
 import {AdaptationTechnology} from '../../src/cards/base/AdaptationTechnology';
-import {TileType} from '../../src/TileType';
+import {TileType} from '../../src/common/TileType';
 import {Ants} from '../../src/cards/base/Ants';
-import {AresTestHelper} from '../ares/AresTestHelper';
 import {Ceres} from '../../src/colonies/Ceres';
 import {Celestic} from '../../src/cards/venusNext/Celestic';
-import {PartyName} from '../../src/turmoil/parties/PartyName';
-import {Tags} from '../../src/cards/Tags';
+import {PartyName} from '../../src/common/turmoil/PartyName';
+import {Tags} from '../../src/common/cards/Tags';
 import {ResearchCoordination} from '../../src/cards/prelude/ResearchCoordination';
-import {Resources} from '../../src/Resources';
+import {Resources} from '../../src/common/Resources';
 import {SmallAsteroid} from '../../src/cards/promo/SmallAsteroid';
 import {OrOptions} from '../../src/inputs/OrOptions';
+import {TestPlayer} from '../TestPlayer';
 
 describe('CardRequirements', function() {
-  let player: Player; let player2: Player;
+  let player: TestPlayer; let player2: TestPlayer;
   const adaptationTechnology = new AdaptationTechnology();
 
   beforeEach(function() {
@@ -43,7 +42,7 @@ describe('CardRequirements', function() {
   });
 
   it('satisfies properly for temperature max', function() {
-    const requirements = CardRequirements.builder((b) => b.temperature(-10).max());
+    const requirements = CardRequirements.builder((b) => b.temperature(-10, {max: true}));
     expect(requirements.satisfies(player)).eq(true);
     (player.game as any).temperature = -10;
     expect(requirements.satisfies(player)).eq(true);
@@ -94,7 +93,7 @@ describe('CardRequirements', function() {
   });
 
   it('satisfies properly for resourceTypes', function() {
-    const requirements = CardRequirements.builder((b) => b.resourceTypes(3).max());
+    const requirements = CardRequirements.builder((b) => b.resourceTypes(3, {max: true}));
     expect(requirements.satisfies(player)).eq(true);
     player.megaCredits = 10;
     player.steel = 2;
@@ -108,20 +107,20 @@ describe('CardRequirements', function() {
   });
 
   it('satisfies properly for greeneries', function() {
-    const requirements = CardRequirements.builder((b) => b.greeneries(2).max());
+    const requirements = CardRequirements.builder((b) => b.greeneries(2, {max: true}));
     expect(requirements.satisfies(player)).eq(true);
-    AresTestHelper.addGreenery(player);
+    TestingUtils.addGreenery(player);
     expect(requirements.satisfies(player)).eq(true);
-    AresTestHelper.addGreenery(player);
+    TestingUtils.addGreenery(player);
     expect(requirements.satisfies(player)).eq(true);
-    AresTestHelper.addGreenery(player2);
+    TestingUtils.addGreenery(player2);
     expect(requirements.satisfies(player)).eq(true);
-    AresTestHelper.addGreenery(player);
+    TestingUtils.addGreenery(player);
     expect(requirements.satisfies(player)).eq(false);
   });
 
   it('satisfies properly for cities', function() {
-    const requirements = CardRequirements.builder((b) => b.cities(2).any());
+    const requirements = CardRequirements.builder((b) => b.cities(2, {all: true}));
     expect(requirements.satisfies(player)).eq(false);
     player.game.addCityTile(player2, player.game.board.getAvailableSpacesForCity(player)[0].id);
     expect(requirements.satisfies(player)).eq(false);
@@ -173,13 +172,42 @@ describe('CardRequirements', function() {
   it('satisfies properly for different tags', function() {
     const requirements = CardRequirements.builder((b) => b.tag(Tags.MICROBE).tag(Tags.ANIMAL));
 
-    const researchCoordination = new ResearchCoordination();
-    player.playedCards.push(researchCoordination);
+    player.tagsForTest = {wild: 1};
     expect(requirements.satisfies(player)).eq(false);
 
-    const ants = new Ants();
-    player.playedCards.push(ants);
+    player.tagsForTest = {wild: 1, microbe: 1};
     expect(requirements.satisfies(player)).eq(true);
+  });
+
+  it('satisfies properly for max tag requirement', function() {
+    const requirements = CardRequirements.builder((b) => b.tag(Tags.MICROBE, 1, {max: true}));
+
+    player.tagsForTest = {microbe: 1};
+    expect(requirements.satisfies(player)).eq(true);
+
+    player.tagsForTest = {microbe: 2};
+    expect(requirements.satisfies(player)).eq(false);
+
+    player.tagsForTest = {microbe: 1, wild: 1};
+    expect(requirements.satisfies(player)).eq(true);
+  });
+
+  it('satisfies properly for any tag requirement', function() {
+    const requirements = CardRequirements.builder((b) => b.tag(Tags.MICROBE, 2, {all: true}));
+
+    player.tagsForTest = {microbe: 2};
+    expect(requirements.satisfies(player)).is.true;
+
+    player.tagsForTest = {microbe: 1};
+    expect(requirements.satisfies(player)).is.false;
+
+    player.tagsForTest = {microbe: 1};
+    player2.tagsForTest = {microbe: 1};
+    expect(requirements.satisfies(player)).is.true;
+
+    player.tagsForTest = {microbe: 0};
+    player2.tagsForTest = {microbe: 2};
+    expect(requirements.satisfies(player)).is.true;
   });
 
   it('satisfies properly for production', function() {
@@ -205,7 +233,8 @@ describe('CardRequirements', function() {
     const smallAsteroid = new SmallAsteroid();
     smallAsteroid.play(player);
     // Choose Remove 1 plant option
-    const orOptions = player.game.deferredActions.peek()!.execute() as OrOptions;
+    TestingUtils.runAllActions(player.game);
+    const orOptions = TestingUtils.cast(player.getWaitingFor(), OrOptions);
     orOptions.options[0].cb([player2]);
 
     expect(requirements.satisfies(player)).eq(true);

@@ -1,13 +1,13 @@
 
-import {Tags} from '../../Tags';
-import {CardName} from '../../../CardName';
+import {CardName} from '../../../common/cards/CardName';
+import {Tags} from '../../../common/cards/Tags';
 import {Viron} from '../../venusNext/Viron';
 
 export class _Viron_ extends Viron {
-  public get name() {
+  public override get name() {
     return CardName._VIRON_;
   }
-  public get tags() {
+  public override get tags() {
     return [Tags.WILDCARD];
   }
 }

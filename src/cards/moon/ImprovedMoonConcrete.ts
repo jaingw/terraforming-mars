@@ -1,8 +1,8 @@
-import {CardName} from '../../CardName';
-import {CardType} from '../CardType';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
 import {IProjectCard} from '../IProjectCard';
 import {CardRenderer} from '../render/CardRenderer';
-import {Units} from '../../Units';
+import {Units} from '../../common/Units';
 import {Player} from '../../Player';
 import {MoonExpansion} from '../../moon/MoonExpansion';
 import {MoonCard} from './MoonCard';
@@ -14,6 +14,7 @@ export class ImprovedMoonConcrete extends MoonCard implements IProjectCard {
       cardType: CardType.AUTOMATED,
       cost: 12,
       reserveUnits: Units.of({steel: 2}),
+      tr: {moonMining: 1},
 
       metadata: {
         description: 'Spend 2 steel. Raise the Mining Rate 1 step.',
@@ -28,7 +29,7 @@ export class ImprovedMoonConcrete extends MoonCard implements IProjectCard {
     });
   }
 
-  public play(player: Player) {
+  public override play(player: Player) {
     super.play(player);
     MoonExpansion.raiseMiningRate(player);
     return undefined;

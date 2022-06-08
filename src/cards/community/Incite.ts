@@ -1,14 +1,15 @@
-import {CorporationCard} from '../corporation/CorporationCard';
+import {ICorporationCard} from '../corporation/ICorporationCard';
 import {Player} from '../../Player';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Card} from '../Card';
-import {CardName} from '../../CardName';
-import {CardType} from '../CardType';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
 import {SendDelegateToArea} from '../../deferredActions/SendDelegateToArea';
 import {CardRenderer} from '../render/CardRenderer';
-import {Size} from '../render/Size';
+import {Size} from '../../common/cards/render/Size';
+import {TurmoilUtil} from '../../turmoil/TurmoilUtil';
 
-export class Incite extends Card implements CorporationCard {
+export class Incite extends Card implements ICorporationCard {
   constructor() {
     super({
       name: CardName.INCITE,
@@ -26,7 +27,7 @@ export class Incite extends Card implements CorporationCard {
           b.corpBox('effect', (ce) => {
             ce.vSpace(Size.LARGE);
             ce.effect(undefined, (eb) => {
-              eb.startEffect.influence(1);
+              eb.startEffect.influence();
             });
             ce.vSpace(Size.SMALL);
             ce.effect('You have +1 influence. When you send a delegate using the lobbying action, you pay 2 M€ less for it.', (eb) => {
@@ -38,17 +39,13 @@ export class Incite extends Card implements CorporationCard {
     });
   }
   public play(player: Player) {
-    if (player.game.turmoil) {
-      player.game.turmoil.addInfluenceBonus(player);
-    }
+    TurmoilUtil.getTurmoil(player.game).addInfluenceBonus(player);
     return undefined;
   }
 
   public initialAction(player: Player) {
-    if (player.game.turmoil) {
-      const title = 'Incite first action - Select where to send two delegates';
-      player.game.defer(new SendDelegateToArea(player, title, {count: 2, source: 'reserve'}));
-    }
+    const title = 'Incite first action - Select where to send two delegates';
+    player.game.defer(new SendDelegateToArea(player, title, {count: 2, source: 'reserve'}));
 
     return undefined;
   }

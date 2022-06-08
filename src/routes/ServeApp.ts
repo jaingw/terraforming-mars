@@ -8,7 +8,7 @@ export class ServeApp extends Handler {
   private constructor() {
     super();
   }
-  public get(req: http.IncomingMessage, res: http.ServerResponse, ctx: IContext): void {
+  public override get(req: http.IncomingMessage, res: http.ServerResponse, ctx: IContext): void {
     req.url = '/build/assets/index_ca.html';
     ServeAsset.INSTANCE.get(req, res, ctx);
   }

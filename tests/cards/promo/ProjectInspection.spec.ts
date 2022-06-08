@@ -6,8 +6,9 @@ import {Playwrights} from '../../../src/cards/community/Playwrights';
 import {Game} from '../../../src/Game';
 import {SelectCard} from '../../../src/inputs/SelectCard';
 import {ICard} from '../../../src/cards/ICard';
+import {IProjectCard} from '../../../src/cards/IProjectCard';
 import {Player} from '../../../src/Player';
-import {Resources} from '../../../src/Resources';
+import {Resources} from '../../../src/common/Resources';
 import {TestPlayers} from '../../TestPlayers';
 
 describe('ProjectInspection', function() {
@@ -27,7 +28,7 @@ describe('ProjectInspection', function() {
 
   it('Can\'t play if available actions can\'t act', function() {
     player.playedCards.push(restrictedArea);
-    player.setActionsThisGeneration(restrictedArea.name);
+    player.addActionThisGeneration(restrictedArea.name);
     player.megaCredits = 1;
 
     expect(card.canPlay(player)).is.not.true;
@@ -36,7 +37,7 @@ describe('ProjectInspection', function() {
   it('Should play', function() {
     player.playedCards.push(restrictedArea);
     player.addResource(Resources.MEGACREDITS, 2);
-    player.setActionsThisGeneration(restrictedArea.name);
+    player.addActionThisGeneration(restrictedArea.name);
     expect(card.canPlay(player)).is.true;
 
     const play = card.play(player);
@@ -47,7 +48,7 @@ describe('ProjectInspection', function() {
     const playwrights = new Playwrights();
     player.corpCard = playwrights;
 
-    player.setActionsThisGeneration(playwrights.name);
+    player.addActionThisGeneration(playwrights.name);
     expect(card.canPlay(player)).is.false; // PI -> PW -> ???
   });
 
@@ -56,7 +57,7 @@ describe('ProjectInspection', function() {
     const indenturedWorkers = new IndenturedWorkers();
     player.corpCard = playwrights;
     player.playedCards.push(indenturedWorkers);
-    player.setActionsThisGeneration(playwrights.name);
+    player.addActionThisGeneration(playwrights.name);
     expect(card.canPlay(player)).is.true; // PI -> PW -> PI -> PW -> IW
 
     player.playCard(card);
@@ -89,12 +90,12 @@ describe('ProjectInspection', function() {
     player.corpCard = playwrights;
     player.playedCards.push(card);
     player.playedCards.push(restrictedArea);
-    player.setActionsThisGeneration(restrictedArea.name);
-    player.setActionsThisGeneration(playwrights.name);
+    player.addActionThisGeneration(restrictedArea.name);
+    player.addActionThisGeneration(playwrights.name);
     player.addResource(Resources.MEGACREDITS, 2);
     expect(playwrights.canAct(player)).is.true; // PW -> PI -> RA
 
-    const action1 = playwrights.action(player) as SelectCard<ICard>;
+    const action1 = playwrights.action(player) as SelectCard<IProjectCard>;
     expect(action1).is.not.undefined;
     expect(action1.cards).has.lengthOf(1); // Only PI is available
     expect(action1.cards[0]?.name).eq(card.name);
@@ -113,11 +114,11 @@ describe('ProjectInspection', function() {
     player.corpCard = playwrights;
     player.playedCards.push(card);
     player.playedCards.push(indenturedWorkers);
-    player.setActionsThisGeneration(playwrights.name);
+    player.addActionThisGeneration(playwrights.name);
     player.addResource(Resources.MEGACREDITS, 2);
     expect(playwrights.canAct(player)).is.true; // PW -> PI -> PW -> IW
 
-    const action1 = playwrights.action(player) as SelectCard<ICard>;
+    const action1 = playwrights.action(player) as SelectCard<IProjectCard>;
     expect(action1).is.not.undefined;
     expect(action1.cards).has.lengthOf(2); // PI and IW are available
     expect(action1.cards[0]?.name).eq(card.name);

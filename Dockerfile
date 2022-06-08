@@ -1,29 +1,60 @@
-FROM node:lts-alpine
+# Intermediate image - base for building and installing dependencies
+FROM node:16.13.2-alpine3.15 AS install
 
-EXPOSE 8080
-
-LABEL maintainer="bafolts" \
-      name="terraforming-mars" \
-      Version="1.0"
-
-RUN mkdir -p /usr/src/app/db \
-   && addgroup -S tfm \
-   && adduser -S -D -h /usr/src/app tfm tfm \
-   && apk add --no-cache git
+# Install required tools
+RUN apk add --no-cache --virtual .gyp git python3 make g++ \
+  && ln -sf python3 /usr/bin/python
 
 WORKDIR /usr/src/app
 
-COPY package*.json ./
+# Install dependencies first, to cache the image.
+COPY ["package.json", "package-lock.json", "./"]
 
-RUN npm install
+# Install dependencies
+RUN npm ci
 
+
+# Create image for application building
+FROM install AS builder
+
+# Copy sources
 COPY . .
 
-RUN chown -R tfm:tfm /usr/src/app \
-   && npm run build \
-   && rm -rf .git \
-   && apk del git
+# Run building
+RUN npm run build 
+
+
+# Create image to prepare prod dependencies to be copied from
+FROM install AS installProd
+
+RUN npm ci --production --prefer-offline
+
+
+# Target image
+FROM node:16.13.2-alpine3.15
+
+WORKDIR /usr/src/app
+
+# Add user tfm
+RUN adduser -S -D -h /usr/src/app tfm \
+  && chown -R tfm:nogroup .
 
 USER tfm
 
-CMD [ "npm", "run", "start" ]
+# Copy required files.
+
+COPY ["package.json", "package-lock.json", "./"]
+
+# Copy dependencies from intermediate image
+COPY --from=installProd /usr/src/app/node_modules ./node_modules
+
+# Copy built app from intermediate image
+COPY --from=builder /usr/src/app/build ./build
+
+COPY --from=builder /usr/src/app/assets ./assets
+
+# Run command.
+
+EXPOSE 8080
+
+CMD npm run start

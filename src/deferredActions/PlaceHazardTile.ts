@@ -5,7 +5,7 @@ import {ISpace} from '../boards/ISpace';
 import {DeferredAction, Priority} from './DeferredAction';
 import {_AresHazardPlacement} from '../ares/AresHazards';
 import {LogHelper} from '../LogHelper';
-import {TileType} from '../TileType';
+import {TileType} from '../common/TileType';
 
 export class PlaceHazardTile implements DeferredAction {
   public priority = Priority.DEFAULT;

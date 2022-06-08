@@ -1,9 +1,9 @@
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {Player} from '../../Player';
-import {CardType} from '../CardType';
-import {Tags} from '../Tags';
+import {CardType} from '../../common/cards/CardType';
+import {Tags} from '../../common/cards/Tags';
 import {CardRenderer} from '../render/CardRenderer';
-import {Units} from '../../Units';
+import {Units} from '../../common/Units';
 import {MoonCard} from './MoonCard';
 
 export class ArchimedesHydroponicsStation extends MoonCard {
@@ -27,9 +27,9 @@ export class ArchimedesHydroponicsStation extends MoonCard {
     }, {
       // No moon card properties.
     });
-  };
+  }
 
-  public play(player: Player) {
+  public override play(player: Player) {
     player.adjustProduction(this.productionBox, {log: true});
     return undefined;
   }

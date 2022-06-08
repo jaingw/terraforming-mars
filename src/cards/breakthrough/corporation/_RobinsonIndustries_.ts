@@ -1,19 +1,19 @@
 
+import {CardName} from '../../../common/cards/CardName';
+import {Resources} from '../../../common/Resources';
 import {Player} from '../../../Player';
-import {Resources} from '../../../Resources';
-import {CardName} from '../../../CardName';
 import {RobinsonIndustries} from '../../prelude/RobinsonIndustries';
 import {CardRenderer} from '../../render/CardRenderer';
 
 export class _RobinsonIndustries_ extends RobinsonIndustries {
-  public get name() {
+  public override get name() {
     return CardName._ROBINSON_INDUSTRIES_;
   }
 
-  public canAct(player: Player): boolean {
+  public override canAct(player: Player): boolean {
     return player.canAfford(3);
   }
-  public get metadata() {
+  public override get metadata() {
     return {
       cardNumber: 'R27',
       description: 'You start with 47 M€.',
@@ -29,7 +29,7 @@ export class _RobinsonIndustries_ extends RobinsonIndustries {
     };
   }
 
-  public increaseAndLogProduction(player: Player, resource: Resources) {
+  public override increaseAndLogProduction(player: Player, resource: Resources) {
     player.deductResource(Resources.MEGACREDITS, 3);
     player.addProduction(resource, 1, {log: true});
     const number = player.getProduction(resource);

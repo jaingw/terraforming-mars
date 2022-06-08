@@ -1,17 +1,19 @@
 import {ICard} from './ICard';
 import {Player} from '../Player';
-import {Resources} from '../Resources';
-import {Units} from '../Units';
+import {Resources} from '../common/Resources';
+import {Units} from '../common/Units';
 
 export interface IProjectCard extends ICard {
-    canPlay?: (player: Player) => boolean;
+    canPlay: (player: Player) => boolean;
     cost: number;
 
-    // A field dedicated to Robotic Workforce which tracks whether a card has an additional production
-    // bonus besides the obvious ones printed on the card. Mining Rights and Mining Area are the only
-    // two that use this field at the time (though don't expect this comment to be kept up to date if
-    // that changes.)
-    bonusResource?: Resources | undefined;
+    // This field serves two purposes:
+    // It's used by Robotic Workforce to track production bonuses that are game-specific
+    // (Mining Rights, Mining Area, their Ares equivalents, and Pathfinders' Specialized Settlement all apply.)
+    //
+    // It's also used when rendering the card to indicate which production bonus it might have received, as
+    // a visual cue for someone playing Robotic Workforce.
+    bonusResource?: Array<Resources>;
 
     // Represents resources held in reserve when paying for a card.
     // Cards that require a unit of steel while playing, for instance.

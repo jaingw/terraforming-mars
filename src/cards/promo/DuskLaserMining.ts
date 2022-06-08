@@ -1,12 +1,13 @@
 import {IProjectCard} from '../IProjectCard';
-import {CardName} from '../../CardName';
-import {CardType} from '../CardType';
-import {Tags} from '../Tags';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
+import {Tags} from '../../common/cards/Tags';
 import {Player} from '../../Player';
-import {Resources} from '../../Resources';
+import {Resources} from '../../common/Resources';
 import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
 import {Card} from '../Card';
+import {digit} from '../Options';
 
 export class DuskLaserMining extends Card implements IProjectCard {
   constructor() {
@@ -24,14 +25,14 @@ export class DuskLaserMining extends Card implements IProjectCard {
           b.production((pb) => {
             pb.minus().energy(1).br;
             pb.plus().titanium(1);
-          }).nbsp.titanium(4).digit;
+          }).nbsp.titanium(4, {digit});
         }),
       },
     });
   }
 
-  public canPlay(player: Player): boolean {
-    return super.canPlay(player) && player.getProduction(Resources.ENERGY) >= 1;
+  public override canPlay(player: Player): boolean {
+    return player.getProduction(Resources.ENERGY) >= 1;
   }
 
   public play(player: Player) {

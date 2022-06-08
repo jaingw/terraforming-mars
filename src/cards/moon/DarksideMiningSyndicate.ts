@@ -1,11 +1,11 @@
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {Player} from '../../Player';
-import {CardType} from '../CardType';
+import {CardType} from '../../common/cards/CardType';
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {CardRenderer} from '../render/CardRenderer';
 import {MoonExpansion} from '../../moon/MoonExpansion';
-import {Resources} from '../../Resources';
+import {Resources} from '../../common/Resources';
 import {Card} from '../Card';
 
 export class DarksideMiningSyndicate extends Card implements IProjectCard {
@@ -15,6 +15,7 @@ export class DarksideMiningSyndicate extends Card implements IProjectCard {
       cardType: CardType.AUTOMATED,
       tags: [Tags.MOON, Tags.SPACE],
       cost: 18,
+      tr: {moonMining: 1},
 
       metadata: {
         description: 'Increase your Titanium production 2 steps, or ' +
@@ -27,11 +28,11 @@ export class DarksideMiningSyndicate extends Card implements IProjectCard {
         }),
       },
     });
-  };
+  }
 
   public play(player: Player) {
     const productionBonus = (MoonExpansion.moonData(player.game).miningRate >= 2) ? 1 : 2;
-    player.addProduction(Resources.TITANIUM, productionBonus);
+    player.addProduction(Resources.TITANIUM, productionBonus, {log: true});
     MoonExpansion.raiseMiningRate(player);
     return undefined;
   }

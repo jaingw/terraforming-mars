@@ -1,5 +1,5 @@
-import {CardName} from '../../CardName';
-import {GameModule} from '../../GameModule';
+import {CardName} from '../../common/cards/CardName';
+import {GameModule} from '../../common/cards/GameModule';
 import {CardManifest} from '../CardManifest';
 import {AerialMappers} from './AerialMappers';
 import {AerosportTournament} from './AerosportTournament';
@@ -56,6 +56,7 @@ import {VenusSoils} from './VenusSoils';
 import {VenusWaystation} from './VenusWaystation';
 import {Viron} from './Viron';
 import {WaterToVenus} from './WaterToVenus';
+import {AirScrappingStandardProjectVariant} from './AirScrappingStandardProjectVariant';
 
 export const VENUS_CARD_MANIFEST = new CardManifest({
   module: GameModule.Venus,
@@ -112,12 +113,13 @@ export const VENUS_CARD_MANIFEST = new CardManifest({
   ],
   standardProjects: [
     {cardName: CardName.AIR_SCRAPPING_STANDARD_PROJECT, Factory: AirScrappingStandardProject},
+    {cardName: CardName.AIR_SCRAPPING_STANDARD_PROJECT_VARIANT, Factory: AirScrappingStandardProjectVariant},
   ],
 
   corporationCards: [
-    {cardName: CardName.APHRODITE, Factory: Aphrodite},
-    {cardName: CardName.CELESTIC, Factory: Celestic},
+    {cardName: CardName.APHRODITE, Factory: Aphrodite, compatibility: GameModule.Venus},
+    {cardName: CardName.CELESTIC, Factory: Celestic, compatibility: GameModule.Venus},
     {cardName: CardName.MANUTECH, Factory: Manutech},
-    {cardName: CardName.MORNING_STAR_INC, Factory: MorningStarInc},
+    {cardName: CardName.MORNING_STAR_INC, Factory: MorningStarInc, compatibility: GameModule.Venus},
     {cardName: CardName.VIRON, Factory: Viron},
   ]});

@@ -9,6 +9,7 @@ import {expect} from 'chai';
 import {SelectHowToPayDeferred} from '../../../src/deferredActions/SelectHowToPayDeferred';
 import {PlaceMoonRoadTile} from '../../../src/moon/PlaceMoonRoadTile';
 import {MooncrateBlockFactory} from '../../../src/cards/moon/MooncrateBlockFactory';
+import {Phase} from '../../../src/common/Phase';
 
 const MOON_OPTIONS = TestingUtils.setCustomGameOptions({moonExpansion: true});
 
@@ -26,7 +27,18 @@ describe('MoonRoadStandardProject', () => {
   });
 
   it('can act', () => {
-    // 1. Have the money? And the steel?
+    player.steel = 0;
+    player.megaCredits = 18;
+    expect(player.canPlay(card)).is.false;
+
+    player.steel = 1;
+    player.megaCredits = 17;
+    expect(player.canPlay(card)).is.false;
+
+    player.steel = 1;
+    player.megaCredits = 18;
+    expect(player.canPlay(card)).is.true;
+
     // 2. Are there spaces on the moon for a Road?
   });
 
@@ -57,6 +69,21 @@ describe('MoonRoadStandardProject', () => {
 
     expect(moonData.logisticRate).eq(1);
     expect(player.getTerraformRating()).eq(15);
+  });
+
+
+  it('can act when Reds are in power.', () => {
+    const player = TestPlayers.BLUE.newPlayer();
+    const game = Game.newInstance('foobar', [player], player, MOON_OPTIONS);
+    const moonData = MoonExpansion.moonData(game);
+    game.phase = Phase.ACTION;
+
+    // Card requirements
+    player.steel = 1;
+
+    TestingUtils.testRedsCosts(() => card.canAct(player), player, card.cost, 3);
+    moonData.logisticRate = 8;
+    TestingUtils.testRedsCosts(() => card.canAct(player), player, card.cost, 0);
   });
 });
 

@@ -2,14 +2,14 @@
 import {IProjectCard} from '../IProjectCard';
 import {Player} from '../../Player';
 import {Card} from '../Card';
-import {CardType} from '../CardType';
-import {Tags} from '../Tags';
+import {CardType} from '../../common/cards/CardType';
+import {Tags} from '../../common/cards/Tags';
 import {SelectSpace} from '../../inputs/SelectSpace';
 import {ISpace} from '../../boards/ISpace';
-import {Resources} from '../../Resources';
-import {CardName} from '../../CardName';
+import {Resources} from '../../common/Resources';
+import {CardName} from '../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
-import {Units} from '../../Units';
+import {Units} from '../../common/Units';
 
 export class CorporateStronghold extends Card implements IProjectCard {
   constructor() {
@@ -19,6 +19,7 @@ export class CorporateStronghold extends Card implements IProjectCard {
       tags: [Tags.CITY, Tags.BUILDING],
       cost: 11,
       productionBox: Units.of({energy: -1, megacredits: 3}),
+      victoryPoints: -2,
 
       metadata: {
         cardNumber: '182',
@@ -29,11 +30,10 @@ export class CorporateStronghold extends Card implements IProjectCard {
             pb.plus().megacredits(3);
           }).nbsp.nbsp.city();
         }),
-        victoryPoints: -2,
       },
     });
   }
-  public canPlay(player: Player): boolean {
+  public override canPlay(player: Player): boolean {
     return player.getProduction(Resources.ENERGY) >= 1 &&
       player.game.board.getAvailableSpacesForCity(player).length > 0;
   }
@@ -48,8 +48,5 @@ export class CorporateStronghold extends Card implements IProjectCard {
         return undefined;
       },
     );
-  }
-  public getVictoryPoints() {
-    return -2;
   }
 }

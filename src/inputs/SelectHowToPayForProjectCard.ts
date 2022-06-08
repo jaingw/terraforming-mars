@@ -1,8 +1,8 @@
 import {PlayerInput} from '../PlayerInput';
-import {PlayerInputTypes} from '../PlayerInputTypes';
-import {HowToPay} from './HowToPay';
+import {PlayerInputTypes} from '../common/input/PlayerInputTypes';
+import {HowToPay} from '../common/inputs/HowToPay';
 import {IProjectCard} from '../cards/IProjectCard';
-import {Units} from '../Units';
+import {Units} from '../common/Units';
 import {MoonExpansion} from '../moon/MoonExpansion';
 import {Player} from '../Player';
 
@@ -14,6 +14,8 @@ export class SelectHowToPayForProjectCard implements PlayerInput {
   public microbes: number;
   public floaters: number;
   public canUseHeat: boolean;
+  public scienceResources: number;
+  public seedResources: number;
   public reserveUnits: Array<Units>;
 
   constructor(
@@ -23,6 +25,8 @@ export class SelectHowToPayForProjectCard implements PlayerInput {
     this.microbes = player.getMicrobesCanSpend();
     this.floaters = player.getFloatersCanSpend();
     this.canUseHeat = player.canUseHeatAsMegaCredits;
+    this.scienceResources = player.getSpendableScienceResources();
+    this.seedResources = player.getSpendableSeedResources();
     this.reserveUnits = this.cards.map((card) => {
       return card.reserveUnits ? MoonExpansion.adjustedReserveCosts(player, card) : Units.EMPTY;
     });

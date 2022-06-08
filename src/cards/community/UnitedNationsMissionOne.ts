@@ -1,14 +1,15 @@
-import {CorporationCard} from '../corporation/CorporationCard';
-import {Tags} from '../Tags';
-import {CardName} from '../../CardName';
-import {CardType} from '../CardType';
 import {CardRenderer} from '../render/CardRenderer';
 import {Card} from '../Card';
 import {Game} from '../../Game';
 import {Player} from '../../Player';
-import {Phase} from '../../Phase';
+import {all} from '../Options';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
+import {Tags} from '../../common/cards/Tags';
+import {Phase} from '../../common/Phase';
+import {ICorporationCard} from '../corporation/ICorporationCard';
 
-export class UnitedNationsMissionOne extends Card implements CorporationCard {
+export class UnitedNationsMissionOne extends Card implements ICorporationCard {
   constructor() {
     super({
       cardType: CardType.CORPORATION,
@@ -25,7 +26,7 @@ export class UnitedNationsMissionOne extends Card implements CorporationCard {
           b.corpBox('effect', (ce) => {
             ce.vSpace();
             ce.effect('When any player takes an action or plays a card that increases TR, including this, gain 1 M€ for each step.', (eb) => {
-              eb.tr(1).any.startEffect.megacredits(1);
+              eb.tr(1, {all}).startEffect.megacredits(1);
             });
           });
         }),

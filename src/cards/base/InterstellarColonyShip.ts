@@ -1,9 +1,8 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Card} from '../Card';
-import {CardType} from '../CardType';
-import {Player} from '../../Player';
-import {CardName} from '../../CardName';
+import {CardType} from '../../common/cards/CardType';
+import {CardName} from '../../common/cards/CardName';
 import {CardRequirements} from '../CardRequirements';
 
 export class InterstellarColonyShip extends Card implements IProjectCard {
@@ -13,22 +12,16 @@ export class InterstellarColonyShip extends Card implements IProjectCard {
       name: CardName.INTERSTELLAR_COLONY_SHIP,
       tags: [Tags.EARTH, Tags.SPACE],
       cost: 24,
+      victoryPoints: 4,
 
       requirements: CardRequirements.builder((b) => b.tag(Tags.SCIENCE, 5)),
       metadata: {
         description: 'Requires that you have 5 Science tags.',
         cardNumber: '027',
-        victoryPoints: 4,
       },
     });
   }
-  public play(player: Player) {
-    if (player.getTagCount(Tags.SCIENCE) < 5) {
-      throw 'Requires 5 science tags.';
-    }
+  public play() {
     return undefined;
-  }
-  public getVictoryPoints() {
-    return 4;
   }
 }

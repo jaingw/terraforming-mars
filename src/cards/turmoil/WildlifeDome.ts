@@ -1,14 +1,12 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Card} from '../Card';
-import {CardName} from '../../CardName';
-import {CardType} from '../CardType';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {PartyName} from '../../turmoil/parties/PartyName';
+import {PartyName} from '../../common/turmoil/PartyName';
 import {SelectSpace} from '../../inputs/SelectSpace';
 import {ISpace} from '../../boards/ISpace';
-import {PartyHooks} from '../../turmoil/parties/PartyHooks';
-import {REDS_RULING_POLICY_COST, MAX_OXYGEN_LEVEL} from '../../constants';
 import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
 
@@ -20,6 +18,7 @@ export class WildlifeDome extends Card implements IProjectCard {
       tags: [Tags.ANIMAL, Tags.PLANT, Tags.BUILDING],
       cardType: CardType.AUTOMATED,
       requirements: CardRequirements.builder((b) => b.party(PartyName.GREENS)),
+      tr: {oxygen: 1},
 
       metadata: {
         cardNumber: 'T15',
@@ -31,21 +30,8 @@ export class WildlifeDome extends Card implements IProjectCard {
     });
   }
 
-  public canPlay(player: Player): boolean {
-    if (!super.canPlay(player)) {
-      return false;
-    }
-    if (player.game.turmoil !== undefined) {
-      const canPlaceTile = player.game.board.getAvailableSpacesForGreenery(player).length > 0;
-      const oxygenMaxed = player.game.getOxygenLevel() === MAX_OXYGEN_LEVEL;
-
-      if (PartyHooks.shouldApplyPolicy(player.game, PartyName.REDS) && !oxygenMaxed) {
-        return player.canAfford(player.getCardCost(this) + REDS_RULING_POLICY_COST, {steel: true, microbes: true}) && canPlaceTile;
-      }
-
-      return canPlaceTile;
-    }
-    return false;
+  public override canPlay(player: Player): boolean {
+    return player.game.board.getAvailableSpacesForGreenery(player).length > 0;
   }
 
   public play(player: Player) {

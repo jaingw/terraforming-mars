@@ -9,12 +9,14 @@ import {Game} from '../../src/Game';
 import {IMoonData} from '../../src/moon/IMoonData';
 import {MoonExpansion} from '../../src/moon/MoonExpansion';
 import {MoonSpaces} from '../../src/moon/MoonSpaces';
-import {Resources} from '../../src/Resources';
+import {Resources} from '../../src/common/Resources';
 import {SpaceName} from '../../src/SpaceName';
-import {TileType} from '../../src/TileType';
+import {TileType} from '../../src/common/TileType';
 import {TestingUtils} from '../TestingUtils';
 import {TestPlayer} from '../TestPlayer';
 import {TestPlayers} from '../TestPlayers';
+import {Phase} from '../../src/common/Phase';
+import {VictoryPointsBreakdown} from '../../src/VictoryPointsBreakdown';
 
 const MOON_OPTIONS = TestingUtils.setCustomGameOptions({moonExpansion: true});
 
@@ -75,19 +77,35 @@ describe('MoonExpansion', () => {
     expect(player.getTerraformRating()).eq(21);
   });
 
+  it('raiseColonyRate', () => {
+    expect(moonData.colonyRate).to.eq(0);
+    expect(player.getTerraformRating()).eq(20);
+    MoonExpansion.raiseColonyRate(player);
+    expect(moonData.colonyRate).to.eq(1);
+    expect(player.getTerraformRating()).eq(21);
+  });
+
+  it('raiseLogisticsRate', () => {
+    expect(moonData.logisticRate).to.eq(0);
+    expect(player.getTerraformRating()).eq(20);
+    MoonExpansion.raiseLogisticRate(player);
+    expect(moonData.logisticRate).to.eq(1);
+    expect(player.getTerraformRating()).eq(21);
+  });
+
   it('computeVictoryPoints', () => {
-    const vps = player.victoryPointsBreakdown;
+    const vps = new VictoryPointsBreakdown();
     function computeVps() {
-      vps.moonColonies = 0;
-      vps.moonMines = 0;
-      vps.moonRoads = 0;
+      vps.points.moonColonies = 0;
+      vps.points.moonMines = 0;
+      vps.points.moonRoads = 0;
       MoonExpansion.calculateVictoryPoints(player, vps);
       return {
-        colonies: vps.moonColonies,
-        mines: vps.moonMines,
-        roads: vps.moonRoads,
+        colonies: vps.points.moonColonies,
+        mines: vps.points.moonMines,
+        roads: vps.points.moonRoads,
       };
-    };
+    }
 
     expect(computeVps()).eql({colonies: 0, mines: 0, roads: 0});
     MoonExpansion.addTile(player, 'm02', {tileType: TileType.MOON_ROAD});
@@ -152,9 +170,9 @@ describe('MoonExpansion', () => {
 
   it('Raise colony rate bonus 5-6', () => {
     moonData.colonyRate = 5;
-    player.cardsInHand = [];
+    player.setProductionForTest({energy: 0});
     MoonExpansion.raiseColonyRate(player, 1);
-    expect(player.cardsInHand).has.length(1);
+    expect(player.getProduction(Resources.ENERGY)).eq(1);
   });
 
   it('Moon parameters are global parameters', () => {
@@ -171,8 +189,35 @@ describe('MoonExpansion', () => {
 
     // Gives a +2/-2 on the next action
     player.playedCards = [specialDesign];
-    player.lastCardPlayed = specialDesign;
+    player.lastCardPlayed = specialDesign.name;
 
     expect(player.getPlayableCards()).does.include(card);
+  });
+
+  it('raiseMiningRate during WGT', () => {
+    game.phase = Phase.SOLAR;
+    expect(moonData.miningRate).to.eq(0);
+    expect(player.getTerraformRating()).eq(20);
+    MoonExpansion.raiseMiningRate(player);
+    expect(moonData.miningRate).to.eq(1);
+    expect(player.getTerraformRating()).eq(20);
+  });
+
+  it('raiseColonyRate during WGT', () => {
+    game.phase = Phase.SOLAR;
+    expect(moonData.colonyRate).to.eq(0);
+    expect(player.getTerraformRating()).eq(20);
+    MoonExpansion.raiseColonyRate(player);
+    expect(moonData.colonyRate).to.eq(1);
+    expect(player.getTerraformRating()).eq(20);
+  });
+
+  it('raiseLogisticsRate during WGT', () => {
+    game.phase = Phase.SOLAR;
+    expect(moonData.logisticRate).to.eq(0);
+    expect(player.getTerraformRating()).eq(20);
+    MoonExpansion.raiseLogisticRate(player);
+    expect(moonData.logisticRate).to.eq(1);
+    expect(player.getTerraformRating()).eq(20);
   });
 });

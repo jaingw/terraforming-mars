@@ -1,51 +1,50 @@
 import {AddResourcesToCard} from '../deferredActions/AddResourcesToCard';
-import {CardName} from '../CardName';
+import {CardName} from '../common/cards/CardName';
 import {ColonyBenefit} from './ColonyBenefit';
-import {ColonyModel} from '../models/ColonyModel';
-import {ColonyName} from './ColonyName';
+import {ColonyName} from '../common/colonies/ColonyName';
 import {DeferredAction, Priority} from '../deferredActions/DeferredAction';
 import {DiscardCards} from '../deferredActions/DiscardCards';
 import {DrawCards} from '../deferredActions/DrawCards';
 import {GiveColonyBonus} from '../deferredActions/GiveColonyBonus';
 import {IncreaseColonyTrack} from '../deferredActions/IncreaseColonyTrack';
 import {LogHelper} from '../LogHelper';
-import {MAX_COLONY_TRACK_POSITION, PLAYER_DELEGATES_COUNT} from '../constants';
+import {MAX_COLONY_TRACK_POSITION, PLAYER_DELEGATES_COUNT} from '../common/constants';
 import {PlaceOceanTile} from '../deferredActions/PlaceOceanTile';
 import {Player} from '../Player';
 import {PlayerInput} from '../PlayerInput';
-import {ResourceType} from '../ResourceType';
-import {Resources} from '../Resources';
+import {Resources} from '../common/Resources';
+import {ResourceType} from '../common/ResourceType';
 import {ScienceTagCard} from '../cards/community/ScienceTagCard';
 import {SelectColony} from '../inputs/SelectColony';
 import {SelectPlayer} from '../inputs/SelectPlayer';
-import {SerializedColony} from '../SerializedColony';
 import {StealResources} from '../deferredActions/StealResources';
-import {Tags} from '../cards/Tags';
+import {Tags} from '../common/cards/Tags';
 import {SendDelegateToArea} from '../deferredActions/SendDelegateToArea';
 import {Game} from '../Game';
+import {TurmoilUtil} from '../turmoil/TurmoilUtil';
+import {ShouldIncreaseTrack} from '../common/colonies/ShouldIncreaseTrack';
+import {IColony, TradeOptions} from './IColony';
 
-export enum ShouldIncreaseTrack { YES, NO, ASK }
+export abstract class Colony implements IColony {
+    public abstract readonly name: ColonyName;
 
-export abstract class Colony implements SerializedColony {
-    public abstract name: ColonyName;
-    public abstract description: string;
-
+    // isActive represents when the colony is part of the game, or "back in the box", as it were.
     public isActive: boolean = true;
     public visitor: undefined | Player = undefined;
     public colonies: Array<Player> = [];
     public trackPosition: number = 1;
-    public resourceType?: ResourceType;
+    public readonly resourceType?: ResourceType;
 
-    public abstract buildType: ColonyBenefit;
-    public buildQuantity: Array<number> = [1, 1, 1];
-    public buildResource?: Resources;
-    public abstract tradeType: ColonyBenefit;
-    public tradeQuantity: Array<number> = [1, 1, 1, 1, 1, 1, 1];
-    public tradeResource?: Resources | Array<Resources>;
-    public abstract colonyBonusType: ColonyBenefit;
-    public colonyBonusQuantity: number = 1;
-    public colonyBonusResource?: Resources;
-    public shouldIncreaseTrack: ShouldIncreaseTrack = ShouldIncreaseTrack.YES;
+    public abstract readonly buildType: ColonyBenefit;
+    public readonly buildQuantity: Array<number> = [1, 1, 1];
+    public readonly buildResource?: Resources;
+    public abstract readonly tradeType: ColonyBenefit;
+    public readonly tradeQuantity: Array<number> = [1, 1, 1, 1, 1, 1, 1];
+    public readonly tradeResource?: Resources | Array<Resources>;
+    public abstract readonly colonyBonusType: ColonyBenefit;
+    public readonly colonyBonusQuantity: number = 1;
+    public readonly colonyBonusResource?: Resources;
+    public readonly shouldIncreaseTrack: ShouldIncreaseTrack = ShouldIncreaseTrack.YES;
 
 
     public endGeneration(game: Game): void {
@@ -76,10 +75,13 @@ export abstract class Colony implements SerializedColony {
       return this.colonies.length >= 3;
     }
 
-    public addColony(player: Player): void {
+    public addColony(player: Player, options?: {giveBonusTwice: boolean}): void {
       player.game.log('${0} built a colony on ${1}', (b) => b.player(player).colony(this));
 
       this.giveBonus(player, this.buildType, this.buildQuantity[this.colonies.length], this.buildResource);
+      if (options?.giveBonusTwice === true) { // Vital Colony hook.
+        this.giveBonus(player, this.buildType, this.buildQuantity[this.colonies.length], this.buildResource);
+      }
 
       this.colonies.push(player);
       if (this.trackPosition < this.colonies.length) {
@@ -93,14 +95,25 @@ export abstract class Colony implements SerializedColony {
       }
     }
 
-    public trade(player: Player, bonusTradeOffset: number = 0, usesTradeFleet: boolean = true, decreaseTrackAfterTrade: boolean = true): void {
+    /*
+     * Trade with this colony.
+     *
+     * Before passing off the trade, this determines whether the track should advance prior to trading, and then
+     * hands off the real work to `handleTrade`.
+     *
+     * @param bonusTradeOffset an offset that allows a player to increase the colony tile track marker before trading.
+     * @param usesTradeFleet when false, the player can trade without an available trade fleet.
+     * @param decreaseTrackAfterTrade when false, the track does not decrease after trading.
+     * @returns
+     */
+    public trade(player: Player, tradeOptions: TradeOptions = {}, bonusTradeOffset = 0): void {
       const tradeOffset = player.colonyTradeOffset + bonusTradeOffset;
       const maxTrackPosition = Math.min(this.trackPosition + tradeOffset, MAX_COLONY_TRACK_POSITION);
       const steps = maxTrackPosition - this.trackPosition;
 
       if (steps === 0 || this.shouldIncreaseTrack === ShouldIncreaseTrack.NO) {
         // Don't increase
-        this.handleTrade(player, usesTradeFleet, decreaseTrackAfterTrade);
+        this.handleTrade(player, tradeOptions);
         return;
       }
 
@@ -108,7 +121,7 @@ export abstract class Colony implements SerializedColony {
         // No point in asking the player, just increase it
         this.increaseTrack(steps);
         LogHelper.logColonyTrackIncrease(player, this, steps);
-        this.handleTrade(player, usesTradeFleet, decreaseTrackAfterTrade);
+        this.handleTrade(player, tradeOptions);
         return;
       }
 
@@ -117,21 +130,23 @@ export abstract class Colony implements SerializedColony {
         player,
         this,
         steps,
-        () => this.handleTrade(player, usesTradeFleet, decreaseTrackAfterTrade),
+        () => this.handleTrade(player, tradeOptions),
       ));
     }
 
-    private handleTrade(player: Player, usesTradeFleet: boolean, decreaseTrackAfterTrade: boolean, giveColonyBonuses: boolean = true) {
+    private handleTrade(player: Player, options: TradeOptions) {
       const resource = Array.isArray(this.tradeResource) ? this.tradeResource[this.trackPosition] : this.tradeResource;
       const num = this.tradeQuantity[this.trackPosition];
       this.giveBonus(player, this.tradeType, num, resource);
 
-      if (giveColonyBonuses) {
+      // !== false because default is true.
+      if (options.giveColonyBonuses !== false) {
         // 殖民者贸易奖励
-        player.game.defer(new GiveColonyBonus(player, this));
+        player.game.defer(new GiveColonyBonus(player, this, options.selfishTrade));
       }
 
-      if (usesTradeFleet) {
+      // !== false because default is true.
+      if (options.usesTradeFleet !== false) {
         this.visitor = player;
         // TradeNavigator
         player.tradesThisGeneration++;
@@ -141,14 +156,15 @@ export abstract class Colony implements SerializedColony {
             .find((player) => player.isCorporation(CardName.TRADE_NAVIGATOR));
           if (TradingNavigator !== undefined) {
             this.giveBonus(TradingNavigator, this.tradeType, num, resource);
-            if (giveColonyBonuses) {
-              player.game.defer(new GiveColonyBonus(player, this));
+            if (options.giveColonyBonuses) {
+              player.game.defer(new GiveColonyBonus(player, this, options.selfishTrade));
             }
           }
         }
       }
 
-      if (decreaseTrackAfterTrade) {
+      // !== false because default is true.
+      if (options.decreaseTrackAfterTrade !== false) {
         player.game.defer(new DeferredAction(player, () => {
           this.trackPosition = this.colonies.length;
           return undefined;
@@ -177,16 +193,14 @@ export abstract class Colony implements SerializedColony {
 
       case ColonyBenefit.COPY_TRADE:
         const openColonies = game.colonies.filter((colony) => colony.isActive);
-        const coloniesModel: Array<ColonyModel> = game.getColoniesModel(openColonies);
         action = new DeferredAction(
           player,
-          () => new SelectColony('Select colony to gain trade income from', 'Select', coloniesModel, (colonyName: ColonyName) => {
-            openColonies.forEach((colony) => {
-              if (colony.name === colonyName) {
-                game.log('${0} gained ${1} trade bonus', (b) => b.player(player).colony(colony));
-                colony.handleTrade(player, false, false, false);
-              }
-              return undefined;
+          () => new SelectColony('Select colony to gain trade income from', 'Select', openColonies, (colony: IColony) => {
+            game.log('${0} gained ${1} trade bonus', (b) => b.player(player).colony(colony));
+            (colony as Colony).handleTrade(player, {
+              usesTradeFleet: false,
+              decreaseTrackAfterTrade: false,
+              giveColonyBonuses: false,
             });
             return undefined;
           }),
@@ -232,16 +246,16 @@ export abstract class Colony implements SerializedColony {
         break;
 
       case ColonyBenefit.GAIN_INFLUENCE:
-        if (game.turmoil !== undefined) {
-          game.turmoil.addInfluenceBonus(player);
+        TurmoilUtil.ifTurmoil(game, (turmoil) => {
+          turmoil.addInfluenceBonus(player);
           game.log('${0} gained 1 influence', (b) => b.player(player));
-        }
+        });
         break;
 
       case ColonyBenefit.PLACE_DELEGATES:
-        if (game.turmoil !== undefined) {
-          const playerHasLobbyDelegate = game.turmoil.lobby.has(player.id);
-          let availablePlayerDelegates = game.turmoil.getDelegatesInReserve(player);
+        TurmoilUtil.ifTurmoil(game, (turmoil) => {
+          const playerHasLobbyDelegate = turmoil.lobby.has(player.id);
+          let availablePlayerDelegates = turmoil.getAvailableDelegateCount(player, 'reserve');
           if (playerHasLobbyDelegate) availablePlayerDelegates += 1;
 
           const qty = Math.min(quantity, availablePlayerDelegates);
@@ -250,24 +264,23 @@ export abstract class Colony implements SerializedColony {
             const fromLobby = (i === qty - 1 && qty === availablePlayerDelegates && playerHasLobbyDelegate);
             game.defer(new SendDelegateToArea(player, 'Select where to send delegate', {source: fromLobby ? 'lobby' : 'reserve'}));
           }
-        }
+        });
         break;
 
       case ColonyBenefit.GIVE_MC_PER_DELEGATE:
-        if (game.turmoil !== undefined) {
-          let partyDelegateCount = PLAYER_DELEGATES_COUNT - game.turmoil.getDelegatesInReserve(player);
-          if (game.turmoil.lobby.has(player.id)) partyDelegateCount--;
-          if (game.turmoil.chairman === player.id) partyDelegateCount--;
+        TurmoilUtil.ifTurmoil(game, (turmoil) => {
+          let partyDelegateCount = PLAYER_DELEGATES_COUNT - turmoil.getAvailableDelegateCount(player, 'reserve');
+          if (turmoil.lobby.has(player.id)) partyDelegateCount--;
+          if (turmoil.chairman === player.id) partyDelegateCount--;
 
           player.addResource(Resources.MEGACREDITS, partyDelegateCount, {log: true});
-        }
+        });
         break;
 
       case ColonyBenefit.GAIN_TR:
         if (quantity > 0) {
-          player.increaseTerraformRatingSteps(quantity);
-          LogHelper.logTRIncrease(player, quantity);
-        };
+          player.increaseTerraformRatingSteps(quantity, {log: true});
+        }
         break;
 
       case ColonyBenefit.GAIN_VP:
@@ -336,3 +349,4 @@ export abstract class Colony implements SerializedColony {
       }
     }
 }
+

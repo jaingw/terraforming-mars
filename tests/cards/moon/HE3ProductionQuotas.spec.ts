@@ -6,7 +6,7 @@ import {HE3ProductionQuotas} from '../../../src/cards/moon/HE3ProductionQuotas';
 import {expect} from 'chai';
 import {MoonExpansion} from '../../../src/moon/MoonExpansion';
 import {IMoonData} from '../../../src/moon/IMoonData';
-import {TileType} from '../../../src/TileType';
+import {TileType} from '../../../src/common/TileType';
 import {Kelvinists} from '../../../src/turmoil/parties/Kelvinists';
 import {Greens} from '../../../src/turmoil/parties/Greens';
 
@@ -30,7 +30,7 @@ describe('HE3ProductionQuotas', () => {
     player.megaCredits = card.cost;
     game.turmoil!.rulingParty = new Kelvinists();
 
-    const spaces = moonData.moon.getAvailableSpacesOnLand();
+    const spaces = moonData.moon.getAvailableSpacesOnLand(player);
     spaces[0].tile = {tileType: TileType.MOON_MINE};
     spaces[1].tile = {tileType: TileType.MOON_MINE};
     spaces[2].tile = {tileType: TileType.MOON_MINE};
@@ -52,7 +52,7 @@ describe('HE3ProductionQuotas', () => {
   });
 
   it('play', () => {
-    const spaces = moonData.moon.getAvailableSpacesOnLand();
+    const spaces = moonData.moon.getAvailableSpacesOnLand(player);
     spaces[0].tile = {tileType: TileType.MOON_MINE};
     spaces[1].tile = {tileType: TileType.MOON_MINE};
     spaces[2].tile = {tileType: TileType.MOON_MINE};

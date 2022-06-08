@@ -3,7 +3,7 @@ import {COMMUNITY_CARD_MANIFEST} from '../src/cards/community/CommunityCardManif
 import {CardFinder} from '../src/CardFinder';
 import {TestingUtils} from './TestingUtils';
 import {CardLoader} from '../src/CardLoader';
-import {CardName} from '../src/CardName';
+import {CardName} from '../src/common/cards/CardName';
 
 describe('CardLoader', function() {
   it('correctly removes projectCardsToRemove', function() {
@@ -61,7 +61,7 @@ describe('CardLoader', function() {
     const turmoilPreludes: Array<CardName> = [];
     COMMUNITY_CARD_MANIFEST.preludeCards.factories.forEach((cf) => turmoilPreludes.push(cf.cardName));
     turmoilPreludes.forEach((preludeName) => {
-      const preludeCard = new CardFinder().getProjectCardByName(preludeName)!;
+      const preludeCard = new CardFinder().getPreludeByName(preludeName)!;
       expect(preludeDeck.includes(preludeCard)).is.not.true;
     });
   });

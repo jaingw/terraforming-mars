@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 import {PhobosSpaceHaven} from '../../../src/cards/base/PhobosSpaceHaven';
 import {Game} from '../../../src/Game';
-import {Resources} from '../../../src/Resources';
+import {Resources} from '../../../src/common/Resources';
 import {TestPlayers} from '../../TestPlayers';
 
 describe('PhobosSpaceHaven', function() {
@@ -13,8 +13,7 @@ describe('PhobosSpaceHaven', function() {
     const action = card.play(player);
     expect(action).is.undefined;
     expect(player.getProduction(Resources.TITANIUM)).to.eq(1);
-    player.victoryPointsBreakdown.setVictoryPoints('victoryPoints', card.getVictoryPoints());
-    expect(player.victoryPointsBreakdown.victoryPoints).to.eq(3);
-    expect(game.getCitiesInPlay()).to.eq(1);
+    expect(card.getVictoryPoints()).to.eq(3);
+    expect(game.getCitiesCount()).to.eq(1);
   });
 });

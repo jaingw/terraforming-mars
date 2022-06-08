@@ -1,8 +1,8 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
-import {CardType} from '../CardType';
+import {Tags} from '../../common/cards/Tags';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {BuildColony} from '../../deferredActions/BuildColony';
 import {CardRenderer} from '../render/CardRenderer';
 import {CardRequirements} from '../CardRequirements';
@@ -18,6 +18,8 @@ export class SpacePortColony extends Card implements IProjectCard {
       cardType: CardType.AUTOMATED,
 
       requirements: CardRequirements.builder((b) => b.colonies()),
+      victoryPoints: 'special',
+
       metadata: {
         cardNumber: 'C39',
         renderData: CardRenderer.builder((b) => {
@@ -36,7 +38,7 @@ export class SpacePortColony extends Card implements IProjectCard {
     return undefined;
   }
 
-  public getVictoryPoints(player: Player) {
+  public override getVictoryPoints(player: Player) {
     let coloniesCount: number = 0;
     player.game.colonies.forEach((colony) => {
       coloniesCount += colony.colonies.length;

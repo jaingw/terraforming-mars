@@ -1,17 +1,15 @@
 import {IActionCard, IResourceCard} from '../ICard';
-import {Tags} from '../Tags';
-import {CardType} from '../CardType';
+import {Tags} from '../../common/cards/Tags';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {ResourceType} from '../../ResourceType';
+import {ResourceType} from '../../common/ResourceType';
 import {OrOptions} from '../../inputs/OrOptions';
 import {SelectOption} from '../../inputs/SelectOption';
-import {CardName} from '../../CardName';
-import {MAX_VENUS_SCALE, REDS_RULING_POLICY_COST} from '../../constants';
-import {PartyHooks} from '../../turmoil/parties/PartyHooks';
-import {PartyName} from '../../turmoil/parties/PartyName';
+import {CardName} from '../../common/cards/CardName';
+import {MAX_VENUS_SCALE} from '../../common/constants';
 import {LogHelper} from '../../LogHelper';
 import {CardRenderer} from '../render/CardRenderer';
-import {Size} from '../render/Size';
+import {Size} from '../../common/cards/render/Size';
 import {Card} from '../Card';
 
 export class ExtractorBalloons extends Card implements IActionCard, IResourceCard {
@@ -36,9 +34,9 @@ export class ExtractorBalloons extends Card implements IActionCard, IResourceCar
         }),
       },
     });
-  };
+  }
 
-  public resourceCount: number = 0;
+  public override resourceCount: number = 0;
 
   public play(player: Player) {
     player.addResourceTo(this, 3);
@@ -49,8 +47,8 @@ export class ExtractorBalloons extends Card implements IActionCard, IResourceCar
   }
   public action(player: Player) {
     const venusMaxed = player.game.getVenusScaleLevel() === MAX_VENUS_SCALE;
-    const cannotAffordRed = PartyHooks.shouldApplyPolicy(player.game, PartyName.REDS) && !player.canAfford(REDS_RULING_POLICY_COST);
-    if (this.resourceCount < 2 || venusMaxed || cannotAffordRed) {
+    const canAffordReds = player.canAfford(0, {tr: {venus: 1}});
+    if (this.resourceCount < 2 || venusMaxed || !canAffordReds) {
       player.addResourceTo(this, {log: true});
       return undefined;
     }

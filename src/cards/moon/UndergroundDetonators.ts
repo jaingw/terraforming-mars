@@ -1,6 +1,6 @@
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {Player} from '../../Player';
-import {CardType} from '../CardType';
+import {CardType} from '../../common/cards/CardType';
 import {MoonExpansion} from '../../moon/MoonExpansion';
 import {CardRenderer} from '../render/CardRenderer';
 import {Card} from '../Card';
@@ -11,6 +11,7 @@ export class UndergroundDetonators extends Card {
       name: CardName.UNDERGROUND_DETONATORS,
       cardType: CardType.EVENT,
       cost: 9,
+      tr: {moonMining: 1},
 
       metadata: {
         description: 'Gain 1 steel and 1 titanium. Raise the Mining Rate 1 step.',
@@ -22,7 +23,7 @@ export class UndergroundDetonators extends Card {
         }),
       },
     });
-  };
+  }
 
   public play(player: Player) {
     player.steel += 1;

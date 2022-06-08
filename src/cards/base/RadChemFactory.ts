@@ -1,15 +1,12 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Card} from '../Card';
-import {CardType} from '../CardType';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {Resources} from '../../Resources';
-import {CardName} from '../../CardName';
-import {PartyHooks} from '../../turmoil/parties/PartyHooks';
-import {PartyName} from '../../turmoil/parties/PartyName';
-import {REDS_RULING_POLICY_COST} from '../../constants';
+import {Resources} from '../../common/Resources';
+import {CardName} from '../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
-import {Units} from '../../Units';
+import {Units} from '../../common/Units';
 
 export class RadChemFactory extends Card implements IProjectCard {
   constructor() {
@@ -19,6 +16,7 @@ export class RadChemFactory extends Card implements IProjectCard {
       tags: [Tags.BUILDING],
       cost: 8,
       productionBox: Units.of({energy: -1}),
+      tr: {tr: 2},
 
       metadata: {
         cardNumber: '205',
@@ -30,13 +28,8 @@ export class RadChemFactory extends Card implements IProjectCard {
       },
     });
   }
-  public canPlay(player: Player): boolean {
-    const hasEnergyProduction = player.getProduction(Resources.ENERGY) >= 1;
-    if (PartyHooks.shouldApplyPolicy(player.game, PartyName.REDS)) {
-      return player.canAfford(player.getCardCost(this) + REDS_RULING_POLICY_COST * 2, {steel: true}) && hasEnergyProduction;
-    }
-
-    return hasEnergyProduction;
+  public override canPlay(player: Player): boolean {
+    return player.getProduction(Resources.ENERGY) >= 1;
   }
 
   public play(player: Player) {

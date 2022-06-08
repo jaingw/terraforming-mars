@@ -4,15 +4,16 @@ import {IndenturedWorkers} from '../../../src/cards/base/IndenturedWorkers';
 import {LocalHeatTrapping} from '../../../src/cards/base/LocalHeatTrapping';
 import {ReleaseOfInertGases} from '../../../src/cards/base/ReleaseOfInertGases';
 import {Playwrights} from '../../../src/cards/community/Playwrights';
-import {ICard} from '../../../src/cards/ICard';
+import {IProjectCard} from '../../../src/cards/IProjectCard';
 import {MartianSurvey} from '../../../src/cards/prelude/MartianSurvey';
 import {LawSuit} from '../../../src/cards/promo/LawSuit';
 import {Game} from '../../../src/Game';
 import {SelectCard} from '../../../src/inputs/SelectCard';
 import {SelectPlayer} from '../../../src/inputs/SelectPlayer';
 import {Player} from '../../../src/Player';
-import {Resources} from '../../../src/Resources';
+import {Resources} from '../../../src/common/Resources';
 import {TestPlayers} from '../../TestPlayers';
+import {TestingUtils} from '../../TestingUtils';
 
 describe('Playwrights', () => {
   let card : Playwrights; let player : Player; let player2: Player; let game : Game;
@@ -44,11 +45,11 @@ describe('Playwrights', () => {
     player.megaCredits = event.cost;
     expect(card.canAct(player)).is.true;
 
-    const selectCard = card.action(player) as SelectCard<ICard>;
+    const selectCard = card.action(player) as SelectCard<IProjectCard>;
     selectCard.cb([event]);
 
     game.deferredActions.pop()!.execute(); // SelectHowToPay
-    game.deferredActions.runAll(() => {});
+    TestingUtils.runAllActions(game);
 
     expect(player.getTerraformRating()).to.eq(tr + 4);
     expect(player.megaCredits).eq(0);
@@ -64,11 +65,11 @@ describe('Playwrights', () => {
 
     player.megaCredits = event.cost;
     expect(card.canAct(player)).is.true;
-    const selectCard = card.action(player) as SelectCard<ICard>;
+    const selectCard = card.action(player) as SelectCard<IProjectCard>;
     selectCard.cb([event]);
 
     game.deferredActions.pop()!.execute(); // SelectHowToPay
-    game.deferredActions.runAll(() => {});
+    TestingUtils.runAllActions(game);
 
     expect(player.getTerraformRating()).to.eq(tr + 2);
     expect(player.megaCredits).eq(0);
@@ -89,7 +90,7 @@ describe('Playwrights', () => {
     const indenturedWorkers = new IndenturedWorkers();
     player.playedCards.push(indenturedWorkers);
 
-    const selectCard = card.action(player) as SelectCard<ICard>;
+    const selectCard = card.action(player) as SelectCard<IProjectCard>;
     selectCard.cb([indenturedWorkers]);
     // SelectHowToPay
     game.deferredActions.pop()!.execute();
@@ -109,14 +110,14 @@ describe('Playwrights', () => {
     player.removingPlayers = [player2.id];
     expect(card.canAct(player)).is.true;
 
-    const selectCard = card.action(player) as SelectCard<ICard>;
+    const selectCard = card.action(player) as SelectCard<IProjectCard>;
     selectCard.cb([event]);
 
     game.deferredActions.pop()!.execute(); // SelectHowToPay
     const selectPlayer = game.deferredActions.pop()!.execute() as SelectPlayer;
     selectPlayer.cb(player2);
 
-    player.game.deferredActions.runAll(() => {});
+    TestingUtils.runAllActions(player.game);
 
     expect(player.playedCards).has.lengthOf(0);
     expect(player2.playedCards).has.lengthOf(0); // Card is removed from play for sued player

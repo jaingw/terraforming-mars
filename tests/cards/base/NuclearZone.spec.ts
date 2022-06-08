@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 import {NuclearZone} from '../../../src/cards/base/NuclearZone';
 import {Game} from '../../../src/Game';
-import {TileType} from '../../../src/TileType';
+import {TileType} from '../../../src/common/TileType';
 import {TestPlayers} from '../../TestPlayers';
 
 describe('NuclearZone', function() {
@@ -15,8 +15,7 @@ describe('NuclearZone', function() {
       const space = action.availableSpaces[0];
       action.cb(space);
       expect(space.tile && space.tile.tileType).to.eq(TileType.NUCLEAR_ZONE);
-      player.victoryPointsBreakdown.setVictoryPoints('victoryPoints', card.getVictoryPoints());
-      expect(player.victoryPointsBreakdown.victoryPoints).to.eq(-2);
+      expect(card.getVictoryPoints()).to.eq(-2);
       expect(space.adjacency?.cost).eq(undefined);
     }
     expect(game.getTemperature()).to.eq(-26);

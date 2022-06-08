@@ -1,13 +1,14 @@
 import {Card} from '../Card';
-import {CorporationCard} from './CorporationCard';
-import {Tags} from '../Tags';
+import {ICorporationCard} from './ICorporationCard';
+import {Tags} from '../../common/cards/Tags';
 import {IProjectCard} from '../IProjectCard';
 import {Player} from '../../Player';
-import {CardType} from '../CardType';
-import {CardName} from '../../CardName';
+import {CardType} from '../../common/cards/CardType';
+import {CardName} from '../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
+import {digit, played} from '../Options';
 
-export class InterplanetaryCinematics extends Card implements CorporationCard {
+export class InterplanetaryCinematics extends Card implements ICorporationCard {
   constructor() {
     super({
       cardType: CardType.CORPORATION,
@@ -20,10 +21,10 @@ export class InterplanetaryCinematics extends Card implements CorporationCard {
         description: 'You start with 20 steel and 30 M€.',
         renderData: CardRenderer.builder((b) => {
           b.br.br.br;
-          b.megacredits(30).nbsp.steel(20).digit;
+          b.megacredits(30).nbsp.steel(20, {digit});
           b.corpBox('effect', (ce) => {
             ce.effect('Each time you play an event, you gain 2 M€.', (eb) => {
-              eb.event().played.startEffect.megacredits(2);
+              eb.event({played}).startEffect.megacredits(2);
             });
           });
         }),

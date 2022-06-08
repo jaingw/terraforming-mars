@@ -1,7 +1,7 @@
-import {Tags} from '../Tags';
-import {CardType} from '../CardType';
+import {Tags} from '../../common/cards/Tags';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
 import {Card} from '../Card';
@@ -15,21 +15,18 @@ export class AtalantaPlanitiaLab extends Card {
       cost: 10,
 
       requirements: CardRequirements.builder((b) => b.tag(Tags.SCIENCE, 3)),
+      victoryPoints: 2,
+
       metadata: {
         cardNumber: '216',
         description: 'Requires 3 science tags. Draw 2 cards.',
         renderData: CardRenderer.builder((b) => b.cards(2)),
-        victoryPoints: 2,
       },
     });
-  };
+  }
 
   public play(player: Player) {
     player.drawCard(2);
     return undefined;
-  }
-
-  public getVictoryPoints() {
-    return 2;
   }
 }

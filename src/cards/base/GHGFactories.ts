@@ -1,12 +1,13 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Player} from '../../Player';
 import {Card} from '../Card';
-import {CardType} from '../CardType';
-import {Resources} from '../../Resources';
-import {CardName} from '../../CardName';
+import {CardType} from '../../common/cards/CardType';
+import {Resources} from '../../common/Resources';
+import {CardName} from '../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
-import {Units} from '../../Units';
+import {Units} from '../../common/Units';
+import {digit} from '../Options';
 
 export class GHGFactories extends Card implements IProjectCard {
   constructor() {
@@ -22,14 +23,14 @@ export class GHGFactories extends Card implements IProjectCard {
         renderData: CardRenderer.builder((b) => {
           b.production((pb) => {
             pb.minus().energy(1).br;
-            pb.plus().heat(4).digit;
+            pb.plus().heat(4, {digit});
           });
         }),
         description: 'Decrease your Energy production 1 step and increase your heat production 4 steps.',
       },
     });
   }
-  public canPlay(player: Player): boolean {
+  public override canPlay(player: Player): boolean {
     return player.getProduction(Resources.ENERGY) >= 1;
   }
   public play(player: Player) {

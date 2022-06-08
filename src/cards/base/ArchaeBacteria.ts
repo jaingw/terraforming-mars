@@ -1,12 +1,13 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Card} from '../Card';
-import {CardType} from '../CardType';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {Resources} from '../../Resources';
-import {CardName} from '../../CardName';
+import {Resources} from '../../common/Resources';
+import {CardName} from '../../common/cards/CardName';
 import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
+import {max} from '../Options';
 
 export class ArchaeBacteria extends Card implements IProjectCard {
   constructor() {
@@ -16,7 +17,7 @@ export class ArchaeBacteria extends Card implements IProjectCard {
       tags: [Tags.MICROBE],
       cost: 6,
 
-      requirements: CardRequirements.builder((b) => b.temperature(-18).max()),
+      requirements: CardRequirements.builder((b) => b.temperature(-18, {max})),
       metadata: {
         description: 'It must be -18 C or colder. Increase your Plant production 1 step.',
         cardNumber: '042',

@@ -1,8 +1,8 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Card} from '../Card';
-import {CardType} from '../CardType';
-import {CardName} from '../../CardName';
+import {CardType} from '../../common/cards/CardType';
+import {CardName} from '../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
 
 export class AdaptationTechnology extends Card implements IProjectCard {
@@ -12,6 +12,7 @@ export class AdaptationTechnology extends Card implements IProjectCard {
       name: CardName.ADAPTATION_TECHNOLOGY,
       tags: [Tags.SCIENCE],
       cost: 12,
+      victoryPoints: 1,
 
       metadata: {
         cardNumber: '153',
@@ -20,7 +21,6 @@ export class AdaptationTechnology extends Card implements IProjectCard {
             eb.plate('Global requirements').startEffect.text('+/- 2');
           });
         }),
-        victoryPoints: 1,
       },
     });
   }
@@ -29,8 +29,5 @@ export class AdaptationTechnology extends Card implements IProjectCard {
   }
   public play() {
     return undefined;
-  }
-  public getVictoryPoints() {
-    return 1;
   }
 }

@@ -1,7 +1,7 @@
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {Player} from '../../Player';
-import {CardType} from '../CardType';
-import {Tags} from '../Tags';
+import {CardType} from '../../common/cards/CardType';
+import {Tags} from '../../common/cards/Tags';
 import {CardRenderer} from '../render/CardRenderer';
 import {MoonExpansion} from '../../moon/MoonExpansion';
 import {BuildColony} from '../../deferredActions/BuildColony';
@@ -14,6 +14,7 @@ export class LTFHeadquarters extends Card {
       cardType: CardType.AUTOMATED,
       tags: [Tags.SPACE],
       cost: 31,
+      tr: {moonColony: 1},
 
       metadata: {
         description: 'Raise the Colony Rate 1 step. Place a colony. Gain 1 trade fleet.',
@@ -23,7 +24,7 @@ export class LTFHeadquarters extends Card {
         }),
       },
     });
-  };
+  }
 
   public play(player: Player) {
     MoonExpansion.raiseColonyRate(player);

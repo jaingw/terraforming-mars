@@ -1,14 +1,15 @@
-import {CardName} from '../../CardName';
-import {CardType} from '../CardType';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
 import {ISpace} from '../../boards/ISpace';
-import {SpaceBonus} from '../../SpaceBonus';
-import {Resources} from '../../Resources';
-import {ResourceType} from '../../ResourceType';
-import {Tags} from '../Tags';
+import {SpaceBonus} from '../../common/boards/SpaceBonus';
+import {Resources} from '../../common/Resources';
+import {ResourceType} from '../../common/ResourceType';
+import {Tags} from '../../common/cards/Tags';
 import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
 import {SurveyCard} from './SurveyCard';
+import {all} from '../Options';
 
 export class EcologicalSurvey extends SurveyCard {
   constructor() {
@@ -18,7 +19,7 @@ export class EcologicalSurvey extends SurveyCard {
       tags: [Tags.SCIENCE],
       cost: 9,
 
-      requirements: CardRequirements.builder((b) => b.greeneries(3).any()),
+      requirements: CardRequirements.builder((b) => b.greeneries(3, {all})),
       metadata: {
         description: 'Requires 3 greeneries on Mars.',
         cardNumber: 'A07',

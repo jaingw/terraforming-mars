@@ -1,9 +1,9 @@
 import {Player} from '../../../Player';
-import {CardName} from '../../../CardName';
+import {CardName} from '../../../common/cards/CardName';
 import {CardRenderer} from '../../render/CardRenderer';
 import {StandardProjectCard} from '../../StandardProjectCard';
 import {PlaceCityTile} from '../../../deferredActions/PlaceCityTile';
-import {Resources} from '../../../Resources';
+import {Resources} from '../../../common/Resources';
 
 export class CityStandardProject extends StandardProjectCard {
   constructor() {
@@ -23,13 +23,25 @@ export class CityStandardProject extends StandardProjectCard {
     });
   }
 
-  public canAct(player: Player): boolean {
-    /* 矿业公司突破：标动城市可以用铁 */
-    if (player.isCorporation(CardName._MINING_GUILD_)) {
-      return player.canAfford(this.cost-player.steelValue*player.steel) &&
-        player.game.board.getAvailableSpacesForCity(player).length > 0;
+  protected override discount(player: Player): number {
+    if (player.playedCards.find((card) => card.name === CardName.PREFABRICATION_OF_HUMAN_HABITATS)) {
+      return 2 + super.discount(player);
     }
-    return player.canAfford(this.cost- super.discount(player)) && player.game.board.getAvailableSpacesForCity(player).length > 0;
+    return super.discount(player);
+  }
+
+  public override canPayWith(player: Player) {
+    if (player.playedCards.find((card) => card.name === CardName.PREFABRICATION_OF_HUMAN_HABITATS)) {
+      return {steel: true};
+    } else if (player.isCorporation(CardName._MINING_GUILD_)) {/* 矿业公司突破：标动城市可以用铁 */
+      return {steel: true};
+    } else {
+      return {};
+    }
+  }
+
+  public override canAct(player: Player): boolean {
+    return super.canAct(player) && player.game.board.getAvailableSpacesForCity(player).length > 0;
   }
 
   actionEssence(player: Player): void {

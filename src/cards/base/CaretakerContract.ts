@@ -1,14 +1,12 @@
 import {IActionCard} from '../ICard';
 import {IProjectCard} from '../IProjectCard';
 import {Card} from '../Card';
-import {CardType} from '../CardType';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {CardName} from '../../CardName';
-import {PartyHooks} from '../../turmoil/parties/PartyHooks';
-import {PartyName} from '../../turmoil/parties/PartyName';
-import {REDS_RULING_POLICY_COST} from '../../constants';
+import {CardName} from '../../common/cards/CardName';
 import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
+import {Units} from '../../common/Units';
 
 export class CaretakerContract extends Card implements IActionCard, IProjectCard {
   constructor() {
@@ -32,13 +30,10 @@ export class CaretakerContract extends Card implements IActionCard, IProjectCard
     return undefined;
   }
   public canAct(player: Player): boolean {
-    const hasEnoughHeat = player.availableHeat >= 8;
-
-    if (PartyHooks.shouldApplyPolicy(player.game, PartyName.REDS)) {
-      return player.canAfford(REDS_RULING_POLICY_COST) && hasEnoughHeat;
-    }
-
-    return hasEnoughHeat;
+    return player.availableHeat >= 8 && player.canAfford(0, {
+      reserveUnits: Units.of({heat: 8}),
+      tr: {tr: 1},
+    });
   }
   public action(player: Player) {
     return player.spendHeat(8, () => {

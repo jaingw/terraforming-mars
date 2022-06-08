@@ -1,13 +1,14 @@
-import {Tags} from '../../Tags';
 import {Player} from '../../../Player';
 import {IProjectCard} from '../../IProjectCard';
-import {CorporationCard} from '../../corporation/CorporationCard';
-import {CardName} from '../../../CardName';
-import {CardType} from '../../CardType';
 import {CardRenderer} from '../../render/CardRenderer';
 import {Card} from '../../Card';
+import {played} from '../../Options';
+import {CardName} from '../../../common/cards/CardName';
+import {CardType} from '../../../common/cards/CardType';
+import {Tags} from '../../../common/cards/Tags';
+import {ICorporationCard} from '../../corporation/ICorporationCard';
 
-export class _Teractor_ extends Card implements CorporationCard {
+export class _Teractor_ extends Card implements ICorporationCard {
   constructor() {
     super({
       cardType: CardType.CORPORATION,
@@ -21,10 +22,10 @@ export class _Teractor_ extends Card implements CorporationCard {
         description: 'You start with 55 M€. As your first action, draw 1 earth tag card.',
         renderData: CardRenderer.builder((b) => {
           b.br.br;
-          b.megacredits(55).nbsp.cards(1).secondaryTag(Tags.EARTH);
+          b.megacredits(55).nbsp.cards(1, {secondaryTag: Tags.EARTH});
           b.corpBox('effect', (ce) => {
             ce.effect('When you play an Earth tag, you pay 3 M€ less for it.', (eb) => {
-              eb.earth(1).played.startEffect.megacredits(-3);
+              eb.earth(1, {played}).startEffect.megacredits(-3);
             });
           });
         }),

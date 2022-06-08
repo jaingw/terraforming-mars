@@ -1,13 +1,13 @@
-import {CorporationCard} from '../corporation/CorporationCard';
 import {Player} from '../../Player';
-import {Tags} from '../Tags';
-import {CardName} from '../../CardName';
-import {CardType} from '../CardType';
 import {CardRenderer} from '../render/CardRenderer';
 import {Card} from '../Card';
-import {Resources} from '../../Resources';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
+import {Tags} from '../../common/cards/Tags';
+import {Resources} from '../../common/Resources';
+import {ICorporationCard} from '../corporation/ICorporationCard';
 
-export class Hotsprings extends Card implements CorporationCard {
+export class Hotsprings extends Card implements ICorporationCard {
   constructor() {
     super({
       cardType: CardType.CORPORATION,

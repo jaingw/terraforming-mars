@@ -1,5 +1,3 @@
-import {CardName} from '../../CardName';
-import {GameModule} from '../../GameModule';
 import {CardManifest} from '../CardManifest';
 import {IdoFront} from './corp/IdoFront';
 import {SisterPlanetSponsors} from './SisterPlanetSponsors';
@@ -33,6 +31,9 @@ import {BrotherhoodOfMutants} from './corp/BrotherhoodOfMutants';
 import {StarCoreMining} from './StarCoreMining';
 import {EMDrive} from './EMDrive';
 import {FallOfSunrise} from './FallOfSunrise';
+import {Void} from './corp/Void';
+import {CardName} from '../../common/cards/CardName';
+import {GameModule} from '../../common/cards/GameModule';
 
 
 export const EROS_CARD_MANIFEST = new CardManifest({
@@ -72,6 +73,7 @@ export const EROS_CARD_MANIFEST = new CardManifest({
     {cardName: CardName.INCITE_ENDER, Factory: InciteEnder, compatibility: GameModule.Turmoil}, // Q24
     {cardName: CardName.TRADE_NAVIGATOR, Factory: TradeNavigator, compatibility: GameModule.Colonies}, // Q25
     {cardName: CardName.BROTHERHOOD_OF_MUTANTS, Factory: BrotherhoodOfMutants, compatibility: GameModule.Turmoil}, // Q26
+    {cardName: CardName.VOID, Factory: Void}, // Q27
   ],
   preludeCards: [
   ],

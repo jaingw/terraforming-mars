@@ -1,10 +1,9 @@
 import {expect} from 'chai';
 import {StripMine} from '../../../src/cards/base/StripMine';
-import {REDS_RULING_POLICY_COST} from '../../../src/constants';
 import {Game} from '../../../src/Game';
-import {Phase} from '../../../src/Phase';
+import {Phase} from '../../../src/common/Phase';
 import {Player} from '../../../src/Player';
-import {Resources} from '../../../src/Resources';
+import {Resources} from '../../../src/common/Resources';
 import {Reds} from '../../../src/turmoil/parties/Reds';
 import {PoliticalAgendas} from '../../../src/turmoil/PoliticalAgendas';
 import {Turmoil} from '../../../src/turmoil/Turmoil';
@@ -45,16 +44,15 @@ describe('StripMine', function() {
     player.megaCredits = card.cost;
     player.game.phase = Phase.ACTION;
 
-    const reds = new Reds();
-    turmoil.rulingParty = reds;
+    turmoil.rulingParty = new Reds();
     PoliticalAgendas.setNextAgenda(turmoil, game);
-    expect(card.canPlay(player)).is.false;
+    expect(player.canPlay(card)).is.false;
 
-    player.megaCredits += REDS_RULING_POLICY_COST * 2; // Payment for Reds tax
-    expect(card.canPlay(player)).is.true;
+    player.megaCredits += 6; // Payment for Reds tax
+    expect(player.canPlay(card)).is.true;
 
     player.megaCredits = 5; // Cannot play as cannot afford Reds tax in MC
     player.steel = 30;
-    expect(card.canPlay(player)).is.false;
+    expect(player.canPlay(card)).is.false;
   });
 });

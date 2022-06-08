@@ -1,10 +1,10 @@
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {Player} from '../../Player';
-import {CardType} from '../CardType';
-import {Tags} from '../Tags';
+import {CardType} from '../../common/cards/CardType';
+import {Tags} from '../../common/cards/Tags';
 import {MoonExpansion} from '../../moon/MoonExpansion';
 import {CardRenderer} from '../render/CardRenderer';
-import {Units} from '../../Units';
+import {Units} from '../../common/Units';
 import {MoonCard} from './MoonCard';
 
 export class AlgaeBioreactors extends MoonCard {
@@ -15,6 +15,7 @@ export class AlgaeBioreactors extends MoonCard {
       tags: [Tags.PLANT],
       cost: 9,
       productionBox: Units.of({plants: -1}),
+      tr: {moonColony: 1, oxygen: 1},
 
       metadata: {
         description: 'Decrease your plant production 1 step. Raise the Colony Rate 1 step and oxygen 1%.',
@@ -25,9 +26,9 @@ export class AlgaeBioreactors extends MoonCard {
       },
     }, {
     });
-  };
+  }
 
-  public play(player: Player) {
+  public override play(player: Player) {
     super.play(player);
     MoonExpansion.raiseColonyRate(player);
     player.game.increaseOxygenLevel(player, 1);

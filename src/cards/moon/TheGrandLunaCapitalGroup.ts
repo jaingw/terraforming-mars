@@ -1,20 +1,22 @@
-import {CardName} from '../../CardName';
-import {CardType} from '../CardType';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {Tags} from '../Tags';
-import {CorporationCard} from '../corporation/CorporationCard';
+import {Tags} from '../../common/cards/Tags';
+import {ICorporationCard} from '../corporation/ICorporationCard';
 import {CardRenderer} from '../render/CardRenderer';
-import {TileType} from '../../TileType';
+import {TileType} from '../../common/TileType';
 import {PlaceMoonColonyTile} from '../../moon/PlaceMoonColonyTile';
 import {MoonExpansion} from '../../moon/MoonExpansion';
-import {ISpace, SpaceId} from '../../boards/ISpace';
-import {Resources} from '../../Resources';
+import {ISpace} from '../../boards/ISpace';
+import {SpaceId} from '../../common/Types';
+import {Resources} from '../../common/Resources';
 import {CardRenderDynamicVictoryPoints} from '../render/CardRenderDynamicVictoryPoints';
-import {Size} from '../render/Size';
-import {AltSecondaryTag} from '../render/CardRenderItem';
+import {Size} from '../../common/cards/render/Size';
+import {AltSecondaryTag} from '../../common/cards/render/AltSecondaryTag';
 import {Card} from '../Card';
+import {all} from '../Options';
 
-export class TheGrandLunaCapitalGroup extends Card implements CorporationCard {
+export class TheGrandLunaCapitalGroup extends Card implements ICorporationCard {
   constructor() {
     super({
       cardType: CardType.CORPORATION,
@@ -22,6 +24,7 @@ export class TheGrandLunaCapitalGroup extends Card implements CorporationCard {
       tags: [Tags.CITY, Tags.MOON],
       startingMegaCredits: 32,
       initialActionText: 'Place a colony tile',
+      victoryPoints: 'special',
 
       metadata: {
         description: {
@@ -30,11 +33,11 @@ export class TheGrandLunaCapitalGroup extends Card implements CorporationCard {
         },
         cardNumber: 'MC7',
         renderData: CardRenderer.builder((b) => {
-          b.megacredits(32).titanium(1).moonColony().secondaryTag(AltSecondaryTag.MOON_COLONY_RATE).br;
+          b.megacredits(32).titanium(1).moonColony({secondaryTag: AltSecondaryTag.MOON_COLONY_RATE}).br;
           b.effect('When you place a colony tile, gain 2 M€ for each adjacent colony tile.', (eb) => {
-            eb.moonColony({size: Size.SMALL}).any.moonColony({size: Size.SMALL}).asterix()
+            eb.moonColony({size: Size.SMALL, all}).moonColony({size: Size.SMALL}).asterix()
               .startEffect
-              .megacredits(2).slash().moonColony({size: Size.SMALL}).any;
+              .megacredits(2).slash().moonColony({size: Size.SMALL, all});
           }).br,
           b.vpText('1 VP for each colony tile adjacent to your colony tiles.').br;
         }),
@@ -65,10 +68,10 @@ export class TheGrandLunaCapitalGroup extends Card implements CorporationCard {
     cardOwner.addResource(Resources.MEGACREDITS, filtered.length * 2, {log: true});
   }
 
-  public getVictoryPoints(player: Player) {
+  public override getVictoryPoints(player: Player) {
     const moon = MoonExpansion.moonData(player.game).moon;
     const neighboringColonyTiles: Set<SpaceId> = new Set();
-    const colonyTiles = MoonExpansion.tiles(player.game, TileType.MOON_COLONY, {ownedBy: player});
+    const colonyTiles = MoonExpansion.spaces(player.game, TileType.MOON_COLONY, {ownedBy: player});
     colonyTiles.forEach((tile) =>
       moon.getAdjacentSpaces(tile).forEach((neighbor) => {
         if (MoonExpansion.spaceHasType(neighbor, TileType.MOON_COLONY)) {

@@ -3,7 +3,7 @@ import {PowerPlantStandardProject} from '../../../src/cards/base/standardProject
 import {Manutech} from '../../../src/cards/venusNext/Manutech';
 import {Game} from '../../../src/Game';
 import {Player} from '../../../src/Player';
-import {Resources} from '../../../src/Resources';
+import {Resources} from '../../../src/common/Resources';
 import {TestPlayers} from '../../TestPlayers';
 
 describe('Manutech', function() {
@@ -24,6 +24,7 @@ describe('Manutech', function() {
   });
 
   it('Should add energy resources by Power Plant standard project', function() {
+    player.megaCredits = 11;
     new PowerPlantStandardProject().action(player);
     game.deferredActions.pop()!.execute();
     expect(player.getResource(Resources.ENERGY)).to.eq(1);

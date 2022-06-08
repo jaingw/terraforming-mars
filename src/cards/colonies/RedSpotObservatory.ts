@@ -1,9 +1,9 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
-import {CardType} from '../CardType';
+import {Tags} from '../../common/cards/Tags';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {CardName} from '../../CardName';
-import {ResourceType} from '../../ResourceType';
+import {CardName} from '../../common/cards/CardName';
+import {ResourceType} from '../../common/ResourceType';
 import {SelectOption} from '../../inputs/SelectOption';
 import {OrOptions} from '../../inputs/OrOptions';
 import {IResourceCard} from '../ICard';
@@ -19,6 +19,7 @@ export class RedSpotObservatory extends Card implements IProjectCard, IResourceC
       name: CardName.RED_SPOT_OBSERVATORY,
       cardType: CardType.ACTIVE,
       resourceType: ResourceType.FLOATER,
+      victoryPoints: 2,
 
       requirements: CardRequirements.builder((b) => b.tag(Tags.SCIENCE, 3)),
       metadata: {
@@ -34,12 +35,11 @@ export class RedSpotObservatory extends Card implements IProjectCard, IResourceC
           text: 'Requires 3 Science tags. Draw 2 cards.',
           align: 'left',
         },
-        victoryPoints: 2,
       },
     });
   }
 
-  public resourceCount: number = 0;
+  public override resourceCount: number = 0;
 
   public canAct(): boolean {
     return true;
@@ -76,9 +76,5 @@ export class RedSpotObservatory extends Card implements IProjectCard, IResourceC
   public play(player: Player) {
     player.drawCard(2);
     return undefined;
-  }
-
-  public getVictoryPoints(): number {
-    return 2;
   }
 }

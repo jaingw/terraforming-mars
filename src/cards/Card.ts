@@ -1,13 +1,16 @@
-import {CardMetadata} from './CardMetadata';
-import {CardName} from '../CardName';
-import {CardType} from './CardType';
+import {ICardMetadata} from '../common/cards/ICardMetadata';
+import {CardName} from '../common/cards/CardName';
+import {CardType} from '../common/cards/CardType';
+import {ICardDiscount} from '../common/cards/Types';
 import {IAdjacencyBonus} from '../ares/IAdjacencyBonus';
-import {ResourceType} from '../ResourceType';
-import {Tags} from './Tags';
+import {ResourceType} from '../common/ResourceType';
+import {Tags} from '../common/cards/Tags';
 import {Player} from '../Player';
-import {Units} from '../Units';
+import {Units} from '../common/Units';
 import {CardRequirements} from './CardRequirements';
-import {CardDiscount} from './ICard';
+import {TRSource, VictoryPoints} from './ICard';
+import {CardRenderDynamicVictoryPoints} from './render/CardRenderDynamicVictoryPoints';
+import {CardRenderItemType} from '../common/cards/render/CardRenderItemType';
 
 export interface StaticCardProperties {
   adjacencyBonus?: IAdjacencyBonus;
@@ -15,15 +18,17 @@ export interface StaticCardProperties {
   cardType: CardType;
   cost?: number;
   initialActionText?: string;
-  metadata?: CardMetadata;
+  metadata?: ICardMetadata;
   requirements?: CardRequirements;
   name: CardName;
   resourceType?: ResourceType;
   startingMegaCredits?: number;
   tags?: Array<Tags>;
   productionBox?: Units;
-  cardDiscount?: CardDiscount;
+  cardDiscount?: ICardDiscount | Array<ICardDiscount>;
   reserveUnits?: Units,
+  tr?: TRSource,
+  victoryPoints?: number | 'special' | VictoryPoints,
 }
 
 export const staticCardProperties = new Map<CardName, StaticCardProperties>();
@@ -41,11 +46,15 @@ export abstract class Card {
           throw new Error(`${properties.name} must have a cost property`);
         }
       }
+      // TODO(kberg): apply these changes in CardVictoryPoints.vue and remove this conditional altogether.
+      Card.autopopulateMetadataVictoryPoints(properties);
+
       staticCardProperties.set(properties.name, properties);
       staticInstance = properties;
     }
     this.properties = staticInstance;
   }
+  public resourceCount = 0;
   public get adjacencyBonus() {
     return this.properties.adjacencyBonus;
   }
@@ -88,10 +97,109 @@ export abstract class Card {
   public get reserveUnits(): Units {
     return this.properties.reserveUnits || Units.EMPTY;
   }
-  public canPlay(player: Player) {
-    if (this.properties.requirements === undefined) {
-      return true;
+  public get tr(): TRSource {
+    return this.properties.tr || {};
+  }
+  public get victoryPoints(): number | 'special' | VictoryPoints | undefined {
+    return this.properties.victoryPoints;
+  }
+  public canPlay(_player: Player) {
+    return true;
+  }
+
+  // player is optional to support historical tests.
+  public getVictoryPoints(player?: Player): number {
+    const vp1 = this.properties.victoryPoints;
+    if (vp1 === 'special') {
+      throw new Error('When victoryPoints is \'special\', override getVictoryPoints');
     }
-    return this.properties.requirements.satisfies(player);
+    if (vp1 !== undefined) {
+      if (typeof(vp1) === 'number') {
+        return vp1;
+      }
+      if (vp1.type === 'resource') {
+        return vp1.points * Math.floor(this.resourceCount / vp1.per);
+      } else {
+        const tag = vp1.type;
+        const count = player?.getTagCount(tag, 'vps') ?? 0;
+        return vp1.points * Math.floor(count / vp1.per);
+      }
+    }
+
+    const vps = this.properties.metadata?.victoryPoints;
+    if (vps === undefined) {
+      return 0;
+    }
+
+    if (typeof(vps) === 'number') return vps;
+
+    if (vps.targetOneOrMore === true || vps.anyPlayer === true) {
+      throw new Error('Not yet handled');
+    }
+
+    let units: number | undefined = 0;
+
+    switch (vps.item?.type) {
+    case CardRenderItemType.MICROBES:
+    case CardRenderItemType.ANIMALS:
+    case CardRenderItemType.FIGHTER:
+    case CardRenderItemType.FLOATERS:
+    case CardRenderItemType.ASTEROIDS:
+    case CardRenderItemType.PRESERVATION:
+    case CardRenderItemType.DATA_RESOURCE:
+    case CardRenderItemType.RESOURCE_CUBE:
+    case CardRenderItemType.SCIENCE:
+    case CardRenderItemType.CAMPS:
+      units = this.resourceCount ?? 0;
+      break;
+
+    case CardRenderItemType.JOVIAN:
+      units = player?.getTagCount(Tags.JOVIAN, 'vps');
+      break;
+    case CardRenderItemType.MOON:
+      units = player?.getTagCount(Tags.MOON, 'vps');
+      break;
+    }
+
+    if (units === undefined) {
+      throw new Error('Not yet handled');
+    }
+    return vps.points * Math.floor(units / vps.target);
+  }
+
+  private static autopopulateMetadataVictoryPoints(properties: StaticCardProperties) {
+    const vps = properties.victoryPoints;
+    if (vps === undefined) {
+      return;
+    }
+
+    if (vps === 'special') {
+      if (properties.metadata?.victoryPoints === undefined) {
+        throw new Error('When card.victoryPoints is \'special\', metadata.vp and getVictoryPoints must be supplied');
+      }
+      return;
+    } else {
+      if (properties.metadata?.victoryPoints !== undefined) {
+        throw new Error('card.victoryPoints and metadata.victoryPoints cannot be on the same card');
+      }
+    }
+
+    if (typeof(vps) === 'number') {
+      if (properties.metadata !== undefined) {
+        properties.metadata.victoryPoints = vps;
+      }
+      return;
+    }
+    if (vps.type === 'resource') {
+      if (properties.resourceType === undefined) {
+        throw new Error('When defining a card-resource based VP, resourceType must be defined.');
+      }
+      if (properties.metadata !== undefined) {
+        properties.metadata.victoryPoints = CardRenderDynamicVictoryPoints.resource(properties.resourceType, vps.points, vps.per);
+      }
+      return;
+    } else if (properties.metadata !== undefined) {
+      properties.metadata.victoryPoints = CardRenderDynamicVictoryPoints.tag(vps.type, vps.points, vps.per);
+    }
   }
 }

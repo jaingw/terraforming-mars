@@ -2,7 +2,7 @@ import {expect} from 'chai';
 import {VenusMagnetizer} from '../../../src/cards/venusNext/VenusMagnetizer';
 import {Game} from '../../../src/Game';
 import {Player} from '../../../src/Player';
-import {Resources} from '../../../src/Resources';
+import {Resources} from '../../../src/common/Resources';
 import {TestPlayers} from '../../TestPlayers';
 
 describe('VenusMagnetizer', function() {
@@ -17,12 +17,12 @@ describe('VenusMagnetizer', function() {
 
   it('Can\'t play', function() {
     (game as any).venusScaleLevel = 8;
-    expect(card.canPlay(player)).is.not.true;
+    expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
 
   it('Should play', function() {
     (game as any).venusScaleLevel = 10;
-    expect(card.canPlay(player)).is.true;
+    expect(player.canPlayIgnoringCost(card)).is.true;
     expect(card.play()).is.undefined;
   });
 

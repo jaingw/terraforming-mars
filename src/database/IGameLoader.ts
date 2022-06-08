@@ -1,5 +1,5 @@
-import {Game, SpectatorId} from '../Game';
-import {PlayerId} from '../Player';
+import {Game} from '../Game';
+import {PlayerId, SpectatorId} from '../common/Types';
 
 type LoadCallback = (game: Game | undefined) => void;
 export enum State {

@@ -1,15 +1,15 @@
 import {IActionCard, ICard, IResourceCard} from '../ICard';
-import {Tags} from '../Tags';
-import {CardType} from '../CardType';
+import {Tags} from '../../common/cards/Tags';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {ResourceType} from '../../ResourceType';
+import {ResourceType} from '../../common/ResourceType';
 import {OrOptions} from '../../inputs/OrOptions';
 import {SelectOption} from '../../inputs/SelectOption';
 import {SelectCard} from '../../inputs/SelectCard';
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {LogHelper} from '../../LogHelper';
 import {CardRenderer} from '../render/CardRenderer';
-import {Size} from '../render/Size';
+import {Size} from '../../common/cards/render/Size';
 import {Card} from '../Card';
 
 export class AerialMappers extends Card implements IActionCard, IResourceCard {
@@ -20,6 +20,7 @@ export class AerialMappers extends Card implements IActionCard, IResourceCard {
       tags: [Tags.VENUS],
       cost: 11,
       resourceType: ResourceType.FLOATER,
+      victoryPoints: 1,
 
       metadata: {
         cardNumber: '213',
@@ -32,20 +33,16 @@ export class AerialMappers extends Card implements IActionCard, IResourceCard {
             be.floaters(1).startAction.cards(1);
           });
         }),
-        victoryPoints: 1,
       },
     });
-  };
-  public resourceCount: number = 0;
+  }
+  public override resourceCount: number = 0;
 
   public play() {
     return undefined;
   }
   public canAct(): boolean {
     return true;
-  }
-  public getVictoryPoints() {
-    return 1;
   }
   public action(player: Player) {
     const floaterCards = player.getResourceCards(ResourceType.FLOATER);

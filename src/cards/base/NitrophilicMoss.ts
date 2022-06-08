@@ -1,10 +1,10 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Card} from '../Card';
-import {CardType} from '../CardType';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {Resources} from '../../Resources';
-import {CardName} from '../../CardName';
+import {Resources} from '../../common/Resources';
+import {CardName} from '../../common/cards/CardName';
 import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
 
@@ -29,12 +29,11 @@ export class NitrophilicMoss extends Card implements IProjectCard {
     });
   }
 
-  public canPlay(player: Player): boolean {
-    const meetsCardRequirements = super.canPlay(player);
+  public override canPlay(player: Player): boolean {
     const hasViralEnhancers = player.playedCards.find((card) => card.name === CardName.VIRAL_ENHANCERS);
     const hasEnoughPlants = player.plants >= 2 || player.isCorporation(CardName.MANUTECH) || player.plants >= 1 && hasViralEnhancers !== undefined;
 
-    return meetsCardRequirements && hasEnoughPlants;
+    return hasEnoughPlants;
   }
   public play(player: Player) {
     player.plants -= 2;

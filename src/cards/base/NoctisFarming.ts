@@ -1,13 +1,13 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Card} from '../Card';
-import {CardType} from '../CardType';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {Resources} from '../../Resources';
-import {CardName} from '../../CardName';
+import {Resources} from '../../common/Resources';
+import {CardName} from '../../common/cards/CardName';
 import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
-import {Units} from '../../Units';
+import {Units} from '../../common/Units';
 
 export class NoctisFarming extends Card implements IProjectCard {
   constructor() {
@@ -17,8 +17,9 @@ export class NoctisFarming extends Card implements IProjectCard {
       tags: [Tags.PLANT, Tags.BUILDING],
       cost: 10,
       productionBox: Units.of({megacredits: 1}),
-
       requirements: CardRequirements.builder((b) => b.temperature(-20)),
+      victoryPoints: 1,
+
       metadata: {
         cardNumber: '176',
         renderData: CardRenderer.builder((b) => {
@@ -27,7 +28,6 @@ export class NoctisFarming extends Card implements IProjectCard {
           }).nbsp.plants(2);
         }),
         description: 'Requires -20 C or warmer. Increase your M€ production 1 step and gain 2 Plants.',
-        victoryPoints: 1,
       },
     });
   }
@@ -36,8 +36,5 @@ export class NoctisFarming extends Card implements IProjectCard {
     player.addProduction(Resources.MEGACREDITS, 1);
     player.plants += 2;
     return undefined;
-  }
-  public getVictoryPoints() {
-    return 1;
   }
 }

@@ -1,8 +1,8 @@
 import {expect} from 'chai';
 import {MartianMediaCenter} from '../../../src/cards/turmoil/MartianMediaCenter';
 import {Game} from '../../../src/Game';
-import {Resources} from '../../../src/Resources';
-import {PartyName} from '../../../src/turmoil/parties/PartyName';
+import {Resources} from '../../../src/common/Resources';
+import {PartyName} from '../../../src/common/turmoil/PartyName';
 import {TestingUtils} from '../../TestingUtils';
 import {TestPlayers} from '../../TestPlayers';
 
@@ -13,11 +13,11 @@ describe('MartianMediaCenter', function() {
 
     const gameOptions = TestingUtils.setCustomGameOptions();
     const game = Game.newInstance('foobar', [player], player, gameOptions);
-    expect(card.canPlay(player)).is.not.true;
+    expect(player.canPlayIgnoringCost(card)).is.not.true;
 
     const mars = game.turmoil!.getPartyByName(PartyName.MARS)!;
     mars.delegates.push(player, player);
-    expect(card.canPlay(player)).is.true;
+    expect(player.canPlayIgnoringCost(card)).is.true;
 
     card.play(player);
     expect(player.getProduction(Resources.MEGACREDITS)).to.eq(2);

@@ -2,7 +2,7 @@ import {expect} from 'chai';
 import {RadSuits} from '../../../src/cards/base/RadSuits';
 import {Game} from '../../../src/Game';
 import {TestPlayer} from '../../TestPlayer';
-import {Resources} from '../../../src/Resources';
+import {Resources} from '../../../src/common/Resources';
 import {TestPlayers} from '../../TestPlayers';
 
 describe('RadSuits', function() {
@@ -16,7 +16,7 @@ describe('RadSuits', function() {
   });
 
   it('Can\'t play', function() {
-    expect(card.canPlay(player)).is.not.true;
+    expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
 
   it('Should play', function() {
@@ -24,11 +24,10 @@ describe('RadSuits', function() {
     game.addCityTile(player, lands[0].id);
     game.addCityTile(player, lands[1].id);
 
-    expect(card.canPlay(player)).is.true;
+    expect(player.canPlayIgnoringCost(card)).is.true;
     card.play(player);
 
     expect(player.getProduction(Resources.MEGACREDITS)).to.eq(1);
-    player.victoryPointsBreakdown.setVictoryPoints('victoryPoints', card.getVictoryPoints());
-    expect(player.victoryPointsBreakdown.victoryPoints).to.eq(1);
+    expect(card.getVictoryPoints()).to.eq(1);
   });
 });

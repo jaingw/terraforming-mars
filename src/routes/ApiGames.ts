@@ -12,7 +12,7 @@ export class ApiGames extends Handler {
     super({validateServerId: true});
   }
 
-  public get(req: http.IncomingMessage, res: http.ServerResponse, ctx: IContext): void {
+  public override get(req: http.IncomingMessage, res: http.ServerResponse, ctx: IContext): void {
     const queryParams = querystring.parse(req.url!.replace(/^.*\?/, ''));
     if (queryParams.userId === undefined || queryParams.userId !== UserUtil.myId) {
       console.warn('Not me');

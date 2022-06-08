@@ -1,12 +1,25 @@
-import {Game, GameId, GameOptions, Score} from '../Game';
-import {User} from '../User';
+import {Game, GameOptions, Score} from '../Game';
 import {SerializedGame} from '../SerializedGame';
+import {SerializedPlayer} from '../SerializedPlayer';
+import {IGameData} from '../common/game/IGameData';
+import {GameId} from '../common/Types';
+import {User} from '../User';
+import {Phase} from '../common/Phase';
+export interface IShortData {
+    id:string,
+    phase : Phase,
+    createtime : string,
+    updatetime : string,
+    gameAge :number,
+    lastSaveId :number,
 
-export interface IGameData {
-    gameId: string;
-    playerCount: number;
+    //  id name color exited userId
+    players : Array<SerializedPlayer>;
 }
-
+export interface IGameShortData {
+    gameId: string;
+    shortData? :IShortData;
+}
 /**
  * A game store. Load, save, you know the drill.
  *
@@ -43,11 +56,26 @@ export type DbLoadCallback<T> = (err: Error | undefined, game: T | undefined) =>
 export interface IDatabase {
 
     /**
+     * Creates any tables needed
+     */
+    initialize(): Promise<void>;
+
+    /**
      * Pulls most recent version of game
      * @param game_id the game id to load
-     * @param cb called with game if exists, if game is undefined err will be truthy
+     * @param cb called with game if exists. If game is undefined err will be truthy.
      */
     getGame(game_id: string, cb: (err: Error | undefined, game?: SerializedGame) => void): void;
+
+    /**
+     * Finds the game id associated with the given player.
+     *
+     * This is not yet written efficiently in Postgres, so use sparingly.
+     *
+     * @param playerId the playerID assocaited with a game
+     * @param cb called with the gameid if it exists. If it does not err will be truthy.
+     */
+    getGameId(playerId: string, cb: (err: Error | undefined, gameId?: GameId) => void): void;
 
     /**
      * Load a game at a specific save point.
@@ -62,7 +90,7 @@ export interface IDatabase {
      *
      * @param cb a callback either returning either an error or a list of all `game_id`s.
      */
-    getGames(cb:(err: Error | undefined, allGames:Array<GameId>) => void): void;
+    getGames(cb:(err: Error | undefined, allGames:Array<IGameShortData>) => void): void;
 
     /**
      * Load references to all games that can be cloned. Every game is cloneable,
@@ -78,6 +106,20 @@ export interface IDatabase {
     getClonableGames(cb:(err: Error | undefined, allGames:Array<IGameData>)=> void) : void;
 
     /**
+     * Load reference to game that can be cloned. Every game is cloneable,
+     * this just returns the original save of the game. However, if a game's
+     * original save is pruned, say, due to {@link deleteGameNbrSaves}, it won't
+     * exist.
+     *
+     * Cloneable games are those with a save_id 0.
+     *
+     * @param game_id the game id to search for
+     * @param cb a callback either returning either an error or a reference to a cloneable game.
+     * if the game is not found then undefined.
+     */
+    getClonableGameByGameId(game_id: GameId, cb: (err: Error | undefined, gameData: IGameData | undefined) => void): void;
+
+    /**
      * Saves the current state of the game at a supplied save point. Used for
      * interim game updates.
      *
@@ -85,7 +127,7 @@ export interface IDatabase {
      * game to increment its state count.
      */
     // TODO(kberg): why is `players` a useful first-class piece of data?
-    saveGameState(game_id: GameId, save_id: number, game: string): void;
+    saveGameState(game_id: GameId, save_id: number, game: string, gameShortDate: string ): void;
 
     /**
      * Stores the results of a game in perpetuity in a separate table from normal
@@ -124,7 +166,7 @@ export interface IDatabase {
      * A maintenance task on a single game to close it out upon its completion.
      * It will:
      *
-     * * Purge all saves between `(0, save_id]`.
+     * * Purge all saves between `(0, last save]`.
      * * Mark the game as finished.
      * * It also participates in purging abandoned solo games older
      *   than a given date range, regardless of the supplied `game_id`.
@@ -133,7 +175,7 @@ export interface IDatabase {
     // TODO(kberg): rename to represent that it's closing out
     // this game. Also consider not needing the save_id, and
     // also to make the maintenance behavior a first-class method.
-    cleanSaves(game_id: GameId, save_id: number): void;
+    cleanSaves(game_id: GameId): void;
     cleanGame(game_id: string): void;
     cleanGameSave(game_id: string, save_id: number): void;
     saveUser(id: string, name: string, password: string, prop: string): void ;

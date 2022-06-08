@@ -173,7 +173,12 @@ players_overview.css 双公司名称显示调整
     }
 }
 
-
+/**
+start_screen.less
+*/
+.topmost-start-screen {
+    padding-bottom: 120px; 
+}
 /**
 创建游戏界面的label框禁用
 */
@@ -270,35 +275,48 @@ qrcode
 }
 
 /* award */
-.award-chaos{
-    background: url(assets/eros/award-chaos.png) no-repeat;
+.naming-award{
     position: absolute;
     height: 53px;
     width: 115px;
-    background-size: 100%;
     z-index: 10;
+}
+.naming-award-chaos{
+    background: url(assets/eros/award-chaos.png) no-repeat;
+    background-size: 100%;
     left: -36px;
     top: 6px;
 }
-.award-starcore{
+.naming-award-starcore{
     background: url(assets/eros/award-starcore.png) no-repeat;
-    position: absolute;
-    height: 53px;
-    width: 115px;
     background-size: 100%;
-    left: 62px;
+    left: 43px;
     top: 239px;
 }
-.award-incite{
+.naming-award-incite{
     background: url(assets/eros/award-incite.png) no-repeat;
-    position: absolute;
-    height: 53px;
-    width: 115px;
     background-size: 100%;
     left: 80px;
     top: 6px;
 }
-
+.naming-award-trade-navigator{
+    background: url(assets/eros/award-xia.png) no-repeat;
+    background-size: 100%;
+    left: 98px;
+    top: 14px;
+}
+.naming-award-brotherhood{
+    background: url(assets/eros/award-ddxy.png) no-repeat;
+    background-size: 100%;
+    left: 90px;
+    top: 6px;
+}
+.naming-award-emdrive{
+    background: url(assets/eros/award-ddxy.png) no-repeat;
+    background-size: 100%;
+    left: 43px;
+    top: 239px;
+}
 /** 帮助指引 */
 .help-img{
     display: flex;

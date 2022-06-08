@@ -1,16 +1,16 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
-import {CardType} from '../CardType';
 import {Player} from '../../Player';
-import {CardName} from '../../CardName';
-import {ResourceType} from '../../ResourceType';
-import {Resources} from '../../Resources';
-import {IActionCard, IResourceCard} from '../ICard';
+import {IActionCard, IResourceCard, VictoryPoints} from '../ICard';
 import {DecreaseAnyProduction} from '../../deferredActions/DecreaseAnyProduction';
 import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
-import {CardRenderDynamicVictoryPoints} from '../render/CardRenderDynamicVictoryPoints';
 import {Card} from '../Card';
+import {all} from '../Options';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
+import {Tags} from '../../common/cards/Tags';
+import {Resources} from '../../common/Resources';
+import {ResourceType} from '../../common/ResourceType';
 
 export class ElectricSheep extends Card implements IActionCard, IProjectCard, IResourceCard {
   constructor() {
@@ -20,6 +20,7 @@ export class ElectricSheep extends Card implements IActionCard, IProjectCard, IR
       tags: [Tags.ENERGY, Tags.ANIMAL],
       cost: 10,
       resourceType: ResourceType.ANIMAL,
+      victoryPoints: VictoryPoints.resource(1, 1),
 
       requirements: CardRequirements.builder((b) => b.tag(Tags.ENERGY, 4)),
       metadata: {
@@ -28,24 +29,23 @@ export class ElectricSheep extends Card implements IActionCard, IProjectCard, IR
           b.action('Add 1 Animal to this card.', (eb) => {
             eb.empty().startAction.animals(1);
           }).br;
-          b.production((pb) => pb.minus().energy(1).any).br;
+          b.production((pb) => pb.minus().energy(1, {all})).br;
           b.vpText('1 VP per Animal on this card.');
         }),
         description: {
           text: 'Requires 4 Power tags. Decrease any Energy production 1 step.',
           align: 'left',
         },
-        victoryPoints: CardRenderDynamicVictoryPoints.animals(1, 1),
       },
     });
   }
-    public resourceCount: number = 0;
+    public override resourceCount: number = 0;
 
     public canAct(): boolean {
       return true;
     }
 
-    public canPlay(player: Player): boolean {
+    public override canPlay(player: Player): boolean {
       return player.getTagCount(Tags.ENERGY) >= 4;
     }
 
@@ -55,12 +55,8 @@ export class ElectricSheep extends Card implements IActionCard, IProjectCard, IR
     }
 
     public play(player: Player) {
-      player.game.defer(new DecreaseAnyProduction(player, Resources.ENERGY, 1));
+      player.game.defer(new DecreaseAnyProduction(player, Resources.ENERGY, {count: 1}));
       return undefined;
-    }
-
-    public getVictoryPoints(): number {
-      return this.resourceCount;
     }
 }
 

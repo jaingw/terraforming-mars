@@ -1,27 +1,35 @@
 
-import {CorporationCard} from '../../corporation/CorporationCard';
-import {Tags} from '../../Tags';
 import {Player} from '../../../Player';
-import {Resources} from '../../../Resources';
-import {CardName} from '../../../CardName';
-import {CardType} from '../../CardType';
-import {CardMetadata} from '../../CardMetadata';
 import {CardRenderer} from '../../render/CardRenderer';
-import {Size} from '../../render/Size';
+import {multiplier, all} from '../../Options';
+import {Card} from '../../Card';
+import {CardName} from '../../../common/cards/CardName';
+import {CardType} from '../../../common/cards/CardType';
+import {ICardMetadata} from '../../../common/cards/ICardMetadata';
+import {Size} from '../../../common/cards/render/Size';
+import {Tags} from '../../../common/cards/Tags';
+import {Resources} from '../../../common/Resources';
+import {ICorporationCard} from '../../corporation/ICorporationCard';
 
-export class _Helion_ implements CorporationCard {
-    public name: CardName = CardName._HELION_;
-    public tags: Array<Tags> = [Tags.SPACE];
-    public startingMegaCredits: number = 48;
-    public cardType: CardType = CardType.CORPORATION;
+export class _Helion_ extends Card implements ICorporationCard {
+  constructor() {
+    super({
+      cardType: CardType.CORPORATION,
+      name: CardName._HELION_,
+      tags: [Tags.SPACE],
+      startingMegaCredits: 48,
 
-    public play(player: Player) {
-      player.canUseHeatAsMegaCredits = true;
-      player.addProduction(Resources.HEAT, 3);
-      return undefined;
-    }
+    });
+  }
 
-    public metadata: CardMetadata = {
+  public play(player: Player) {
+    player.canUseHeatAsMegaCredits = true;
+    player.addProduction(Resources.HEAT, 3);
+    return undefined;
+  }
+
+  public override get metadata(): ICardMetadata {
+    return {
       cardNumber: 'R18',
       description: 'You start with 3 heat production and 48 M€.',
       renderData: CardRenderer.builder((b) => {
@@ -29,13 +37,14 @@ export class _Helion_ implements CorporationCard {
         b.corpBox('effect', (ce) => {
           ce.effect(undefined, (eb) => {
             ce.vSpace(Size.LARGE);
-            eb.text('x').heat(1).startEffect.megacredits(0).multiplier;
+            eb.text('x').heat(1).startEffect.megacredits(0, {multiplier});
           });
           ce.effect('You may use heat as M€. You may not use M€ as heat. Any player increase Temperature, that player gain 1 heat.', (eb) => {
-            eb.temperature(1).any.startEffect.heat(1);
+            eb.temperature(1, {all}).startEffect.heat(1, {all}).asterix();
           });
         });
       }),
-    }
+    };
+  }
 }
 

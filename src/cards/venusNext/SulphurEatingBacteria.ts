@@ -1,16 +1,17 @@
 import {IActionCard, IResourceCard} from '../ICard';
-import {Tags} from '../Tags';
-import {CardType} from '../CardType';
+import {Tags} from '../../common/cards/Tags';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {ResourceType} from '../../ResourceType';
+import {ResourceType} from '../../common/ResourceType';
 import {OrOptions} from '../../inputs/OrOptions';
 import {SelectOption} from '../../inputs/SelectOption';
 import {SelectAmount} from '../../inputs/SelectAmount';
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {LogHelper} from '../../LogHelper';
 import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
 import {Card} from '../Card';
+import {multiplier} from '../Options';
 
 export class SulphurEatingBacteria extends Card implements IActionCard, IResourceCard {
   constructor() {
@@ -30,14 +31,14 @@ export class SulphurEatingBacteria extends Card implements IActionCard, IResourc
           }).br;
           b.or().br;
           b.action('Spend any number of Microbes here to gain triple amount of M€.', (eb) => {
-            eb.text('x').microbes(1).startAction.megacredits(3).multiplier;
+            eb.text('x').microbes(1).startAction.megacredits(3, {multiplier});
           });
         }),
         description: 'Requires Venus 6%',
       },
     });
-  };
-  public resourceCount: number = 0;
+  }
+  public override resourceCount: number = 0;
 
   public play() {
     return undefined;

@@ -1,14 +1,15 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
-import {CardType} from '../CardType';
+import {Tags} from '../../common/cards/Tags';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {CardName} from '../../CardName';
-import {Resources} from '../../Resources';
-import {ColonyName} from '../../colonies/ColonyName';
+import {CardName} from '../../common/cards/CardName';
+import {Resources} from '../../common/Resources';
+import {ColonyName} from '../../common/colonies/ColonyName';
 import {BuildColony} from '../../deferredActions/BuildColony';
 import {CardRenderer} from '../render/CardRenderer';
 import {CardRequirements} from '../CardRequirements';
 import {Card} from '../Card';
+import {max} from '../Options';
 
 export class PioneerSettlement extends Card implements IProjectCard {
   constructor() {
@@ -17,8 +18,9 @@ export class PioneerSettlement extends Card implements IProjectCard {
       tags: [Tags.SPACE],
       name: CardName.PIONEER_SETTLEMENT,
       cardType: CardType.AUTOMATED,
+      requirements: CardRequirements.builder((b) => b.colonies(1, {max})),
+      victoryPoints: 2,
 
-      requirements: CardRequirements.builder((b) => b.colonies(1).max()),
       metadata: {
         cardNumber: 'C29',
         renderData: CardRenderer.builder((b) => {
@@ -26,14 +28,13 @@ export class PioneerSettlement extends Card implements IProjectCard {
           b.nbsp.colonies(1);
         }),
         description: 'Requires that you have no more than 1 colony. Decrease your M€ production 2 steps. Place a colony.',
-        victoryPoints: 2,
       },
     });
   }
 
   public warning?: string;
 
-  public canPlay(player: Player): boolean {
+  public override canPlay(player: Player): boolean {
     if (player.hasAvailableColonyTileToBuildOn() === false) {
       return false;
     }
@@ -77,9 +78,5 @@ export class PioneerSettlement extends Card implements IProjectCard {
     player.game.defer(new BuildColony(player, false, 'Select colony for Pioneer Settlement', openColonies));
     player.addProduction(Resources.MEGACREDITS, -2);
     return undefined;
-  }
-
-  public getVictoryPoints() {
-    return 2;
   }
 }

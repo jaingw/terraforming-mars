@@ -1,18 +1,18 @@
-import {CardName} from '../../CardName';
-import {CardType} from '../CardType';
-import {Tags} from '../Tags';
-import {CorporationCard} from '../corporation/CorporationCard';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
+import {Tags} from '../../common/cards/Tags';
+import {ICorporationCard} from '../corporation/ICorporationCard';
 import {CardRenderer} from '../render/CardRenderer';
 import {IActionCard} from '../ICard';
-import {ResourceType} from '../../ResourceType';
+import {ResourceType} from '../../common/ResourceType';
 import {Player} from '../../Player';
-import {CardRenderDynamicVictoryPoints} from '../render/CardRenderDynamicVictoryPoints';
 import {AddResourcesToCard} from '../../deferredActions/AddResourcesToCard';
 import {MoonCards} from '../../moon/MoonCards';
 import {PlayerInput} from '../../PlayerInput';
 import {Card} from '../Card';
+import {VictoryPoints} from '../ICard';
 
-export class NanotechIndustries extends Card implements IActionCard, CorporationCard {
+export class NanotechIndustries extends Card implements IActionCard, ICorporationCard {
   constructor() {
     super({
       cardType: CardType.CORPORATION,
@@ -21,6 +21,8 @@ export class NanotechIndustries extends Card implements IActionCard, Corporation
       startingMegaCredits: 42,
       resourceType: ResourceType.SCIENCE,
       initialActionText: 'Draw 3 cards and keep 2.',
+
+      victoryPoints: VictoryPoints.resource(1, 2),
 
       metadata: {
         cardNumber: 'MC1',
@@ -32,12 +34,11 @@ export class NanotechIndustries extends Card implements IActionCard, Corporation
         }),
         description: 'You start with 42 M€. As your first action, draw 3 cards. Take 2 of them into hand, and discard the rest. ' +
           '1 VP for every 2 science resources here.',
-        victoryPoints: CardRenderDynamicVictoryPoints.science(1, 2),
       },
     });
   }
 
-  public resourceCount = 0;
+  public override resourceCount = 0;
 
   public play() {
     return undefined;
@@ -58,9 +59,5 @@ export class NanotechIndustries extends Card implements IActionCard, Corporation
       {filter: (card): boolean => MoonCards.scienceCardsWithLessThan2VP.has(card.name)},
     ));
     return undefined;
-  }
-
-  public getVictoryPoints() {
-    return Math.floor(this.resourceCount / 2);
   }
 }

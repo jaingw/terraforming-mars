@@ -2,7 +2,7 @@ import {expect} from 'chai';
 import {Livestock} from '../../../src/cards/base/Livestock';
 import {Game} from '../../../src/Game';
 import {Player} from '../../../src/Player';
-import {Resources} from '../../../src/Resources';
+import {Resources} from '../../../src/common/Resources';
 import {TestPlayers} from '../../TestPlayers';
 
 describe('Livestock', function() {
@@ -17,19 +17,19 @@ describe('Livestock', function() {
 
   it('Can\'t play without plant production', function() {
     (game as any).oxygenLevel = 9;
-    expect(card.canPlay(player)).is.not.true;
+    expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
 
   it('Can\'t play if oxygen level too low', function() {
     (game as any).oxygenLevel = 8;
     player.addProduction(Resources.PLANTS, 1);
-    expect(card.canPlay(player)).is.not.true;
+    expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
 
   it('Should play', function() {
     player.addProduction(Resources.PLANTS, 1);
     (game as any).oxygenLevel = 9;
-    expect(card.canPlay(player)).is.true;
+    expect(player.canPlayIgnoringCost(card)).is.true;
 
     card.play(player);
     player.playedCards.push(card);

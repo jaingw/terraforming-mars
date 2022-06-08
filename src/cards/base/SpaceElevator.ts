@@ -1,13 +1,13 @@
 import {IActionCard} from '../ICard';
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Card} from '../Card';
-import {CardType} from '../CardType';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {Resources} from '../../Resources';
-import {CardName} from '../../CardName';
+import {Resources} from '../../common/Resources';
+import {CardName} from '../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
-import {Units} from '../../Units';
+import {Units} from '../../common/Units';
 
 export class SpaceElevator extends Card implements IActionCard, IProjectCard {
   constructor() {
@@ -17,6 +17,7 @@ export class SpaceElevator extends Card implements IActionCard, IProjectCard {
       tags: [Tags.SPACE, Tags.BUILDING],
       cost: 27,
       productionBox: Units.of({titanium: 1}),
+      victoryPoints: 2,
 
       metadata: {
         cardNumber: '203',
@@ -27,7 +28,6 @@ export class SpaceElevator extends Card implements IActionCard, IProjectCard {
           b.production((pb) => pb.titanium(1));
         }),
         description: 'Increase your titanium production 1 step.',
-        victoryPoints: 2,
       },
     });
   }
@@ -42,9 +42,6 @@ export class SpaceElevator extends Card implements IActionCard, IProjectCard {
     player.steel--;
     player.megaCredits += 5;
     return undefined;
-  }
-  public getVictoryPoints() {
-    return 2;
   }
 }
 

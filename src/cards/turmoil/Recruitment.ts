@@ -1,10 +1,12 @@
 import {IProjectCard} from '../IProjectCard';
 import {Card} from '../Card';
-import {CardName} from '../../CardName';
-import {CardType} from '../CardType';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
 import {SendDelegateToArea} from '../../deferredActions/SendDelegateToArea';
 import {CardRenderer} from '../render/CardRenderer';
+import {TurmoilUtil} from '../../turmoil/TurmoilUtil';
+import {all} from '../Options';
 
 export class Recruitment extends Card implements IProjectCard {
   constructor() {
@@ -16,19 +18,20 @@ export class Recruitment extends Card implements IProjectCard {
       metadata: {
         cardNumber: 'T11',
         renderData: CardRenderer.builder((b) => {
-          b.minus().delegates(1).any.asterix().nbsp.plus().delegates(1);
+          b.minus().delegates(1, {all}).asterix().nbsp.plus().delegates(1);
         }),
         description: 'Exchange one NEUTRAL NON-LEADER delegate with one of your own from the reserve.',
       },
     });
   }
 
-  public canPlay(player: Player): boolean {
-    if (player.game.turmoil === undefined || player.game.turmoil!.getDelegatesInReserve(player) === 0) {
+  public override canPlay(player: Player): boolean {
+    const turmoil = TurmoilUtil.getTurmoil(player.game);
+    if (turmoil.hasDelegatesInReserve(player) === false) {
       return false;
     }
 
-    return player.game.turmoil!.parties.some((party) => {
+    return turmoil.parties.some((party) => {
       const neutralDelegates = party.getDelegates('NEUTRAL');
       return neutralDelegates > 1 || (neutralDelegates === 1 && party.partyLeader !== 'NEUTRAL');
     });

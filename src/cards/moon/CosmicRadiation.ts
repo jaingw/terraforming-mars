@@ -1,14 +1,15 @@
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {Player} from '../../Player';
-import {CardType} from '../CardType';
+import {CardType} from '../../common/cards/CardType';
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {MoonExpansion} from '../../moon/MoonExpansion';
-import {TileType} from '../../TileType';
+import {TileType} from '../../common/TileType';
 import {CardRenderer} from '../render/CardRenderer';
 import {CardRequirements} from '../CardRequirements';
 import {Card} from '../Card';
-import {Size} from '../render/Size';
+import {Size} from '../../common/cards/render/Size';
+import {all} from '../Options';
 
 export class CosmicRadiation extends Card implements IProjectCard {
   constructor() {
@@ -23,15 +24,15 @@ export class CosmicRadiation extends Card implements IProjectCard {
         description: 'Requires 4 Mining Rate. All players pay 4M€ for each mining tile they own.',
         cardNumber: 'M52',
         renderData: CardRenderer.builder((b) => {
-          b.minus().megacredits(4).any.slash().moonMine({size: Size.SMALL}).any;
+          b.minus().megacredits(4, {all}).slash().moonMine({size: Size.SMALL, all});
         }),
       },
     });
-  };
+  }
 
   public play(player: Player) {
-    const mines = MoonExpansion.tiles(player.game, TileType.MOON_MINE);
-    player.game.getPlayers().forEach((mineTileOwner) => {
+    const mines = MoonExpansion.spaces(player.game, TileType.MOON_MINE);
+    player.game.getPlayersInGenerationOrder().forEach((mineTileOwner) => {
       const owned = mines.filter((mine) => mine.player?.id === mineTileOwner.id).length;
       if (owned > 0) {
         const owes = owned * 4;

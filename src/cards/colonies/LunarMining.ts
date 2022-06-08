@@ -1,11 +1,12 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
-import {CardType} from '../CardType';
+import {Tags} from '../../common/cards/Tags';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {CardName} from '../../CardName';
-import {Resources} from '../../Resources';
+import {CardName} from '../../common/cards/CardName';
+import {Resources} from '../../common/Resources';
 import {Card} from '../Card';
 import {CardRenderer} from '../render/CardRenderer';
+import {played} from '../Options';
 
 export class LunarMining extends Card implements IProjectCard {
   constructor() {
@@ -19,7 +20,7 @@ export class LunarMining extends Card implements IProjectCard {
         cardNumber: 'C22',
         renderData: CardRenderer.builder((b) => {
           b.production((pb) => {
-            pb.titanium(1).slash().earth(2).played;
+            pb.titanium(1).slash().earth(2, {played});
           });
         }),
         description: 'Increase your titanium production 1 step for every 2 Earth tags you have in play, including this.',
@@ -28,7 +29,7 @@ export class LunarMining extends Card implements IProjectCard {
   }
 
   public play(player: Player) {
-    player.addProduction(Resources.TITANIUM, Math.floor((player.getTagCount(Tags.EARTH)+1) / 2));
+    player.addProduction(Resources.TITANIUM, Math.floor((player.getTagCount(Tags.EARTH)+1) / 2), {log: true});
     return undefined;
   }
 }

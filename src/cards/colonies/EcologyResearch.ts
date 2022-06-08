@@ -1,12 +1,12 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
-import {CardType} from '../CardType';
+import {Tags} from '../../common/cards/Tags';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {CardName} from '../../CardName';
-import {Resources} from '../../Resources';
-import {ResourceType} from '../../ResourceType';
+import {CardName} from '../../common/cards/CardName';
+import {Resources} from '../../common/Resources';
+import {ResourceType} from '../../common/ResourceType';
 import {AddResourcesToCard} from '../../deferredActions/AddResourcesToCard';
-import {Size} from '../render/Size';
+import {Size} from '../../common/cards/render/Size';
 import {Card} from '../Card';
 import {CardRenderer} from '../render/CardRenderer';
 
@@ -17,15 +17,15 @@ export class EcologyResearch extends Card implements IProjectCard {
       tags: [Tags.SCIENCE, Tags.PLANT, Tags.ANIMAL, Tags.MICROBE],
       name: CardName.ECOLOGY_RESEARCH,
       cardType: CardType.AUTOMATED,
+      victoryPoints: 1,
 
       metadata: {
         description: 'Increase your plant production 1 step for each colony you own. Add 1 animal to ANOTHER card and 2 microbes to ANOTHER card.',
         cardNumber: 'C09',
         renderData: CardRenderer.builder((b) => {
-          b.production((pb) => pb.plants(1).slash().colonies(1, Size.SMALL)).br;
+          b.production((pb) => pb.plants(1).slash().colonies(1, {size: Size.SMALL})).br;
           b.animals(1).asterix().nbsp.nbsp.microbes(2).asterix();
         }),
-        victoryPoints: 1,
       },
     });
   }
@@ -45,9 +45,5 @@ export class EcologyResearch extends Card implements IProjectCard {
     }
 
     return undefined;
-  }
-
-  public getVictoryPoints() {
-    return 1;
   }
 }

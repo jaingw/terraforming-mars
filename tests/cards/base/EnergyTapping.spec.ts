@@ -3,7 +3,7 @@ import {EnergyTapping} from '../../../src/cards/base/EnergyTapping';
 import {Game} from '../../../src/Game';
 import {SelectPlayer} from '../../../src/inputs/SelectPlayer';
 import {TestPlayer} from '../../TestPlayer';
-import {Resources} from '../../../src/Resources';
+import {Resources} from '../../../src/common/Resources';
 import {TestPlayers} from '../../TestPlayers';
 
 describe('EnergyTapping', function() {
@@ -41,8 +41,7 @@ describe('EnergyTapping', function() {
     Game.newInstance('foobar', [player], player);
     card.play(player);
 
-    player.victoryPointsBreakdown.setVictoryPoints('victoryPoints', card.getVictoryPoints());
     expect(player.getProduction(Resources.ENERGY)).to.eq(1);
-    expect(player.victoryPointsBreakdown.victoryPoints).to.eq(-1);
+    expect(card.getVictoryPoints()).to.eq(-1);
   });
 });

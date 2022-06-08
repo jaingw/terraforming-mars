@@ -1,11 +1,12 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
-import {CardType} from '../CardType';
+import {Tags} from '../../common/cards/Tags';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {CardName} from '../../CardName';
-import {Resources} from '../../Resources';
+import {CardName} from '../../common/cards/CardName';
+import {Resources} from '../../common/Resources';
 import {CardRenderer} from '../render/CardRenderer';
 import {Card} from '../Card';
+import {digit} from '../Options';
 
 export class SolarReflectors extends Card implements IProjectCard {
   constructor() {
@@ -18,7 +19,7 @@ export class SolarReflectors extends Card implements IProjectCard {
       metadata: {
         cardNumber: 'C38',
         renderData: CardRenderer.builder((b) => {
-          b.production((pb) => pb.heat(5).digit);
+          b.production((pb) => pb.heat(5, {digit}));
         }),
         description: 'Increase your heat production 5 steps.',
       },

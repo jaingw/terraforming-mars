@@ -1,15 +1,16 @@
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Player} from '../../Player';
-import {CorporationCard} from './../corporation/CorporationCard';
+import {ICorporationCard} from '../corporation/ICorporationCard';
 import {IProjectCard} from '../IProjectCard';
-import {Resources} from '../../Resources';
+import {Resources} from '../../common/Resources';
 import {Card} from '../Card';
-import {CardName} from '../../CardName';
-import {CardType} from '../CardType';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
 import {CardRenderer} from '../render/CardRenderer';
-import {Units} from '../../Units';
+import {Units} from '../../common/Units';
+import {played} from '../Options';
 
-export class CheungShingMARS extends Card implements CorporationCard {
+export class CheungShingMARS extends Card implements ICorporationCard {
   constructor() {
     super({
       cardType: CardType.CORPORATION,
@@ -27,7 +28,7 @@ export class CheungShingMARS extends Card implements CorporationCard {
           b.production((pb) => pb.megacredits(3)).nbsp.megacredits(44);
           b.corpBox('effect', (ce) => {
             ce.effect('When you play a building tag, you pay 2 M€ less for it.', (eb) => {
-              eb.building().played.startEffect.megacredits(-2);
+              eb.building(1, {played}).startEffect.megacredits(-2);
             });
           });
         }),

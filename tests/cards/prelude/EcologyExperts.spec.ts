@@ -2,7 +2,7 @@ import {expect} from 'chai';
 import {EcologyExperts} from '../../../src/cards/prelude/EcologyExperts';
 import {Game} from '../../../src/Game';
 import {Player} from '../../../src/Player';
-import {Resources} from '../../../src/Resources';
+import {Resources} from '../../../src/common/Resources';
 import {TestPlayers} from '../../TestPlayers';
 
 describe('EcologyExperts', function() {
@@ -16,7 +16,7 @@ describe('EcologyExperts', function() {
 
   it('Gets requirement bonus', function() {
     expect(card.getRequirementBonus(player)).to.eq(0);
-    player.lastCardPlayed = card;
+    player.lastCardPlayed = card.name;
     expect(card.getRequirementBonus(player)).to.eq(50);
   });
 

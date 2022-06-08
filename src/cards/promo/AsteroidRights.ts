@@ -1,12 +1,12 @@
 import {IProjectCard} from '../IProjectCard';
 import {IActionCard, ICard, IResourceCard} from '../ICard';
 import {Card} from '../Card';
-import {CardName} from '../../CardName';
-import {CardType} from '../CardType';
-import {ResourceType} from '../../ResourceType';
-import {Tags} from '../Tags';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
+import {ResourceType} from '../../common/ResourceType';
+import {Tags} from '../../common/cards/Tags';
 import {Player} from '../../Player';
-import {Resources} from '../../Resources';
+import {Resources} from '../../common/Resources';
 import {LogHelper} from '../../LogHelper';
 import {SelectCard} from '../../inputs/SelectCard';
 import {OrOptions} from '../../inputs/OrOptions';
@@ -41,7 +41,7 @@ export class AsteroidRights extends Card implements IActionCard, IProjectCard, I
       },
     });
   }
-  public resourceCount = 0;
+  public override resourceCount = 0;
 
   public play() {
     this.resourceCount = 2;
@@ -57,21 +57,18 @@ export class AsteroidRights extends Card implements IActionCard, IProjectCard, I
     const hasAsteroids = this.resourceCount > 0;
     const asteroidCards = player.getResourceCards(ResourceType.ASTEROID);
 
-    const spendAsteroidOption = new SelectOption('Remove 1 asteroid on this card to increase M€ production 1 step OR gain 2 titanium', 'Remove asteroid', () => {
+    const gainTitaniumOption = new SelectOption('Remove 1 asteroid on this card to gain 2 titanium', 'Remove asteroid', () => {
       this.resourceCount--;
+      player.titanium += 2;
+      LogHelper.logRemoveResource(player, this, 1, 'gain 2 titanium');
+      return undefined;
+    });
 
-      return new OrOptions(
-        new SelectOption('Gain 2 titanium', 'Select', () => {
-          player.titanium += 2;
-          LogHelper.logRemoveResource(player, this, 1, 'gain 2 titanium');
-          return undefined;
-        }),
-        new SelectOption('Increase M€ production 1 step', 'Select', () => {
-          player.addProduction(Resources.MEGACREDITS, 1);
-          LogHelper.logRemoveResource(player, this, 1, 'increase M€ production 1 step');
-          return undefined;
-        }),
-      );
+    const increaseMcProdOption = new SelectOption('Remove 1 asteroid on this card to increase M€ production 1 step', 'Remove asteroid', () => {
+      this.resourceCount--;
+      player.addProduction(Resources.MEGACREDITS, 1);
+      LogHelper.logRemoveResource(player, this, 1, 'increase M€ production 1 step');
+      return undefined;
     });
 
     const addAsteroidToSelf = new SelectOption('Add 1 asteroid to this card', 'Add asteroid', () => {
@@ -89,7 +86,7 @@ export class AsteroidRights extends Card implements IActionCard, IProjectCard, I
     });
 
     // Spend asteroid
-    if (!canAddAsteroid) return spendAsteroidOption.cb();
+    if (!canAddAsteroid) return new OrOptions(gainTitaniumOption, increaseMcProdOption);
 
     // Add asteroid to any card
     if (!hasAsteroids) {
@@ -98,7 +95,8 @@ export class AsteroidRights extends Card implements IActionCard, IProjectCard, I
     }
 
     const opts: Array<SelectOption | SelectCard<ICard>> = [];
-    opts.push(spendAsteroidOption);
+    opts.push(gainTitaniumOption);
+    opts.push(increaseMcProdOption);
     asteroidCards.length === 1 ? opts.push(addAsteroidToSelf) : opts.push(addAsteroidOption);
 
     return new OrOptions(...opts);

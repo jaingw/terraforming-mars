@@ -1,14 +1,15 @@
 import {IActionCard} from '../ICard';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Player} from '../../Player';
-import {CorporationCard} from '../corporation/CorporationCard';
+import {ICorporationCard} from '../corporation/ICorporationCard';
 import {Card} from '../Card';
-import {CardName} from '../../CardName';
-import {CardType} from '../CardType';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
 import {CardRenderer} from '../render/CardRenderer';
-import {Resources} from '../../Resources';
+import {Resources} from '../../common/Resources';
+import {TurmoilUtil} from '../../turmoil/TurmoilUtil';
 
-export class SeptemTribus extends Card implements IActionCard, CorporationCard {
+export class SeptemTribus extends Card implements IActionCard, ICorporationCard {
   constructor() {
     super({
       name: CardName.SEPTEM_TRIBUS,
@@ -36,15 +37,14 @@ export class SeptemTribus extends Card implements IActionCard, CorporationCard {
     return undefined;
   }
 
-  public canAct(player: Player): boolean {
-    return player.game.gameOptions.turmoilExtension;
+  public canAct(): boolean {
+    return true;
   }
 
   public action(player: Player) {
-    if (player.game.turmoil !== undefined) {
-      const partiesWithPresence = player.game.turmoil.parties.filter((party) => party.delegates.includes(player));
-      player.addResource(Resources.MEGACREDITS, partiesWithPresence.length * 2, {log: true});
-    }
+    const turmoil = TurmoilUtil.getTurmoil(player.game);
+    const partiesWithPresence = turmoil.parties.filter((party) => party.delegates.includes(player));
+    player.addResource(Resources.MEGACREDITS, partiesWithPresence.length * 2, {log: true});
 
     return undefined;
   }

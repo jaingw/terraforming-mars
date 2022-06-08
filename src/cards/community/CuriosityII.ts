@@ -1,24 +1,24 @@
 import {Card} from '../Card';
-import {CorporationCard} from '../corporation/CorporationCard';
-import {Tags} from '../Tags';
+import {ICorporationCard} from '../corporation/ICorporationCard';
+import {Tags} from '../../common/cards/Tags';
 import {Player} from '../../Player';
 import {ISpace} from '../../boards/ISpace';
-import {Resources} from '../../Resources';
-import {CardName} from '../../CardName';
-import {CardType} from '../CardType';
+import {Resources} from '../../common/Resources';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
 import {CardRenderer} from '../render/CardRenderer';
-import {Size} from '../render/Size';
+import {Size} from '../../common/cards/render/Size';
 import {DeferredAction} from '../../deferredActions/DeferredAction';
 import {OrOptions} from '../../inputs/OrOptions';
 import {SelectOption} from '../../inputs/SelectOption';
 import {SelectHowToPayDeferred} from '../../deferredActions/SelectHowToPayDeferred';
 import {DrawCards} from '../../deferredActions/DrawCards';
-import {SpaceType} from '../../SpaceType';
-import {SpaceBonus} from '../../SpaceBonus';
-import {Phase} from '../../Phase';
-import {Units} from '../../Units';
+import {SpaceType} from '../../common/boards/SpaceType';
+import {SpaceBonus} from '../../common/boards/SpaceBonus';
+import {Phase} from '../../common/Phase';
+import {Units} from '../../common/Units';
 
-export class CuriosityII extends Card implements CorporationCard {
+export class CuriosityII extends Card implements ICorporationCard {
   constructor() {
     super({
       cardType: CardType.CORPORATION,
@@ -39,7 +39,7 @@ export class CuriosityII extends Card implements CorporationCard {
               'When you place a tile on an area that has a RESOURCE placement bonus, ' +
               'or on top of another tile, you may pay 2 M€ to draw a card.',
               (eb) => {
-                eb.emptyTile('normal', Size.SMALL).nbsp.asterix().startEffect.megacredits(-2).cards(1);
+                eb.emptyTile('normal', {size: Size.SMALL}).nbsp.asterix().startEffect.megacredits(-2).cards(1);
               });
           });
         }),

@@ -1,13 +1,14 @@
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {Player} from '../../Player';
-import {CardType} from '../CardType';
+import {CardType} from '../../common/cards/CardType';
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {CardRenderer} from '../render/CardRenderer';
 import {CardRequirements} from '../CardRequirements';
 import {IActionCard} from '../ICard';
 import {SendDelegateToArea} from '../../deferredActions/SendDelegateToArea';
 import {Card} from '../Card';
+import {TurmoilUtil} from '../../turmoil/TurmoilUtil';
 
 export class LunaPoliticalInstitute extends Card implements IActionCard, IProjectCard {
   constructor() {
@@ -28,14 +29,14 @@ export class LunaPoliticalInstitute extends Card implements IActionCard, IProjec
         }),
       },
     });
-  };
+  }
 
   public play() {
     return undefined;
   }
 
   public canAct(player: Player) {
-    return player.game.turmoil !== undefined && player.game.turmoil?.getDelegatesInReserve(player) > 0;
+    return TurmoilUtil.getTurmoil(player.game).getDelegatesInReserve(player) > 0;
   }
 
   public action(player: Player) {

@@ -1,16 +1,17 @@
 
-import {Tags} from '../../Tags';
 import {Player} from '../../../Player';
-import {CorporationCard} from '../../corporation/CorporationCard';
 import {IProjectCard} from '../../IProjectCard';
 import {Game} from '../../../Game';
 import {SelectCard} from '../../../inputs/SelectCard';
-import {CardName} from '../../../CardName';
-import {CardType} from '../../CardType';
 import {Card} from '../../Card';
 import {CardRenderer} from '../../render/CardRenderer';
+import {played} from '../../Options';
+import {CardName} from '../../../common/cards/CardName';
+import {CardType} from '../../../common/cards/CardType';
+import {Tags} from '../../../common/cards/Tags';
+import {ICorporationCard} from '../../corporation/ICorporationCard';
 
-export class _ValleyTrust_ extends Card implements CorporationCard {
+export class _ValleyTrust_ extends Card implements ICorporationCard {
   constructor() {
     super({
       cardType: CardType.CORPORATION,
@@ -28,7 +29,7 @@ export class _ValleyTrust_ extends Card implements CorporationCard {
           b.megacredits(37).nbsp.prelude().asterix();
           b.corpBox('effect', (ce) => {
             ce.effect('When you play a Science tag, you pay 2M€ less for it.', (eb) => {
-              eb.science(1).played.startEffect.megacredits(-2);
+              eb.science(1, {played}).startEffect.megacredits(-2);
             });
           });
         }),

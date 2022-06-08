@@ -1,12 +1,13 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
-import {CardType} from '../CardType';
+import {Tags} from '../../common/cards/Tags';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {RemoveAnyPlants} from '../../deferredActions/RemoveAnyPlants';
 import {CardRequirements} from '../CardRequirements';
 import {Card} from '../Card';
 import {CardRenderer} from '../render/CardRenderer';
+import {all, digit} from '../Options';
 
 export class ImpactorSwarm extends Card implements IProjectCard {
   constructor() {
@@ -20,8 +21,8 @@ export class ImpactorSwarm extends Card implements IProjectCard {
       metadata: {
         cardNumber: 'C16',
         renderData: CardRenderer.builder((b) => {
-          b.heat(12).digit.br;
-          b.minus().plants(2).any;
+          b.heat(12, {digit}).br;
+          b.minus().plants(2, {all});
         }),
         description: 'Requires 2 Jovian tags. Gain 12 heat. Remove up to 2 plants from any player.',
       },

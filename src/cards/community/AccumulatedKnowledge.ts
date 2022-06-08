@@ -1,13 +1,13 @@
 import {Player} from '../../Player';
 import {PreludeCard} from '../prelude/PreludeCard';
 import {IProjectCard} from '../IProjectCard';
-import {CardName} from '../../CardName';
-import {Tags} from '../Tags';
 import {OrOptions} from '../../inputs/OrOptions';
 import {SelectCard} from '../../inputs/SelectCard';
 import {SelectOption} from '../../inputs/SelectOption';
 import {DeferredAction} from '../../deferredActions/DeferredAction';
 import {CardRenderer} from '../render/CardRenderer';
+import {CardName} from '../../common/cards/CardName';
+import {Tags} from '../../common/cards/Tags';
 
 export class AccumulatedKnowledge extends PreludeCard implements IProjectCard {
   constructor() {

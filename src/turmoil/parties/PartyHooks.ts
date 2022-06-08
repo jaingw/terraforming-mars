@@ -1,25 +1,24 @@
 import {Player} from '../../Player';
-import {Game} from '../../Game';
-import {PartyName} from './PartyName';
-import {SpaceType} from '../../SpaceType';
-import {Phase} from '../../Phase';
+import {PartyName} from '../../common/turmoil/PartyName';
+import {SpaceType} from '../../common/boards/SpaceType';
+import {Phase} from '../../common/Phase';
 import {PolicyId} from '../Policy';
-import {Resources} from '../../Resources';
+import {Resources} from '../../common/Resources';
 import {ISpace} from '../../boards/ISpace';
 import {GREENS_POLICY_1} from './Greens';
-import {TurmoilPolicy} from '../TurmoilPolicy';
 import {PoliticalAgendas} from '../PoliticalAgendas';
+import {TurmoilUtil} from '../TurmoilUtil';
 
 export class PartyHooks {
   static applyMarsFirstRulingPolicy(player: Player, spaceType: SpaceType) {
-    if (this.shouldApplyPolicy(player.game, PartyName.MARS, TurmoilPolicy.MARS_FIRST_DEFAULT_POLICY) &&
+    if (this.shouldApplyPolicy(player, PartyName.MARS, 'mfp01') &&
         spaceType !== SpaceType.COLONY) {
       player.addResource(Resources.STEEL, 1);
     }
   }
 
   static applyGreensRulingPolicy(player: Player, space: ISpace) {
-    if (this.shouldApplyPolicy(player.game, PartyName.GREENS, TurmoilPolicy.GREENS_DEFAULT_POLICY)) {
+    if (this.shouldApplyPolicy(player, PartyName.GREENS, 'gp01')) {
       const greensPolicy = GREENS_POLICY_1;
       greensPolicy.onTilePlaced(player, space);
     }
@@ -27,26 +26,24 @@ export class PartyHooks {
 
   // Return true when the supplied policy is active. When `policyId` is inactive, it selects
   // the default policy for `partyName`.
-  static shouldApplyPolicy(game: Game, partyName: PartyName, policyId?: PolicyId): boolean {
-    if (!game.gameOptions.turmoilExtension) return false;
+  static shouldApplyPolicy(player: Player, partyName: PartyName, policyId?: PolicyId): boolean {
+    const game = player.game;
+    return TurmoilUtil.ifTurmoilElse(game, (turmoil) => {
+      if (game.phase !== Phase.ACTION) return false;
 
-    if (game.phase !== Phase.ACTION) return false;
+      const rulingParty = turmoil.rulingParty;
+      if (rulingParty === undefined) return false;
 
-    const turmoil = game.turmoil!;
-    if (!turmoil) return false;
+      // Set the default policy if not given
+      if (policyId === undefined) {
+        policyId = rulingParty.policies[0].id;
+      }
 
-    const rulingParty = turmoil.rulingParty;
-    if (rulingParty === undefined) return false;
+      const currentPolicyId: PolicyId = (turmoil.politicalAgendasData === undefined) ?
+        rulingParty.policies[0].id :
+        PoliticalAgendas.currentAgenda(turmoil).policyId;
 
-    // Set the default policy if not given
-    if (policyId === undefined) {
-      policyId = rulingParty.policies[0].id;
-    }
-
-    const currentPolicyId: PolicyId = (turmoil.politicalAgendasData === undefined) ?
-      rulingParty.policies[0].id :
-      PoliticalAgendas.currentAgenda(turmoil).policyId;
-
-    return rulingParty.name === partyName && currentPolicyId === policyId;
+      return rulingParty.name === partyName && currentPolicyId === policyId;
+    }, () => false);
   }
 }

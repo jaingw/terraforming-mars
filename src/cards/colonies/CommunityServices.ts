@@ -1,8 +1,8 @@
 import {IProjectCard} from '../IProjectCard';
-import {CardType} from '../CardType';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {CardName} from '../../CardName';
-import {Resources} from '../../Resources';
+import {CardName} from '../../common/cards/CardName';
+import {Resources} from '../../common/Resources';
 import {Card} from '../Card';
 import {CardRenderer} from '../render/CardRenderer';
 
@@ -12,6 +12,7 @@ export class CommunityServices extends Card implements IProjectCard {
       cost: 13,
       name: CardName.COMMUNITY_SERVICES,
       cardType: CardType.AUTOMATED,
+      victoryPoints: 1,
 
       metadata: {
         cardNumber: 'C04',
@@ -21,17 +22,12 @@ export class CommunityServices extends Card implements IProjectCard {
             pb.megacredits(1);
           }).slash().noTags();
         }),
-        victoryPoints: 1,
       },
     });
   }
 
   public play(player: Player) {
-    player.addProduction(Resources.MEGACREDITS, player.getNoTagsCount() + 1);
+    player.addProduction(Resources.MEGACREDITS, player.getNoTagsCount() + 1, {log: true});
     return undefined;
-  }
-
-  public getVictoryPoints() {
-    return 1;
   }
 }

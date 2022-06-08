@@ -1,8 +1,8 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
-import {CardType} from '../CardType';
+import {Tags} from '../../common/cards/Tags';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
 import {Card} from '../Card';
 import {CardRequirements} from '../CardRequirements';
@@ -14,6 +14,7 @@ export class SkyDocks extends Card implements IProjectCard {
       tags: [Tags.SPACE, Tags.EARTH],
       name: CardName.SKY_DOCKS,
       cardType: CardType.ACTIVE,
+      victoryPoints: 2,
 
       requirements: CardRequirements.builder((b) => b.tag(Tags.EARTH, 2)),
       cardDiscount: {amount: 1},
@@ -26,7 +27,6 @@ export class SkyDocks extends Card implements IProjectCard {
           b.tradeFleet();
         }),
         description: 'Requires 2 Earth tags. Gain 1 Trade Fleet.',
-        victoryPoints: 2,
       },
     });
   }
@@ -38,10 +38,6 @@ export class SkyDocks extends Card implements IProjectCard {
 
   public getCardDiscount() {
     return 1;
-  }
-
-  public getVictoryPoints() {
-    return 2;
   }
 
   public onDiscard(player: Player): void {

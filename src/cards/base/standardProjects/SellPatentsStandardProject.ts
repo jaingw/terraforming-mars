@@ -1,5 +1,5 @@
 import {Player} from '../../../Player';
-import {CardName} from '../../../CardName';
+import {CardName} from '../../../common/cards/CardName';
 import {CardRenderer} from '../../render/CardRenderer';
 import {StandardProjectCard} from '../../StandardProjectCard';
 import {SelectCard} from '../../../inputs/SelectCard';
@@ -7,6 +7,7 @@ import {IProjectCard} from '../../IProjectCard';
 // import {DeferredAction} from '../../../deferredActions/DeferredAction';
 import {OrOptions} from '../../../inputs/OrOptions';
 import {SelectOption} from '../../../inputs/SelectOption';
+import {multiplier} from '../../Options';
 
 export class SellPatentsStandardProject extends StandardProjectCard {
   constructor() {
@@ -17,14 +18,14 @@ export class SellPatentsStandardProject extends StandardProjectCard {
         cardNumber: 'SP8',
         renderData: CardRenderer.builder((b) =>
           b.standardProject('Discard any number of cards to gain that amount of M€.', (eb) => {
-            eb.text('X').cards(1).startAction.megacredits(0).multiplier;
+            eb.text('X').cards(1).startAction.megacredits(0, {multiplier});
           }),
         ),
       },
     });
   }
 
-  public canAct(player: Player): boolean {
+  public override canAct(player: Player): boolean {
     return player.cardsInHand.length > 0;
   }
 
@@ -32,7 +33,7 @@ export class SellPatentsStandardProject extends StandardProjectCard {
     // no-op
   }
 
-  public action(player: Player): SelectCard<IProjectCard> {
+  public override action(player: Player): SelectCard<IProjectCard> {
     return new SelectCard(
       'Sell patents',
       'Sell',

@@ -18,12 +18,12 @@ describe('Extremophiles', function() {
   });
 
   it('Can\'t play', function() {
-    expect(card.canPlay(player)).is.not.true;
+    expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
 
   it('Should play', function() {
     player.playedCards.push(new Research());
-    expect(card.canPlay(player)).is.true;
+    expect(player.canPlayIgnoringCost(card)).is.true;
     const action = card.play();
     expect(action).is.undefined;
   });
@@ -37,10 +37,10 @@ describe('Extremophiles', function() {
   it('Should act - multiple targets', function() {
     player.playedCards.push(card, new Tardigrades());
     const action = card.action(player);
-    expect(action instanceof SelectCard).is.true;
+    expect(action).instanceOf(SelectCard);
 
         action!.cb([card]);
-        expect(player.getResourcesOnCard(card)).to.eq(1);
+        expect(card.resourceCount).to.eq(1);
   });
 
   it('Gives victory points', function() {

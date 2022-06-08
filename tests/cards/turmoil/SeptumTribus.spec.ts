@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 import {SeptemTribus} from '../../../src/cards/turmoil/SeptemTribus';
 import {Game} from '../../../src/Game';
-import {PartyName} from '../../../src/turmoil/parties/PartyName';
+import {PartyName} from '../../../src/common/turmoil/PartyName';
 import {TestingUtils} from '../../TestingUtils';
 import {TestPlayers} from '../../TestPlayers';
 
@@ -33,17 +33,5 @@ describe('SeptumTribus', function() {
       card.action(player);
       expect(player.megaCredits).to.eq(6);
     }
-  });
-
-  it('Cannot act without Turmoil expansion', function() {
-    const card = new SeptemTribus();
-    const player = TestPlayers.BLUE.newPlayer();
-
-    const gameOptions = TestingUtils.setCustomGameOptions({turmoilExtension: false});
-    Game.newInstance('foobar', [player], player, gameOptions);
-    card.play();
-
-    player.corpCard = card;
-    expect(card.canAct(player)).is.not.true;
   });
 });

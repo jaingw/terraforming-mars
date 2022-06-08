@@ -1,9 +1,8 @@
-import {CorporationCard} from '../corporation/CorporationCard';
+import {ICorporationCard} from '../corporation/ICorporationCard';
 import {Player} from '../../Player';
-import {Tags} from '../Tags';
-import {CardName} from '../../CardName';
-import {CardType} from '../CardType';
-import {LogHelper} from '../../LogHelper';
+import {Tags} from '../../common/cards/Tags';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
 import {IProjectCard} from '../IProjectCard';
 import {SelectCard} from '../../inputs/SelectCard';
 import {ICard} from '../ICard';
@@ -11,11 +10,12 @@ import {OrOptions} from '../../inputs/OrOptions';
 import {SelectOption} from '../../inputs/SelectOption';
 import {Card} from '../Card';
 import {CardRenderer} from '../render/CardRenderer';
-import {Size} from '../render/Size';
-import {AltSecondaryTag} from '../render/CardRenderItem';
-import {Resources} from '../../Resources';
+import {Size} from '../../common/cards/render/Size';
+import {AltSecondaryTag} from '../../common/cards/render/AltSecondaryTag';
+import {Resources} from '../../common/Resources';
+import {digit} from '../Options';
 
-export class ProjectWorkshop extends Card implements CorporationCard {
+export class ProjectWorkshop extends Card implements ICorporationCard {
   constructor() {
     super({
       name: CardName.PROJECT_WORKSHOP,
@@ -28,17 +28,17 @@ export class ProjectWorkshop extends Card implements CorporationCard {
         cardNumber: 'R45',
         description: 'You start with 39 M€, 1 steel and 1 titanium. As your first action, draw a blue card.',
         renderData: CardRenderer.builder((b) => {
-          b.megacredits(39).steel(1).titanium(1).cards(1).secondaryTag(AltSecondaryTag.BLUE);
+          b.megacredits(39).steel(1).titanium(1).cards(1, {secondaryTag: AltSecondaryTag.BLUE});
           b.corpBox('action', (cb) => {
             cb.vSpace(Size.LARGE);
             cb.action(undefined, (eb) => {
-              eb.text('flip', Size.SMALL, true).cards(1).secondaryTag(AltSecondaryTag.BLUE);
-              eb.startAction.text('?', Size.MEDIUM, true).tr(1, Size.SMALL);
-              eb.cards(2).digit;
+              eb.text('flip', Size.SMALL, true).cards(1, {secondaryTag: AltSecondaryTag.BLUE});
+              eb.startAction.text('?', Size.MEDIUM, true).tr(1, {size: Size.SMALL});
+              eb.cards(2, {digit});
             });
             cb.vSpace(Size.SMALL);
             cb.action('Flip and discard a played blue card to convert any VP on it into TR and draw 2 cards, or spend 3 M€ to draw a blue card.', (eb) => {
-              eb.or().megacredits(3).startAction.cards(1).secondaryTag(AltSecondaryTag.BLUE);
+              eb.or().megacredits(3).startAction.cards(1, {secondaryTag: AltSecondaryTag.BLUE});
             });
           });
         }),
@@ -97,16 +97,17 @@ export class ProjectWorkshop extends Card implements CorporationCard {
     });
 
     if (activeCards.length === 0) return drawBlueCard;
+    // TODO(kberg): Take reds into account
     if (!player.canAfford(3)) return flipBlueCard;
 
     return new OrOptions(drawBlueCard, flipBlueCard);
   }
 
   private convertCardPointsToTR(player: Player, card: ICard) {
-    if (card.getVictoryPoints !== undefined) {
-      const steps = card.getVictoryPoints(player);
-      player.increaseTerraformRatingSteps(steps);
-      LogHelper.logTRIncrease(player, steps);
+    const steps = card.getVictoryPoints(player);
+    // TODO(kberg): this doesn't reduce VPs below 0. What to do?
+    if (steps !== 0) {
+      player.increaseTerraformRatingSteps(steps, {log: true});
     }
   }
 

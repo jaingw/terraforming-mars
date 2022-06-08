@@ -1,14 +1,14 @@
-import {CorporationCard} from '../corporation/CorporationCard';
-import {Tags} from '../Tags';
-import {CardName} from '../../CardName';
-import {CardType} from '../CardType';
 import {CardRenderer} from '../render/CardRenderer';
 import {Card} from '../Card';
 import {Player} from '../../Player';
 import {DiscardCards} from '../../deferredActions/DiscardCards';
-import {Size} from '../render/Size';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
+import {Size} from '../../common/cards/render/Size';
+import {Tags} from '../../common/cards/Tags';
+import {ICorporationCard} from '../corporation/ICorporationCard';
 
-export class LabourUnion extends Card implements CorporationCard {
+export class LabourUnion extends Card implements ICorporationCard {
   constructor() {
     super({
       cardType: CardType.CORPORATION,

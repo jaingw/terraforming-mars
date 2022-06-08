@@ -1,13 +1,14 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Card} from '../Card';
-import {CardType} from '../CardType';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {Resources} from '../../Resources';
-import {CardName} from '../../CardName';
+import {Resources} from '../../common/Resources';
+import {CardName} from '../../common/cards/CardName';
 import {DecreaseAnyProduction} from '../../deferredActions/DecreaseAnyProduction';
 import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
+import {all} from '../Options';
 
 export class PowerSupplyConsortium extends Card implements IProjectCard {
   constructor() {
@@ -22,7 +23,7 @@ export class PowerSupplyConsortium extends Card implements IProjectCard {
         cardNumber: '160',
         renderData: CardRenderer.builder((b) => {
           b.production((pb) => {
-            pb.minus().energy(1).any.br;
+            pb.minus().energy(1, {all}).br;
             pb.plus().energy(1);
           });
         }),
@@ -33,7 +34,8 @@ export class PowerSupplyConsortium extends Card implements IProjectCard {
 
   public play(player: Player) {
     player.addProduction(Resources.ENERGY, 1);
-    player.game.defer(new DecreaseAnyProduction(player, Resources.ENERGY, 1));
+    player.game.defer(
+      new DecreaseAnyProduction(player, Resources.ENERGY, {count: 1, stealing: true}));
     return undefined;
   }
 }

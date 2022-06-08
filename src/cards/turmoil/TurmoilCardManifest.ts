@@ -1,5 +1,5 @@
-import {CardName} from '../../CardName';
-import {GameModule} from '../../GameModule';
+import {CardName} from '../../common/cards/CardName';
+import {GameModule} from '../../common/cards/GameModule';
 import {CardManifest} from '../CardManifest';
 import {AerialLenses} from './AerialLenses';
 import {BannedDelegate} from './BannedDelegate';
@@ -51,7 +51,7 @@ export const TURMOIL_CARD_MANIFEST = new CardManifest({
     {cardName: CardName.PRISTAR, Factory: Pristar},
     {cardName: CardName.TERRALABS_RESEARCH, Factory: TerralabsResearch},
     {cardName: CardName.UTOPIA_INVEST, Factory: UtopiaInvest},
-    {cardName: CardName.SEPTEM_TRIBUS, Factory: SeptemTribus},
+    {cardName: CardName.SEPTEM_TRIBUS, Factory: SeptemTribus, compatibility: GameModule.Turmoil},
   ],
 });
 

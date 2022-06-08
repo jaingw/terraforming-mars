@@ -1,12 +1,9 @@
 import {IActionCard} from '../ICard';
-import {Tags} from '../Tags';
-import {CardType} from '../CardType';
+import {Tags} from '../../common/cards/Tags';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {Resources} from '../../Resources';
-import {MAX_VENUS_SCALE, REDS_RULING_POLICY_COST} from '../../constants';
-import {CardName} from '../../CardName';
-import {PartyHooks} from '../../turmoil/parties/PartyHooks';
-import {PartyName} from '../../turmoil/parties/PartyName';
+import {Resources} from '../../common/Resources';
+import {CardName} from '../../common/cards/CardName';
 import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
 import {Card} from '../Card';
@@ -30,20 +27,13 @@ export class VenusMagnetizer extends Card implements IActionCard {
         description: 'Requires Venus 10%.',
       },
     });
-  };
+  }
 
   public play() {
     return undefined;
   }
   public canAct(player: Player): boolean {
-    const venusMaxed = player.game.getVenusScaleLevel() === MAX_VENUS_SCALE;
-    const hasEnergyProduction = player.getProduction(Resources.ENERGY) > 0;
-
-    if (PartyHooks.shouldApplyPolicy(player.game, PartyName.REDS)) {
-      return player.canAfford(REDS_RULING_POLICY_COST) && hasEnergyProduction && !venusMaxed;
-    }
-
-    return hasEnergyProduction && !venusMaxed;
+    return player.getProduction(Resources.ENERGY) > 0 && player.canAfford(0, {tr: {venus: 1}});
   }
   public action(player: Player) {
     player.addProduction(Resources.ENERGY, -1);

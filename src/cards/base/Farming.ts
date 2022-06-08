@@ -1,11 +1,11 @@
 
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Card} from '../Card';
-import {CardType} from '../CardType';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {Resources} from '../../Resources';
-import {CardName} from '../../CardName';
+import {Resources} from '../../common/Resources';
+import {CardName} from '../../common/cards/CardName';
 import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
 
@@ -16,6 +16,7 @@ export class Farming extends Card implements IProjectCard {
       name: CardName.FARMING,
       tags: [Tags.PLANT],
       cost: 16,
+      victoryPoints: 2,
 
       requirements: CardRequirements.builder((b) => b.temperature(4)),
       metadata: {
@@ -27,7 +28,6 @@ export class Farming extends Card implements IProjectCard {
             pb.plants(2);
           }).nbsp.plants(2);
         }),
-        victoryPoints: 2,
       },
     });
   }
@@ -36,8 +36,5 @@ export class Farming extends Card implements IProjectCard {
     player.addProduction(Resources.PLANTS, 2);
     player.plants += 2;
     return undefined;
-  }
-  public getVictoryPoints() {
-    return 2;
   }
 }

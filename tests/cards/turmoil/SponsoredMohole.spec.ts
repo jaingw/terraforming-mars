@@ -1,8 +1,8 @@
 import {expect} from 'chai';
 import {SponsoredMohole} from '../../../src/cards/turmoil/SponsoredMohole';
 import {Game} from '../../../src/Game';
-import {Resources} from '../../../src/Resources';
-import {PartyName} from '../../../src/turmoil/parties/PartyName';
+import {Resources} from '../../../src/common/Resources';
+import {PartyName} from '../../../src/common/turmoil/PartyName';
 import {TestingUtils} from '../../TestingUtils';
 import {TestPlayers} from '../../TestPlayers';
 
@@ -13,11 +13,11 @@ describe('SponsoredMohole', function() {
     const redPlayer = TestPlayers.RED.newPlayer();
     const gameOptions = TestingUtils.setCustomGameOptions();
     const game = Game.newInstance('foobar', [player, redPlayer], player, gameOptions);
-    expect(card.canPlay(player)).is.not.true;
+    expect(player.canPlayIgnoringCost(card)).is.not.true;
 
     const kelvinists = game.turmoil!.getPartyByName(PartyName.KELVINISTS)!;
     kelvinists.delegates.push(player, player);
-    expect(card.canPlay(player)).is.true;
+    expect(player.canPlayIgnoringCost(card)).is.true;
 
     card.play(player);
     expect(player.getProduction(Resources.HEAT)).to.eq(2);

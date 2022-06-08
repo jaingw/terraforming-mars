@@ -1,13 +1,13 @@
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {Player} from '../../Player';
-import {CardType} from '../CardType';
+import {CardType} from '../../common/cards/CardType';
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
-import {ResourceType} from '../../ResourceType';
+import {Tags} from '../../common/cards/Tags';
+import {ResourceType} from '../../common/ResourceType';
 import {AddResourcesToCard} from '../../deferredActions/AddResourcesToCard';
 import {CardRenderer} from '../render/CardRenderer';
-import {CardRenderDynamicVictoryPoints} from '../render/CardRenderDynamicVictoryPoints';
 import {Card} from '../Card';
+import {VictoryPoints} from '../ICard';
 
 export class ProcessorFactory extends Card implements IProjectCard {
   constructor() {
@@ -16,7 +16,9 @@ export class ProcessorFactory extends Card implements IProjectCard {
       cardType: CardType.ACTIVE,
       tags: [Tags.MOON, Tags.BUILDING],
       cost: 8,
+
       resourceType: ResourceType.DATA,
+      victoryPoints: VictoryPoints.resource(1, 3),
 
       metadata: {
         cardNumber: 'M86',
@@ -25,11 +27,10 @@ export class ProcessorFactory extends Card implements IProjectCard {
           b.br;
           b.vpText('1 VP for every 3 data resources here.');
         }),
-        victoryPoints: CardRenderDynamicVictoryPoints.data(1, 3),
       },
     });
-  };
-  public resourceCount = 0;
+  }
+  public override resourceCount = 0;
 
   public play() {
     return undefined;
@@ -43,9 +44,5 @@ export class ProcessorFactory extends Card implements IProjectCard {
     player.steel--;
     player.game.defer(new AddResourcesToCard(player, ResourceType.DATA, {count: 2}));
     return undefined;
-  }
-
-  public getVictoryPoints() {
-    return Math.floor(this.resourceCount / 3);
   }
 }

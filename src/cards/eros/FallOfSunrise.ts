@@ -1,14 +1,14 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
-import {CardType} from '../CardType';
 import {Player} from '../../Player';
-import {Resources} from '../../Resources';
-import {CardName} from '../../CardName';
-import {MAX_TEMPERATURE, REDS_RULING_POLICY_COST} from '../../constants';
 import {PartyHooks} from '../../turmoil/parties/PartyHooks';
-import {PartyName} from '../../turmoil/parties/PartyName';
 import {CardRenderer} from '../render/CardRenderer';
 import {Card} from '../Card';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
+import {Tags} from '../../common/cards/Tags';
+import {MAX_TEMPERATURE, REDS_RULING_POLICY_COST} from '../../common/constants';
+import {Resources} from '../../common/Resources';
+import {PartyName} from '../../common/turmoil/PartyName';
 
 export class FallOfSunrise extends Card implements IProjectCard {
   constructor() {
@@ -27,11 +27,11 @@ export class FallOfSunrise extends Card implements IProjectCard {
         description: 'Increase Temperature 1 step. Gain 4 plants.',
       },
     });
-  };
+  }
 
-  public canPlay(player: Player): boolean {
+  public override canPlay(player: Player): boolean {
     const temperatureStep = player.game.getTemperature() < MAX_TEMPERATURE ? 1 : 0;
-    if (PartyHooks.shouldApplyPolicy(player.game, PartyName.REDS)) {
+    if (PartyHooks.shouldApplyPolicy(player, PartyName.REDS)) {
       return player.canAfford(player.getCardCost(this) + REDS_RULING_POLICY_COST * temperatureStep, {titanium: true});
     }
 

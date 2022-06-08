@@ -1,23 +1,24 @@
-import {CorporationCard} from '../corporation/CorporationCard';
+import {ICorporationCard} from '../corporation/ICorporationCard';
 import {Player} from '../../Player';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Game} from '../../Game';
-import {CardName} from '../../CardName';
-import {CardType} from '../CardType';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
 import {ARES_CARD_MANIFEST} from './AresCardManifest';
 import {PlaceHazardTile} from '../../deferredActions/PlaceHazardTile';
 import {ISpace} from '../../boards/ISpace';
 import {SelectOption} from '../../inputs/SelectOption';
 import {OrOptions} from '../../inputs/OrOptions';
 import {SelectSpace} from '../../inputs/SelectSpace';
-import {LogHelper} from '../../LogHelper';
 import {Card} from '../Card';
 import {CardRenderer} from '../render/CardRenderer';
-import {AltSecondaryTag} from '../render/CardRenderItem';
-import {Size} from '../render/Size';
-import {isAresTile} from '../../TileType';
+import {AltSecondaryTag} from '../../common/cards/render/AltSecondaryTag';
+import {Size} from '../../common/cards/render/Size';
+import {isHazardTileType} from '../../common/TileType';
+import {all} from '../Options';
 
-export class Eris extends Card implements CorporationCard {
+
+export class Eris extends Card implements ICorporationCard {
   constructor() {
     super({
       cardType: CardType.CORPORATION,
@@ -31,10 +32,10 @@ export class Eris extends Card implements CorporationCard {
         description: 'You start with 46 M€. As your first action, draw an Ares card.',
         renderData: CardRenderer.builder((b) => {
           b.br.br;
-          b.megacredits(46).nbsp.cards(1).secondaryTag(AltSecondaryTag.ARES);
+          b.megacredits(46).nbsp.cards(1, {secondaryTag: AltSecondaryTag.ARES});
           b.corpBox('action', (ce) => {
             ce.action('Place a new hazard tile adjacent to NO OTHER TILE, OR remove a hazard tile to gain 1 TR.', (eb) => {
-              eb.empty().startAction.plus().hazardTile().slash().minus().hazardTile().any.colon().tr(1, Size.SMALL);
+              eb.empty().startAction.plus().hazardTile().slash().minus().hazardTile({all}).colon().tr(1, {size: Size.SMALL});
             });
           });
         }),
@@ -85,7 +86,6 @@ export class Eris extends Card implements CorporationCard {
           (space: ISpace) => {
             space.tile = undefined;
             player.increaseTerraformRating();
-            LogHelper.logTRIncrease(player, 1);
             return undefined;
           },
         );
@@ -115,7 +115,7 @@ export class Eris extends Card implements CorporationCard {
 
   private getAllUnprotectedHazardSpaces(game: Game): Array<ISpace> {
     return game.board.spaces.filter(
-      (space) => space.tile && isAresTile(space.tile.tileType) && space.tile.protectedHazard === false,
+      (space) => space.tile && isHazardTileType(space.tile.tileType) && space.tile.protectedHazard === false,
     );
   }
 }

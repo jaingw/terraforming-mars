@@ -4,9 +4,9 @@ import {TestingUtils} from '../../TestingUtils';
 import {TestPlayers} from '../../TestPlayers';
 import {OrbitalPowerGrid} from '../../../src/cards/moon/OrbitalPowerGrid';
 import {expect} from 'chai';
-import {TileType} from '../../../src/TileType';
-import {Resources} from '../../../src/Resources';
-import {SpaceType} from '../../../src/SpaceType';
+import {Resources} from '../../../src/common/Resources';
+import {TileType} from '../../../src/common/TileType';
+import {SpaceType} from '../../../src/common/boards/SpaceType';
 
 const MOON_OPTIONS = TestingUtils.setCustomGameOptions({moonExpansion: true});
 
@@ -46,7 +46,7 @@ describe('OrbitalPowerGrid', () => {
     colonySpaces[0].tile = {tileType: TileType.CITY};
     colonySpaces[1].tile = {tileType: TileType.CITY};
 
-    const landSpaces = player.game.board.getAvailableSpacesOnLand();
+    const landSpaces = player.game.board.getAvailableSpacesOnLand(player);
     landSpaces[0].tile = {tileType: TileType.CITY};
     landSpaces[1].tile = {tileType: TileType.CITY};
     landSpaces[2].tile = {tileType: TileType.CITY};

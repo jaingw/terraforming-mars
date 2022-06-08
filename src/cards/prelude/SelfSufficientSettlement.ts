@@ -1,12 +1,11 @@
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Player} from '../../Player';
 import {PreludeCard} from './PreludeCard';
 import {IProjectCard} from '../IProjectCard';
-import {Resources} from '../../Resources';
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {PlaceCityTile} from '../../deferredActions/PlaceCityTile';
 import {CardRenderer} from '../render/CardRenderer';
-import {Units} from '../../Units';
+import {Units} from '../../common/Units';
 
 export class SelfSufficientSettlement extends PreludeCard implements IProjectCard {
   constructor() {
@@ -25,7 +24,7 @@ export class SelfSufficientSettlement extends PreludeCard implements IProjectCar
     });
   }
   public play(player: Player) {
-    player.addProduction(Resources.MEGACREDITS, 2);
+    player.adjustProduction(this.productionBox);
     player.game.defer(new PlaceCityTile(player));
     return undefined;
   }

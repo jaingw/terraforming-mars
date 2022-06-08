@@ -37,13 +37,14 @@ describe('BioPrintingFacility', function() {
   it('Should act - single target', function() {
     const smallanimals = new SmallAnimals();
     player.playedCards.push(smallanimals);
+    player.energy = 2;
 
     const action = card.action(player);
-    expect(action instanceof OrOptions).is.true;
+    expect(action).instanceOf(OrOptions);
     expect(action!.options).has.lengthOf(2);
 
     action!.options[0].cb();
-    expect(player.getResourcesOnCard(smallanimals)).to.eq(1);
+    expect(smallanimals.resourceCount).to.eq(1);
 
     action!.options[1].cb();
     expect(player.plants).to.eq(2);
@@ -53,15 +54,16 @@ describe('BioPrintingFacility', function() {
     const smallanimals = new SmallAnimals();
     const fish = new Fish();
     player.playedCards.push(smallanimals, fish);
+    player.energy = 2;
 
     const action = card.action(player);
-    expect(action instanceof OrOptions).is.true;
+    expect(action).instanceOf(OrOptions);
     expect(action!.options).has.lengthOf(2);
 
     action!.options[0].cb([smallanimals]);
-    expect(player.getResourcesOnCard(smallanimals)).to.eq(1);
+    expect(smallanimals.resourceCount).to.eq(1);
 
     action!.options[0].cb([fish]);
-    expect(player.getResourcesOnCard(fish)).to.eq(1);
+    expect(fish.resourceCount).to.eq(1);
   });
 });

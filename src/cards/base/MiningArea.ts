@@ -1,14 +1,13 @@
 import {Player} from '../../Player';
-import {TileType} from '../../TileType';
-import {CardName} from '../../CardName';
+import {TileType} from '../../common/TileType';
+import {CardName} from '../../common/cards/CardName';
 import {MiningCard} from './MiningCard';
-import {CardMetadata} from '../CardMetadata';
 import {CardRenderer} from '../render/CardRenderer';
 
 export class MiningArea extends MiningCard {
   constructor(
     name: CardName = CardName.MINING_AREA,
-    metadata: CardMetadata = {
+    metadata = {
       cardNumber: '064',
       renderData: CardRenderer.builder((b) => {
         b.tile(TileType.MINING_AREA, true).asterix().br;
@@ -24,7 +23,7 @@ export class MiningArea extends MiningCard {
       metadata,
     );
   }
-  protected getAvailableSpaces(player: Player) {
+  protected override getAvailableSpaces(player: Player) {
     return super.getAvailableSpaces(player)
       .filter((space) => player.game.board.getAdjacentSpaces(space).some((adjacentSpace) => adjacentSpace.tile !== undefined && adjacentSpace.tile.tileType !== TileType.OCEAN && adjacentSpace.player === player));
   }

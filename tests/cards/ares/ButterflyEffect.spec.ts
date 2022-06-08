@@ -1,19 +1,21 @@
-import {Game} from '../../../src/Game';
-import {Player} from '../../../src/Player';
 import {ButterflyEffect} from '../../../src/cards/ares/ButterflyEffect';
 import {expect} from 'chai';
 import {ARES_OPTIONS_WITH_HAZARDS} from '../../ares/AresTestHelper';
 import {ShiftAresGlobalParameters} from '../../../src/inputs/ShiftAresGlobalParameters';
-import {TestPlayers} from '../../TestPlayers';
+import {getTestPlayer, newTestGame} from '../../TestGame';
+import {TestPlayer} from '../../TestPlayer';
+import {Game} from '../../../src/Game';
+import {TestingUtils} from '../../TestingUtils';
 
 describe('ButterflyEffect', function() {
-  let card: ButterflyEffect; let player: Player; let game: Game;
+  let card: ButterflyEffect;
+  let player: TestPlayer;
+  let game: Game;
 
   beforeEach(function() {
     card = new ButterflyEffect();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    game = Game.newInstance('foobar', [player, redPlayer], player, ARES_OPTIONS_WITH_HAZARDS);
+    game = newTestGame(2, ARES_OPTIONS_WITH_HAZARDS);
+    player = getTestPlayer(game, 0);
   });
 
   it('play', function() {
@@ -27,7 +29,8 @@ describe('ButterflyEffect', function() {
     expect(originalHazardData.severeErosionTemperature.threshold).eq(-4);
     expect(originalHazardData.severeDustStormOxygen.threshold).eq(5);
 
-    const input = game.deferredActions.peek()!.execute() as ShiftAresGlobalParameters;
+    TestingUtils.runAllActions(game);
+    const input = TestingUtils.cast(player.getWaitingFor(), ShiftAresGlobalParameters);
     input.cb(
       {
         lowOceanDelta: -1,

@@ -6,7 +6,7 @@ import {OrOptions} from '../../../src/inputs/OrOptions';
 import {SelectPlayer} from '../../../src/inputs/SelectPlayer';
 import {SelectSpace} from '../../../src/inputs/SelectSpace';
 import {TestPlayer} from '../../TestPlayer';
-import {SpaceType} from '../../../src/SpaceType';
+import {SpaceType} from '../../../src/common/boards/SpaceType';
 import {TestingUtils} from '../../TestingUtils';
 import {TestPlayers} from '../../TestPlayers';
 
@@ -23,7 +23,7 @@ describe('Flooding', function() {
   it('Should play', function() {
     const oceans = game.board.getAvailableSpacesForOcean(player);
     const action = card.play(player);
-    expect(action instanceof SelectSpace).is.true;
+    expect(action).instanceOf(SelectSpace);
 
     expect(action!.cb(oceans[0])).is.undefined;
     const adjacentSpaces = game.board.getAdjacentSpaces(oceans[0]);
@@ -47,8 +47,7 @@ describe('Flooding', function() {
     subActionSelectPlayer.cb(player2);
     expect(player2.megaCredits).to.eq(0);
 
-    player.victoryPointsBreakdown.setVictoryPoints('victoryPoints', card.getVictoryPoints());
-    expect(player.victoryPointsBreakdown.victoryPoints).to.eq(-1);
+    expect(card.getVictoryPoints()).to.eq(-1);
   });
 
   it('Does not suggest to remove money from yourself', function() {
@@ -58,7 +57,7 @@ describe('Flooding', function() {
     game.addGreenery(player, '03');
     game.addGreenery(player2, '05');
 
-    expect(action instanceof SelectSpace).is.true;
+    expect(action).instanceOf(SelectSpace);
     const subActions: OrOptions = action!.cb(oceanSpaces[0]) as OrOptions;
     expect(subActions.options).has.lengthOf(2);
 

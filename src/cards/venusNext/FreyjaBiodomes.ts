@@ -1,11 +1,11 @@
-import {Tags} from '../Tags';
-import {CardType} from '../CardType';
+import {Tags} from '../../common/cards/Tags';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {Resources} from '../../Resources';
-import {ResourceType} from '../../ResourceType';
+import {Resources} from '../../common/Resources';
+import {ResourceType} from '../../common/ResourceType';
 import {SelectCard} from '../../inputs/SelectCard';
 import {ICard} from '../ICard';
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
 import {Card} from '../Card';
@@ -19,22 +19,23 @@ export class FreyjaBiodomes extends Card {
       cost: 14,
 
       requirements: CardRequirements.builder((b) => b.venus(10)),
+      victoryPoints: 2,
+
       metadata: {
         cardNumber: '227',
         renderData: CardRenderer.builder((b) => {
-          b.microbes(2).secondaryTag(Tags.VENUS).or().animals(2).secondaryTag(Tags.VENUS).br;
+          b.microbes(2, {secondaryTag: Tags.VENUS}).or().animals(2, {secondaryTag: Tags.VENUS}).br;
           b.production((pb) => pb.minus().energy(1).nbsp.plus().megacredits(2));
         }),
         description: {
           text: 'Requires 10% on the Venus track. Add 2 Microbes or 2 Animals to another Venus card. Production: energy -1, M€ +2.',
           align: 'left',
         },
-        victoryPoints: 2,
       },
     });
-  };
-  public canPlay(player: Player): boolean {
-    return player.getProduction(Resources.ENERGY) >= 1 && super.canPlay(player);
+  }
+  public override canPlay(player: Player): boolean {
+    return player.getProduction(Resources.ENERGY) >= 1;
   }
   public getResCards(player: Player): ICard[] {
     let resourceCards = player.getResourceCards(ResourceType.ANIMAL);
@@ -66,9 +67,5 @@ export class FreyjaBiodomes extends Card {
     player.addProduction(Resources.ENERGY, -1);
     player.addProduction(Resources.MEGACREDITS, 2);
     return undefined;
-  }
-
-  public getVictoryPoints() {
-    return 2;
   }
 }

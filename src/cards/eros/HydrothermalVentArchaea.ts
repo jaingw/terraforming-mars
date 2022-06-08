@@ -1,14 +1,13 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
-import {CardType} from '../CardType';
 import {Player} from '../../Player';
-import {ResourceType} from '../../ResourceType';
-import {CardName} from '../../CardName';
-import {IResourceCard} from '../ICard';
+import {IResourceCard, VictoryPoints} from '../ICard';
 import {CardRenderer} from '../render/CardRenderer';
 import {CardRequirements} from '../CardRequirements';
-import {CardRenderDynamicVictoryPoints} from '../render/CardRenderDynamicVictoryPoints';
 import {Card} from '../Card';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
+import {Tags} from '../../common/cards/Tags';
+import {ResourceType} from '../../common/ResourceType';
 
 export class HydrothermalVentArchaea extends Card implements IProjectCard, IResourceCard {
   constructor() {
@@ -18,7 +17,7 @@ export class HydrothermalVentArchaea extends Card implements IProjectCard, IReso
       tags: [Tags.MICROBE],
       cost: 8,
       resourceType: ResourceType.MICROBE,
-
+      victoryPoints: VictoryPoints.resource(1, 2),
       requirements: CardRequirements.builder((b) => b.oceans(3)),
       metadata: {
         cardNumber: 'Q12',
@@ -29,18 +28,13 @@ export class HydrothermalVentArchaea extends Card implements IProjectCard, IReso
           b.vpText('1 VP per 2 Microbes on this card.');
         }),
         description: 'Requires 3 oceans.',
-        victoryPoints: CardRenderDynamicVictoryPoints.microbes(1, 2),
       },
     });
   }
-    public resourceCount: number = 0;
+    public override resourceCount: number = 0;
 
-    public canPlay(player: Player): boolean {
+    public override canPlay(player: Player): boolean {
       return super.canPlay(player);
-    }
-
-    public getVictoryPoints(): number {
-      return Math.floor(this.resourceCount / 2);
     }
 
     public play() {

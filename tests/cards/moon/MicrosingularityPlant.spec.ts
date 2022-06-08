@@ -6,8 +6,8 @@ import {MicrosingularityPlant} from '../../../src/cards/moon/MicrosingularityPla
 import {expect} from 'chai';
 import {MoonExpansion} from '../../../src/moon/MoonExpansion';
 import {IMoonData} from '../../../src/moon/IMoonData';
-import {TileType} from '../../../src/TileType';
-import {Resources} from '../../../src/Resources';
+import {Resources} from '../../../src/common/Resources';
+import {TileType} from '../../../src/common/TileType';
 
 const MOON_OPTIONS = TestingUtils.setCustomGameOptions({moonExpansion: true});
 
@@ -27,8 +27,8 @@ describe('MicrosingularityPlant', () => {
     player.cardsInHand = [card];
     player.megaCredits = card.cost;
 
-    const space1 = moonData.moon.getAvailableSpacesOnLand()[0];
-    const space2 = moonData.moon.getAvailableSpacesOnLand()[1];
+    const space1 = moonData.moon.getAvailableSpacesOnLand(player)[0];
+    const space2 = moonData.moon.getAvailableSpacesOnLand(player)[1];
 
     space1.tile = {tileType: TileType.MOON_COLONY};
     space2.tile = {tileType: TileType.MOON_COLONY};

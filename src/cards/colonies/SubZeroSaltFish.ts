@@ -1,16 +1,17 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
-import {CardType} from '../CardType';
+import {Tags} from '../../common/cards/Tags';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {CardName} from '../../CardName';
-import {ResourceType} from '../../ResourceType';
-import {Resources} from '../../Resources';
+import {CardName} from '../../common/cards/CardName';
+import {Resources} from '../../common/Resources';
+import {ResourceType} from '../../common/ResourceType';
 import {IResourceCard} from '../ICard';
 import {DecreaseAnyProduction} from '../../deferredActions/DecreaseAnyProduction';
 import {CardRenderer} from '../render/CardRenderer';
 import {CardRequirements} from '../CardRequirements';
 import {Card} from '../Card';
-import {CardRenderDynamicVictoryPoints} from '../render/CardRenderDynamicVictoryPoints';
+import {VictoryPoints} from '../ICard';
+import {all} from '../Options';
 
 export class SubZeroSaltFish extends Card implements IProjectCard, IResourceCard {
   constructor() {
@@ -19,35 +20,36 @@ export class SubZeroSaltFish extends Card implements IProjectCard, IResourceCard
       tags: [Tags.ANIMAL],
       name: CardName.SUBZERO_SALT_FISH,
       cardType: CardType.ACTIVE,
-      resourceType: ResourceType.ANIMAL,
 
+      resourceType: ResourceType.ANIMAL,
+      victoryPoints: VictoryPoints.resource(1, 2),
       requirements: CardRequirements.builder((b) => b.temperature(-6)),
+
       metadata: {
         cardNumber: 'C42',
         renderData: CardRenderer.builder((b) => {
           b.action('Add 1 Animal to this card.', (eb) => {
             eb.empty().startAction.animals(1);
           }).br;
-          b.production((pb) => pb.minus().plants(1).any).br;
+          b.production((pb) => pb.minus().plants(1, {all})).br;
           b.vpText('1 VP per 2 Animals on this card.');
         }),
         description: {
           text: 'Requires -6 C. Decrease any Plant production 1 step.',
           align: 'left',
         },
-        victoryPoints: CardRenderDynamicVictoryPoints.animals(1, 2),
       },
     });
   }
 
-  public resourceCount: number = 0;
+  public override resourceCount: number = 0;
 
   public canAct(): boolean {
     return true;
   }
 
-  public canPlay(player: Player): boolean {
-    return super.canPlay(player) && player.game.someoneHasResourceProduction(Resources.PLANTS, 1);
+  public override canPlay(player: Player): boolean {
+    return player.game.someoneCanHaveProductionReduced(Resources.PLANTS, 1);
   }
 
   public action(player: Player) {
@@ -56,11 +58,8 @@ export class SubZeroSaltFish extends Card implements IProjectCard, IResourceCard
   }
 
   public play(player: Player) {
-    player.game.defer(new DecreaseAnyProduction(player, Resources.PLANTS, 1));
+    player.game.defer(
+      new DecreaseAnyProduction(player, Resources.PLANTS, {count: 1}));
     return undefined;
-  }
-
-  public getVictoryPoints(): number {
-    return Math.floor(this.resourceCount / 2);
   }
 }

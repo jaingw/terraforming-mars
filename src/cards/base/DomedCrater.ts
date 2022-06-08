@@ -1,16 +1,17 @@
 
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Card} from '../Card';
-import {CardType} from '../CardType';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
 import {SelectSpace} from '../../inputs/SelectSpace';
 import {ISpace} from '../../boards/ISpace';
-import {Resources} from '../../Resources';
-import {CardName} from '../../CardName';
+import {Resources} from '../../common/Resources';
+import {CardName} from '../../common/cards/CardName';
 import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
-import {Units} from '../../Units';
+import {Units} from '../../common/Units';
+import {digit, max} from '../Options';
 
 export class DomedCrater extends Card implements IProjectCard {
   constructor() {
@@ -20,8 +21,9 @@ export class DomedCrater extends Card implements IProjectCard {
       tags: [Tags.CITY, Tags.BUILDING],
       cost: 24,
       productionBox: Units.of({energy: -1, megacredits: 3}),
+      victoryPoints: 1,
 
-      requirements: CardRequirements.builder((b) => b.oxygen(7).max()),
+      requirements: CardRequirements.builder((b) => b.oxygen(7, {max})),
       metadata: {
         cardNumber: 'T03',
         description: {
@@ -32,16 +34,14 @@ export class DomedCrater extends Card implements IProjectCard {
           b.production((pb) => {
             pb.minus().energy(1).br;
             pb.plus().megacredits(3);
-          }).nbsp.city().plants(3).digit.br;
+          }).nbsp.city().plants(3, {digit}).br;
         }),
-        victoryPoints: 1,
       },
     });
   }
 
-  public canPlay(player: Player): boolean {
-    return super.canPlay(player) &&
-      player.getProduction(Resources.ENERGY) >= 1 &&
+  public override canPlay(player: Player): boolean {
+    return player.getProduction(Resources.ENERGY) >= 1 &&
       player.game.board.getAvailableSpacesForCity(player).length > 0;
   }
   public play(player: Player) {
@@ -56,8 +56,5 @@ export class DomedCrater extends Card implements IProjectCard {
         return undefined;
       },
     );
-  }
-  public getVictoryPoints() {
-    return 1;
   }
 }

@@ -1,6 +1,6 @@
-import {Message} from '../Message';
+import {PlayerInputTypes} from '../common/input/PlayerInputTypes';
+import {Message} from '../common/logs/Message';
 import {PlayerInput} from '../PlayerInput';
-import {PlayerInputTypes} from '../PlayerInputTypes';
 import {IGlobalEvent} from '../turmoil/globalEvents/IGlobalEvent';
 
 export class SelectGlobalCard implements PlayerInput {

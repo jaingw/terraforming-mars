@@ -1,7 +1,7 @@
 import {IProjectCard} from '../IProjectCard';
 import {Card} from '../Card';
-import {CardName} from '../../CardName';
-import {CardType} from '../CardType';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
 import {OrOptions} from '../../inputs/OrOptions';
 import {SelectDelegate} from '../../inputs/SelectDelegate';
@@ -9,6 +9,8 @@ import {IParty} from '../../turmoil/parties/IParty';
 import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
 import {NeutralPlayer} from '../../turmoil/Turmoil';
+import {TurmoilUtil} from '../../turmoil/TurmoilUtil';
+import {all} from '../Options';
 
 export class BannedDelegate extends Card implements IProjectCard {
   constructor() {
@@ -22,40 +24,41 @@ export class BannedDelegate extends Card implements IProjectCard {
         cardNumber: 'T02',
         description: 'Requires that you are Chairman. Remove any NON-LEADER delegate.',
         renderData: CardRenderer.builder((b) => {
-          b.minus().delegates(1).any;
+          b.minus().delegates(1, {all});
         }),
       },
     });
   }
 
   public play(player: Player) {
+    const turmoil = TurmoilUtil.getTurmoil(player.game);
     const orOptions: Array<SelectDelegate> = [];
-        // Take each party having more than just the party leader in the area
-        player.game.turmoil!.parties.forEach((party) => {
-          if (party.delegates.length > 1) {
-            // Remove the party leader from available choices
-            const delegates = party.delegates.slice();
-            delegates.splice(party.delegates.indexOf(party.partyLeader!), 1);
-            const players = Array.from(new Set<Player | 'NEUTRAL'>(delegates));
-            if (players.length > 0) {
-              const selectDelegate = new SelectDelegate(players, 'Select player delegate to remove from ' + party.name + ' party', (selectedPlayer: Player | 'NEUTRAL') => {
-                player.game.turmoil!.removeDelegateFromParty(selectedPlayer, party.name, player.game);
-                this.log(player, party, selectedPlayer);
-                return undefined;
-              });
-              selectDelegate.buttonLabel = 'Remove delegate';
-              orOptions.push(selectDelegate);
-            }
-          }
-        });
-        if (orOptions.length === 0) {
-          return undefined;
-        } else if (orOptions.length === 1) {
-          return orOptions[0];
-        } else {
-          const options = new OrOptions(...orOptions);
-          return options;
+    // Take each party having more than just the party leader in the area
+    turmoil.parties.forEach((party) => {
+      if (party.delegates.length > 1) {
+        // Remove the party leader from available choices
+        const delegates = party.delegates.slice();
+        delegates.splice(party.delegates.indexOf(party.partyLeader!), 1);
+        const players = Array.from(new Set<Player | 'NEUTRAL'>(delegates));
+        if (players.length > 0) {
+          const selectDelegate = new SelectDelegate(players, 'Select player delegate to remove from ' + party.name + ' party', (selectedPlayer: Player | 'NEUTRAL') => {
+            turmoil.removeDelegateFromParty(selectedPlayer, party.name, player.game);
+            this.log(player, party, selectedPlayer);
+            return undefined;
+          });
+          selectDelegate.buttonLabel = 'Remove delegate';
+          orOptions.push(selectDelegate);
         }
+      }
+    });
+    if (orOptions.length === 0) {
+      return undefined;
+    } else if (orOptions.length === 1) {
+      return orOptions[0];
+    } else {
+      const options = new OrOptions(...orOptions);
+      return options;
+    }
   }
 
   private log(player: Player, party: IParty, selectedPlayer: Player | NeutralPlayer) {

@@ -2,7 +2,7 @@ import {expect} from 'chai';
 import {Zeppelins} from '../../../src/cards/base/Zeppelins';
 import {Game} from '../../../src/Game';
 import {TestPlayer} from '../../TestPlayer';
-import {Resources} from '../../../src/Resources';
+import {Resources} from '../../../src/common/Resources';
 import {TestPlayers} from '../../TestPlayers';
 
 describe('Zeppelins', function() {
@@ -17,18 +17,17 @@ describe('Zeppelins', function() {
 
   it('Can\'t play', function() {
     (game as any).oxygenLevel = 4;
-    expect(card.canPlay(player)).is.not.true;
+    expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
   it('Should play', function() {
     (game as any).oxygenLevel = 5;
-    expect(card.canPlay(player)).is.true;
+    expect(player.canPlayIgnoringCost(card)).is.true;
 
     const lands = game.board.getAvailableSpacesOnLand(player);
     game.addCityTile(player, lands[0].id);
 
     card.play(player);
     expect(player.getProduction(Resources.MEGACREDITS)).to.eq(1);
-    player.victoryPointsBreakdown.setVictoryPoints('victoryPoints', card.getVictoryPoints());
-    expect(player.victoryPointsBreakdown.victoryPoints).to.eq(1);
+    expect(card.getVictoryPoints()).to.eq(1);
   });
 });

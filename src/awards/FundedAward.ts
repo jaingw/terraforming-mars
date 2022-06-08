@@ -1,5 +1,6 @@
 import {IAward} from './IAward';
 import {Player} from '../Player';
+import {SerializedPlayerId} from '../SerializedPlayer';
 
 export interface FundedAward {
   award: IAward;
@@ -7,16 +8,16 @@ export interface FundedAward {
 }
 
 // export interface SerializedFundedAward {
-interface SerializedFundedAward {
-  name?: string;
-  playerId?: string;
+export interface SerializedFundedAward {
+  award: IAward;
+  player: SerializedPlayerId;
 }
 
 export function serializeFundedAwards(fundedAwards: Array<FundedAward>) : Array<SerializedFundedAward> {
   return fundedAwards.map((fundedAward) => {
     return {
-      name: fundedAward.award.name,
-      playerId: fundedAward.player.id,
+      award: {name: fundedAward.award.name} as IAward,
+      player: fundedAward.player.serializeId(),
     };
   });
 }
@@ -26,28 +27,25 @@ export function deserializeFundedAwards(
   players: Array<Player>,
   awards: Array<IAward>): Array<FundedAward> {
   return fundedAwards.map((element: SerializedFundedAward) => {
-    // TODO(kberg): remove by 2021-03-30
-    if (element.name === 'Entrepeneur') {
-      element.name = 'Entrepreneur';
+    // Rebuild funded awards
+    if (element.award.name === 'DesertSettler') {
+      element.award.name = 'Desert Settler';
     }
-    const awardName = element.name;
-    if (awardName === undefined) {
-      throw new Error('Award name not found');
+    if (element.award.name === 'EstateDealer') {
+      element.award.name = 'Estate Dealer';
     }
-    const award: IAward | undefined = awards.find((award) => award.name === awardName);
-    if (award === undefined) {
-      throw new Error(`Award ${awardName} not found when rebuilding Funded Award`);
+    if (element.award.name === 'Entrepeneur') {
+      element.award.name = 'Entrepreneur';
     }
-
-    const playerId = element.playerId;
-    if (playerId === undefined) {
-      throw new Error(`Player ID not found when rebuilding Funded Award ${awardName}`);
+    const player = players.find((player) => player.id === element.player.id);
+    const award = awards.find((award) => award.name === element.award.name);
+    if (player && award) {
+      return {
+        player: player,
+        award: award,
+      };
+    } else {
+      throw 'Player or Award not found when rebuilding Claimed Award'+ element.award.name;
     }
-    const player = players.find((player) => player.id === playerId);
-    if (player === undefined) {
-      throw new Error(`Player ${playerId} not found when rebuilding Funded Award ${awardName}`);
-    }
-
-    return {award, player};
   });
 }

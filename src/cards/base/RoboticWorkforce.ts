@@ -1,15 +1,16 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Card} from '../Card';
-import {CardType} from '../CardType';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
 import {SelectCard} from '../../inputs/SelectCard';
-import {CardName} from '../../CardName';
-import {Resources} from '../../Resources';
+import {CardName} from '../../common/cards/CardName';
+import {Resources} from '../../common/Resources';
 import {ICard} from '../ICard';
 import {CardRenderer} from '../render/CardRenderer';
-import {Size} from '../render/Size';
-import {Units} from '../../Units';
+import {Size} from '../../common/cards/render/Size';
+import {Units} from '../../common/Units';
+import {played} from '../Options';
 
 export class RoboticWorkforce extends Card implements IProjectCard {
   constructor() {
@@ -22,13 +23,13 @@ export class RoboticWorkforce extends Card implements IProjectCard {
         cardNumber: '086',
         renderData: CardRenderer.builder((b) => {
           b.text('Copy A', Size.SMALL, true).nbsp;
-          b.production((pb) => pb.building().played);
+          b.production((pb) => pb.building(1, {played}));
         }),
         description: 'Duplicate only the production box of one of your building cards.',
       },
     });
   }
-  public canPlay(player: Player): boolean {
+  public override canPlay(player: Player): boolean {
     return this.getAvailableCards(player).length > 0;
   }
 
@@ -37,15 +38,19 @@ export class RoboticWorkforce extends Card implements IProjectCard {
       return false;
     }
     if (card.name === CardName.BIOMASS_COMBUSTORS) {
-      return player.game.someoneHasResourceProduction(Resources.PLANTS, 1);
-    }
-    if (card.name === CardName.HEAT_TRAPPERS) {
-      return player.game.someoneHasResourceProduction(Resources.HEAT, 2);
+      return player.game.someoneCanHaveProductionReduced(Resources.PLANTS, 1);
+    } else if (card.name === CardName.HEAT_TRAPPERS) {
+      return player.game.someoneCanHaveProductionReduced(Resources.HEAT, 2);
+    } else if (card.name === CardName.GYROPOLIS) {
+      return player.getProduction(Resources.ENERGY) >= 2;
+    } else if (card.name === CardName.SPECIALIZED_SETTLEMENT) {
+      return player.getProduction(Resources.ENERGY) >= 1;
     }
 
-    if (card.produce !== undefined) return true;
-
-    if (card.productionBox === undefined || card.productionBox === Units.EMPTY) return false;
+    if (card.productionBox === undefined || card.productionBox === Units.EMPTY) {
+      if (card.produce !== undefined) return true;
+      return false;
+    }
 
     return player.canAdjustProduction(card.productionBox);
   }

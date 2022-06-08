@@ -3,8 +3,8 @@ import {AcquiredCompany} from '../../../src/cards/base/AcquiredCompany';
 import {Sponsors} from '../../../src/cards/base/Sponsors';
 import {PROffice} from '../../../src/cards/turmoil/PROffice';
 import {Game} from '../../../src/Game';
-import {Resources} from '../../../src/Resources';
-import {PartyName} from '../../../src/turmoil/parties/PartyName';
+import {Resources} from '../../../src/common/Resources';
+import {PartyName} from '../../../src/common/turmoil/PartyName';
 import {TestingUtils} from '../../TestingUtils';
 import {TestPlayers} from '../../TestPlayers';
 
@@ -17,11 +17,11 @@ describe('PROffice', function() {
 
     const gameOptions = TestingUtils.setCustomGameOptions();
     const game = Game.newInstance('foobar', [player], player, gameOptions);
-    expect(card.canPlay(player)).is.not.true;
+    expect(player.canPlayIgnoringCost(card)).is.not.true;
 
     const unity = game.turmoil!.getPartyByName(PartyName.UNITY)!;
     unity.delegates.push(player, player);
-    expect(card.canPlay(player)).is.true;
+    expect(player.canPlayIgnoringCost(card)).is.true;
 
     player.playedCards.push(card2, card3);
     card.play(player);

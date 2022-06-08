@@ -4,9 +4,9 @@ import * as http from 'http';
 import * as fs from 'fs';
 import {MilestoneAwardSelector} from '../MilestoneAwardSelector';
 import {GameOptions} from '../Game';
-import {BoardName} from '../boards/BoardName';
-import {AgendaStyle} from '../turmoil/PoliticalAgendas';
-import {RandomMAOptionType} from '../RandomMAOptionType';
+import {BoardName} from '../common/boards/BoardName';
+import {AgendaStyle} from '../common/turmoil/Types';
+import {RandomMAOptionType} from '../common/ma/RandomMAOptionType';
 import {Multiset} from '../utils/Multiset';
 
 function processRequest(req: http.IncomingMessage, res: http.ServerResponse): void {
@@ -117,6 +117,12 @@ function simpleGameOptions(): GameOptions {
     customColoniesList: [],
     requiresVenusTrackCompletion: false, // Venus must be completed to end the game
     requiresMoonTrackCompletion: false, // Moon must be completed to end the game
+    moonStandardProjectVariant: false,
+    altVenusBoard: false,
+    escapeVelocityMode: false,
+    escapeVelocityThreshold: undefined,
+    escapeVelocityPeriod: undefined,
+    escapeVelocityPenalty: undefined,
 
     // The options that can change, should be parameters.
     boardName: BoardName.ORIGINAL,
@@ -124,10 +130,12 @@ function simpleGameOptions(): GameOptions {
     aresExtension: false,
     includeVenusMA: false,
     moonExpansion: false,
+    pathfindersExpansion: false,
     randomMA: RandomMAOptionType.NONE,
 
     heatFor: false, //  七热升温
     breakthrough: false, // 界限突破
     doubleCorp: false, // 双将
+    initialCorpDraftVariant: true,
   };
 }

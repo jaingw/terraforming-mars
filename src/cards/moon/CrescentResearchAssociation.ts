@@ -1,20 +1,22 @@
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {Player} from '../../Player';
 import {Card} from '../Card';
-import {CardType} from '../CardType';
-import {CorporationCard} from '../corporation/CorporationCard';
+import {VictoryPoints} from '../ICard';
+import {CardType} from '../../common/cards/CardType';
+import {ICorporationCard} from '../corporation/ICorporationCard';
 import {IProjectCard} from '../IProjectCard';
-import {CardRenderDynamicVictoryPoints} from '../render/CardRenderDynamicVictoryPoints';
 import {CardRenderer} from '../render/CardRenderer';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 
-export class CrescentResearchAssociation extends Card implements CorporationCard {
+export class CrescentResearchAssociation extends Card implements ICorporationCard {
   constructor() {
     super({
       cardType: CardType.CORPORATION,
       name: CardName.CRESCENT_RESEARCH_ASSOCIATION,
       tags: [Tags.SCIENCE, Tags.MOON],
       startingMegaCredits: 50,
+
+      victoryPoints: VictoryPoints.tags(Tags.MOON, 1, 3),
 
       metadata: {
         description: 'You start with 50 M€. 1 VP for every 3 Moon tags you have.',
@@ -25,7 +27,6 @@ export class CrescentResearchAssociation extends Card implements CorporationCard
             eb.moon().startEffect.megacredits(1).slash().moon();
           });
         }),
-        victoryPoints: CardRenderDynamicVictoryPoints.moon(1, 3),
       },
     });
   }
@@ -38,10 +39,6 @@ export class CrescentResearchAssociation extends Card implements CorporationCard
     if (card.tags.indexOf(Tags.MOON) === -1) {
       return 0;
     }
-    return player.getTagCount(Tags.MOON, false, true);
-  }
-
-  public getVictoryPoints(player: Player) {
-    return Math.floor(player.getTagCount(Tags.MOON, true, false) / 3);
+    return player.getTagCount(Tags.MOON);
   }
 }

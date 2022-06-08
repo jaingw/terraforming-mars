@@ -1,14 +1,15 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Card} from '../Card';
-import {CardName} from '../../CardName';
-import {CardType} from '../CardType';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {PartyName} from '../../turmoil/parties/PartyName';
-import {Resources} from '../../Resources';
+import {PartyName} from '../../common/turmoil/PartyName';
+import {Resources} from '../../common/Resources';
 import {DeferredAction} from '../../deferredActions/DeferredAction';
 import {CardRenderer} from '../render/CardRenderer';
 import {CardRequirements} from '../CardRequirements';
+import {played} from '../Options';
 
 export class GMOContract extends Card implements IProjectCard {
   constructor() {
@@ -24,7 +25,7 @@ export class GMOContract extends Card implements IProjectCard {
         cardNumber: 'T06',
         renderData: CardRenderer.builder((b) => {
           b.effect('Each time you play a plant, animal or microbe tag, including this, gain 2 M€.', (be) => {
-            be.animals(1).played.slash().plants(1).played.slash().microbes(1).played;
+            be.animals(1, {played}).slash().plants(1, {played}).slash().microbes(1, {played});
             be.startEffect.megacredits(2);
           });
         }),
@@ -37,7 +38,7 @@ export class GMOContract extends Card implements IProjectCard {
     if (amount > 0) {
       player.game.defer(
         new DeferredAction(player, () => {
-          player.addResource(Resources.MEGACREDITS, amount * 2);
+          player.addResource(Resources.MEGACREDITS, amount * 2, {log: true});
           return undefined;
         }),
       );

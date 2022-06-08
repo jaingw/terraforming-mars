@@ -1,16 +1,17 @@
 import {IProjectCard} from '../IProjectCard';
-import {CardType} from '../CardType';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {CardName} from '../../CardName';
-import {ResourceType} from '../../ResourceType';
+import {CardName} from '../../common/cards/CardName';
+import {ResourceType} from '../../common/ResourceType';
 import {OrOptions} from '../../inputs/OrOptions';
 import {SelectOption} from '../../inputs/SelectOption';
 import {IResourceCard} from '../ICard';
-import {Resources} from '../../Resources';
+import {Resources} from '../../common/Resources';
 import {AddResourcesToCard} from '../../deferredActions/AddResourcesToCard';
 import {Card} from '../Card';
-import {Size} from '../render/Size';
+import {Size} from '../../common/cards/render/Size';
 import {CardRenderer} from '../render/CardRenderer';
+import {digit} from '../Options';
 
 export class AtmoCollectors extends Card implements IProjectCard, IResourceCard {
   constructor() {
@@ -28,7 +29,7 @@ export class AtmoCollectors extends Card implements IProjectCard, IResourceCard 
             eb.empty().startAction.floaters(1).or(Size.SMALL);
           }).br;
           b.action('Spend 1 floater here to gain 2 titanium, or 3 energy, or 4 heat.', (eb) => {
-            eb.floaters(1).startAction.titanium(2).digit.slash(Size.SMALL).energy(3).digit.slash(Size.SMALL).heat(4).digit;
+            eb.floaters(1).startAction.titanium(2, {digit}).slash(Size.SMALL).energy(3, {digit}).slash(Size.SMALL).heat(4, {digit});
           }).br;
           b.floaters(2).asterix();
         }),
@@ -36,7 +37,7 @@ export class AtmoCollectors extends Card implements IProjectCard, IResourceCard 
     });
   }
 
-  public resourceCount: number = 0;
+  public override resourceCount: number = 0;
 
   public canAct(): boolean {
     return true;

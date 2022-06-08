@@ -28,14 +28,14 @@ describe('Splice', function() {
 
     player2.playedCards.push(card2);
     const action = card.onCardPlayed(player2, card2);
-    expect(action instanceof OrOptions).is.true;
+    expect(action).instanceOf(OrOptions);
     if ( ! (action instanceof OrOptions)) return;
 
     expect(action.options).has.lengthOf(2);
     const orOptions = action.options[0] as OrOptions;
 
     orOptions.cb();
-    expect(player2.getResourcesOnCard(card2)).to.eq(1);
+    expect(card2.resourceCount).to.eq(1);
     expect(player.megaCredits).to.eq(2);
   });
 

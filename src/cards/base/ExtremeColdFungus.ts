@@ -1,17 +1,18 @@
 import {ICard, IActionCard} from '../ICard';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Card} from '../Card';
-import {CardType} from '../CardType';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
 import {OrOptions} from '../../inputs/OrOptions';
 import {SelectOption} from '../../inputs/SelectOption';
 import {SelectCard} from '../../inputs/SelectCard';
 import {IProjectCard} from '../IProjectCard';
-import {ResourceType} from '../../ResourceType';
-import {CardName} from '../../CardName';
-import {Resources} from '../../Resources';
+import {ResourceType} from '../../common/ResourceType';
+import {CardName} from '../../common/cards/CardName';
+import {Resources} from '../../common/Resources';
 import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
+import {max} from '../Options';
 
 export class ExtremeColdFungus extends Card implements IActionCard, IProjectCard {
   constructor() {
@@ -21,7 +22,7 @@ export class ExtremeColdFungus extends Card implements IActionCard, IProjectCard
       tags: [Tags.MICROBE],
       cost: 13,
 
-      requirements: CardRequirements.builder((b) => b.temperature(-10).max()),
+      requirements: CardRequirements.builder((b) => b.temperature(-10, {max})),
       metadata: {
         cardNumber: '134',
         description: 'It must be -10 C or colder.',

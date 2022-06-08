@@ -25,26 +25,26 @@ describe('StratosphericBirds', () => {
     player.playedCards.push(deuteriumExport);
     player.addResourceTo(deuteriumExport, 1);
     (game as any).venusScaleLevel = 10;
-    expect(card.canPlay(player)).is.not.true;
+    expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
 
   it('Cannot play if no floater', () => {
     (game as any).venusScaleLevel = 12;
-    expect(card.canPlay(player)).is.not.true;
+    expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
 
   it('Can play', () => {
     player.playedCards.push(deuteriumExport);
     player.addResourceTo(deuteriumExport, 1);
     (game as any).venusScaleLevel = 12;
-    expect(card.canPlay(player)).is.true;
+    expect(player.canPlayIgnoringCost(card)).is.true;
   });
 
   it('Should play', () => {
     player.playedCards.push(deuteriumExport);
     player.addResourceTo(deuteriumExport, 1);
     (game as any).venusScaleLevel = 12;
-    expect(card.canPlay(player)).is.true;
+    expect(player.canPlayIgnoringCost(card)).is.true;
     player.playedCards.push(card);
 
     card.play(player);
@@ -55,7 +55,7 @@ describe('StratosphericBirds', () => {
   it('Should act', () => {
     player.playedCards.push(card);
     card.action(player);
-    expect(player.getResourcesOnCard(card)).to.eq(1);
+    expect(card.resourceCount).to.eq(1);
 
     player.addResourceTo(card, 7);
     expect(card.getVictoryPoints()).to.eq(8);
@@ -74,8 +74,8 @@ describe('StratosphericBirds', () => {
     expect(selectCard.cards).has.lengthOf(2);
 
     selectCard.cb([deuteriumExport]);
-    expect(player.getResourcesOnCard(deuteriumExport)).to.eq(0);
-    expect(player.getResourcesOnCard(extractorBalloons)).to.eq(1);
+    expect(deuteriumExport.resourceCount).to.eq(0);
+    expect(extractorBalloons.resourceCount).to.eq(1);
   });
 
   it('Edge case: Dirigibles with no other floater cards', () => {
@@ -88,21 +88,21 @@ describe('StratosphericBirds', () => {
     player.megaCredits = 9;
 
     // 9 M€ + 1 Dirigibles floater: Cannot play
-    expect(card.canPlay(player)).is.not.true;
+    expect(player.canPlayIgnoringCost(card)).is.not.true;
 
 
     // 12 M€ + 1 Dirigibles floater: Card is playable
     player.megaCredits = 12;
-    const SelectHowToPayForProjectCard = player.playProjectCard();
-    expect(card.canPlay(player)).is.true;
+    const selectHowToPayForProjectCard = player.playProjectCard();
+    expect(player.canPlayIgnoringCost(card)).is.true;
 
     // Try to spend floater to pay for card: Throw an error
     expect(() => {
-      SelectHowToPayForProjectCard.cb(card, {steel: 0, heat: 0, titanium: 0, megaCredits: 9, microbes: 0, floaters: 1});
+      selectHowToPayForProjectCard.cb(card, {steel: 0, heat: 0, titanium: 0, megaCredits: 9, microbes: 0, floaters: 1});
     }).to.throw('Cannot spend all floaters to play Stratospheric Birds');
 
     // Pay with MC only: Can play
-    SelectHowToPayForProjectCard.cb(card, {steel: 0, heat: 0, titanium: 0, megaCredits: 12, microbes: 0, floaters: 0});
+    selectHowToPayForProjectCard.cb(card, {steel: 0, heat: 0, titanium: 0, megaCredits: 12, microbes: 0, floaters: 0});
         game.deferredActions.pop()!.execute(); // Remove floater
         expect(dirigibles.resourceCount).to.eq(0);
   });
@@ -117,13 +117,13 @@ describe('StratosphericBirds', () => {
     player.megaCredits = 3;
 
     const selectHowToPayForCard = player.playProjectCard();
-    expect(card.canPlay(player)).is.true;
+    expect(player.canPlayIgnoringCost(card)).is.true;
 
     // Spend all 3 floaters from Dirigibles to pay for the card
     selectHowToPayForCard.cb(card, {steel: 0, heat: 0, titanium: 0, megaCredits: 3, microbes: 0, floaters: 3});
         game.deferredActions.pop()!.execute(); // Remove floater
-        expect(player.getResourcesOnCard(dirigibles)).to.eq(0);
-        expect(player.getResourcesOnCard(deuteriumExport)).to.eq(0);
+        expect(dirigibles.resourceCount).to.eq(0);
+        expect(deuteriumExport.resourceCount).to.eq(0);
         expect(player.megaCredits).to.eq(0);
   });
 
@@ -137,6 +137,6 @@ describe('StratosphericBirds', () => {
     const indentured = new IndenturedWorkers();
     player.playCard(indentured);
     card.play(player);
-    expect(card.canPlay(player)).is.true;
+    expect(player.canPlayIgnoringCost(card)).is.true;
   });
 });

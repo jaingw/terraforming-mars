@@ -1,12 +1,12 @@
 import {IProjectCard} from '../IProjectCard';
-import {CardType} from '../CardType';
-import {Tags} from '../Tags';
+import {CardType} from '../../common/cards/CardType';
+import {Tags} from '../../common/cards/Tags';
 import {Player} from '../../Player';
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {CardRequirements} from '../CardRequirements';
 import {Card} from '../Card';
 import {CardRenderer} from '../render/CardRenderer';
-import {Size} from '../render/Size';
+import {Size} from '../../common/cards/render/Size';
 
 export class Conscription extends Card implements IProjectCard {
   constructor() {
@@ -15,6 +15,7 @@ export class Conscription extends Card implements IProjectCard {
       cost: 5,
       tags: [Tags.EARTH],
       name: CardName.CONSCRIPTION,
+      victoryPoints: -1,
 
       requirements: CardRequirements.builder((b) => b.tag(Tags.EARTH, 2)),
       metadata: {
@@ -23,21 +24,17 @@ export class Conscription extends Card implements IProjectCard {
           b.text('next card', Size.SMALL, true).colon().megacredits(-16);
         }),
         description: 'Requires 2 Earth tags. The next card you play this generation costs 16 M€ less.',
-        victoryPoints: -1,
       },
     });
   }
 
   public getCardDiscount(player: Player) {
-    if (player.lastCardPlayed !== undefined && player.lastCardPlayed.name === this.name) {
+    if (player.lastCardPlayed === this.name) {
       return 16;
     }
     return 0;
   }
   public play() {
     return undefined;
-  }
-  public getVictoryPoints() {
-    return -1;
   }
 }

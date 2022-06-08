@@ -1,8 +1,8 @@
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Player} from '../../Player';
 import {PreludeCard} from '../prelude/PreludeCard';
 import {IProjectCard} from '../IProjectCard';
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {DeferredAction} from '../../deferredActions/DeferredAction';
 import {CardRenderer} from '../render/CardRenderer';
 
@@ -11,6 +11,7 @@ export class TradeAdvance extends PreludeCard implements IProjectCard {
     super({
       name: CardName.TRADE_ADVANCE,
       tags: [Tags.EARTH],
+      startingMegacredits: 2,
 
       metadata: {
         cardNumber: 'Y05',
@@ -30,7 +31,7 @@ export class TradeAdvance extends PreludeCard implements IProjectCard {
       () => {
         const openColonies = player.game.colonies.filter((colony) => colony.isActive);
         openColonies.forEach((colony) => {
-          colony.trade(player, 1, false);
+          colony.trade(player, {usesTradeFleet: false}, 1);
         });
         return undefined;
       },

@@ -2,7 +2,7 @@ import {expect} from 'chai';
 import {ArchaeBacteria} from '../../../src/cards/base/ArchaeBacteria';
 import {Player} from '../../../src/Player';
 import {Game} from '../../../src/Game';
-import {Resources} from '../../../src/Resources';
+import {Resources} from '../../../src/common/Resources';
 import {TestPlayers} from '../../TestPlayers';
 
 describe('ArchaeBacteria', function() {
@@ -17,7 +17,7 @@ describe('ArchaeBacteria', function() {
 
   it('Can\'t play', function() {
     (game as any).temperature = -12;
-    expect(card.canPlay(player)).is.not.true;
+    expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
 
   it('Should play', function() {

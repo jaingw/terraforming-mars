@@ -1,18 +1,18 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
-import {CardType} from '../CardType';
+import {Tags} from '../../common/cards/Tags';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {CardName} from '../../CardName';
-import {ResourceType} from '../../ResourceType';
+import {CardName} from '../../common/cards/CardName';
+import {ResourceType} from '../../common/ResourceType';
 import {OrOptions} from '../../inputs/OrOptions';
 import {SelectOption} from '../../inputs/SelectOption';
 import {IResourceCard} from '../ICard';
-import {Resources} from '../../Resources';
+import {Resources} from '../../common/Resources';
 import {AddResourcesToCard} from '../../deferredActions/AddResourcesToCard';
 import {CardRequirements} from '../CardRequirements';
 import {Card} from '../Card';
 import {CardRenderer} from '../render/CardRenderer';
-import {Size} from '../render/Size';
+import {Size} from '../../common/cards/render/Size';
 
 export class JupiterFloatingStation extends Card implements IProjectCard, IResourceCard {
   constructor() {
@@ -22,13 +22,14 @@ export class JupiterFloatingStation extends Card implements IProjectCard, IResou
       name: CardName.JUPITER_FLOATING_STATION,
       cardType: CardType.ACTIVE,
       resourceType: ResourceType.FLOATER,
-
       requirements: CardRequirements.builder((b) => b.tag(Tags.SCIENCE, 3)),
+      victoryPoints: 1,
+
       metadata: {
         cardNumber: 'C19',
         renderData: CardRenderer.builder((b) => {
           b.action('Add 1 floater to a JOVIAN CARD.', (eb) => {
-            eb.empty().startAction.floaters(1).secondaryTag(Tags.JOVIAN);
+            eb.empty().startAction.floaters(1, {secondaryTag: Tags.JOVIAN});
           }).br;
           b.or().br;
           b.action('Gain 1 M€ for every floater here [MAX 4].', (eb) => {
@@ -40,12 +41,11 @@ export class JupiterFloatingStation extends Card implements IProjectCard, IResou
           text: 'Requires 3 Science tags.',
           align: 'left',
         },
-        victoryPoints: 1,
       },
     });
   }
 
-  public resourceCount: number = 0;
+  public override resourceCount: number = 0;
 
   public canAct(): boolean {
     return true;
@@ -68,9 +68,5 @@ export class JupiterFloatingStation extends Card implements IProjectCard, IResou
 
   public play() {
     return undefined;
-  }
-
-  public getVictoryPoints(): number {
-    return 1;
   }
 }

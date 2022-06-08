@@ -4,7 +4,6 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-
         {
             "type": "node",
             "request": "launch",
@@ -20,7 +19,8 @@
                 "--timeout",
                 "999999",
                 "--colors",
-                "${workspaceFolder}/build/tests/**/Game.spec.js"
+                // "${workspaceFolder}/build/tests/!(components)/**/*.spec.js"
+                "${workspaceFolder}/build/tests/**/*.spec.js"
             ],
             "cwd": "${workspaceFolder}/",
             "internalConsoleOptions": "openOnSessionStart",
@@ -31,16 +31,10 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "templates",
-            "program": "${workspaceFolder}/compile-vue-templates.js" 
-        } ,
-        {
-            "type": "node",
-            "request": "launch",
             "name": "make_static_json",
             "program": "${workspaceFolder}/make_static_json.js" 
         } ,
-
-        
+       
+    
     ]
 }

@@ -17,22 +17,21 @@ describe('AdvancedEcosystems', function() {
   });
 
   it('Can\'t play if tag requirements is unmet', function() {
-    expect(card.canPlay(player)).is.not.true;
+    expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
 
   it('Should play', function() {
-    expect(card.canPlay(player)).is.not.true;
+    expect(player.canPlayIgnoringCost(card)).is.not.true;
 
     player.playedCards.push(new Tardigrades());
-    expect(card.canPlay(player)).is.true;
+    expect(player.canPlayIgnoringCost(card)).is.true;
 
     card.play();
-    player.victoryPointsBreakdown.setVictoryPoints('victoryPoints', card.getVictoryPoints());
-    expect(player.victoryPointsBreakdown.victoryPoints).to.eq(3);
+    expect(card.getVictoryPoints()).to.eq(3);
   });
 
   it('Can play with two wildcards', function() {
     player.playedCards.push(new ResearchCoordination());
-    expect(card.canPlay(player)).is.true;
+    expect(player.canPlayIgnoringCost(card)).is.true;
   });
 });

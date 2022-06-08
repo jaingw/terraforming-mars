@@ -1,7 +1,7 @@
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {Player} from '../../Player';
-import {CardType} from '../CardType';
-import {Tags} from '../Tags';
+import {CardType} from '../../common/cards/CardType';
+import {Tags} from '../../common/cards/Tags';
 import {MoonExpansion} from '../../moon/MoonExpansion';
 import {CardRenderer} from '../render/CardRenderer';
 import {CardRequirements} from '../CardRequirements';
@@ -14,6 +14,7 @@ export class AIControlledMineNetwork extends Card {
       cardType: CardType.AUTOMATED,
       tags: [Tags.SCIENCE],
       cost: 6,
+      tr: {moonLogistics: 1},
 
       requirements: CardRequirements.builder((b) => b.logisticRate(2)),
       metadata: {
@@ -24,7 +25,7 @@ export class AIControlledMineNetwork extends Card {
         }),
       },
     });
-  };
+  }
 
   public play(player: Player) {
     MoonExpansion.raiseLogisticRate(player);

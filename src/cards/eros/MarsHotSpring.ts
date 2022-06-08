@@ -1,18 +1,19 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
 import {Player} from '../../Player';
 import {Game} from '../../Game';
-import {CardType} from '../CardType';
-import {Resources} from '../../Resources';
-import {CardName} from '../../CardName';
 import {SelectSpace} from '../../inputs/SelectSpace';
-import {TileType} from '../../TileType';
+import {TileType} from '../../common/TileType';
 import {ISpace} from '../../boards/ISpace';
 import {Board} from '../../boards/Board';
 import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
 import {Card} from '../Card';
-import {Units} from '../../Units';
+import {digit} from '../Options';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
+import {Tags} from '../../common/cards/Tags';
+import {Resources} from '../../common/Resources';
+import {Units} from '../../common/Units';
 
 export class MarsHotSpring extends Card implements IProjectCard {
   constructor() {
@@ -27,14 +28,14 @@ export class MarsHotSpring extends Card implements IProjectCard {
       metadata: {
         cardNumber: 'Q06',
         renderData: CardRenderer.builder((b) => {
-          b.production((pb) => pb.megacredits(2).nbsp.heat(2).digit).br;
+          b.production((pb) => pb.megacredits(2).nbsp.heat(2, {digit})).br;
           b.tile(TileType.HOT_SPRING, true, false).asterix();
         }),
         description: 'Requires 3 ocean tiles. Increase your M€ and Heat production 2 steps. Place this tile ADJACENT TO an ocean tile.',
       },
     });
-  };
-  public canPlay(player: Player): boolean {
+  }
+  public override canPlay(player: Player): boolean {
     const canPlaceTile = this.getAvailableSpaces(player, player.game).length > 0;
     return super.canPlay(player) && canPlaceTile;
   }

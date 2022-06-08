@@ -1,8 +1,8 @@
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {Player} from '../../Player';
-import {CardType} from '../CardType';
-import {Tags} from '../Tags';
-import {Resources} from '../../Resources';
+import {CardType} from '../../common/cards/CardType';
+import {Tags} from '../../common/cards/Tags';
+import {Resources} from '../../common/Resources';
 import {MoonExpansion} from '../../moon/MoonExpansion';
 import {CardRenderer} from '../render/CardRenderer';
 import {CardRequirements} from '../CardRequirements';
@@ -15,6 +15,7 @@ export class LunarTradeFleet extends Card {
       cardType: CardType.AUTOMATED,
       tags: [Tags.MOON, Tags.SPACE],
       cost: 8,
+      tr: {moonLogistics: 1},
 
       requirements: CardRequirements.builder((b) => b.production(Resources.TITANIUM, 2)),
       metadata: {
@@ -28,7 +29,7 @@ export class LunarTradeFleet extends Card {
         }),
       },
     });
-  };
+  }
 
   public play(player: Player) {
     player.addProduction(Resources.MEGACREDITS, 1, {log: true});

@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 import {BusinessNetwork} from '../../../src/cards/base/BusinessNetwork';
 import {MirandaResort} from '../../../src/cards/base/MirandaResort';
-import {Resources} from '../../../src/Resources';
+import {Resources} from '../../../src/common/Resources';
 import {TestPlayers} from '../../TestPlayers';
 import {Game} from '../../../src/Game';
 
@@ -16,8 +16,7 @@ describe('MirandaResort', function() {
     player.playedCards.push(new BusinessNetwork());
     const action = card.play(player);
     expect(action).is.undefined;
-    player.victoryPointsBreakdown.setVictoryPoints('victoryPoints', card.getVictoryPoints());
-    expect(player.victoryPointsBreakdown.victoryPoints).to.eq(1);
+    expect(card.getVictoryPoints()).to.eq(1);
     expect(player.getProduction(Resources.MEGACREDITS)).to.eq(1);
   });
 });

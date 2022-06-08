@@ -1,16 +1,16 @@
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Player} from '../../Player';
 import {Card} from '../Card';
-import {CorporationCard} from './../corporation/CorporationCard';
+import {ICorporationCard} from '../corporation/ICorporationCard';
 import {IProjectCard} from '../IProjectCard';
 import {OrOptions} from '../../inputs/OrOptions';
 import {SelectOption} from '../../inputs/SelectOption';
 import {IAward} from '../../awards/IAward';
-import {CardName} from '../../CardName';
-import {CardType} from '../CardType';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
 import {CardRenderer} from '../render/CardRenderer';
 
-export class Vitor extends Card implements CorporationCard {
+export class Vitor extends Card implements ICorporationCard {
   constructor() {
     super({
       cardType: CardType.CORPORATION,
@@ -60,9 +60,22 @@ export class Vitor extends Card implements CorporationCard {
   }
 
   public onCardPlayed(player: Player, card: IProjectCard) {
-    if (player.isCorporation(this.name) && card.getVictoryPoints !== undefined && card.getVictoryPoints(player) >= 0) {
-      player.megaCredits += 3;
+    if (!player.isCorporation(this.name)) {
+      return;
     }
+    if (card.name === CardName.SCIENCE_TAG_BLANK_CARD) {
+      return;
+    }
+    const victoryPoints = card.metadata?.victoryPoints;
+    if (victoryPoints === undefined) return;
+    if (typeof(victoryPoints) === 'number') {
+      if (victoryPoints <= 0) return;
+    } else {
+      // victoryPoints type is CardRenderDynamicVictoryPoints
+      if (victoryPoints.points <= 0) return;
+    }
+
+    player.megaCredits += 3;
   }
 
   public play(_player: Player) {

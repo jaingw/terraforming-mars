@@ -1,14 +1,15 @@
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Player} from '../../Player';
-import {CorporationCard} from './../corporation/CorporationCard';
+import {ICorporationCard} from '../corporation/ICorporationCard';
 import {IProjectCard} from '../IProjectCard';
-import {Resources} from '../../Resources';
+import {Resources} from '../../common/Resources';
 import {Card} from '../Card';
-import {CardName} from '../../CardName';
-import {CardType} from '../CardType';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
 import {CardRenderer} from '../render/CardRenderer';
+import {played} from '../Options';
 
-export class PointLuna extends Card implements CorporationCard {
+export class PointLuna extends Card implements ICorporationCard {
   constructor() {
     super({
       cardType: CardType.CORPORATION,
@@ -24,7 +25,7 @@ export class PointLuna extends Card implements CorporationCard {
           b.production((pb) => pb.titanium(1)).nbsp.megacredits(38);
           b.corpBox('effect', (ce) => {
             ce.effect('When you play an Earth tag, including this, draw a card.', (eb) => {
-              eb.earth().played.startEffect.cards(1);
+              eb.earth(1, {played}).startEffect.cards(1);
             });
           });
         }),
@@ -38,8 +39,8 @@ export class PointLuna extends Card implements CorporationCard {
     }
   }
 
-  public onCorpCardPlayed(player: Player, card: CorporationCard) {
-    return this.onCardPlayed(player, card as IProjectCard);
+  public onCorpCardPlayed(player: Player, card:ICorporationCard) {
+    return this.onCardPlayed(player, card as unknown as IProjectCard);
   }
 
   public play(player: Player) {

@@ -11,7 +11,7 @@
 .board-cont {
 	display: inline-block;
 	vertical-align: top;
-	width: 640px;
+	width: 670px;
 	margin: 0 auto;
 	margin-top: 20px;
 }
@@ -23,6 +23,11 @@
 .board-without-venus{
 	background: url(assets/board/mars-without-venus.png) no-repeat;
 }
+
+// // Not used yet.
+// .board-with-pathfinders {
+// 	width: 670px!;
+// }
 
 .board-legend {
 	position: absolute;
@@ -105,6 +110,38 @@
     height: 24px;
 }
 
+.board-space-bonus--bonustemperature {
+    background: url(assets/board/bonus_temperature.png);
+    background-repeat: no-repeat;
+    background-size: 32px 21px;
+    width: 36px;
+    height: 21px;
+    background-position: center;
+    filter: saturate(1.5);
+}
+
+.board-space-bonus--microbe {
+	background: url(assets/resources/microbe.png) no-repeat;
+	background-size: 16px;
+}
+
+.board-space-bonus--data {
+	background: url(assets/resources/data.png) no-repeat;
+	background-size: 16px;
+}
+
+.board-space-bonus--energy-production {
+	background: url(assets/pathfinders/energy-production.png) no-repeat;
+	// The production box and viz border require a size change.
+	background-size: 20px;
+	width: 20px;
+	height: 20px;
+}
+
+.board-space-bonus--science {
+	background: url(assets/resources/science.png) no-repeat;
+	background-size: 16px;
+}
 
 .board-space-tile--ocean {
 	background: url(assets/board_icons.png) -79px -29px no-repeat;
@@ -220,6 +257,7 @@
 .board-cube--green {
 	background: url(assets/board_icons.png) -1px -91px no-repeat;
 }
+
 .board-cube--purple {
 	background: url(assets/board_icons.png) -118px -91px no-repeat;
 }
@@ -233,6 +271,11 @@
 }
 
 .board-cube--bronze {
+	background: url(assets/board_icons.png) -142px -91px no-repeat;
+}
+
+// TODO(kberg): this only works at the moment because I've made the neutral cube bronze.
+.board-cube--neutral {
 	background: url(assets/board_icons.png) -142px -91px no-repeat;
 }
 
@@ -255,9 +298,17 @@
 		width: 88px;
 	}
 
-	&.board-space-69, &.board-space-70, &.board-space-71, &.board-space-72, &.board-space-73 {
+	&.board-space-69, &.board-space-70, &.board-space-71, &.board-space-72, &.board-space-73, &.board-space-75, &.board-space-76, &.board-space-77, &.board-space-78 {
 		.board-space-text {
 			margin-top: -15px;
+		}
+	}
+
+	&.board-space-74 {
+		.board-space-text {
+			margin-top: -33px;
+			font-size: 10px;
+			line-height: 10px;
 		}
 	}
 
@@ -298,6 +349,11 @@
     background-color: #0af4;
 }
 
+.board-space-type-cove {
+	background: url(assets/pathfinders/cove.png) no-repeat;
+	clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+}
+
 .board-ocean-checkmark{
 	margin-left: 20px;
     margin-bottom: -1px;
@@ -306,7 +362,6 @@
 .board-hidden-tile{
 	opacity: 0.4;
 }
-
 
 .hide-tile-button-container {
 	position: relative;

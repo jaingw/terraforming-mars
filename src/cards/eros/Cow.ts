@@ -1,15 +1,14 @@
-import {IActionCard, IResourceCard} from '../ICard';
+import {IActionCard, IResourceCard, VictoryPoints} from '../ICard';
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
-import {CardType} from '../CardType';
 import {Player} from '../../Player';
-import {ResourceType} from '../../ResourceType';
-import {Resources} from '../../Resources';
 import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
-import {CardRenderDynamicVictoryPoints} from '../render/CardRenderDynamicVictoryPoints';
 import {Card} from '../Card';
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
+import {Tags} from '../../common/cards/Tags';
+import {Resources} from '../../common/Resources';
+import {ResourceType} from '../../common/ResourceType';
 
 export class Cow extends Card implements IActionCard, IProjectCard, IResourceCard {
   constructor() {
@@ -19,6 +18,7 @@ export class Cow extends Card implements IActionCard, IProjectCard, IResourceCar
       tags: [Tags.ANIMAL],
       cost: 6,
       resourceType: ResourceType.ANIMAL,
+      victoryPoints: VictoryPoints.resource(1, 2),
 
       requirements: CardRequirements.builder((b) => b.oxygen(5)),
       metadata: {
@@ -30,16 +30,12 @@ export class Cow extends Card implements IActionCard, IProjectCard, IResourceCar
           b.vpText('1 VP for each 2 Animals on this card.');
         }),
         description: 'Requires 5% oxygen.',
-        victoryPoints: CardRenderDynamicVictoryPoints.animals(1, 2),
       },
     });
   }
-    public resourceCount = 0;
-    public canPlay(player: Player): boolean {
+    public override resourceCount = 0;
+    public override canPlay(player: Player): boolean {
       return super.canPlay(player);
-    }
-    public getVictoryPoints(): number {
-      return Math.floor(this.resourceCount / 2);
     }
     public play() {
       return undefined;

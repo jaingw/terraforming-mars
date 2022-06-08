@@ -6,7 +6,7 @@ import {LunaConference} from '../../../src/cards/moon/LunaConference';
 import {expect} from 'chai';
 import {MoonExpansion} from '../../../src/moon/MoonExpansion';
 import {IMoonData} from '../../../src/moon/IMoonData';
-import {TileType} from '../../../src/TileType';
+import {TileType} from '../../../src/common/TileType';
 import {Scientists} from '../../../src/turmoil/parties/Scientists';
 import {Greens} from '../../../src/turmoil/parties/Greens';
 
@@ -37,7 +37,7 @@ describe('LunaConference', () => {
   });
 
   it('play', () => {
-    const spaces = moonData.moon.getAvailableSpacesOnLand();
+    const spaces = moonData.moon.getAvailableSpacesOnLand(player);
     spaces[0].tile = {tileType: TileType.MOON_ROAD};
     spaces[1].tile = {tileType: TileType.MOON_ROAD};
 

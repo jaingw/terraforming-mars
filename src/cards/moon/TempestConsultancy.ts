@@ -1,14 +1,15 @@
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {SendDelegateToArea} from '../../deferredActions/SendDelegateToArea';
 import {Player} from '../../Player';
 import {Card} from '../Card';
-import {CardType} from '../CardType';
-import {CorporationCard} from '../corporation/CorporationCard';
+import {CardType} from '../../common/cards/CardType';
+import {ICorporationCard} from '../corporation/ICorporationCard';
 import {CardRenderer} from '../render/CardRenderer';
-import {Size} from '../render/Size';
-import {Tags} from '../Tags';
+import {Size} from '../../common/cards/render/Size';
+import {Tags} from '../../common/cards/Tags';
+import {TurmoilUtil} from '../../turmoil/TurmoilUtil';
 
-export class TempestConsultancy extends Card implements CorporationCard {
+export class TempestConsultancy extends Card implements ICorporationCard {
   constructor() {
     super({
       cardType: CardType.CORPORATION,
@@ -38,10 +39,8 @@ export class TempestConsultancy extends Card implements CorporationCard {
   }
 
   public initialAction(player: Player) {
-    if (player.game.turmoil) {
-      const title = 'Tempest Consultancy first action - Select where to send two delegates';
-      player.game.defer(new SendDelegateToArea(player, title, {count: 2, source: 'reserve'}));
-    }
+    const title = 'Tempest Consultancy first action - Select where to send two delegates';
+    player.game.defer(new SendDelegateToArea(player, title, {count: 2, source: 'reserve'}));
 
     return undefined;
   }
@@ -53,11 +52,13 @@ export class TempestConsultancy extends Card implements CorporationCard {
   public action(player: Player) {
     let count = Math.floor(player.getTagCount(Tags.MOON) / 5);
     count = Math.min(count, 3);
-    player.game.defer(new SendDelegateToArea(
-      player,
-      `Select a party to send ${count} delegate(s) to`,
-      {count: count, source: 'reserve'}));
-
+    count = Math.min(count, TurmoilUtil.getTurmoil(player.game).getAvailableDelegateCount(player, 'reserve'));
+    if (count > 0) {
+      player.game.defer(new SendDelegateToArea(
+        player,
+        `Select a party to send ${count} delegate(s) to`,
+        {count: count, source: 'reserve'}));
+    }
     return undefined;
-  };
+  }
 }

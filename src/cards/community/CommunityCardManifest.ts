@@ -1,13 +1,10 @@
-import {CardName} from '../../CardName';
-import {GameModule} from '../../GameModule';
+import {CardName} from '../../common/cards/CardName';
+import {GameModule} from '../../common/cards/GameModule';
 import {CardManifest} from '../CardManifest';
 import {AgricolaInc} from './AgricolaInc';
 import {Incite} from './Incite';
 import {Playwrights} from './Playwrights';
 import {ProjectWorkshop} from './ProjectWorkshop';
-import {ResearchGrant} from './ResearchGrant';
-import {ValuableGases} from './ValuableGases';
-import {VenusFirst} from './VenusFirst';
 import {AerospaceMission} from './AerospaceMission';
 import {TradeAdvance} from './TradeAdvance';
 import {PoliticalUprising} from './PoliticalUprising';
@@ -21,8 +18,12 @@ import {LabourUnion} from './LabourUnion';
 import {UnitedNationsMissionOne} from './UnitedNationsMissionOne';
 import {AccumulatedKnowledge} from './AccumulatedKnowledge';
 import {NitrateReducers} from './NitrateReducers';
-import {VitalColony} from './VitalColony';
+// import {VitalColony} from './VitalColony';
 import {CuriosityII} from './CuriosityII';
+import {ExecutiveOrder} from './ExecutiveOrder';
+import {ResearchGrant} from './ResearchGrant';
+import {VenusFirst} from './VenusFirst';
+import {ValuableGases} from './ValuableGases';
 
 export const COMMUNITY_CARD_MANIFEST = new CardManifest({
   module: GameModule.Community,
@@ -43,6 +44,7 @@ export const COMMUNITY_CARD_MANIFEST = new CardManifest({
 
   ],
   preludeCards: [
+    // 粉丝扩的部分前序跟pf扩重合 先注释
     {cardName: CardName.RESEARCH_GRANT, Factory: ResearchGrant},
     {
       cardName: CardName.VALUABLE_GASES,
@@ -54,6 +56,11 @@ export const COMMUNITY_CARD_MANIFEST = new CardManifest({
       Factory: VenusFirst,
       compatibility: GameModule.Venus,
     },
+    // {
+    //   cardName: CardName.VITAL_COLONY,
+    //   Factory: VitalColony,
+    //   compatibility: GameModule.Colonies,
+    // },
     {
       cardName: CardName.AEROSPACE_MISSION,
       Factory: AerospaceMission,
@@ -74,6 +81,7 @@ export const COMMUNITY_CARD_MANIFEST = new CardManifest({
       Factory: ByElection,
       compatibility: GameModule.Turmoil,
     },
+    {cardName: CardName.EXECUTIVE_ORDER, Factory: ExecutiveOrder, compatibility: GameModule.Turmoil},
     {
       cardName: CardName.ACCUMULATED_KNOWLEDGE,
       Factory: AccumulatedKnowledge,
@@ -82,11 +90,6 @@ export const COMMUNITY_CARD_MANIFEST = new CardManifest({
       cardName: CardName.NITRATE_REDUCERS,
       Factory: NitrateReducers,
       compatibility: GameModule.Venus,
-    },
-    {
-      cardName: CardName.VITAL_COLONY,
-      Factory: VitalColony,
-      compatibility: GameModule.Colonies,
     },
   ],
 });

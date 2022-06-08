@@ -1,4 +1,5 @@
-import {Game, GameId} from '../Game';
+import {Game} from '../Game';
+import {GameId} from '../common/Types';
 import {GameSetup} from '../GameSetup';
 import {Player} from '../Player';
 import {SerializedGame} from '../SerializedGame';
@@ -41,7 +42,7 @@ export class Cloner {
         // response.game = Game.load(serialized);
       }
     } catch (e) {
-      response.err = e;
+      response.err = e instanceof Error ? e : new Error(String(e));
     }
     cb();
     // cb(response.err, response.game);

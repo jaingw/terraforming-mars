@@ -1,12 +1,13 @@
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {Player} from '../../Player';
-import {CardType} from '../CardType';
-import {Tags} from '../Tags';
+import {CardType} from '../../common/cards/CardType';
+import {Tags} from '../../common/cards/Tags';
 import {MoonExpansion} from '../../moon/MoonExpansion';
 import {CardRenderer} from '../render/CardRenderer';
 import {CardRequirements} from '../CardRequirements';
-import {Units} from '../../Units';
+import {Units} from '../../common/Units';
 import {MoonCard} from './MoonCard';
+import {all} from '../Options';
 
 export class LunaResort extends MoonCard {
   constructor() {
@@ -17,8 +18,9 @@ export class LunaResort extends MoonCard {
       cost: 11,
       productionBox: Units.of({energy: -1, megacredits: 3}),
       reserveUnits: Units.of({titanium: 2}),
+      tr: {moonColony: 1},
 
-      requirements: CardRequirements.builder((b) => b.colonyTiles(2).any()),
+      requirements: CardRequirements.builder((b) => b.colonyTiles(2, {all})),
       metadata: {
         description:
           'Requires 2 colonies on the Moon. Spend 2 titanium. Decrease your energy production 1 step and increase your M€ production 3 steps. Raise the Colony Rate 1 step.',
@@ -31,9 +33,9 @@ export class LunaResort extends MoonCard {
         }),
       },
     });
-  };
+  }
 
-  public play(player: Player) {
+  public override play(player: Player) {
     super.play(player);
     MoonExpansion.raiseColonyRate(player);
     return undefined;

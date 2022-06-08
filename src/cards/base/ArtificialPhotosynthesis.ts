@@ -1,14 +1,14 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Card} from '../Card';
-import {CardType} from '../CardType';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
 import {OrOptions} from '../../inputs/OrOptions';
 import {SelectOption} from '../../inputs/SelectOption';
-import {Resources} from '../../Resources';
-import {CardName} from '../../CardName';
+import {Resources} from '../../common/Resources';
+import {CardName} from '../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
-import {Size} from '../render/Size';
+import {Size} from '../../common/cards/render/Size';
 
 export class ArtificialPhotosynthesis extends Card implements IProjectCard {
   constructor() {
@@ -28,11 +28,11 @@ export class ArtificialPhotosynthesis extends Card implements IProjectCard {
   public play(player: Player) {
     return new OrOptions(
       new SelectOption('Increase your energy production 2 steps', 'Increase', () => {
-        player.addProduction(Resources.ENERGY, 2);
+        player.addProduction(Resources.ENERGY, 2, {log: true});
         return undefined;
       }),
       new SelectOption('Increase your plant production 1 step', 'Increase', () => {
-        player.addProduction(Resources.PLANTS, 1);
+        player.addProduction(Resources.PLANTS, 1, {log: true});
         return undefined;
       }),
     );

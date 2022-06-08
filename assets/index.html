@@ -2,7 +2,7 @@
 <html>
     <head>
         <link rel="stylesheet" type="text/css" media="all" href="/styles.css?v=VERSION" />
-		<title>Terraforming Mars</title>
+        <title>Terraforming Mars</title>
         <meta name="viewport" content='width=1260, user-scalable=1' />
         <meta name="description" content="Terraforming Mars Open Source Web Application" />
     </head>
@@ -30,22 +30,28 @@
                     :game="game"
                 ></game-home>
                 <player-home
-                    v-else-if="screen === 'player-home'"
-                    :player="player"
+                    v-else-if="screen === 'player-home' && playerView !== undefined"
+                    :player-view="playerView"
                     :key="playerkey"
                     :settings="settings"
                 ></player-home>
-                <spectator-home v-else-if="screen === 'spectator-home'"></spectator-home>
+                <spectator-home
+                    v-else-if="screen === 'spectator-home' && spectator !== undefined"
+                    :spectator="spectator"
+                    :key="playerkey"
+                    :settings="settings"
+                ></spectator-home>
                 <game-end
                     v-else-if="screen === 'the-end'"
-                    :player="player"
+                    :player-view="playerView"
+                    :spectator="spectator"
                 ></game-end>
                 <games-overview
                     v-else-if="screen === 'games-overview'"
                 ></games-overview>
                 <debug-ui v-else-if="screen === 'cards'"></debug-ui>
-                <help v-else-if="screen === 'help'"></help>
-				<debug-ui v-else-if="screen === 'debug-ui'"></debug-ui>
+                <Help v-else-if="screen === 'help'"></Help>
+                <debug-ui v-else-if="screen === 'debug-ui'"></debug-ui>
                 <login v-if="screen === 'login'"></login>
                 <my-games v-if="screen === 'my-games'"></my-games>
                 <register v-if="screen === 'register'"></register>
@@ -53,6 +59,7 @@
                 <users v-if="screen === 'users'"></users>
             </div>
         </div>
+        <div  style="text-align:center;margin:-35px 0 0 60px;position: relative;"><a href="https://beian.miit.gov.cn" target="_blank">粤ICP备17128934号</a></div>
         <script src="/main.js?v=VERSION"></script>
     </body>
 </html>

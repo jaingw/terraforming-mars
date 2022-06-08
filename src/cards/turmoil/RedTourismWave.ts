@@ -1,13 +1,13 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
-import {CardName} from '../../CardName';
-import {CardType} from '../CardType';
+import {Tags} from '../../common/cards/Tags';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {PartyName} from '../../turmoil/parties/PartyName';
-import {Resources} from '../../Resources';
+import {PartyName} from '../../common/turmoil/PartyName';
+import {Resources} from '../../common/Resources';
 import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
-import {Size} from '../render/Size';
+import {Size} from '../../common/cards/render/Size';
 import {Card} from '../Card';
 
 export class RedTourismWave extends Card implements IProjectCard {
@@ -22,7 +22,7 @@ export class RedTourismWave extends Card implements IProjectCard {
       metadata: {
         cardNumber: 'T12',
         renderData: CardRenderer.builder((b) => {
-          b.megacredits(1).slash().emptyTile('normal', Size.SMALL).asterix();
+          b.megacredits(1).slash().emptyTile('normal', {size: Size.SMALL}).asterix();
         }),
         description: 'Requires that Reds are ruling or that you have 2 delegates there. Gain 1 M€ from each EMPTY AREA ADJACENT TO YOUR TILES',
       },

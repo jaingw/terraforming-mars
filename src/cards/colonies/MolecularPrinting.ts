@@ -1,12 +1,13 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
-import {CardType} from '../CardType';
+import {Tags} from '../../common/cards/Tags';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
 import {Card} from '../Card';
-import {Size} from '../render/Size';
-import {Resources} from '../../Resources';
+import {Size} from '../../common/cards/render/Size';
+import {Resources} from '../../common/Resources';
+import {all} from '../Options';
 
 export class MolecularPrinting extends Card implements IProjectCard {
   constructor() {
@@ -15,15 +16,15 @@ export class MolecularPrinting extends Card implements IProjectCard {
       tags: [Tags.SCIENCE],
       name: CardName.MOLECULAR_PRINTING,
       cardType: CardType.AUTOMATED,
+      victoryPoints: 1,
 
       metadata: {
         cardNumber: 'C27',
         renderData: CardRenderer.builder((b) => {
-          b.megacredits(1).slash().city(Size.SMALL).any.br;
-          b.megacredits(1).slash().colonies(1, Size.SMALL).any;
+          b.megacredits(1).slash().city({size: Size.SMALL, all}).br;
+          b.megacredits(1).slash().colonies(1, {size: Size.SMALL, all});
         }),
         description: 'Gain 1 M€ for each city tile in play. Gain 1 M€ for each colony in play.',
-        victoryPoints: 1,
       },
     });
   }
@@ -33,11 +34,7 @@ export class MolecularPrinting extends Card implements IProjectCard {
     player.game.colonies.forEach((colony) => {
       coloniesCount += colony.colonies.length;
     });
-    player.addResource(Resources.MEGACREDITS, player.game.getCitiesInPlay() + coloniesCount, {log: true});
+    player.addResource(Resources.MEGACREDITS, player.game.getCitiesCount() + coloniesCount, {log: true});
     return undefined;
-  }
-
-  public getVictoryPoints() {
-    return 1;
   }
 }

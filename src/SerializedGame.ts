@@ -1,37 +1,42 @@
-import {Phase} from './Phase';
-import {ClaimedMilestone} from './milestones/ClaimedMilestone';
-import {IMilestone} from './milestones/IMilestone';
-import {IAward} from './awards/IAward';
+import {Phase} from './common/Phase';
+import {SerializedClaimedMilestone} from './milestones/ClaimedMilestone';
 import {ColonyDealer} from './colonies/ColonyDealer';
 import {DeferredAction} from './deferredActions/DeferredAction';
 import {SerializedColony} from './SerializedColony';
-import {SerializedPlayer} from './SerializedPlayer';
+import {SerializedPlayer, SerializedPlayerId} from './SerializedPlayer';
 import {SerializedDealer} from './SerializedDealer';
 import {SerializedTurmoil} from './turmoil/SerializedTurmoil';
-import {GameOptions, SpectatorId} from './Game';
-import {IAresData} from './ares/IAresData';
-import {LogMessage} from './LogMessage';
+import {SpectatorId} from './common/Types';
+import {GameOptions} from './Game';
+import {IAresData} from './common/ares/IAresData';
+import {LogMessage} from './common/logs/LogMessage';
 import {SerializedBoard} from './boards/SerializedBoard';
 import {SerializedMoonData} from './moon/SerializedMoonData';
-import {FundedAward} from './awards/FundedAward';
+import {SerializedFundedAward} from './awards/FundedAward';
+import {SerializedPathfindersData} from './pathfinders/SerializedPathfindersData';
+import {IAward} from './awards/IAward';
+import {IMilestone} from './milestones/IMilestone';
 
 export interface SerializedGame {
     exitedPlayers: Array<SerializedPlayer> ;
-    activePlayer: SerializedPlayer;
+    activePlayer: SerializedPlayerId;
     aresData?: IAresData;
     awards: Array<IAward>;
     board: SerializedBoard;
-    claimedMilestones: Array<ClaimedMilestone>;
+    // game.rng changes over the course of a game but isn't saved and serialized
+    // for instance, in the face of a redeal.
+    currentSeed: number | undefined; // TODO(kberg): Remove '|undefined' by 2022-06-01
+    claimedMilestones: Array<SerializedClaimedMilestone>;
     clonedGamedId?: string;
     colonies: Array<SerializedColony>;
     colonyDealer: ColonyDealer | undefined;
     dealer: SerializedDealer;
     deferredActions: Array<DeferredAction>;
-    donePlayers: Array<SerializedPlayer>;
-    draftedPlayers: Array<SerializedPlayer>;
+    donePlayers: Array<SerializedPlayerId>;
+    draftedPlayers: Array<SerializedPlayerId>;
     draftRound: number;
-    first: SerializedPlayer;
-    fundedAwards: Array<FundedAward>;
+    first: SerializedPlayerId;
+    fundedAwards: Array<SerializedFundedAward>;
     gameAge: number;
     gameLog: Array<LogMessage>;
     gameOptions: GameOptions;
@@ -40,13 +45,14 @@ export interface SerializedGame {
     initialDraftIteration: number;
     lastSaveId: number;
     milestones: Array<IMilestone>;
-    monsInsuranceOwner: SerializedPlayer | undefined;
+    monsInsuranceOwner: SerializedPlayerId | undefined;
     moonData: SerializedMoonData | undefined;
+    pathfindersData: SerializedPathfindersData | undefined;
     oxygenLevel: number;
-    passedPlayers: Array<SerializedPlayer>;
     phase: Phase;
+    passedPlayers: Array<SerializedPlayerId>;
     players: Array<SerializedPlayer>;
-    researchedPlayers: Array<SerializedPlayer>;
+    researchedPlayers: Array<SerializedPlayerId>;
 
     seed: number;
     someoneHasRemovedOtherPlayersPlants: boolean;
@@ -56,15 +62,18 @@ export interface SerializedGame {
     turmoil?: SerializedTurmoil;
     undoCount: number;
     venusScaleLevel: number;
-    venusNextExtension: boolean;
+    venusNextExtension?: boolean;
 
     createtime :string;
     updatetime :string;
     breakthrough: boolean;
+    cardDrew: boolean;
     heatFor: boolean,
     loadState: string,
     firstExited: boolean,
+    finishFirstTrading: boolean,
     soloMode: boolean,
-    unDraftedCards: Map<Object, Object>,
+    // unDraftedCards: Map<Object, Object>,
+    unitedNationsMissionOneOwner: string | undefined ;
 }
 

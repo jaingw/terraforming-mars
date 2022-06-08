@@ -1,10 +1,11 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
 import {Card} from '../Card';
-import {CardType} from '../CardType';
 import {Player} from '../../Player';
-import {CardName} from '../../CardName';
 import {CardRenderer} from '../render/CardRenderer';
+import {played} from '../Options';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
+import {Tags} from '../../common/cards/Tags';
 
 export class StarCoreMining extends Card implements IProjectCard {
   constructor() {
@@ -13,14 +14,20 @@ export class StarCoreMining extends Card implements IProjectCard {
       name: CardName.STARCORE_MINING,
       tags: [Tags.PLANT, Tags.ENERGY, Tags.SPACE, Tags.BUILDING],
       cost: 32,
+      victoryPoints: 2,
       metadata: {
         cardNumber: 'Q07',
         renderData: CardRenderer.builder((b) => {
-          b.plants(1).played.slash().energy(1).played.slash().space().played.slash().building(1).played.startEffect.br;
-          b.plants(1).slash().energy(1).slash().titanium(1).slash().steel(1).br;
+          b.effect(undefined, (eb) => {
+            eb.startEffect.plants(1, {played}).slash().energy(1, {played}).slash().space( {played}).slash().building(1, {played});
+          }).br;
+          b.effect(undefined, (eb) => {
+            eb.empty().startEffect;
+          }).br;
+          b.effect('When you play a Plant, Energy, Space or Building tag, including these, gain related resource.', (eb) => {
+            eb.startEffect.plants(1).slash().energy(1).slash().titanium(1).slash().steel(1);
+          }).br;
         }),
-        description: 'When you play a Plant, Energy, Space or Building tag, including these, gain related resource.',
-        victoryPoints: 2,
       },
     });
   }
@@ -38,9 +45,5 @@ export class StarCoreMining extends Card implements IProjectCard {
 
   public play() {
     return undefined;
-  }
-
-  public getVictoryPoints(_player: Player) {
-    return 2;
   }
 }

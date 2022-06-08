@@ -1,22 +1,22 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
 import {Card} from '../Card';
-import {CardType} from '../CardType';
 import {Player} from '../../Player';
-import {TileType} from '../../TileType';
+import {TileType} from '../../common/TileType';
 import {SelectSpace} from '../../inputs/SelectSpace';
 import {ISpace} from '../../boards/ISpace';
-import {CardName} from '../../CardName';
 import {Board} from '../../boards/Board';
 import {IAdjacencyBonus} from '../../ares/IAdjacencyBonus';
-import {CardMetadata} from '../CardMetadata';
 import {CardRenderer} from '../render/CardRenderer';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
+import {ICardMetadata} from '../../common/cards/ICardMetadata';
+import {Tags} from '../../common/cards/Tags';
 
 export class WasteIncinerator extends Card implements IProjectCard {
   constructor(
     name: CardName = CardName.WASTE_INCINERATOR,
     adjacencyBonus: IAdjacencyBonus | undefined = undefined,
-    metadata: CardMetadata = {
+    metadata: ICardMetadata = {
       cardNumber: 'Q11',
       renderData: CardRenderer.builder((b) => {
         b.effect('When you sell patents, you can gain 2 heat instead of 1 MC. ', (eb) => {
@@ -41,7 +41,7 @@ export class WasteIncinerator extends Card implements IProjectCard {
     return player.game.board.getAvailableSpacesOnLand(player)
       .filter((space) => player.game.board.getAdjacentSpaces(space).some((adjacentSpace) => Board.isCitySpace(adjacentSpace)));
   }
-  public canPlay(player: Player): boolean {
+  public override canPlay(player: Player): boolean {
     return this.getAvailableSpaces(player).length > 0;
   }
   public play(player: Player) {

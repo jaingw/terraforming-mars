@@ -1,14 +1,15 @@
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {Player} from '../../Player';
-import {CardType} from '../CardType';
-import {Tags} from '../Tags';
-import {CorporationCard} from '../corporation/CorporationCard';
+import {CardType} from '../../common/cards/CardType';
+import {Tags} from '../../common/cards/Tags';
+import {ICorporationCard} from '../corporation/ICorporationCard';
 import {CardRenderer} from '../render/CardRenderer';
 import {MoonExpansion} from '../../moon/MoonExpansion';
-import {Size} from '../render/Size';
+import {Size} from '../../common/cards/render/Size';
 import {Card} from '../Card';
+import {all} from '../Options';
 
-export class LunaFirstIncorporated extends Card implements CorporationCard {
+export class LunaFirstIncorporated extends Card implements ICorporationCard {
   constructor() {
     super({
       cardType: CardType.CORPORATION,
@@ -28,10 +29,10 @@ export class LunaFirstIncorporated extends Card implements CorporationCard {
               .startEffect.production((pb) => pb.megacredits(1));
           }).br,
           b.effect('When any player raises any Moon Rate, gain 1M€ per step.', (eb) => {
-            eb.moonColonyRate({size: Size.SMALL}).any.slash()
-              .moonMiningRate({size: Size.SMALL}).any.slash()
-              .moonLogisticsRate({size: Size.SMALL}).any.
-              startEffect.megacredits(1);
+            eb.moonColonyRate({size: Size.SMALL, all}).slash()
+              .moonMiningRate({size: Size.SMALL, all}).slash()
+              .moonLogisticsRate({size: Size.SMALL, all})
+              .startEffect.megacredits(1);
           }).br;
         }),
       },

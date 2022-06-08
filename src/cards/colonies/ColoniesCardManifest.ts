@@ -1,5 +1,5 @@
-import {CardName} from '../../CardName';
-import {GameModule} from '../../GameModule';
+import {CardName} from '../../common/cards/CardName';
+import {GameModule} from '../../common/cards/GameModule';
 import {CardManifest} from '../CardManifest';
 import {Airliners} from './Airliners';
 import {AirRaid} from './AirRaid';
@@ -115,9 +115,9 @@ export const COLONIES_CARD_MANIFEST = new CardManifest({
     {cardName: CardName.BUILD_COLONY_STANDARD_PROJECT, Factory: BuildColonyStandardProject},
   ],
   corporationCards: [
-    {cardName: CardName.ARIDOR, Factory: Aridor},
+    {cardName: CardName.ARIDOR, Factory: Aridor, compatibility: GameModule.Colonies},
     {cardName: CardName.ARKLIGHT, Factory: Arklight},
     {cardName: CardName.POLYPHEMOS, Factory: Polyphemos},
-    {cardName: CardName.POSEIDON, Factory: Poseidon},
+    {cardName: CardName.POSEIDON, Factory: Poseidon, compatibility: GameModule.Colonies},
     {cardName: CardName.STORMCRAFT_INCORPORATED, Factory: StormCraftIncorporated},
   ]});

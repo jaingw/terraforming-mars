@@ -6,9 +6,9 @@ import {OffWorldCityLiving} from '../../../src/cards/moon/OffWorldCityLiving';
 import {expect} from 'chai';
 import {MoonExpansion} from '../../../src/moon/MoonExpansion';
 import {IMoonData} from '../../../src/moon/IMoonData';
-import {TileType} from '../../../src/TileType';
-import {SpaceType} from '../../../src/SpaceType';
-import {Resources} from '../../../src/Resources';
+import {TileType} from '../../../src/common/TileType';
+import {SpaceType} from '../../../src/common/boards/SpaceType';
+import {Resources} from '../../../src/common/Resources';
 
 const MOON_OPTIONS = TestingUtils.setCustomGameOptions({moonExpansion: true});
 
@@ -41,7 +41,7 @@ describe('OffWorldCityLiving', () => {
     colonySpaces[0].tile = {tileType: TileType.CITY};
     colonySpaces[1].tile = {tileType: TileType.CITY};
 
-    const landSpaces = player.game.board.getAvailableSpacesOnLand();
+    const landSpaces = player.game.board.getAvailableSpacesOnLand(player);
     landSpaces[0].tile = {tileType: TileType.CITY};
     landSpaces[1].tile = {tileType: TileType.CITY};
     landSpaces[2].tile = {tileType: TileType.CITY};
@@ -61,7 +61,7 @@ describe('OffWorldCityLiving', () => {
     colonySpaces[1].tile = {tileType: TileType.CITY};
     expect(card.getVictoryPoints(player)).eq(0);
 
-    const landSpaces = player.game.board.getAvailableSpacesOnLand();
+    const landSpaces = player.game.board.getAvailableSpacesOnLand(player);
     landSpaces[0].tile = {tileType: TileType.CITY};
     expect(card.getVictoryPoints(player)).eq(1);
     landSpaces[1].tile = {tileType: TileType.CITY};

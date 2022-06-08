@@ -1,12 +1,13 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
-import {CardType} from '../CardType';
 import {Player} from '../../Player';
-import {Resources} from '../../Resources';
-import {CardName} from '../../CardName';
 import {CardRenderer} from '../render/CardRenderer';
 import {Card} from '../Card';
-import {Size} from '../render/Size';
+import {all} from '../Options';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
+import {Size} from '../../common/cards/render/Size';
+import {Tags} from '../../common/cards/Tags';
+import {Resources} from '../../common/Resources';
 
 export class SolarCosmicRays extends Card implements IProjectCard {
   constructor() {
@@ -20,12 +21,12 @@ export class SolarCosmicRays extends Card implements IProjectCard {
         cardNumber: 'Q01',
         renderData: CardRenderer.builder((b) => {
           b.production((pb) => pb.energy(1)).nbsp;
-          b.production((pb) => pb.heat(1).slash().energy(1).any.asterix()).text('MAX 15', Size.SMALL);
+          b.production((pb) => pb.heat(1).slash().energy(1, {all}).asterix()).text('MAX 15', Size.SMALL);
         }),
         description: 'Increase your energy production 1 steps. For each energy production other player has, you increase your heat production 1 step[max 15].',
       },
     });
-  };
+  }
   public play(player: Player) {
     player.addProduction(Resources.ENERGY, 1);
     let alllEnergyProd = 0;

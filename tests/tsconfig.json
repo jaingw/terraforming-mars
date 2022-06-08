@@ -1,17 +1,19 @@
 {
     "compilerOptions": {
         "outDir": "../build/tests",
+        "target": "es5",
         "types": ["node", "mocha", "chai"]
     },
     "extends": "../tsconfig.json",
     "references": [
         {
             "path": "../src/tsconfig.json"
-        },
+        }
     ],
     "include": [
         "utils/setup.ts",
         "**/*.spec.ts",
         "vue-shims.d.ts",
+        "TestingUtils.ts"
     ]
 }

@@ -1,10 +1,11 @@
 import {IProjectCard} from '../IProjectCard';
 import {Player} from '../../Player';
 import {Card} from '../Card';
-import {CardType} from '../CardType';
-import {CardName} from '../../CardName';
 import {CardRenderer} from '../render/CardRenderer';
-import {Tags} from '../Tags';
+import {played} from '../Options';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
+import {Tags} from '../../common/cards/Tags';
 
 export class CommunityWorker extends Card implements IProjectCard {
   constructor() {
@@ -13,15 +14,15 @@ export class CommunityWorker extends Card implements IProjectCard {
       name: CardName.COMMUNITY_WORKER,
       tags: [],
       cost: 9,
+      victoryPoints: 1,
 
       metadata: {
         cardNumber: 'Q20',
         renderData: CardRenderer.builder((b) => {
           b.effect('When you play a card WITH NO TAGS, including this, you gain 4M€.', (eb) => {
-            eb.noTags().played.startEffect.megacredits(4);
+            eb.noTags({played}).startEffect.megacredits(4);
           });
         }),
-        victoryPoints: 1,
       },
     });
   }
@@ -34,9 +35,6 @@ export class CommunityWorker extends Card implements IProjectCard {
 
   public play() {
     return undefined;
-  }
-  public getVictoryPoints() {
-    return 1;
   }
 }
 

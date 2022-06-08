@@ -1,9 +1,9 @@
 import {Player} from '../../Player';
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {PreludeCard} from './PreludeCard';
 import {PlayProjectCard} from '../../deferredActions/PlayProjectCard';
 import {CardRenderer} from '../render/CardRenderer';
-import {Size} from '../render/Size';
+import {Size} from '../../common/cards/render/Size';
 
 export class EccentricSponsor extends PreludeCard {
   constructor() {
@@ -19,7 +19,7 @@ export class EccentricSponsor extends PreludeCard {
     });
   }
   public getCardDiscount(player: Player) {
-    if (player.lastCardPlayed !== undefined && player.lastCardPlayed.name === this.name) {
+    if (player.lastCardPlayed === this.name) {
       return 25;
     }
     return 0;

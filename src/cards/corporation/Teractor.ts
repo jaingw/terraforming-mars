@@ -1,13 +1,14 @@
 import {Card} from '../Card';
-import {Tags} from '../Tags';
-import {CorporationCard} from './CorporationCard';
+import {Tags} from '../../common/cards/Tags';
+import {ICorporationCard} from './ICorporationCard';
 import {Player} from '../../Player';
 import {IProjectCard} from '../IProjectCard';
-import {CardName} from '../../CardName';
-import {CardType} from '../CardType';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
 import {CardRenderer} from '../render/CardRenderer';
+import {played} from '../Options';
 
-export class Teractor extends Card implements CorporationCard {
+export class Teractor extends Card implements ICorporationCard {
   constructor() {
     super({
       cardType: CardType.CORPORATION,
@@ -24,7 +25,7 @@ export class Teractor extends Card implements CorporationCard {
           b.megacredits(60);
           b.corpBox('effect', (ce) => {
             ce.effect('When you play an Earth tag, you pay 3 M€ less for it.', (eb) => {
-              eb.earth(1).played.startEffect.megacredits(-3);
+              eb.earth(1, {played}).startEffect.megacredits(-3);
             });
           });
         }),

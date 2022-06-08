@@ -1,33 +1,29 @@
 import {Player} from '../../Player';
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
-import {REDS_RULING_POLICY_COST} from '../../constants';
 import {StandardProjectCard} from '../StandardProjectCard';
-import {PartyHooks} from '../../turmoil/parties/PartyHooks';
-import {PartyName} from '../../turmoil/parties/PartyName';
-import * as constants from '../../constants';
+import * as constants from '../../common/constants';
 
 export class AirScrappingStandardProject extends StandardProjectCard {
-  constructor() {
-    super({
-      name: CardName.AIR_SCRAPPING_STANDARD_PROJECT,
-      cost: 15,
-      metadata: {
-        cardNumber: 'SP1',
-        renderData: CardRenderer.builder((b) =>
-          b.standardProject('Spend 15 M€ to raise Venus 1 step.', (eb) => {
-            eb.megacredits(15).startAction.venus(1);
-          }),
-        ),
-      },
-    });
+  constructor(properties = {
+    name: CardName.AIR_SCRAPPING_STANDARD_PROJECT,
+    cost: 15,
+    tr: {venus: 1},
+    metadata: {
+      cardNumber: 'SP1',
+      renderData: CardRenderer.builder((b) =>
+        b.standardProject('Spend 15 M€ to raise Venus 1 step.', (eb) => {
+          eb.megacredits(15).startAction.venus(1);
+        }),
+      ),
+    },
+  }) {
+    super(properties);
   }
 
-  public canAct(player: Player): boolean {
-    let cost = this.cost;
-    if (PartyHooks.shouldApplyPolicy(player.game, PartyName.REDS)) cost += REDS_RULING_POLICY_COST;
-
-    return player.canAfford(cost- super.discount(player)) && player.game.getVenusScaleLevel() < constants.MAX_VENUS_SCALE;
+  public override canAct(player: Player): boolean {
+    if (player.game.getVenusScaleLevel() >= constants.MAX_VENUS_SCALE) return false;
+    return super.canAct(player);
   }
 
   actionEssence(player: Player): void {

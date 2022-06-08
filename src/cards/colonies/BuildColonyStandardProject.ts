@@ -1,11 +1,8 @@
 import {Player} from '../../Player';
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
 import {StandardProjectCard} from '../StandardProjectCard';
-import {PartyHooks} from '../../turmoil/parties/PartyHooks';
-import {PartyName} from '../../turmoil/parties/PartyName';
-import * as constants from '../../constants';
-import {ColonyName} from '../../colonies/ColonyName';
+import {ColonyName} from '../../common/colonies/ColonyName';
 import {BuildColony} from '../../deferredActions/BuildColony';
 
 export class BuildColonyStandardProject extends StandardProjectCard {
@@ -24,20 +21,30 @@ export class BuildColonyStandardProject extends StandardProjectCard {
     });
   }
 
+  protected override discount(player: Player): number {
+    if (player.isCorporation(CardName.ADHAI_HIGH_ORBIT_CONSTRUCTIONS)) {
+      const count = player.corpCard?.name === CardName.ADHAI_HIGH_ORBIT_CONSTRUCTIONS ? player.corpCard.resourceCount : player.corpCard2?.resourceCount;
+      const adhaiDiscount = Math.floor((count || 0) / 2);
+      return adhaiDiscount + super.discount(player);
+    }
+    return super.discount(player);
+  }
+
   private getOpenColonies(player: Player) {
     let openColonies = player.game.colonies.filter((colony) => colony.colonies.length < 3 &&
       colony.colonies.includes(player) === false &&
       colony.isActive);
 
     // TODO: Europa sometimes costs additional 3.
-    if (PartyHooks.shouldApplyPolicy(player.game, PartyName.REDS) && !player.canAfford(this.cost + constants.REDS_RULING_POLICY_COST)) {
+    const canAffordVenus = player.canAfford(this.cost, {tr: {venus: 1}});
+    if (!canAffordVenus) {
       openColonies = openColonies.filter((colony) => colony.name !== ColonyName.VENUS);
     }
 
     return openColonies;
   }
 
-  public canAct(player: Player): boolean {
+  public override canAct(player: Player): boolean {
     return super.canAct(player) && this.getOpenColonies(player).length > 0;
   }
 

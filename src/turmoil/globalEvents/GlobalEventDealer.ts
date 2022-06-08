@@ -1,4 +1,4 @@
-import {GlobalEventName} from './GlobalEventName';
+import {GlobalEventName} from '../../common/turmoil/globalEvents/GlobalEventName';
 import {IGlobalEvent} from './IGlobalEvent';
 import {GlobalDustStorm} from './GlobalDustStorm';
 import {SponsoredProjects} from './SponsoredProjects';
@@ -38,8 +38,13 @@ import {VenusInfrastructure} from './VenusInfrastructure';
 import {CloudSocieties} from './CloudSocieties';
 import {MicrogravityHealthProblems} from './MicrogravityHealthProblems';
 import {SerializedGlobalEventDealer} from './SerializedGlobalEventDealer';
-import {ISerializable} from '../../ISerializable';
 import {LeadershipSummit} from './LeadershipSummit';
+import {BalancedDevelopment} from './BalancedDevelopment';
+import {TiredEarth} from './TiredEarth';
+import {MagneticFieldStimulationDelays} from './MagneticFieldStimulationDelays';
+import {ConstantStruggle} from './ConstantStruggle';
+import {SpaceRaceToMars} from './SpaceRaceToMars';
+import {CommunicationBoom} from './CommunicationBoom';
 
 const COLONY_ONLY_POSITIVE_GLOBAL_EVENTS = new Map<GlobalEventName, new() => IGlobalEvent>([
   [GlobalEventName.JOVIAN_TAX_RIGHTS, JovianTaxRights],
@@ -61,7 +66,6 @@ const VENUS_POSITIVE_GLOBAL_EVENTS = new Map<GlobalEventName, new() => IGlobalEv
   [GlobalEventName.VENUS_INFRASTRUCTURE, VenusInfrastructure],
 ]);
 
-// ALL POSITIVE GLOBAL EVENTS
 const POSITIVE_GLOBAL_EVENTS = new Map<GlobalEventName, new() => IGlobalEvent>([
   [GlobalEventName.SPONSORED_PROJECTS, SponsoredProjects],
   [GlobalEventName.ASTEROID_MINING, AsteroidMining],
@@ -81,7 +85,6 @@ const POSITIVE_GLOBAL_EVENTS = new Map<GlobalEventName, new() => IGlobalEvent>([
   [GlobalEventName.STRONG_SOCIETY, StrongSociety],
 ]);
 
-// ALL NEGATIVE GLOBAL EVENTS
 const NEGATIVE_GLOBAL_EVENTS = new Map<GlobalEventName, new() => IGlobalEvent>([
   [GlobalEventName.GLOBAL_DUST_STORM, GlobalDustStorm],
   [GlobalEventName.ECO_SABOTAGE, EcoSabotage],
@@ -104,14 +107,25 @@ const COMMUNITY_GLOBAL_EVENTS = new Map<GlobalEventName, new() => IGlobalEvent>(
   [GlobalEventName.LEADERSHIP_SUMMIT, LeadershipSummit],
 ]);
 
+const PATHFINDERS_POSITIVE_GLOBAL_EVENTS = new Map<GlobalEventName, new() => IGlobalEvent>([
+  [GlobalEventName.BALANCED_DEVELOPMENT, BalancedDevelopment],
+  [GlobalEventName.SPACE_RACE_TO_MARS, SpaceRaceToMars],
+]);
+
+const PATHFINDERS_NEGATIVE_GLOBAL_EVENTS = new Map<GlobalEventName, new() => IGlobalEvent>([
+  [GlobalEventName.CONSTANT_STRUGGLE, ConstantStruggle],
+  [GlobalEventName.TIRED_EARTH, TiredEarth],
+  [GlobalEventName.MAGNETIC_FIELD_STIMULATION_DELAYS, MagneticFieldStimulationDelays],
+  [GlobalEventName.COMMUNICATION_BOOM, CommunicationBoom],
+]);
+
 // When renaming, add the rename here and add a TODO (like the example below)
 // And remember to add a test in GlobalEventDealer.spec.ts
 const RENAMED_GLOBAL_EVENTS = new Map<GlobalEventName, new() => IGlobalEvent>([
-  // TODO(bafolts): remove after 2021-05-08
-  ['Miners Of Strike' as GlobalEventName, MinersOnStrike],
+  // ['Miners Of Strike' as GlobalEventName, MinersOnStrike],
 ]);
 
-const ALL_EVENTS = new Map<GlobalEventName, new() => IGlobalEvent>([
+export const ALL_EVENTS = new Map<GlobalEventName, new() => IGlobalEvent>([
   ...Array.from(POSITIVE_GLOBAL_EVENTS),
   ...Array.from(NEGATIVE_GLOBAL_EVENTS),
   ...Array.from(COLONY_ONLY_POSITIVE_GLOBAL_EVENTS),
@@ -121,6 +135,8 @@ const ALL_EVENTS = new Map<GlobalEventName, new() => IGlobalEvent>([
   ...Array.from(VENUS_POSITIVE_GLOBAL_EVENTS),
   ...Array.from(COMMUNITY_GLOBAL_EVENTS),
   ...Array.from(RENAMED_GLOBAL_EVENTS),
+  ...Array.from(PATHFINDERS_POSITIVE_GLOBAL_EVENTS),
+  ...Array.from(PATHFINDERS_NEGATIVE_GLOBAL_EVENTS),
 ]);
 
 // Function to return a global event object by its name
@@ -131,7 +147,7 @@ export function getGlobalEventByName(globalEventName: GlobalEventName): IGlobalE
   return undefined;
 }
 
-export class GlobalEventDealer implements ISerializable<SerializedGlobalEventDealer> {
+export class GlobalEventDealer {
   constructor(
     public readonly globalEventsDeck: Array<IGlobalEvent>,
     public readonly discardedGlobalEvents: Array<IGlobalEvent>) {}
@@ -145,7 +161,7 @@ export class GlobalEventDealer implements ISerializable<SerializedGlobalEventDea
 
       if (game.gameOptions.venusNextExtension && game.gameOptions.coloniesExtension) {
         events.push(...Array.from(VENUS_COLONY_NEGATIVE_GLOBAL_EVENTS));
-      };
+      }
     }
 
     if (game.gameOptions.venusNextExtension) events.push(...Array.from(VENUS_POSITIVE_GLOBAL_EVENTS));
@@ -158,9 +174,16 @@ export class GlobalEventDealer implements ISerializable<SerializedGlobalEventDea
 
     if (game.gameOptions.communityCardsOption) events.push(...Array.from(COMMUNITY_GLOBAL_EVENTS));
 
+    if (game.gameOptions.pathfindersExpansion) {
+      events.push(...Array.from(PATHFINDERS_POSITIVE_GLOBAL_EVENTS));
+      if (!game.gameOptions.removeNegativeGlobalEventsOption) {
+        events.push(...Array.from(PATHFINDERS_NEGATIVE_GLOBAL_EVENTS));
+      }
+    }
+
     const globalEventsDeck = this.shuffle(events.map((cf) => new cf[1]));
     return new GlobalEventDealer(globalEventsDeck, []);
-  };
+  }
 
   private static shuffle(cards: Array<IGlobalEvent>): Array<IGlobalEvent> {
     const deck: Array<IGlobalEvent> = [];
@@ -191,8 +214,8 @@ export class GlobalEventDealer implements ISerializable<SerializedGlobalEventDea
 
   public serialize(): SerializedGlobalEventDealer {
     return {
-      globalEventsDeck: this.globalEventsDeck,
-      discardedGlobalEvents: this.discardedGlobalEvents,
+      globalEventsDeck: this.globalEventsDeck.map((card) => ({'name': card.name} as IGlobalEvent)),
+      discardedGlobalEvents: this.discardedGlobalEvents.map((card) => ({'name': card.name} as IGlobalEvent)),
     } as SerializedGlobalEventDealer;
   }
 

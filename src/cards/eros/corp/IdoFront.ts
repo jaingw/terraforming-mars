@@ -1,14 +1,14 @@
-import {CorporationCard} from '../../corporation/CorporationCard';
 import {Player} from '../../../Player';
-import {Tags} from '../../Tags';
 import {IProjectCard} from '../../IProjectCard';
-import {Resources} from '../../../Resources';
-import {CardName} from '../../../CardName';
-import {CardType} from '../../CardType';
 import {Card} from '../../Card';
 import {CardRenderer} from '../../render/CardRenderer';
+import {CardName} from '../../../common/cards/CardName';
+import {CardType} from '../../../common/cards/CardType';
+import {Tags} from '../../../common/cards/Tags';
+import {Resources} from '../../../common/Resources';
+import {ICorporationCard} from '../../corporation/ICorporationCard';
 
-export class IdoFront extends Card implements CorporationCard {
+export class IdoFront extends Card implements ICorporationCard {
     public allTags = new Set();
 
     constructor() {
@@ -46,15 +46,15 @@ export class IdoFront extends Card implements CorporationCard {
         }
       }
 
-      const wildCount = player.getTagCount(Tags.WILDCARD, false, false);
+      const wildCount = player.getTagCount(Tags.WILDCARD);
       if (card.tags.length >= count) {
         player.addResource(Resources.MEGACREDITS, 2*Math.min(card.tags.length, count+wildCount));
       }
       return undefined;
     }
 
-    public onCorpCardPlayed(player: Player, card: CorporationCard) {
-      return this.onCardPlayed(player, card as IProjectCard);
+    public onCorpCardPlayed(player: Player, card:ICorporationCard) {
+      return this.onCardPlayed(player, card as unknown as IProjectCard);
     }
 
     public play() {

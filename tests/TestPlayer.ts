@@ -1,14 +1,12 @@
 import {Player} from '../src/Player';
 import {PlayerInput} from '../src/PlayerInput';
-import {Color} from '../src/Color';
-import {Units} from '../src/Units';
-import {Tags} from '../src/cards/Tags';
-import {VictoryPointsBreakdown} from '../src/VictoryPointsBreakdown';
+import {Color} from '../src/common/Color';
+import {Units} from '../src/common/Units';
+import {Tags} from '../src/common/cards/Tags';
 
 export class TestPlayer extends Player {
-  public victoryPointsBreakdown = new VictoryPointsBreakdown();
   constructor(color: Color) {
-    super('player-' + color, color, false, 0, color + '-id');
+    super('player-' + color, color, false, 0, 'p-' + color + '-id');
   }
 
   public setProductionForTest(units: Partial<Units>) {
@@ -32,25 +30,41 @@ export class TestPlayer extends Player {
     }
   }
 
-  public getVictoryPoints(): VictoryPointsBreakdown {
-    this.victoryPointsBreakdown = super.getVictoryPoints();
-    return this.victoryPointsBreakdown;
+  public getProductionForTest(): Units {
+    return {
+      megacredits: this.megaCreditProduction,
+      steel: this.steelProduction,
+      titanium: this.titaniumProduction,
+      plants: this.plantProduction,
+      energy: this.energyProduction,
+      heat: this.heatProduction,
+    };
   }
 
-  public getStandardProjectOption() {
+  public getResourcesForTest(): Units {
+    return {
+      megacredits: this.megaCredits,
+      steel: this.steel,
+      titanium: this.titanium,
+      plants: this.plants,
+      energy: this.energy,
+      heat: this.heat,
+    };
+  }
+
+  public override getStandardProjectOption() {
     return super.getStandardProjectOption();
   }
 
   public tagsForTest: Partial<TagsForTest> | undefined = undefined;
 
-  public getTagCount(tag: Tags, includeEventsTags:boolean = false, includeWildcardTags:boolean = true): number {
-    if (this.tagsForTest !== undefined) {
-      return this.tagsForTest[tag] || 0;
-    }
-    return super.getTagCount(tag, includeEventsTags, includeWildcardTags);
+  public override getRawTagCount(tag: Tags, includeEventsTags:boolean = false): number {
+    return this.tagsForTest !== undefined ?
+      this.tagsForTest[tag] ?? 0 :
+      super.getRawTagCount(tag, includeEventsTags);
   }
 
-  public runInput(input: ReadonlyArray<ReadonlyArray<string>>, pi: PlayerInput): void {
+  public override runInput(input: ReadonlyArray<ReadonlyArray<string>>, pi: PlayerInput): void {
     super.runInput(input, pi);
   }
 
@@ -63,6 +77,13 @@ export class TestPlayer extends Player {
       energy: this.energy,
       heat: this.heat,
     });
+  }
+
+  public popWaitingFor(): PlayerInput | undefined {
+    const waitingFor = this.getWaitingFor();
+    this.waitingFor = undefined;
+    this.waitingForCb = undefined;
+    return waitingFor;
   }
 }
 
@@ -81,4 +102,6 @@ export interface TagsForTest {
   wild: number;
   moon: number;
   event: number;
+  mars: number;
+  clone: number;
 }

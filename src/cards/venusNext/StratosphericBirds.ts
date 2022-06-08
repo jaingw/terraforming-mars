@@ -1,14 +1,14 @@
 import {IActionCard, IResourceCard} from '../ICard';
-import {Tags} from '../Tags';
-import {CardType} from '../CardType';
+import {Tags} from '../../common/cards/Tags';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {ResourceType} from '../../ResourceType';
-import {CardName} from '../../CardName';
+import {ResourceType} from '../../common/ResourceType';
+import {CardName} from '../../common/cards/CardName';
 import {RemoveResourcesFromCard} from '../../deferredActions/RemoveResourcesFromCard';
 import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
-import {CardRenderDynamicVictoryPoints} from '../render/CardRenderDynamicVictoryPoints';
 import {Card} from '../Card';
+import {VictoryPoints} from '../ICard';
 
 export class StratosphericBirds extends Card implements IActionCard, IResourceCard {
   constructor() {
@@ -18,6 +18,7 @@ export class StratosphericBirds extends Card implements IActionCard, IResourceCa
       tags: [Tags.VENUS, Tags.ANIMAL],
       cost: 12,
       resourceType: ResourceType.ANIMAL,
+      victoryPoints: VictoryPoints.resource(1, 1),
 
       requirements: CardRequirements.builder((b) => b.venus(12)),
       metadata: {
@@ -33,25 +34,22 @@ export class StratosphericBirds extends Card implements IActionCard, IResourceCa
           text: 'Requires Venus 12% and that you spend 1 Floater from any card.',
           align: 'left',
         },
-        victoryPoints: CardRenderDynamicVictoryPoints.animals(1, 1),
       },
     });
-  };
-  public resourceCount: number = 0;
-  public canPlay(player: Player): boolean {
-    const cardsWithFloater = player.getCardsWithResources().filter((card) => card.resourceType === ResourceType.FLOATER);
+  }
+  public override resourceCount: number = 0;
+  public override canPlay(player: Player): boolean {
+    const cardsWithFloater = player.getCardsWithResources(ResourceType.FLOATER);
     if (cardsWithFloater.length === 0) return false;
 
-    const meetsGlobalRequirements = super.canPlay(player);
-
     if (cardsWithFloater.length > 1) {
-      return meetsGlobalRequirements;
+      return true;
     } else {
       const floaterCard = cardsWithFloater[0];
-      if (floaterCard.name !== CardName.DIRIGIBLES) return meetsGlobalRequirements;
+      if (floaterCard.name !== CardName.DIRIGIBLES) return true;
 
-      const canPayForFloater = ((floaterCard.resourceCount! - 1) * 3 + player.megaCredits) >= player.getCardCost(this);
-      return canPayForFloater && meetsGlobalRequirements;
+      const canPayForFloater = ((floaterCard.resourceCount - 1) * 3 + player.megaCredits) >= player.getCardCost(this);
+      return canPayForFloater;
     }
   }
   public play(player: Player) {
@@ -60,9 +58,6 @@ export class StratosphericBirds extends Card implements IActionCard, IResourceCa
   }
   public canAct(): boolean {
     return true;
-  }
-  public getVictoryPoints(): number {
-    return this.resourceCount;
   }
   public action(player: Player) {
     player.addResourceTo(this);

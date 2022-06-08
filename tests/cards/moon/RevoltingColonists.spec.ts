@@ -6,7 +6,7 @@ import {RevoltingColonists} from '../../../src/cards/moon/RevoltingColonists';
 import {expect} from 'chai';
 import {MoonExpansion} from '../../../src/moon/MoonExpansion';
 import {IMoonData} from '../../../src/moon/IMoonData';
-import {TileType} from '../../../src/TileType';
+import {TileType} from '../../../src/common/TileType';
 
 const MOON_OPTIONS = TestingUtils.setCustomGameOptions({moonExpansion: true});
 
@@ -38,7 +38,7 @@ describe('RevoltingColonists', () => {
   });
 
   it('play', () => {
-    const spaces = moonData.moon.getAvailableSpacesOnLand();
+    const spaces = moonData.moon.getAvailableSpacesOnLand(player1);
 
     const assignTile = function(idx: number, player: Player) {
       spaces[idx].tile = {tileType: TileType.MOON_COLONY};

@@ -12,7 +12,7 @@ export class ApiPlayer extends Handler {
     super();
   }
 
-  public get(req: http.IncomingMessage, res: http.ServerResponse, ctx: IContext): void {
+  public override get(req: http.IncomingMessage, res: http.ServerResponse, ctx: IContext): void {
     const qs = req.url!.substring('/api/player?'.length);
     const queryParams = querystring.parse(qs);
     const playerId = (queryParams as any)['id'];

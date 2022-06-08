@@ -1,14 +1,15 @@
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {Player} from '../../Player';
-import {CardType} from '../CardType';
-import {Tags} from '../Tags';
-import {ResourceType} from '../../ResourceType';
+import {CardType} from '../../common/cards/CardType';
+import {Tags} from '../../common/cards/Tags';
+import {ResourceType} from '../../common/ResourceType';
 import {StealResources} from '../../deferredActions/StealResources';
-import {Resources} from '../../Resources';
+import {Resources} from '../../common/Resources';
 import {CardRenderer} from '../render/CardRenderer';
-import {CardRenderDynamicVictoryPoints} from '../render/CardRenderDynamicVictoryPoints';
-import {Units} from '../../Units';
+import {Units} from '../../common/Units';
 import {MoonCard} from './MoonCard';
+import {all} from '../Options';
+import {VictoryPoints} from '../ICard';
 
 export class AncientShipyards extends MoonCard {
   constructor() {
@@ -17,25 +18,26 @@ export class AncientShipyards extends MoonCard {
       cardType: CardType.ACTIVE,
       tags: [Tags.MOON, Tags.SPACE],
       cost: 6,
+
       resourceType: ResourceType.RESOURCE_CUBE,
+      victoryPoints: VictoryPoints.resource(-1, 1),
       reserveUnits: Units.of({titanium: 3}),
 
       metadata: {
-        description: 'Spend 3 titanium. -1 VP for every 2 resources here.',
+        description: 'Spend 3 titanium. -1 VP for every resource here.',
         cardNumber: 'M19',
         renderData: CardRenderer.builder((b) => {
           b.action('Steal 5 M€ from any player and add a resource cube here.', (eb) => {
-            eb.empty().startAction.text('Steal').nbsp.megacredits(5).any.colon().resourceCube(1);
+            eb.empty().startAction.text('Steal').nbsp.megacredits(5, {all}).colon().resourceCube(1);
           }).br.br;
           b.minus().titanium(3);
         }),
-        victoryPoints: CardRenderDynamicVictoryPoints.resourceCube(-1, 2),
       },
     });
-  };
-  public resourceCount: number = 0;
+  }
+  public override resourceCount: number = 0;
 
-  public play(player: Player) {
+  public override play(player: Player) {
     super.play(player);
     return undefined;
   }
@@ -51,9 +53,5 @@ export class AncientShipyards extends MoonCard {
     };
     player.game.defer(deferredAction);
     return undefined;
-  }
-
-  public getVictoryPoints() {
-    return -Math.floor(this.resourceCount / 2);
   }
 }

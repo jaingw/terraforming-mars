@@ -1,18 +1,19 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Card} from '../Card';
-import {CardType} from '../CardType';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
 import {ISpace} from '../../boards/ISpace';
 import {SelectSpace} from '../../inputs/SelectSpace';
-import {Resources} from '../../Resources';
-import {CardName} from '../../CardName';
+import {Resources} from '../../common/Resources';
+import {CardName} from '../../common/cards/CardName';
 import {Priority} from '../../deferredActions/DeferredAction';
 import {GainProduction} from '../../deferredActions/GainProduction';
 import {LoseProduction} from '../../deferredActions/LoseProduction';
 import {Board} from '../../boards/Board';
 import {CardRenderer} from '../render/CardRenderer';
-import {Units} from '../../Units';
+import {Units} from '../../common/Units';
+import {all} from '../Options';
 
 export class ImmigrantCity extends Card implements IProjectCard {
   constructor() {
@@ -27,7 +28,7 @@ export class ImmigrantCity extends Card implements IProjectCard {
         cardNumber: '200',
         renderData: CardRenderer.builder((b) => {
           b.effect('When a City tile is placed, including this, increase your M€ production 1 step.', (eb) => {
-            eb.city().any.startEffect.production((pb) => pb.megacredits(1));
+            eb.city({all}).startEffect.production((pb) => pb.megacredits(1));
           }).br;
           b.production((pb) => pb.minus().energy(1).megacredits(-2)).city();
         }),
@@ -36,7 +37,7 @@ export class ImmigrantCity extends Card implements IProjectCard {
     });
   }
 
-  public canPlay(player: Player): boolean {
+  public override canPlay(player: Player): boolean {
     const hasEnergyProduction = player.getProduction(Resources.ENERGY) >= 1;
     const canPlaceCityOnMars = player.game.board.getAvailableSpacesForCity(player).length > 0;
     const canDecreaseMcProduction = player.getProduction(Resources.MEGACREDITS) >= -4 || player.isCorporation(CardName.THARSIS_REPUBLIC);

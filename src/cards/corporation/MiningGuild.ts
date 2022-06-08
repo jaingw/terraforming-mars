@@ -1,19 +1,20 @@
 import {Card} from '../Card';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Player} from '../../Player';
-import {CorporationCard} from './CorporationCard';
-import {Phase} from '../../Phase';
+import {ICorporationCard} from './ICorporationCard';
+import {Phase} from '../../common/Phase';
 import {ISpace} from '../../boards/ISpace';
-import {SpaceBonus} from '../../SpaceBonus';
-import {Resources} from '../../Resources';
-import {CardName} from '../../CardName';
-import {CardType} from '../CardType';
+import {SpaceBonus} from '../../common/boards/SpaceBonus';
+import {Resources} from '../../common/Resources';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
 import {GainProduction} from '../../deferredActions/GainProduction';
 import {CardRenderer} from '../render/CardRenderer';
-import {Units} from '../../Units';
+import {Units} from '../../common/Units';
 import {BoardType} from '../../boards/BoardType';
+import {digit} from '../Options';
 
-export class MiningGuild extends Card implements CorporationCard {
+export class MiningGuild extends Card implements ICorporationCard {
   constructor() {
     super({
       cardType: CardType.CORPORATION,
@@ -27,7 +28,7 @@ export class MiningGuild extends Card implements CorporationCard {
         description: 'You start with 30 M€, 5 steel and 1 steel production.',
         renderData: CardRenderer.builder((b) => {
           b.br.br;
-          b.megacredits(30).nbsp.steel(5).digit.nbsp.production((pb) => pb.steel(1));
+          b.megacredits(30).nbsp.steel(5, {digit}).nbsp.production((pb) => pb.steel(1));
           b.corpBox('effect', (ce) => {
             ce.effect('Each time you get any steel or titanium as a placement bonus on the map, increase your steel production 1 step.', (eb) => {
               eb.steel(1).asterix().slash().titanium(1).asterix();
@@ -40,12 +41,15 @@ export class MiningGuild extends Card implements CorporationCard {
   }
 
   public onTilePlaced(cardOwner: Player, activePlayer: Player, space: ISpace, boardType: BoardType) {
-    // TODO(kberg): Clarify that this is nerfed for The Moon.
     // Nerfing on The Moon.
     if (boardType !== BoardType.MARS) {
       return;
     }
     if (cardOwner.id !== activePlayer.id || cardOwner.game.phase === Phase.SOLAR) {
+      return;
+    }
+    // Don't grant a bonus if the card is overplaced (like Ares Ocean City)
+    if (space?.tile?.covers !== undefined) {
       return;
     }
     if (space.bonus.some((bonus) => bonus === SpaceBonus.STEEL || bonus === SpaceBonus.TITANIUM)) {

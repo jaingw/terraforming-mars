@@ -26,9 +26,9 @@ describe('BactoviralResearch', function() {
     player.playedCards.push(card2, card3, card4);
 
     const action = card.play(player) as SelectCard<ICard>;
-    expect(action instanceof SelectCard).is.true;
+    expect(action).instanceOf(SelectCard);
     action.cb([card3]);
-    expect(player.getResourcesOnCard(card3)).to.eq(4);
+    expect(card3.resourceCount).to.eq(4);
     expect(player.cardsInHand.length).to.eq(1);
   });
 
@@ -36,7 +36,7 @@ describe('BactoviralResearch', function() {
     const card2 = new RegolithEaters();
     player.playedCards.push(card2);
     card.play(player) as SelectCard<ICard>;
-    expect(player.getResourcesOnCard(card2)).to.eq(2);
+    expect(card2.resourceCount).to.eq(2);
     expect(player.cardsInHand.length).to.eq(1);
   });
 

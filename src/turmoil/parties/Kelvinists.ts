@@ -1,13 +1,14 @@
 import {IParty} from './IParty';
 import {Party} from './Party';
-import {PartyName} from './PartyName';
+import {PartyName} from '../../common/turmoil/PartyName';
 import {Game} from '../../Game';
-import {Resources} from '../../Resources';
+import {Resources} from '../../common/Resources';
 import {Bonus} from '../Bonus';
 import {Policy} from '../Policy';
 import {Player} from '../../Player';
 import {SelectHowToPayDeferred} from '../../deferredActions/SelectHowToPayDeferred';
-import {TurmoilPolicy} from '../TurmoilPolicy';
+import {MAX_TEMPERATURE} from '../../common/constants';
+import {CardName} from '../../common/cards/CardName';
 
 export class Kelvinists extends Party implements IParty {
   name = PartyName.KELVINISTS;
@@ -17,38 +18,47 @@ export class Kelvinists extends Party implements IParty {
 }
 
 class KelvinistsBonus01 implements Bonus {
-  id = 'kb01';
+  id = 'kb01' as const;
   isDefault = true;
   description = 'Gain 1 M€ for each Heat production you have';
 
+  getScore(player: Player) {
+    return player.getProduction(Resources.HEAT);
+  }
+
   grant(game: Game) {
-    game.getPlayers().forEach((player) => {
-      const heatProduction = player.getProduction(Resources.HEAT);
-      player.addResource(Resources.MEGACREDITS, heatProduction);
+    game.getPlayersInGenerationOrder().forEach((player) => {
+      player.addResource(Resources.MEGACREDITS, this.getScore(player));
     });
   }
 }
 
 class KelvinistsBonus02 implements Bonus {
-  id = 'kb02';
+  id = 'kb02' as const;
   description = 'Gain 1 heat for each Heat production you have';
   isDefault = false;
 
+  getScore(player: Player) {
+    return player.getProduction(Resources.HEAT);
+  }
+
   grant(game: Game) {
-    game.getPlayers().forEach((player) => {
-      const heatProduction = player.getProduction(Resources.HEAT);
-      player.addResource(Resources.HEAT, heatProduction);
+    game.getPlayersInGenerationOrder().forEach((player) => {
+      player.addResource(Resources.HEAT, this.getScore(player));
     });
   }
 }
 
 class KelvinistsPolicy01 implements Policy {
   isDefault = true;
-  id = TurmoilPolicy.KELVINISTS_DEFAULT_POLICY;
+  id = 'kp01' as const;
   description: string = 'Pay 10 M€ to increase your Energy and Heat production 1 step (Turmoil Kelvinists)';
 
+  cost(player: Player): number {
+    return player.cardIsInEffect(CardName.HIGH_TEMP_SUPERCONDUCTORS) ? 7: 10;
+  }
   canAct(player: Player) {
-    return player.canAfford(10);
+    return player.canAfford(this.cost(player));
   }
 
   action(player: Player) {
@@ -56,7 +66,7 @@ class KelvinistsPolicy01 implements Policy {
     game.log('${0} used Turmoil Kelvinists action', (b) => b.player(player));
     game.defer(new SelectHowToPayDeferred(
       player,
-      10,
+      this.cost(player),
       {
         title: 'Select how to pay for Turmoil Kelvinists action',
         afterPay: () => {
@@ -72,18 +82,18 @@ class KelvinistsPolicy01 implements Policy {
 }
 
 class KelvinistsPolicy02 implements Policy {
-  id = TurmoilPolicy.KELVINISTS_POLICY_2;
+  id = 'kp02' as const;
   description: string = 'When you raise temperature, gain 3 M€ per step raised';
   isDefault = false;
 }
 
 class KelvinistsPolicy03 implements Policy {
-  id = TurmoilPolicy.KELVINISTS_POLICY_3;
+  id = 'kp03' as const;
   description: string = 'Convert 6 heat into temperature (Turmoil Kelvinists)';
   isDefault = false;
 
   canAct(player: Player) {
-    return player.heat >= 6;
+    return player.availableHeat >= 6 && player.game.getTemperature() < MAX_TEMPERATURE;
   }
 
   action(player: Player) {
@@ -91,14 +101,15 @@ class KelvinistsPolicy03 implements Policy {
     game.log('${0} used Turmoil Kelvinists action', (b) => b.player(player));
     game.log('${0} spent 6 heat to raise temperature 1 step', (b) => b.player(player));
 
-    player.deductResource(Resources.HEAT, 6);
-    game.increaseTemperature(player, 1);
-    return undefined;
+    return player.spendHeat(6, () => {
+      game.increaseTemperature(player, 1);
+      return undefined;
+    });
   }
 }
 
 class KelvinistsPolicy04 implements Policy {
-  id = TurmoilPolicy.KELVINISTS_POLICY_4;
+  id = 'kp04' as const;
   description: string = 'When you place a tile, gain 2 heat';
   isDefault = false;
 

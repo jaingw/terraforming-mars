@@ -5,6 +5,7 @@ import {GameLoader} from '../../src/database/GameLoader';
 import {Player} from '../../src/Player';
 import {SerializedGame} from '../../src/SerializedGame';
 import {TestPlayers} from '../TestPlayers';
+import {IGameShortData} from '../../src/database/IDatabase';
 
 describe('GameLoader', function() {
   const expectedGameIds: Array<string> = ['alpha', 'foobar'];
@@ -77,7 +78,7 @@ describe('GameLoader', function() {
     let actualGame1: Game | undefined = game;
     const originalLoadFromJSON = Game.prototype.loadFromJSON;
     Game.prototype.loadFromJSON = function() {
-      throw 'could not parse this';
+      throw new Error('could not parse this');
     };
     GameLoader.getInstance().getGameById('foobar', (game1) => {
       actualGame1 = game1;
@@ -88,9 +89,9 @@ describe('GameLoader', function() {
 
   it('gets game when requested before database loaded', function(done) {
     const workingGetGames = Database.getInstance().getGames;
-    Database.getInstance().getGames = function(cb: (err: any, games: Array<string>) => void) {
+    Database.getInstance().getGames = function(cb: (err: any, games: Array<IGameShortData>) => void) {
       setTimeout(function() {
-        cb(undefined, ['foobar']);
+        cb(undefined, [{gameId: 'foobar'}]);
       });
     };
     GameLoader.getInstance().getGameById('foobar', (game1) => {
@@ -102,7 +103,7 @@ describe('GameLoader', function() {
     GameLoader.getInstance().getGameById('foobar', (game1) => {
       expect(game1).is.undefined;
     });
-    GameLoader.getInstance().getByPlayerId(game.getPlayers()[0].id, (game1) => {
+    GameLoader.getInstance().getByPlayerId(game.getPlayersInGenerationOrder()[0].id, (game1) => {
       expect(game1).is.undefined;
       done();
     });
@@ -139,7 +140,7 @@ describe('GameLoader', function() {
 
   it('gets player when it exists in database', function() {
     let actualGame1: Game | undefined = undefined;
-    const players = game.getPlayers();
+    const players = game.getPlayersInGenerationOrder();
     GameLoader.getInstance().getByPlayerId(players[Math.floor(Math.random() * players.length)].id, (game1) => {
       actualGame1 = game1;
     });
@@ -158,7 +159,7 @@ describe('GameLoader', function() {
   });
 
   it('gets player when added and not in database', function() {
-    const players = game.getPlayers();
+    const players = game.getPlayersInGenerationOrder();
     GameLoader.getInstance().add(game);
     GameLoader.getInstance().getByPlayerId(players[Math.floor(Math.random() * players.length)]!.id, (game1) => {
       expect(game1).is.undefined;
@@ -167,7 +168,7 @@ describe('GameLoader', function() {
 
   it('loads values after error pulling game ids', function() {
     const workingGetGames = Database.getInstance().getGames;
-    Database.getInstance().getGames = function(cb: (err: any, games: Array<string>) => void) {
+    Database.getInstance().getGames = function(cb: (err: any, games: Array<IGameShortData>) => void) {
       cb('error', []);
     };
     let actualGame1: Game | undefined = game;
@@ -180,7 +181,7 @@ describe('GameLoader', function() {
 
   it('loads values when no game ids', function() {
     const workingGetGames = Database.getInstance().getGames;
-    Database.getInstance().getGames = function(cb: (err: any, games: Array<string>) => void) {
+    Database.getInstance().getGames = function(cb: (err: any, games: Array<IGameShortData>) => void) {
       cb(undefined, []);
     };
     let actualGame1: Game | undefined = game;
@@ -193,7 +194,7 @@ describe('GameLoader', function() {
 
   it('loads players that will never exist', function(done) {
     const workingGetGames = Database.getInstance().getGames;
-    Database.getInstance().getGames = function(cb: (err: any, games: Array<string>) => void) {
+    Database.getInstance().getGames = function(cb: (err: any, games: Array<IGameShortData>) => void) {
       setTimeout(function() {
         cb(undefined, []);
       });
@@ -207,15 +208,15 @@ describe('GameLoader', function() {
 
   it('loads players available later', function(done) {
     const workingGetGames = Database.getInstance().getGames;
-    Database.getInstance().getGames = function(cb: (err: any, games: Array<string>) => void) {
+    Database.getInstance().getGames = function(cb: (err: any, games: Array<IGameShortData>) => void) {
       setTimeout(function() {
-        cb(undefined, ['foobar']);
+        cb(undefined, [{gameId: 'foobar'}]);
       });
     };
     GameLoader.getInstance().getGameById('foobar', (game1) => {
       expect(game1).is.undefined;
     });
-    GameLoader.getInstance().getByPlayerId(game.getPlayers()[0].id, (game1) => {
+        GameLoader.getInstance().getByPlayerId(game.getPlayersInGenerationOrder()[0].id, (game1) => {
       expect(game1).is.undefined;
       Database.getInstance().getGames = workingGetGames;
       done();

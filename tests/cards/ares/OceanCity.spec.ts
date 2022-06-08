@@ -1,14 +1,15 @@
 import {Game} from '../../../src/Game';
 import {Player} from '../../../src/Player';
 import {OceanCity} from '../../../src/cards/ares/OceanCity';
-import {AresTestHelper, ARES_OPTIONS_NO_HAZARDS} from '../../ares/AresTestHelper';
+import {ARES_OPTIONS_NO_HAZARDS} from '../../ares/AresTestHelper';
 import {expect} from 'chai';
-import {Resources} from '../../../src/Resources';
-import {TileType} from '../../../src/TileType';
-import {SpaceType} from '../../../src/SpaceType';
+import {Resources} from '../../../src/common/Resources';
+import {TileType} from '../../../src/common/TileType';
+import {SpaceType} from '../../../src/common/boards/SpaceType';
 import {TestPlayers} from '../../TestPlayers';
 import {Capital} from '../../../src/cards/base/Capital';
-import {SpaceBonus} from '../../../src/SpaceBonus';
+import {SpaceBonus} from '../../../src/common/boards/SpaceBonus';
+import {TestingUtils} from '../../TestingUtils';
 
 describe('OceanCity', function() {
   let card: OceanCity; let player: Player; let game: Game;
@@ -21,22 +22,22 @@ describe('OceanCity', function() {
   });
 
   it('Can play', function() {
-    AresTestHelper.addOcean(game, player);
+    TestingUtils.addOcean(player);
     expect(card.canPlay(player)).is.false;
 
-    AresTestHelper.addOcean(game, player);
+    TestingUtils.addOcean(player);
     expect(card.canPlay(player)).is.false;
 
-    AresTestHelper.addOcean(game, player);
+    TestingUtils.addOcean(player);
     expect(card.canPlay(player)).is.false;
 
-    AresTestHelper.addOcean(game, player);
+    TestingUtils.addOcean(player);
     expect(card.canPlay(player)).is.false;
 
-    AresTestHelper.addOcean(game, player);
+    TestingUtils.addOcean(player);
     expect(card.canPlay(player)).is.false;
 
-    AresTestHelper.addOcean(game, player);
+    TestingUtils.addOcean(player);
     expect(card.canPlay(player)).is.false;
 
     player.addProduction(Resources.ENERGY, 1);
@@ -44,27 +45,27 @@ describe('OceanCity', function() {
   });
 
   it('play', function() {
-    const oceanSpace = AresTestHelper.addOcean(game, player);
+    const oceanSpace = TestingUtils.addOcean(player);
     player.addProduction(Resources.ENERGY, 1);
 
     const action = card.play(player);
 
     expect(player.getProduction(Resources.ENERGY)).eq(0);
     expect(player.getProduction(Resources.MEGACREDITS)).eq(3);
-    expect(game.getCitiesInPlayOnMars()).eq(0);
-    expect(player.getCitiesCount()).eq(0);
+    expect(game.getCitiesOnMarsCount()).eq(0);
+    expect(player.game.getCitiesCount(player)).eq(0);
 
     action.cb(oceanSpace);
 
-    expect(game.getCitiesInPlayOnMars()).eq(1);
-    expect(player.getCitiesCount()).eq(1);
+    expect(game.getCitiesOnMarsCount()).eq(1);
+    expect(player.game.getCitiesCount(player)).eq(1);
 
     expect(oceanSpace.player).to.eq(player);
     expect(oceanSpace.tile!.tileType).to.eq(TileType.OCEAN_CITY);
   });
 
   it('Cannot place a city next to Ocean City', function() {
-    const oceanSpace = AresTestHelper.addOcean(game, player);
+    const oceanSpace = TestingUtils.addOcean(player);
     player.addProduction(Resources.ENERGY, 1);
 
     const action = card.play(player);
@@ -82,7 +83,7 @@ describe('OceanCity', function() {
   });
 
   it('Can place Ocean City next to a city', function() {
-    const oceanSpace = AresTestHelper.addOcean(game, player);
+    const oceanSpace = TestingUtils.addOcean(player);
     player.addProduction(Resources.ENERGY, 1);
 
     const citySpace = game.board
@@ -101,7 +102,7 @@ describe('OceanCity', function() {
   it('', function() {});
 
   it('Ocean City counts as ocean for adjacency', function() {
-    const oceanSpace = AresTestHelper.addOcean(game, player);
+    const oceanSpace = TestingUtils.addOcean(player);
     const action = card.play(player);
     action.cb(oceanSpace);
     const greenery = game.board
@@ -116,7 +117,7 @@ describe('OceanCity', function() {
   });
 
   it('Ocean City counts for city-related VP', function() {
-    const oceanSpace = AresTestHelper.addOcean(game, player);
+    const oceanSpace = TestingUtils.addOcean(player);
     const action = card.play(player);
     action.cb(oceanSpace);
     const greenery = game.board

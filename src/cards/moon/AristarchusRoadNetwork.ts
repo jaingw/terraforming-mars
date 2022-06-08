@@ -1,13 +1,13 @@
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {Player} from '../../Player';
-import {CardType} from '../CardType';
+import {CardType} from '../../common/cards/CardType';
 import {PlaceMoonRoadTile} from '../../moon/PlaceMoonRoadTile';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {CardRenderer} from '../render/CardRenderer';
-import {TileType} from '../../TileType';
-import {Units} from '../../Units';
+import {TileType} from '../../common/TileType';
+import {Units} from '../../common/Units';
 import {MoonCard} from './MoonCard';
-import {AltSecondaryTag} from '../render/CardRenderItem';
+import {AltSecondaryTag} from '../../common/cards/render/AltSecondaryTag';
 
 export class AristarchusRoadNetwork extends MoonCard {
   constructor() {
@@ -18,6 +18,7 @@ export class AristarchusRoadNetwork extends MoonCard {
       cost: 15,
       productionBox: Units.of({megacredits: 2}),
       reserveUnits: Units.of({steel: 2}),
+      tr: {moonLogistics: 1},
 
       metadata: {
         description: 'Spend 2 steel. Increase your M€ production 2 steps. ' +
@@ -25,15 +26,15 @@ export class AristarchusRoadNetwork extends MoonCard {
         cardNumber: 'M10',
         renderData: CardRenderer.builder((b) => {
           b.minus().steel(2).nbsp.production((eb) => eb.megacredits(2)).br;
-          b.moonRoad().secondaryTag(AltSecondaryTag.MOON_LOGISTICS_RATE);
+          b.moonRoad({secondaryTag: AltSecondaryTag.MOON_LOGISTICS_RATE});
         }),
       },
     }, {
       tilesBuilt: [TileType.MOON_ROAD],
     });
-  };
+  }
 
-  public play(player: Player) {
+  public override play(player: Player) {
     super.play(player);
     player.game.defer(new PlaceMoonRoadTile(player));
     return undefined;

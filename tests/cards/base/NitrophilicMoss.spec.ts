@@ -4,7 +4,7 @@ import {ViralEnhancers} from '../../../src/cards/base/ViralEnhancers';
 import {Manutech} from '../../../src/cards/venusNext/Manutech';
 import {Game} from '../../../src/Game';
 import {Player} from '../../../src/Player';
-import {Resources} from '../../../src/Resources';
+import {Resources} from '../../../src/common/Resources';
 import {TestingUtils} from '../../TestingUtils';
 import {TestPlayers} from '../../TestPlayers';
 
@@ -21,19 +21,19 @@ describe('NitrophilicMoss', function() {
   it('Can\'t play without enough oceans', function() {
     TestingUtils.maxOutOceans(player, 2);
     player.plants = 2;
-    expect(card.canPlay(player)).is.not.true;
+    expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
 
   it('Can\'t play if not enough plants', function() {
     TestingUtils.maxOutOceans(player, 3);
     player.plants = 1;
-    expect(card.canPlay(player)).is.not.true;
+    expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
 
   it('Should play', function() {
     TestingUtils.maxOutOceans(player, 3);
     player.plants = 2;
-    expect(card.canPlay(player)).is.true;
+    expect(player.canPlayIgnoringCost(card)).is.true;
 
     card.play(player);
     expect(player.plants).to.eq(0);
@@ -47,7 +47,7 @@ describe('NitrophilicMoss', function() {
     TestingUtils.maxOutOceans(player, 3);
     player.plants = 1;
 
-    expect(card.canPlay(player)).is.true;
+    expect(player.canPlayIgnoringCost(card)).is.true;
     card.play(player);
 
     expect(player.plants).to.eq(-1);
@@ -59,6 +59,6 @@ describe('NitrophilicMoss', function() {
   it('Should play', function() {
     TestingUtils.maxOutOceans(player, 3);
     player.corpCard = new Manutech();
-    expect(card.canPlay(player)).is.true;
+    expect(player.canPlayIgnoringCost(card)).is.true;
   });
 });

@@ -1,5 +1,3 @@
-import {CardName} from '../../CardName';
-import {GameModule} from '../../GameModule';
 import {CardManifest} from '../CardManifest';
 import {_PhoboLog_} from './corporation/_PhoboLog_';
 import {_Thorgate_} from './corporation/_Thorgate_';
@@ -25,6 +23,8 @@ import {_ArcadianCommunities_} from './corporation/_ArcadianCommunities_';
 import {_TharsisRepublic_} from './corporation/_TharsisRepublic_';
 import {_MorningStarInc_} from './corporation/_MorningStarInc_';
 import {_InterplanetaryCinematics_} from './corporation/_InterplanetaryCinematics_';
+import {CardName} from '../../common/cards/CardName';
+import {GameModule} from '../../common/cards/GameModule';
 
 export const BREAKTHROUGH_CARD_MANIFEST = new CardManifest({
   module: GameModule.Breakthrough,

@@ -4,9 +4,9 @@ import {MethaneFromTitan} from '../../../src/cards/base/MethaneFromTitan';
 import {DiasporaMovement} from '../../../src/cards/turmoil/DiasporaMovement';
 import {Game} from '../../../src/Game';
 import {Player} from '../../../src/Player';
-import {Resources} from '../../../src/Resources';
+import {Resources} from '../../../src/common/Resources';
 import {IParty} from '../../../src/turmoil/parties/IParty';
-import {PartyName} from '../../../src/turmoil/parties/PartyName';
+import {PartyName} from '../../../src/common/turmoil/PartyName';
 import {Turmoil} from '../../../src/turmoil/Turmoil';
 import {TestingUtils} from '../../TestingUtils';
 import {TestPlayers} from '../../TestPlayers';
@@ -27,13 +27,13 @@ describe('DiasporaMovement', function() {
 
   it('Can\'t play', function() {
     reds.sendDelegate(player, game);
-    expect(card.canPlay(player)).is.not.true;
+    expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
 
   it('Should play', function() {
     reds.sendDelegate(player, game);
     reds.sendDelegate(player, game);
-    expect(card.canPlay(player)).is.true;
+    expect(player.canPlayIgnoringCost(card)).is.true;
 
     player.playedCards.push(new ColonizerTrainingCamp());
     player2.playedCards.push(new MethaneFromTitan());

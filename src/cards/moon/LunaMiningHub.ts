@@ -1,16 +1,16 @@
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {Player} from '../../Player';
-import {CardType} from '../CardType';
-import {Tags} from '../Tags';
+import {CardType} from '../../common/cards/CardType';
+import {Tags} from '../../common/cards/Tags';
 import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
-import {TileType} from '../../TileType';
+import {TileType} from '../../common/TileType';
 import {CardRenderDynamicVictoryPoints} from '../render/CardRenderDynamicVictoryPoints';
 import {MoonExpansion} from '../../moon/MoonExpansion';
-import {Units} from '../../Units';
+import {Units} from '../../common/Units';
 import {MoonCard} from './MoonCard';
 import {PlaceSpecialMoonTile} from '../../moon/PlaceSpecialMoonTile';
-import {Size} from '../render/Size';
+import {Size} from '../../common/cards/render/Size';
 
 export class LunaMiningHub extends MoonCard {
   constructor() {
@@ -19,10 +19,13 @@ export class LunaMiningHub extends MoonCard {
       cardType: CardType.AUTOMATED,
       tags: [Tags.BUILDING],
       cost: 16,
+
       productionBox: Units.of({steel: 1, titanium: 1}),
       reserveUnits: Units.of({steel: 1, titanium: 1}),
-
+      tr: {moonMining: 1},
+      victoryPoints: 'special',
       requirements: CardRequirements.builder((b) => b.miningRate(5)),
+
       metadata: {
         cardNumber: 'M14',
         description: {
@@ -39,9 +42,9 @@ export class LunaMiningHub extends MoonCard {
         victoryPoints: CardRenderDynamicVictoryPoints.moonMiningTile(2, true),
       },
     });
-  };
+  }
 
-  public play(player: Player) {
+  public override play(player: Player) {
     super.play(player);
     player.game.defer(new PlaceSpecialMoonTile(
       player, {
@@ -53,7 +56,7 @@ export class LunaMiningHub extends MoonCard {
     return undefined;
   }
 
-  public getVictoryPoints(player: Player) {
+  public override getVictoryPoints(player: Player) {
     const moonData = MoonExpansion.moonData(player.game);
     const usedSpace = moonData.moon.getSpaceByTileCard(this.name);
     if (usedSpace !== undefined) {

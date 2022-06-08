@@ -19,12 +19,12 @@ describe('ExtremeColdFungus', () => {
 
   it('Cannot play', () => {
     (game as any).temperature = -8;
-    expect(card.canPlay(player)).is.not.true;
+    expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
 
   it('Can play', () => {
     (game as any).temperature = -12;
-    expect(card.canPlay(player)).is.true;
+    expect(player.canPlayIgnoringCost(card)).is.true;
   });
 
   it('Should play', () => {
@@ -37,11 +37,11 @@ describe('ExtremeColdFungus', () => {
     player.playedCards.push(tardigrades);
 
     const action = card.action(player);
-    expect(action instanceof OrOptions).is.true;
+    expect(action).instanceOf(OrOptions);
     expect(action!.options).has.lengthOf(2);
 
         action!.options[0].cb();
-        expect(player.getResourcesOnCard(tardigrades)).to.eq(2);
+        expect(tardigrades.resourceCount).to.eq(2);
 
         action!.options[1].cb();
         expect(player.plants).to.eq(1);
@@ -53,13 +53,13 @@ describe('ExtremeColdFungus', () => {
     player.playedCards.push(tardigrades, ants);
 
     const action = card.action(player);
-    expect(action instanceof OrOptions).is.true;
+    expect(action).instanceOf(OrOptions);
     expect(action!.options).has.lengthOf(2);
 
         action!.options[0].cb([tardigrades]);
-        expect(player.getResourcesOnCard(tardigrades)).to.eq(2);
+        expect(tardigrades.resourceCount).to.eq(2);
 
         action!.options[0].cb([ants]);
-        expect(player.getResourcesOnCard(ants)).to.eq(2);
+        expect(ants.resourceCount).to.eq(2);
   });
 });

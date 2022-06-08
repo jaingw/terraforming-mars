@@ -1,12 +1,13 @@
 import {IProjectCard} from '../IProjectCard';
 import {Card} from '../Card';
-import {CardType} from '../CardType';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {Resources} from '../../Resources';
-import {CardName} from '../../CardName';
+import {Resources} from '../../common/Resources';
+import {CardName} from '../../common/cards/CardName';
 import {DecreaseAnyProduction} from '../../deferredActions/DecreaseAnyProduction';
 import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
+import {all} from '../Options';
 
 export class GreatEscarpmentConsortium extends Card implements IProjectCard {
   constructor() {
@@ -20,7 +21,7 @@ export class GreatEscarpmentConsortium extends Card implements IProjectCard {
         cardNumber: '061',
         renderData: CardRenderer.builder((b) => {
           b.production((pb) => {
-            pb.minus().steel(-1).any.br;
+            pb.minus().steel(-1, {all}).br;
             pb.plus().steel(1);
           });
         }),
@@ -30,7 +31,8 @@ export class GreatEscarpmentConsortium extends Card implements IProjectCard {
   }
 
   public play(player: Player) {
-    player.game.defer(new DecreaseAnyProduction(player, Resources.STEEL, 1));
+    player.game.defer(
+      new DecreaseAnyProduction(player, Resources.STEEL, {count: 1, stealing: true}));
     player.addProduction(Resources.STEEL, 1);
     return undefined;
   }

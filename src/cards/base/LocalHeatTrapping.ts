@@ -1,16 +1,17 @@
 import {IProjectCard} from '../IProjectCard';
 import {Card} from '../Card';
-import {CardType} from '../CardType';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
 import {OrOptions} from '../../inputs/OrOptions';
 import {SelectOption} from '../../inputs/SelectOption';
 import {SelectCard} from '../../inputs/SelectCard';
-import {ResourceType} from '../../ResourceType';
+import {ResourceType} from '../../common/ResourceType';
 import {ICard} from '../ICard';
-import {CardName} from '../../CardName';
-import {Resources} from '../../Resources';
+import {CardName} from '../../common/cards/CardName';
+import {Resources} from '../../common/Resources';
 import {CardRenderer} from '../render/CardRenderer';
-import {Units} from '../../Units';
+import {Units} from '../../common/Units';
+import {digit} from '../Options';
 
 export class LocalHeatTrapping extends Card implements IProjectCard {
   constructor() {
@@ -23,9 +24,9 @@ export class LocalHeatTrapping extends Card implements IProjectCard {
       metadata: {
         cardNumber: '190',
         renderData: CardRenderer.builder((b) => {
-          b.minus().heat(5).digit;
-          b.plus().plants(4).digit;
-          b.or().animals(2).digit.asterix();
+          b.minus().heat(5, {digit});
+          b.plus().plants(4, {digit});
+          b.or().animals(2, {digit}).asterix();
         }),
         description: 'Spend 5 heat to gain either 4 Plants, or to add 2 Animals to ANOTHER card.',
       },

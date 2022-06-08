@@ -7,6 +7,7 @@ export enum CorporationGroup {
   PROMO = 'Promo',
   COMMUNITY = 'Community',
   EROS = 'Eros',
-  MOON = 'Moon'
+  MOON = 'Moon',
+  PATHFINDERS = 'Pathfinders'
 }
 

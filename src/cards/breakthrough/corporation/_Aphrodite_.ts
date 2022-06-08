@@ -1,15 +1,16 @@
 
 import {Player} from '../../../Player';
-import {CardName} from '../../../CardName';
-import {CardMetadata} from '../../CardMetadata';
 import {CardRenderer} from '../../render/CardRenderer';
 import {Aphrodite} from '../../venusNext/Aphrodite';
+import {all} from '../../Options';
+import {CardName} from '../../../common/cards/CardName';
+import {ICardMetadata} from '../../../common/cards/ICardMetadata';
 
 export class _Aphrodite_ extends Aphrodite {
-  public get name() {
+  public override get name() {
     return CardName._APHRODITE_;
   }
-  public get startingMegaCredits() : number {
+  public override get startingMegaCredits() : number {
     return 40;
   }
 
@@ -18,11 +19,11 @@ export class _Aphrodite_ extends Aphrodite {
     return undefined;
   }
 
-  public play(_player: Player) {
+  public override play(_player: Player) {
     return undefined;
   }
 
-  public get metadata(): CardMetadata {
+  public override get metadata(): ICardMetadata {
     return {
       cardNumber: 'R01',
       description: 'You start with 40 M€. As your first action, raise Venus Scale 2 steps.',
@@ -31,7 +32,7 @@ export class _Aphrodite_ extends Aphrodite {
         b.megacredits(40).nbsp.venus(1).venus(1);
         b.corpBox('effect', (ce) => {
           ce.effect('Whenever Venus is terraformed 1 step, you gain 2 plant.', (eb) => {
-            eb.venus(1).any.startEffect.plants(2);
+            eb.venus(1, {all}).startEffect.plants(2);
           });
         });
       }),

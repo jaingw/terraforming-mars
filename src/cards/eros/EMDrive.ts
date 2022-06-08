@@ -1,20 +1,19 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
-import {CardType} from '../CardType';
 import {Player} from '../../Player';
-import {CardName} from '../../CardName';
 import {Card} from '../Card';
 import {CardRenderer} from '../render/CardRenderer';
-import {Size} from '../render/Size';
 import {CardRequirements} from '../CardRequirements';
-import {PartyName} from '../../turmoil/parties/PartyName';
 import {IActionCard} from '../ICard';
 import {Game} from '../../Game';
 import {OrOptions} from '../../inputs/OrOptions';
-import {ColonyName} from '../../colonies/ColonyName';
 import {DeferredAction} from '../../deferredActions/DeferredAction';
 import {SelectColony} from '../../inputs/SelectColony';
-import {ColonyModel} from '../../models/ColonyModel';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
+import {Size} from '../../common/cards/render/Size';
+import {Tags} from '../../common/cards/Tags';
+import {PartyName} from '../../common/turmoil/PartyName';
+import { IColony } from '@/colonies/IColony';
 
 export class EMDrive extends Card implements IActionCard, IProjectCard {
   constructor() {
@@ -23,21 +22,21 @@ export class EMDrive extends Card implements IActionCard, IProjectCard {
       name: CardName.EM_DRIVE,
       tags: [Tags.JOVIAN, Tags.SCIENCE, Tags.SPACE],
       cardType: CardType.ACTIVE,
+      victoryPoints: 2,
       requirements: CardRequirements.builder((b) => b.party(PartyName.SCIENTISTS)),
       metadata: {
         cardNumber: 'Q19',
         renderData: CardRenderer.builder((b) => {
           b.action('Increase a Colony Tile track to the maximum.', (eb) => {
-            eb.startAction.trade().text('+MAX', Size.LARGE);
+            eb.empty().startAction.trade().text('+MAX', Size.LARGE);
           });
         }),
         description: 'Requires that Scientists are ruling or that you have 2 delegates there.',
-        victoryPoints: 2,
       },
     });
   }
 
-  public canPlay(player: Player): boolean {
+  public override canPlay(player: Player): boolean {
     if (player.game.turmoil !== undefined) {
       return player.game.turmoil.canPlay(player, PartyName.SCIENTISTS);
     }
@@ -67,18 +66,14 @@ export class EMDrive extends Card implements IActionCard, IProjectCard {
     if (increasableColonies.length === 0) {
       return undefined;
     }
-    const coloniesModel: Array<ColonyModel> = player.game.getColoniesModel(increasableColonies);
     player.game.defer(new DeferredAction(
       player,
-      () => new SelectColony('Select colony to increase the track mark to the maximum', 'Select', coloniesModel, (colonyName: ColonyName) => {
-        increasableColonies .forEach((colony) => {
-          if (colony.name === colonyName) {
-            colony.increaseTrack(10);
-            player.game.log('${0} increase ${1} to the max', (b) => b.player(player).colony(colony));
-            return undefined;
-          }
+      () => new SelectColony('Select colony to increase the track mark to the maximum', 'Select', increasableColonies, (colony: IColony) => {
+        if (increasableColonies.includes(colony)) {
+          colony.increaseTrack(10);
+          player.game.log('${0} increase ${1} to the max', (b) => b.player(player).colony(colony));
           return undefined;
-        });
+        }
         return undefined;
       }),
     ));

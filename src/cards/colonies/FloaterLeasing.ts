@@ -1,11 +1,12 @@
 import {IProjectCard} from '../IProjectCard';
-import {CardType} from '../CardType';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {CardName} from '../../CardName';
-import {Resources} from '../../Resources';
-import {ResourceType} from '../../ResourceType';
+import {CardName} from '../../common/cards/CardName';
+import {Resources} from '../../common/Resources';
+import {ResourceType} from '../../common/ResourceType';
 import {Card} from '../Card';
 import {CardRenderer} from '../render/CardRenderer';
+import {digit} from '../Options';
 
 export class FloaterLeasing extends Card implements IProjectCard {
   constructor() {
@@ -17,7 +18,7 @@ export class FloaterLeasing extends Card implements IProjectCard {
       metadata: {
         cardNumber: 'C10',
         renderData: CardRenderer.builder((b) => {
-          b.production((pb) => pb.megacredits(1)).slash().floaters(3).digit;
+          b.production((pb) => pb.megacredits(1)).slash().floaters(3, {digit});
         }),
         description: 'Increase your M€ production 1 step PER 3 floaters you have.',
       },
@@ -25,7 +26,7 @@ export class FloaterLeasing extends Card implements IProjectCard {
   }
 
   public play(player: Player) {
-    player.addProduction(Resources.MEGACREDITS, Math.floor(player.getResourceCount(ResourceType.FLOATER) / 3));
+    player.addProduction(Resources.MEGACREDITS, Math.floor(player.getResourceCount(ResourceType.FLOATER) / 3), {log: true});
     return undefined;
   }
 }

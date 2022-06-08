@@ -9,8 +9,8 @@ import {Greens, GREENS_BONUS_1, GREENS_BONUS_2, GREENS_POLICY_4} from '../../../
 import {Lichen} from '../../../src/cards/base/Lichen';
 import {Fish} from '../../../src/cards/base/Fish';
 import {Tardigrades} from '../../../src/cards/base/Tardigrades';
-import {TileType} from '../../../src/TileType';
-import {SpaceType} from '../../../src/SpaceType';
+import {TileType} from '../../../src/common/TileType';
+import {SpaceType} from '../../../src/common/boards/SpaceType';
 import {OrOptions} from '../../../src/inputs/OrOptions';
 
 describe('Greens', function() {

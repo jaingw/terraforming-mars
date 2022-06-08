@@ -2,7 +2,7 @@ import {expect} from 'chai';
 import {Research} from '../../../src/cards/base/Research';
 import {DuskLaserMining} from '../../../src/cards/promo/DuskLaserMining';
 import {Player} from '../../../src/Player';
-import {Resources} from '../../../src/Resources';
+import {Resources} from '../../../src/common/Resources';
 import {TestPlayers} from '../../TestPlayers';
 
 describe('DuskLaserMining', function() {
@@ -15,18 +15,18 @@ describe('DuskLaserMining', function() {
 
   it('Can\'t play if not enough science tags', function() {
     player.addProduction(Resources.ENERGY, 1);
-    expect(card.canPlay(player)).is.not.true;
+    expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
 
   it('Can\'t play if no energy production', function() {
     player.playedCards.push(new Research());
-    expect(card.canPlay(player)).is.not.true;
+    expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
 
   it('Should play', function() {
     player.playedCards.push(new Research());
     player.addProduction(Resources.ENERGY, 1);
-    expect(card.canPlay(player)).is.true;
+    expect(player.canPlayIgnoringCost(card)).is.true;
 
     card.play(player);
     expect(player.getProduction(Resources.ENERGY)).to.eq(0);

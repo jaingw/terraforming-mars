@@ -12,7 +12,7 @@ export class ApiGame extends Handler {
     super();
   }
 
-  public get(req: http.IncomingMessage, res: http.ServerResponse, ctx: IContext): void {
+  public override get(req: http.IncomingMessage, res: http.ServerResponse, ctx: IContext): void {
     if (req.url === undefined) {
       console.warn('url not defined');
       ctx.route.notFound(req, res, 'url not defined');
@@ -35,7 +35,7 @@ export class ApiGame extends Handler {
         return;
       }
 
-      const model = Server.getGameModel(game, userId);
+      const model = Server.getSimpleGameModel(game, userId);
       ctx.route.writeJson(res, model);
     });
   }

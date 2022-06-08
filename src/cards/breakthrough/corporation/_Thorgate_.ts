@@ -1,15 +1,16 @@
 
-import {Tags} from '../../Tags';
 import {Player} from '../../../Player';
 import {IProjectCard} from '../../IProjectCard';
-import {CorporationCard} from '../../corporation/CorporationCard';
-import {Resources} from '../../../Resources';
-import {CardName} from '../../../CardName';
-import {CardType} from '../../CardType';
 import {CardRenderer} from '../../render/CardRenderer';
 import {Card} from '../../Card';
+import {played} from '../../Options';
+import {CardName} from '../../../common/cards/CardName';
+import {CardType} from '../../../common/cards/CardType';
+import {Tags} from '../../../common/cards/Tags';
+import {Resources} from '../../../common/Resources';
+import {ICorporationCard} from '../../corporation/ICorporationCard';
 
-export class _Thorgate_ extends Card implements CorporationCard {
+export class _Thorgate_ extends Card implements ICorporationCard {
   constructor() {
     super({
       cardType: CardType.CORPORATION,
@@ -27,7 +28,7 @@ export class _Thorgate_ extends Card implements CorporationCard {
           b.corpBox('effect', (ce) => {
             ce.effect('When playing a power card OR THE STANDARD PROJECT POWER PLANT, you pay 3 M€ less for it.', (eb) => {
               // TODO(chosta): energy().played needs to be power() [same for space()]
-              eb.energy(1).played.asterix().startEffect.megacredits(-3);
+              eb.energy(1, {played}).asterix().startEffect.megacredits(-3);
             });
           });
         }),

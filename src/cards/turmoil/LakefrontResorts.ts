@@ -1,18 +1,19 @@
-import {CorporationCard} from '../corporation/CorporationCard';
-import {Tags} from '../Tags';
+import {ICorporationCard} from '../corporation/ICorporationCard';
+import {Tags} from '../../common/cards/Tags';
 import {Player} from '../../Player';
 import {ISpace} from '../../boards/ISpace';
-import {TileType} from '../../TileType';
-import {Resources} from '../../Resources';
+import {Resources} from '../../common/Resources';
 import {Card} from '../Card';
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {Priority} from '../../deferredActions/DeferredAction';
 import {GainProduction} from '../../deferredActions/GainProduction';
-import {CardType} from '../CardType';
+import {CardType} from '../../common/cards/CardType';
 import {CardRenderer} from '../render/CardRenderer';
-import {Size} from '../render/Size';
+import {Size} from '../../common/cards/render/Size';
+import {all} from '../Options';
+import {Board} from '../../boards/Board';
 
-export class LakefrontResorts extends Card implements CorporationCard {
+export class LakefrontResorts extends Card implements ICorporationCard {
   constructor() {
     super({
       cardType: CardType.CORPORATION,
@@ -29,8 +30,8 @@ export class LakefrontResorts extends Card implements CorporationCard {
           b.corpBox('effect', (ce) => {
             ce.vSpace(Size.MEDIUM);
             ce.effect('When any ocean tile is placed, increase your M€ production 1 step. Your bonus for placing adjacent to oceans is 3M€ instead of 2 M€.', (eb) => {
-              eb.oceans(1, Size.SMALL).any.colon().production((pb) => pb.megacredits(1));
-              eb.emptyTile('normal', Size.SMALL).oceans(1, Size.SMALL);
+              eb.oceans(1, {size: Size.SMALL, all}).colon().production((pb) => pb.megacredits(1));
+              eb.emptyTile('normal', {size: Size.SMALL}).oceans(1, {size: Size.SMALL});
               eb.startEffect.megacredits(3);
             });
           });
@@ -45,7 +46,7 @@ export class LakefrontResorts extends Card implements CorporationCard {
   }
 
   public onTilePlaced(cardOwner: Player, activePlayer: Player, space: ISpace) {
-    if (space.tile?.tileType === TileType.OCEAN) {
+    if (Board.isUncoveredOceanSpace(space)) {
       cardOwner.game.defer(
         new GainProduction(cardOwner, Resources.MEGACREDITS),
         cardOwner.id !== activePlayer.id ? Priority.OPPONENT_TRIGGER : undefined,

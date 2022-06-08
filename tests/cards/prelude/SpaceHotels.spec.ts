@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 import {SpaceHotels} from '../../../src/cards/prelude/SpaceHotels';
 import {Player} from '../../../src/Player';
-import {Resources} from '../../../src/Resources';
+import {Resources} from '../../../src/common/Resources';
 import {TestPlayers} from '../../TestPlayers';
 
 describe('SpaceHotels', function() {
@@ -14,12 +14,12 @@ describe('SpaceHotels', function() {
 
   it('Can\'t play', function() {
     player.playedCards.push(card);
-    expect(card.canPlay(player)).is.not.true;
+    expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
 
   it('Should play', function() {
     player.playedCards.push(card, card);
-    expect(card.canPlay(player)).is.true;
+    expect(player.canPlayIgnoringCost(card)).is.true;
 
     card.play(player);
     expect(player.getProduction(Resources.MEGACREDITS)).to.eq(4);

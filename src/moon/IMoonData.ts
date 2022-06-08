@@ -21,15 +21,18 @@ export namespace IMoonData {
       colonyRate: moonData.colonyRate,
       miningRate: moonData.miningRate,
       logisticRate: moonData.logisticRate,
-      lunaFirstPlayerId: moonData.lunaFirstPlayer ? moonData.lunaFirstPlayer.id : undefined,
+      lunaFirstPlayer: moonData.lunaFirstPlayer?.serializeId(),
       lunaProjectOfficeLastGeneration: moonData.lunaProjectOfficeLastGeneration,
     };
-  };
+  }
 
   export function deserialize(moonData: SerializedMoonData, players: Array<Player>): IMoonData {
-    const lunaFirstPlayer = players.find((p) => p.id === moonData.lunaFirstPlayerId);
-    if (moonData.lunaFirstPlayerId !== undefined && lunaFirstPlayer === undefined) {
-      throw new Error(`player ${moonData.lunaFirstPlayerId} not found`);
+    let lunaFirstPlayer = undefined;
+    if (moonData.lunaFirstPlayer !== undefined ) {
+      lunaFirstPlayer = players.find((p) => p.id === moonData.lunaFirstPlayer!.id);
+      if ( lunaFirstPlayer === undefined) {
+        throw new Error(`player ${moonData.lunaFirstPlayer.id} not found`);
+      }
     }
     return {
       colonyRate: moonData.colonyRate,

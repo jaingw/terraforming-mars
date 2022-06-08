@@ -1,0 +1,59 @@
+{
+    // tab 大小为2个空格
+    "editor.tabSize": 2,
+    // // 保存时格式化
+    "editor.formatOnSave": false,
+    // // 开启 vscode 文件路径导航
+    "breadcrumbs.enabled": true,
+    //  显示 markdown 中英文切换时产生的特殊字符
+    "editor.renderControlCharacters": true,
+    "vetur.validation.template": false,    // 把 vetur 扩展的 template 格式化去掉
+
+    // eslint 检测文件类型
+    "vetur.format.defaultFormatterOptions": {
+      "js-beautify-html": {
+        "wrap_attributes": "auto"
+      },
+      "prettyhtml": {
+        "printWidth": 200,
+        "singleQuote": false,
+        "wrapAttributes": false,
+        "sortAttributes": false
+      },
+      "prettier": {
+        "semi": false,
+        "singleQuote": true
+      }
+    },
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true,
+    },
+    // "[vue]": {
+    //   "editor.codeActionsOnSave": {
+    //     "source.fixAll.eslint": false
+    //   }
+    // },
+    "eslint.options": {
+      "extensions": [".js",".ts"]
+    },
+      
+    "eslint.validate": [
+      "javascript",
+      "typescript",
+      "html"
+    ],
+
+
+    "eslint.alwaysShowStatus": true,
+    "html.format.contentUnformatted": "",
+    "javascript.format.enable": false,
+    "editor.fontLigatures": true,
+    "window.zoomLevel": 0,
+    "vetur.format.defaultFormatter.js": "vscode-typescript",
+    "vetur.format.defaultFormatter.html": "prettier",
+    "javascript.format.insertSpaceBeforeFunctionParenthesis": true,
+    "explorer.confirmDelete": false,
+    "git.autofetch": true,
+
+    
+  }

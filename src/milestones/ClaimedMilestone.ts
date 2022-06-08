@@ -1,6 +1,7 @@
 
 import {Player} from '../Player';
 import {IMilestone} from './IMilestone';
+import {SerializedPlayerId} from '../SerializedPlayer';
 
 export interface ClaimedMilestone {
   milestone: IMilestone;
@@ -9,15 +10,15 @@ export interface ClaimedMilestone {
 
 // export interface SerializedClaimedMilestone {
 export interface SerializedClaimedMilestone {
-  name?: string;
-  playerId?: string;
+  milestone: IMilestone;
+  player: SerializedPlayerId;
 }
 
 export function serializeClaimedMilestones(claimedMilestones: Array<ClaimedMilestone>) : Array<SerializedClaimedMilestone> {
   return claimedMilestones.map((claimedMilestone) => {
     return {
-      name: claimedMilestone.milestone.name,
-      playerId: claimedMilestone.player.id,
+      milestone: {name: claimedMilestone.milestone.name} as IMilestone,
+      player: claimedMilestone.player.serializeId(),
     };
   });
 }
@@ -27,24 +28,15 @@ export function deserializeClaimedMilestones(
   players: Array<Player>,
   milestones: Array<IMilestone>): Array<ClaimedMilestone> {
   return claimedMilestones.map((element: SerializedClaimedMilestone) => {
-    const milestoneName = element.name;
-    if (milestoneName === undefined) {
-      throw new Error('Milestone name not found');
+    if (element.milestone.name === 'Tactitian') {
+      element.milestone.name = 'Tactician';
     }
-    const milestone: IMilestone | undefined = milestones.find((milestone) => milestone.name === milestoneName);
-    if (milestone === undefined) {
-      throw new Error(`Milestone ${milestoneName} not found when rebuilding Claimed Milestone`);
+    const player = players.find((player) => player.id === element.player.id);
+    const milestone = milestones.find((milestone) => milestone.name === element.milestone.name);
+    if (player && milestone) {
+      return {player, milestone};
+    } else {
+      throw new Error('Player or Milestone not found when rebuilding Claimed Milestone'+ element.milestone.name);
     }
-
-    const playerId = element.playerId;
-    if (playerId === undefined) {
-      throw new Error(`Player ID not found when rebuilding claimed milestone ${milestoneName}`);
-    }
-    const player = players.find((player) => player.id === playerId);
-    if (player === undefined) {
-      throw new Error(`Player ${playerId} not found when rebuilding claimed milestone ${milestoneName}`);
-    }
-
-    return {milestone, player};
   });
 }

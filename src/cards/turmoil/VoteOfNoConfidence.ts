@@ -1,13 +1,12 @@
 import {IProjectCard} from '../IProjectCard';
-import {CardName} from '../../CardName';
-import {CardType} from '../CardType';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {PartyHooks} from '../../turmoil/parties/PartyHooks';
-import {PartyName} from '../../turmoil/parties/PartyName';
-import {REDS_RULING_POLICY_COST} from '../../constants';
 import {Card} from '../Card';
 import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
+import {TurmoilUtil} from '../../turmoil/TurmoilUtil';
+import {all} from '../Options';
 
 export class VoteOfNoConfidence extends Card implements IProjectCard {
   constructor() {
@@ -15,12 +14,15 @@ export class VoteOfNoConfidence extends Card implements IProjectCard {
       name: CardName.VOTE_OF_NO_CONFIDENCE,
       cardType: CardType.EVENT,
       cost: 5,
+      tr: {tr: 1},
 
+      // TODO(kberg): this renders a delegate with a tie and a black background. On the physical card, there is
+      // no black background.
       requirements: CardRequirements.builder((b) => b.partyLeaders()),
       metadata: {
         cardNumber: 'T16',
         renderData: CardRenderer.builder((b) => {
-          b.minus().chairman().any.asterix();
+          b.minus().chairman({all}).asterix();
           b.nbsp.plus().partyLeaders().br;
           b.tr(1);
         }),
@@ -30,35 +32,21 @@ export class VoteOfNoConfidence extends Card implements IProjectCard {
     });
   }
 
-  public canPlay(player: Player): boolean {
-    if (!super.canPlay(player)) {
-      return false;
-    }
-    if (player.game.turmoil !== undefined) {
-      if (!player.game.turmoil.getDelegatesInReserve(player)) return false;
+  public override canPlay(player: Player): boolean {
+    const turmoil = TurmoilUtil.getTurmoil(player.game);
+    if (!turmoil.hasDelegatesInReserve(player)) return false;
 
-      const chairmanIsNeutral = player.game.turmoil.chairman === 'NEUTRAL';
-      if (chairmanIsNeutral === false) {
-        return false;
-      }
-
-      if (PartyHooks.shouldApplyPolicy(player.game, PartyName.REDS)) {
-        return player.canAfford(player.getCardCost(this) + REDS_RULING_POLICY_COST);
-      }
-      return true;
-    }
-    return false;
+    return turmoil.chairman === 'NEUTRAL';
   }
 
   public play(player: Player) {
-    if (player.game.turmoil !== undefined) {
-            player.game.turmoil.chairman! = player;
-            const index = player.game.turmoil.delegateReserve.indexOf(player);
-            if (index > -1) {
-              player.game.turmoil.delegateReserve.splice(index, 1);
-            }
-            player.increaseTerraformRating();
+    const turmoil = TurmoilUtil.getTurmoil(player.game);
+    turmoil.chairman = player;
+    const index = turmoil.delegateReserve.indexOf(player);
+    if (index > -1) {
+      turmoil.delegateReserve.splice(index, 1);
     }
+    player.increaseTerraformRating();
     return undefined;
   }
 }

@@ -1,20 +1,19 @@
 import {Card, StaticCardProperties} from '../Card';
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {Player} from '../../Player';
 import {ISpace} from '../../boards/ISpace';
-import {SpaceBonus} from '../../SpaceBonus';
-import {TileType} from '../../TileType';
-import {Resources} from '../../Resources';
-import {ResourceType} from '../../ResourceType';
+import {SpaceBonus} from '../../common/boards/SpaceBonus';
+import {Resources} from '../../common/Resources';
+import {ResourceType} from '../../common/ResourceType';
 import {AddResourcesToCard} from '../../deferredActions/AddResourcesToCard';
 import {GainResources} from '../../deferredActions/GainResources';
-import {Phase} from '../../Phase';
+import {Phase} from '../../common/Phase';
 import {IProjectCard} from '../IProjectCard';
 import {BoardType} from '../../boards/BoardType';
-import {SpaceType} from '../../SpaceType';
+import {SpaceType} from '../../common/boards/SpaceType';
 import {PartyHooks} from '../../turmoil/parties/PartyHooks';
-import {PartyName} from '../../turmoil/parties/PartyName';
-import {TurmoilPolicy} from '../../turmoil/TurmoilPolicy';
+import {PartyName} from '../../common/turmoil/PartyName';
+import {Board} from '../../boards/Board';
 
 export abstract class SurveyCard extends Card implements IProjectCard {
   constructor(properties: StaticCardProperties) {
@@ -26,7 +25,7 @@ export abstract class SurveyCard extends Card implements IProjectCard {
   }
 
   private grantsBonusNow(space: ISpace, bonus: SpaceBonus) {
-    return space.tile?.covers !== undefined && space.bonus.includes(bonus);
+    return space.tile?.covers === undefined && space.bonus.includes(bonus);
   }
 
   public onTilePlaced(cardOwner: Player, activePlayer: Player, space: ISpace, boardType: BoardType) {
@@ -49,11 +48,11 @@ export abstract class SurveyCard extends Card implements IProjectCard {
       switch (resource) {
       case Resources.STEEL:
         grant = space.spaceType !== SpaceType.COLONY &&
-            PartyHooks.shouldApplyPolicy(cardOwner.game, PartyName.MARS, TurmoilPolicy.MARS_FIRST_DEFAULT_POLICY);
+            PartyHooks.shouldApplyPolicy(cardOwner, PartyName.MARS, 'mfp01');
         break;
       case Resources.PLANTS:
-        grant = space.tile?.tileType === TileType.OCEAN &&
-          cardOwner.playedCards.some((card) => card.name === CardName.ARCTIC_ALGAE);
+        grant = Board.isUncoveredOceanSpace(space) &&
+          cardOwner.cardIsInEffect(CardName.ARCTIC_ALGAE);
       }
     }
     if (grant) {

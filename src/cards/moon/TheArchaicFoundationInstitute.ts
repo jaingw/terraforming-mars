@@ -1,14 +1,15 @@
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {Player} from '../../Player';
-import {CardType} from '../CardType';
-import {Tags} from '../Tags';
-import {CorporationCard} from '../corporation/CorporationCard';
+import {CardType} from '../../common/cards/CardType';
+import {Tags} from '../../common/cards/Tags';
+import {ICorporationCard} from '../corporation/ICorporationCard';
 import {IProjectCard} from '../IProjectCard';
-import {ResourceType} from '../../ResourceType';
+import {ResourceType} from '../../common/ResourceType';
 import {CardRenderer} from '../render/CardRenderer';
 import {Card} from '../Card';
+import {ICard} from '../ICard';
 
-export class TheArchaicFoundationInstitute extends Card implements CorporationCard {
+export class TheArchaicFoundationInstitute extends Card implements ICorporationCard {
   constructor() {
     super({
       cardType: CardType.CORPORATION,
@@ -22,10 +23,10 @@ export class TheArchaicFoundationInstitute extends Card implements CorporationCa
         cardNumber: '',
         renderData: CardRenderer.builder((b) => {
           b.megacredits(55).br;
-          b.effect('When you play a Moon tag, add a bronze resource cube on this card.', (eb) => {
+          b.effect('When you play a Moon tag, including these, add a resource cube on this card.', (eb) => {
             eb.moon().startEffect.resourceCube();
           }).br;
-          b.effect('Automatically remove every 3 bronze resource cubes collected here and increase your TR 1 step.', (eb) => {
+          b.effect('Automatically remove every 3 resource cubes collected here and increase your TR 1 step.', (eb) => {
             eb.resourceCube(3).startEffect.tr(1);
           });
         }),
@@ -33,9 +34,10 @@ export class TheArchaicFoundationInstitute extends Card implements CorporationCa
     });
   }
 
-  public resourceCount = 0;
+  public override resourceCount = 0;
 
   public play() {
+    this.resourceCount += 2;
     return undefined;
   }
 
@@ -47,11 +49,17 @@ export class TheArchaicFoundationInstitute extends Card implements CorporationCa
     const count = moonTags.length;
     if (count > 0) {
       player.addResourceTo(this, count);
-      if (this.resourceCount >= 3) {
-        player.removeResourceFrom(this, 3, player.game, player, true);
-        player.increaseTerraformRating();
-      }
-    };
+    }
     return undefined;
+  }
+
+  public onResourceAdded(player: Player, playedCard: ICard): void {
+    if (playedCard.name !== this.name) return;
+    // TODO(kberg): If for some reason you gain MC but do not play another card, this becomes almost
+    // like lost TR.
+    if (this.resourceCount >= 3 && player.canAfford(0, {tr: {tr: 1}})) {
+      player.removeResourceFrom(this, 3);
+      player.increaseTerraformRating();
+    }
   }
 }

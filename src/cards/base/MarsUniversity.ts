@@ -1,14 +1,15 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Card} from '../Card';
-import {CardType} from '../CardType';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
 import {OrOptions} from '../../inputs/OrOptions';
 import {SelectCard} from '../../inputs/SelectCard';
 import {SelectOption} from '../../inputs/SelectOption';
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {DeferredAction} from '../../deferredActions/DeferredAction';
 import {CardRenderer} from '../render/CardRenderer';
+import {played} from '../Options';
 
 export class MarsUniversity extends Card implements IProjectCard {
   constructor() {
@@ -17,21 +18,21 @@ export class MarsUniversity extends Card implements IProjectCard {
       name: CardName.MARS_UNIVERSITY,
       tags: [Tags.SCIENCE, Tags.BUILDING],
       cost: 8,
+      victoryPoints: 1,
 
       metadata: {
         cardNumber: '073',
         renderData: CardRenderer.builder((b) => {
           b.effect('When you play a Science tag, including this, you may discard a card from hand to draw a card.', (eb) => {
-            eb.science().played.startEffect.minus().cards(1).nbsp.plus().cards(1);
+            eb.science(1, {played}).startEffect.minus().cards(1).nbsp.plus().cards(1);
           });
         }),
-        victoryPoints: 1,
       },
     });
   }
 
   public onCardPlayed(player: Player, card: IProjectCard) {
-    const scienceTags = card.tags.filter((tag) => tag === Tags.SCIENCE).length;
+    const scienceTags = player.cardTagCount(card, Tags.SCIENCE);
     for (let i = 0; i < scienceTags; i++) {
       player.game.defer(new DeferredAction(
         player,
@@ -60,8 +61,5 @@ export class MarsUniversity extends Card implements IProjectCard {
   }
   public play() {
     return undefined;
-  }
-  public getVictoryPoints() {
-    return 1;
   }
 }

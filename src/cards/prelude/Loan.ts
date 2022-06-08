@@ -1,14 +1,16 @@
 import {Player} from '../../Player';
 import {PreludeCard} from './PreludeCard';
 import {IProjectCard} from '../IProjectCard';
-import {Resources} from '../../Resources';
-import {CardName} from '../../CardName';
+import {Resources} from '../../common/Resources';
+import {CardName} from '../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
 
 export class Loan extends PreludeCard implements IProjectCard {
   constructor() {
     super({
       name: CardName.LOAN,
+
+      startingMegacredits: 30,
 
       metadata: {
         cardNumber: 'P17',
@@ -20,7 +22,7 @@ export class Loan extends PreludeCard implements IProjectCard {
       },
     });
   }
-  public canPlay(player: Player): boolean {
+  public override canPlay(player: Player): boolean {
     return player.getProduction(Resources.MEGACREDITS) >= -3;
   }
   public play(player: Player) {

@@ -1,6 +1,6 @@
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {Player} from '../../Player';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {PreludeCard} from '../prelude/PreludeCard';
 import {DrawCards} from '../../deferredActions/DrawCards';
 import {CardRenderer} from '../render/CardRenderer';
@@ -16,7 +16,7 @@ export class LunarPlanningOffice extends PreludeCard implements IProjectCard {
         description: 'Draw 2 cards with Moon tag. Gain 6 steel.',
         cardNumber: '',
         renderData: CardRenderer.builder((b) => {
-          b.cards(2).secondaryTag(Tags.MOON).br.steel(6);
+          b.cards(2, {secondaryTag: Tags.MOON}).br.steel(6);
         }),
       },
     });

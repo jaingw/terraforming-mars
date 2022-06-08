@@ -7,8 +7,8 @@ import {getDate, getDay} from './UserUtil';
 import {GameLoader} from './database/GameLoader';
 import {generateRandomId} from './UserUtil';
 import {Server} from './models/ServerModel';
-import {PlayerBlockModel} from './models/PlayerModel';
-
+import {PlayerBlockModel} from './common/models/PlayerModel';
+import * as crypto from 'crypto';
 const colorNames = ['Blue', 'Red', 'Yellow', 'Green', 'Black', 'Purple', 'You', 'blue', 'red', 'yellow', 'green', 'black', 'purple', 'you'];
 
 function notFound(req: http.IncomingMessage, res: http.ServerResponse): void {
@@ -68,7 +68,8 @@ export function apiGameBack(req: http.IncomingMessage, res: http.ServerResponse)
     } catch (err) {
       console.warn('error rollback', err);
       res.writeHead(500);
-      res.write('Unable to rollback: ' + err.message);
+      const message = err instanceof Error ? err.message : String(err);
+      res.write('Unable to rollback: ' + message);
       res.end();
     }
   });
@@ -153,7 +154,7 @@ export function login(req: http.IncomingMessage, res: http.ServerResponse): void
     try {
       const userReq = JSON.parse(body);
       const userName: string = userReq.userName.trim().toLowerCase();
-      const password: string = userReq.password.trim().toLowerCase();
+      let password: string = userReq.password.trim().toLowerCase();
       if (userName === undefined || userName.length === 0) {
         throw new Error('UserName must not be empty ');
       }
@@ -164,6 +165,7 @@ export function login(req: http.IncomingMessage, res: http.ServerResponse): void
       if (password === undefined || password.length <= 2) {
         throw new Error('Password must not be empty and  be longer than 2');
       }
+      password = crypto.createHash('md5').update( password ).digest('hex');
       if (password !== user.password.trim().toLowerCase()) {
         throw new Error('Password error');
       }
@@ -172,7 +174,8 @@ export function login(req: http.IncomingMessage, res: http.ServerResponse): void
     } catch (err) {
       console.warn('error login', err);
       res.writeHead(500);
-      res.write('Unable to login: ' + err.message);
+      const message = err instanceof Error ? err.message : String(err);
+      res.write('Unable to login: ' + message);
     }
     res.end();
   });
@@ -188,7 +191,7 @@ export function register(req: http.IncomingMessage, res: http.ServerResponse): v
       const userReq = JSON.parse(body);
       const userId = generateRandomId('');
       const userName: string = userReq.userName ? userReq.userName.trim().toLowerCase() : '';
-      const password: string = userReq.password ? userReq.password.trim().toLowerCase() : '';
+      let password: string = userReq.password ? userReq.password.trim().toLowerCase() : '';
       if (userName === undefined || userName.length <= 1) {
         throw new Error('UserName must not be empty and  be longer than 1');
       }
@@ -198,6 +201,7 @@ export function register(req: http.IncomingMessage, res: http.ServerResponse): v
       if (password === undefined || password.length <= 2) {
         throw new Error('Password must not be empty and  be longer than 2');
       }
+      password = crypto.createHash('md5').update( password ).digest('hex');
       Database.getInstance().saveUser(userId, userName, password, '{}');
       const user: User = new User(userName, password, userId);
       user.createtime = getDay();
@@ -208,7 +212,8 @@ export function register(req: http.IncomingMessage, res: http.ServerResponse): v
     } catch (err) {
       console.warn('error register user', err);
       res.writeHead(500);
-      res.write('Unable to register user: ' + err.message);
+      const message = err instanceof Error ? err.message : String(err);
+      res.write('Unable to register user: ' + message);
     }
     res.end();
   });
@@ -292,7 +297,8 @@ export function resign(req: http.IncomingMessage, res: http.ServerResponse): voi
       console.warn('error resign', err);
       console.warn('error resign:', body);
       res.writeHead(500);
-      res.write('Unable to resign: ' + err.message);
+      const message = err instanceof Error ? err.message : String(err);
+      res.write('Unable to resign: ' + message);
       res.end();
     }
   });
@@ -323,7 +329,8 @@ export function showHand(req: http.IncomingMessage, res: http.ServerResponse): v
     } catch (err) {
       console.warn('error update', err);
       res.writeHead(500);
-      res.write('Unable to update: ' + err.message);
+      const message = err instanceof Error ? err.message : String(err);
+      res.write('Unable to update: ' + message);
       res.end();
     }
   });
@@ -390,7 +397,8 @@ export function sitDown(req: http.IncomingMessage, res: http.ServerResponse): vo
     } catch (err) {
       console.warn('error update', err);
       res.writeHead(500);
-      res.write('Unable to update: ' + err.message);
+      const message = err instanceof Error ? err.message : String(err);
+      res.write('Unable to update: ' + message);
       res.end();
     }
   });

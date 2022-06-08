@@ -24,17 +24,17 @@ function getAllTranslations() {
 
         for (const phrase in dataJson) {
           if (dataJson.hasOwnProperty(phrase)) {
-                    if (translations[phrase] === undefined) {
-                        translations[phrase] = {};
-          }
-          if (lang === 'cn' && translations[phrase][lang] !== undefined) {
-            console.log('重复翻译： '+ phrase);
-                    }
-                    translations[phrase][lang] = dataJson[phrase];
-                }
+            if (translations[phrase] === undefined) {
+              translations[phrase] = {};
             }
+            if (lang === 'cn' && translations[phrase][lang] !== undefined) {
+              console.log('重复翻译： '+ phrase);
+            }
+            translations[phrase][lang] = dataJson[phrase];
+          }
+        }
       });
-  }
+    }
   });
 
   return translations;
@@ -49,8 +49,8 @@ function generateAppVersion() {
   try {
     return child_process.execSync('git log -1 --pretty=format:"%h %cD"').toString();
   } catch (error) {
-    console.warn('unable to generate app version', error);
-    return 'unknown version';
+    console.error('unable to generate app version', error);
+    throw error;
   }
 }
 
@@ -58,7 +58,7 @@ function getWaitingForTimeout() {
   if (process.env.WAITING_FOR_TIMEOUT) {
     return Number(process.env.WAITING_FOR_TIMEOUT);
   }
-  return 5000;
+  return 2500;
 }
 
 function getLogLength() {
@@ -136,3 +136,34 @@ fs.writeFileSync('build/src/genfiles/settings.json', JSON.stringify({
 fs.writeFileSync('build/src/genfiles/translations.json', JSON.stringify(
   translationsJSON,
 ));
+
+/**
+ * Generate translation files in `/assets/locales/*.json` to load them async by the client
+ */
+function generateTranslations() {
+  const localesDir = path.join(__dirname, 'src/locales');
+  const localesCodes = fs.readdirSync(localesDir);
+  const destinationPath = path.join(__dirname, 'assets/locales');
+
+  if (!fs.existsSync(destinationPath)) {
+    fs.mkdirSync(destinationPath);
+  }
+
+  const isJSONExt = (fileName) => fileName.endsWith('.json');
+
+  localesCodes.forEach((localeCode) => {
+    const localeDir = path.join(localesDir, localeCode);
+    const localeFiles = fs.readdirSync(localeDir).filter(isJSONExt);
+
+    const localeObject = localeFiles.reduce((localeObject, localeFile) => {
+      const filePath = path.join(localeDir, localeFile);
+      Object.assign(localeObject, require(filePath));
+      return localeObject;
+    }, {});
+
+    const destinationFile = path.join(destinationPath, `${localeCode}.json`);
+    fs.writeFileSync(destinationFile, JSON.stringify(localeObject));
+  });
+}
+
+generateTranslations();

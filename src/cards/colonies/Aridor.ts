@@ -1,19 +1,19 @@
-import {CorporationCard} from '../corporation/CorporationCard';
+import {ICorporationCard} from '../corporation/ICorporationCard';
 import {Player} from '../../Player';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Game} from '../../Game';
 import {IProjectCard} from '../IProjectCard';
-import {Resources} from '../../Resources';
-import {CardType} from '../CardType';
-import {CardName} from '../../CardName';
-import {Colony} from '../../colonies/Colony';
+import {Resources} from '../../common/Resources';
+import {CardType} from '../../common/cards/CardType';
+import {CardName} from '../../common/cards/CardName';
+import {IColony} from '../../colonies/IColony';
 import {SelectColony} from '../../inputs/SelectColony';
-import {ColonyName} from '../../colonies/ColonyName';
-import {ColonyModel} from '../../models/ColonyModel';
 import {Card} from '../Card';
 import {CardRenderer} from '../render/CardRenderer';
+import {Venus} from '../community/Venus';
+import {checkActivationVenus} from '../../colonies/ColonyDealer';
 
-export class Aridor extends Card implements CorporationCard {
+export class Aridor extends Card implements ICorporationCard {
   constructor() {
     super({
       name: CardName.ARIDOR,
@@ -36,73 +36,71 @@ export class Aridor extends Card implements CorporationCard {
       },
     });
   }
-    public allTags = new Set<Tags>();
-    public initialAction(player: Player) {
-      const game = player.game;
-      if (game.colonyDealer === undefined || !game.gameOptions.coloniesExtension) return undefined;
+  public allTags = new Set<Tags>();
+  public initialAction(player: Player) {
+    const game = player.game;
+    if (game.colonyDealer === undefined || !game.gameOptions.coloniesExtension) return undefined;
 
-      const availableColonies: Colony[] = game.colonyDealer.discardedColonies;
-      if (availableColonies.length === 0) return undefined;
+    const availableColonies: IColony[] = game.colonyDealer.discardedColonies;
+    if (availableColonies.length === 0) return undefined;
 
-      const coloniesModel: Array<ColonyModel> = game.getColoniesModel(availableColonies);
-      const selectColony = new SelectColony('Aridor first action - Select colony tile to add', 'Add colony tile', coloniesModel, (colonyName: ColonyName) => {
-        if (game.colonyDealer !== undefined) {
-          availableColonies.forEach((colony) => {
-            if (colony.name === colonyName) {
-              game.colonies.push(colony);
-              game.colonies.sort((a, b) => (a.name > b.name) ? 1 : -1);
-              game.log('${0} added a new Colony tile: ${1}', (b) => b.player(player).colony(colony));
-              this.checkActivation(colony, game);
-              return undefined;
-            }
-            return undefined;
-          });
-          game.colonyDealer.discardedColonies = game.colonyDealer.discardedColonies.filter((colony) => colony.name !== colonyName);
-          return undefined;
-        } else return undefined;
-      },
-      );
-      return selectColony;
+    const selectColony = new SelectColony('Aridor first action - Select colony tile to add', 'Add colony tile', availableColonies, (colony: IColony) => {
+      if (availableColonies.includes(colony)) {
+        game.colonies.push(colony);
+        game.colonies.sort((a, b) => (a.name > b.name) ? 1 : -1);
+        game.log('${0} added a new Colony tile: ${1}', (b) => b.player(player).colony(colony));
+        this.checkActivation(colony, game);
+          game.colonyDealer!.discardedColonies = game.colonyDealer!.discardedColonies.filter((colo) => colo!== colony);
+      } else {
+        throw new Error(`Colony ${colony.name} is not a discarded colony`);
+      }
+      return undefined;
+    });
+    return selectColony;
+  }
+
+  private checkActivation(colony: IColony, game: Game): void {
+    if (colony instanceof Venus && checkActivationVenus(game)) {
+      colony.isActive = true;
+      return;
     }
+    if (colony.resourceType === undefined) return;
+    game.getPlayers().forEach((player) => {
+      if (player.corpResourceType(colony.resourceType!)) {
+        colony.isActive = true;
+        return;
+      }
+      const resourceCard = player.playedCards.some((card) => card.resourceType === colony.resourceType);
+      if (resourceCard) {
+        colony.isActive = true;
+        return;
+      }
+    });
+  }
 
-    private checkActivation(colony: Colony, game: Game): void {
-      if (colony.resourceType === undefined) return;
-      game.getPlayers().forEach((player) => {
-        if (player.corpResourceType(colony.resourceType!)) {
-          colony.isActive = true;
-          return;
-        }
-        const resourceCard = player.playedCards.find((card) => card.resourceType === colony.resourceType);
-        if (resourceCard !== undefined) {
-          colony.isActive = true;
-          return;
-        }
-      });
-    }
-
-    public onCardPlayed(player: Player, card: IProjectCard) {
-      if (
-        card.cardType === CardType.EVENT ||
+  public onCardPlayed(player: Player, card: IProjectCard) {
+    if (
+      card.cardType === CardType.EVENT ||
         card.tags.filter((tag) => tag !== Tags.WILDCARD).length === 0 ||
         !player.isCorporation(this.name)) {
-        return undefined;
-      }
-
-      for (const tag of card.tags.filter((tag) => tag !== Tags.WILDCARD)) {
-        const currentSize = this.allTags.size;
-        this.allTags.add(tag);
-        if (this.allTags.size > currentSize) {
-          player.addProduction(Resources.MEGACREDITS, 1);
-        }
-      }
       return undefined;
     }
 
-    public onCorpCardPlayed(player: Player, card: CorporationCard) {
-      return this.onCardPlayed(player, card as IProjectCard);
+    for (const tag of card.tags.filter((tag) => tag !== Tags.WILDCARD)) {
+      const currentSize = this.allTags.size;
+      this.allTags.add(tag);
+      if (this.allTags.size > currentSize) {
+        player.addProduction(Resources.MEGACREDITS, 1, {log: true});
+      }
     }
+    return undefined;
+  }
 
-    public play() {
-      return undefined;
-    }
+  public onCorpCardPlayed(player: Player, card:ICorporationCard) {
+    return this.onCardPlayed(player, card as unknown as IProjectCard);
+  }
+
+  public play() {
+    return undefined;
+  }
 }

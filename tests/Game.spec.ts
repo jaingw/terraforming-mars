@@ -4,27 +4,28 @@ import {SpaceName} from '../src/SpaceName';
 import {Mayor} from '../src/milestones/Mayor';
 import {Banker} from '../src/awards/Banker';
 import {Thermalist} from '../src/awards/Thermalist';
-import * as constants from '../src/constants';
+import * as constants from '../src/common/constants';
 import {Birds} from '../src/cards/base/Birds';
 import {WaterImportFromEuropa} from '../src/cards/base/WaterImportFromEuropa';
-import {Phase} from '../src/Phase';
+import {Phase} from '../src/common/Phase';
 import {TestingUtils} from './TestingUtils';
 import {TestPlayers} from './TestPlayers';
 import {SaturnSystems} from '../src/cards/corporation/SaturnSystems';
-import {Resources} from '../src/Resources';
-import {ISpace, SpaceId} from '../src/boards/ISpace';
+import {Resources} from '../src/common/Resources';
+import {ISpace} from '../src/boards/ISpace';
+import {SpaceId} from '../src/common/Types';
 import {ResearchNetwork} from '../src/cards/prelude/ResearchNetwork';
 import {ArcticAlgae} from '../src/cards/base/ArcticAlgae';
 import {Ecologist} from '../src/milestones/Ecologist';
 import {OrOptions} from '../src/inputs/OrOptions';
-import {BoardName} from '../src/boards/BoardName';
-import {SpaceType} from '../src/SpaceType';
+import {BoardName} from '../src/common/boards/BoardName';
+import {SpaceType} from '../src/common/boards/SpaceType';
 import {Helion} from '../src/cards/corporation/Helion';
 import {Player} from '../src/Player';
-import {Color} from '../src/Color';
-import {RandomMAOptionType} from '../src/RandomMAOptionType';
-import {SpaceBonus} from '../src/SpaceBonus';
-import {TileType} from '../src/TileType';
+import {Color} from '../src/common/Color';
+import {RandomMAOptionType} from '../src/common/ma/RandomMAOptionType';
+import {SpaceBonus} from '../src/common/boards/SpaceBonus';
+import {TileType} from '../src/common/TileType';
 
 describe('Game', () => {
   it('should initialize with right defaults', () => {
@@ -95,20 +96,20 @@ describe('Game', () => {
     // game.playerIsDoneWithGame(player2);
     // game.playerIsDoneWithGame(player);
 
-    player.getVictoryPoints();
-    player2.getVictoryPoints();
-    player3.getVictoryPoints();
+    const player1VPs = player.getVictoryPoints();
+    const player2VPs = player2.getVictoryPoints();
+    const player3VPs = player3.getVictoryPoints();
 
-    expect(player.victoryPointsBreakdown.terraformRating).to.eq(21);
-    expect(player.victoryPointsBreakdown.milestones).to.eq(5);
-    expect(player.victoryPointsBreakdown.awards).to.eq(2); // one 2nd place
-    expect(player.victoryPointsBreakdown.greenery).to.eq(1);
-    expect(player.victoryPointsBreakdown.city).to.eq(1); // greenery adjacent to city
-    expect(player.victoryPointsBreakdown.victoryPoints).to.eq(6);
-    expect(player.victoryPointsBreakdown.total).to.eq(36);
+    expect(player1VPs.terraformRating).to.eq(21);
+    expect(player1VPs.milestones).to.eq(5);
+    expect(player1VPs.awards).to.eq(2); // one 2nd place
+    expect(player1VPs.greenery).to.eq(1);
+    expect(player1VPs.city).to.eq(1); // greenery adjacent to city
+    expect(player1VPs.victoryPoints).to.eq(6);
+    expect(player1VPs.total).to.eq(36);
 
-    expect(player2.victoryPointsBreakdown.awards).to.eq(10); // 1st place + one shared 1st place
-    expect(player3.victoryPointsBreakdown.awards).to.eq(5); // one shared 1st place
+    expect(player2VPs.awards).to.eq(10); // 1st place + one shared 1st place
+    expect(player3VPs.awards).to.eq(5); // one shared 1st place
   });
 
   it('Disallows to set temperature more than allowed maximum', () => {
@@ -305,15 +306,15 @@ describe('Game', () => {
     player.takeActionForFinalGreenery();
 
     // Place first greenery to get 2 plants
-    const placeFirstGreenery = player.getWaitingFor() as OrOptions;
+    const placeFirstGreenery = TestingUtils.cast(player.getWaitingFor(), OrOptions);
     const arsiaMons = game.board.getSpace(SpaceName.ARSIA_MONS);
     placeFirstGreenery.options[0].cb(arsiaMons);
     expect(player.plants).to.eq(8);
 
     // Place second greenery
-    const placeSecondGreenery = player.getWaitingFor() as OrOptions;
+    const placeSecondGreenery = TestingUtils.cast(player.getWaitingFor(), OrOptions);
     const otherSpace = game.board.getSpace('30');
-    placeSecondGreenery.options[0].cb(otherSpace); ;
+    placeSecondGreenery.options[0].cb(otherSpace);
 
     // End the game
     game.playerHasPassed(player);
@@ -333,7 +334,7 @@ describe('Game', () => {
     const player4 = new Player('p4', Color.RED, false, 0, 'p4-id');
     const game = Game.newInstance('gto', [player1, player2, player3, player4], player3);
 
-    game.getPlayers().forEach((p) => {
+    game.getPlayersInGenerationOrder().forEach((p) => {
       (p as any).waitingFor = undefined;
       p.plants = 8;
     });
@@ -386,7 +387,7 @@ describe('Game', () => {
     const game = Game.newInstance('gto', [player1, player2, player3, player4], player2);
     (game as any).incrementFirstPlayer();
 
-    game.getPlayers().forEach((p) => {
+    game.getPlayersInGenerationOrder().forEach((p) => {
       (p as any).waitingFor = undefined;
     });
 
@@ -426,7 +427,7 @@ describe('Game', () => {
     const player4 = new Player('p4', Color.RED, false, 0, 'p4-id');
     const game = Game.newInstance('gto', [player1, player2, player3, player4], player3);
 
-    let players = game.getPlayers();
+    let players = game.getPlayersInGenerationOrder();
     expect(players[0].name).to.eq('p3');
     expect(players[1].name).to.eq('p4');
     expect(players[2].name).to.eq('p1');
@@ -434,14 +435,14 @@ describe('Game', () => {
 
 
     (game as any).incrementFirstPlayer();
-    players = game.getPlayers();
+    players = game.getPlayersInGenerationOrder();
     expect(players[0].name).to.eq('p4');
     expect(players[1].name).to.eq('p1');
     expect(players[2].name).to.eq('p2');
     expect(players[3].name).to.eq('p3');
 
     (game as any).incrementFirstPlayer();
-    players = game.getPlayers();
+    players = game.getPlayersInGenerationOrder();
     expect(players[0].name).to.eq('p1');
     expect(players[1].name).to.eq('p2');
     expect(players[2].name).to.eq('p3');
@@ -598,7 +599,7 @@ describe('Game', () => {
   it('grant space bonus sanity test', () => {
     const player = TestPlayers.BLUE.newPlayer();
     const game = Game.newInstance('foobar', [player], player);
-    const space = game.board.getAvailableSpacesOnLand()[0];
+    const space = game.board.getAvailableSpacesOnLand(player)[0];
 
     space.bonus = [SpaceBonus.DRAW_CARD, SpaceBonus.DRAW_CARD, SpaceBonus.DRAW_CARD, SpaceBonus.DRAW_CARD, SpaceBonus.PLANT, SpaceBonus.TITANIUM];
     expect(player.cardsInHand).has.length(0);
@@ -622,19 +623,14 @@ describe('Game', () => {
   //   const game = Game.newInstance('foobar', [player], player);
   //   const serialized = game.serialize();
   //   const serializedKeys = Object.keys(serialized).sort();
+  //  expect(serializedKeys).not.include('rng');
   //   const gameKeys = Object.keys(game);
   //   expect(gameKeys).not.include('moonData');
-  //   expect(serializedKeys).to.have.members(gameKeys.concat('moonData').concat('venusNextExtension').concat('cardDrew').sort());
+  //  expect(gameKeys).not.include('pathfindersData');
+  //  expect(serializedKeys.concat('rng').sort())
+  //  expect(serializedKeys).to.have.members(gameKeys.concat('moonData', 'pathfindersData'));
   // });
-
-  // it('serializes every property', () => {
-  //   const player = TestPlayers.BLUE.newPlayer();
-  //   const game = Game.newInstance('foobar', [player], player, setCustomGameOptions({moonExpansion: true}));
-  //   const serialized = game.serialize();
-  //   const serializedKeys = Object.keys(serialized).sort();
-  //   const gameKeys = Object.keys(game);
-  //   expect(serializedKeys).to.have.members(gameKeys.concat('venusNextExtension').sort());
-  // });
+  
 
   it('deserializing a game without moon data still loads', () => {
     const player = TestPlayers.BLUE.newPlayer();
@@ -643,5 +639,31 @@ describe('Game', () => {
     delete serialized['moonData'];
     const deserialized = game.loadFromJSON(serialized);
     expect(deserialized.moonData).is.undefined;
+  });
+
+  it('deserializing a game without pathfinders still loads', () => {
+    const player = TestPlayers.BLUE.newPlayer();
+    const game = Game.newInstance('foobar', [player], player, TestingUtils.setCustomGameOptions({pathfindersExpansion: false}));
+    const serialized = game.serialize();
+    (serialized.gameOptions as any).pathfindersData = undefined;
+
+    const deserialized = game.loadFromJSON(serialized);
+    expect(deserialized.pathfindersData).is.undefined;
+  });
+
+  it('deserializing a game with awards', () => {
+    const player = TestPlayers.BLUE.newPlayer();
+    const game = Game.newInstance('foobar', [player], player, TestingUtils.setCustomGameOptions({pathfindersExpansion: false}));
+    const serialized = game.serialize();
+    const deserialized = game.loadFromJSON(serialized);
+    expect(deserialized.awards).deep.eq(game.awards);
+  });
+
+  it('deserializing a game with milestones', () => {
+    const player = TestPlayers.BLUE.newPlayer();
+    const game = Game.newInstance('foobar', [player], player, TestingUtils.setCustomGameOptions({pathfindersExpansion: false}));
+    const serialized = game.serialize();
+    const deserialized = game.loadFromJSON(serialized);
+    expect(deserialized.milestones).deep.eq(game.milestones);
   });
 });

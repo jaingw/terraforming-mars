@@ -16,5 +16,23 @@ export enum SpaceName {
     ELYSIUM_MONS = '14',
     OLYMPUS_MONS = '20',
     HELLAS_OCEAN_TILE = '61',
-    STANFORD_TORUS = '69'
+    STANFORD_TORUS = '69',
+    // Vastitas Borealis
+    VASTITAS_BOREALIS_NORTH_POLE = '33',
+    ELYSIUM_MONS_VASTITAS_BOREALIS = '07',
+    ALBA_FOSSAE = '12',
+    CERANIUS_FOSSAE = '21',
+    ALBA_MONS = '22',
+
+    // Pathfinders
+    TIKHONAROV = '20',
+    LADON = '55',
+    FLAUGERGUES = '58',
+    CHARYBDIS = '63',
+
+    CERES_SPACEPORT = '75',
+    DYSON_SCREENS = '76',
+    LUNAR_EMBASSY = '77',
+    VENERA_BASE = '78',
+    // MARTIAN_TRANSHIPMENT_STATION = '79',
 }

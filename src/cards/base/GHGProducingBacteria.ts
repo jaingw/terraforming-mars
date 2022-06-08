@@ -1,19 +1,16 @@
 import {IActionCard, IResourceCard} from '../ICard';
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Card} from '../Card';
-import {CardType} from '../CardType';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
 import {OrOptions} from '../../inputs/OrOptions';
-import {ResourceType} from '../../ResourceType';
+import {ResourceType} from '../../common/ResourceType';
 import {SelectOption} from '../../inputs/SelectOption';
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {LogHelper} from '../../LogHelper';
-import {PartyHooks} from '../../turmoil/parties/PartyHooks';
-import {PartyName} from '../../turmoil/parties/PartyName';
 import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
-import {REDS_RULING_POLICY_COST} from '../../constants';
 
 export class GHGProducingBacteria extends Card implements IActionCard, IProjectCard, IResourceCard {
   constructor() {
@@ -41,37 +38,36 @@ export class GHGProducingBacteria extends Card implements IActionCard, IProjectC
     });
   }
 
-    public resourceCount: number = 0;
+  public override resourceCount: number = 0;
 
-    public play() {
+  public play() {
+    return undefined;
+  }
+  public canAct(): boolean {
+    return true;
+  }
+  public action(player: Player) {
+    if (this.resourceCount < 2) {
+      player.addResourceTo(this, {log: true});
       return undefined;
     }
-    public canAct(): boolean {
-      return true;
-    }
-    public action(player: Player) {
-      if (this.resourceCount < 2) {
-        player.addResourceTo(this, {log: true});
-        return undefined;
-      }
 
-      const orOptions = new OrOptions();
-      const redsAreRuling = PartyHooks.shouldApplyPolicy(player.game, PartyName.REDS);
+    const orOptions = new OrOptions();
 
-      if (!redsAreRuling || (redsAreRuling && player.canAfford(REDS_RULING_POLICY_COST))) {
-        orOptions.options.push(new SelectOption('Remove 2 microbes to raise temperature 1 step', 'Remove microbes', () => {
-          player.removeResourceFrom(this, 2);
-          LogHelper.logRemoveResource(player, this, 2, 'raise temperature 1 step');
-          return player.game.increaseTemperature(player, 1);
-        }));
-      }
-
-      orOptions.options.push(new SelectOption('Add 1 microbe to this card', 'Add microbe', () => {
-        player.addResourceTo(this, {log: true});
-        return undefined;
+    if (player.canAfford(0, {tr: {temperature: 1}})) {
+      orOptions.options.push(new SelectOption('Remove 2 microbes to raise temperature 1 step', 'Remove microbes', () => {
+        player.removeResourceFrom(this, 2);
+        LogHelper.logRemoveResource(player, this, 2, 'raise temperature 1 step');
+        return player.game.increaseTemperature(player, 1);
       }));
-
-      if (orOptions.options.length === 1) return orOptions.options[0].cb();
-      return orOptions;
     }
+
+    orOptions.options.push(new SelectOption('Add 1 microbe to this card', 'Add microbe', () => {
+      player.addResourceTo(this, {log: true});
+      return undefined;
+    }));
+
+    if (orOptions.options.length === 1) return orOptions.options[0].cb();
+    return orOptions;
+  }
 }

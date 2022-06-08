@@ -1,10 +1,10 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Card} from '../Card';
-import {CardType} from '../CardType';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {Resources} from '../../Resources';
-import {CardName} from '../../CardName';
+import {Resources} from '../../common/Resources';
+import {CardName} from '../../common/cards/CardName';
 import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
 
@@ -15,6 +15,7 @@ export class WavePower extends Card implements IProjectCard {
       name: CardName.WAVE_POWER,
       tags: [Tags.ENERGY],
       cost: 8,
+      victoryPoints: 1,
 
       requirements: CardRequirements.builder((b) => b.oceans(3)),
       metadata: {
@@ -23,7 +24,6 @@ export class WavePower extends Card implements IProjectCard {
           b.production((pb) => pb.energy(1));
         }),
         description: 'Requires 3 ocean tiles. Increase your energy production 1 step.',
-        victoryPoints: 1,
       },
     });
   }
@@ -31,9 +31,6 @@ export class WavePower extends Card implements IProjectCard {
   public play(player: Player) {
     player.addProduction(Resources.ENERGY, 1);
     return undefined;
-  }
-  public getVictoryPoints() {
-    return 1;
   }
 }
 

@@ -1,14 +1,15 @@
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Player} from '../../Player';
 import {PreludeCard} from '../prelude/PreludeCard';
 import {IProjectCard} from '../IProjectCard';
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {ALL_PARTIES} from '../../turmoil/parties/IParty';
+import {TurmoilUtil} from '../../turmoil/TurmoilUtil';
 import {SelectOption} from '../../inputs/SelectOption';
 import {OrOptions} from '../../inputs/OrOptions';
 import {DeferredAction} from '../../deferredActions/DeferredAction';
 import {CardRenderer} from '../render/CardRenderer';
-import {Size} from '../render/Size';
+import {Size} from '../../common/cards/render/Size';
 import {PoliticalAgendas} from '../../turmoil/PoliticalAgendas';
 
 export class ByElection extends PreludeCard implements IProjectCard {
@@ -21,20 +22,19 @@ export class ByElection extends PreludeCard implements IProjectCard {
         cardNumber: 'Y02',
         renderData: CardRenderer.builder((b) => {
           b.text('set ruling party', Size.SMALL, true).br;
-          b.plus().influence(1);
+          b.plus().influence();
         }),
         description: 'Set the ruling party to one of your choice. Gain 1 influence.',
       },
     });
   }
-  public canPlay(player: Player) {
-    return player.game.turmoil !== undefined;
+  public override canPlay() {
+    return true;
   }
+
   public play(player: Player) {
-    const turmoil = player.game.turmoil;
-    if (turmoil === undefined) {
-      return;
-    }
+    const turmoil = TurmoilUtil.getTurmoil(player.game);
+
     turmoil.addInfluenceBonus(player);
     const setRulingParty = new OrOptions();
 

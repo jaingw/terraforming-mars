@@ -1,13 +1,14 @@
 import {IProjectCard} from './../IProjectCard';
-import {Tags} from './../Tags';
-import {CardType} from './../CardType';
 import {Player} from '../../Player';
 import {IActionCard} from './../ICard';
-import {CardName} from '../../CardName';
 import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
 import {DrawCards} from '../../deferredActions/DrawCards';
 import {Card} from '../Card';
+import {digit, all} from '../Options';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
+import {Tags} from '../../common/cards/Tags';
 
 export class Ansible extends Card implements IActionCard, IProjectCard {
   constructor() {
@@ -16,6 +17,7 @@ export class Ansible extends Card implements IActionCard, IProjectCard {
       name: CardName.ANSIBLE,
       tags: [Tags.SCIENCE],
       cost: 18,
+      victoryPoints: 2,
 
       requirements: CardRequirements.builder((b) => b.tag(Tags.SCIENCE, 6)),
       metadata: {
@@ -23,16 +25,15 @@ export class Ansible extends Card implements IActionCard, IProjectCard {
         renderData: CardRenderer.builder((b) => {
           b.action('draw 3 cards. All OPPONENTS draw 1 card.', (eb) => {
             eb.empty().startAction;
-            eb.plus().cards(3).digit.nbsp.plus().cards(1).any.asterix();
+            eb.plus().cards(3, {digit}).nbsp.plus().cards(1, {all}).asterix();
           });
         }),
         description: 'Requires 6 science tags.',
-        victoryPoints: 2,
       },
     });
   }
 
-  public canPlay(player: Player): boolean {
+  public override canPlay(player: Player): boolean {
     return player.getTagCount(Tags.SCIENCE) >= 6;
   }
 
@@ -42,10 +43,6 @@ export class Ansible extends Card implements IActionCard, IProjectCard {
 
   public canAct(_player: Player): boolean {
     return true;
-  }
-
-  public getVictoryPoints() {
-    return 2;
   }
 
   public action(player: Player) {

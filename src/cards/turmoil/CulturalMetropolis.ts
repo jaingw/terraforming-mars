@@ -1,16 +1,17 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Card} from '../Card';
-import {CardName} from '../../CardName';
-import {CardType} from '../CardType';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {Resources} from '../../Resources';
-import {PartyName} from '../../turmoil/parties/PartyName';
+import {Resources} from '../../common/Resources';
+import {PartyName} from '../../common/turmoil/PartyName';
 import {PlaceCityTile} from '../../deferredActions/PlaceCityTile';
 import {SendDelegateToArea} from '../../deferredActions/SendDelegateToArea';
 import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
-import {Units} from '../../Units';
+import {Units} from '../../common/Units';
+import {TurmoilUtil} from '../../turmoil/TurmoilUtil';
 
 export class CulturalMetropolis extends Card implements IProjectCard {
   constructor() {
@@ -35,24 +36,15 @@ export class CulturalMetropolis extends Card implements IProjectCard {
     });
   }
 
-  public canPlay(player: Player): boolean {
-    if ( ! super.canPlay(player)) {
-      return false;
-    }
-
+  public override canPlay(player: Player): boolean {
     if (player.getProduction(Resources.ENERGY) < 1) {
       return false;
     }
 
     // This card requires player has 2 delegates available
-    const turmoil = player.game.turmoil;
-    if (turmoil !== undefined) {
-      const hasEnoughDelegates = turmoil.getDelegatesInReserve(player) > 1 ||
-        (turmoil.getDelegatesInReserve(player) === 1 && turmoil.lobby.has(player.id));
-      return hasEnoughDelegates;
-    }
-
-    return false;
+    const turmoil = TurmoilUtil.getTurmoil(player.game);
+    const hasEnoughDelegates = turmoil.getAvailableDelegateCount(player, 'both') >= 2;
+    return hasEnoughDelegates;
   }
 
   public play(player: Player) {
@@ -61,9 +53,12 @@ export class CulturalMetropolis extends Card implements IProjectCard {
     player.game.defer(new PlaceCityTile(player));
     const title = 'Select where to send two delegates';
 
-    if (player.game.turmoil!.getDelegatesInReserve(player) > 1) {
+    const turmoil = TurmoilUtil.getTurmoil(player.game);
+    const availableReserveDelegates = turmoil.getAvailableDelegateCount(player, 'reserve');
+    if (availableReserveDelegates > 1) {
       player.game.defer(new SendDelegateToArea(player, title, {count: 2, source: 'reserve'}));
-    } else if (player.game.turmoil!.getDelegatesInReserve(player) === 1 && player.game.turmoil!.lobby.has(player.id)) {
+    } else if (availableReserveDelegates === 1 && turmoil.lobby.has(player.id)) {
+      // TODO(kberg): it's not that clear that 'lobby' when count > 1 falls into the reserve.
       player.game.defer(new SendDelegateToArea(player, title, {count: 2, source: 'lobby'}));
     }
     return undefined;

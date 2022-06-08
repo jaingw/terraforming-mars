@@ -1,14 +1,15 @@
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {Player} from '../../Player';
-import {CardType} from '../CardType';
+import {CardType} from '../../common/cards/CardType';
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {CardRenderer} from '../render/CardRenderer';
 import {MoonExpansion} from '../../moon/MoonExpansion';
 import {OrOptions} from '../../inputs/OrOptions';
 import {SelectOption} from '../../inputs/SelectOption';
-import {Resources} from '../../Resources';
+import {Resources} from '../../common/Resources';
 import {Card} from '../Card';
+import {digit} from '../Options';
 
 export class PreliminaryDarkside extends Card implements IProjectCard {
   constructor() {
@@ -17,17 +18,19 @@ export class PreliminaryDarkside extends Card implements IProjectCard {
       cardType: CardType.EVENT,
       tags: [Tags.MOON],
       cost: 13,
+      tr: {moonMining: 1},
+
 
       metadata: {
         description: 'Gain 3 titanium or 4 steel. Raise the Mining Rate 1 step.',
         cardNumber: 'M63',
         renderData: CardRenderer.builder((b) => {
-          b.titanium(3).digit.or().steel(4).digit.br;
+          b.titanium(3, {digit}).or().steel(4, {digit}).br;
           b.moonMiningRate();
         }),
       },
     });
-  };
+  }
 
   public play(player: Player) {
     MoonExpansion.raiseMiningRate(player);

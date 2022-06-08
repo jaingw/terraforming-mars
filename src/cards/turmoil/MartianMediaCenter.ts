@@ -1,16 +1,17 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Card} from '../Card';
-import {CardName} from '../../CardName';
-import {CardType} from '../CardType';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {PartyName} from '../../turmoil/parties/PartyName';
-import {Resources} from '../../Resources';
+import {PartyName} from '../../common/turmoil/PartyName';
+import {Resources} from '../../common/Resources';
 import {SelectHowToPayDeferred} from '../../deferredActions/SelectHowToPayDeferred';
 import {SendDelegateToArea} from '../../deferredActions/SendDelegateToArea';
 import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
-import {Units} from '../../Units';
+import {Units} from '../../common/Units';
+import {TurmoilUtil} from '../../turmoil/TurmoilUtil';
 
 export class MartianMediaCenter extends Card implements IProjectCard {
   constructor() {
@@ -43,7 +44,7 @@ export class MartianMediaCenter extends Card implements IProjectCard {
   }
 
   public canAct(player: Player): boolean {
-    return (player.canAfford(3) && player.game.turmoil!.getDelegatesInReserve(player) > 0);
+    return player.canAfford(3) && TurmoilUtil.getTurmoil(player.game).hasDelegatesInReserve(player);
   }
 
   public action(player: Player) {

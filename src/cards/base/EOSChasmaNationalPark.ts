@@ -1,16 +1,16 @@
 import {ICard} from '../ICard';
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Card} from '../Card';
-import {CardType} from '../CardType';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
 import {SelectCard} from '../../inputs/SelectCard';
-import {Resources} from '../../Resources';
-import {CardName} from '../../CardName';
-import {ResourceType} from '../../ResourceType';
+import {Resources} from '../../common/Resources';
+import {CardName} from '../../common/cards/CardName';
+import {ResourceType} from '../../common/ResourceType';
 import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
-import {Units} from '../../Units';
+import {Units} from '../../common/Units';
 
 export class EosChasmaNationalPark extends Card implements IProjectCard {
   constructor() {
@@ -19,7 +19,8 @@ export class EosChasmaNationalPark extends Card implements IProjectCard {
       name: CardName.EOS_CHASMA_NATIONAL_PARK,
       tags: [Tags.PLANT, Tags.BUILDING],
       cost: 16,
-      productionBox: Units.of({energy: 2}),
+      productionBox: Units.of({megacredits: 2}),
+      victoryPoints: 1,
 
       requirements: CardRequirements.builder((b) => b.temperature(-12)),
       metadata: {
@@ -29,7 +30,6 @@ export class EosChasmaNationalPark extends Card implements IProjectCard {
           b.animals(1).asterix().plants(3).br;
           b.production((pb) => pb.megacredits(2));
         }),
-        victoryPoints: 1,
       },
     });
   }
@@ -50,9 +50,5 @@ export class EosChasmaNationalPark extends Card implements IProjectCard {
       player.addResourceTo(foundCards[0], {log: true});
       return undefined;
     });
-  }
-
-  public getVictoryPoints() {
-    return 1;
   }
 }

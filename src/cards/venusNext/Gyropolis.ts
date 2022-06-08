@@ -1,13 +1,14 @@
-import {Tags} from '../Tags';
-import {CardType} from '../CardType';
+import {Tags} from '../../common/cards/Tags';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {Resources} from '../../Resources';
+import {Resources} from '../../common/Resources';
 import {SelectSpace} from '../../inputs/SelectSpace';
 import {ISpace} from '../../boards/ISpace';
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
 import {Card} from '../Card';
-import {Units} from '../../Units';
+import {played} from '../Options';
+import {Units} from '../../common/Units';
 
 export class Gyropolis extends Card {
   constructor() {
@@ -23,15 +24,15 @@ export class Gyropolis extends Card {
         renderData: CardRenderer.builder((b) => {
           b.production((pb) => {
             pb.minus().energy(2).br;
-            pb.plus().megacredits(1).slash().venus(1).played.br;
-            pb.plus().megacredits(1).slash().earth().played.br;
+            pb.plus().megacredits(1).slash().venus(1, {played}).br;
+            pb.plus().megacredits(1).slash().earth(1, {played}).br;
           }).nbsp.city();
         }),
         description: 'Decrease your energy production 2 steps. Increase your M€ production 1 step for each Venus and Earth tag you have. Place a City tile.',
       },
     });
-  };
-  public canPlay(player: Player): boolean {
+  }
+  public override canPlay(player: Player): boolean {
     if (player.game.board.getAvailableSpacesForCity(player).length === 0) return false;
     return player.getProduction(Resources.ENERGY) >= 2;
   }

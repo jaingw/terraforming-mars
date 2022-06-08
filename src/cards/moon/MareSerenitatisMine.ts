@@ -1,16 +1,16 @@
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {Player} from '../../Player';
-import {CardType} from '../CardType';
-import {Tags} from '../Tags';
+import {CardType} from '../../common/cards/CardType';
+import {Tags} from '../../common/cards/Tags';
 import {CardRenderer} from '../render/CardRenderer';
 import {MoonSpaces} from '../../moon/MoonSpaces';
 import {MoonExpansion} from '../../moon/MoonExpansion';
 import {PlaceMoonRoadTile} from '../../moon/PlaceMoonRoadTile';
-import {Units} from '../../Units';
-import {SpaceType} from '../../SpaceType';
-import {TileType} from '../../TileType';
+import {Units} from '../../common/Units';
+import {SpaceType} from '../../common/boards/SpaceType';
+import {TileType} from '../../common/TileType';
 import {MoonCard} from './MoonCard';
-import {AltSecondaryTag} from '../render/CardRenderItem';
+import {AltSecondaryTag} from '../../common/cards/render/AltSecondaryTag';
 
 export class MareSerenitatisMine extends MoonCard {
   constructor() {
@@ -21,6 +21,7 @@ export class MareSerenitatisMine extends MoonCard {
       cost: 21,
       productionBox: Units.of({steel: 1, titanium: 1}),
       reserveUnits: Units.of({steel: 1, titanium: 2}),
+      tr: {moonMining: 1, moonLogistics: 1},
 
       metadata: {
         description: 'Spend 2 titanium and 1 steel. Increase your steel and titanium production 1 step ' +
@@ -29,7 +30,7 @@ export class MareSerenitatisMine extends MoonCard {
         renderData: CardRenderer.builder((b) => {
           b.minus().titanium(2).minus().steel(1).br;
           b.production((pb) => pb.steel(1).titanium(1)).br;
-          b.moonMine().secondaryTag(AltSecondaryTag.MOON_MINING_RATE).asterix().nbsp.moonRoad().secondaryTag(AltSecondaryTag.MOON_MINING_RATE).asterix();
+          b.moonMine({secondaryTag: AltSecondaryTag.MOON_MINING_RATE}).asterix().nbsp.moonRoad({secondaryTag: AltSecondaryTag.MOON_MINING_RATE}).asterix();
         }),
       },
     }, {
@@ -37,7 +38,7 @@ export class MareSerenitatisMine extends MoonCard {
     });
   }
 
-  public play(player: Player) {
+  public override play(player: Player) {
     super.play(player);
     MoonExpansion.addMineTile(player, MoonSpaces.MARE_SERENITATIS, this.name);
     MoonExpansion.raiseMiningRate(player);

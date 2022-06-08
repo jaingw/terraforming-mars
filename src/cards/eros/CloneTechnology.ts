@@ -1,13 +1,14 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
-import {CardType} from '../CardType';
 import {Player} from '../../Player';
 import {SelectCard} from '../../inputs/SelectCard';
-import {CardName} from '../../CardName';
-import {Resources} from '../../Resources';
 import {ICard} from '../ICard';
 import {CardRenderer} from '../render/CardRenderer';
 import {Card} from '../Card';
+import {played} from '../Options';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
+import {Tags} from '../../common/cards/Tags';
+import {Resources} from '../../common/Resources';
 
 export class CloneTechnology extends Card implements IProjectCard {
   constructor() {
@@ -16,23 +17,19 @@ export class CloneTechnology extends Card implements IProjectCard {
       name: CardName.CLONE_TECHNOLOGY,
       tags: [Tags.SCIENCE, Tags.MICROBE],
       cost: 13,
+      victoryPoints: 1,
       metadata: {
         cardNumber: 'Q04',
         renderData: CardRenderer.builder((b) => {
-          b.production((pb) => pb.text('X').plants(1).played).nbsp.text('X').plants(1).asterix();
+          b.production((pb) => pb.text('X').plants(1, {played})).nbsp.text('X').plants(1).asterix();
         }),
         description: 'Duplicate the production box and plant resource of one of your plant cards.',
-        victoryPoints: 1,
       },
     });
   }
 
-  public canPlay(player: Player): boolean {
+  public override canPlay(player: Player): boolean {
     return this.getAvailableCards(player).length > 0;
-  }
-
-  public getVictoryPoints() {
-    return 1;
   }
 
   public plantCardsNames: ReadonlyArray<CardName> = [
@@ -59,12 +56,22 @@ export class CloneTechnology extends Card implements IProjectCard {
     CardName.DOME_FARMING,
     CardName.ECOLOGY_EXPERTS,
     CardName.OCEAN_FARM,
+    // moon
+    CardName.ALGAE_BIOREACTORS,
+    CardName.ARCHIMEDES_HYDROPONICS_STATION,
+    CardName.GEODESIC_TENTS,
+
+    // path
+    CardName.ORBITAL_LABORATORIES,
+    CardName.POLLINATORS,
+    CardName.SOIL_DETOXIFICATION,
   ];
 
   public corporationCardsNames: ReadonlyArray<CardName> = [
     CardName.ECOLINE,
     CardName._ECOLINE_,
     CardName.APHRODITE,
+    CardName.AGRICOLA_INC,
 
   ];
 
@@ -94,6 +101,18 @@ export class CloneTechnology extends Card implements IProjectCard {
         }
       } else if (card.name === CardName.BIOSPHERE_SUPPORT) {
         if (player.getProduction(Resources.MEGACREDITS) >= -4) {
+          return true;
+        }
+      } else if (card.name === CardName.ALGAE_BIOREACTORS) {
+        if (player.getProduction(Resources.PLANTS) >= 1) {
+          return true;
+        }
+      } else if (card.name === CardName.GEODESIC_TENTS) {
+        if (player.getProduction(Resources.ENERGY) >= 1) {
+          return true;
+        }
+      } else if (card.name === CardName.ARCHIMEDES_HYDROPONICS_STATION) {
+        if (player.getProduction(Resources.ENERGY) >= 1 && player.getProduction(Resources.MEGACREDITS) >= -4) {
           return true;
         }
       } else if (this.plantCardsNames.includes(card.name)) {
@@ -144,7 +163,7 @@ export class CloneTechnology extends Card implements IProjectCard {
         new Updater(CardName.GRASS, 0, 0, 1, 0, 3),
         new Updater(CardName.HEATHER, 0, 0, 1, 0, 1),
         new Updater(CardName.BUSHES, 0, 0, 2, 0, 2),
-        new Updater(CardName.GREENHOUSES, 0, 0, 0, 0, player.game.getCitiesInPlay()),
+        new Updater(CardName.GREENHOUSES, 0, 0, 0, 0, player.game.getCitiesCount()),
         new Updater(CardName.FARMING, 0, 2, 2, 0, 2),
         new Updater(CardName.LICHEN, 0, 0, 0, 0, 0),
         new Updater(CardName.TUNDRA_FARMING, 0, 2, 1, 0, 1),
@@ -163,22 +182,36 @@ export class CloneTechnology extends Card implements IProjectCard {
         new Updater(CardName.NITROPHILIC_MOSS, 0, 0, 2, 0, -2),
         new Updater(CardName.ECOLINE, 0, 0, 2, 0, 3),
         new Updater(CardName._ECOLINE_, 0, 0, 2, 0, 3),
+
+        new Updater(CardName.AGRICOLA_INC, 0, 1, 1, 0, 0),
+
+        // moon
+        new Updater(CardName.ALGAE_BIOREACTORS, 0, 0, -1, 0, 0),
+        new Updater(CardName.ARCHIMEDES_HYDROPONICS_STATION, -1, -1, 2, 0, 0),
+        new Updater(CardName.GEODESIC_TENTS, -1, 0, 1, 0, 0),
+
+        // path
+        new Updater(CardName.ORBITAL_LABORATORIES, 0, 0, 2, 0, 1),
+        new Updater(CardName.POLLINATORS, 0, 2, 1, 0, 0),
+        new Updater(CardName.SOIL_DETOXIFICATION, 0, 0, 1, 0, 0),
+
+
       ];
 
       const result:Updater = updaters.filter((u) => u.name === foundCard.name)[0];
 
       if (!result) {
-        throw 'Production not found for selected card';
+        throw new Error('Production not found for selected card');
       }
 
       if (player.getProduction(Resources.ENERGY) + result.energyProduction < 0) {
-        throw 'not enough energy production';
+        throw new Error('not enough energy production');
       }
       if (player.getProduction(Resources.PLANTS) + result.plantProduction < 0) {
-        throw 'not enough plant production';
+        throw new Error('not enough plant production');
       }
       if (player.getProduction(Resources.HEAT) + result.heatProduction < 0) {
-        throw 'not enough heat production';
+        throw new Error('not enough heat production');
       }
 
       player.addProduction(Resources.ENERGY, result.energyProduction);

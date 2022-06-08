@@ -1,8 +1,4 @@
-import {CorporationCard} from '../../corporation/CorporationCard';
-import {CardName} from '../../../CardName';
-import {CardType} from '../../CardType';
 import {CardRenderer} from '../../render/CardRenderer';
-import {Tags} from '../../Tags';
 import {Card} from '../../Card';
 import {ICard} from '../../ICard';
 import {Player} from '../../../Player';
@@ -10,8 +6,12 @@ import {SendDelegateToArea} from '../../../deferredActions/SendDelegateToArea';
 import {IGlobalEvent} from '../../../turmoil/globalEvents/IGlobalEvent';
 import {DeferredAction} from '../../../deferredActions/DeferredAction';
 import {SelectGlobalCard} from '../../../inputs/SelectGlobalCard';
+import {CardName} from '../../../common/cards/CardName';
+import {CardType} from '../../../common/cards/CardType';
+import {Tags} from '../../../common/cards/Tags';
+import {ICorporationCard} from '../../corporation/ICorporationCard';
 
-export class InciteEnder extends Card implements ICard, CorporationCard {
+export class InciteEnder extends Card implements ICard, ICorporationCard {
   constructor() {
     super({
       name: CardName.INCITE_ENDER,
@@ -31,7 +31,7 @@ export class InciteEnder extends Card implements ICard, CorporationCard {
               eb.empty().startAction.text('3').globalCards(1).asterix();
             });
             ce.effect('Get 1 influence per leader of the Non-dominant party.', (eb) => {
-              eb.startEffect.plus().influence(1).slash().partyLeaders().empty().asterix();
+              eb.startEffect.plus().influence({amount: 1}).slash().partyLeaders().empty().asterix();
             });
           });
         }),

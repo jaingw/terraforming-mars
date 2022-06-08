@@ -1,7 +1,7 @@
-import {CardName} from '../../CardName';
-import {CardType} from '../CardType';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {CardRenderer} from '../render/CardRenderer';
 import {CardRequirements} from '../CardRequirements';
 import {Card} from '../Card';
@@ -13,6 +13,7 @@ export class MoonTether extends Card implements IProjectCard {
       cardType: CardType.ACTIVE,
       tags: [Tags.MOON, Tags.SPACE],
       cost: 18,
+      victoryPoints: 1,
 
       requirements: CardRequirements.builder((b) => b.tag(Tags.SPACE, 6)),
       cardDiscount: {amount: 2},
@@ -24,10 +25,9 @@ export class MoonTether extends Card implements IProjectCard {
           }).br;
         }),
         description: 'Requires 6 Space tags.',
-        victoryPoints: 1,
       },
     });
-  };
+  }
 
   public play() {
     return undefined;
@@ -36,9 +36,5 @@ export class MoonTether extends Card implements IProjectCard {
 
   public getCardDiscount() {
     return 2;
-  }
-
-  public getVictoryPoints() {
-    return 1;
   }
 }

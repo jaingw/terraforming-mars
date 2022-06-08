@@ -1,10 +1,12 @@
 
-import {Color} from '../Color';
+import {Color} from '../common/Color';
 import {Database} from './Database';
-import {Game, LoadState, SpectatorId} from '../Game';
+import {Game, LoadState} from '../Game';
 import {Player} from '../Player';
+import {SpectatorId} from '../common/Types';
 import {User} from '../User';
 import {IGameLoader, State} from './IGameLoader';
+import {IGameShortData} from './IDatabase';
 
 type LoadCallback = (game: Game | undefined) => void;
 
@@ -113,7 +115,7 @@ export class GameLoader implements IGameLoader {
 
   public getBySpectatorId(spectatorId: SpectatorId, cb: LoadCallback): void {
     this.getByPlayerId(spectatorId, cb);
-  };
+  }
 
   public getByPlayerId(playerId: string, cb: LoadCallback): void {
     if (this.state === State.READY && this.playerToGame.has(playerId)) {
@@ -184,7 +186,14 @@ export class GameLoader implements IGameLoader {
       }
       for (const player of game.getAllPlayers()) {
         this.playerToGame.set(player.id, game);
-        const user = this.userNameMap.get(player.name);
+
+        let user : User | undefined;
+        if (player.userId !== undefined) {
+          user = this.userIdMap.get(player.userId);
+        }
+        if ( user === undefined ) {
+          user = this.userNameMap.get(player.name);
+        }
         if (user !== undefined) {
           let strings = this.usersToGames.get(user.id);
           if (strings !== undefined) {
@@ -253,7 +262,7 @@ export class GameLoader implements IGameLoader {
       });
     });
 
-    Database.getInstance().getGames((err, allGames) => {
+    Database.getInstance().getGames((err: Error | undefined, allGames:Array<IGameShortData>) => {
       if (err) {
         console.error('error loading all games', err);
         this.onAllGamesLoaded();
@@ -265,9 +274,21 @@ export class GameLoader implements IGameLoader {
         this.onAllGamesLoaded();
         cb();
         return;
-      };
+      }
       console.log(`loading all games ${allGames.length}`);
-      this.allGameIds = allGames;
+      const player = new Player('test', Color.BLUE, false, 0, '000');
+      const player2 = new Player('test2', Color.RED, false, 0, '111');
+
+      allGames.forEach((gamedata) => {
+        if (gamedata.shortData) {
+          const gameToRebuild = Game.newInstance(gamedata.gameId, [player, player2], player);
+          Object.assign(gameToRebuild, gamedata.shortData);
+          gameToRebuild.loadState = LoadState.HALFLOADED;
+          this.onGameLoaded(gameToRebuild);
+        } else {
+          this.allGameIds.push(gamedata.gameId);
+        }
+      });
       this.loadNextGame(cb);
     });
   }
@@ -290,13 +311,7 @@ export class GameLoader implements IGameLoader {
           console.error(`unable to load  game ${game_id}`, err);
         } else {
           try {
-            if (process.env.PORT) {
-              // 测试环境  加载全部
-              gameToRebuild.loadFromJSON(serializedGame);
-            } else {
-              // 正式环境  加载部分
-              gameToRebuild.loadFromJSON(serializedGame, false);
-            }
+            gameToRebuild.loadFromJSON(serializedGame, false);
             this.onGameLoaded(gameToRebuild);
           } catch (err) {
             console.error(`unable to load game ${game_id}`, err);

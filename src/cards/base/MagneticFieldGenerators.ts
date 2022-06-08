@@ -1,15 +1,13 @@
 import {Player} from '../../Player';
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Card} from '../Card';
-import {CardType} from '../CardType';
-import {Resources} from '../../Resources';
-import {CardName} from '../../CardName';
-import {PartyHooks} from '../../turmoil/parties/PartyHooks';
-import {PartyName} from '../../turmoil/parties/PartyName';
-import {REDS_RULING_POLICY_COST} from '../../constants';
+import {CardType} from '../../common/cards/CardType';
+import {Resources} from '../../common/Resources';
+import {CardName} from '../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
-import {Units} from '../../Units';
+import {Units} from '../../common/Units';
+import {digit} from '../Options';
 
 export class MagneticFieldGenerators extends Card implements IProjectCard {
   constructor() {
@@ -19,12 +17,13 @@ export class MagneticFieldGenerators extends Card implements IProjectCard {
       tags: [Tags.BUILDING],
       cost: 20,
       productionBox: Units.of({energy: -4, plants: 2}),
+      tr: {tr: 3},
 
       metadata: {
         cardNumber: '165',
         renderData: CardRenderer.builder((b) => {
           b.production((pb) => {
-            pb.minus().energy(4).digit.br;
+            pb.minus().energy(4, {digit}).br;
             pb.plus().plants(2);
           }).br;
           b.tr(3);
@@ -34,14 +33,8 @@ export class MagneticFieldGenerators extends Card implements IProjectCard {
     });
   }
 
-  public canPlay(player: Player): boolean {
-    const meetsEnergyRequirements = player.getProduction(Resources.ENERGY) >= 4;
-
-    if (PartyHooks.shouldApplyPolicy(player.game, PartyName.REDS)) {
-      return player.canAfford(player.getCardCost(this) + REDS_RULING_POLICY_COST * 3, {steel: true}) && meetsEnergyRequirements;
-    }
-
-    return meetsEnergyRequirements;
+  public override canPlay(player: Player): boolean {
+    return player.getProduction(Resources.ENERGY) >= 4;
   }
 
   public play(player: Player) {

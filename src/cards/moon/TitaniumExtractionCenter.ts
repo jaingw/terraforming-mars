@@ -1,11 +1,11 @@
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {Player} from '../../Player';
-import {CardType} from '../CardType';
-import {Tags} from '../Tags';
+import {CardType} from '../../common/cards/CardType';
+import {Tags} from '../../common/cards/Tags';
 import {MoonExpansion} from '../../moon/MoonExpansion';
-import {Resources} from '../../Resources';
+import {Resources} from '../../common/Resources';
 import {CardRenderer} from '../render/CardRenderer';
-import {Units} from '../../Units';
+import {Units} from '../../common/Units';
 import {MoonCard} from './MoonCard';
 
 export class TitaniumExtractionCenter extends MoonCard {
@@ -15,7 +15,6 @@ export class TitaniumExtractionCenter extends MoonCard {
       cardType: CardType.AUTOMATED,
       tags: [Tags.BUILDING],
       cost: 14,
-      productionBox: Units.of({}),
       reserveUnits: Units.of({titanium: 2}),
 
       metadata: {
@@ -29,11 +28,15 @@ export class TitaniumExtractionCenter extends MoonCard {
     });
   }
 
-  public play(player: Player) {
-    super.play(player);
+  public produce(player: Player) {
     const miningRate = MoonExpansion.moonData(player.game).miningRate;
     const productionIncrease = Math.floor(miningRate / 2);
-    player.addProduction(Resources.TITANIUM, productionIncrease);
+    player.addProduction(Resources.TITANIUM, productionIncrease, {log: true});
+  }
+
+  public override play(player: Player) {
+    super.play(player);
+    this.produce(player);
     return undefined;
   }
 }

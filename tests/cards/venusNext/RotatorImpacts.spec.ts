@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 import {MorningStarInc} from '../../../src/cards/venusNext/MorningStarInc';
 import {RotatorImpacts} from '../../../src/cards/venusNext/RotatorImpacts';
-import {MAX_VENUS_SCALE} from '../../../src/constants';
+import {MAX_VENUS_SCALE} from '../../../src/common/constants';
 import {Game} from '../../../src/Game';
 import {OrOptions} from '../../../src/inputs/OrOptions';
 import {Player} from '../../../src/Player';
@@ -19,16 +19,16 @@ describe('RotatorImpacts', () => {
 
   it('Cannot play', () => {
     (game as any).venusScaleLevel = 16;
-    expect(card.canPlay(player)).is.not.true;
+    expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
 
   it('Can play', () => {
     (game as any).venusScaleLevel = 14;
-    expect(card.canPlay(player)).is.true;
+    expect(player.canPlayIgnoringCost(card)).is.true;
   });
 
   it('Should play', () => {
-    expect(card.canPlay(player)).is.true;
+    expect(player.canPlayIgnoringCost(card)).is.true;
     const action = card.play();
     expect(action).is.undefined;
   });
@@ -39,7 +39,7 @@ describe('RotatorImpacts', () => {
     player.corpCard = corp;
 
     (game as any).venusScaleLevel = 18;
-    expect(card.canPlay(player)).is.true;
+    expect(player.canPlayIgnoringCost(card)).is.true;
   });
 
   it('Should act', () => {

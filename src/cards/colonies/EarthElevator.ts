@@ -1,9 +1,9 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
-import {CardType} from '../CardType';
+import {Tags} from '../../common/cards/Tags';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {CardName} from '../../CardName';
-import {Resources} from '../../Resources';
+import {CardName} from '../../common/cards/CardName';
+import {Resources} from '../../common/Resources';
 import {Card} from '../Card';
 import {CardRenderer} from '../render/CardRenderer';
 
@@ -14,6 +14,7 @@ export class EarthElevator extends Card implements IProjectCard {
       tags: [Tags.SPACE, Tags.EARTH],
       name: CardName.EARTH_ELEVATOR,
       cardType: CardType.AUTOMATED,
+      victoryPoints: 4,
 
       metadata: {
         description: 'Increase your titanium production 3 steps.',
@@ -21,7 +22,6 @@ export class EarthElevator extends Card implements IProjectCard {
         renderData: CardRenderer.builder((b) => {
           b.production((pb) => pb.titanium(3));
         }),
-        victoryPoints: 4,
       },
     });
   }
@@ -29,8 +29,5 @@ export class EarthElevator extends Card implements IProjectCard {
   public play(player: Player) {
     player.addProduction(Resources.TITANIUM, 3);
     return undefined;
-  }
-  public getVictoryPoints() {
-    return 4;
   }
 }

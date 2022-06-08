@@ -1,11 +1,11 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Card} from '../Card';
-import {CardType} from '../CardType';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
-import {AltSecondaryTag} from '../render/CardRenderItem';
+import {AltSecondaryTag} from '../../common/cards/render/AltSecondaryTag';
 
 export class CuttingEdgeTechnology extends Card implements IProjectCard {
   constructor() {
@@ -14,15 +14,15 @@ export class CuttingEdgeTechnology extends Card implements IProjectCard {
       name: CardName.CUTTING_EDGE_TECHNOLOGY,
       tags: [Tags.SCIENCE],
       cost: 12,
+      victoryPoints: 1,
 
       metadata: {
         cardNumber: 'X18',
         renderData: CardRenderer.builder((b) => {
           b.effect('When playing a card with a requirement, you pay 2 M€ less for it.', (eb) => {
-            eb.cards(1).secondaryTag(AltSecondaryTag.REQ).startEffect.megacredits(-2);
+            eb.cards(1, {secondaryTag: AltSecondaryTag.REQ}).startEffect.megacredits(-2);
           });
         }),
-        victoryPoints: 1,
       },
     });
   }
@@ -34,9 +34,5 @@ export class CuttingEdgeTechnology extends Card implements IProjectCard {
   public getCardDiscount(_player: Player, card: IProjectCard) {
     if (card.requirements !== undefined) return 2;
     return 0;
-  }
-
-  public getVictoryPoints() {
-    return 1;
   }
 }

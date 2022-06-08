@@ -8,6 +8,7 @@ import {SelectCard} from '../../../src/inputs/SelectCard';
 import {TestPlayers} from '../../TestPlayers';
 import {DiscardCards} from '../../../src/deferredActions/DiscardCards';
 import {DrawCards} from '../../../src/deferredActions/DrawCards';
+import {TestingUtils} from '../../TestingUtils';
 
 describe('SponsoredAcademies', function() {
   it('Should play', function() {
@@ -18,9 +19,9 @@ describe('SponsoredAcademies', function() {
     const player2 = TestPlayers.RED.newPlayer();
     const game = Game.newInstance('foobar', [player, player2], player);
     player.cardsInHand.push(card);
-    expect(card.canPlay(player)).is.not.true;
+    expect(player.canPlayIgnoringCost(card)).is.not.true;
     player.cardsInHand.push(card2, card3);
-    expect(card.canPlay(player)).is.true;
+    expect(player.canPlayIgnoringCost(card)).is.true;
 
     player.playCard(card);
     const discardCard = game.deferredActions.pop()!.execute() as SelectCard<IProjectCard>;
@@ -30,7 +31,7 @@ describe('SponsoredAcademies', function() {
     expect(discardCard.cards.filter((c) => c.name === card.name)).has.lengthOf(0);
 
     discardCard.cb([card2]);
-    game.deferredActions.runAll(() => {}); // Draw cards
+    TestingUtils.runAllActions(game); // Draw cards
     expect(player.cardsInHand).has.lengthOf(4);
     expect(player2.cardsInHand).has.lengthOf(1);
   });

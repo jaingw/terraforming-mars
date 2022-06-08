@@ -1,5 +1,5 @@
-import {CardName} from '../../CardName';
-import {GameModule} from '../../GameModule';
+import {CardName} from '../../common/cards/CardName';
+import {GameModule} from '../../common/cards/GameModule';
 import {CardManifest} from '../CardManifest';
 import {Advertising} from './Advertising';
 import {ArcadianCommunities} from './ArcadianCommunities';
@@ -7,6 +7,8 @@ import {AsteroidDeflectionSystem} from './AsteroidDeflectionSystem';
 import {AsteroidHollowing} from './AsteroidHollowing';
 import {AsteroidRights} from './AsteroidRights';
 import {Astrodrill} from './Astrodrill';
+import {BactoviralResearch} from './BactoviralResearch';
+import {BioPrintingFacility} from './BioPrintingFacility';
 import {CometAiming} from './CometAiming';
 import {CrashSiteCleanup} from './CrashSiteCleanup';
 import {CuttingEdgeTechnology} from './CuttingEdgeTechnology';
@@ -18,6 +20,7 @@ import {EnergyMarket} from './EnergyMarket';
 import {Factorum} from './Factorum';
 import {FieldCappedCity} from './FieldCappedCity';
 import {GreatDamPromo} from './GreatDamPromo';
+import {Harvest} from './Harvest';
 import {HiTechLab} from './HiTechLab';
 import {ImportedNutrients} from './ImportedNutrients';
 import {InterplanetaryTrade} from './InterplanetaryTrade';
@@ -30,7 +33,9 @@ import {Meltworks} from './Meltworks';
 import {MercurianAlloys} from './MercurianAlloys';
 import {MoholeLake} from './MoholeLake';
 import {MonsInsurance} from './MonsInsurance';
+import {NewPartner} from './NewPartner';
 import {OrbitalCleanup} from './OrbitalCleanup';
+import {OutdoorSports} from './OutdoorSports';
 import {Penguins} from './Penguins';
 import {PharmacyUnion} from './PharmacyUnion';
 import {Philares} from './Philares';
@@ -46,8 +51,6 @@ import {Splice} from './Splice';
 import {StanfordTorus} from './StanfordTorus';
 import {SubCrustMeasurements} from './SubCrustMeasurements';
 import {TopsoilContract} from './TopsoilContract';
-import {BioPrintingFacility} from './BioPrintingFacility';
-import {BactoviralResearch} from './BactoviralResearch';
 
 export const PROMO_CARD_MANIFEST = new CardManifest({
   module: GameModule.Promo,
@@ -91,6 +94,11 @@ export const PROMO_CARD_MANIFEST = new CardManifest({
     {cardName: CardName.SATURN_SURFING, Factory: SaturnSurfing},
     {cardName: CardName.BIO_PRINTING_FACILITY, Factory: BioPrintingFacility},
     {cardName: CardName.BACTOVIRAL_RESEARCH, Factory: BactoviralResearch},
+    {cardName: CardName.HARVEST, Factory: Harvest},
+    {cardName: CardName.OUTDOOR_SPORTS, Factory: OutdoorSports},
+  ],
+  preludeCards: [
+    {cardName: CardName.NEW_PARTNER, Factory: NewPartner},
   ],
 
   cardsToRemove: [

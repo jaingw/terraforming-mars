@@ -4,7 +4,7 @@ import {TestingUtils} from '../../TestingUtils';
 import {TestPlayers} from '../../TestPlayers';
 import {AncientShipyards} from '../../../src/cards/moon/AncientShipyards';
 import {expect} from 'chai';
-import {Resources} from '../../../src/Resources';
+import {Resources} from '../../../src/common/Resources';
 import {OrOptions} from '../../../src/inputs/OrOptions';
 
 const MOON_OPTIONS = TestingUtils.setCustomGameOptions({moonExpansion: true});
@@ -55,16 +55,29 @@ describe('AncientShipyards', () => {
     expect(card.resourceCount).eq(1);
   });
 
+  it('act solo', () => {
+    redPlayer = TestPlayers.RED.newPlayer();
+    game = Game.newInstance('id', [redPlayer], redPlayer, MOON_OPTIONS);
+
+    expect(card.resourceCount).eq(0);
+    redPlayer.megaCredits = 10;
+
+    card.action(redPlayer);
+    const options = game.deferredActions.pop()!.execute();
+    expect(options).to.be.undefined;
+
+    expect(redPlayer.megaCredits).eq(15);
+    expect(card.resourceCount).eq(1);
+  });
+
   it('victory points', () => {
     expect(card.getVictoryPoints()).eq(0);
     card.resourceCount = 1;
-    expect(card.getVictoryPoints()).eq(0);
+    expect(card.getVictoryPoints()).eq(-1);
     card.resourceCount = 2;
-    expect(card.getVictoryPoints()).eq(-1);
-    card.resourceCount = 3;
-    expect(card.getVictoryPoints()).eq(-1);
-    card.resourceCount = 4;
     expect(card.getVictoryPoints()).eq(-2);
+    card.resourceCount = 3;
+    expect(card.getVictoryPoints()).eq(-3);
   });
 });
 

@@ -1,10 +1,12 @@
 import * as http from 'http';
 import {Handler} from './Handler';
 import {IContext} from './IHandler';
-import {Phase} from '../Phase';
+import {Phase} from '../common/Phase';
 import {Player} from '../Player';
 import {GameLoader} from '../database/GameLoader';
-import {WaitingForModel} from '../models/WaitingForModel';
+import {WaitingForModel} from '../common/models/WaitingForModel';
+import {isPlayerId, isSpectatorId} from '../common/utils/utils';
+import {Game} from '../Game';
 
 export class ApiWaitingFor extends Handler {
   public static readonly INSTANCE = new ApiWaitingFor();
@@ -16,16 +18,24 @@ export class ApiWaitingFor extends Handler {
     return player.getWaitingFor() !== undefined || player.game.phase === Phase.END;
   }
 
-  private getWaitingForModel(player: Player, gameAge: number, undoCount: number): WaitingForModel {
+  // When player is undefined, caller is a spectator.
+  private getPlayerWaitingForModel(player: Player, game: Game, gameAge: number, undoCount: number): WaitingForModel {
     if (this.timeToGo(player)) {
       return {result: 'GO'};
-    } else if (player.game.gameAge > gameAge || player.game.undoCount > undoCount) {
+    } else if (game.gameAge > gameAge || game.undoCount > undoCount) {
       return {result: 'REFRESH'};
     }
     return {result: 'WAIT'};
   }
 
-  public get(req: http.IncomingMessage, res: http.ServerResponse, ctx: IContext): void {
+  private getSpectatorWaitingForModel(game: Game, gameAge: number, undoCount: number): WaitingForModel {
+    if (game.gameAge > gameAge || game.undoCount > undoCount) {
+      return {result: 'REFRESH'};
+    }
+    return {result: 'WAIT'};
+  }
+
+  public override get(req: http.IncomingMessage, res: http.ServerResponse, ctx: IContext): void {
     const playerId = String(ctx.url.searchParams.get('id'));
     const gameAge = Number(ctx.url.searchParams.get('gameAge'));
     const undoCount = Number(ctx.url.searchParams.get('undoCount'));
@@ -35,12 +45,16 @@ export class ApiWaitingFor extends Handler {
         return;
       }
       try {
-        const player = game.getAllPlayers().find((player) => player.id === playerId);
-        if (player !== undefined) {
-          ctx.route.writeJson(res, this.getWaitingForModel(player, gameAge, undoCount));
-        } else {
-          ctx.route.notFound(req, res, 'player not found');
+        if (isPlayerId(playerId)) {
+          const player = game.getAllPlayers().find((player) => player.id === playerId);
+          if (player !== undefined) {
+            ctx.route.writeJson(res, this.getPlayerWaitingForModel(player, game, gameAge, undoCount));
+            return;
+          }
+        } else if (isSpectatorId(playerId)) {
+          ctx.route.writeJson(res, this.getSpectatorWaitingForModel(game, gameAge, undoCount));
         }
+        ctx.route.notFound(req, res, 'player not found');
       } catch (err) {
         // This is basically impossible since getPlayerById ensures that the player is on that game.
         console.warn(`unable to find player ${playerId}`, err);

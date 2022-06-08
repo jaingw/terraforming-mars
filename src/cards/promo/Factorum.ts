@@ -1,18 +1,18 @@
 import {Card} from '../Card';
-import {CorporationCard} from '../corporation/CorporationCard';
+import {ICorporationCard} from '../corporation/ICorporationCard';
 import {Player} from '../../Player';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {IActionCard} from '../ICard';
-import {Resources} from '../../Resources';
+import {Resources} from '../../common/Resources';
 import {SelectOption} from '../../inputs/SelectOption';
 import {OrOptions} from '../../inputs/OrOptions';
-import {CardName} from '../../CardName';
-import {CardType} from '../CardType';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
 import {CardRenderer} from '../render/CardRenderer';
-import {Size} from '../render/Size';
-import {Units} from '../../Units';
+import {Size} from '../../common/cards/render/Size';
+import {Units} from '../../common/Units';
 
-export class Factorum extends Card implements IActionCard, CorporationCard {
+export class Factorum extends Card implements IActionCard, ICorporationCard {
   constructor() {
     super({
       cardType: CardType.CORPORATION,
@@ -30,7 +30,7 @@ export class Factorum extends Card implements IActionCard, CorporationCard {
             ce.vSpace(Size.LARGE);
             ce.action('Increase your energy production 1 step IF YOU HAVE NO ENERGY RESOURCES, or spend 3M€ to draw a building card.', (eb) => {
               eb.empty().arrow().production((pb) => pb.energy(1));
-              eb.or().megacredits(3).startAction.cards(1).secondaryTag(Tags.BUILDING);
+              eb.or().megacredits(3).startAction.cards(1, {secondaryTag: Tags.BUILDING});
             });
           });
         }),

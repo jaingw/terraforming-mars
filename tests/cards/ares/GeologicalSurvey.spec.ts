@@ -3,16 +3,17 @@ import {Ants} from '../../../src/cards/base/Ants';
 import {GeologicalSurvey} from '../../../src/cards/ares/GeologicalSurvey';
 import {Pets} from '../../../src/cards/base/Pets';
 import {Game} from '../../../src/Game';
-import {Phase} from '../../../src/Phase';
+import {Phase} from '../../../src/common/Phase';
 import {Player} from '../../../src/Player';
-import {SpaceBonus} from '../../../src/SpaceBonus';
-import {SpaceType} from '../../../src/SpaceType';
-import {TileType} from '../../../src/TileType';
-import {AresTestHelper, ARES_OPTIONS_NO_HAZARDS} from '../../ares/AresTestHelper';
+import {SpaceBonus} from '../../../src/common/boards/SpaceBonus';
+import {SpaceType} from '../../../src/common/boards/SpaceType';
+import {TileType} from '../../../src/common/TileType';
+import {ARES_OPTIONS_NO_HAZARDS} from '../../ares/AresTestHelper';
 import {EmptyBoard} from '../../ares/EmptyBoard';
 import {MarsFirst} from '../../../src/turmoil/parties/MarsFirst';
 import {TestingUtils} from '../../TestingUtils';
 import {TestPlayers} from '../../TestPlayers';
+import {OceanCity} from '../../../src/cards/ares/OceanCity';
 
 describe('GeologicalSurvey', () => {
   let card : GeologicalSurvey;
@@ -29,27 +30,27 @@ describe('GeologicalSurvey', () => {
   });
 
   it('Can play', () => {
-    AresTestHelper.addGreenery(player);
-    expect(card.canPlay(player)).is.true;
+    TestingUtils.addGreenery(player);
+    expect(player.canPlayIgnoringCost(card)).is.true;
 
-    AresTestHelper.addGreenery(player);
-    expect(card.canPlay(player)).is.true;
+    TestingUtils.addGreenery(player);
+    expect(player.canPlayIgnoringCost(card)).is.true;
 
-    AresTestHelper.addGreenery(player);
-    expect(card.canPlay(player)).is.true;
+    TestingUtils.addGreenery(player);
+    expect(player.canPlayIgnoringCost(card)).is.true;
 
-    AresTestHelper.addGreenery(player);
-    expect(card.canPlay(player)).is.true;
+    TestingUtils.addGreenery(player);
+    expect(player.canPlayIgnoringCost(card)).is.true;
 
-    AresTestHelper.addGreenery(player);
-    expect(card.canPlay(player)).is.true;
+    TestingUtils.addGreenery(player);
+    expect(player.canPlayIgnoringCost(card)).is.true;
 
-    AresTestHelper.addGreenery(player);
-    expect(card.canPlay(player)).is.false;
+    TestingUtils.addGreenery(player);
+    expect(player.canPlayIgnoringCost(card)).is.false;
   });
 
 
-  it('Bonus in the field', () => {
+  it('Works with Adjacency Bonuses', () => {
     // tile types in this test are irrelevant.
     // What's key is that this space has a weird behavior - it grants all the bonuses.
     // Only three of them will grant additional bonuses: steel, titanium, and heat.
@@ -68,7 +69,6 @@ describe('GeologicalSurvey', () => {
     ],
     };
     game.addTile(player, SpaceType.LAND, firstSpace, {tileType: TileType.RESTRICTED_AREA});
-    // firstSpace.player = player;
 
     const microbeCard = new Ants();
     const animalCard = new Pets();
@@ -101,6 +101,37 @@ describe('GeologicalSurvey', () => {
     expect(animalCard.resourceCount).eq(1);
   });
 
+  it('Works with Space Bonuses', () => {
+    // tile types in this test are irrelevant.
+    // What's key is that this space has a weird behavior - it grants all the bonuses.
+    // Only three of them will grant additional bonuses: steel, titanium, and heat.
+
+    expect(player.titanium).eq(0);
+    expect(player.steel).eq(0);
+    expect(player.heat).eq(0);
+    expect(player.plants).eq(0);
+    expect(player.cardsInHand).is.length(0);
+
+    const space = game.board.getAvailableSpacesOnLand(player)[0];
+    space.bonus = [
+      SpaceBonus.TITANIUM,
+      SpaceBonus.STEEL,
+      SpaceBonus.PLANT,
+      SpaceBonus.DRAW_CARD,
+      SpaceBonus.HEAT,
+    ],
+    player.playedCards = [card];
+    game.addTile(player, SpaceType.LAND, space, {tileType: TileType.RESTRICTED_AREA});
+
+    TestingUtils.runAllActions(game);
+
+    expect(player.titanium).eq(2);
+    expect(player.steel).eq(2);
+    expect(player.heat).eq(2);
+    expect(player.plants).eq(1);
+    expect(player.cardsInHand).is.length(1);
+  });
+
   it('Works with Mars First policy', () => {
     player = TestPlayers.BLUE.newPlayer();
     const gameOptions = TestingUtils.setCustomGameOptions();
@@ -127,14 +158,16 @@ describe('GeologicalSurvey', () => {
 
   it('Bonus not granted when overplacing', () => {
     player.playedCards.push(card);
+    const space = game.board.spaces[5];
 
     // Hand-placing an ocean to make things easy, since this test suite relies on an otherwise empty board.
-    game.board.spaces[5].spaceType = SpaceType.OCEAN;
-    game.board.spaces[5].bonus = [SpaceBonus.HEAT];
-    game.simpleAddTile(redPlayer, game.board.spaces[5], {tileType: TileType.OCEAN});
+    space.spaceType = SpaceType.OCEAN;
+    space.bonus = [SpaceBonus.HEAT];
+    game.simpleAddTile(redPlayer, space, {tileType: TileType.OCEAN});
 
     player.heat = 0;
-    game.addTile(player, SpaceType.OCEAN, game.board.spaces[5], {tileType: TileType.OCEAN_CITY});
+    const selectSpace = new OceanCity().play(player);
+    selectSpace.cb(space);
     TestingUtils.runAllActions(game);
     expect(player.heat).eq(0);
   });

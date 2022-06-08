@@ -1,10 +1,9 @@
 import {StandardActionCard} from '../../StandardActionCard';
-import {CardName} from '../../../CardName';
+import {CardName} from '../../../common/cards/CardName';
 import {CardRenderer} from '../../render/CardRenderer';
 import {Player} from '../../../Player';
-import {PartyHooks} from '../../../turmoil/parties/PartyHooks';
-import {PartyName} from '../../../turmoil/parties/PartyName';
-import {MAX_TEMPERATURE, REDS_RULING_POLICY_COST} from '../../../constants';
+import {MAX_TEMPERATURE} from '../../../common/constants';
+import {Units} from '../../../common/Units';
 
 
 export class ConvertHeat extends StandardActionCard {
@@ -26,15 +25,16 @@ export class ConvertHeat extends StandardActionCard {
     if (player.game.getTemperature() === MAX_TEMPERATURE) {
       return false;
     }
+
+    // Strictly speaking, this conditional is not necessary, because canAfford manages reserveUnits.
     if (player.availableHeat < player.heatForTemperature) {
       return false;
     }
 
-    if (PartyHooks.shouldApplyPolicy(player.game, PartyName.REDS)) {
-      return (!player.isCorporation(CardName.HELION) && player.canAfford(REDS_RULING_POLICY_COST)) ||
-        player.canAfford(REDS_RULING_POLICY_COST + 8);
-    }
-    return true;
+    return player.canAfford(0, {
+      tr: {temperature: 1},
+      reserveUnits: Units.of({heat: player.heatForTemperature}),
+    });
   }
 
   public action(player: Player) {

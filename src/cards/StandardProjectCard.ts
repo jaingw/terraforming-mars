@@ -1,6 +1,6 @@
-import {CardType} from './CardType';
+import {CardType} from '../common/cards/CardType';
 import {Player} from '../Player';
-import {IActionCard, ICard} from './ICard';
+import {IActionCard, ICard, TRSource} from './ICard';
 import {OrOptions} from '../inputs/OrOptions';
 import {SelectAmount} from '../inputs/SelectAmount';
 import {SelectHowToPay} from '../inputs/SelectHowToPay';
@@ -10,18 +10,19 @@ import {SelectPlayer} from '../inputs/SelectPlayer';
 import {AndOptions} from '../inputs/AndOptions';
 import {SelectCard} from '../inputs/SelectCard';
 import {SelectSpace} from '../inputs/SelectSpace';
-import {CardMetadata} from './CardMetadata';
-import {CardName} from '../CardName';
+import {ICardMetadata} from '../common/cards/ICardMetadata';
+import {CardName} from '../common/cards/CardName';
 import {SelectHowToPayDeferred} from '../deferredActions/SelectHowToPayDeferred';
 import {Card} from './Card';
 import {MoonExpansion} from '../moon/MoonExpansion';
-import {Units} from '../Units';
+import {Units} from '../common/Units';
 
 interface StaticStandardProjectCardProperties {
   name: CardName,
   cost: number,
-  metadata: CardMetadata,
+  metadata: ICardMetadata,
   reserveUnits?: Units,
+  tr?: TRSource,
 }
 
 export abstract class StandardProjectCard extends Card implements IActionCard, ICard {
@@ -59,7 +60,17 @@ export abstract class StandardProjectCard extends Card implements IActionCard, I
   }
 
   public canAct(player: Player): boolean {
-    return player.canAfford(this.cost - this.discount(player), {reserveUnits: MoonExpansion.adjustedReserveCosts(player, this)});
+    const canPayWith = this.canPayWith(player);
+    return player.canAfford(
+      this.cost - this.discount(player), {
+        ...canPayWith,
+        tr: this.tr,
+        reserveUnits: MoonExpansion.adjustedReserveCosts(player, this),
+      });
+  }
+
+  public canPayWith(_player: Player): {steel?: boolean, titanium?: boolean, seeds?: boolean, tr?: TRSource} {
+    return {};
   }
 
   protected projectPlayed(player: Player) {
@@ -67,18 +78,25 @@ export abstract class StandardProjectCard extends Card implements IActionCard, I
     this.onStandardProject(player);
   }
 
+  private suffixFreeCardName(cardName: CardName): string {
+    return cardName.split(':')[0];
+  }
+
   public action(player: Player): OrOptions | SelectOption | AndOptions | SelectAmount | SelectCard<ICard> | SelectCard<IProjectCard> | SelectHowToPay | SelectPlayer | SelectSpace | undefined {
+    const canPayWith = this.canPayWith(player);
     player.game.defer(new SelectHowToPayDeferred(
       player,
       this.cost - this.discount(player),
       {
-        title: `Select how to pay for ${this.name} project`,
+        canUseSteel: canPayWith.steel,
+        canUseTitanium: canPayWith.titanium,
+        canUseSeeds: canPayWith.seeds,
+        title: `Select how to pay for ${this.suffixFreeCardName(this.name)} standard project`,
         afterPay: () => {
+          this.projectPlayed(player);
           this.actionEssence(player);
         },
-        canUseSteel: player.isCorporation(CardName._MINING_GUILD_) && this.name === CardName.CITY_STANDARD_PROJECT,
       }));
-    this.projectPlayed(player);
     return undefined;
   }
 }

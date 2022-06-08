@@ -1,12 +1,12 @@
-import {CorporationCard} from '../corporation/CorporationCard';
+import {ICorporationCard} from '../corporation/ICorporationCard';
 import {Player} from '../../Player';
 import {Card} from '../Card';
-import {CardName} from '../../CardName';
-import {CardType} from '../CardType';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
 import {CardRenderer} from '../render/CardRenderer';
-import {Size} from '../render/Size';
+import {Size} from '../../common/cards/render/Size';
 
-export class Midas extends Card implements CorporationCard {
+export class Midas extends Card implements ICorporationCard {
   constructor() {
     super({
       name: CardName.MIDAS,
@@ -18,7 +18,7 @@ export class Midas extends Card implements CorporationCard {
         description: 'You start with 120 M€. Lower your TR 7 steps.',
         renderData: CardRenderer.builder((b) => {
           b.vSpace(Size.LARGE).br;
-          b.megacredits(120, Size.LARGE).nbsp.nbsp.nbsp;
+          b.megacredits(120, {size: Size.LARGE}).nbsp.nbsp.nbsp;
           b.minus().tr(7);
         }),
       },

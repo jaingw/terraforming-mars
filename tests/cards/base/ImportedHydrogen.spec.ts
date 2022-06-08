@@ -27,7 +27,7 @@ describe('ImportedHydrogen', function() {
     player.playedCards.push(pets, tardigrades, decomposers);
 
     const action = card.play(player);
-    expect(action instanceof OrOptions).is.true;
+    expect(action).instanceOf(OrOptions);
     expect((action as OrOptions).options).has.lengthOf(3);
 
     (action as OrOptions).options[0].cb();
@@ -40,9 +40,9 @@ describe('ImportedHydrogen', function() {
     expect(selectMicrobe.cards[0]).to.eq(tardigrades);
     selectMicrobe.cb([tardigrades]);
 
-    expect(player.getResourcesOnCard(tardigrades)).to.eq(3);
+    expect(tardigrades.resourceCount).to.eq(3);
     selectAnimal.cb();
-    expect(player.getResourcesOnCard(pets)).to.eq(2);
+    expect(pets.resourceCount).to.eq(2);
   });
 
   it('Should add plants directly if no microbe or animal cards available', function() {

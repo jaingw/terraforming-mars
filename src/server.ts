@@ -8,7 +8,7 @@ import * as https from 'https';
 import * as http from 'http';
 import * as fs from 'fs';
 
-import {ApiCloneableGames} from './routes/ApiCloneableGames';
+import {ApiCloneableGame} from './routes/ApiCloneableGame';
 import {ApiGameLogs} from './routes/ApiGameLogs';
 import {ApiGames} from './routes/ApiGames';
 import {ApiGame} from './routes/ApiGame';
@@ -39,8 +39,7 @@ const route = new Route();
 const handlers: Map<string, IHandler> = new Map(
   [
     ['/', ServeApp.INSTANCE],
-    ['/api/clonablegames', ApiCloneableGames.INSTANCE],
-    ['/api/cloneablegames', ApiCloneableGames.INSTANCE],
+    ['/api/cloneablegame', ApiCloneableGame.INSTANCE],
     ['/api/game', ApiGame.INSTANCE],
     ['/api/game/logs', ApiGameLogs.INSTANCE],
     ['/api/games', ApiGames.INSTANCE],
@@ -63,6 +62,7 @@ const handlers: Map<string, IHandler> = new Map(
     ['/solo', ServeApp.INSTANCE],
     ['/spectator', ServeApp.INSTANCE],
     ['/styles.css', ServeAsset.INSTANCE],
+    ['/sw.js', ServeAsset.INSTANCE],
     ['/the-end', ServeApp.INSTANCE],
 
 
@@ -76,6 +76,10 @@ const handlers: Map<string, IHandler> = new Map(
 );
 
 function processRequest(req: http.IncomingMessage, res: http.ServerResponse): void {
+  if (req.method === 'HEAD') {
+    res.end();
+    return;
+  }
   if (req.url === undefined) {
     route.notFound(req, res);
     return;
@@ -166,7 +170,6 @@ if (process.env.KEY_PATH && process.env.CERT_PATH) {
 } else {
   server = http.createServer(requestHandler);
 }
-
 
 GameLoader.getInstance().start(() => {
   console.log('Starting server on port ' + (process.env.PORT || 8081));

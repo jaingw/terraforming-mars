@@ -1,13 +1,14 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Card} from '../Card';
-import {CardType} from '../CardType';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {Resources} from '../../Resources';
-import {CardName} from '../../CardName';
+import {Resources} from '../../common/Resources';
+import {CardName} from '../../common/cards/CardName';
 import {DecreaseAnyProduction} from '../../deferredActions/DecreaseAnyProduction';
 import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
+import {all} from '../Options';
 
 export class AsteroidMiningConsortium extends Card implements IProjectCard {
   constructor() {
@@ -16,6 +17,7 @@ export class AsteroidMiningConsortium extends Card implements IProjectCard {
       name: CardName.ASTEROID_MINING_CONSORTIUM,
       tags: [Tags.JOVIAN],
       cost: 13,
+      victoryPoints: 1,
 
       requirements: CardRequirements.builder((b) => b.production(Resources.TITANIUM)),
       metadata: {
@@ -23,21 +25,22 @@ export class AsteroidMiningConsortium extends Card implements IProjectCard {
         cardNumber: '002',
         renderData: CardRenderer.builder((b) => {
           b.production((pb) => {
-            pb.minus().titanium(-1).any.br;
+            pb.minus().titanium(-1, {all}).br;
             pb.plus().titanium(1);
           });
         }),
-        victoryPoints: 1,
       },
     });
   }
 
   public play(player: Player) {
-    player.game.defer(new DecreaseAnyProduction(player, Resources.TITANIUM, 1));
+    const decreaseAction = new DecreaseAnyProduction(
+      player,
+      Resources.TITANIUM,
+      {count: 1, stealing: true},
+    );
+    player.game.defer(decreaseAction);
     player.addProduction(Resources.TITANIUM, 1);
     return undefined;
-  }
-  public getVictoryPoints() {
-    return 1;
   }
 }

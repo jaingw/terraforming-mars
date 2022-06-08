@@ -1,25 +1,33 @@
 import {Board} from './boards/Board';
-import {BoardName} from './boards/BoardName';
+import {BoardName} from './common/boards/BoardName';
 import {ElysiumBoard} from './boards/ElysiumBoard';
-import {Game, GameId, GameOptions} from './Game';
+import {Game, GameOptions} from './Game';
+import {GameId} from './common/Types';
 import {HellasBoard} from './boards/HellasBoard';
 import {OriginalBoard} from './boards/OriginalBoard';
 import {Player} from './Player';
-import {Resources} from './Resources';
-import {ColonyName} from './colonies/ColonyName';
-import {Color} from './Color';
-import {TileType} from './TileType';
+import {Resources} from './common/Resources';
+import {ColonyName} from './common/colonies/ColonyName';
+import {Color} from './common/Color';
+import {TileType} from './common/TileType';
 import {Random} from './Random';
+import {ArabiaTerraBoard} from './boards/ArabiaTerraBoard';
+import {VastitasBorealisBoard} from './boards/VastitasBorealisBoard';
 
 export class GameSetup {
   // Function to construct the board and milestones/awards list
-  public static newBoard(boardName: BoardName, shuffle: boolean, rng: Random, includeVenus: boolean): Board {
-    if (boardName === BoardName.ELYSIUM) {
-      return ElysiumBoard.newInstance(shuffle, rng, includeVenus);
-    } else if (boardName === BoardName.HELLAS) {
-      return HellasBoard.newInstance(shuffle, rng, includeVenus);
-    } else {
-      return OriginalBoard.newInstance(shuffle, rng, includeVenus);
+  public static newBoard(gameOptions: GameOptions, rng: Random): Board {
+    switch (gameOptions.boardName) {
+    case BoardName.ELYSIUM:
+      return ElysiumBoard.newInstance(gameOptions, rng);
+    case BoardName.HELLAS:
+      return HellasBoard.newInstance(gameOptions, rng);
+    case BoardName.ARABIA_TERRA:
+      return ArabiaTerraBoard.newInstance(gameOptions, rng);
+    case BoardName.VASTITAS_BOREALIS:
+      return VastitasBorealisBoard.newInstance(gameOptions, rng);
+    default:
+      return OriginalBoard.newInstance(gameOptions, rng);
     }
   }
 

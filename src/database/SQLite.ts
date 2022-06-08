@@ -1,27 +1,43 @@
-import {IDatabase, DbLoadCallback} from './IDatabase';
-import {Game, GameId, GameOptions, Score} from '../Game';
-import {IGameData} from './IDatabase';
+import {IDatabase, DbLoadCallback, IGameShortData} from './IDatabase';
+import {Game, GameOptions, Score} from '../Game';
+import {GameId} from '../common/Types';
+import {IGameData} from '../common/game/IGameData';
 import {SerializedGame} from '../SerializedGame';
 
 import sqlite3 = require('sqlite3');
 import {User} from '../User';
+import {Timer} from '../Timer';
 const path = require('path');
 const fs = require('fs');
-const dbFolder = path.resolve(__dirname, '../../../db');
-const dbPath = path.resolve(__dirname, '../../../db/game.db');
+const dbFolder = path.resolve(process.cwd(), './db');
+const dbPath = path.resolve(dbFolder, 'game.db');
+
+export const IN_MEMORY_SQLITE_PATH = ':memory:';
 
 export class SQLite implements IDatabase {
-  private db: sqlite3.Database;
+  protected db: sqlite3.Database;
 
-  constructor() {
-    // Create the table that will store every saves if not exists
-    if (!fs.existsSync(dbFolder)) {
-      fs.mkdirSync(dbFolder);
+  constructor(filename: string = dbPath) {
+    if (filename !== IN_MEMORY_SQLITE_PATH) {
+      if (!fs.existsSync(dbFolder)) {
+        fs.mkdirSync(dbFolder);
+      }
     }
-    this.db = new sqlite3.Database(dbPath);
-    this.db.run('CREATE TABLE IF NOT EXISTS games(game_id varchar, save_id integer, game text, status text default \'running\',createtime timestamp default (datetime(CURRENT_TIMESTAMP,\'localtime\')), PRIMARY KEY (game_id, save_id))');
-    this.db.run('CREATE TABLE IF NOT EXISTS \'users\'(\'id\'  varchar NOT NULL,\'name\'  varchar NOT NULL,\'password\'  varchar NOT NULL,\'prop\' varchar,\'createtime\'  timestamp DEFAULT (datetime(CURRENT_TIMESTAMP,\'localtime\')),PRIMARY KEY (\'id\'))');
-    this.db.run('CREATE TABLE IF NOT EXISTS game_results(game_id varchar not null, seed_game_id varchar, players integer, generations integer, game_options text, scores text,createtime timestamp default (datetime(CURRENT_TIMESTAMP,\'localtime\')), PRIMARY KEY (game_id))');
+    this.db = new sqlite3.Database(filename);
+  }
+
+  async initialize(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.db.run('CREATE TABLE IF NOT EXISTS games(game_id varchar, save_id integer, game text, status text default \'running\',createtime timestamp default (datetime(CURRENT_TIMESTAMP,\'localtime\')), prop text, PRIMARY KEY (game_id, save_id))');
+      this.db.run('CREATE TABLE IF NOT EXISTS \'users\'(\'id\'  varchar NOT NULL,\'name\'  varchar NOT NULL,\'password\'  varchar NOT NULL,\'prop\' varchar,\'createtime\'  timestamp DEFAULT (datetime(CURRENT_TIMESTAMP,\'localtime\')),PRIMARY KEY (\'id\'))');
+      this.db.run('CREATE TABLE IF NOT EXISTS game_results(game_id varchar not null, seed_game_id varchar, players integer, generations integer, game_options text, scores text,createtime timestamp default (datetime(CURRENT_TIMESTAMP,\'localtime\')), PRIMARY KEY (game_id))', (err3) => {
+        if (err3) {
+          reject(err3);
+          return;
+        }
+        resolve();
+      });
+    });
   }
 
   getClonableGames(cb: (err: Error | undefined, allGames: Array<IGameData>) => void) {
@@ -44,16 +60,33 @@ export class SQLite implements IDatabase {
     });
   }
 
-  getGames(cb: (err: Error | undefined, allGames: Array<string>) => void) {
-    const allGames: Array<string> = [];
-    const sql: string = 'SELECT distinct game_id game_id FROM games ';
+  getClonableGameByGameId(gameId: GameId, cb: (err: Error | undefined, gameData: IGameData | undefined) => void) {
+    const sql = 'SELECT players FROM games WHERE save_id = 0 AND game_id = ? LIMIT 1';
+
+    this.db.get(sql, [gameId], (err, row) => {
+      if (err) {
+        cb(err, undefined);
+      } else if (row) {
+        cb(undefined, {
+          gameId,
+          playerCount: row.players,
+        });
+      } else {
+        cb(undefined, undefined);
+      }
+    });
+  }
+
+  getGames(cb: (err: Error | undefined, allGames: Array<IGameShortData>) => void) {
+    const allGames: Array<IGameShortData> = [];
+    const sql: string = 'SELECT distinct game_id game_id,prop prop,max(save_id) FROM games group by game_id ';
     this.db.all(sql, [], (err, rows) => {
       if (rows) {
         rows.forEach((row) => {
-          allGames.push(row.game_id);
+          allGames.push({gameId: row.game_id, shortData: row.prop !== undefined && row.prop !=='' ? JSON.parse(row.prop) : undefined});
         });
-        return cb(err ?? undefined, allGames);
       }
+      return cb(err ?? undefined, allGames);
     });
   }
 
@@ -101,6 +134,17 @@ export class SQLite implements IDatabase {
     });
   }
 
+  // TODO(kberg): throw an error if two game ids exist.
+  getGameId(playerId: string, cb: (err: Error | undefined, gameId?: GameId) => void): void {
+    const sql = 'SELECT game_id from games, json_each(games.game, \'$.players\') e where json_extract(e.value, \'$.id\') = ?';
+    this.db.get(sql, [playerId], (err: Error | null, row: { gameId: any; }) => {
+      if (err) {
+        return cb(err ?? undefined);
+      }
+      cb(undefined, row.gameId);
+    });
+  }
+
   getGameVersion(game_id: GameId, save_id: number, cb: DbLoadCallback<SerializedGame>): void {
     this.db.get('SELECT game game FROM games WHERE game_id = ? and save_id = ?', [game_id, save_id], (err: Error | null, row: { game: any; }) => {
       if (err) {
@@ -110,19 +154,33 @@ export class SQLite implements IDatabase {
     });
   }
 
-  cleanSaves(game_id: GameId, save_id: number): void {
-    // DELETE all saves except initial and last one
-    this.db.run('DELETE FROM games WHERE game_id = ? AND save_id < ? AND save_id > 0', [game_id, save_id], function(err: Error | null) {
+  getMaxSaveId(game_id: GameId, cb: DbLoadCallback<number>): void {
+    this.db.get('SELECT MAX(save_id) AS save_id FROM games WHERE game_id = ?', [game_id], (err: Error | null, row: { save_id: number; }) => {
       if (err) {
-        return console.warn(err.message);
+        return cb(err ?? undefined, undefined);
       }
+      cb(undefined, row.save_id);
     });
-    // Flag game as finished
-    this.db.run('UPDATE games SET status = \'finished\' WHERE game_id = ?', [game_id], function(err: Error | null) {
+  }
+
+  cleanSaves(game_id: GameId): void {
+    this.getMaxSaveId(game_id, ((err, save_id) => {
       if (err) {
-        return console.warn(err.message);
+        console.warn('SQLite: cleansaves0:', err.message);
+        return;
       }
-    });
+      if (save_id === undefined) throw new Error('saveId is undefined for ' + game_id);
+      // Purges isn't used yet
+      // this.runQuietly('INSERT into purges (game_id, last_save_id) values (?, ?)', [game_id, save_id]);
+      // DELETE all saves except initial and last one
+      this.db.run('DELETE FROM games WHERE game_id = ? AND save_id < ? AND save_id > 0', [game_id, save_id], (err) => {
+        if (err) console.warn('SQLite: cleansaves1: ', err.message);
+        // Flag game as finished
+        this.db.run('UPDATE games SET status = \'finished\' WHERE game_id = ?', [game_id], (err) => {
+          if (err) console.warn('SQLite: cleansaves2: ', err.message);
+        });
+      });
+    }));
   }
 
   purgeUnfinishedGames(): void {
@@ -170,18 +228,23 @@ export class SQLite implements IDatabase {
         game.updatetime = row.createtime;
         game.gameLog = gamelog;
         game.log('${0} undo turn', (b) => b.playerId(playId));
+        // 会员回退时 以当前时间开始计时， 避免计时算到上一个人头上
+        if (playId === 'manager') {
+          Timer.newInstance().stop();
+          game.activePlayer.timer.start();
+        }
         console.log(`${playId} undo turn ${game_id}  ${save_id}`);
       }
       return true;
     });
   }
 
-  saveGameState(game_id: string, save_id: number, game: string): void {
+  saveGameState(game_id: string, save_id: number, game: string, gameShortDate: string = '{}'): void {
     // Insert
-    this.db.run('INSERT INTO games(game_id, save_id, game) VALUES(?, ?, ?)', [game_id, save_id, game], function(err: Error | null) {
+    this.db.run('INSERT INTO games(game_id, save_id, game, prop) VALUES(?, ?, ?, ?)', [game_id, save_id, game, gameShortDate], function(err: Error | null) {
       if (err) {
         // Should be a duplicate, does not matter
-        console.log('saveGameState' + err);
+        console.log('saveGameState ' + err);
         return;
       }
     });
@@ -212,10 +275,14 @@ export class SQLite implements IDatabase {
     this.db.all(sql, [], (err, rows) => {
       if (rows) {
         rows.forEach((row) => {
-          allUsers.push( Object.assign(new User('', '', ''), {id: row.id, name: row.name, password: row.password, createtime: row.createtime}, JSON.parse(row.prop) ));
+          const user = Object.assign(new User('', '', ''), {id: row.id, name: row.name, password: row.password, createtime: row.createtime}, JSON.parse(row.prop) );
+          if (user.donateNum === 0 && user.isvip() > 0) {
+            user.donateNum = 1;
+          }
+          allUsers.push(user );
         });
         return cb(err, allUsers);
-      };
+      }
       if (err) {
         return console.warn(err.message);
       }

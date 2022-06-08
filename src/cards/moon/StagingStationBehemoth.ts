@@ -1,8 +1,8 @@
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {Player} from '../../Player';
-import {CardType} from '../CardType';
+import {CardType} from '../../common/cards/CardType';
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {CardRenderer} from '../render/CardRenderer';
 import {MoonExpansion} from '../../moon/MoonExpansion';
 import {Card} from '../Card';
@@ -14,6 +14,7 @@ export class StagingStationBehemoth extends Card implements IProjectCard {
       cardType: CardType.AUTOMATED,
       tags: [Tags.SPACE],
       cost: 24,
+      tr: {moonLogistics: 1},
 
       metadata: {
         description: 'Gain 2 trade fleets. Raise the Logistic Rate 1 step.',
@@ -23,7 +24,7 @@ export class StagingStationBehemoth extends Card implements IProjectCard {
         }),
       },
     });
-  };
+  }
 
   public play(player: Player) {
     player.increaseFleetSize();

@@ -1,11 +1,11 @@
 import {IProjectCard} from '../IProjectCard';
-import {CardType} from '../CardType';
 import {Player} from '../../Player';
-import {CardName} from '../../CardName';
 import {CardRenderer} from '../render/CardRenderer';
-import {Tags} from '../Tags';
 import {Card} from '../Card';
-import {Resources} from '../../Resources';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
+import {Tags} from '../../common/cards/Tags';
+import {Resources} from '../../common/Resources';
 
 export class EnergySupply extends Card implements IProjectCard {
   constructor() {
@@ -21,7 +21,7 @@ export class EnergySupply extends Card implements IProjectCard {
         description: 'Gain 3 energy.',
       },
     });
-  };
+  }
   public play(player: Player) {
     player.addResource(Resources.ENERGY, 3);
     return undefined;

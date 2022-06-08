@@ -1,12 +1,9 @@
 import {IProjectCard} from '../IProjectCard';
 import {Card} from '../Card';
-import {CardType} from '../CardType';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {Resources} from '../../Resources';
-import {CardName} from '../../CardName';
-import {MAX_OCEAN_TILES, REDS_RULING_POLICY_COST} from '../../constants';
-import {PartyHooks} from '../../turmoil/parties/PartyHooks';
-import {PartyName} from '../../turmoil/parties/PartyName';
+import {Resources} from '../../common/Resources';
+import {CardName} from '../../common/cards/CardName';
 import {PlaceOceanTile} from '../../deferredActions/PlaceOceanTile';
 import {CardRenderer} from '../render/CardRenderer';
 
@@ -16,6 +13,7 @@ export class BlackPolarDust extends Card implements IProjectCard {
       cardType: CardType.AUTOMATED,
       name: CardName.BLACK_POLAR_DUST,
       cost: 15,
+      tr: {oceans: 1},
 
       metadata: {
         cardNumber: '022',
@@ -29,15 +27,8 @@ export class BlackPolarDust extends Card implements IProjectCard {
       },
     });
   }
-  public canPlay(player: Player): boolean {
-    const meetsMcProdRequirement = player.getProduction(Resources.MEGACREDITS) >= -3;
-    const oceansMaxed = player.game.board.getOceansOnBoard() === MAX_OCEAN_TILES;
-
-    if (PartyHooks.shouldApplyPolicy(player.game, PartyName.REDS) && !oceansMaxed) {
-      return player.canAfford(player.getCardCost(this) + REDS_RULING_POLICY_COST) && meetsMcProdRequirement;
-    }
-
-    return meetsMcProdRequirement;
+  public override canPlay(player: Player): boolean {
+    return player.getProduction(Resources.MEGACREDITS) >= -3;
   }
   public play(player: Player) {
     player.addProduction(Resources.MEGACREDITS, -2);

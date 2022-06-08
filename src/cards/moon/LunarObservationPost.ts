@@ -1,14 +1,14 @@
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {Player} from '../../Player';
-import {CardType} from '../CardType';
-import {Tags} from '../Tags';
-import {ResourceType} from '../../ResourceType';
+import {CardType} from '../../common/cards/CardType';
+import {Tags} from '../../common/cards/Tags';
+import {ResourceType} from '../../common/ResourceType';
 import {AddResourcesToCard} from '../../deferredActions/AddResourcesToCard';
 import {IActionCard} from '../ICard';
 import {CardRenderer} from '../render/CardRenderer';
-import {CardRenderDynamicVictoryPoints} from '../render/CardRenderDynamicVictoryPoints';
-import {Units} from '../../Units';
+import {Units} from '../../common/Units';
 import {MoonCard} from './MoonCard';
+import {VictoryPoints} from '../ICard';
 
 export class LunarObservationPost extends MoonCard implements IActionCard {
   constructor() {
@@ -17,8 +17,9 @@ export class LunarObservationPost extends MoonCard implements IActionCard {
       cardType: CardType.ACTIVE,
       tags: [Tags.SCIENCE, Tags.SCIENCE],
       cost: 7,
-      productionBox: Units.of({}),
+
       resourceType: ResourceType.DATA,
+      victoryPoints: VictoryPoints.resource(1, 3),
       reserveUnits: Units.of({titanium: 1}),
 
       metadata: {
@@ -31,14 +32,13 @@ export class LunarObservationPost extends MoonCard implements IActionCard {
           b.br;
           b.minus().titanium(1);
         }),
-        victoryPoints: CardRenderDynamicVictoryPoints.data(1, 3),
       },
     });
   }
 
-  public resourceCount: number = 0;
+  public override resourceCount: number = 0;
 
-  public play(player: Player) {
+  public override play(player: Player) {
     super.play(player);
     return undefined;
   }
@@ -50,9 +50,5 @@ export class LunarObservationPost extends MoonCard implements IActionCard {
   public action(player: Player) {
     player.game.defer(new AddResourcesToCard(player, ResourceType.DATA));
     return undefined;
-  }
-
-  public getVictoryPoints() {
-    return Math.floor(this.resourceCount / 3);
   }
 }

@@ -1,23 +1,23 @@
-import {CorporationCard} from '../../corporation/CorporationCard';
 import {Player} from '../../../Player';
-import {CardName} from '../../../CardName';
-import {CardType} from '../../CardType';
 import {CardRenderer} from '../../render/CardRenderer';
-import {Tags} from '../../Tags';
 import {OrOptions} from '../../../inputs/OrOptions';
 import {SelectOption} from '../../../inputs/SelectOption';
 import {LogHelper} from '../../../LogHelper';
 import {PlaceOceanTile} from '../../../deferredActions/PlaceOceanTile';
 import {SelectHowToPayDeferred} from '../../../deferredActions/SelectHowToPayDeferred';
-import {MAX_TEMPERATURE, MAX_OCEAN_TILES, MAX_OXYGEN_LEVEL, MAX_VENUS_SCALE, REDS_RULING_POLICY_COST} from '../../../constants';
-import {PartyName} from '../../../turmoil/parties/PartyName';
 import {PartyHooks} from '../../../turmoil/parties/PartyHooks';
 import {Card} from '../../Card';
 import {ICard} from '../../ICard';
-import {Size} from '../../render/Size';
 import {Priority} from '../../../deferredActions/DeferredAction';
+import {CardName} from '../../../common/cards/CardName';
+import {CardType} from '../../../common/cards/CardType';
+import {Size} from '../../../common/cards/render/Size';
+import {Tags} from '../../../common/cards/Tags';
+import {REDS_RULING_POLICY_COST, MAX_VENUS_SCALE, MAX_TEMPERATURE, MAX_OXYGEN_LEVEL, MAX_OCEAN_TILES} from '../../../common/constants';
+import {PartyName} from '../../../common/turmoil/PartyName';
+import {ICorporationCard} from '../../corporation/ICorporationCard';
 
-export class WGParternship extends Card implements ICard, CorporationCard {
+export class WGParternship extends Card implements ICard, ICorporationCard {
   constructor() {
     super({
       name: CardName.WG_PARTERNSHIP,
@@ -38,7 +38,7 @@ export class WGParternship extends Card implements ICard, CorporationCard {
             });
             ce.vSpace(Size.SMALL);
             ce.action(`inrease temperature/oxygen/venus 1step or spend ${WGParternship.oceanCost}M€ to place an ocean`, (eb) => {
-              eb.or().megacredits(WGParternship.oceanCost).startAction.oceans(1, Size.SMALL);
+              eb.or().megacredits(WGParternship.oceanCost).startAction.oceans(1, {size: Size.SMALL});
             });
             ce.vSpace(Size.SMALL);
           });
@@ -55,7 +55,7 @@ export class WGParternship extends Card implements ICard, CorporationCard {
 
   public canAct(player: Player): boolean {
     const game = player.game;
-    const shouldApplyRed = PartyHooks.shouldApplyPolicy(player.game, PartyName.REDS);
+    const shouldApplyRed = PartyHooks.shouldApplyPolicy(player, PartyName.REDS);
 
     if (shouldApplyRed && !player.canAfford( REDS_RULING_POLICY_COST)) {
       return false;
@@ -66,7 +66,7 @@ export class WGParternship extends Card implements ICard, CorporationCard {
     if ( game.getTemperature() !== MAX_TEMPERATURE || game.getOxygenLevel() !== MAX_OXYGEN_LEVEL ) {
       return true;
     }
-    if (game.board.getOceansOnBoard() === MAX_OCEAN_TILES || !player.canAfford(WGParternship.oceanCost) ||
+    if (game.board.getOceanCount() === MAX_OCEAN_TILES || !player.canAfford(WGParternship.oceanCost) ||
             shouldApplyRed && !player.canAfford(WGParternship.oceanCost+REDS_RULING_POLICY_COST) ) {
       return false;
     }
@@ -109,9 +109,9 @@ export class WGParternship extends Card implements ICard, CorporationCard {
     if (game.gameOptions.venusNextExtension && game.getVenusScaleLevel() !== MAX_VENUS_SCALE) {
       action.options.push(increaseVenus);
     }
-    const shouldApplyRed = PartyHooks.shouldApplyPolicy(player.game, PartyName.REDS);
+    const shouldApplyRed = PartyHooks.shouldApplyPolicy(player, PartyName.REDS);
     const canAfford = player.canAfford(WGParternship.oceanCost) || shouldApplyRed && player.canAfford(WGParternship.oceanCost+REDS_RULING_POLICY_COST);
-    if (game.board.getOceansOnBoard() < MAX_OCEAN_TILES && canAfford) {
+    if (game.board.getOceanCount() < MAX_OCEAN_TILES && canAfford) {
       action.options.push(addOcean);
     }
     return action;

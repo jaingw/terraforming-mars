@@ -1,11 +1,10 @@
-import {Tags} from '../Tags';
+import {Tags} from '../../common/cards/Tags';
 import {Player} from '../../Player';
 import {PreludeCard} from './PreludeCard';
 import {IProjectCard} from '../IProjectCard';
-import {Resources} from '../../Resources';
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
-import {Units} from '../../Units';
+import {Units} from '../../common/Units';
 
 export class ResearchNetwork extends PreludeCard implements IProjectCard {
   constructor() {
@@ -25,7 +24,7 @@ export class ResearchNetwork extends PreludeCard implements IProjectCard {
     });
   }
   public play(player: Player) {
-    player.addProduction(Resources.MEGACREDITS, 1);
+    player.adjustProduction(this.productionBox),
     player.drawCard(3);
     return undefined;
   }

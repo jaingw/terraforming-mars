@@ -1,10 +1,10 @@
 import {IProjectCard} from '../IProjectCard';
 import {Card} from '../Card';
-import {CardName} from '../../CardName';
-import {CardType} from '../CardType';
-import {Tags} from '../Tags';
+import {CardName} from '../../common/cards/CardName';
+import {CardType} from '../../common/cards/CardType';
+import {Tags} from '../../common/cards/Tags';
 import {Player} from '../../Player';
-import {Resources} from '../../Resources';
+import {Resources} from '../../common/Resources';
 import {CardRenderer} from '../../cards/render/CardRenderer';
 
 export class InterplanetaryTrade extends Card implements IProjectCard {
@@ -14,6 +14,7 @@ export class InterplanetaryTrade extends Card implements IProjectCard {
       name: CardName.INTERPLANETARY_TRADE,
       tags: [Tags.SPACE],
       cost: 27,
+      victoryPoints: 1,
 
       metadata: {
         cardNumber: 'X05',
@@ -22,23 +23,14 @@ export class InterplanetaryTrade extends Card implements IProjectCard {
           b.slash().diverseTag();
         }),
         description: 'Increase your M€ production 1 step per different tag you have in play, including this.',
-        victoryPoints: 1,
       },
     });
   }
 
   public play(player: Player) {
-    // This card tag is counting as well
+    // This card's tag also counts.
     const availableTags = player.getDistinctTagCount(true, Tags.SPACE);
-    // Only count wildcards up to the max amount of tag types existing (minus events and wildcards)
-    const existingTags = Object.keys(Tags).length - 2;
-    // 事件公司的标志上限是12
-    if (player.isCorporation(CardName._INTERPLANETARY_CINEMATICS_) && player.playedCards.filter((card) => card.cardType === CardType.EVENT ).length > 0) player.addProduction(Resources.MEGACREDITS, Math.min(availableTags+1, existingTags), {log: true});
-    else player.addProduction(Resources.MEGACREDITS, Math.min(availableTags, existingTags), {log: true});
+    player.addProduction(Resources.MEGACREDITS, availableTags, {log: true});
     return undefined;
-  }
-
-  public getVictoryPoints() {
-    return 1;
   }
 }

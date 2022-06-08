@@ -1,18 +1,18 @@
-import {CardName} from '../CardName';
+import {CardName} from '../common/cards/CardName';
 import {ICard} from '../cards/ICard';
 import {Game} from '../Game';
 import {SelectCard} from '../inputs/SelectCard';
 import {ISpace} from '../boards/ISpace';
 import {Player} from '../Player';
-import {Resources} from '../Resources';
-import {ResourceType} from '../ResourceType';
-import {SpaceBonus} from '../SpaceBonus';
-import {OCEAN_UPGRADE_TILES, TileType} from '../TileType';
+import {Resources} from '../common/Resources';
+import {ResourceType} from '../common/ResourceType';
+import {SpaceBonus} from '../common/boards/SpaceBonus';
+import {OCEAN_UPGRADE_TILES, TileType} from '../common/TileType';
 import {ITile} from '../ITile';
-import {IAresData, IMilestoneCount} from './IAresData';
+import {IAresData, IMilestoneCount} from '../common/ares/IAresData';
 import {IAdjacencyCost} from './IAdjacencyCost';
 import {Multiset} from '../utils/Multiset';
-import {Phase} from '../Phase';
+import {Phase} from '../common/Phase';
 import {DeferredAction} from '../deferredActions/DeferredAction';
 import {SelectHowToPayDeferred} from '../deferredActions/SelectHowToPayDeferred';
 import {SelectProductionToLoseDeferred} from '../deferredActions/SelectProductionToLoseDeferred';
@@ -22,7 +22,7 @@ export enum HazardSeverity {
     NONE,
     MILD,
     SEVERE
-};
+}
 
 export class AresHandler {
   private constructor() {}
@@ -63,7 +63,7 @@ export class AresHandler {
       return false;
     }
     const adjacentPlayer = adjacentSpace.player;
-    if (adjacentPlayer === undefined) {
+    if (adjacentPlayer === undefined || adjacentPlayer.name === 'neutral') {
       throw new Error(`A tile with an adjacency bonus must have an owner (${adjacentSpace.x}, ${adjacentSpace.y}, ${adjacentSpace.adjacency.bonus}`);
     }
 
@@ -122,7 +122,7 @@ export class AresHandler {
     let ownerBonus = 1;
     if (adjacentPlayer.cardIsInEffect(CardName.MARKETING_EXPERTS)) {
       ownerBonus = 2;
-    };
+    }
 
     adjacentPlayer.megaCredits += ownerBonus;
     player.game.log('${0} gains ${1} M€ for a tile placed next to ${2}', (b) => b.player(adjacentPlayer).number(ownerBonus).string(tileText));

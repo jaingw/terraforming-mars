@@ -1,14 +1,13 @@
 
-import {CardName} from '../../CardName';
+import {CardName} from '../../common/cards/CardName';
 import {MiningCard} from './MiningCard';
-import {TileType} from '../../TileType';
-import {CardMetadata} from '../CardMetadata';
+import {TileType} from '../../common/TileType';
 import {CardRenderer} from '../render/CardRenderer';
 
 export class MiningRights extends MiningCard {
   constructor(
     name: CardName = CardName.MINING_RIGHTS,
-    metadata: CardMetadata = {
+    metadata = {
       cardNumber: '067',
       renderData: CardRenderer.builder((b) => {
         b.tile(TileType.MINING_RIGHTS, true).asterix().br;

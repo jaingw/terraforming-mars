@@ -8,14 +8,15 @@ import {COMMUNITY_CARD_MANIFEST} from './cards/community/CommunityCardManifest';
 import {ARES_CARD_MANIFEST} from './cards/ares/AresCardManifest';
 /* 群友扩内容 */
 import {EROS_CARD_MANIFEST} from './cards/eros/ErosCardManifest';
+import {MOON_CARD_MANIFEST} from './cards/moon/MoonCardManifest';
+import {PATHFINDERS_CARD_MANIFEST} from './cards/pathfinders/PathfindersCardManifest';
 import {CardManifest} from './cards/CardManifest';
-import {CardName} from './CardName';
+import {CardName} from './common/cards/CardName';
 import {ICard} from './cards/ICard';
 import {ICardFactory} from './cards/ICardFactory';
 import {Deck} from './Deck';
-import {GameModule} from './GameModule';
+import {GameModule} from './common/cards/GameModule';
 import {GameOptions} from './Game';
-import {MOON_CARD_MANIFEST} from './cards/moon/MoonCardManifest';
 
 export class CardLoader {
   private readonly gameOptions: GameOptions;
@@ -36,12 +37,13 @@ export class CardLoader {
       [gameOptions.communityCardsOption, COMMUNITY_CARD_MANIFEST],
       [gameOptions.erosCardsOption, EROS_CARD_MANIFEST],
       [gameOptions.moonExpansion, MOON_CARD_MANIFEST],
+      [gameOptions.pathfindersExpansion, PATHFINDERS_CARD_MANIFEST],
     ];
 
     this.manifests = manifests.filter((a) => a[0]).map((a) => a[1]);
   }
 
-  private static include(gameOptions: GameOptions, cf: ICardFactory<ICard>): boolean {
+  public static include(gameOptions: GameOptions, cf: ICardFactory<ICard>): boolean {
     if (cf.compatibility === undefined) {
       return true;
     }
@@ -54,6 +56,8 @@ export class CardLoader {
         return gameOptions.coloniesExtension;
       case GameModule.Turmoil:
         return gameOptions.turmoilExtension;
+      case GameModule.Pathfinders:
+        return gameOptions.pathfindersExpansion;
       default:
         throw new Error(`Unhandled expansion type ${expansion} for card ${cf.cardName}`);
       }

@@ -1,9 +1,9 @@
 import {IProjectCard} from '../IProjectCard';
-import {Tags} from '../Tags';
-import {CardType} from '../CardType';
+import {Tags} from '../../common/cards/Tags';
+import {CardType} from '../../common/cards/CardType';
 import {Player} from '../../Player';
-import {CardName} from '../../CardName';
-import {ResourceType} from '../../ResourceType';
+import {CardName} from '../../common/cards/CardName';
+import {ResourceType} from '../../common/ResourceType';
 import {SelectOption} from '../../inputs/SelectOption';
 import {OrOptions} from '../../inputs/OrOptions';
 import {SelectAmount} from '../../inputs/SelectAmount';
@@ -20,24 +20,24 @@ export class TitanShuttles extends Card implements IProjectCard, IResourceCard {
       name: CardName.TITAN_SHUTTLES,
       cardType: CardType.ACTIVE,
       resourceType: ResourceType.FLOATER,
+      victoryPoints: 1,
 
       metadata: {
         cardNumber: 'C45',
         renderData: CardRenderer.builder((b) => {
           b.action('Add 2 floaters to ANY JOVIAN CARD.', (eb) => {
-            eb.empty().startAction.floaters(2).secondaryTag(Tags.JOVIAN);
+            eb.empty().startAction.floaters(2, {secondaryTag: Tags.JOVIAN});
           }).br;
           b.or().br;
           b.action('Spend any number of floaters here to gain the same number of titanium.', (eb) => {
             eb.text('x').floaters(1).startAction.text('x').titanium(1);
           }).br;
         }),
-        victoryPoints: 1,
       },
     });
   }
 
-  public resourceCount: number = 0;
+  public override resourceCount: number = 0;
 
   public canAct(): boolean {
     return true;
@@ -72,9 +72,5 @@ export class TitanShuttles extends Card implements IProjectCard, IResourceCard {
 
   public play() {
     return undefined;
-  }
-
-  public getVictoryPoints(): number {
-    return 1;
   }
 }
