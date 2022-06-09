@@ -39,7 +39,7 @@ export class ShinraTech extends Card implements ICorporationCard {
   private _onCardPlayed(player: Player, card: IProjectCard | ICorporationCard) {
     if (player.corpName(this.name)) {
       for (const tag of card.tags) {
-        if (tag === Tags.SCIENCE) {
+        if (tag === Tags.ENERGY) {
           player.game.getCardPlayer(this.name)?.addProduction(Resources.MEGACREDITS, 2, {log: true});
         }
       }
