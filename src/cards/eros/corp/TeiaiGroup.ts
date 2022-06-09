@@ -11,7 +11,7 @@ export class TeiaiGroup extends Card implements ICard, ICorporationCard {
   constructor() {
     super({
       name: CardName.TEIAI_GROUP,
-      tags: [Tags.WILDCARD, Tags.WILDCARD, Tags.WILDCARD, Tags.WILDCARD, Tags.WILDCARD, Tags.WILDCARD, Tags.WILDCARD],
+      tags: [Tags.BUILDING],
       startingMegaCredits: 51,
       cardType: CardType.CORPORATION,
 

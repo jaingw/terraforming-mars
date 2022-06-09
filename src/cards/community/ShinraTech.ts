@@ -19,10 +19,10 @@ export class ShinraTech extends Card implements ICorporationCard {
 
       metadata: {
         cardNumber: 'XUEBAO2',
-        description: 'You start with 2 energy production and 39 M€.',
+        description: 'You start with 2 energy production and 39 M€. Draw a Energy card.',
         renderData: CardRenderer.builder((b) => {
-          b.br;
-          b.production((pb) => pb.energy(2)).nbsp.megacredits(39);
+          b.br.br.br;
+          b.production((pb) => pb.energy(2)).megacredits(39).cards(1, {secondaryTag: Tags.ENERGY});
           b.corpBox('effect', (ce) => {
             ce.effect('When playing a power tag, increase MC production 2 steps', (eb) => {
               eb.energy(1, {played}).asterix().startEffect.production((pb) => pb.megacredits(2));
@@ -44,6 +44,7 @@ export class ShinraTech extends Card implements ICorporationCard {
   public play(player: Player) {
     player.addProduction(Resources.ENERGY, 2);
     player.addProduction(Resources.MEGACREDITS, 2);
+    player.drawCard(1, {tag: Tags.ENERGY});
     return undefined;
   }
 }
