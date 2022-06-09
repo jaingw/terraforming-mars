@@ -216,7 +216,7 @@ describe('GameLoader', function() {
     GameLoader.getInstance().getGameById('foobar', (game1) => {
       expect(game1).is.undefined;
     });
-        GameLoader.getInstance().getByPlayerId(game.getPlayersInGenerationOrder()[0].id, (game1) => {
+    GameLoader.getInstance().getByPlayerId(game.getPlayersInGenerationOrder()[0].id, (game1) => {
       expect(game1).is.undefined;
       Database.getInstance().getGames = workingGetGames;
       done();

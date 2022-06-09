@@ -20,7 +20,7 @@ export class OrOptions implements PlayerInput {
   public buttonLabel: string = 'Save';
   public options: Array<PlayerInput>;
   public inputType: PlayerInputTypes = PlayerInputTypes.OR_OPTIONS;
-    public id: string | undefined;
+  public id: string | undefined;
   constructor(
     ...options: Array<SelectAmount | SelectCard<ICard> | SelectCard<IProjectCard>| SelectPlayer | SelectOption | SelectHowToPay | SelectDelegate | SelectColony>
   ) {

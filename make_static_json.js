@@ -1,4 +1,3 @@
-/* eslint-disable guard-for-in */
 // Generates the files settings.json and translations.json, stored in src/genfiles
 
 require('dotenv').config();
@@ -20,18 +19,20 @@ function getAllTranslations() {
       const files = fs.readdirSync(translationDir);
       files.forEach((file) => {
         if ( file === undefined || ! file.endsWith('.json')) return;
-        const dataJson = JSON.parse(fs.readFileSync(path.join(translationDir, file), 'utf8'));
 
-        for (const phrase in dataJson) {
-          if (dataJson.hasOwnProperty(phrase)) {
-            if (translations[phrase] === undefined) {
-              translations[phrase] = {};
+        try {
+          const dataJson = JSON.parse(fs.readFileSync(path.join(translationDir, file), 'utf8'));
+
+          for (const phrase in dataJson) {
+            if (dataJson.hasOwnProperty(phrase)) {
+              if (translations[phrase] === undefined) {
+                translations[phrase] = {};
+              }
+              translations[phrase][lang] = dataJson[phrase];
             }
-            if (lang === 'cn' && translations[phrase][lang] !== undefined) {
-              console.log('重复翻译： '+ phrase);
-            }
-            translations[phrase][lang] = dataJson[phrase];
           }
+        } catch (e) {
+          throw new Error(`While parsing ${file}:` + e);
         }
       });
     }
@@ -40,14 +41,18 @@ function getAllTranslations() {
   return translations;
 }
 
-
-function generateAppVersion() {
+function getBuildMetadata() /* {head: string, date: string} */ {
   // assumes SOURCE_VERSION is git hash
   if (process.env.SOURCE_VERSION) {
-    return process.env.SOURCE_VERSION.substring(0, 7) + ' ' + new Date(new Date().getTime()+8*60*60*1000).toISOString().slice(0, 16).replace('T', ' ');
+    return {
+      head: process.env.SOURCE_VERSION.substring(0, 7),
+      date: new Date().toUTCString().replace(/ \(.+\)/, ''),
+    };
   }
   try {
-    return child_process.execSync('git log -1 --pretty=format:"%h %cD"').toString();
+    const output = child_process.execSync(`git log -1 --pretty=format:"%h %cD"`).toString();
+    const [head, ...rest] = output.split(' ');
+    return {head, date: rest.join(' ')};
   } catch (error) {
     console.error('unable to generate app version', error);
     throw error;
@@ -68,73 +73,20 @@ function getLogLength() {
   return 50;
 }
 
-function _translationsCompare(translationsJSON) {
-  const pathToTranslationsDir = path.resolve('src/locales');
-  const translations = {};
-  let translationDir = '';
-  const cntranslation = translationsJSON;
-  const dirs = fs.readdirSync(pathToTranslationsDir);
-  for (const idx in dirs) {
-    const lang = dirs[idx];
-    if (lang === 'cn') {
-      continue;
-    }
-    const localeDir = path.join(pathToTranslationsDir, lang);
-    if (lang.length === 2 && fs.statSync(localeDir).isDirectory()) {
-      translations[lang] = {};
-
-      translationDir = path.resolve(path.join(pathToTranslationsDir, lang));
-
-      const files = fs.readdirSync(translationDir);
-      for (const idx in files) {
-        const file = files[idx];
-
-        if ( file === undefined || ! file.endsWith('.json')) continue;
-
-        const dataJson = JSON.parse(fs.readFileSync(path.join(translationDir, file), 'utf8'));
-        console.log(path.join(translationDir, file));
-        for (const k in dataJson) {
-          if (cntranslation[k]['cn'] === undefined) {
-            console.log(k);
-          }
-        }
-      }
-    }
-  }
-}
-const translationsJSON = getAllTranslations();
-// translationsCompare(translationsJSON);
-
 if (!fs.existsSync('src/genfiles')) {
   fs.mkdirSync('src/genfiles');
 }
 
+const buildmetadata = getBuildMetadata();
 fs.writeFileSync('src/genfiles/settings.json', JSON.stringify({
-  version: generateAppVersion(),
+  head: buildmetadata.head,
+  builtAt: buildmetadata.date,
   waitingForTimeout: getWaitingForTimeout(),
   logLength: getLogLength(),
 }));
 
 fs.writeFileSync('src/genfiles/translations.json', JSON.stringify(
-  translationsJSON,
-));
-
-if (!fs.existsSync('build/src/')) {
-  fs.mkdirSync('build/src/');
-}
-
-if (!fs.existsSync('build/src/genfiles')) {
-  fs.mkdirSync('build/src/genfiles');
-}
-
-fs.writeFileSync('build/src/genfiles/settings.json', JSON.stringify({
-  version: generateAppVersion(),
-  waitingForTimeout: getWaitingForTimeout(),
-  logLength: getLogLength(),
-}));
-
-fs.writeFileSync('build/src/genfiles/translations.json', JSON.stringify(
-  translationsJSON,
+  getAllTranslations(),
 ));
 
 /**

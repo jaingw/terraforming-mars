@@ -51,10 +51,10 @@ export class Recyclon extends Card implements ICorporationCard, IResourceCard {
     if (card.tags.includes(Tags.BUILDING) === false || !player.isCorporation(this.name)) {
       return undefined;
     }
-      // 双公司出Mining Guild得2微生物
-      if (card.tags.filter((x) => x === Tags.BUILDING ).length ===2) {
-        player.addResourceTo(this);
-      }
+    // 双公司出Mining Guild得2微生物
+    if (card.tags.filter((x) => x === Tags.BUILDING ).length ===2) {
+      player.addResourceTo(this);
+    }
     if (this.resourceCount < 2) {
       player.addResourceTo(this);
       return undefined;
@@ -73,7 +73,7 @@ export class Recyclon extends Card implements ICorporationCard, IResourceCard {
     return new OrOptions(spendResource, addResource);
   }
 
-    public onCorpCardPlayed(player: Player, card:ICorporationCard) {
-      return this.onCardPlayed(player, card as unknown as IProjectCard);
-    }
+  public onCorpCardPlayed(player: Player, card:ICorporationCard) {
+    return this.onCardPlayed(player, card as unknown as IProjectCard);
+  }
 }

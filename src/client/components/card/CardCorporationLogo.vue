@@ -254,7 +254,7 @@
     <template v-else-if="title === CardName.COLONIAL_ONE">
       <div class="card-colonial-one-logo">Colonial One</div>
     </template>
-    <template template v-else-if="title === CardName.HOTSPRINGS">
+    <template v-else-if="title === CardName.HOTSPRINGS">
       <div class="card-hotsprings-logo">Hotsprings</div>
     </template>
     <template v-else-if="title === CardName.JUNK_VENTURES">
@@ -287,8 +287,20 @@
     <template v-else-if="title === CardName.BROTHERHOOD_OF_MUTANTS">
       <div class="card-mutant-logo"></div><div class="naming-award  naming-award-brotherhood"></div>
     </template>
+    <template v-else-if="title === CardName.TEIAI_GROUP">
+      <div class="card-teiai-group-logo"></div>
+    </template>
     <template v-else-if="title === CardName.VOID">
       <div class="card-midas-logo">VOID</div>
+    </template>
+    <template v-else-if="title === CardName.SHINRA_TECH">
+      <div class="card-playwrights-logo">🌸SHINRA<br/>TECH🌸</div>
+    </template>
+    <template v-else-if="title === CardName.TYRELL">
+      <div class="card-incite-logo">🌸TYRELL🌸</div>
+    </template>
+    <template v-else-if="title === CardName.WEYLAND_YUTANI">
+      <div class="card-project-workshop-logo">🌸WEYLAND<br/>YUTANI🌸</div>
     </template>
     <template v-else>
       <div>{{title}}</div>

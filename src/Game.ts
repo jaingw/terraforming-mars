@@ -211,8 +211,8 @@ export class Game {
   public dealer: Dealer;
   public board: Board;
   public soloMode: boolean = false;
-  public heatFor: boolean = false;;
-  public breakthrough: boolean = false;;
+  public heatFor: boolean = false;
+  public breakthrough: boolean = false;
   public createtime :string = getDate();
   public updatetime :string = getDate();
   private static stringifyPlayers : Map<Player, boolean> = new Map();
@@ -1352,6 +1352,10 @@ export class Game {
       }
       if (this.venusScaleLevel < 16 && this.venusScaleLevel + steps * 2 >= 16) {
         player.increaseTerraformRating();
+      }
+      const foundCard = player.playedCards.find((card) => card.name === CardName.VENUS_UNIVERSITY);
+      if (foundCard !== undefined) {
+        player.drawCard(steps);
       }
       if (this.gameOptions.altVenusBoard) {
         // The second half of this equation removes any increases earler than 16-to-18.

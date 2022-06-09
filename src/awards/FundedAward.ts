@@ -45,6 +45,7 @@ export function deserializeFundedAwards(
         award: award,
       };
     } else {
+      // eslint-disable-next-line no-throw-literal
       throw 'Player or Award not found when rebuilding Claimed Award'+ element.award.name;
     }
   });

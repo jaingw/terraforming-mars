@@ -4,16 +4,16 @@ import {PlayerInput} from '../PlayerInput';
 import {IGlobalEvent} from '../turmoil/globalEvents/IGlobalEvent';
 
 export class SelectGlobalCard implements PlayerInput {
-    public inputType: PlayerInputTypes = PlayerInputTypes.SELECT_GLOBAL_CARD;
+  public inputType: PlayerInputTypes = PlayerInputTypes.SELECT_GLOBAL_CARD;
 
-    constructor(
+  constructor(
         public title: string | Message,
         public buttonLabel: string = 'Save',
         public cards: Array<IGlobalEvent>,
         public cb: (cards: Array<IGlobalEvent>) => PlayerInput | undefined,
         public maxCardsToSelect: number = 1,
         public minCardsToSelect: number = 1,
-    ) {
-      this.buttonLabel = buttonLabel;
-    }
+  ) {
+    this.buttonLabel = buttonLabel;
+  }
 }

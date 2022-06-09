@@ -24,6 +24,9 @@ import {ExecutiveOrder} from './ExecutiveOrder';
 import {ResearchGrant} from './ResearchGrant';
 import {VenusFirst} from './VenusFirst';
 import {ValuableGases} from './ValuableGases';
+import {WeylandYutani} from './WeylandYutani';
+import {ShinraTech} from './ShinraTech';
+import {Tyrell} from './Tyrell';
 
 export const COMMUNITY_CARD_MANIFEST = new CardManifest({
   module: GameModule.Community,
@@ -41,7 +44,9 @@ export const COMMUNITY_CARD_MANIFEST = new CardManifest({
     {cardName: CardName.ARISTARCHUS, Factory: Aristarchus},
     {cardName: CardName.LABOUR_UNION, Factory: LabourUnion},
     {cardName: CardName.UNITED_NATIONS_MISSION_ONE, Factory: UnitedNationsMissionOne},
-
+    {cardName: CardName.WEYLAND_YUTANI, Factory: WeylandYutani},
+    {cardName: CardName.SHINRA_TECH, Factory: ShinraTech},
+    {cardName: CardName.TYRELL, Factory: Tyrell},
   ],
   preludeCards: [
     // 粉丝扩的部分前序跟pf扩重合 先注释

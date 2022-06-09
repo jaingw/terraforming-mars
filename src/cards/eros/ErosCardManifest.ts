@@ -32,6 +32,13 @@ import {StarCoreMining} from './StarCoreMining';
 import {EMDrive} from './EMDrive';
 import {FallOfSunrise} from './FallOfSunrise';
 import {Void} from './corp/Void';
+import {TeiaiGroup} from './corp/TeiaiGroup';
+import {VenusUniversity} from './VenusUniversity';
+import {FleetRecycling} from './FleetRecycling';
+// import {SquidGame} from './SquidGame';
+import {PlantSmuggling} from './PlantSmuggling';
+import {AntiGravityExperiment} from './AntiGravityExperiment';
+import {BorderCheckpoint} from './BorderCheckpoint';
 import {CardName} from '../../common/cards/CardName';
 import {GameModule} from '../../common/cards/GameModule';
 
@@ -64,6 +71,12 @@ export const EROS_CARD_MANIFEST = new CardManifest({
     // {cardName: CardName.STARCORE_PLUNDER, Factory: StarcorePlunder},
     {cardName: CardName.EM_DRIVE, Factory: EMDrive, compatibility: [GameModule.Colonies, GameModule.Turmoil]}, // Q19
     {cardName: CardName.COMMUNITY_WORKER, Factory: CommunityWorker}, // Q20
+    {cardName: CardName.VENUS_UNIVERSITY, Factory: VenusUniversity, compatibility: [GameModule.Venus]},
+    {cardName: CardName.FLEET_RECYCLING, Factory: FleetRecycling, compatibility: [GameModule.Colonies]},
+    // {cardName: CardName.SQUID_GAME, Factory: SquidGame},
+    {cardName: CardName.PLANT_SMUGGLING, Factory: PlantSmuggling, compatibility: [GameModule.Colonies]},
+    {cardName: CardName.ANTI_GRAVITY_EXPERIMENT, Factory: AntiGravityExperiment},
+    {cardName: CardName.BORDER_CHECKPOINT, Factory: BorderCheckpoint},
 
   ],
   corporationCards: [
@@ -74,6 +87,7 @@ export const EROS_CARD_MANIFEST = new CardManifest({
     {cardName: CardName.TRADE_NAVIGATOR, Factory: TradeNavigator, compatibility: GameModule.Colonies}, // Q25
     {cardName: CardName.BROTHERHOOD_OF_MUTANTS, Factory: BrotherhoodOfMutants, compatibility: GameModule.Turmoil}, // Q26
     {cardName: CardName.VOID, Factory: Void}, // Q27
+    {cardName: CardName.TEIAI_GROUP, Factory: TeiaiGroup},
   ],
   preludeCards: [
   ],

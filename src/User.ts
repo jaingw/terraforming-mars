@@ -5,8 +5,8 @@ export class User {
   public createtime: string = '';
   public rollbackNum: number = 5;
   public rollbackDate: string = getDay();
-  public vip : boolean = false;
-  public vipDate : string = '2021-01-01';
+  public vip : boolean = true; // ender test
+  public vipDate : string = '4000-01-01';
   public accessDate : string = '2021-01-01';
   public showhandcards : boolean = false;
   public donateNum : number = 0;

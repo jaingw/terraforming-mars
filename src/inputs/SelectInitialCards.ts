@@ -9,24 +9,24 @@ import {SelectCard} from './SelectCard';
 
 export class SelectInitialCards extends AndOptions implements PlayerInput {
   public override inputType = PlayerInputTypes.SELECT_INITIAL_CARDS;
-    constructor(player: Player, doubleCorp : boolean, cb: (corporation: ICorporationCard, corporation2: ICorporationCard | undefined) => undefined) {
+  constructor(player: Player, doubleCorp : boolean, cb: (corporation: ICorporationCard, corporation2: ICorporationCard | undefined) => undefined) {
     super(() => {
-        cb(corporation, corporation2);
+      cb(corporation, corporation2);
       return undefined;
     });
     let corporation: ICorporationCard;
-      let corporation2: ICorporationCard;
+    let corporation2: ICorporationCard;
     this.title = ' ';
     this.buttonLabel = 'Start';
-      const corpNum = doubleCorp? 2:1;
+    const corpNum = doubleCorp? 2:1;
     this.options.push(
       new SelectCard<ICorporationCard>(
-          doubleCorp ? 'Select 2 corporations' : 'Select corporation', undefined, player.dealtCorporationCards,
+        doubleCorp ? 'Select 2 corporations' : 'Select corporation', undefined, player.dealtCorporationCards,
         (foundCards: Array<ICorporationCard>) => {
           corporation = foundCards[0];
-            corporation2 = foundCards[1];
+          corporation2 = foundCards[1];
           return undefined;
-          }, corpNum, corpNum, false, undefined, true, false,
+        }, corpNum, corpNum, false, undefined, true, false,
       ),
     );
 

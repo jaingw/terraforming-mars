@@ -6,7 +6,7 @@
 
     "Mars Hot Spring":"火星温泉",
     "Requires 3 ocean tiles. Increase your M€ and Heat production 2 steps. Place this tile ADJACENT TO an ocean tile":"需要有3块海洋。提升你的M€产能和热能产能各2格，放置此版块到与海洋相邻的位置",
-  
+
     "Solar Cosmic Rays":"太阳射线",
     "Increase your energy production 1 steps. For each energy production in play, you increase your heat production 1 step[max 15]":"提升你的电力产能1格。全场每有1点电力产能，你提升你的热能产能1格（至多15）",
 
@@ -17,16 +17,16 @@
     "Requires 3 oceans":"需要有3块海洋",
 
     "Waste Incinerator":"垃圾焚烧站",
-   
+
     "Nitrogenrich Comet":"富氮彗星",
     "Increase Temperature 1 step. Gain 4 plants":"提升温度1格。获得4个植物资源",
-  
+
 
     "Cutting Edge Lab":"前沿实验室",
 
     "Respiration Enhance":"呼吸作用增强",
     "Effect: When you place a greenery, you can choose to increase temperature 1 step, intead of oxygen":"效果：每当你放置一片绿化版块，你可以选择提升温度1格而不是提升氧气",
-   
+
     "Electric Sheep":"电子羊",
     "Requires 4 Power tags. Decrease any Energy production 1 step":"需要你有4个电力标志。降低任意玩家电力产能1格",
 
@@ -36,7 +36,7 @@
 
     "Large Ecological Reserve":"大型生态保护区",
     "Requires a Plant tag, a Microbe tag, and an Animal tag. Place 2 greenery tiles and raise oxygen 2 steps":"需要你有1个植物标志，1个微生物标志，1个动物标志。放置2片绿化版块并提升氧气2格",
-    
+
 
     "Clone Technology":"克隆科技",
     "Duplicate the production box and plant resource of one of your plant cards":"复制你的一张植物牌的产能和植物资源",
@@ -82,7 +82,36 @@
 
     "Starcore Mining":"星核开采",
 
-    "EM Drive":"无工质推进飞船"
+    "EM Drive":"无工质推进飞船",
 
+    "You start with 51 MC":"你起始获得51MC",
+
+    "Action: Decrease 1 TR to draw 2 card. If you have no card, you do not need to decrease TR.":"行动：降低1点TR，抽2张牌。如果你没有手牌，则不需要降低TR。",
+
+    "Fleet Recycling":"飞船回收",
+
+    "Lose 1 Trade Fleet. Gain 4 steel and 4 titanium":"失去一艘贸易飞船。获得4点钢铁以及4点钛",
+
+    "Venus University":"金星大学",
+
+    "Squid Game":"鱿鱼游戏",
+
+    "FOR EACH MILESTONE YOU HAVE, DECREASE 5 MC":"你每设立一个里程碑，本卡费用-5",
+
+    "Draw 6 new awards. Select one and add to this game":"随机抽取6个未加入游戏的奖励，选择一个设立",
+
+    "Plant Smuggling":"植物走私集团",
+
+    "Requires a colony. Increase your MC production 2 step. When any player trades, you gain 1 plant.":"需要有一个殖民地。提升2点金钱产能。每当有玩家贸易，你获得1点植物。",
+
+    "AntiGravity Experiment":"反重力先行试验",
+
+    "Effect: For this generation, when you play a card, you pay 2 MC less for it":"效果：本时代内，你打出卡牌费用-2",
+
+    "Action: Draw a card from discard pile":"行动：从弃牌堆中抽一张牌。",
+
+    "Border Checkpoint": "边境检查站",
+
+    "Place a city tile on the border":"放置一片城市到火星边缘。无视其它放置规则。"
 }
 

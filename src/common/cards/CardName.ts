@@ -1,6 +1,8 @@
 export enum CardName {
     // Standard projects:
-    SELL_PATENTS_STANDARD_PROJECT = 'Sell Patents',
+
+
+  SELL_PATENTS_STANDARD_PROJECT = 'Sell Patents',
     POWER_PLANT_STANDARD_PROJECT = 'Power Plant:SP',
     ASTEROID_STANDARD_PROJECT = 'Asteroid:SP',
     BUFFER_GAS_STANDARD_PROJECT = 'Buffer Gas',
@@ -512,6 +514,10 @@ export enum CardName {
     ARISTARCHUS = 'Aristarchus',
     LABOUR_UNION = 'Labour Union',
     UNITED_NATIONS_MISSION_ONE = 'United Nations Mission One',
+    WEYLAND_YUTANI = '🌸Weyland Yutani🌸',
+    SHINRA_TECH = '🌸Shinra Tech🌸',
+    BYT_NLARGE = '🌸Buy N Large🌸',
+   TYRELL = '🌸Tyrell🌸',
 
 
     // Community preludes
@@ -597,6 +603,13 @@ export enum CardName {
     STARCORE_MINING = 'Starcore Mining',
     EM_DRIVE = 'EM Drive',
     VOID = 'Void',
+    TEIAI_GROUP = 'TeiAi Group',
+    VENUS_UNIVERSITY = 'Venus University',
+    FLEET_RECYCLING = 'Fleet Recycling',
+    SQUID_GAME = 'Squid Game',
+    PLANT_SMUGGLING = 'Plant Smuggling',
+    ANTI_GRAVITY_EXPERIMENT = 'AntiGravity Experiment',
+    BORDER_CHECKPOINT = 'Border Checkpoint',
 
     // The Moon.
     MARE_NECTARIS_MINE = 'Mare Nectaris Mine',

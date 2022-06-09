@@ -111,6 +111,11 @@ export abstract class Colony implements IColony {
       const maxTrackPosition = Math.min(this.trackPosition + tradeOffset, MAX_COLONY_TRACK_POSITION);
       const steps = maxTrackPosition - this.trackPosition;
 
+      for (const somePlayer of player.game.getPlayers()) {
+        if (somePlayer.cardIsInEffect(CardName.PLANT_SMUGGLING)) {
+          somePlayer.addResource(Resources.PLANTS, 1);
+        }
+      }
       if (steps === 0 || this.shouldIncreaseTrack === ShouldIncreaseTrack.NO) {
         // Don't increase
         this.handleTrade(player, tradeOptions);

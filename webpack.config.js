@@ -27,7 +27,6 @@ const plugins = [
       },
     },
   }),
-  },
   new VueLoaderPlugin(),
   // fork 一个进程进行检查
   // new ForkTsCheckerWebpackPlugin({

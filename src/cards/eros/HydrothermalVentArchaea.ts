@@ -31,13 +31,13 @@ export class HydrothermalVentArchaea extends Card implements IProjectCard, IReso
       },
     });
   }
-    public override resourceCount: number = 0;
+  public override resourceCount: number = 0;
 
-    public override canPlay(player: Player): boolean {
-      return super.canPlay(player);
-    }
+  public override canPlay(player: Player): boolean {
+    return super.canPlay(player);
+  }
 
-    public play() {
-      return undefined;
-    }
+  public play() {
+    return undefined;
+  }
 }

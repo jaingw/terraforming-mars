@@ -12,7 +12,7 @@ import {CardName} from '../../common/cards/CardName';
 import {CardType} from '../../common/cards/CardType';
 import {Tags} from '../../common/cards/Tags';
 import {ColonyName} from '../../common/colonies/ColonyName';
-import { IColony } from '@/colonies/IColony';
+import {IColony} from '@/colonies/IColony';
 
 export class JovianExpedition extends Card implements IProjectCard {
   constructor() {

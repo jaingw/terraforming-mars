@@ -75,6 +75,7 @@ import {TurmoilUtil} from './turmoil/TurmoilUtil';
 import {PathfindersExpansion} from './pathfinders/PathfindersExpansion';
 import {deserializeProjectCard, serializedCardName, serializePlayedCard, deserializeCorpCard} from './cards/CardSerialization';
 import {ColoniesHandler} from './colonies/ColoniesHandler';
+import {AntiGravityExperiment} from './cards/eros/AntiGravityExperiment';
 
 export class Player {
   public readonly id: PlayerId;
@@ -1272,6 +1273,11 @@ export class Player {
     } else if (this.game.syndicatePirateRaider === this.id) {
       this.tradesThisGeneration = 0;
     }
+
+    // AntiGravityExperiment Hook
+    this.playedCards
+      .filter((card) => card.name === CardName.ANTI_GRAVITY_EXPERIMENT)
+      .forEach((card) => (card as AntiGravityExperiment).isDisabled = true);
 
     this.turmoilPolicyActionUsed = false;
     this.politicalAgendasActionUsedCount = 0;

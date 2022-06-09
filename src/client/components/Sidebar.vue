@@ -177,7 +177,7 @@ export default Vue.extend({
     };
   },
   methods: {
-    preferencesPanelOpen: function() :void{
+    preferencesPanelOpen: function() :void {
       this.ui.resign_panel_open = false;
       this.ui.resign_wait = false;
       this.ui.resign_time = '';
@@ -185,7 +185,7 @@ export default Vue.extend({
       clearInterval(ui_timeout_id);
       this.ui.preferences_panel_open = !this.ui.preferences_panel_open;
     },
-    resignPanelOpen: function(): void{
+    resignPanelOpen: function(): void {
       const ui = this.ui;
       ui.preferences_panel_open = false;
 
@@ -194,7 +194,7 @@ export default Vue.extend({
       ui.resign_wait = false;
       ui.resign_time = '';
     },
-    resignWait: function():void{
+    resignWait: function():void {
       this.ui.resign_time = '(3s)';
       let wait_time = 3;
       clearInterval(ui_timeout_id);
@@ -209,7 +209,7 @@ export default Vue.extend({
       };
       ui_timeout_id = (setInterval(resignWaitTime, 1000) as any);
     },
-    resign: function():void{
+    resign: function():void {
       const userId = PreferencesManager.load('userId');
       this.resignPanelOpen();
       if (userId === '') {

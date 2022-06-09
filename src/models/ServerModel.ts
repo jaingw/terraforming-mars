@@ -44,7 +44,7 @@ import {TurmoilUtil} from '../turmoil/TurmoilUtil';
 import {createPathfindersModel} from './PathfindersModel';
 import {MoonExpansion} from '../moon/MoonExpansion';
 import {MoonModel} from '../common/models/MoonModel';
-import { IColony } from '@/colonies/IColony';
+import {IColony} from '@/colonies/IColony';
 
 export class Server {
   public static getSimpleGameModel(game: Game, userId : string = ''): SimpleGameModel {

@@ -630,7 +630,7 @@ describe('Game', () => {
   //  expect(serializedKeys.concat('rng').sort())
   //  expect(serializedKeys).to.have.members(gameKeys.concat('moonData', 'pathfindersData'));
   // });
-  
+
 
   it('deserializing a game without moon data still loads', () => {
     const player = TestPlayers.BLUE.newPlayer();

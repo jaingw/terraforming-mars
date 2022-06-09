@@ -16,7 +16,7 @@ export class Terraformer implements IMilestone {
     return player.getTerraformRating();
   }
   public canClaim(player: Player): boolean {
-      const target = TurmoilUtil.ifTurmoilElse(player.game, () => this.terraformRatingTurmoil, () => this.terraformRating);
+    const target = TurmoilUtil.ifTurmoilElse(player.game, () => this.terraformRatingTurmoil, () => this.terraformRating);
     const score = this.getScore(player);
     return score >= target;
   }

@@ -102,7 +102,7 @@ export class Localfilesystem implements IDatabase {
     cb(undefined, gameIds);
   }
 
-  restoreReferenceGame(_game_id: GameId, _game: Game, cb:(err: any) => void): void{
+  restoreReferenceGame(_game_id: GameId, _game: Game, cb:(err: any) => void): void {
     cb(undefined);
   }
 
@@ -118,7 +118,7 @@ export class Localfilesystem implements IDatabase {
     // Not implemented.
   }
 
-  restoreGame(_gameId: GameId, _save_id: number, _game: Game, _playId: string): void{
+  restoreGame(_gameId: GameId, _save_id: number, _game: Game, _playId: string): void {
     throw new Error('Undo not yet implemented');
   }
 
@@ -134,13 +134,13 @@ export class Localfilesystem implements IDatabase {
   refresh(): void {
     throw new Error('Method not implemented.');
   }
-  saveGameState(_game_id: GameId, _save_id: number, _game: string, _gameShortDate: string ): void{
+  saveGameState(_game_id: GameId, _save_id: number, _game: string, _gameShortDate: string ): void {
     throw new Error('Method not implemented.');
   }
-  cleanGame(_game_id: string): void{
+  cleanGame(_game_id: string): void {
     throw new Error('Method not implemented.');
   }
-  cleanGameSave(_game_id: string, _save_id: number): void{
+  cleanGameSave(_game_id: string, _save_id: number): void {
     throw new Error('Method not implemented.');
   }
 }

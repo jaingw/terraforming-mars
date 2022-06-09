@@ -51,7 +51,7 @@ export class Arklight extends Card implements ICorporationCard, IResourceCard {
       player.addResourceTo(this, {qty: card.tags.filter((cardTag) => cardTag === Tags.ANIMAL || cardTag === Tags.PLANT).length, log: true});
     }
   }
-    public onCorpCardPlayed(player: Player, card:ICorporationCard) {
-      return this.onCardPlayed(player, card as unknown as IProjectCard);
-    }
+  public onCorpCardPlayed(player: Player, card:ICorporationCard) {
+    return this.onCardPlayed(player, card as unknown as IProjectCard);
+  }
 }

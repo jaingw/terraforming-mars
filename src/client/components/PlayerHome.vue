@@ -428,7 +428,7 @@ export default Vue.extend({
       return fleetsRange;
     },
     updateTips: function() {
-      PreferencesManager.INSTANCE.set('enable_sounds', this.soundtip  );
+      PreferencesManager.INSTANCE.set('enable_sounds', this.soundtip );
     },
     updateShowHandCards: function() {
       const userId = PreferencesManager.load('userId');

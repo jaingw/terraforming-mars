@@ -13,7 +13,7 @@ import {CardType} from '../../common/cards/CardType';
 import {Size} from '../../common/cards/render/Size';
 import {Tags} from '../../common/cards/Tags';
 import {PartyName} from '../../common/turmoil/PartyName';
-import { IColony } from '@/colonies/IColony';
+import {IColony} from '@/colonies/IColony';
 
 export class EMDrive extends Card implements IActionCard, IProjectCard {
   constructor() {

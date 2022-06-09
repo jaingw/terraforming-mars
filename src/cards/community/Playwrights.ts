@@ -78,7 +78,7 @@ export class Playwrights extends Card implements ICorporationCard {
             title: 'Select how to pay to replay the event',
             afterPay: () => {
               player.playCard(selectedCard, undefined, false); // Play the card but don't add it to played cards
-                player.removedFromPlayCards.push(selectedCard); // Remove card from the game , in case Conscription/Indentured Workers invalid
+              player.removedFromPlayCards.push(selectedCard); // Remove card from the game , in case Conscription/Indentured Workers invalid
               if (selectedCard.name === CardName.LAW_SUIT) {
                 /*
                    * If the card played is Law Suit we need to remove it from the newly sued player's played cards.
