@@ -112,6 +112,12 @@
 
     "Border Checkpoint": "边境检查站",
 
-    "Place a city tile on the border":"放置一片城市到火星边缘。无视其它放置规则。"
+    "Place a city tile on the border":"放置一片城市到火星边缘。无视其它放置规则。",
+
+    "scolex":"星核",
+
+    "✡Ind✡": "✡工业✡",
+
+    "Action: Discard a card, and use a non resource card action from other opponents.": "行动：弃置一张牌，使用其它玩家的一张的行动卡，该卡上资源数量必须为0。"
 }
 

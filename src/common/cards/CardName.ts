@@ -517,10 +517,14 @@ export enum CardName {
     WEYLAND_YUTANI = '🌸Weyland Yutani🌸',
     SHINRA_TECH = '🌸Shinra Tech🌸',
     BYT_NLARGE = '🌸Buy N Large🌸',
-   TYRELL = '🌸Tyrell🌸',
+    TYRELL = '🌸Tyrell🌸',
+    MINING_CORP = '🌸Mining Corp🌸',
+  SCOLEX_INDUSTRIES = '🌸Scolex Industries🌸',
+  PROTOGEN = '🌸Protogen🌸',
+  INTEGRATED_MICROORGANISMS = '🌸Integrated Microorganisms🌸',
 
 
-    // Community preludes
+  // Community preludes
     VALUABLE_GASES = 'Valuable Gases',
     VENUS_FIRST = 'Venus First',
     RESEARCH_GRANT = 'Research Grant',

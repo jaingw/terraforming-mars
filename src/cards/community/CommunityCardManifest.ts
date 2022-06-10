@@ -27,6 +27,10 @@ import {ValuableGases} from './ValuableGases';
 import {WeylandYutani} from './WeylandYutani';
 import {ShinraTech} from './ShinraTech';
 import {Tyrell} from './Tyrell';
+import {MiningCorp} from './MiningCorp';
+import {ScolexIndustries} from './ScolexIndustries';
+import {Protogen} from './Protogen';
+import {IntegratedMicroorganisms} from './IntegratedMicroorganisms';
 
 export const COMMUNITY_CARD_MANIFEST = new CardManifest({
   module: GameModule.Community,
@@ -47,6 +51,11 @@ export const COMMUNITY_CARD_MANIFEST = new CardManifest({
     {cardName: CardName.WEYLAND_YUTANI, Factory: WeylandYutani},
     {cardName: CardName.SHINRA_TECH, Factory: ShinraTech},
     {cardName: CardName.TYRELL, Factory: Tyrell},
+    {cardName: CardName.MINING_CORP, Factory: MiningCorp},
+    {cardName: CardName.SCOLEX_INDUSTRIES, Factory: ScolexIndustries},
+    {cardName: CardName.PROTOGEN, Factory: Protogen},
+    {cardName: CardName.INTEGRATED_MICROORGANISMS, Factory: IntegratedMicroorganisms},
+
   ],
   preludeCards: [
     // 粉丝扩的部分前序跟pf扩重合 先注释

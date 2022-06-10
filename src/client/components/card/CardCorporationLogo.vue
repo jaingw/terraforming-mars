@@ -297,10 +297,25 @@
       <div class="card-playwrights-logo">🌸SHINRA<br/>TECH🌸</div>
     </template>
     <template v-else-if="title === CardName.TYRELL">
-      <div class="card-incite-logo">🌸TYRELL🌸</div>
+      <div class="card-incite-logo">TYRELL</div>
     </template>
     <template v-else-if="title === CardName.WEYLAND_YUTANI">
       <div class="card-project-workshop-logo">🌸WEYLAND<br/>YUTANI🌸</div>
+    </template>
+    <template v-else-if="title === CardName.SCOLEX_INDUSTRIES">
+      <div class="card-scolex-logo">
+        <div class="utopia-corp-name-1">scolex</div>
+        <div class="utopia-corp-name-2">✡Ind✡</div>
+      </div>
+    </template>
+    <template v-else-if="title === CardName.INTEGRATED_MICROORGANISMS">
+      <div class="card-protogen-logo">🌸INTEGRATED<br/>MICROORGANISMS🌸</div>
+    </template>
+    <template v-else-if="title === CardName.PROTOGEN">
+      <div class="card-protogen-logo">🌸PROTOGEN🌸</div>
+    </template>
+    <template v-else-if="title === CardName.MINING_CORP">
+      <div class="card-curiosity-ii-logo">MINING CORP</div>
     </template>
     <template v-else>
       <div>{{title}}</div>

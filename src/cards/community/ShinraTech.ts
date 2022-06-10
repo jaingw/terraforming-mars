@@ -45,6 +45,11 @@ export class ShinraTech extends Card implements ICorporationCard {
       }
     }
   }
+
+  public onCorpCardPlayed(player: Player, card:ICorporationCard) {
+    return this.onCardPlayed(player, card as unknown as IProjectCard);
+  }
+
   public play(player: Player) {
     player.addProduction(Resources.ENERGY, 2);
     player.addProduction(Resources.MEGACREDITS, 2);

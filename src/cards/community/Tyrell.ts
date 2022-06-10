@@ -9,23 +9,24 @@ import {CardRenderer} from '../render/CardRenderer';
 import {all} from '../Options';
 import {DiscardCards} from '../../deferredActions/DiscardCards';
 import {Priority} from '../../deferredActions/DeferredAction';
+import {Tags} from '../../common/cards/Tags';
 
 export class Tyrell extends Card implements ICard, ICorporationCard {
   constructor() {
     super({
       name: CardName.TYRELL,
-      tags: [],
+      tags: [Tags.SCIENCE],
       startingMegaCredits: 46,
       cardType: CardType.CORPORATION,
 
       metadata: {
-        cardNumber: 'R12',
-        description: 'You start with 46 M€.',
+        cardNumber: 'XUEBAO04',
+        description: 'You start with 50 M€.',
         renderData: CardRenderer.builder((b) => {
           b.br.br.br;
-          b.megacredits(46);
+          b.megacredits(50);
           b.corpBox('action', (ce) => {
-            ce.action('Discard a card, and use a blue card action from other opponents.', (eb) => {
+            ce.action('Discard a card, and use a non resource card action from other opponents.', (eb) => {
               eb.minus().cards(1).startAction.text('Action').cards(1, {all});
             });
           });
@@ -40,6 +41,7 @@ export class Tyrell extends Card implements ICard, ICorporationCard {
     cardOwner.game.getPlayers().filter((player)=>player.id !== cardOwner.id).forEach((player)=>{
       if (player.corpCard !== undefined && player.corpCard.name !== this.name) {
         if (
+          !(player.corpCard.resourceType !== undefined && player.corpCard.resourceCount && player.corpCard.resourceCount > 0)&&
           player.corpCard.action !== undefined &&
           player.corpCard.canAct !== undefined &&
           // player.getActionsThisGeneration().has(player.corpCard.name) &&
@@ -49,6 +51,7 @@ export class Tyrell extends Card implements ICard, ICorporationCard {
       }
       if (player.corpCard2 !== undefined && player.corpCard2.name !== this.name) {
         if (
+          !(player.corpCard2.resourceType !== undefined && player.corpCard2.resourceCount && player.corpCard2.resourceCount > 0)&&
           player.corpCard2.action !== undefined &&
           player.corpCard2.canAct !== undefined &&
           // player.getActionsThisGeneration().has(player.corpCard2.name) &&
@@ -57,7 +60,7 @@ export class Tyrell extends Card implements ICard, ICorporationCard {
         }
       }
 
-      for (const playedCard of player.playedCards) {
+      for (const playedCard of player.playedCards.filter((card) => !(card.resourceType !== undefined && card.resourceCount && card.resourceCount > 0))) {
         if (isIActionCard(playedCard) &&
           // player.getActionsThisGeneration().has(playedCard.name) &&
           playedCard.canAct(cardOwner)) {
@@ -83,7 +86,7 @@ export class Tyrell extends Card implements ICard, ICorporationCard {
       this.getActionCards(player),
       (foundCards: Array<ICard>) => {
         const foundCard = foundCards[0];
-        player.game.log('${0} used ${1} action with ${2}', (b) => b.player(player).card(foundCard).card(this));
+        player.game.log('${0} copy ${1} action with ${2}', (b) => b.player(player).card(foundCard).card(this));
         return foundCard.action!(player);
       },
     );
