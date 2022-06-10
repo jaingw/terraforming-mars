@@ -10,6 +10,7 @@ import {SelectSpace} from '../../inputs/SelectSpace';
 import {ISpace} from '../../boards/ISpace';
 import {DrawCards} from '../../deferredActions/DrawCards';
 import {DeferredAction} from '../..//deferredActions/DeferredAction';
+import {Resources} from '../../common/Resources';
 
 export class BorderCheckpoint extends Card implements IProjectCard {
   constructor() {
@@ -57,11 +58,13 @@ export class BorderCheckpoint extends Card implements IProjectCard {
   }
 
 
-  // public override canPlay(player: Player): boolean {
-  //   return this.getAvailableSpaces(player).length > 0;
-  // }
+  public override canPlay(player: Player): boolean {
+    return player.getProduction(Resources.ENERGY) >= 1 && this.getAvailableSpaces(player).length > 0;
+  }
 
   public play(player: Player): PlayerInput {
+    player.addProduction(Resources.ENERGY, -1);
+    player.addProduction(Resources.MEGACREDITS, 2);
     return new SelectSpace('Select place on the border', this.getAvailableSpaces(player), (foundSpace: ISpace) => {
       player.game.addCityTile(player, foundSpace.id);
       return undefined;
@@ -70,7 +73,7 @@ export class BorderCheckpoint extends Card implements IProjectCard {
 
 
   public canAct(player: Player): boolean {
-    return player.game.dealer.getDiscardedSize() >= 5;
+    return player.game.dealer.getDiscardedSize() >= 1;
   }
 
 
