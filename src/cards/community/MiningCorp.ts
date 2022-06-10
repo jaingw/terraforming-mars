@@ -21,7 +21,7 @@ export class MiningCorp extends Card implements ICorporationCard {
         description: 'You start with 1 energy and steel production, 25 M€ and 10 steel. Draw 3 building cards.',
         renderData: CardRenderer.builder((b) => {
           b.br.br;
-          b.production((pb) => pb.energy(1).steel(1)).megacredits(39).text('3').cards(1, {secondaryTag: Tags.BUILDING});
+          b.production((pb) => pb.energy(1).steel(1)).megacredits(25).text('10', Size.TINY).steel(1).text('3', Size.TINY).cards(1, {secondaryTag: Tags.BUILDING});
           b.corpBox('effect', (ce) => {
             ce.effect('Your steel resources are worth 1 M€ extra.', (eb) => {
               eb.steel(1).startEffect.plus(Size.SMALL).megacredits(1);
