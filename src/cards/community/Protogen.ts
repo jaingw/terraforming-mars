@@ -24,7 +24,7 @@ export class Protogen extends Card implements ICorporationCard {
           b.br.br.br;
           b.megacredits(47).cards(1, {secondaryTag: Tags.MICROBE});
           b.corpBox('effect', (ce) => {
-            ce.effect('When you gain a microbe to ANY CARD, also gain 2 heat.', (eb) => {
+            ce.effect('When you gain microbes in one action, also gain 2 heat.', (eb) => {
               eb.microbes(1).asterix().startEffect.heat(2);
             });
           });
@@ -41,9 +41,9 @@ export class Protogen extends Card implements ICorporationCard {
     player.drawCard(1, {tag: Tags.MICROBE});
     return undefined;
   }
-  public onResourceAdded(player: Player, card: ICard, count: number) {
+  public onResourceAdded(player: Player, card: ICard) {
     if (card.resourceType === ResourceType.MICROBE) {
-      player.heat += 2*count;
+      player.heat += 2;
     }
   }
 }
