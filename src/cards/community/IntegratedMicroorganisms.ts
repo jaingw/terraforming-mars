@@ -79,6 +79,8 @@ export class IntegratedMicroorganisms extends Card implements ICorporationCard {
     return undefined;
   }
   public onCardPlayed(player: Player, card: IProjectCard) {
-    this.effectResolve(player, card);
+    if (player.corpName(this.name)) {
+      this.effectResolve(player, card);
+    }
   }
 }
