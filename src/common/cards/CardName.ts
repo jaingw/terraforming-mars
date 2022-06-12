@@ -522,6 +522,7 @@ export enum CardName {
   PROTOGEN = '🌸Protogen🌸',
   INTEGRATED_MICROORGANISMS = '🌸Integrated Microorganisms🌸',
   BUY_N_LARGE = '🌸Buy N Large🌸',
+  RDA = '🌸RDA🌸',
 
 
   // Community preludes

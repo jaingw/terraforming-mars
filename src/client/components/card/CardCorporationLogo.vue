@@ -320,6 +320,9 @@
     <template v-else-if="title ===  CardName.BUY_N_LARGE">
       <div class="card-buy-n-large-logo"></div>
     </template>
+    <template v-else-if="title ===  CardName.RDA">
+      <div class="card-rda-logo"></div>
+    </template>
     <template v-else>
       <div>{{title}}</div>
     </template>
