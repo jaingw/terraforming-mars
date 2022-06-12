@@ -21,13 +21,13 @@ export class BuyNLarge extends Card implements ICorporationCard {
       cardType: CardType.CORPORATION,
       name: CardName.BUY_N_LARGE,
       tags: [Tags.PLANT],
-      startingMegaCredits: 32,
+      startingMegaCredits: 35,
       resourceType: ResourceType.SEED,
 
       metadata: {
         cardNumber: 'XUEBAO08',
         renderData: CardRenderer.builder((b) => {
-          b.megacredits(32).greenery().br;
+          b.megacredits(35).greenery().br;
           b.effect('When you place a greenery tile or play a biology tag, add 1 seed resource to this card.', (eb) => {
             eb.greenery().slash().animals(1, {played}).slash().plants(1, {played}).slash().microbes(1, {played}).startEffect.seed();
           }).br;
@@ -35,7 +35,7 @@ export class BuyNLarge extends Card implements ICorporationCard {
             eb.text('8').seed().asterix().startAction.plants(8, {digit});
           }).br;
         }),
-        description: 'You start with 32M€. As your first action, place a greenery.',
+        description: 'You start with 35M€. As your first action, place a greenery.',
       },
     });
   }
@@ -43,7 +43,7 @@ export class BuyNLarge extends Card implements ICorporationCard {
   public override resourceCount = 0;
 
   public play() {
-    this.resourceCount += 2;
+    this.resourceCount += 1;
     return undefined;
   }
 
