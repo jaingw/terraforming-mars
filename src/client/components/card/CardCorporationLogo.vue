@@ -323,6 +323,9 @@
     <template v-else-if="title ===  CardName.RDA">
       <div class="card-rda-logo"></div>
     </template>
+    <template v-else-if="title ===  CardName.PRISM">
+      <div class="card-prism-logo"></div>
+    </template>
     <template v-else>
       <div>{{title}}</div>
     </template>

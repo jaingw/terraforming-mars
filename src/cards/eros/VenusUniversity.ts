@@ -26,7 +26,7 @@ export class VenusUniversity extends Card implements IProjectCard {
         victoryPoints: 1,
       },
     });
-  };
+  }
   public play() {
     return undefined;
   }

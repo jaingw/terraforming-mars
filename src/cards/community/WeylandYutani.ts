@@ -22,7 +22,7 @@ export class WeylandYutani extends Card implements ICorporationCard {
         cardNumber: 'XUEBAO1',
         description: 'You start with 49 M€.',
         renderData: CardRenderer.builder((b) => {
-          b.megacredits(49)
+          b.megacredits(49);
           b.corpBox('effect', (ce) => {
             ce.vSpace(Size.LARGE);
             ce.effect('when a science tag is played, you gain 2 M€.', (eb) => {

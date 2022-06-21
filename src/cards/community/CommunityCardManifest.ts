@@ -61,7 +61,6 @@ export const COMMUNITY_CARD_MANIFEST = new CardManifest({
     {cardName: CardName.RDA, Factory: Rda},
 
 
-
   ],
   preludeCards: [
     // 粉丝扩的部分前序跟pf扩重合 先注释

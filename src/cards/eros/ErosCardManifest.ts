@@ -41,6 +41,7 @@ import {AntiGravityExperiment} from './AntiGravityExperiment';
 import {BorderCheckpoint} from './BorderCheckpoint';
 import {CardName} from '../../common/cards/CardName';
 import {GameModule} from '../../common/cards/GameModule';
+import {Prism} from '../../cards/eros/corp/Prism';
 
 
 export const EROS_CARD_MANIFEST = new CardManifest({
@@ -88,6 +89,7 @@ export const EROS_CARD_MANIFEST = new CardManifest({
     {cardName: CardName.BROTHERHOOD_OF_MUTANTS, Factory: BrotherhoodOfMutants, compatibility: GameModule.Turmoil}, // Q26
     {cardName: CardName.VOID, Factory: Void}, // Q27
     {cardName: CardName.TEIAI_GROUP, Factory: TeiaiGroup},
+    {cardName: CardName.PRISM, Factory: Prism},
   ],
   preludeCards: [
   ],

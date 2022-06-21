@@ -118,6 +118,8 @@
 
     "✡Ind✡": "✡工业✡",
 
-    "Action: Discard a card, and use a non resource card action from other opponents.": "行动：弃置一张牌，使用其它玩家的一张的行动卡，该卡上资源数量必须为0。"
+    "Action: Discard a card, and use a non resource card action from other opponents.": "行动：弃置一张牌，使用其它玩家的一张的行动卡，该卡上资源数量必须为0。",
+
+    "Effect: For each tag, get 1 MC discount per 3 related tags": "效果：每3个相同的标记使拥有该标记卡牌费用-1。"
 }
 
