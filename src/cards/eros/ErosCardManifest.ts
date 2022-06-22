@@ -42,6 +42,7 @@ import {BorderCheckpoint} from './BorderCheckpoint';
 import {CardName} from '../../common/cards/CardName';
 import {GameModule} from '../../common/cards/GameModule';
 import {Prism} from '../../cards/eros/corp/Prism';
+import {HayMaker} from '../../cards/eros/HayMaker';
 
 
 export const EROS_CARD_MANIFEST = new CardManifest({
@@ -78,6 +79,8 @@ export const EROS_CARD_MANIFEST = new CardManifest({
     {cardName: CardName.PLANT_SMUGGLING, Factory: PlantSmuggling, compatibility: [GameModule.Colonies]},
     {cardName: CardName.ANTI_GRAVITY_EXPERIMENT, Factory: AntiGravityExperiment},
     {cardName: CardName.BORDER_CHECKPOINT, Factory: BorderCheckpoint},
+    {cardName: CardName.HAY_MAKER, Factory: HayMaker},
+
 
   ],
   corporationCards: [
