@@ -13,14 +13,14 @@ export class Prism extends Card implements ICorporationCard {
       cardType: CardType.CORPORATION,
       name: CardName.PRISM,
       tags: [Tags.WILDCARD],
-      startingMegaCredits: 28,
+      startingMegaCredits: 33,
 
       metadata: {
         cardNumber: 'Q040',
-        description: 'You start with 28 M€',
+        description: 'You start with 33 M€',
         renderData: CardRenderer.builder((b) => {
           b.br.br.br.br;
-          b.megacredits(28);
+          b.megacredits(33);
           b.corpBox('effect', (ce) => {
             ce.effect('For each tag, get 1 MC discount per 3 related tags', (eb) => {
               eb.diverseTag().startEffect.megacredits(-1).slash().text('3').diverseTag();
@@ -46,12 +46,26 @@ export class Prism extends Card implements ICorporationCard {
 
 
   public getCardDiscount(player: Player, card: IProjectCard) {
-    let cardDiscount = 0;
+    let totalDiscount = 0;
     if (player.isCorporation(CardName.PRISM)) {
-      card.tags.filter((tag) => tag !== Tags.EVENT).forEach((tag) => {
-        cardDiscount += Math.floor(player.getTagCount(tag) / 3);
-      });
+      let tagIndex: number;
+      const tagArray = card.tags.filter((tag) => tag !== Tags.EVENT);
+      const tagNum = tagArray.length;
+      for (tagIndex = 0; tagIndex < tagNum; tagIndex++) {
+        let cardDiscount = 0;
+        let i = 0;
+        for (const tag of tagArray) {
+          if (i === tagIndex) {
+            cardDiscount += Math.floor(player.getTagCount(tag) / 3);
+          } else {
+            cardDiscount += Math.floor(player.getTagCount(tag, 'raw') / 3);
+          }
+          i += 1;
+        }
+        totalDiscount = Math.max(totalDiscount, cardDiscount);
+      }
     }
-    return cardDiscount;
+    // console.log('totalDiscount: ', totalDiscount);
+    return totalDiscount;
   }
 }
