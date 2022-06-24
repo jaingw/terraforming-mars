@@ -38,6 +38,7 @@ export interface IColony {
   decreaseTrack(steps?: number): void;
   isColonyFull(): boolean;
   addColony(player: Player, options?: {giveBonusTwice: boolean}): void;
+  removeColony(player: Player): void;
   trade(player: Player, tradeOptions?: TradeOptions, bonusTradeOffset?: number): void;
   giveColonyBonus(player: Player, isGiveColonyBonus?: boolean): undefined | PlayerInput;
 }

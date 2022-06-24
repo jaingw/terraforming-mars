@@ -617,6 +617,8 @@ export enum CardName {
   BORDER_CHECKPOINT = 'Border Checkpoint',
   PRISM = 'Prism',
   HAY_MAKER = 'Hay Maker',
+  MARTIAN_FENCING = 'Martian Fencing',
+  MILLENNIUM_FALCON = 'Millennium Falcon',
 
   // The Moon.
   MARE_NECTARIS_MINE = 'Mare Nectaris Mine',

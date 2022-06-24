@@ -43,6 +43,8 @@ import {CardName} from '../../common/cards/CardName';
 import {GameModule} from '../../common/cards/GameModule';
 import {Prism} from '../../cards/eros/corp/Prism';
 import {HayMaker} from '../../cards/eros/HayMaker';
+import {MartianFencing} from '../../cards/eros/MartianFencing';
+import {MillenniumFalcon} from '../../cards/eros/corp/MillenniumFalcon';
 
 
 export const EROS_CARD_MANIFEST = new CardManifest({
@@ -80,6 +82,7 @@ export const EROS_CARD_MANIFEST = new CardManifest({
     {cardName: CardName.ANTI_GRAVITY_EXPERIMENT, Factory: AntiGravityExperiment},
     {cardName: CardName.BORDER_CHECKPOINT, Factory: BorderCheckpoint},
     {cardName: CardName.HAY_MAKER, Factory: HayMaker},
+    {cardName: CardName.MARTIAN_FENCING, Factory: MartianFencing},
 
 
   ],
@@ -93,6 +96,7 @@ export const EROS_CARD_MANIFEST = new CardManifest({
     {cardName: CardName.VOID, Factory: Void}, // Q27
     {cardName: CardName.TEIAI_GROUP, Factory: TeiaiGroup},
     {cardName: CardName.PRISM, Factory: Prism},
+    {cardName: CardName.MILLENNIUM_FALCON, Factory: MillenniumFalcon},
   ],
   preludeCards: [
   ],

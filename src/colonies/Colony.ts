@@ -95,6 +95,13 @@ export abstract class Colony implements IColony {
       }
     }
 
+    public removeColony(player: Player): void {
+      player.game.log('${0} remove a colony from ${1}', (b) => b.player(player).colony(this));
+      const index=this.colonies.indexOf(player);
+      if (index>-1) {
+        this.colonies.splice(index, 1);
+      }
+    }
     /*
      * Trade with this colony.
      *
