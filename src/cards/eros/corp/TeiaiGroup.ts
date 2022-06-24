@@ -32,14 +32,14 @@ export class TeiaiGroup extends Card implements ICard, ICorporationCard {
     });
   }
 
-  // public play() {
-  //   return undefined;
-  // }
-  public play(player:Player) {
-    // TEST ONLY
-    player.drawCard(350);
+  public play() {
     return undefined;
   }
+  // public play(player:Player) {
+  //   // TEST ONLY
+  //   player.drawCard(350);
+  //   return undefined;
+  // }
 
   public canAct(): boolean {
     return true;
