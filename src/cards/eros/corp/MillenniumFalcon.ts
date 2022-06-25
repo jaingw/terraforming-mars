@@ -14,16 +14,16 @@ export class MillenniumFalcon extends Card implements ICorporationCard {
   constructor() {
     super({
       name: CardName.MILLENNIUM_FALCON,
-      startingMegaCredits: 20,
+      startingMegaCredits: 28,
       cardType: CardType.CORPORATION,
       initialActionText: 'Place a colony',
 
       metadata: {
         cardNumber: 'R02',
-        description: 'You start with 20 M€. As your first action, place a colony.',
+        description: 'You start with 28 M€. As your first action, place a colony.',
         renderData: CardRenderer.builder((b) => {
           b.br.br;
-          b.megacredits(20).nbsp.colonies(1);
+          b.megacredits(28).nbsp.colonies(1);
           b.corpBox('action', (ce) => {
             ce.action('Move one of your colony to another colony (Could not be TITANIA for both case).', (eb) => {
               eb.colonies(1).startAction.colonies(1, {all}).asterix();

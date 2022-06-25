@@ -31,8 +31,8 @@ export class BuyNLarge extends Card implements ICorporationCard {
           b.effect('When you place a greenery tile or play a biology tag, add 1 seed resource to this card.', (eb) => {
             eb.greenery().slash().animals(1, {played}).slash().plants(1, {played}).slash().microbes(1, {played}).startEffect.seed();
           }).br;
-          b.effect('When you have 8 seeds, automatically convert to 8 plants.', (eb) => {
-            eb.text('8').seed().asterix().startAction.plants(8, {digit});
+          b.effect('When you have 6 seeds, automatically convert to 8 plants.', (eb) => {
+            eb.text('6').seed().asterix().startAction.plants(8, {digit});
           }).br;
         }),
         description: 'You start with 35M€. As your first action, place a greenery.',
@@ -82,9 +82,9 @@ export class BuyNLarge extends Card implements ICorporationCard {
 
   public onResourceAdded(player: Player, playedCard: ICard) {
     if (playedCard.name !== this.name) return;
-    if (this.resourceCount >= 8) {
-      const delta = Math.floor(this.resourceCount / 8);
-      const deducted = delta * 8;
+    if (this.resourceCount >= 6) {
+      const delta = Math.floor(this.resourceCount / 6);
+      const deducted = delta * 6;
       this.resourceCount -= deducted;
       player.addResource(Resources.PLANTS, 8*delta, {log: true});
       player.game.log('${0} removed ${1} seeds from ${2} to gain ${3} plants.',
