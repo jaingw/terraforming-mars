@@ -22,7 +22,7 @@ export class MillenniumFalcon extends Card implements ICorporationCard {
         cardNumber: 'R02',
         description: 'You start with 28 M€. As your first action, place a colony.',
         renderData: CardRenderer.builder((b) => {
-          b.br.br;
+          b.br.br.br.br;
           b.megacredits(28).nbsp.colonies(1);
           b.corpBox('action', (ce) => {
             ce.action('Move one of your colony to another colony (Could not be TITANIA for both case).', (eb) => {

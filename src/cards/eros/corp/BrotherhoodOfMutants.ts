@@ -27,7 +27,7 @@ export class BrotherhoodOfMutants extends Card implements ICard, ICorporationCar
         cardNumber: 'Q26',
         description: 'You start with 36 M€.',
         renderData: CardRenderer.builder((b) => {
-          b.br.br;
+          b.br.br.br;
           b.megacredits(36, {size: Size.TINY});
           b.corpBox('action', (ce) => {
             ce.vSpace(Size.LARGE);

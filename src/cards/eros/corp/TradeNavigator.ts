@@ -18,7 +18,7 @@ export class TradeNavigator extends Card implements ICard, ICorporationCard {
         cardNumber: 'Q25',
         description: 'You start with 42 M€.',
         renderData: CardRenderer.builder((b) => {
-          b.br.br;
+          b.br.br.br.br;
           b.megacredits(42);
           b.corpBox('effect', (ce) => {
             ce.effect('The first time any player trades a colony in each generation, you perform a same trade without decreasing the track.', (eb) => {
