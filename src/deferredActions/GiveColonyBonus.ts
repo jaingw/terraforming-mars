@@ -2,6 +2,7 @@ import {Player} from '../Player';
 import {IColony} from '../colonies/IColony';
 import {DeferredAction, Priority} from './DeferredAction';
 import {Multiset} from '../utils/Multiset';
+import {CardName} from '../common/cards/CardName';
 
 // 殖民者贸易奖励
 export class GiveColonyBonus implements DeferredAction {
@@ -33,6 +34,9 @@ export class GiveColonyBonus implements DeferredAction {
     for (const entry of this.waitingFor.entries()) {
       const bonusPlayer = entry[0];
       this.giveColonyBonus(bonusPlayer);
+      if (bonusPlayer.isCorporation(CardName.IMPERIAL_STAR_DESTROYER)) {
+        this.giveColonyBonus(bonusPlayer); // 再触发一次殖民地奖励
+      }
     }
 
     return undefined;

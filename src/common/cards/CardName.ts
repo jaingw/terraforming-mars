@@ -619,6 +619,7 @@ export enum CardName {
   HAY_MAKER = 'Hay Maker',
   MARTIAN_FENCING = 'Martian Fencing',
   MILLENNIUM_FALCON = 'Millennium Falcon',
+  IMPERIAL_STAR_DESTROYER = 'Imperial Star Destroyer',
 
   // The Moon.
   MARE_NECTARIS_MINE = 'Mare Nectaris Mine',

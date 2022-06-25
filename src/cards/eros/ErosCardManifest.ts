@@ -45,6 +45,7 @@ import {Prism} from '../../cards/eros/corp/Prism';
 import {HayMaker} from '../../cards/eros/HayMaker';
 import {MartianFencing} from '../../cards/eros/MartianFencing';
 import {MillenniumFalcon} from '../../cards/eros/corp/MillenniumFalcon';
+import {ImperialStarDestroyer} from '../../cards/eros/corp/ImperialStarDestroyer';
 
 
 export const EROS_CARD_MANIFEST = new CardManifest({
@@ -96,7 +97,9 @@ export const EROS_CARD_MANIFEST = new CardManifest({
     {cardName: CardName.VOID, Factory: Void}, // Q27
     {cardName: CardName.TEIAI_GROUP, Factory: TeiaiGroup},
     {cardName: CardName.PRISM, Factory: Prism},
-    {cardName: CardName.MILLENNIUM_FALCON, Factory: MillenniumFalcon},
+    {cardName: CardName.MILLENNIUM_FALCON, Factory: MillenniumFalcon, compatibility: GameModule.Colonies},
+    {cardName: CardName.IMPERIAL_STAR_DESTROYER, Factory: ImperialStarDestroyer, compatibility: GameModule.Colonies},
+
   ],
   preludeCards: [
   ],
