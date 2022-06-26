@@ -132,6 +132,12 @@
 
     "Action: Move one of your colony to another colony (Could not be TITANIA for both case)." : "行动：将你的一个殖民地移动到另一个殖民地，同时获得放置奖励（本行动不包含分数殖民地）。",
 
-    "Effect: You gain double trade bonus." : "效果：你获得双倍殖民地奖励。"
+    "Effect: You gain double trade bonus." : "效果：你获得双倍殖民地奖励。",
+
+    "Action: If you have no card, draw 2 card." : "行动：如果你没有手牌，抽2张牌。",
+
+    "Action: Or you can discard X cards to draw X-1 cards. Maximum X is current generation number." : "行动：或者你可以弃X摸X-1牌。X不大于当前时代数。"
+
+
 }
 
