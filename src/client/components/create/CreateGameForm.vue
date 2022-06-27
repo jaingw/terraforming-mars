@@ -5,6 +5,12 @@
       <span v-i18n>Looking for people to play with</span>? <u v-i18n>Join us qq group: 859050306</u>.
     </div>
 
+    <div class="create-game-discord-invite">
+      <span v-i18n> bug: 千年隼可以上4个殖民地 - 已修复 </span><br>
+      <span v-i18n> bug: 反重力先行试验持续生效 - 本地测试没问题，待复现 </span><br>
+      <span v-i18n> bug: 微生物热公司一次获得多个微生物只能加2热 - 不是bug，技能就是如此 </span><br>
+    </div>
+
     <div class="create-game-form create-game-panel create-game--block">
 
       <div class="create-game-options">
