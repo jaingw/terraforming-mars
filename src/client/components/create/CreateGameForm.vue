@@ -445,10 +445,13 @@ import {playerColorClass} from '@/common/utils/utils';
 import {PreferencesManager} from '../../utils/PreferencesManager';
 import {RandomMAOptionType} from '@/common/ma/RandomMAOptionType';
 import {AgendaStyle} from '@/common/turmoil/Types';
+
 import * as constants from '@/common/constants';
 import {QrCode} from '../QrCode';
 import {mainAppSettings} from '../App';
+
 type BoardNameType = BoardName | RandomBoardOption;
+
 export interface CreateGameModel {
   isvip: boolean,
   constants: typeof constants;
@@ -509,6 +512,7 @@ export interface CreateGameModel {
   escapeVelocityPeriod: number;
   escapeVelocityPenalty: number;
 }
+
 export interface NewPlayerModel {
   index: number;
   name: string;
@@ -517,6 +521,7 @@ export interface NewPlayerModel {
   handicap: number;
   first: boolean;
 }
+
 const vipOptions : any = {
   'heatFor': false,
   'breakthrough': false,
@@ -526,15 +531,18 @@ const vipOptions : any = {
   'communityCardsOption': false,
   'moonExpansion': false,
   'politicalAgendasExtension': AgendaStyle.STANDARD,
+
   'shuffleMapOption': false,
   'removeNegativeGlobalEventsOption': false,
   'randomMA': RandomMAOptionType.NONE,
+
   // 这四参数跟后端 routes/game不一样
   'cardsBlackList': [],
   'customColoniesList': [],
   'showCardsBlackList': false,
   'showColoniesList': false,
 };
+
 export default Vue.extend({
   name: 'CreateGameForm',
   data(): CreateGameModel {
@@ -633,6 +641,7 @@ export default Vue.extend({
   methods: {
     async downloadCurrentSettings() {
       const serializedData = await this.serializeSettings();
+
       if (serializedData) {
         const a = document.createElement('a');
         const blob = new Blob([serializedData], {'type': 'application/json'});
@@ -647,6 +656,7 @@ export default Vue.extend({
       (refs.file as any).value ='';
       const reader = new FileReader();
       const component = this.$data;
+
       reader.addEventListener('load', function() {
         const readerResults = reader.result;
         if (typeof(readerResults) === 'string') {
@@ -656,14 +666,17 @@ export default Vue.extend({
           component.showCorporationList = results['customCorporationsList'].length > 0;
           component.showColoniesList = results['customColoniesList'].length > 0;
           component.showCardsBlackList = results['cardsBlackList'].length > 0;
+
           for (const k in results) {
             if (['customCorporationsList', 'customColoniesList', 'cardsBlackList', 'players'].includes(k)) continue;
             (component as any)[k] = results[k];
           }
+
           for (let i = 0; i < players.length; i++) {
             Object.assign(component.players[i], players[i]);
             // component.players[i] = players[i];  这会使player对象替换，vue检测不到更换玩家颜色事件,不会自动修改背景色
           }
+
           // 非vip还原部分设置
           if (!component.isvip) {
             for (const k in vipOptions) {
@@ -674,14 +687,18 @@ export default Vue.extend({
           if (component.randomMA !== RandomMAOptionType.NONE) {
             component.randomMACheckbox = true;
           }
+
+
           Vue.nextTick(() => {
             if (component.isvip) {
               if (component.showColoniesList) {
                 (refs.coloniesFilter as any).updateColoniesByNames(results['customColoniesList']);
               }
+
               if (component.showCorporationList) {
                 (refs.corporationsFilter as any).selectedCorporations = results['customCorporationsList'];
               }
+
               if (component.showCardsBlackList) {
                 (refs.cardsFilter as any).selectedCardNames = results['cardsBlackList'];
               }
@@ -816,7 +833,9 @@ export default Vue.extend({
     },
     async serializeSettings() {
       const component = (this as any) as CreateGameModel;
+
       let players = component.players.slice(0, component.playersCount);
+
       if (component.randomFirstPlayer) {
         // Shuffle players array to assign each player a random seat around the table
         players = players.map((a) => ({sort: Math.random(), value: a}))
@@ -824,6 +843,7 @@ export default Vue.extend({
           .map((a) => a.value);
         component.firstIndex = Math.floor(component.seed * component.playersCount) + 1;
       }
+
       // Auto assign an available color if there are duplicates
       const uniqueColors = players.map((player) => player.color).filter((v, i, a) => a.indexOf(v) === i);
       if (uniqueColors.length !== players.length) {
@@ -836,8 +856,10 @@ export default Vue.extend({
           }
         });
       }
+
       // Set player name automatically if not entered
       const isSoloMode = component.playersCount === 1;
+
       component.players.forEach((player) => {
         if (player.name === '') {
           if (isSoloMode) {
@@ -853,10 +875,12 @@ export default Vue.extend({
           }
         }
       });
+
       players.map((player: any) => {
         player.first = (component.firstIndex === player.index);
         return player;
       });
+
       const corporateEra = component.corporateEra;
       const prelude = component.prelude;
       const draftVariant = component.draftVariant;
@@ -899,6 +923,7 @@ export default Vue.extend({
       const escapeVelocityPeriod = component.escapeVelocityMode ? component.escapeVelocityPeriod : undefined;
       const escapeVelocityPenalty = component.escapeVelocityMode ? component.escapeVelocityPenalty : undefined;
       const clonedGamedId: undefined | string = undefined;
+
       // Check custom colony count
       if (customColoniesList.length > 0) {
         const playersCount = players.length;
@@ -908,11 +933,13 @@ export default Vue.extend({
         } else if (playersCount === 2) {
           neededColoniesCount = 5;
         }
+
         if (customColoniesList.length < neededColoniesCount) {
           window.alert(translateTextWithParams('Must select at least ${0} colonies', [neededColoniesCount.toString()]));
           return;
         }
       }
+
       // Check custom corp count
       if (component.showCorporationList && customCorporationsList.length > 0) {
         const neededCorpsCount = players.length * startingCorporations;
@@ -984,7 +1011,9 @@ export default Vue.extend({
       const root = this.$root as unknown as typeof mainAppSettings.data;
       root.isServerSideRequestInProgress = true;
       PreferencesManager.INSTANCE.set('lastcreated', nowtime.toString());
+
       const dataToSend = await this.serializeSettings();
+
       if (dataToSend === undefined) return;
       const onSucces = (response: any) => {
         root.isServerSideRequestInProgress = false;
@@ -997,6 +1026,7 @@ export default Vue.extend({
           (this as any).$root.$data.screen = 'game-home';
         }
       };
+
       fetch('/game', {'method': 'PUT', 'body': dataToSend, 'headers': {'Content-Type': 'application/json'}})
         .then((response) => response.json())
         .then(onSucces)

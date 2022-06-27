@@ -73,7 +73,7 @@ export const mainAppSettings = {
       'turmoil_parties': false,
     } as {[x: string]: boolean},
     game: undefined as SimpleGameModel | undefined,
-    isvip: true, // 页面加载时刷新isvip, 之后都可以根据这个值判断是否vip // ender test
+    isvip: false, // 页面加载时刷新isvip, 之后都可以根据这个值判断是否vip // ender test
     oscreen: 'empty', // 跳转赞助页面前的页面
     playerView: undefined,
     spectator: undefined,
