@@ -31,6 +31,9 @@ export class GiveColonyBonus implements DeferredAction {
       } else {
         // Selfish behavior, `player` gets all the colony bonuses.
         this.waitingFor.add(this.player);
+        if (this.player.isCorporation(CardName.IMPERIAL_STAR_DESTROYER)) {
+          this.waitingFor.add(this.player); // 如果自己是歼星则全部翻倍
+        }
       }
     }
 

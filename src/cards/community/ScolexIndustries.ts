@@ -18,14 +18,14 @@ export class ScolexIndustries extends Card implements IActionCard, ICorporationC
       cardType: CardType.CORPORATION,
       name: CardName.SCOLEX_INDUSTRIES,
       tags: [Tags.PLANT, Tags.ENERGY],
-      startingMegaCredits: 45,
+      startingMegaCredits: 40,
 
       metadata: {
         cardNumber: 'XUEBAO5',
-        description: 'You start with 1 steel, titanium, plant and energy production, and 45 M€.',
+        description: 'You start with 1 steel, titanium, plant and energy production, and 40 M€.',
         renderData: CardRenderer.builder((b) => {
           b.br.br.br;
-          b.production((pb) => pb.steel(1).titanium(1).plants(1).energy(1)).megacredits(45);
+          b.production((pb) => pb.steel(1).titanium(1).plants(1).energy(1)).megacredits(40);
           b.corpBox('action', (ce) => {
             ce.action('Decrease 1 production, and Increase 1 production', (eb) => {
               eb.minus(Size.SMALL).production((eb) => eb.wild(1)).startAction.plus(Size.SMALL).production((eb) => eb.wild(1));

@@ -13,14 +13,14 @@ export class Prism extends Card implements ICorporationCard {
       cardType: CardType.CORPORATION,
       name: CardName.PRISM,
       tags: [Tags.WILDCARD],
-      startingMegaCredits: 33,
+      startingMegaCredits: 36,
 
       metadata: {
         cardNumber: 'Q040',
-        description: 'You start with 33 M€',
+        description: 'You start with 36 M€',
         renderData: CardRenderer.builder((b) => {
           b.br.br.br.br;
-          b.megacredits(33);
+          b.megacredits(36);
           b.corpBox('effect', (ce) => {
             ce.effect('For each tag, get 1 MC discount per 3 related tags', (eb) => {
               eb.diverseTag().startEffect.megacredits(-1).slash().text('3').diverseTag();

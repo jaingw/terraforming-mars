@@ -72,6 +72,7 @@ export class CloneTechnology extends Card implements IProjectCard {
     CardName._ECOLINE_,
     CardName.APHRODITE,
     CardName.AGRICOLA_INC,
+    CardName.SCOLEX_INDUSTRIES, // 新星核
 
   ];
 
