@@ -332,6 +332,9 @@
     <template v-else-if="title ===  CardName.IMPERIAL_STAR_DESTROYER">
       <div class="card-imperial-star-destroyer-logo"></div>
     </template>
+    <template v-else-if="title ===  CardName.CITY_GREENHOUSE">
+      <div class="card-city-greenhouse-logo"></div>
+    </template>
     <template v-else>
       <div>{{title}}</div>
     </template>

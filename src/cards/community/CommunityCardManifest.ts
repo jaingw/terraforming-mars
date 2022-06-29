@@ -33,6 +33,7 @@ import {Protogen} from './Protogen';
 import {IntegratedMicroorganisms} from './IntegratedMicroorganisms';
 import {BuyNLarge} from './BuyNLarge';
 import {Rda} from './Rda';
+import {CityGreenhouse} from './CityGreenhouse';
 
 export const COMMUNITY_CARD_MANIFEST = new CardManifest({
   module: GameModule.Community,
@@ -59,6 +60,7 @@ export const COMMUNITY_CARD_MANIFEST = new CardManifest({
     {cardName: CardName.INTEGRATED_MICROORGANISMS, Factory: IntegratedMicroorganisms},
     {cardName: CardName.BUY_N_LARGE, Factory: BuyNLarge},
     {cardName: CardName.RDA, Factory: Rda},
+    {cardName: CardName.CITY_GREENHOUSE, Factory: CityGreenhouse},
 
 
   ],
