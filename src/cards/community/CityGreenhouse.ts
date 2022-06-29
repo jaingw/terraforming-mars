@@ -37,14 +37,22 @@ export class CityGreenhouse extends Card implements ICorporationCard {
   }
 
 
-  public onTilePlaced(cardOwner: Player, _activePlayer: Player, space: ISpace) {
+  public onTilePlaced(cardOwner: Player, activePlayer: Player, space: ISpace) {
     if (Board.isCitySpace(space)) {
       cardOwner.game.defer(new GainResources(cardOwner, Resources.HEAT, {count: 4}));
+      cardOwner.game.log('${0} received 4 Heat from ${1} city', (b) =>
+        b.player(cardOwner)
+          .player(activePlayer),
+      );
     }
     return;
   }
 
-  public play() {
+  public play(player: Player) {
+    if (player.game.getPlayers().length === 1) {
+      // Get bonus for 2 neutral cities
+      player.addResource(Resources.HEAT, 8);
+    }
     return undefined;
   }
 }
