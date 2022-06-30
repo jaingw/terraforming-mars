@@ -6,11 +6,8 @@
     </div>
 
     <div class="create-game-discord-invite">
-      <span v-i18n> bug: 歼星舰+pf扩5元贸易不能触发 - 已修复 </span><br>
       <span v-i18n> bug: 反重力先行试验持续生效 - 本地测试没问题，待复现 </span><br>
-      <span v-i18n> bug: 克隆科技无法复制星核工业 - 已修复 </span><br>
-      <span v-i18n> nerf: 星核工业由45元改为40元 </span><br>
-      <span v-i18n> buff: 棱镜由33元改为36元 </span><br>
+      <span v-i18n> bug: 边境检查站允许撤回 - 已修复 </span><br>
     </div>
 
     <div class="create-game-form create-game-panel create-game--block">
