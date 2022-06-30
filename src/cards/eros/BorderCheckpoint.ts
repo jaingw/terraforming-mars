@@ -81,6 +81,7 @@ export class BorderCheckpoint extends Card implements IProjectCard {
     const cardIndex = this.getRandomNum(0, 4);
     const cards: Array<IProjectCard> = player.game.dealer.discarded.splice(cardIndex, 1);
     player.game.defer(new DeferredAction(player, () => DrawCards.choose(player, cards, {keepMax: 1})));
+    player.game.cardDrew = true;
     return undefined;
   }
 }
