@@ -140,7 +140,7 @@
 
     "Effect: When you gain microbes in one action, also gain 2 heat." : "效果：每次你获得微生物时，获得2热。如果一次获得多个微生物也只获得2热。",
 
-    "Action: Send a neutral delegate to any party." : "行动：放置一个中立代表。",
+    "Action: Send a Neutral delegate to any party." : "行动：放置一个中立代表。",
 
     "Effect: Your delegates count as neutral delegates. If neutral delegate becomes chairman, you can decide: let all other player lose 1 TR, or ignore their ruling bonus." : "效果：所有场上的中立代表均视为你的代表。当你执政时，你不获得TR，改为选择：让其它玩家失去1TR, 或者让其它玩家忽略本时代的执政奖励。"
 
