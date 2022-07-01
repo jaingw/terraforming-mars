@@ -1,7 +1,7 @@
 import {Player} from '../../Player';
 import {Game} from '../../Game';
 import {NeutralPlayer} from '../Turmoil';
-// import {CardName} from '../../common/cards/CardName';
+import {CardName} from '../../common/cards/CardName';
 
 export abstract class Party {
   public partyLeader: undefined | Player | NeutralPlayer = undefined;
@@ -75,11 +75,10 @@ export abstract class Party {
 
   // Return number of delegate
   public getDelegates(player: Player | NeutralPlayer): number {
-    // if (player !== 'NEUTRAL' && player.isCorporation(CardName.SITH_ORGANIZATIONS)) {
-    //   return this.delegates.filter((p) => p === 'NEUTRAL').length;
-    // } else {
-    //   return this.delegates.filter((p) => p === player).length;
-    // }
-    return this.delegates.filter((p) => p === player).length;
+    if (player !== 'NEUTRAL' && player !== undefined && player.isCorporation(CardName.SITH_ORGANIZATIONS)) {
+      return this.delegates.filter((p) => (p === 'NEUTRAL' || p === player)).length;
+    } else {
+      return this.delegates.filter((p) => p === player).length;
+    }
   }
 }

@@ -19,19 +19,19 @@ export class SithOrganizations extends Card implements ICard, ICorporationCard {
   constructor() {
     super({
       name: CardName.SITH_ORGANIZATIONS,
-      tags: [Tags.JOVIAN, Tags.VENUS],
-      startingMegaCredits: 40,
+      tags: [Tags.VENUS, Tags.JOVIAN],
+      startingMegaCredits: 35,
       cardType: CardType.CORPORATION,
 
       metadata: {
         cardNumber: 'Q48',
-        description: 'You start with 40 M€.',
+        description: 'You start with 35 M€.',
         renderData: CardRenderer.builder((b) => {
           b.br;
-          b.megacredits(40, {size: Size.TINY});
+          b.megacredits(35, {size: Size.TINY});
           b.corpBox('action', (ce) => {
             ce.vSpace(Size.LARGE);
-            ce.action('Send a neutral delegate to any party.', (eb) => {
+            ce.action('Send a Neutral delegate to any party.', (eb) => {
               eb.empty().startAction.delegates(1).asterix();
             });
             ce.effect('Your delegates count as neutral delegates. If neutral delegate becomes chairman, you can decide: let all other player lose 1 TR, or ignore their ruling bonus.', (eb) => {
@@ -43,11 +43,29 @@ export class SithOrganizations extends Card implements ICard, ICorporationCard {
     });
   }
 
-  public play(_player: Player) {
-    // 去掉影响力
-    // if (player.game.turmoil) {
-    //   player.game.turmoil.addInfluenceBonus(player);
-    // }
+  public play(player: Player) {
+    const game = player.game;
+    if (game.turmoil !== undefined) {
+      const turmoil = game.turmoil;
+      const parties = game.turmoil.parties;
+      for (let i = 0; i < 6; i++) {
+        turmoil.delegateReserve.push('NEUTRAL');
+      }
+      parties.forEach((party)=>{
+        const neutral = party.getDelegates('NEUTRAL');
+        for (let i=0; i<neutral; i++) {
+          turmoil.removeDelegateFromParty('NEUTRAL', party.name, game);
+          turmoil.delegateReserve.push(player);
+          turmoil.sendDelegateToParty(player, party.name, game, 'reserve');
+        }
+      });
+      turmoil.chairman = player;
+      const index = turmoil.delegateReserve.indexOf(player);
+      if (index > -1) {
+        turmoil.delegateReserve.splice(index, 1);
+      }
+      return undefined;
+    }
     return undefined;
   }
 

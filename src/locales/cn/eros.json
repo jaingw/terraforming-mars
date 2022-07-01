@@ -142,7 +142,7 @@
 
     "Action: Send a neutral delegate to any party." : "行动：放置一个中立代表。",
 
-    "Effect: Your delegates count as neutral delegates. If neutral delegate becomes chairman, you can decide: let all other player lose 1 TR, or ignore their ruling bonus." : "效果：你的代表视为中立代表。当中立代表成为主席时（开始游戏的不算），你选择一项：让其它玩家失去1TR, 或者让其它玩家忽略本时代的执政奖励。"
+    "Effect: Your delegates count as neutral delegates. If neutral delegate becomes chairman, you can decide: let all other player lose 1 TR, or ignore their ruling bonus." : "效果：所有场上的中立代表均视为你的代表。当你执政时，你不获得TR，改为选择：让其它玩家失去1TR, 或者让其它玩家忽略本时代的执政奖励。"
 
 
 }

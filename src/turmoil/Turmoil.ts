@@ -121,8 +121,12 @@ export class Turmoil {
       }
     }
     // 如果是西斯，所有放置的代表都是中立代表
-    if (player !== 'NEUTRAL' && player.isCorporation(CardName.SITH_ORGANIZATIONS)) {
-      party.sendDelegate('NEUTRAL', game);
+    // if (player !== 'NEUTRAL' && player.isCorporation(CardName.SITH_ORGANIZATIONS)) {
+    const sith = game.getPlayers().filter((p) => p.isCorporation(CardName.SITH_ORGANIZATIONS));
+    // console.log('sith', sith);
+    // console.log('player === \'NEUTRAL\' && sith[0] !== undefined', player === 'NEUTRAL' && sith[0] !== undefined);
+    if (player === 'NEUTRAL' && sith.length !== 0) {
+      party.sendDelegate(sith[0], game);
     } else {
       party.sendDelegate(player, game);
     }
@@ -314,15 +318,13 @@ export class Turmoil {
     if (bonus === undefined) {
       throw new Error(`Bonus id ${bonusId} not found in party ${rulingParty.name}`);
     }
-    console.log('chairman', this.chairman);
-    console.log('this.chairman !== undefined', this.chairman !== undefined);
-    console.log('game.getPlayers().filter((p) => p.isCorporation(CardName.SITH_ORGANIZATIONS)).length===1', game.getPlayers().filter((p) => p.isCorporation(CardName.SITH_ORGANIZATIONS)).length===1);
-    console.log(this.chairman !== 'NEUTRAL' && this.chairman !== undefined && game.getPlayers().filter((p) => p.isCorporation(CardName.SITH_ORGANIZATIONS)).length===1);
-    if (this.chairman === 'NEUTRAL' && this.chairman !== undefined && game.getPlayers().filter((p) => p.isCorporation(CardName.SITH_ORGANIZATIONS)).length===1) {
+
+    if (this.chairman !== undefined && this.chairman !== 'NEUTRAL' && this.chairman.isCorporation(CardName.SITH_ORGANIZATIONS)) {
       const NonSithPlayers = game.getPlayers().filter((p) => !p.isCorporation(CardName.SITH_ORGANIZATIONS));
-      const SithPlayer = game.getPlayers().filter((p) => p.isCorporation(CardName.SITH_ORGANIZATIONS))[0];
+      const SithPlayer = this.chairman;
+      SithPlayer.decreaseTerraformRatingSteps(1); // 其实是中立执政，无法享有TR
       const action: OrOptions = new OrOptions();
-      action.title = 'Select action for World Government Terraforming';
+      action.title = 'Select effect from Sith ability';
       action.buttonLabel = 'Confirm';
       action.options.push(
         new SelectOption('Decrease all other players 1 TR', 'Decrease', () => {
