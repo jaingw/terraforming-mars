@@ -1,16 +1,19 @@
 import {PartyName} from '../common/turmoil/PartyName';
-import {IParty, ALL_PARTIES} from './parties/IParty';
+import {ALL_PARTIES, IParty} from './parties/IParty';
 import {Player} from '../Player';
 import {Game} from '../Game';
-import {GlobalEventDealer, getGlobalEventByName} from './globalEvents/GlobalEventDealer';
+import {getGlobalEventByName, GlobalEventDealer} from './globalEvents/GlobalEventDealer';
 import {IGlobalEvent} from './globalEvents/IGlobalEvent';
-import {SerializedTurmoil, SerializedParty} from './SerializedTurmoil';
+import {SerializedParty, SerializedTurmoil} from './SerializedTurmoil';
 import {PLAYER_DELEGATES_COUNT} from '../common/constants';
-import {PoliticalAgendasData, PoliticalAgendas} from './PoliticalAgendas';
+import {PoliticalAgendas, PoliticalAgendasData} from './PoliticalAgendas';
 import {AgendaStyle} from '../common/turmoil/Types';
 import {CardName} from '../common/cards/CardName';
 import {DeferredAction} from '../deferredActions/DeferredAction';
 import {SerializedPlayerId} from '../SerializedPlayer';
+import {OrOptions} from '../inputs/OrOptions';
+import {SelectOption} from '../inputs/SelectOption';
+
 export type NeutralPlayer = 'NEUTRAL';
 
 
@@ -117,7 +120,12 @@ export class Turmoil {
         return;
       }
     }
-    party.sendDelegate(player, game);
+    // 如果是西斯，所有放置的代表都是中立代表
+    if (player !== 'NEUTRAL' && player.isCorporation(CardName.SITH_ORGANIZATIONS)) {
+      party.sendDelegate('NEUTRAL', game);
+    } else {
+      party.sendDelegate(player, game);
+    }
     this.checkDominantParty(party);
   }
 
@@ -306,8 +314,39 @@ export class Turmoil {
     if (bonus === undefined) {
       throw new Error(`Bonus id ${bonusId} not found in party ${rulingParty.name}`);
     }
-    game.log('The ruling bonus is: ${0}', (b) => b.string(bonus.description));
-    bonus.grant(game);
+    console.log('chairman', this.chairman);
+    console.log('this.chairman !== undefined', this.chairman !== undefined);
+    console.log('game.getPlayers().filter((p) => p.isCorporation(CardName.SITH_ORGANIZATIONS)).length===1', game.getPlayers().filter((p) => p.isCorporation(CardName.SITH_ORGANIZATIONS)).length===1);
+    console.log(this.chairman !== 'NEUTRAL' && this.chairman !== undefined && game.getPlayers().filter((p) => p.isCorporation(CardName.SITH_ORGANIZATIONS)).length===1);
+    if (this.chairman === 'NEUTRAL' && this.chairman !== undefined && game.getPlayers().filter((p) => p.isCorporation(CardName.SITH_ORGANIZATIONS)).length===1) {
+      const NonSithPlayers = game.getPlayers().filter((p) => !p.isCorporation(CardName.SITH_ORGANIZATIONS));
+      const SithPlayer = game.getPlayers().filter((p) => p.isCorporation(CardName.SITH_ORGANIZATIONS))[0];
+      const action: OrOptions = new OrOptions();
+      action.title = 'Select action for World Government Terraforming';
+      action.buttonLabel = 'Confirm';
+      action.options.push(
+        new SelectOption('Decrease all other players 1 TR', 'Decrease', () => {
+          NonSithPlayers.forEach((p) => p.decreaseTerraformRatingSteps(1));
+          game.log('${0} let everyone else lose 1 TR.', (b) => b.player(SithPlayer));
+          game.log('The ruling bonus is: ${0}', (b) => b.string(bonus.description));
+          bonus.grant(game.getPlayersInGenerationOrder());
+          return undefined;
+        }),
+        new SelectOption('Ignore ruling bonus this generation', 'Ignore', () => {
+          bonus.grant([SithPlayer]);
+          game.log('${0} let everyone else ignore the ruling bonus', (b) => b.player(SithPlayer));
+          game.log('The ruling bonus is: ${0} (only apply for ${1})', (b) => b.string(bonus.description).player(SithPlayer));
+          return undefined;
+        }),
+      );
+      game.defer(new DeferredAction(SithPlayer, () => action));
+    } else {
+      game.log('The ruling bonus is: ${0}', (b) => b.string(bonus.description));
+
+
+      bonus.grant(game.getPlayersInGenerationOrder());
+    }
+
 
     const policyId = PoliticalAgendas.currentAgenda(this).policyId;
     const policy = rulingParty.policies.find((p) => p.id === policyId);

@@ -1,7 +1,7 @@
 import {IParty} from './IParty';
 import {Party} from './Party';
 import {PartyName} from '../../common/turmoil/PartyName';
-import {Game} from '../../Game';
+// import {Game} from '../../Game';
 import {Bonus} from '../Bonus';
 import {Policy} from '../Policy';
 import {SelectHowToPayDeferred} from '../../deferredActions/SelectHowToPayDeferred';
@@ -38,8 +38,7 @@ class RedsBonus01 implements Bonus {
     return 0;
   }
 
-  grant(game: Game) {
-    const players = game.getPlayersInGenerationOrder();
+  grant(players: Array<Player>) {
     const scores = players.map((player) => this.getScore(player));
 
     players.forEach((player, idx) => {
@@ -66,8 +65,7 @@ class RedsBonus02 implements Bonus {
     return 0;
   }
 
-  grant(game: Game) {
-    const players = game.getPlayersInGenerationOrder();
+  grant(players: Array<Player>) {
     const scores = players.map((player) => this.getScore(player));
 
     players.forEach((player, idx) => {

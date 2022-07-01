@@ -1,7 +1,7 @@
 import {IParty} from './IParty';
 import {Party} from './Party';
 import {PartyName} from '../../common/turmoil/PartyName';
-import {Game} from '../../Game';
+// import {Game} from '../../Game';
 import {Tags} from '../../common/cards/Tags';
 import {Resources} from '../../common/Resources';
 import {Bonus} from '../Bonus';
@@ -31,8 +31,8 @@ class MarsFirstBonus01 implements Bonus {
     return player.getTagCount(Tags.BUILDING, 'raw');
   }
 
-  grant(game: Game) {
-    game.getPlayersInGenerationOrder().forEach((player) => {
+  grant(players: Array<Player>) {
+    players.forEach((player) => {
       player.addResource(Resources.MEGACREDITS, this.getScore(player));
     });
   }
@@ -48,8 +48,8 @@ class MarsFirstBonus02 implements Bonus {
     return boardSpaces.filter((space) => space.tile !== undefined && space.player === player && space.spaceType !== SpaceType.COLONY).length;
   }
 
-  grant(game: Game) {
-    game.getPlayersInGenerationOrder().forEach((player) => {
+  grant(players: Array<Player>) {
+    players.forEach((player) => {
       player.addResource(Resources.MEGACREDITS, this.getScore(player));
     });
   }

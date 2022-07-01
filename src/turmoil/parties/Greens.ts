@@ -1,7 +1,7 @@
 import {IParty} from './IParty';
 import {Party} from './Party';
 import {PartyName} from '../../common/turmoil/PartyName';
-import {Game} from '../../Game';
+// import {Game} from '../../Game';
 import {Tags} from '../../common/cards/Tags';
 import {Resources} from '../../common/Resources';
 import {Bonus} from '../Bonus';
@@ -38,8 +38,8 @@ class GreensBonus01 implements Bonus {
       player.getTagCount(Tags.ANIMAL, 'raw');
   }
 
-  grant(game: Game) {
-    game.getPlayersInGenerationOrder().forEach((player) => {
+  grant(players: Array<Player>) {
+    players.forEach((player) => {
       player.addResource(Resources.MEGACREDITS, this.getScore(player));
     });
   }
@@ -56,8 +56,8 @@ class GreensBonus02 implements Bonus {
     return count * 2;
   }
 
-  grant(game: Game) {
-    game.getPlayersInGenerationOrder().forEach((player) => {
+  grant(players: Array<Player>) {
+    players.forEach((player) => {
       player.addResource(Resources.MEGACREDITS, this.getScore(player));
     });
   }

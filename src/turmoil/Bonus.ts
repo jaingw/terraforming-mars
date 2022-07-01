@@ -1,4 +1,3 @@
-import {Game} from '../Game';
 import {Player} from '../Player';
 import {BonusId} from '../common/turmoil/Types';
 
@@ -6,6 +5,6 @@ export interface Bonus {
   id: BonusId;
   description: string;
   isDefault: boolean;
-  grant: (game: Game) => void;
+  grant: (players: Array<Player>) => void;
   getScore: (player: Player) => number;
 }

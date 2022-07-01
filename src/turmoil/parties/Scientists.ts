@@ -25,8 +25,8 @@ class ScientistsBonus01 implements Bonus {
     return player.getTagCount(Tags.SCIENCE, 'raw');
   }
 
-  grant(game: Game) {
-    game.getPlayersInGenerationOrder().forEach((player) => {
+  grant(players: Array<Player>) {
+    players.forEach((player) => {
       player.addResource(Resources.MEGACREDITS, this.getScore(player));
     });
   }
@@ -41,8 +41,8 @@ class ScientistsBonus02 implements Bonus {
     return Math.floor(player.cardsInHand.length / 3);
   }
 
-  grant(game: Game) {
-    game.getPlayersInGenerationOrder().forEach((player) => {
+  grant(players: Array<Player>) {
+    players.forEach((player) => {
       player.addResource(Resources.MEGACREDITS, this.getScore(player));
     });
   }

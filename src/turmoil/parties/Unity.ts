@@ -1,7 +1,7 @@
 import {IParty} from './IParty';
 import {Party} from './Party';
 import {PartyName} from '../../common/turmoil/PartyName';
-import {Game} from '../../Game';
+// import {Game} from '../../Game';
 import {Tags} from '../../common/cards/Tags';
 import {Resources} from '../../common/Resources';
 import {Bonus} from '../Bonus';
@@ -33,8 +33,8 @@ class UnityBonus01 implements Bonus {
     return tags.map((tag) => player.getTagCount(tag, 'raw')).reduce((acc, count) => acc + count, 0);
   }
 
-  grant(game: Game) {
-    game.getPlayersInGenerationOrder().forEach((player) => {
+  grant(players: Array<Player>) {
+    players.forEach((player) => {
       player.addResource(Resources.MEGACREDITS, this.getScore(player));
     });
   }
@@ -49,8 +49,8 @@ class UnityBonus02 implements Bonus {
     return player.getTagCount(Tags.SPACE, 'raw');
   }
 
-  grant(game: Game) {
-    game.getPlayersInGenerationOrder().forEach((player) => {
+  grant(players: Array<Player>) {
+    players.forEach((player) => {
       player.addResource(Resources.MEGACREDITS, this.getScore(player));
     });
   }
