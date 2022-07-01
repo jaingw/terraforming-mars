@@ -335,6 +335,9 @@
     <template v-else-if="title ===  CardName.CITY_GREENHOUSE">
       <div class="card-city-greenhouse-logo"></div>
     </template>
+    <template v-else-if="title ===  CardName.SITH_ORGANIZATIONS">
+      <div class="card-sith-logo"></div>
+    </template>
     <template v-else>
       <div>{{title}}</div>
     </template>
