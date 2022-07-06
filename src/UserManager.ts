@@ -220,12 +220,9 @@ export function register(req: http.IncomingMessage, res: http.ServerResponse): v
 }
 
 
-export function isvip(req: http.IncomingMessage, res: http.ServerResponse): void {
-  const qs: string = req.url!.substring('/api/isvip?'.length);
-  const queryParams = querystring.parse(qs);
-  const userId = (queryParams as any)['userId'];
-
-  if (userId === undefined || userId === '') {
+export function isvip(req: http.IncomingMessage, res: http.ServerResponse, ctx: IContext): void {
+  const userId = ctx.url.searchParams.get('userId');
+  if (userId === undefined || userId === '' || userId === null) {
     console.warn('didn\'t find user id');
     notFound(req, res);
     return;

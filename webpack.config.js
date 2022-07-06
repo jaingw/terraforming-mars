@@ -34,7 +34,6 @@ const plugins = [
       },
     },
   }),
-  },
   new VueLoaderPlugin(),
   // fork 一个进程进行检查
   // new ForkTsCheckerWebpackPlugin({
@@ -61,8 +60,6 @@ const plugins = [
   }),
   new NodePolyfillPlugin(),
 ];
-
-
 
 if (process.env.NODE_ENV === 'development') {
   // Reports progress on the commandline during compilation.
