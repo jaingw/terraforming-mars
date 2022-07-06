@@ -9,22 +9,25 @@
             </div>
         </div>
         <br/>
-        <div class="corporations-filter-group" v-for="group in corporationGroups" :key="group.title">
+        <template v-for="module in GAME_MODULES">
+          <div class="corporations-filter-group" v-if="cardsByModule[module].length > 0" v-bind:key="module">
             <div class="corporations-filter-toolbox-cont">
-                <h2>{{ group.title }}</h2>
+                <div><span v-i18n>{{moduleName(module)}}</span>&nbsp;<div :class="icon(module)"></div></div><br>
                 <div class="corporations-filter-toolbox">
-                    <a href="#" v-i18n v-on:click.prevent="selectAll(group.title)">All</a> |
-                    <a href="#" v-i18n v-on:click.prevent="selectNone(group.title)">None</a> |
-                    <a href="#" v-i18n v-on:click.prevent="invertSelection(group.title)">Invert</a>
+                    <a href="#" v-i18n v-on:click.prevent="selectAll(module)">All</a> |
+                    <a href="#" v-i18n v-on:click.prevent="selectNone(module)">None</a> |
+                    <a href="#" v-i18n v-on:click.prevent="invertSelection(module)">Invert</a>
                 </div>
             </div>
-            <div v-for="corporation in group.items"  :key="corporation">
+            <div v-for="corporation in cardsByModule[module]" v-bind:key="corporation">
                 <label class="form-checkbox">
                     <input type="checkbox" v-model="selectedCorporations" :value="corporation"/>
-                    <i class="form-icon"></i>{{ corporation }}
+                    <i class="form-icon"></i><span v-i18n>{{ corporation }}</span>
+                    <div v-for="expansion in expansions(corporation)" :key="expansion" :class="icon(expansion)"></div>
                 </label>
             </div>
-        </div>
+          </div>
+        </template>
     </div>
 </template>
 
@@ -32,36 +35,18 @@
 import Vue from 'vue';
 
 import {CardName} from '@/common/cards/CardName';
-import {CorporationGroup} from '@/CorporationName';
+import {GameModule, GAME_MODULES} from '@/common/cards/GameModule';
+import {byModule, byType, getCard, getCards, toName} from '@/client/cards/ClientCardManifest';
+import {CardType} from '@/common/cards/CardType';
 
-import {COLONIES_CARD_MANIFEST} from '@/cards/colonies/ColoniesCardManifest';
-import {COMMUNITY_CARD_MANIFEST} from '@/cards/community/CommunityCardManifest';
-import {PRELUDE_CARD_MANIFEST} from '@/cards/prelude/PreludeCardManifest';
-import {PROMO_CARD_MANIFEST} from '@/cards/promo/PromoCardManifest';
-import {BASE_CARD_MANIFEST, CORP_ERA_CARD_MANIFEST} from '@/cards/StandardCardManifests';
-import {TURMOIL_CARD_MANIFEST} from '@/cards/turmoil/TurmoilCardManifest';
-import {VENUS_CARD_MANIFEST} from '@/cards/venusNext/VenusCardManifest';
+function corpCardNames(module: GameModule): Array<CardName> {
+  return getCards(byModule(module))
+    .filter(byType(CardType.CORPORATION))
+    .map(toName)
+    .filter((name) => name !== CardName.BEGINNER_CORPORATION);
+}
 
-import {EROS_CARD_MANIFEST} from '@/cards/eros/ErosCardManifest';
-import {ARES_CARD_MANIFEST} from '@/cards/ares/AresCardManifest';
-import {MOON_CARD_MANIFEST} from '@/cards/moon/MoonCardManifest';
-import {PATHFINDERS_CARD_MANIFEST} from '@/cards/pathfinders/PathfindersCardManifest';
-
-
-const allItems: Array<CardName> = [
-  ...BASE_CARD_MANIFEST.corporationCards.cards.concat(CORP_ERA_CARD_MANIFEST.corporationCards.cards).map((cf) => cf.cardName)
-    .filter((cf) => cf !== CardName.BEGINNER_CORPORATION),
-  ...PRELUDE_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName),
-  ...VENUS_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName),
-  ...COLONIES_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName),
-  ...TURMOIL_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName),
-  ...PROMO_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName),
-  ...COMMUNITY_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName),
-  ...EROS_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName),
-  ...ARES_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName),
-  ...MOON_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName),
-  ...PATHFINDERS_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName),
-];
+type Group = GameModule | 'All';
 
 export default Vue.extend({
   name: 'CorporationsFilter',
@@ -87,93 +72,115 @@ export default Vue.extend({
     communityCardsOption: {
       type: Boolean,
     },
-    erosCardsOption: {
-      type: Boolean,
-    },
     moonExpansion: {
       type: Boolean,
     },
-    pathExpansion: {
+    pathfindersExpansion: {
       type: Boolean,
     },
   },
   data() {
+    // Start by giving every entry a default value
+    // Ideally, remove 'x' and inline it into Object.fromEntries, but Typescript doesn't like it.
+    const x = GAME_MODULES.map((module) => [module, []]);
+    const cardsByModule: Record<GameModule, Array<CardName>> = Object.fromEntries(x);
+
+    getCards(byType(CardType.CORPORATION)).forEach((card) => {
+      if (card.name !== CardName.BEGINNER_CORPORATION) {
+        cardsByModule[card.module].push(card.name);
+      }
+    });
+
     return {
+      cardsByModule: cardsByModule,
       customCorporationsList: false,
       selectedCorporations: [
-        ...BASE_CARD_MANIFEST.corporationCards.cards.concat(CORP_ERA_CARD_MANIFEST.corporationCards.cards).map((cf) => cf.cardName).filter((cf) => cf !== CardName.BEGINNER_CORPORATION),
-        ...this.prelude ? PRELUDE_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName) : [],
-        ...this.venusNext ? VENUS_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName) : [],
-        ...this.colonies ? COLONIES_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName) : [],
-        ...this.turmoil ? TURMOIL_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName) : [],
-        ...this.promoCardsOption ? PROMO_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName) : [],
-        ...this.communityCardsOption ? COMMUNITY_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName) : [],
-        ...this.erosCardsOption ? EROS_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName) : [],
-        ...this.moonExpansion ? MOON_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName) : [],
-        ...this.pathExpansion ? PATHFINDERS_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName) : [],
-      ] as Array<CardName> | boolean /* v-model thinks this can be boolean */,
-      corporationGroups: [
-        {'title': CorporationGroup.ORIGINAL, 'items': BASE_CARD_MANIFEST.corporationCards.cards
-          .concat(CORP_ERA_CARD_MANIFEST.corporationCards.cards).map((cf) => cf.cardName)
-          .filter((cf) => cf !== CardName.BEGINNER_CORPORATION)},
-        {'title': CorporationGroup.PRELUDE, 'items': PRELUDE_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName)},
-        {'title': CorporationGroup.VENUS_NEXT, 'items': VENUS_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName)},
-        {'title': CorporationGroup.COLONIES, 'items': COLONIES_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName)},
-        {'title': CorporationGroup.TURMOIL, 'items': TURMOIL_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName)},
-        {'title': CorporationGroup.PROMO, 'items': PROMO_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName)},
-        {'title': CorporationGroup.COMMUNITY, 'items': COMMUNITY_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName)},
-        {'title': CorporationGroup.EROS, 'items': EROS_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName)},
-        {'title': CorporationGroup.MOON, 'items': MOON_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName)},
-        {'title': CorporationGroup.PATHFINDERS, 'items': PATHFINDERS_CARD_MANIFEST.corporationCards.cards.map((cf) => cf.cardName)},
+        // A bit sloppy since map is just above, but it will do.
+        ...corpCardNames('base'),
+        ...this.corporateEra ? corpCardNames('corpera') : [],
+        ...this.prelude ? corpCardNames('prelude') : [],
+        ...this.venusNext ? corpCardNames('venus') : [],
+        ...this.colonies ? corpCardNames('colonies') : [],
+        ...this.turmoil ? corpCardNames('turmoil') : [],
+        ...this.promoCardsOption ? corpCardNames('promo') : [],
+        ...this.communityCardsOption ? corpCardNames('community') : [],
+        ...this.moonExpansion ? corpCardNames('moon') : [],
+        ...this.pathfindersExpansion ? corpCardNames('pathfinders') : [],
       ],
+      GAME_MODULES: GAME_MODULES.filter((x) => x !== 'breakthrough'),
     };
   },
   methods: {
-    getSelected(): Array<CardName> {
-      if (Array.isArray(this.selectedCorporations)) {
-        return this.selectedCorporations;
+    getItemsByGroup(group: Group): Array<CardName> {
+      if (group === 'All') return GAME_MODULES.map((module) => this.cardsByModule[module]).flat();
+      const corps = this.cardsByModule[group];
+      if (corps === undefined) {
+        console.log('module %s not found', group);
+        return [];
+      } else {
+        return corps.slice();
       }
-      console.warn('unexpectedly got boolean for selectedCorporations');
-      return [];
     },
-    getItemsByGroup(group: string): Array<CardName> {
-      if (group === 'All') return allItems.slice();
-
-      const corps = this.corporationGroups.find((g) => g.title === group);
-      if (corps === undefined) return [];
-
-      return (corps.items as any).slice();
-    },
-    selectAll(group: string) {
+    selectAll(group: Group) {
       const items = this.getItemsByGroup(group);
       for (const item of items) {
-        if (this.getSelected().includes(item) === false) {
-          this.getSelected().push(item);
+        if (this.selectedCorporations.includes(item) === false) {
+          this.selectedCorporations.push(item);
         }
       }
     },
     removeFromSelection(cardName: CardName) {
-      const itemIdx = this.getSelected().indexOf(cardName);
+      const itemIdx = this.selectedCorporations.indexOf(cardName);
       if (itemIdx !== -1) {
-        this.getSelected().splice(itemIdx, 1);
+        this.selectedCorporations.splice(itemIdx, 1);
       }
     },
-    selectNone(group: string) {
+    selectNone(group: Group) {
       const items = this.getItemsByGroup(group);
       for (const item of items) {
         this.removeFromSelection(item);
       }
     },
-    invertSelection(group: string) {
+    invertSelection(group: Group) {
       const items = this.getItemsByGroup(group);
 
       for (const idx in items) {
-        if (this.getSelected().includes(items[idx])) {
+        if (this.selectedCorporations.includes(items[idx])) {
           this.removeFromSelection(items[idx]);
         } else {
-          this.getSelected().push(items[idx]);
+          this.selectedCorporations.push(items[idx]);
         }
       }
+    },
+    watchSelect(module: GameModule, enabled: boolean) {
+      enabled ? this.selectAll(module) : this.selectNone(module);
+    },
+    expansions(corporation: CardName): Array<GameModule> {
+      return getCard(corporation)?.compatibility ?? [];
+    },
+    icon(module: GameModule) {
+      let suffix: string = module;
+      if (module === 'colonies') suffix = 'colony';
+      if (module === 'moon') suffix = 'themoon';
+      return `create-game-expansion-icon expansion-icon-${suffix}`;
+    },
+    moduleName(module: GameModule) {
+      switch (module) {
+      case 'base': return 'Base';
+      case 'corpera': return 'Corporate Era';
+      case 'prelude': return 'Prelude';
+      case 'venus': return 'Venus Next';
+      case 'colonies': return 'Colonies';
+      case 'turmoil': return 'Turmoil';
+      case 'promo': return 'Promo';
+      // case 'breakthrough': return 'Breakthrough';
+      case 'eros': return 'Eros';
+      case 'community': return 'Community';
+      case 'ares': return 'Ares';
+      case 'moon': return 'The Moon';
+      case 'pathfinders': return 'Pathfinders';
+      }
+      return '';
     },
   },
   watch: {
@@ -181,34 +188,31 @@ export default Vue.extend({
       this.$emit('corporation-list-changed', value);
     },
     corporateEra(enabled) {
-      enabled ? this.selectAll(CorporationGroup.ORIGINAL) : this.selectNone(CorporationGroup.ORIGINAL);
+      this.watchSelect('corpera', enabled);
     },
     prelude(enabled) {
-      enabled ? this.selectAll(CorporationGroup.PRELUDE) : this.selectNone(CorporationGroup.PRELUDE);
+      this.watchSelect('prelude', enabled);
     },
     venusNext(enabled) {
-      enabled ? this.selectAll(CorporationGroup.VENUS_NEXT) : this.selectNone(CorporationGroup.VENUS_NEXT);
+      this.watchSelect('venus', enabled);
     },
     colonies(enabled) {
-      enabled ? this.selectAll(CorporationGroup.COLONIES) : this.selectNone(CorporationGroup.COLONIES);
+      this.watchSelect('colonies', enabled);
     },
     turmoil(enabled) {
-      enabled ? this.selectAll(CorporationGroup.TURMOIL) : this.selectNone(CorporationGroup.TURMOIL);
+      this.watchSelect('turmoil', enabled);
     },
     promoCardsOption(enabled) {
-      enabled ? this.selectAll(CorporationGroup.PROMO) : this.selectNone(CorporationGroup.PROMO);
-    },
-    erosCardsOption: function(enabled) {
-      enabled ? this.selectAll(CorporationGroup.EROS) : this.selectNone(CorporationGroup.EROS);
+      this.watchSelect('promo', enabled);
     },
     communityCardsOption(enabled) {
-      enabled ? this.selectAll(CorporationGroup.COMMUNITY) : this.selectNone(CorporationGroup.COMMUNITY);
+      this.watchSelect('community', enabled);
     },
     moonExpansion(enabled) {
-      enabled ? this.selectAll(CorporationGroup.MOON) : this.selectNone(CorporationGroup.MOON);
+      this.watchSelect('moon', enabled);
     },
-    pathExpansion(enabled) {
-      enabled ? this.selectAll(CorporationGroup.PATHFINDERS) : this.selectNone(CorporationGroup.PATHFINDERS);
+    pathfindersExpansion(enabled) {
+      this.watchSelect('pathfinders', enabled);
     },
   },
 });

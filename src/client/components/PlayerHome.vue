@@ -57,6 +57,8 @@
 
               <MoonBoard v-if="game.gameOptions.moonExpansion" :model="game.moon" :hideTiles="hideTiles"/>
 
+              <PlanetaryTracks v-if="game.gameOptions.pathfindersExpansion" :tracks="game.pathfinders" :gameOptions="game.gameOptions"/>
+
               <div v-if="playerView.players.length > 1" class="player_home_block--milestones-and-awards">
                   <Milestone :milestones_list="game.milestones" />
                   <Awards :awards="game.awards" show-scores/>
@@ -122,7 +124,7 @@
                       <div class="played-cards-selection" v-i18n>{{ getToggleLabel('EVENT')}}</div>
                     </div>
                   </div>
-                  <div class="text-overview">[ toggle cards filters ]</div>
+                  <div class="text-overview" v-i18n>[ toggle cards filters ]</div>
               </div>
               <div v-if="thisPlayer.corporationCard !== undefined" class="cardbox">
                   <Card :card="thisPlayer.corporationCard" :actionUsed="isCardActivated(thisPlayer.corporationCard, thisPlayer)"/>
@@ -255,7 +257,6 @@
               </div>
           </div>
       </div>
-      <PlanetaryTracks v-if="game.gameOptions.pathfindersExpansion" :tracks="game.pathfinders" :gameOptions="game.gameOptions"/>
   </div>
 </template>
 
@@ -270,10 +271,10 @@ import Awards from '@/client/components/Awards.vue';
 import PlayersOverview from '@/client/components/overview/PlayersOverview.vue';
 import WaitingFor from '@/client/components/WaitingFor.vue';
 import Sidebar from '@/client/components/Sidebar.vue';
-import Colony from '@/client/components/Colony.vue';
+import Colony from '@/client/components/colonies/Colony.vue';
 import LogPanel from '@/client/components/LogPanel.vue';
 import {PlayerMixin} from '@/client/mixins/PlayerMixin';
-import Turmoil from '@/client/components/Turmoil.vue';
+import Turmoil from '@/client/components/turmoil/Turmoil.vue';
 import {playerColorClass} from '@/common/utils/utils';
 import PlanetaryTracks from '@/client/components/pathfinders/PlanetaryTracks.vue';
 import DynamicTitle from '@/client/components/common/DynamicTitle.vue';
@@ -428,7 +429,7 @@ export default Vue.extend({
       return fleetsRange;
     },
     updateTips: function() {
-      PreferencesManager.INSTANCE.set('enable_sounds', this.soundtip  );
+      PreferencesManager.INSTANCE.set('enable_sounds', this.soundtip );
     },
     updateShowHandCards: function() {
       const userId = PreferencesManager.load('userId');

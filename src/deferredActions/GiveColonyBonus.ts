@@ -4,15 +4,16 @@ import {DeferredAction, Priority} from './DeferredAction';
 import {Multiset} from '../utils/Multiset';
 
 // 殖民者贸易奖励
-export class GiveColonyBonus implements DeferredAction {
-  public priority = Priority.DEFAULT;
+export class GiveColonyBonus extends DeferredAction {
   public cb: () => void = () => {};
   private waitingFor: Multiset<Player> = new Multiset<Player>();
   constructor(
-        public player: Player,
-        public colony: IColony,
-        public selfish: boolean = false, // Used for CoordinatedRaid.
-  ) {}
+    player: Player,
+    public colony: IColony,
+    public selfish: boolean = false, // Used for CoordinatedRaid.
+  ) {
+    super(player, Priority.DEFAULT);
+  }
 
   public execute() {
     if (this.colony.colonies.length === 0) {

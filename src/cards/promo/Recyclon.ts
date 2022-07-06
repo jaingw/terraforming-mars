@@ -2,7 +2,7 @@ import {ICorporationCard} from '../corporation/ICorporationCard';
 import {Player} from '../../Player';
 import {Tags} from '../../common/cards/Tags';
 import {Resources} from '../../common/Resources';
-import {ResourceType} from '../../common/ResourceType';
+import {CardResource} from '../../common/CardResource';
 import {IProjectCard} from '../IProjectCard';
 import {SelectOption} from '../../inputs/SelectOption';
 import {OrOptions} from '../../inputs/OrOptions';
@@ -21,7 +21,7 @@ export class Recyclon extends Card implements ICorporationCard, IResourceCard {
       name: CardName.RECYCLON,
       tags: [Tags.MICROBE, Tags.BUILDING],
       startingMegaCredits: 38,
-      resourceType: ResourceType.MICROBE,
+      resourceType: CardResource.MICROBE,
       productionBox: Units.of({steel: 1}),
 
       metadata: {
@@ -51,10 +51,10 @@ export class Recyclon extends Card implements ICorporationCard, IResourceCard {
     if (card.tags.includes(Tags.BUILDING) === false || !player.isCorporation(this.name)) {
       return undefined;
     }
-      // 双公司出Mining Guild得2微生物
-      if (card.tags.filter((x) => x === Tags.BUILDING ).length ===2) {
-        player.addResourceTo(this);
-      }
+    // 双公司出Mining Guild得2微生物
+    if (card.tags.filter((x) => x === Tags.BUILDING ).length ===2) {
+      player.addResourceTo(this);
+    }
     if (this.resourceCount < 2) {
       player.addResourceTo(this);
       return undefined;
@@ -73,7 +73,7 @@ export class Recyclon extends Card implements ICorporationCard, IResourceCard {
     return new OrOptions(spendResource, addResource);
   }
 
-    public onCorpCardPlayed(player: Player, card:ICorporationCard) {
-      return this.onCardPlayed(player, card as unknown as IProjectCard);
-    }
+  public onCorpCardPlayed(player: Player, card:ICorporationCard) {
+    return this.onCardPlayed(player, card as unknown as IProjectCard);
+  }
 }

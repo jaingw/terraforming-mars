@@ -70,6 +70,24 @@ export class CardFinder {
     return this.getCardByName(cardName, (manifest) => [manifest.preludeCards]);
   }
 
+
+  public cardsFromJSONName(cards: Array<CardName>): Array<IProjectCard> {
+    if (cards === undefined) {
+      // console.warn('missing cards calling cardsFromJSON');
+      return [];
+    }
+    const result: Array<IProjectCard> = [];
+    cards.forEach((element: CardName) => {
+      const card = this.getProjectCardByName(element);
+      if (card !== undefined) {
+        result.push(card);
+      } else {
+        console.warn(`card ${element} not found while loading game.`);
+      }
+    });
+    return result;
+  }
+
   public cardsFromJSON(cards: Array<SerializedCard>): Array<IProjectCard> {
     if (cards === undefined) {
       // console.warn('missing cards calling cardsFromJSON');
@@ -81,7 +99,7 @@ export class CardFinder {
       if (card !== undefined) {
         result.push(card);
       } else {
-        console.warn(`card ${element} not found while loading game.`);
+        console.warn(`card ${element.name} not found while loading game.`);
       }
     });
     return result;
@@ -99,7 +117,7 @@ export class CardFinder {
       if (card !== undefined) {
         result.push(card);
       } else {
-        console.warn(`corporation ${element} not found while loading game.`);
+        console.warn(`corporation ${element.name} not found while loading game.`);
       }
     });
     return result;

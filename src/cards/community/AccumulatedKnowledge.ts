@@ -4,7 +4,7 @@ import {IProjectCard} from '../IProjectCard';
 import {OrOptions} from '../../inputs/OrOptions';
 import {SelectCard} from '../../inputs/SelectCard';
 import {SelectOption} from '../../inputs/SelectOption';
-import {DeferredAction} from '../../deferredActions/DeferredAction';
+import {SimpleDeferredAction} from '../../deferredActions/DeferredAction';
 import {CardRenderer} from '../render/CardRenderer';
 import {CardName} from '../../common/cards/CardName';
 import {Tags} from '../../common/cards/Tags';
@@ -30,7 +30,7 @@ export class AccumulatedKnowledge extends PreludeCard implements IProjectCard {
     const game = player.game;
     player.drawCard(4);
 
-    game.defer(new DeferredAction(player, () => new OrOptions(
+    game.defer(new SimpleDeferredAction(player, () => new OrOptions(
       new SelectCard('Discard a card to draw a card', 'Discard', player.cardsInHand, (foundCards: Array<IProjectCard>) => {
         player.cardsInHand.splice(player.cardsInHand.indexOf(foundCards[0]), 1);
         game.dealer.discard(foundCards[0]);

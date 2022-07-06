@@ -9,7 +9,6 @@ import {Units} from '../../common/Units';
 import {SendDelegateToArea} from '../../deferredActions/SendDelegateToArea';
 import {DeclareCloneTag} from '../../pathfinders/DeclareCloneTag';
 import {ICloneTagCard} from './ICloneTagCard';
-import {PathfindersExpansion} from '../../pathfinders/PathfindersExpansion';
 import {TurmoilUtil} from '../../turmoil/TurmoilUtil';
 
 export class LobbyHalls extends Card implements IProjectCard, ICloneTagCard {
@@ -38,7 +37,7 @@ export class LobbyHalls extends Card implements IProjectCard, ICloneTagCard {
   }
 
   public play(player: Player) {
-    player.game.defer(new DeclareCloneTag(player, this, (tag) => PathfindersExpansion.raiseTrack(tag, player, 1)));
+    player.game.defer(new DeclareCloneTag(player, this));
     player.adjustProduction(this.productionBox);
     const turmoil = TurmoilUtil.getTurmoil(player.game);
     if (turmoil.getAvailableDelegateCount(player, 'reserve') > 0) {

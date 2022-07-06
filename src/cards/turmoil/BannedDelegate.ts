@@ -38,7 +38,11 @@ export class BannedDelegate extends Card implements IProjectCard {
       if (party.delegates.length > 1) {
         // Remove the party leader from available choices
         const delegates = party.delegates.slice();
-        delegates.splice(party.delegates.indexOf(party.partyLeader!), 1);
+        if (party.partyLeader !== undefined) {
+          delegates.splice(party.delegates.indexOf(party.partyLeader), 1);
+        } else {
+          throw new Error(`partyLeader not defined for ${player.game.id}`);
+        }
         const players = Array.from(new Set<Player | 'NEUTRAL'>(delegates));
         if (players.length > 0) {
           const selectDelegate = new SelectDelegate(players, 'Select player delegate to remove from ' + party.name + ' party', (selectedPlayer: Player | 'NEUTRAL') => {

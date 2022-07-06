@@ -1,8 +1,7 @@
 import {Game, GameOptions, Score} from '../Game';
 import {SerializedGame} from '../SerializedGame';
 import {SerializedPlayer} from '../SerializedPlayer';
-import {IGameData} from '../common/game/IGameData';
-import {GameId} from '../common/Types';
+import {GameId, PlayerId, SpectatorId} from '../common/Types';
 import {User} from '../User';
 import {Phase} from '../common/Phase';
 export interface IShortData {
@@ -58,7 +57,7 @@ export interface IDatabase {
     /**
      * Creates any tables needed
      */
-    initialize(): Promise<void>;
+    initialize(): Promise<unknown>;
 
     /**
      * Pulls most recent version of game
@@ -72,52 +71,31 @@ export interface IDatabase {
      *
      * This is not yet written efficiently in Postgres, so use sparingly.
      *
-     * @param playerId the playerID assocaited with a game
-     * @param cb called with the gameid if it exists. If it does not err will be truthy.
+     * @param id the `PlayerId` or `SpectatorId` assocaited with a game
      */
-    getGameId(playerId: string, cb: (err: Error | undefined, gameId?: GameId) => void): void;
+    getGameId(id: PlayerId | SpectatorId): Promise<GameId>;
+
+    /**
+     * Get all the save ids assocaited with a game.
+     */
+    getSaveIds(gameId: GameId): Promise<Array<number>>;
 
     /**
      * Load a game at a specific save point.
      */
-    getGameVersion(game_id: GameId, save_id: number, cb: DbLoadCallback<SerializedGame>): void;
+    getGameVersion(game_id: GameId, save_id: number): Promise<SerializedGame>;
 
     /**
      * Return a list of all `game_id`s.
-     *
-     * @param cb a callback containing either a failure to load, or a list of
-     * references to cloneable games.
-     *
-     * @param cb a callback either returning either an error or a list of all `game_id`s.
      */
-    getGames(cb:(err: Error | undefined, allGames:Array<IGameShortData>) => void): void;
+    getGames(): Promise<Array<IGameShortData>>;
 
     /**
-     * Load references to all games that can be cloned. Every game is cloneable,
-     * this just returns the original save of the game. However, if a game's
-     * original save is pruned, say, due to {@link deleteGameNbrSaves}, it won't
-     * appear in this list.
-     *
-     * Cloneable games are those with a save_id 0.
-     *
-     * @param cb a callback either returning either an error or a list of references
-     * to cloneable games.
-     */
-    getClonableGames(cb:(err: Error | undefined, allGames:Array<IGameData>)=> void) : void;
-
-    /**
-     * Load reference to game that can be cloned. Every game is cloneable,
-     * this just returns the original save of the game. However, if a game's
-     * original save is pruned, say, due to {@link deleteGameNbrSaves}, it won't
-     * exist.
-     *
-     * Cloneable games are those with a save_id 0.
+     * Get the player count for a game.
      *
      * @param game_id the game id to search for
-     * @param cb a callback either returning either an error or a reference to a cloneable game.
-     * if the game is not found then undefined.
      */
-    getClonableGameByGameId(game_id: GameId, cb: (err: Error | undefined, gameData: IGameData | undefined) => void): void;
+    getPlayerCount(game_id: GameId): Promise<number>;
 
     /**
      * Saves the current state of the game at a supplied save point. Used for
@@ -127,7 +105,7 @@ export interface IDatabase {
      * game to increment its state count.
      */
     // TODO(kberg): why is `players` a useful first-class piece of data?
-    saveGameState(game_id: GameId, save_id: number, game: string, gameShortDate: string ): void;
+    saveGame( game: Game ): void;
 
     /**
      * Stores the results of a game in perpetuity in a separate table from normal
@@ -153,7 +131,7 @@ export interface IDatabase {
      * The meat behind cloning a game. Load a game at save point 0,
      * and overrides all data in `game`.
      */
-    restoreReferenceGame(game_id: GameId, game: Game, cb:(err: any) => void): void;
+    loadCloneableGame(game_id: GameId): Promise<SerializedGame>;
 
     /**
      * Deletes the last `rollbackCount` saves of the specified game.
@@ -175,7 +153,7 @@ export interface IDatabase {
     // TODO(kberg): rename to represent that it's closing out
     // this game. Also consider not needing the save_id, and
     // also to make the maintenance behavior a first-class method.
-    cleanSaves(game_id: GameId): void;
+    cleanSaves(game_id: GameId): Promise<void>;
     cleanGame(game_id: string): void;
     cleanGameSave(game_id: string, save_id: number): void;
     saveUser(id: string, name: string, password: string, prop: string): void ;
@@ -193,5 +171,12 @@ export interface IDatabase {
      * * In Sqlite, it doesn't purge
      * * This whole method is ignored in LocalFilesystem.
      */
-    purgeUnfinishedGames(): void;
+    purgeUnfinishedGames(maxGameDays?: string): void;
+
+    /**
+     * Generate database statistics for admin purposes.
+     *
+     * Key/value responses will vary between databases.
+     */
+    stats(): Promise<{[key: string]: string | number}>;
 }

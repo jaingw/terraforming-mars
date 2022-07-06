@@ -33,11 +33,10 @@ import {EMDrive} from './EMDrive';
 import {FallOfSunrise} from './FallOfSunrise';
 import {Void} from './corp/Void';
 import {CardName} from '../../common/cards/CardName';
-import {GameModule} from '../../common/cards/GameModule';
 
 
 export const EROS_CARD_MANIFEST = new CardManifest({
-  module: GameModule.Eros,
+  module: 'eros',
   projectCards: [
     // { cardName: CardName.COSMOS_LIBRARY, Factory: CosmosLibrary },
     // { cardName: CardName.EARTH_CIVIL_COURT, Factory: EarthCivilCourt },
@@ -46,12 +45,12 @@ export const EROS_CARD_MANIFEST = new CardManifest({
     // { cardName: CardName.CUTTING_EDGE_LAB, Factory: CuttingEdgeLab },
     {cardName: CardName.SOLAR_COSMIC_RAYS, Factory: SolarCosmicRays}, // Q01
     {cardName: CardName.LARGE_ECOLOGICAL_RESERVE, Factory: LargeEcologicalReserve}, // Q02
-    {cardName: CardName.INTERPLANETARY_ALLIANCE, Factory: InterplanetaryAlliance, compatibility: GameModule.Venus}, // Q03
+    {cardName: CardName.INTERPLANETARY_ALLIANCE, Factory: InterplanetaryAlliance, compatibility: 'venus'}, // Q03
     {cardName: CardName.CLONE_TECHNOLOGY, Factory: CloneTechnology}, // Q04
-    {cardName: CardName.SISTER_PLANET_SPONSORS, Factory: SisterPlanetSponsors, compatibility: GameModule.Venus}, // Q05
+    {cardName: CardName.SISTER_PLANET_SPONSORS, Factory: SisterPlanetSponsors, compatibility: 'venus'}, // Q05
     {cardName: CardName.MARS_HOT_SPRING, Factory: MarsHotSpring}, // Q06
     {cardName: CardName.STARCORE_MINING, Factory: StarCoreMining}, // Q07
-    {cardName: CardName.JOVIAN_EXPEDITION, Factory: JovianExpedition, compatibility: GameModule.Colonies}, // Q08
+    {cardName: CardName.JOVIAN_EXPEDITION, Factory: JovianExpedition, compatibility: 'colonies'}, // Q08
     {cardName: CardName.RESPIRATION_ENHANCE, Factory: RespirationEnhance}, // Q10
     {cardName: CardName.WASTE_INCINERATOR, Factory: WasteIncinerator}, // Q11
     {cardName: CardName.HYDROTHERMAL_VENT_ARCHAEA, Factory: HydrothermalVentArchaea}, // Q12
@@ -62,7 +61,7 @@ export const EROS_CARD_MANIFEST = new CardManifest({
     {cardName: CardName.FALL_OF_SUNRISE, Factory: FallOfSunrise}, // Q17
     {cardName: CardName.ENERGY_SUPPLY, Factory: EnergySupply}, // Q18
     // {cardName: CardName.STARCORE_PLUNDER, Factory: StarcorePlunder},
-    {cardName: CardName.EM_DRIVE, Factory: EMDrive, compatibility: [GameModule.Colonies, GameModule.Turmoil]}, // Q19
+    {cardName: CardName.EM_DRIVE, Factory: EMDrive, compatibility: ['colonies', 'turmoil']}, // Q19
     {cardName: CardName.COMMUNITY_WORKER, Factory: CommunityWorker}, // Q20
 
   ],
@@ -70,9 +69,9 @@ export const EROS_CARD_MANIFEST = new CardManifest({
     {cardName: CardName.CHAOS, Factory: Chaos}, // Q21
     // {cardName: CardName.WG_PARTERNSHIP, Factory: WGParternship}, // Q22
     {cardName: CardName.IDO_FRONT, Factory: IdoFront}, // Q23
-    {cardName: CardName.INCITE_ENDER, Factory: InciteEnder, compatibility: GameModule.Turmoil}, // Q24
-    {cardName: CardName.TRADE_NAVIGATOR, Factory: TradeNavigator, compatibility: GameModule.Colonies}, // Q25
-    {cardName: CardName.BROTHERHOOD_OF_MUTANTS, Factory: BrotherhoodOfMutants, compatibility: GameModule.Turmoil}, // Q26
+    {cardName: CardName.INCITE_ENDER, Factory: InciteEnder, compatibility: 'turmoil'}, // Q24
+    {cardName: CardName.TRADE_NAVIGATOR, Factory: TradeNavigator, compatibility: 'colonies'}, // Q25
+    {cardName: CardName.BROTHERHOOD_OF_MUTANTS, Factory: BrotherhoodOfMutants, compatibility: 'turmoil'}, // Q26
     {cardName: CardName.VOID, Factory: Void}, // Q27
   ],
   preludeCards: [

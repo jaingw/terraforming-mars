@@ -9,7 +9,7 @@
   "Add a floater to each card that can collect floaters. Add 1 floater for each influence to a card.": "在所有可以放置云资源的卡上放置1个云资源。每有1点影响力,放置1个云资源到卡牌上",
   "Lose 2 floaters from a card or 10 M€. Draw 1 card for each influence.": "损失一张牌上的2个云资源或10M€。每点影响力,抽1张牌",
   "Gain 10 M€ if you have 9 or more different tags. Influence counts as unique tags.": "计算你的不同标志数量加影响力,如果合计至少有9点,则获得10M€",
-  "First player removes 1 ocean tile from the gameboard. Gain 1 standard resource per influence.": "起始玩家从游戏版图上移除1块海洋版块。每点影响力获得1个标准资源(自选)",
+  "First player removes 1 ocean tile from the gameboard. Gain 1 standard resource per influence.": "起始玩家从版图上移除1块海洋版块。每点影响力获得1个标准资源(自选)",
   "Lose all plants except 3 + influence.":"保留'3+影响力'个植物资源,丢弃多余的",
   "Count your influence plus Building tags and City tiles (no limits). The player with most (or 10 in solo) gains 2 TR, the 2nd (or 5 in solo) gains 1 TR (ties are friendly).":  "计算'建筑标志+城市版块+影响力'的总数(无限制),点数最大的玩家获得2改造度(TR),第二名获得1改造度(TR),同分时两人都获得",
   "Gain 2 M€ for each influence and set of 5 TR over 15 (max 5 sets).": "计算'影响力+(改造度-15)/5'的点数(最多5点),每点获得2M€",

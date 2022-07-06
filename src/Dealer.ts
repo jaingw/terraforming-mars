@@ -37,11 +37,11 @@ export class Dealer {
     this.discarded.push(card);
   }
   public dealCard(game: Game, isResearchPhase: boolean = false): IProjectCard {
-      if (this.deck.length === 0) {
-        game.log('The discard pile has been shuffled to form a new deck.');
-        this.deck = Dealer.shuffle(this.discarded);
-        this.discarded = [];
-      }
+    if (this.deck.length === 0) {
+      game.log('The discard pile has been shuffled to form a new deck.');
+      this.deck = Dealer.shuffle(this.discarded);
+      this.discarded = [];
+    }
 
     let result: IProjectCard | undefined;
     if (isResearchPhase) {
@@ -54,7 +54,7 @@ export class Dealer {
       throw new Error('Unexpected empty deck');
     }
 
-      game.cardDrew = true;
+    game.cardDrew = true;
     return result;
   }
 
@@ -113,10 +113,10 @@ export class Dealer {
 
   public serialize(): SerializedDealer {
     return {
-        corporationCards: this.corporationCards.map(serializedCardName),
-        deck: this.deck.map(serializedCardName),
-        discarded: this.discarded.map(serializedCardName),
-        preludeDeck: this.preludeDeck.map(serializedCardName),
+      corporationCards: this.corporationCards.map(serializedCardName),
+      deck: this.deck.map(serializedCardName),
+      discarded: this.discarded.map(serializedCardName),
+      preludeDeck: this.preludeDeck.map(serializedCardName),
     };
   }
 }

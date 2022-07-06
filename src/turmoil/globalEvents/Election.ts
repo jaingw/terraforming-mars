@@ -28,7 +28,7 @@ export class Election extends GlobalEvent implements IGlobalEvent {
 
   public resolve(game: Game, turmoil: Turmoil) {
     // Solo
-    if (game.isSoloMode()) {
+    if (game.isSoloMode() || game.getPlayers().length === 1 ) {
       const player = game.getPlayers()[0];
       const score = this.getScore(player, turmoil, game);
       if (score >= 10) {

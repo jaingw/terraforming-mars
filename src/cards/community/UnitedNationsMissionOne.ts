@@ -40,12 +40,12 @@ export class UnitedNationsMissionOne extends Card implements ICorporationCard {
     return undefined;
   }
 
-  public static onTRIncrease(game: Game) {
+  public static onTRIncrease(game: Game, steps: number) {
     const playerId = game.unitedNationsMissionOneOwner;
 
     if (playerId !== undefined) {
       const player = game.getPlayerById(playerId);
-      if (game.phase === Phase.ACTION || game.phase === Phase.PRELUDES) player.megaCredits += 1;
+      if (game.phase === Phase.ACTION || game.phase === Phase.PRELUDES) player.megaCredits += steps;
     }
   }
 }

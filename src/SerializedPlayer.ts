@@ -1,7 +1,7 @@
 import {CardName} from './common/cards/CardName';
 import {Color} from './common/Color';
 import {SerializedCard} from './SerializedCard';
-import {SerializedTimer} from './SerializedTimer';
+import {SerializedTimer} from './common/SerializedTimer';
 
 export interface SerializedPlayerId {
     id: string;
@@ -67,9 +67,11 @@ export interface SerializedPlayer {
     titanium: number;
     titaniumProduction: number;
     titaniumValue: number;
+    totalDelegatesPlaced: number;
     // TODO(kberg): change tradesThisTurn to tradeThisGeneration later
     tradesThisGeneration: number;
     turmoilPolicyActionUsed: boolean;
+    victoryPointsByGeneration: Array<number>;
     heatForTemperature: number;
     undoing : boolean ;
     exited : boolean ;// 是否体退

@@ -59,11 +59,11 @@
                                 <th v-if="game.moon !== undefined"><div class="table-moon-colony-tile"></div></th>
                                 <th v-if="game.moon !== undefined"><div class="table-moon-mine-tile"></div></th>
                                 <th><div class="vp">VP</div></th>
-                                <th v-if="game.gameOptions.escapeVelocityMode" class="clock-icon tooltip tooltip-top" data-tooltip="Escape Velocity penalty">&#x23F3;</th>
+                                <th v-if="game.gameOptions.escapeVelocityMode" class="clock-icon tooltip tooltip-top" :data-tooltip="$t('Escape Velocity penalty')">&#x23F3;</th>
                                 <th class="game-end-total"><div class="game-end-total-column">Total</div></th>
                                 <th><div class="mc-icon"></div></th>
                                 <th v-if="game.gameOptions.showTimers" class="clock-icon">&#x1F551;</th>
-                                <th><div class="table-red-arrow tooltip tooltip-top" data-tooltip="Actions taken this game"></div></th>
+                                <th><div class="table-red-arrow tooltip tooltip-top" :data-tooltip="$t('Actions taken this game')"></div></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -96,6 +96,7 @@
                     </table>
                     <br/>
                     <h2 v-i18n>Victory points details</h2>
+                    <victory-point-chart :players="players" :generation="game.generation" :animation="true"></victory-point-chart>
                     <div class="game-end-flexrow">
                         <div v-for="p in getSortedPlayers()" :key="p.color" class="game-end-column">
                             <div class="game-end-winer-scorebreak-player-title">
@@ -104,7 +105,7 @@
                             <div v-for="v in p.victoryPointsBreakdown.detailsCards" :key="v.cardName">
                               <div class="game-end-column-row">
                                 <div class="game-end-column-vp">{{v.victoryPoint}}</div>
-                                <div class="game-end-column-text">{{v.cardName}}</div>
+                                <div class="game-end-column-text" v-i18n>{{v.cardName}}</div>
                               </div>
                             </div>
                             <div class="game-end-column-row">
@@ -114,13 +115,15 @@
                             <div v-for="v in p.victoryPointsBreakdown.detailsMilestones" :key="v">
                               <div class="game-end-column-row">
                                 <div class="game-end-column-vp">{{v.split(':', 2)[1]}}</div>
-                                <div class="game-end-column-text">{{v.split(':', 2)[0]}}</div>
+                                <div class="game-end-column-text" v-i18n>{{v.split(':', 2)[0]}}</div>
                               </div>
                             </div>
                             <div v-for="v in p.victoryPointsBreakdown.detailsAwards" :key="v">
                               <div class="game-end-column-row">
                                 <div class="game-end-column-vp">{{v.split(':', 2)[1]}}</div>
-                                <div class="game-end-column-text">{{v.split(':', 2)[0]}}</div>
+                                <div class="game-end-column-text">
+                                  <span v-i18n>{{v.split('(')[0]}}</span><span>{{v.split('award')[1].split(':')[0]}}</span>
+                                </div>
                               </div>
                             </div>
                             <div v-for="v in p.victoryPointsBreakdown.detailsPlanetaryTracks" :key="v.tag">
@@ -169,8 +172,9 @@ import MoonBoard from '@/client/components/moon/MoonBoard.vue';
 import PlanetaryTracks from '@/client/components/pathfinders/PlanetaryTracks.vue';
 import LogPanel from '@/client/components/LogPanel.vue';
 import Button from '@/client/components/common/Button.vue';
+import VictoryPointChart from '@/client/components/gameend/VictoryPointChart.vue';
 import {playerColorClass} from '@/common/utils/utils';
-import {Timer} from '@/Timer';
+import {Timer} from '@/common/Timer';
 
 
 import * as constants from '@/common/constants';
@@ -220,6 +224,7 @@ export default Vue.extend({
     Button,
     MoonBoard,
     PlanetaryTracks,
+    VictoryPointChart,
   },
   methods: {
     getEndGamePlayerRowColorClass(color: string): string {

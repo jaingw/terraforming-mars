@@ -36,6 +36,10 @@ export class OceanFarm extends Card implements IProjectCard {
     });
   }
 
+  public override canPlay(player: Player): boolean {
+    return player.game.board.getOceanSpaces({upgradedOceans: false}).length > 0;
+  }
+
   public play(player: Player) {
     player.addProduction(Resources.HEAT, 1);
     player.addProduction(Resources.PLANTS, 1);

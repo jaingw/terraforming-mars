@@ -8,12 +8,12 @@ import {Game} from '../../../src/Game';
 import {SelectCard} from '../../../src/inputs/SelectCard';
 import {Player} from '../../../src/Player';
 import {Resources} from '../../../src/common/Resources';
-import {TestingUtils} from '../../TestingUtils';
+import {setCustomGameOptions} from '../../TestingUtils';
 import {TestPlayers} from '../../TestPlayers';
 import {CardName} from '../../../src/common/cards/CardName';
 import {Tags} from '../../../src/common/cards/Tags';
 import {CardType} from '../../../src/common/cards/CardType';
-import {ResourceType} from '../../../src/common/ResourceType';
+import {CardResource} from '../../../src/common/CardResource';
 import {IProjectCard} from '../../../src/cards/IProjectCard';
 
 describe('MaxwellBase', function() {
@@ -23,7 +23,7 @@ describe('MaxwellBase', function() {
     card = new MaxwellBase();
     player = TestPlayers.BLUE.newPlayer();
     const redPlayer = TestPlayers.RED.newPlayer();
-    const gameOptions = TestingUtils.setCustomGameOptions();
+    const gameOptions = setCustomGameOptions();
     game = Game.newInstance('foobar', [player, redPlayer], player, gameOptions);
   });
 
@@ -91,7 +91,7 @@ describe('MaxwellBase', function() {
       metadata: {
         cardNumber: '1',
       },
-      resourceType: ResourceType.SYNDICATE_FLEET,
+      resourceType: CardResource.SYNDICATE_FLEET,
       resourceCount: 0,
     };
     player.playedCards.push(fakeCard);

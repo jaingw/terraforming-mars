@@ -27,7 +27,7 @@ export class Revolution extends GlobalEvent implements IGlobalEvent {
     });
   }
   public resolve(game: Game, turmoil: Turmoil) {
-    if (game.isSoloMode()) {
+    if (game.isSoloMode() || game.getPlayers().length === 1 ) {
       if (this.getScore(game.getPlayersInGenerationOrder()[0], turmoil) >= 4 ) {
         game.getPlayersInGenerationOrder()[0].decreaseTerraformRatingSteps(2, {log: true});
       }

@@ -13,30 +13,23 @@ export class FakeGameLoader implements IGameLoader {
         return {id: id, participants: []};
       }));
   }
-  getByGameId(gameId: string, _bypassCache: boolean, cb: (game: Game | undefined) => void): void {
-    cb(this.games.get(gameId));
+  async getByGameId(gameId: string, _bypassCache: boolean): Promise<Game | undefined> {
+    return this.games.get(gameId);
   }
-  getByPlayerId(playerId: string, cb: (game: Game | undefined) => void): void {
+  async getByParticipantId(id: PlayerId | SpectatorId): Promise<Game | undefined> {
     for (const game of Array.from(this.games.values())) {
       for (const player of game.getPlayersInGenerationOrder()) {
-        if (player.id === playerId) {
-          cb(game);
-          return;
+        if (player.id === id) {
+          return game;
         }
       }
-    }
-    cb(undefined);
-  }
-  getBySpectatorId(spectatorId: string, cb: (game: Game | undefined) => void): void {
-    for (const game of Array.from(this.games.values())) {
-      if (game.spectatorId === spectatorId) {
-        cb(game);
-        return;
+      if (game.spectatorId === id) {
+        return game;
       }
     }
-    cb(undefined);
+    return undefined;
   }
-  restoreGameAt(_gameId: string, _saveId: number, _cb: (game: Game | undefined) => void): void {
+  restoreGameAt(_gameId: string, _saveId: number): Promise<Game> {
     throw new Error('Method not implemented.');
   }
 }

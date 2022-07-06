@@ -36,30 +36,25 @@ export class ValleyTrust extends Card implements ICorporationCard {
   }
 
 
-  public getCardDiscount(player: Player, card: IProjectCard) {
+  public override getCardDiscount(player: Player, card: IProjectCard) {
     // TODO(chosta) -> improve once the discounts property is given a go
     return player.cardTagCount(card, Tags.SCIENCE) * 2;
   }
 
   public initialAction(player: Player) {
-    if (player.game.gameOptions.preludeExtension) {
-      const cardsDrawn: Array<IProjectCard> = [
-        player.game.dealer.dealPreludeCard(),
-        player.game.dealer.dealPreludeCard(),
-        player.game.dealer.dealPreludeCard(),
-      ];
+    const cardsDrawn: Array<IProjectCard> = [
+      player.game.dealer.dealPreludeCard(),
+      player.game.dealer.dealPreludeCard(),
+      player.game.dealer.dealPreludeCard(),
+    ];
 
-      return new SelectCard('Choose prelude card to play', 'Play', cardsDrawn, (foundCards: Array<IProjectCard>) => {
-        if (foundCards[0].canPlay === undefined || foundCards[0].canPlay(player)) {
-          return player.playCard(foundCards[0]);
-        } else {
-          throw new Error('You cannot pay for this card');
-        }
-      }, 1, 1);
-    } else {
-      console.warn('Prelude extension isn\'t selected.');
-      return undefined;
-    }
+    return new SelectCard('Choose prelude card to play', 'Play', cardsDrawn, (foundCards: Array<IProjectCard>) => {
+      if (foundCards[0].canPlay === undefined || foundCards[0].canPlay(player)) {
+        return player.playCard(foundCards[0]);
+      } else {
+        throw new Error('You cannot pay for this card');
+      }
+    });
   }
 
   public play() {

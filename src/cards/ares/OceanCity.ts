@@ -36,7 +36,7 @@ export class OceanCity extends Card implements IProjectCard {
   }
 
   public override canPlay(player: Player): boolean {
-    return player.getProduction(Resources.ENERGY) > 0;
+    return player.getProduction(Resources.ENERGY) > 0 && player.game.board.getOceanSpaces({upgradedOceans: false}).length > 0;
   }
 
   public play(player: Player) {

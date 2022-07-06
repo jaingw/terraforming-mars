@@ -1,5 +1,4 @@
 import {CardName} from '../../common/cards/CardName';
-import {GameModule} from '../../common/cards/GameModule';
 import {CardManifest} from '../CardManifest';
 import {AgricolaInc} from './AgricolaInc';
 import {Incite} from './Incite';
@@ -26,16 +25,16 @@ import {VenusFirst} from './VenusFirst';
 import {ValuableGases} from './ValuableGases';
 
 export const COMMUNITY_CARD_MANIFEST = new CardManifest({
-  module: GameModule.Community,
+  module: 'community',
   projectCards: [],
   corporationCards: [
     {cardName: CardName.AGRICOLA_INC, Factory: AgricolaInc},
     {cardName: CardName.PROJECT_WORKSHOP, Factory: ProjectWorkshop},
-    {cardName: CardName.INCITE, Factory: Incite, compatibility: GameModule.Turmoil},
+    {cardName: CardName.INCITE, Factory: Incite, compatibility: 'turmoil'},
     {cardName: CardName.PLAYWRIGHTS, Factory: Playwrights},
     {cardName: CardName.CURIOSITY_II, Factory: CuriosityII},
     {cardName: CardName.MIDAS, Factory: Midas},
-    {cardName: CardName.COLONIAL_ONE, Factory: ColonialOne, compatibility: GameModule.Colonies},
+    {cardName: CardName.COLONIAL_ONE, Factory: ColonialOne, compatibility: 'colonies'},
     {cardName: CardName.HOTSPRINGS, Factory: Hotsprings},
     {cardName: CardName.JUNK_VENTURES, Factory: JunkVentures},
     {cardName: CardName.ARISTARCHUS, Factory: Aristarchus},
@@ -49,39 +48,39 @@ export const COMMUNITY_CARD_MANIFEST = new CardManifest({
     {
       cardName: CardName.VALUABLE_GASES,
       Factory: ValuableGases,
-      compatibility: GameModule.Venus,
+      compatibility: 'venus',
     },
     {
       cardName: CardName.VENUS_FIRST,
       Factory: VenusFirst,
-      compatibility: GameModule.Venus,
+      compatibility: 'venus',
     },
     // {
     //   cardName: CardName.VITAL_COLONY,
     //   Factory: VitalColony,
-    //   compatibility: GameModule.Colonies,
+    //   compatibility: 'colonies',
     // },
     {
       cardName: CardName.AEROSPACE_MISSION,
       Factory: AerospaceMission,
-      compatibility: GameModule.Colonies,
+      compatibility: 'colonies',
     },
     {
       cardName: CardName.TRADE_ADVANCE,
       Factory: TradeAdvance,
-      compatibility: GameModule.Colonies,
+      compatibility: 'colonies',
     },
     {
       cardName: CardName.POLITICAL_UPRISING,
       Factory: PoliticalUprising,
-      compatibility: GameModule.Turmoil,
+      compatibility: 'turmoil',
     },
     {
       cardName: CardName.BY_ELECTION,
       Factory: ByElection,
-      compatibility: GameModule.Turmoil,
+      compatibility: 'turmoil',
     },
-    {cardName: CardName.EXECUTIVE_ORDER, Factory: ExecutiveOrder, compatibility: GameModule.Turmoil},
+    {cardName: CardName.EXECUTIVE_ORDER, Factory: ExecutiveOrder, compatibility: 'turmoil'},
     {
       cardName: CardName.ACCUMULATED_KNOWLEDGE,
       Factory: AccumulatedKnowledge,
@@ -89,7 +88,7 @@ export const COMMUNITY_CARD_MANIFEST = new CardManifest({
     {
       cardName: CardName.NITRATE_REDUCERS,
       Factory: NitrateReducers,
-      compatibility: GameModule.Venus,
+      compatibility: 'venus',
     },
   ],
 });

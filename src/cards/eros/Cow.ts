@@ -8,7 +8,7 @@ import {CardName} from '../../common/cards/CardName';
 import {CardType} from '../../common/cards/CardType';
 import {Tags} from '../../common/cards/Tags';
 import {Resources} from '../../common/Resources';
-import {ResourceType} from '../../common/ResourceType';
+import {CardResource} from '../../common/CardResource';
 
 export class Cow extends Card implements IActionCard, IProjectCard, IResourceCard {
   constructor() {
@@ -17,7 +17,7 @@ export class Cow extends Card implements IActionCard, IProjectCard, IResourceCar
       name: CardName.COW,
       tags: [Tags.ANIMAL],
       cost: 6,
-      resourceType: ResourceType.ANIMAL,
+      resourceType: CardResource.ANIMAL,
       victoryPoints: VictoryPoints.resource(1, 2),
 
       requirements: CardRequirements.builder((b) => b.oxygen(5)),
@@ -33,21 +33,21 @@ export class Cow extends Card implements IActionCard, IProjectCard, IResourceCar
       },
     });
   }
-    public override resourceCount = 0;
-    public override canPlay(player: Player): boolean {
-      return super.canPlay(player);
-    }
-    public play() {
-      return undefined;
-    }
-    public canAct(player: Player): boolean {
-      return player.getResource(Resources.PLANTS) >= 1;
-    }
-    public action(player: Player) {
-      player.addResourceTo(this, 1);
-      player.addResource(Resources.PLANTS, -1);
-      player.addResource(Resources.MEGACREDITS, 5);
-      return undefined;
-    }
+  public override resourceCount = 0;
+  public override canPlay(player: Player): boolean {
+    return super.canPlay(player);
+  }
+  public play() {
+    return undefined;
+  }
+  public canAct(player: Player): boolean {
+    return player.getResource(Resources.PLANTS) >= 1;
+  }
+  public action(player: Player) {
+    player.addResourceTo(this, 1);
+    player.addResource(Resources.PLANTS, -1);
+    player.addResource(Resources.MEGACREDITS, 5);
+    return undefined;
+  }
 }
 

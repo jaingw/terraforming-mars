@@ -16,8 +16,8 @@ export const OFFICIAL_COLONY_NAMES = [
 
 export const COMMUNITY_COLONY_NAMES = [
   ColonyName.IAPETUS,
-  ColonyName.MERCURY,
-  ColonyName.HYGIEA,
+  // ColonyName.MERCURY,
+  // ColonyName.HYGIEA,
   ColonyName.TITANIA,
   ColonyName.LEAVITT,
   ColonyName.VENUS,

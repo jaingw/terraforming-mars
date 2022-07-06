@@ -33,7 +33,7 @@ function getDay() {
   return new Date(new Date().getTime()+8*60*60*1000).toISOString().slice(0, 10).replace('T', ' ');
 }
 
-interface MainAppData {
+export interface MainAppData {
     screen: string;
     oscreen: string;
     /**
@@ -302,9 +302,7 @@ export const mainAppSettings = {
       xhr.send();
     } else if (currentPathname === '/games-overview') {
       app.screen = 'games-overview';
-    } else if (
-      currentPathname === '/new-game' || currentPathname === '/solo'
-    ) {
+    } else if (currentPathname === '/new-game') {
       app.screen = 'create-game-form';
     } else if (currentPathname === '/load') {
       app.screen = 'load';

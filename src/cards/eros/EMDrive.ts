@@ -6,14 +6,14 @@ import {CardRequirements} from '../CardRequirements';
 import {IActionCard} from '../ICard';
 import {Game} from '../../Game';
 import {OrOptions} from '../../inputs/OrOptions';
-import {DeferredAction} from '../../deferredActions/DeferredAction';
+import {SimpleDeferredAction} from '../../deferredActions/DeferredAction';
 import {SelectColony} from '../../inputs/SelectColony';
 import {CardName} from '../../common/cards/CardName';
 import {CardType} from '../../common/cards/CardType';
 import {Size} from '../../common/cards/render/Size';
 import {Tags} from '../../common/cards/Tags';
 import {PartyName} from '../../common/turmoil/PartyName';
-import { IColony } from '@/colonies/IColony';
+import {IColony} from '@/colonies/IColony';
 
 export class EMDrive extends Card implements IActionCard, IProjectCard {
   constructor() {
@@ -66,7 +66,7 @@ export class EMDrive extends Card implements IActionCard, IProjectCard {
     if (increasableColonies.length === 0) {
       return undefined;
     }
-    player.game.defer(new DeferredAction(
+    player.game.defer(new SimpleDeferredAction(
       player,
       () => new SelectColony('Select colony to increase the track mark to the maximum', 'Select', increasableColonies, (colony: IColony) => {
         if (increasableColonies.includes(colony)) {

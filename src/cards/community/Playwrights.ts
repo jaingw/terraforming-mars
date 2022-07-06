@@ -8,7 +8,7 @@ import {IProjectCard} from '../IProjectCard';
 import {SelectCard} from '../../inputs/SelectCard';
 import {Resources} from '../../common/Resources';
 import {SelectHowToPayDeferred} from '../../deferredActions/SelectHowToPayDeferred';
-import {DeferredAction} from '../../deferredActions/DeferredAction';
+import {SimpleDeferredAction} from '../../deferredActions/DeferredAction';
 import {CardRenderer} from '../render/CardRenderer';
 import {Size} from '../../common/cards/render/Size';
 import {MoonExpansion} from '../../moon/MoonExpansion';
@@ -78,13 +78,13 @@ export class Playwrights extends Card implements ICorporationCard {
             title: 'Select how to pay to replay the event',
             afterPay: () => {
               player.playCard(selectedCard, undefined, false); // Play the card but don't add it to played cards
-                player.removedFromPlayCards.push(selectedCard); // Remove card from the game , in case Conscription/Indentured Workers invalid
+              player.removedFromPlayCards.push(selectedCard); // Remove card from the game , in case Conscription/Indentured Workers invalid
               if (selectedCard.name === CardName.LAW_SUIT) {
                 /*
                    * If the card played is Law Suit we need to remove it from the newly sued player's played cards.
                    * Needs to be deferred to happen after Law Suit's `play()` method.
                    */
-                player.game.defer(new DeferredAction(player, () => {
+                player.game.defer(new SimpleDeferredAction(player, () => {
                   player.game.getPlayers().some((p) => {
                     const card = p.playedCards[p.playedCards.length - 1];
                     if (card?.name === selectedCard.name) {

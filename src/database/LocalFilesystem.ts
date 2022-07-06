@@ -1,9 +1,9 @@
-import {IDatabase, DbLoadCallback, IGameShortData} from './IDatabase';
+import {IDatabase, IGameShortData} from './IDatabase';
 import {Game, GameOptions, Score} from '../Game';
 import {GameId} from '../common/Types';
-import {IGameData} from '../common/game/IGameData';
 import {SerializedGame} from '../SerializedGame';
 import {Dirent} from 'fs';
+import {Timer} from '../common/Timer';
 
 const path = require('path');
 const fs = require('fs');
@@ -51,40 +51,50 @@ export class Localfilesystem implements IDatabase {
     }
   }
 
-  getGameId(_playerId: string, _cb: (err: Error | undefined, gameId?: GameId) => void): void {
+  getGameId(_playerId: string): Promise<GameId> {
     throw new Error('Not implemented');
   }
 
-  getGameVersion(_game_id: GameId, _save_id: number, _cb: DbLoadCallback<SerializedGame>): void {
+  getSaveIds(gameId: GameId): Promise<Array<number>> {
+    const re = /(.*)-(.*).json/;
+    const results = fs.readdirSync(historyFolder, {withFileTypes: true})
+      .filter((dirent: Dirent) => dirent.name.startsWith(gameId + '-'))
+      .filter((dirent: Dirent) => dirent.isFile())
+      .map((dirent: Dirent) => dirent.name.match(re))
+      .filter((result: RegExpMatchArray) => result !== null)
+      .map((result: RegExpMatchArray) => result[2]);
+    return Promise.resolve(results);
+  }
+
+  getGameVersion(_game_id: GameId, _save_id: number): Promise<SerializedGame> {
     throw new Error('Not implemented');
   }
 
-  getClonableGames(cb: (err: Error | undefined, allGames: Array<IGameData>) => void) {
-    this.getGames((err, gameIds) => {
-      const filtered = gameIds.map( (x) => x.gameId).filter((gameId) => fs.existsSync(this._historyFilename(gameId, 0)));
-      const gameData = filtered.map((gameId) => {
-        const text = fs.readFileSync(this._historyFilename(gameId, 0));
-        const serializedGame = JSON.parse(text) as SerializedGame;
-        return {gameId: gameId, playerCount: serializedGame.players.length};
-      });
-      cb(err, gameData);
-    });
-  }
-
-  getClonableGameByGameId(gameId: GameId, cb: (err: Error | undefined, gameData: IGameData | undefined) => void) {
-    this.getGames((err, gameIds) => {
+  getPlayerCount(gameId: GameId): Promise<number> {
+    return this.getGames().then((gameIds) => {
       const found = gameIds.find((gId) => gId.gameId === gameId && fs.existsSync(this._historyFilename(gameId, 0)));
       if (found === undefined) {
-        cb(err, undefined);
-        return;
+        throw new Error(`${gameId} not found`);
       }
       const text = fs.readFileSync(this._historyFilename(gameId, 0));
       const serializedGame = JSON.parse(text) as SerializedGame;
-      cb(err, {gameId: gameId, playerCount: serializedGame.players.length});
+      return serializedGame.players.length;
     });
   }
 
-  getGames(cb: (err: Error | undefined, allGames: Array<IGameShortData>) => void) {
+  loadCloneableGame(game_id: GameId): Promise<SerializedGame> {
+    try {
+      console.log(`Loading ${game_id} at save point 0`);
+      const text = fs.readFileSync(this._historyFilename(game_id, 0));
+      const serializedGame = JSON.parse(text);
+      return Promise.resolve(serializedGame);
+    } catch (e) {
+      const error = e instanceof Error ? e : new Error(String(e));
+      return Promise.reject(error);
+    }
+  }
+
+  getGames(): Promise<Array<IGameShortData>> {
     const gameIds: Array<IGameShortData> = [];
 
     // TODO(kberg): use readdir since this is expected to be async anyway.
@@ -99,31 +109,54 @@ export class Localfilesystem implements IDatabase {
       }
       gameIds.push({'gameId': result[1]});
     });
-    cb(undefined, gameIds);
-  }
-
-  restoreReferenceGame(_game_id: GameId, _game: Game, cb:(err: any) => void): void{
-    cb(undefined);
+    return Promise.resolve(gameIds);
   }
 
   saveGameResults(_gameId: GameId, _players: number, _generations: number, _gameOptions: GameOptions, _scores: Array<Score>): void {
     // Not implemented
   }
 
-  cleanSaves(_gameId: GameId): void {
+  cleanSaves(_gameId: GameId): Promise<void> {
     // Not implemented here.
+    return Promise.resolve();
   }
 
   purgeUnfinishedGames(): void {
     // Not implemented.
   }
+  restoreGame(game_id: GameId, save_id: number, game: Game, playId: string): void {
+    fs.copyFileSync(this._historyFilename(game_id, save_id), this._filename(game_id));
+    this.getGame(game_id, (err, serializedGame) => {
+      if (err || !serializedGame) {
+        return console.error('PostgreSQL:restoreGame', err);
+      }
+      // Transform string to json
 
-  restoreGame(_gameId: GameId, _save_id: number, _game: Game, _playId: string): void{
-    throw new Error('Undo not yet implemented');
+      // Rebuild each objects
+      const gamelog = game.gameLog;
+      game.loadFromJSON(serializedGame);
+      game.gameLog = gamelog;
+      game.log('${0} undo turn', (b) => b.playerId(playId));
+
+      // 会员回退时 以当前时间开始计时， 避免计时算到上一个人头上
+      if (playId === 'manager') {
+        Timer.newInstance().stop();
+        game.activePlayer.timer.start();
+      }
+      console.log(`${playId} undo turn ${game_id}  ${save_id}`);
+    });
   }
 
   deleteGameNbrSaves(_gameId: GameId, _rollbackCount: number): void {
-    throw new Error('Rollback not yet implemented');
+    console.error('deleting old saves not implemented.');
+  }
+
+  public stats(): Promise<{[key: string]: string | number}> {
+    return Promise.resolve({
+      type: 'Local Filesystem',
+      path: dbFolder.toString(),
+      history_path: historyFolder.toString(),
+    });
   }
   saveUser(_id: string, _name: string, _password: string, _prop: string): void {
     throw new Error('Method not implemented.');
@@ -134,13 +167,13 @@ export class Localfilesystem implements IDatabase {
   refresh(): void {
     throw new Error('Method not implemented.');
   }
-  saveGameState(_game_id: GameId, _save_id: number, _game: string, _gameShortDate: string ): void{
+  saveGame(_game: Game ): void {
     throw new Error('Method not implemented.');
   }
-  cleanGame(_game_id: string): void{
+  cleanGame(_game_id: string): void {
     throw new Error('Method not implemented.');
   }
-  cleanGameSave(_game_id: string, _save_id: number): void{
+  cleanGameSave(_game_id: string, _save_id: number): void {
     throw new Error('Method not implemented.');
   }
 }

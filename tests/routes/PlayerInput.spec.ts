@@ -2,34 +2,24 @@ import * as http from 'http';
 import * as EventEmitter from 'events';
 import {expect} from 'chai';
 import {PlayerInput} from '../../src/routes/PlayerInput';
-import {Route} from '../../src/routes/Route';
 import {MockResponse} from './HttpMocks';
-import {IContext} from '../../src/routes/IHandler';
-import {Game} from '../../src/Game';
-import {FakeGameLoader} from './FakeGameLoader';
-import {TestPlayers} from '../TestPlayers';
+import {RouteTestScaffolding} from './RouteTestScaffolding';
 
 describe('PlayerInput', function() {
-  let req: http.IncomingMessage;
+  let scaffolding: RouteTestScaffolding;
+  let req: EventEmitter;
   let res: MockResponse;
-  let ctx: IContext;
 
   beforeEach(() => {
-    req = new EventEmitter() as http.IncomingMessage;
+    req = new EventEmitter();
     res = new MockResponse();
-    ctx = {
-      route: new Route(),
-      serverId: '1',
-      url: new URL('http://boo.com'),
-      gameLoader: new FakeGameLoader(),
-    };
+    scaffolding = new RouteTestScaffolding(req as http.IncomingMessage);
   });
 
-  it('fails when id not provided', () => {
-    req.url = '/player/input';
-    ctx.url = new URL('http://boo.com' + req.url);
-    PlayerInput.INSTANCE.post(req, res.hide(), ctx);
-    expect(res.content).eq('Not found');
+  it('fails when id not provided', async () => {
+    scaffolding.url = '/player/input';
+    await scaffolding.asyncPost(PlayerInput.INSTANCE, res);
+    expect(res.content).eq('Bad request: must provide player id');
   });
 
   // it('performs undo action', () => {
@@ -78,15 +68,14 @@ describe('PlayerInput', function() {
   //   expect(model.game.gameAge).eq(model.game.gameAge);
   // });
 
-  it('sends 400 on server error', () => {
-    const player = TestPlayers.BLUE.newPlayer();
-    req.url = '/player/input?id=' + player.id;
-    ctx.url = new URL('http://boo.com' + req.url);
-    const game = Game.newInstance('foo', [player], player);
-    ctx.gameLoader.add(game);
-    PlayerInput.INSTANCE.post(req, res.hide(), ctx);
-    req.emit('data', '}{');
-    req.emit('end');
-    expect(res.content).eq('Not found');
-  });
+  // it('sends 400 on server error', () => {
+  //   const player = TestPlayers.BLUE.newPlayer();
+  //   scaffolding.url = `/player/input?id=${player.id}`;
+  //   const game = Game.newInstance('foo', [player], player);
+  //   scaffolding.ctx.gameLoader.add(game);
+  //   scaffolding.post(PlayerInput.INSTANCE, res);
+  //   scaffolding.req.emit('data', '}{');
+  //   scaffolding.req.emit('end');
+  //   expect(res.content).eq('{"message":"Unexpected token } in JSON at position 0"}');
+  // });
 });

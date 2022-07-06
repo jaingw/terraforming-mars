@@ -1,5 +1,5 @@
 import * as http from 'http';
-import {Handler} from './Handler';
+import {AsyncHandler} from './Handler';
 import {IContext} from './IHandler';
 import {Phase} from '../common/Phase';
 import {Player} from '../Player';
@@ -8,7 +8,7 @@ import {WaitingForModel} from '../common/models/WaitingForModel';
 import {isPlayerId, isSpectatorId} from '../common/utils/utils';
 import {Game} from '../Game';
 
-export class ApiWaitingFor extends Handler {
+export class ApiWaitingFor extends AsyncHandler {
   public static readonly INSTANCE = new ApiWaitingFor();
   private constructor() {
     super();
@@ -35,31 +35,30 @@ export class ApiWaitingFor extends Handler {
     return {result: 'WAIT'};
   }
 
-  public override get(req: http.IncomingMessage, res: http.ServerResponse, ctx: IContext): void {
+  public override async get(req: http.IncomingMessage, res: http.ServerResponse, ctx: IContext): Promise<void> {
     const playerId = String(ctx.url.searchParams.get('id'));
     const gameAge = Number(ctx.url.searchParams.get('gameAge'));
     const undoCount = Number(ctx.url.searchParams.get('undoCount'));
-    GameLoader.getInstance().getByPlayerId(playerId, (game) => {
-      if (game === undefined) {
-        ctx.route.notFound(req, res, 'cannot find game for that player');
-        return;
-      }
-      try {
-        if (isPlayerId(playerId)) {
-          const player = game.getAllPlayers().find((player) => player.id === playerId);
-          if (player !== undefined) {
-            ctx.route.writeJson(res, this.getPlayerWaitingForModel(player, game, gameAge, undoCount));
-            return;
-          }
-        } else if (isSpectatorId(playerId)) {
-          ctx.route.writeJson(res, this.getSpectatorWaitingForModel(game, gameAge, undoCount));
+    const game = await GameLoader.getInstance().getByParticipantId(playerId);
+    if (game === undefined) {
+      ctx.route.notFound(req, res, 'cannot find game for that player');
+      return;
+    }
+    try {
+      if (isPlayerId(playerId)) {
+        const player = game.getAllPlayers().find((player) => player.id === playerId);
+        if (player !== undefined) {
+          ctx.route.writeJson(res, this.getPlayerWaitingForModel(player, game, gameAge, undoCount));
+          return;
         }
-        ctx.route.notFound(req, res, 'player not found');
-      } catch (err) {
-        // This is basically impossible since getPlayerById ensures that the player is on that game.
-        console.warn(`unable to find player ${playerId}`, err);
-        ctx.route.notFound(req, res, 'player not found');
+      } else if (isSpectatorId(playerId)) {
+        ctx.route.writeJson(res, this.getSpectatorWaitingForModel(game, gameAge, undoCount));
       }
-    });
+      ctx.route.notFound(req, res, 'player not found');
+    } catch (err) {
+      // This is basically impossible since getPlayerById ensures that the player is on that game.
+      console.warn(`unable to find player ${playerId}`, err);
+      ctx.route.notFound(req, res, 'player not found');
+    }
   }
 }

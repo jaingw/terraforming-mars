@@ -1,7 +1,7 @@
 <template>
   <div class="select-initial-cards">
     <confirm-dialog
-      message="Continue without buying initial cards?"
+      message="Continue without buying any project cards?"
       ref="confirmation"
       v-on:accept="confirmSelection" />
     <SelectCard :playerView="playerView" :playerinput="getOption(0)" :showtitle="true" :onsave="noop" v-on:cardschanged="corporationChanged" />
@@ -16,21 +16,27 @@
 <script lang="ts">
 
 import Vue from 'vue';
+import {WithRefs} from 'vue-typed-refs';
 
 import Button from '@/client/components/common/Button.vue';
-import {getCard} from '@/client/cards/ClientCardManifest';
+import {getCard, getCardOrThrow} from '@/client/cards/ClientCardManifest';
 import {CardName} from '@/common/cards/CardName';
 import * as constants from '@/common/constants';
-import {ICorporationCard} from '@/cards/corporation/ICorporationCard';
+import {IClientCard} from '@/common/cards/IClientCard';
 import {PlayerInputModel} from '@/common/models/PlayerInputModel';
 import {PlayerViewModel} from '@/common/models/PlayerModel';
 import SelectCard from '@/client/components/SelectCard.vue';
 import ConfirmDialog from '@/client/components/common/ConfirmDialog.vue';
-import {getPreferences} from '@/client/utils/PreferencesManager';
+import {IPreferences, PreferencesManager} from '@/client/utils/PreferencesManager';
 import {Tags} from '@/common/cards/Tags';
-import {PreludeCard} from '@/cards/prelude/PreludeCard';
+import {InputResponse} from '@/common/inputs/InputResponse';
+import {CardType} from '@/common/cards/CardType';
 
-export default Vue.extend({
+type Refs = {
+  confirmation: InstanceType<typeof ConfirmDialog>,
+}
+
+export default (Vue as WithRefs<Refs>).extend({
   name: 'SelectInitialCards',
   props: {
     playerView: {
@@ -40,13 +46,17 @@ export default Vue.extend({
       type: Object as () => PlayerInputModel,
     },
     onsave: {
-      type: Function as unknown as () => (out: Array<Array<string>>) => void,
+      type: Function as unknown as () => (out: InputResponse) => void,
     },
     showsave: {
       type: Boolean,
     },
     showtitle: {
       type: Boolean,
+    },
+    preferences: {
+      type: Object as () => Readonly<IPreferences>,
+      default: () => PreferencesManager.INSTANCE.values(),
     },
   },
   components: {
@@ -57,7 +67,7 @@ export default Vue.extend({
   data() {
     return {
       selectedCards: [] as Array<CardName>,
-      selectedCorporation: [] as Array<ICorporationCard>,
+      selectedCorporation: [] as Array<IClientCard>,
       selectedPreludes: [] as Array<CardName>,
     };
   },
@@ -68,11 +78,7 @@ export default Vue.extend({
     getAfterPreludes() {
       let result = 0;
       for (const prelude of this.selectedPreludes) {
-        const cam = getCard(prelude);
-        if (cam === undefined) {
-          throw new Error(`Prelude ${prelude} not found`);
-        }
-        const card = cam.card as PreludeCard;
+        const card = getCardOrThrow(prelude);
         result += card.startingMegaCredits ?? 0;
         if (this.selectedCorporation[0]) {
           result += this.getAfterPreludesCorp(card, this.selectedCorporation[0]);
@@ -83,14 +89,13 @@ export default Vue.extend({
       }
       return result;
     },
-    getAfterPreludesCorp: function(card:PreludeCard, corp:ICorporationCard) {
+    getAfterPreludesCorp: function(card:IClientCard, corp:IClientCard ) {
       let result = 0;
       const prelude = card.name;
       switch (corp.name) {
       // For each step you increase the production of a resource ... you also gain that resource.
       case CardName.MANUTECH:
-        const productionBox = card?.productionBox;
-        result += productionBox.megacredits;
+        result += card.productionBox?.megacredits ?? 0;
         break;
 
         // When you place a city tile, gain 3 M€.
@@ -141,17 +146,17 @@ export default Vue.extend({
           break;
         }
 
-        // // When you place an ocean tile, gain 4MC
-        // case CardName.POLARIS:
-        //   switch (prelude) {
-        //   case CardName.AQUIFER_TURBINES:
-        //   case CardName.POLAR_INDUSTRIES:
-        //     result += 4;
-        //     break;
-        //   case CardName.GREAT_AQUIFER:
-        //     result += 8;
-        //     break;
-        //   }
+        // When you place an ocean tile, gain 4MC
+      case CardName.POLARIS:
+        switch (prelude) {
+        case CardName.AQUIFER_TURBINES:
+        case CardName.POLAR_INDUSTRIES:
+          result += 4;
+          break;
+        case CardName.GREAT_AQUIFER:
+          result += 8;
+          break;
+        }
         break;
       }
       return result;
@@ -166,7 +171,8 @@ export default Vue.extend({
       if (this.selectedCorporation.length === 0 || this.selectedCorporation[0] === undefined) {
         return NaN;
       }
-      let starting = this.selectedCorporation[0].startingMegaCredits;
+      // The ?? 0 is only because IClientCard applies to _all_ cards.
+      let starting = this.selectedCorporation[0].startingMegaCredits ?? 0;
       let cardCost = this.selectedCorporation[0].cardCost === undefined ? constants.CARD_COST : this.selectedCorporation[0].cardCost;
 
       if (this.selectedCorporation[1]) {
@@ -179,20 +185,23 @@ export default Vue.extend({
           }
         }
 
-        starting += this.selectedCorporation[1].startingMegaCredits - constants.STARTING_MEGA_CREDITS_SUB;
+        starting += ( this.selectedCorporation[1].startingMegaCredits ?? 0) - constants.STARTING_MEGA_CREDITS_SUB;
       }
       starting -= this.selectedCards.length * cardCost;
       return starting;
     },
     saveIfConfirmed() {
-      if (getPreferences().show_alerts && this.selectedCards.length === 0) {
-        (this.$refs['confirmation'] as any).show();
+      const projectCards = this.selectedCards.filter((name) => getCard(name)?.cardType !== CardType.PRELUDE);
+      let showAlert = false;
+      if (this.preferences.show_alerts && projectCards.length === 0) showAlert = true;
+      if (showAlert) {
+        this.$refs.confirmation.show();
       } else {
         this.saveData();
       }
     },
     saveData() {
-      const result: Array<Array<string>> = [];
+      const result: InputResponse = [];
       result.push([]);
       if (this.selectedCorporation[0] !== undefined) {
         result[0].push(this.selectedCorporation[0].name);
@@ -216,13 +225,19 @@ export default Vue.extend({
       const choseCards = this.getOption(0).cards?.filter((card) => {
         return cards.indexOf(card.name) >= 0;
       });
-      const coprs: Array<ICorporationCard> = [];
+      const coprs: Array<IClientCard> = [];
       if (choseCards !== undefined) {
         if (choseCards[0]) {
-          coprs[0] = getCard(choseCards[0].name)?.card as ICorporationCard;
+          const card = getCard(choseCards[0].name);
+          if (card) {
+            coprs[0] = card;
+          }
         }
         if (choseCards[1]) {
-          coprs[1] = getCard(choseCards[1].name)?.card as ICorporationCard;
+          const card= getCard(choseCards[1].name);
+          if (card) {
+            coprs[1] = card;
+          }
         }
       }
       this.selectedCorporation = coprs;

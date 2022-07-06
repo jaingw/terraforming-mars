@@ -3,12 +3,13 @@ import {Bushes} from '../../../src/cards/base/Bushes';
 import {MarsUniversity} from '../../../src/cards/base/MarsUniversity';
 import {OlympusConference} from '../../../src/cards/base/OlympusConference';
 import {Research} from '../../../src/cards/base/Research';
-import {ScienceTagCard} from '../../../src/cards/community/ScienceTagCard';
+import {AdaptationTechnology} from '../../../src//cards/base/AdaptationTechnology';
 import {DeferredActionsQueue} from '../../../src/deferredActions/DeferredActionsQueue';
 import {Game} from '../../../src/Game';
 import {OrOptions} from '../../../src/inputs/OrOptions';
 import {TestPlayer} from '../../TestPlayer';
 import {TestPlayers} from '../../TestPlayers';
+import {cast, runAllActions} from '../../TestingUtils';
 
 describe('OlympusConference', function() {
   let card : OlympusConference; let player : TestPlayer; let game : Game;
@@ -41,7 +42,7 @@ describe('OlympusConference', function() {
     card.onCardPlayed(player, card);
     expect(game.deferredActions).has.lengthOf(1);
 
-    const orOptions = game.deferredActions.peek()!.execute() as OrOptions;
+    const orOptions = cast(game.deferredActions.peek()!.execute(), OrOptions);
     game.deferredActions.pop();
     orOptions.options[1].cb();
     expect(card.resourceCount).to.eq(2);
@@ -50,6 +51,14 @@ describe('OlympusConference', function() {
     expect(card.resourceCount).to.eq(1);
     expect(player.cardsInHand).has.lengthOf(1);
     expect(game.deferredActions).has.lengthOf(0);
+  });
+
+  it('including this', function() {
+    player.cardsInHand = [card];
+    player.playCard(card, undefined);
+    expect(card.resourceCount).to.eq(0);
+    runAllActions(game);
+    expect(card.resourceCount).to.eq(1);
   });
 
   it('Plays twice for Research', function() {
@@ -64,7 +73,7 @@ describe('OlympusConference', function() {
     expect(card.resourceCount).to.eq(1);
 
     // Resource on card, can draw
-    const orOptions = game.deferredActions.peek()!.execute() as OrOptions;
+    const orOptions = cast(game.deferredActions.peek()!.execute(), OrOptions);
     game.deferredActions.pop();
     orOptions.options[0].cb();
     expect(card.resourceCount).to.eq(0);
@@ -75,7 +84,7 @@ describe('OlympusConference', function() {
 
   it('Triggers before Mars University', function() {
     const marsUniversity = new MarsUniversity();
-    const scienceTagCard = new ScienceTagCard();
+    const scienceTagCard = new AdaptationTechnology();
 
     // Olypus Conference played before Mars University
     player.playedCards.push(card);
@@ -89,7 +98,7 @@ describe('OlympusConference', function() {
     expect(game.deferredActions).has.lengthOf(2);
 
     // OC's trigger should be the first one
-    const orOptions = game.deferredActions.peek()!.execute() as OrOptions;
+    const orOptions = cast(game.deferredActions.peek()!.execute(), OrOptions);
     game.deferredActions.pop();
     orOptions.options[1].cb();
     expect(card.resourceCount).to.eq(2);
@@ -112,7 +121,7 @@ describe('OlympusConference', function() {
     expect(game.deferredActions).has.lengthOf(2);
 
     // OC's trigger should be the first one
-    const orOptions2 = game.deferredActions.peek()!.execute() as OrOptions;
+    const orOptions2 = cast(game.deferredActions.peek()!.execute(), OrOptions);
     game.deferredActions.pop();
     orOptions2.options[1].cb();
     expect(card.resourceCount).to.eq(2);

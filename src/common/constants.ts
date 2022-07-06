@@ -47,6 +47,7 @@ export const STARTING_MEGA_CREDITS_SUB = 42; // 双将组合公司初始MC扣除
 
 // Pathfinders
 export const SEED_VALUE = 5;
+export const DATA_VALUE = 3;
 
 // Escape Velocity
 export const BONUS_SECONDS_PER_ACTION = 2;
@@ -64,6 +65,8 @@ export const LANGUAGES = [
   {'id': 'es', 'title': 'Spanish'},
   {'id': 'br', 'title': 'Português Brasileiro'},
   {'id': 'it', 'title': 'Italian'},
+  {'id': 'ko', 'title': '한국어 (Korean)'},
 ];
 
 export const APP_NAME = 'Terraforming Mars';
+export const DISCORD_INVITE = 'https://discord.gg/afeyggbN6Y';

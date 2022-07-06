@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {TestingUtils} from '../../TestingUtils';
+import {setCustomGameOptions} from '../../TestingUtils';
 import {DysonScreens} from '../../../src/cards/pathfinders/DysonScreens';
 import {Game} from '../../../src/Game';
 import {TestPlayer} from '../../TestPlayer';
@@ -14,19 +14,21 @@ describe('DysonScreens', function() {
   beforeEach(function() {
     card = new DysonScreens();
     player = TestPlayers.BLUE.newPlayer();
-    Game.newInstance('foobar', [player], player, TestingUtils.setCustomGameOptions({pathfindersExpansion: true}));
+    Game.newInstance('foobar', [player], player, setCustomGameOptions({pathfindersExpansion: true}));
   });
 
   it('play', () => {
     player.cardsInHand = [];
     expect(player.game.board.getSpace(SpaceName.DYSON_SCREENS).player).is.undefined;
     expect(player.game.getTemperature()).eq(-30);
+    expect(player.getProductionForTest()).deep.eq(Units.EMPTY);
 
     card.play(player);
 
     expect(player.cardsInHand).has.length(1);
     expect(player.game.board.getSpace(SpaceName.DYSON_SCREENS).player?.id).eq(player.id);
     expect(player.game.getTemperature()).eq(-28);
+    expect(player.getProductionForTest()).deep.eq(Units.of({energy: 2, heat: 2}));
   });
 
   it('canAct', function() {

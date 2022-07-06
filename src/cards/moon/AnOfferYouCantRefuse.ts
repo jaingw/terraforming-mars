@@ -78,7 +78,7 @@ export class AnOfferYouCantRefuse extends ProjectCard {
           const option = new SelectOption(`${party.name} / ${playerName}`, 'Select', () => {
             const source = turmoil.getDelegatesInReserve(player) > 0 ? 'reserve' : 'lobby';
             turmoil.replaceDelegateFromParty(delegate, player, source, party.name, game);
-            turmoil.checkDominantParty(party); // Check dominance right after replacement (replace doesn't check dominance.)
+            turmoil.checkDominantParty(); // Check dominance right after replacement (replace doesn't check dominance.)
             return this.moveToAnotherParty(game, party.name, player);
           });
           orOptions.options.push(option);

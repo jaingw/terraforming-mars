@@ -23,6 +23,21 @@ export class _TharsisRepublic_ extends Card implements ICorporationCard {
       tags: [Tags.BUILDING],
       startingMegaCredits: 40,
       initialActionText: 'Place a city tile',
+      metadata: {
+        cardNumber: 'R31',
+        description: 'You start with 40 M€. As your first action in the game,place a city tile.',
+        renderData: CardRenderer.builder((b) => {
+          b.br.br;
+          b.megacredits(40).nbsp.city();
+          b.corpBox('effect', (ce) => {
+            ce.effect('When any city tile is placed, increase your M€ production 1 step. When you place a city tile, gain 3 M€.', (eb) => {
+              eb.city({size: Size.SMALL, all}).asterix().colon();
+              eb.production((pb) => pb.megacredits(1)).nbsp;
+              eb.city({size: Size.SMALL}).startEffect.megacredits(3);
+            });
+          });
+        }),
+      },
     });
   }
 
@@ -52,22 +67,5 @@ export class _TharsisRepublic_ extends Card implements ICorporationCard {
       player.addProduction(Resources.MEGACREDITS, 2);
     }
     return undefined;
-  }
-  public override get metadata() {
-    return {
-      cardNumber: 'R31',
-      description: 'You start with 40 M€. As your first action in the game,place a city tile.',
-      renderData: CardRenderer.builder((b) => {
-        b.br.br;
-        b.megacredits(40).nbsp.city();
-        b.corpBox('effect', (ce) => {
-          ce.effect('When any city tile is placed, increase your M€ production 1 step. When you place a city tile, gain 3 M€.', (eb) => {
-            eb.city({size: Size.SMALL, all}).asterix().colon();
-            eb.production((pb) => pb.megacredits(1)).nbsp;
-            eb.city({size: Size.SMALL}).startEffect.megacredits(3);
-          });
-        });
-      }),
-    };
   }
 }

@@ -5,13 +5,14 @@ import {DeferredAction, Priority} from './DeferredAction';
 import {Resources} from '../common/Resources';
 import {CardName} from '../common/cards/CardName';
 
-export class SelectHowToPayDeferred implements DeferredAction {
-  public priority = Priority.DEFAULT;
+export class SelectHowToPayDeferred extends DeferredAction {
   constructor(
-        public player: Player,
-        public amount: number,
-        public options: SelectHowToPayDeferred.Options = {},
-  ) {}
+    player: Player,
+    public amount: number,
+    public options: SelectHowToPayDeferred.Options = {},
+  ) {
+    super(player, Priority.DEFAULT);
+  }
 
   private mustPayWithMegacredits() {
     if (this.player.canUseHeatAsMegaCredits && this.player.heat > 0) {
@@ -31,15 +32,16 @@ export class SelectHowToPayDeferred implements DeferredAction {
         return false;
       }
     }
+    if (this.options.canUseData && ((this.player.corpCard?.resourceCount ?? 0 > 0) || (this.player.corpCard2?.resourceCount ?? 0 > 0))) {
+      return false;
+    }
     return true;
   }
 
   public execute() {
     if (this.mustPayWithMegacredits()) {
       this.player.deductResource(Resources.MEGACREDITS, this.amount);
-      if (this.options.afterPay !== undefined) {
-        this.options.afterPay();
-      }
+      this.options.afterPay?.();
       return undefined;
     }
 
@@ -49,6 +51,7 @@ export class SelectHowToPayDeferred implements DeferredAction {
       this.options.canUseTitanium || false,
       this.player.canUseHeatAsMegaCredits,
       this.options.canUseSeeds || false,
+      this.options.canUseData || false,
       this.amount,
       (howToPay: HowToPay) => {
         this.player.deductResource(Resources.STEEL, howToPay.steel);
@@ -57,15 +60,21 @@ export class SelectHowToPayDeferred implements DeferredAction {
         this.player.deductResource(Resources.HEAT, howToPay.heat);
         if (howToPay.seeds > 0 ) {
           if (this.player.corpCard?.name === CardName.SOYLENT_SEEDLING_SYSTEMS) {
-            this.player.removeResourceFrom(this.player.corpCard!, howToPay.seeds);
+            this.player.removeResourceFrom(this.player.corpCard, howToPay.seeds);
           }
           if (this.player.corpCard2?.name === CardName.SOYLENT_SEEDLING_SYSTEMS) {
-            this.player.removeResourceFrom(this.player.corpCard2!, howToPay.seeds);
+            this.player.removeResourceFrom(this.player.corpCard2, howToPay.seeds);
           }
         }
-        if (this.options.afterPay !== undefined) {
-          this.options.afterPay();
+        if (howToPay.data > 0 ) {
+          if (this.player.corpCard?.name === CardName.AURORAI) {
+            this.player.removeResourceFrom(this.player.corpCard, howToPay.data);
+          }
+          if (this.player.corpCard2?.name === CardName.AURORAI) {
+            this.player.removeResourceFrom(this.player.corpCard2, howToPay.data);
+          }
         }
+        this.options.afterPay?.();
         return undefined;
       },
     );
@@ -77,6 +86,7 @@ export namespace SelectHowToPayDeferred {
     canUseSteel?: boolean;
     canUseTitanium?: boolean;
     canUseSeeds?: boolean,
+    canUseData?: boolean,
     title?: string;
     afterPay?: () => void;
   }

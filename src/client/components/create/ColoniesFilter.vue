@@ -2,28 +2,19 @@
     <div class="colonies-filter">
         <div>
             <h2 v-i18n>Colonies</h2>
-        </div>
-        <div class="colonies-filter-list corporations-filter-toolbox-cont">
-            <h2 v-i18n>Official</h2>
-            <div class="corporations-filter-toolbox">
-              <a href="#" v-i18n v-on:click.prevent="selectAll('Official')">All</a> |
-              <a href="#" v-i18n v-on:click.prevent="selectNone('Official')">None</a> |
-              <a href="#" v-i18n v-on:click.prevent="invertSelection('Official')">Invert</a>
+            <div class="corporations-filter-toolbox corporations-filter-toolbox--topmost">
+                <a href="#" v-i18n v-on:click.prevent="selectAll('All')">All*</a> |
+                <a href="#" v-i18n v-on:click.prevent="selectNone('All')">None*</a> |
+                <a href="#" v-i18n v-on:click.prevent="invertSelection('All')">Invert*</a>
             </div>
-            <label class="form-checkbox" v-for="colony in officialColonies" v-bind:key="colony">
-                <input type="checkbox" v-model="selectedColonies" :value="colony"/>
-                <i class="form-icon"></i><span v-i18n>{{ colony }} - ({{ description(colony) }})</span>
-            </label>
         </div>
-        <div class="colonies-filter-list corporations-filter-toolbox-cont">
-            <h2 v-i18n>Community</h2>
-            <div class="corporations-filter-toolbox">
-              <a href="#" v-i18n v-on:click.prevent="selectAll('Community')">All</a> |
-              <a href="#" v-i18n v-on:click.prevent="selectNone('Community')">None</a> |
-              <a href="#" v-i18n v-on:click.prevent="invertSelection('Community')">Invert</a>
-            </div>
-            <label class="form-checkbox" v-for="colony in communityColonies" v-bind:key="colony">
-                <input type="checkbox" v-model="selectedColonies" :value="colony"/>
+        <div class="colonies-filter-list" v-for="module in modules" v-bind:key="module">
+            <h2 v-i18n>{{title(module)}}</h2>
+              <a href="#" v-i18n v-on:click.prevent="selectAll(module)">All</a> |
+              <a href="#" v-i18n v-on:click.prevent="selectNone(module)">None</a> |
+              <a href="#" v-i18n v-on:click.prevent="invertSelection(module)">Invert</a>
+            <label class="form-checkbox" v-for="colony in getColonies(module)" v-bind:key="colony">
+                <input type="checkbox" v-model="selectedColonies" :value="colony">
                 <i class="form-icon"></i><span v-i18n>{{ colony }} - ({{ description(colony) }})</span>
             </label>
         </div>
@@ -41,7 +32,11 @@ type Data = {
   officialColonies: Array<ColonyName>,
   communityColonies: Array<ColonyName>,
   selectedColonies: Array<ColonyName>,
+  modules: Array<ColonyModule>,
 }
+type ColonyModule = 'colonies' | 'community';
+type Group = ColonyModule | 'All';
+
 export default Vue.extend({
   name: 'ColoniesFilter',
   props: {
@@ -64,49 +59,71 @@ export default Vue.extend({
         ...OFFICIAL_COLONY_NAMES,
         ...this.communityCardsOption ? COMMUNITY_COLONY_NAMES: [],
       ],
+      modules: ['colonies', 'community'],
     };
     return data;
   },
   methods: {
+    // Do not delete this method. It's used by CreateGameForm.
+    updateColoniesByNames(colonyNames: Array<ColonyName>) {
+      this.selectedColonies = [];
+      for (const colony of this.allColonies) {
+        if (colonyNames.includes(colony)) {
+          this.selectedColonies.push(colony);
+        }
+      }
+    },
     description(colonyName: ColonyName): string {
       return COLONY_DESCRIPTIONS.get(colonyName) ?? 'unknown';
     },
-    selectAll: function(group: string) {
-      const colonies = group === 'Official' ? OFFICIAL_COLONY_NAMES : COMMUNITY_COLONY_NAMES;
-      if (!Array.isArray(this.selectedColonies)) {
-        this.selectedColonies = [];
+    getItemsByGroup(group: Group): Array<ColonyName> {
+      switch (group) {
+      case 'All': return this.allColonies;
+      case 'colonies': return this.officialColonies;
+      case 'community': return this.communityColonies;
+      default: return [];
       }
-      for (const item of colonies) {
+    },
+    selectAll(group: Group) {
+      const items = this.getItemsByGroup(group);
+      for (const item of items) {
         if (this.selectedColonies.includes(item) === false) {
           this.selectedColonies.push(item);
         }
       }
     },
-    selectNone: function(group: string) {
-      const colonies = group === 'Official' ? OFFICIAL_COLONY_NAMES : COMMUNITY_COLONY_NAMES;
-      if (!Array.isArray(this.selectedColonies)) {
-        this.selectedColonies = [];
+    removeFromSelection(colonyName: ColonyName) {
+      const itemIdx = this.selectedColonies.indexOf(colonyName);
+      if (itemIdx !== -1) {
+        this.selectedColonies.splice(itemIdx, 1);
       }
-      for (const item of colonies) {
-        const itemIdx = this.selectedColonies.indexOf(item);
-        if (itemIdx !== -1) {
-          this.selectedColonies.splice(itemIdx, 1);
+    },
+    selectNone(group: Group) {
+      const items = this.getItemsByGroup(group);
+      for (const item of items) {
+        this.removeFromSelection(item);
+      }
+    },
+    invertSelection(group: Group) {
+      const items = this.getItemsByGroup(group);
+
+      for (const idx in items) {
+        if (this.selectedColonies.includes(items[idx])) {
+          this.removeFromSelection(items[idx]);
+        } else {
+          this.selectedColonies.push(items[idx]);
         }
       }
     },
-    invertSelection: function(group: string) {
-      const colonies = group === 'Official' ? OFFICIAL_COLONY_NAMES : COMMUNITY_COLONY_NAMES;
-      if (!Array.isArray(this.selectedColonies)) {
-        this.selectedColonies = [];
-      }
-      for (const item of colonies) {
-        const itemIdx = this.selectedColonies.indexOf(item);
-        if (itemIdx !== -1) {
-          this.selectedColonies.splice(itemIdx, 1);
-        } else {
-          this.selectedColonies.push(item);
-        }
-      }
+    title(module: ColonyModule) {
+      if (module === 'colonies') return 'Official';
+      if (module === 'community') return 'Community';
+      return module;
+    },
+    getColonies(module: ColonyModule) {
+      if (module === 'colonies') return this.officialColonies;
+      if (module === 'community') return this.communityColonies;
+      return [];
     },
   },
   watch: {

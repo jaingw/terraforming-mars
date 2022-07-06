@@ -4,7 +4,7 @@ import {ICard} from '../../ICard';
 import {Player} from '../../../Player';
 import {SendDelegateToArea} from '../../../deferredActions/SendDelegateToArea';
 import {IGlobalEvent} from '../../../turmoil/globalEvents/IGlobalEvent';
-import {DeferredAction} from '../../../deferredActions/DeferredAction';
+import {SimpleDeferredAction} from '../../../deferredActions/DeferredAction';
 import {SelectGlobalCard} from '../../../inputs/SelectGlobalCard';
 import {CardName} from '../../../common/cards/CardName';
 import {CardType} from '../../../common/cards/CardType';
@@ -87,7 +87,7 @@ export class InciteEnder extends Card implements ICard, ICorporationCard {
       }
       return undefined;
     };
-    player.game.defer(new DeferredAction(
+    player.game.defer(new SimpleDeferredAction(
       player,
       () => new SelectGlobalCard(
         'Select card(s) to discard',

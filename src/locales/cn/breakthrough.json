@@ -29,7 +29,7 @@
 
     "You start with 20 M€. Lower your TR 1 step.":"起始拥有20M€，-1改造度",
 
-    "You start with 37 M€. As your first action, draw 4 Prelude cards, and play one of them. Discard the other three.":"你起始拥有37M€，作为游戏中的你的第一个行动，你必须抽四张前序卡，打出其中一张，然后弃掉剩余三张。",
+    "You start with 37 M€. As your first action, draw 4 Prelude cards, and play one of them. Discard the other three.":"你起始拥有37M€，作为你的第一个行动，你必须抽四张前序卡，打出其中一张，然后弃掉剩余三张。",
 
     "Effect: When you gain a floater to ANY CARD, gain 1 M€. 1 VP per 3 floaters on this card":"效果:每当你得到1个云资源，获得1M€，本卡上每3个云资源为你提供1VP",
 
@@ -40,7 +40,7 @@
     
     "Action: If your TR was raised this generation, you may pay 5 M€ to raise 1 step. When you raise TR in generation, gain 2 M€.":"行动：如果本时代你提升过改造度，则可以花费5M€额外提升1格。效果：你每在时代内提升了1格改造度，获得2M€。",
 
-    "Effect: Your Venus requirements are +/- 2 steps, your choice in each case. Once per game, increase your M€ production 1 step for each Venus tag you have.":"效果:你打出的牌中,受到金星改造度条件限制时 +/- 2格。一局游戏限一次，你每有一个金星标志，获得1点M€产能。",
+    "Effect: Your Venus requirements are +/- 2 steps, your choice in each case. Once per game, increase your M€ production 1 step for each Venus tag you have.":"效果:你打出的牌中,受到金星改造度条件限制时 +/- 2格。一局限一次，你每有一个金星标志，获得1点M€产能。",
 
     "Effect: Each time you get steel/titanium as placement bonus, increase 1 steel prod.You can use 4 steel to trade or pay for city standard project.":"效果:每当你因放置一个版块而获得钢铁资源或钛合金资源时,提升你的钢铁产能1级；你可以使用4铁贸易；你可以使用铁标动城市。",
 

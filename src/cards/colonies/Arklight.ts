@@ -1,7 +1,7 @@
 import {ICorporationCard} from '../corporation/ICorporationCard';
 import {Player} from '../../Player';
 import {Tags} from '../../common/cards/Tags';
-import {ResourceType} from '../../common/ResourceType';
+import {CardResource} from '../../common/CardResource';
 import {IProjectCard} from '../IProjectCard';
 import {Resources} from '../../common/Resources';
 import {CardType} from '../../common/cards/CardType';
@@ -18,7 +18,7 @@ export class Arklight extends Card implements ICorporationCard, IResourceCard {
       name: CardName.ARKLIGHT,
       tags: [Tags.ANIMAL],
       startingMegaCredits: 45,
-      resourceType: ResourceType.ANIMAL,
+      resourceType: CardResource.ANIMAL,
       cardType: CardType.CORPORATION,
       victoryPoints: VictoryPoints.resource(1, 2),
 
@@ -51,7 +51,7 @@ export class Arklight extends Card implements ICorporationCard, IResourceCard {
       player.addResourceTo(this, {qty: card.tags.filter((cardTag) => cardTag === Tags.ANIMAL || cardTag === Tags.PLANT).length, log: true});
     }
   }
-    public onCorpCardPlayed(player: Player, card:ICorporationCard) {
-      return this.onCardPlayed(player, card as unknown as IProjectCard);
-    }
+  public onCorpCardPlayed(player: Player, card:ICorporationCard) {
+    return this.onCardPlayed(player, card as unknown as IProjectCard);
+  }
 }

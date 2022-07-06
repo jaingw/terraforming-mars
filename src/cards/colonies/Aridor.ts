@@ -39,18 +39,15 @@ export class Aridor extends Card implements ICorporationCard {
   public allTags = new Set<Tags>();
   public initialAction(player: Player) {
     const game = player.game;
-    if (game.colonyDealer === undefined || !game.gameOptions.coloniesExtension) return undefined;
+    if (game.discardedColonies.length === 0) return undefined;
 
-    const availableColonies: IColony[] = game.colonyDealer.discardedColonies;
-    if (availableColonies.length === 0) return undefined;
-
-    const selectColony = new SelectColony('Aridor first action - Select colony tile to add', 'Add colony tile', availableColonies, (colony: IColony) => {
-      if (availableColonies.includes(colony)) {
+    const selectColony = new SelectColony('Aridor first action - Select colony tile to add', 'Add colony tile', game.discardedColonies, (colony: IColony) => {
+      if (game.discardedColonies.includes(colony)) {
         game.colonies.push(colony);
         game.colonies.sort((a, b) => (a.name > b.name) ? 1 : -1);
         game.log('${0} added a new Colony tile: ${1}', (b) => b.player(player).colony(colony));
         this.checkActivation(colony, game);
-          game.colonyDealer!.discardedColonies = game.colonyDealer!.discardedColonies.filter((colo) => colo!== colony);
+        game.discardedColonies = game.discardedColonies.filter((colo) => colo!== colony);
       } else {
         throw new Error(`Colony ${colony.name} is not a discarded colony`);
       }
@@ -64,13 +61,13 @@ export class Aridor extends Card implements ICorporationCard {
       colony.isActive = true;
       return;
     }
-    if (colony.resourceType === undefined) return;
+    if (colony.metadata.resourceType === undefined) return;
     game.getPlayers().forEach((player) => {
-      if (player.corpResourceType(colony.resourceType!)) {
+      if (colony.metadata.resourceType !== undefined && player.corpResourceType(colony.metadata.resourceType)) {
         colony.isActive = true;
         return;
       }
-      const resourceCard = player.playedCards.some((card) => card.resourceType === colony.resourceType);
+      const resourceCard = player.playedCards.some((card) => card.resourceType === colony.metadata.resourceType);
       if (resourceCard) {
         colony.isActive = true;
         return;
@@ -81,12 +78,12 @@ export class Aridor extends Card implements ICorporationCard {
   public onCardPlayed(player: Player, card: IProjectCard) {
     if (
       card.cardType === CardType.EVENT ||
-        card.tags.filter((tag) => tag !== Tags.WILDCARD).length === 0 ||
+        card.tags.filter((tag) => tag !== Tags.WILD).length === 0 ||
         !player.isCorporation(this.name)) {
       return undefined;
     }
 
-    for (const tag of card.tags.filter((tag) => tag !== Tags.WILDCARD)) {
+    for (const tag of card.tags.filter((tag) => tag !== Tags.WILD)) {
       const currentSize = this.allTags.size;
       this.allTags.add(tag);
       if (this.allTags.size > currentSize) {

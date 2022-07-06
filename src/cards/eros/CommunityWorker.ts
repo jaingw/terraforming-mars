@@ -28,7 +28,7 @@ export class CommunityWorker extends Card implements IProjectCard {
   }
 
   public onCardPlayed(player: Player, card: IProjectCard) {
-    if (card.cardType !== CardType.EVENT && card.tags.filter((x)=> x!==Tags.WILDCARD).length === 0) {
+    if (card.cardType !== CardType.EVENT && card.tags.filter((x)=> x!==Tags.WILD).length === 0) {
       player.megaCredits += 4;
     }
   }

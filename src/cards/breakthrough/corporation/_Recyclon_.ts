@@ -28,12 +28,12 @@ export class _Recyclon_ extends Recyclon {
     };
   }
 
-    public override resourceCount: number = 0;
+  public override resourceCount: number = 0;
 
-    public initialAction(player: Player) {
-      if (player.isCorporation(this.name)) {
-        player.addResourceTo(this, 2);
-      }
-      return undefined;
+  public initialAction(player: Player) {
+    if (player.isCorporation(this.name)) {
+      player.addResourceTo(this, 2);
     }
+    return undefined;
+  }
 }

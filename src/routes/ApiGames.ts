@@ -3,7 +3,6 @@ import {Handler} from './Handler';
 import {IContext} from './IHandler';
 import {GameLoader} from '../database/GameLoader';
 import {State} from '../database/IGameLoader';
-import * as querystring from 'querystring';
 import * as UserUtil from '../UserUtil';
 
 export class ApiGames extends Handler {
@@ -13,8 +12,8 @@ export class ApiGames extends Handler {
   }
 
   public override get(req: http.IncomingMessage, res: http.ServerResponse, ctx: IContext): void {
-    const queryParams = querystring.parse(req.url!.replace(/^.*\?/, ''));
-    if (queryParams.userId === undefined || queryParams.userId !== UserUtil.myId) {
+    const userId = ctx.url.searchParams.get('userId');
+    if (userId === undefined || userId !== UserUtil.myId) {
       console.warn('Not me');
       ctx.route.notFound(req, res, 'Not me');
       return;

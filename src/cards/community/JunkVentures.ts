@@ -2,7 +2,7 @@ import {Player} from '../../Player';
 import {CardRenderer} from '../render/CardRenderer';
 import {LogHelper} from '../../LogHelper';
 import {DrawCards} from '../../deferredActions/DrawCards';
-import {DeferredAction} from '../../deferredActions/DeferredAction';
+import {SimpleDeferredAction} from '../../deferredActions/DeferredAction';
 import {Dealer} from '../../Dealer';
 import {CardName} from '../../common/cards/CardName';
 import {CardType} from '../../common/cards/CardType';
@@ -60,7 +60,7 @@ export class JunkVentures extends Card implements ICorporationCard {
     dealer.discarded = Dealer.shuffle(dealer.discarded);
 
     const drawnCards = dealer.discarded.splice(0, 3);
-    game.defer(new DeferredAction(player, () => DrawCards.choose(player, drawnCards, {keepMax: 1})));
+    game.defer(new SimpleDeferredAction(player, () => DrawCards.choose(player, drawnCards, {keepMax: 1})));
     game.cardDrew = true;
     return undefined;
   }

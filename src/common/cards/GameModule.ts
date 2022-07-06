@@ -1,16 +1,2 @@
-export enum GameModule {
-    Override = 'invalid',
-    Base = 'base',
-    CorpEra = 'corpera',
-    Promo = 'promo',
-    Venus = 'venus',
-    Colonies = 'colonies',
-    Prelude = 'prelude',
-    Turmoil = 'turmoil',
-    Breakthrough = 'breakthrough',
-    Community = 'community',
-    Eros = 'eros',
-    Ares = 'ares',
-    Moon = 'moon',
-    Pathfinders = 'pathfinders',
-}
+export const GAME_MODULES = ['base', 'corpera', 'prelude', 'venus', 'colonies', 'turmoil', 'promo', 'breakthrough', 'eros', 'community', 'ares', 'moon', 'pathfinders'] as const;
+export type GameModule = typeof GAME_MODULES[number];

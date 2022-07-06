@@ -45,6 +45,7 @@ import {MagneticFieldStimulationDelays} from './MagneticFieldStimulationDelays';
 import {ConstantStruggle} from './ConstantStruggle';
 import {SpaceRaceToMars} from './SpaceRaceToMars';
 import {CommunicationBoom} from './CommunicationBoom';
+import {GameModule} from '../../common/cards/GameModule';
 
 const COLONY_ONLY_POSITIVE_GLOBAL_EVENTS = new Map<GlobalEventName, new() => IGlobalEvent>([
   [GlobalEventName.JOVIAN_TAX_RIGHTS, JovianTaxRights],
@@ -144,7 +145,15 @@ export function getGlobalEventByName(globalEventName: GlobalEventName): IGlobalE
   const Factory = ALL_EVENTS.get(globalEventName);
 
   if (Factory !== undefined) return new Factory();
+  console.warn(`unable to find global event ${globalEventName}`);
   return undefined;
+}
+
+export function getGlobalEventModule(name: GlobalEventName): GameModule {
+  if (PATHFINDERS_POSITIVE_GLOBAL_EVENTS.has(name)) return 'pathfinders';
+  if (PATHFINDERS_NEGATIVE_GLOBAL_EVENTS.has(name)) return 'pathfinders';
+  if (COMMUNITY_GLOBAL_EVENTS.has(name)) return 'community';
+  return 'turmoil';
 }
 
 export class GlobalEventDealer {
@@ -220,12 +229,15 @@ export class GlobalEventDealer {
   }
 
   public static deserialize(d: GlobalEventDealer | SerializedGlobalEventDealer): GlobalEventDealer {
-    const deck = d.globalEventsDeck.map((element: IGlobalEvent) => {
-      return getGlobalEventByName(element.name)!;
+    const deck: Array<IGlobalEvent> = [];
+    d.globalEventsDeck.forEach((element: IGlobalEvent) => {
+      const globalEvent = getGlobalEventByName(element.name);
+      if (globalEvent !== undefined) deck.push(globalEvent);
     });
-
-    const discardPile = d.discardedGlobalEvents.map((element: IGlobalEvent) => {
-      return getGlobalEventByName(element.name)!;
+    const discardPile: Array<IGlobalEvent> = [];
+    d.discardedGlobalEvents.forEach((element: IGlobalEvent) => {
+      const globalEvent = getGlobalEventByName(element.name);
+      if (globalEvent !== undefined) discardPile.push(globalEvent);
     });
     return new GlobalEventDealer(deck, discardPile);
   }
