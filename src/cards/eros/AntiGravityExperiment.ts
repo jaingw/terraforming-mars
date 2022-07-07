@@ -14,7 +14,7 @@ export class AntiGravityExperiment extends Card implements IProjectCard {
       cost: 12,
 
       requirements: CardRequirements.builder((b) => b.tag(Tags.SCIENCE, 6)),
-      cardDiscount: {amount: 2},
+      // cardDiscount: {amount: 2}, //避免显示bug
       metadata: {
         description: 'Requires 6 science tags.',
         cardNumber: 'Q35',
