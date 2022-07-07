@@ -1,18 +1,19 @@
 <template>
-  <div id="create-game">
-    <h1><span v-i18n>{{ constants.APP_NAME }}</span> — <span v-i18n>Create New Game</span></h1>
-    <div class="create-game-discord-invite" v-if="playersCount===1" >
-      <span v-i18n>Looking for people to play with</span>? <u v-i18n>Join us qq group: 859050306</u>.
-    </div>
+      <div id="create-game">
+            <h1><span v-i18n>{{ constants.APP_NAME }}</span> — <span v-i18n>Create New Game</span></h1>
+            <div class="create-game-discord-invite" v-if="!isvip" >
+                <span v-i18n>Want to play more DIY expansion? Join us qq group: 859050306</span> .
+            </div>
+            <div class="create-game-discord-invite" v-else-if="playersCount===1" >
+                <span v-i18n>Looking for people to play with? Join us qq group: 859050306</span> .
+            </div>
+            <div class="create-game-discord-invite" >
+                <span v-i18n> bug: 反重力先行试验持续生效 - 显示bug，应该已经修复，不确定 </span><br>
+                <span v-i18n> bug: 火星击剑允许撤回 - 已修复 </span><br>
+            </div>
+            <div class="create-game-form create-game-panel create-game--block">
 
-    <div class="create-game-discord-invite">
-      <span v-i18n> bug: 反重力先行试验持续生效 - 显示bug，应该已经修复，不确定 </span><br>
-      <span v-i18n> bug: 火星击剑允许撤回 - 已修复 </span><br>
-    </div>
-
-    <div class="create-game-form create-game-panel create-game--block">
-
-      <div class="create-game-options">
+                <div class="create-game-options">
 
                     <div class="create-game-page-container">
                         <div class="create-game-page-column">
@@ -228,111 +229,10 @@
                                 <span v-i18n>Custom Corporation list</span>
                             </label>
 
-        <div class="create-game-page-container">
-          <div class="create-game-page-column" v-if="! isSoloModePage">
-            <h4 v-i18n>№ of Players</h4>
-            <template v-for="pCount in [1,2,3,4,5,6]">
-              <input type="radio" :value="pCount" name="playersCount" v-model="playersCount" :id="pCount+'-radio'" :key="'__input'+pCount">
-              <label :for="pCount+'-radio'" :key="'_label'+pCount">
-                {{pCount === 1 ? 'Solo' : pCount}}
-              </label>
-            </template>
-          </div>
-
-          <div class="create-game-page-column">
-            <h4 v-i18n>Expansions</h4>
-
-            <input type="checkbox" name="allOfficialExpansions" id="allOfficialExpansions-checkbox" v-model="allOfficialExpansions" v-on:change="selectAll()">
-            <label for="allOfficialExpansions-checkbox">
-              <span v-i18n>All</span>
-            </label>
-
-
-            <input type="checkbox" name="prelude" id="prelude-checkbox" v-model="prelude">
-            <label for="prelude-checkbox" class="expansion-button">
-              <div class="create-game-expansion-icon expansion-icon-prelude"></div>
-              <span v-i18n>Prelude</span>
-            </label>
-
-            <input type="checkbox" name="venusNext" id="venusNext-checkbox" v-model="venusNext" v-on:change="toggleVenusNext()">
-            <label for="venusNext-checkbox" class="expansion-button">
-              <div class="create-game-expansion-icon expansion-icon-venus"></div>
-              <span v-i18n>Venus Next</span>
-            </label>
-
-            <input type="checkbox" name="colonies" id="colonies-checkbox" v-model="colonies">
-            <label for="colonies-checkbox" class="expansion-button">
-              <div class="create-game-expansion-icon expansion-icon-colony"></div>
-              <span v-i18n>Colonies</span>
-            </label>
-
-            <input type="checkbox" name="turmoil" id="turmoil-checkbox" v-model="turmoil" v-on:change="deselectPoliticalAgendasWhenDeselectingTurmoil()">
-            <label for="turmoil-checkbox" class="expansion-button">
-              <div class="create-game-expansion-icon expansion-icon-turmoil"></div>
-              <span v-i18n>Turmoil</span>
-            </label>
-
-            <input type="checkbox" name="promo" id="promo-checkbox" v-model="promoCardsOption">
-            <label for="promo-checkbox" class="expansion-button">
-              <div class="create-game-expansion-icon expansion-icon-promo"></div>
-              <span v-i18n>Promos</span>&nbsp;
-            </label>
-
-            <div class="create-game-subsection-label" v-i18n>Fan-made</div>
-
-            <input type="checkbox" name="heatFor" id="heatFor-checkbox" v-model="heatFor"  v-if="isvip">
-            <label for="heatFor-checkbox"  :class="{forbidden:!isvip}">
-              <span v-i18n>7 Heat Into Temperature</span>
-            </label>
-
-            <input type="checkbox" name="breakthrough" id="breakthrough-checkbox" v-model="breakthrough"  v-if="isvip">
-            <label for="breakthrough-checkbox"  :class="{forbidden:!isvip}">
-              <span v-i18n>BreakThrough</span>&nbsp;<a href="https://docs.qq.com/pdf/DS29QWFZLeUhWWlRR" class="tooltip" target="_blank">&#9432;</a>
-            </label>
-
-            <input type="checkbox" name="doubleCorp" id="doubleCorp-checkbox" v-model="doubleCorp"  v-if="isvip">
-            <label for="doubleCorp-checkbox"  :class="{forbidden:!isvip}">
-              <span v-i18n>Double Corp</span>&nbsp;
-            </label>
-
-            <input type="checkbox" name="eros" id="erosCards-checkbox" v-model="erosCardsOption"  v-if="isvip">
-            <label for="erosCards-checkbox" class="expansion-button" :class="{forbidden:!isvip}">
-              <div class="create-game-expansion-icon expansion-icon-eros"></div>
-              <span v-i18n>Eros</span>&nbsp;<a href="https://docs.qq.com/doc/DS25WcXdnbHhib3Fy" class="tooltip" target="_blank">&#9432;</a>
-            </label>
-
-            <input type="checkbox" name="ares" id="ares-checkbox" v-model="aresExtension"  v-if="isvip">
-            <label for="ares-checkbox" class="expansion-button" :class="{forbidden:!isvip}">
-              <div class="create-game-expansion-icon expansion-icon-ares"></div>
-              <span v-i18n>Ares</span>&nbsp;<a href="https://docs.qq.com/pdf/DQVZqWU5BZURyUkZp" class="tooltip" target="_blank">&#9432;</a>
-            </label>
-
-            <input type="checkbox" name="community" id="communityCards-checkbox" v-model="communityCardsOption"  v-if="isvip">
-            <label for="communityCards-checkbox" class="expansion-button" :class="{forbidden:!isvip}">
-              <div class="create-game-expansion-icon expansion-icon-community"></div>
-              <span v-i18n>Community</span>&nbsp;<a href="https://docs.qq.com/pdf/DQUFZaHdMWHl2V21M" class="tooltip" target="_blank">&#9432;</a>
-            </label>
-
-            <input type="checkbox" name="themoon" id="themoon-checkbox" v-model="moonExpansion"  v-if="isvip">
-            <label for="themoon-checkbox" class="expansion-button" :class="{forbidden:!isvip}">
-              <div class="create-game-expansion-icon expansion-icon-themoon"></div>
-              <span v-i18n>The Moon</span>&nbsp;<a href="https://github.com/bafolts/terraforming-mars/wiki/The-Moon" class="tooltip" target="_blank">&#9432;</a>
-            </label>
-
-            <template v-if="turmoil">
-              <input type="checkbox" name="politicalAgendas" id="politicalAgendas-checkbox" v-on:change="politicalAgendasExtensionToggle()"  v-if="isvip">
-              <label for="politicalAgendas-checkbox" class="expansion-button"  :class="{forbidden:!isvip}">
-                <div class="create-game-expansion-icon expansion-icon-agendas"></div>
-                <span v-i18n>Agendas</span>&nbsp;<a href="https://docs.qq.com/doc/DQUh4RlJFQUxwb09v?pub=1&dver=2.1.0" class="tooltip" target="_blank">&#9432;</a>
-              </label>
-
-              <div class="create-game-page-column-row" v-if="isPoliticalAgendasExtensionEnabled()">
-                <div>
-                  <input type="radio" name="agendaStyle" v-model="politicalAgendasExtension" :value="getPoliticalAgendasExtensionAgendaStyle('random')" id="randomAgendaStyle-radio">
-                  <label class="label-agendaStyle agendaStyle-random" for="randomAgendaStyle-radio">
-                    <span class="agendas-text" v-i18n>{{ getPoliticalAgendasExtensionAgendaStyle('random') }}</span>
-                  </label>
-                </div>
+                            <input type="checkbox" v-model="showCardsBlackList" id="blackList-checkbox"  v-if="isvip">
+                            <label for="blackList-checkbox" :class="{forbidden:!isvip}">
+                                <span v-i18n>Exclude some cards</span>
+                            </label>
 
                             <template v-if="colonies">
                                 <input type="checkbox" v-model="showColoniesList" id="customColonies-checkbox" v-if="isvip">
@@ -376,86 +276,36 @@
                               </label>
                             </div>
 
-            <div class="create-game-subsection-label" v-i18n>Filter</div>
+                            <input type="checkbox" v-model="randomFirstPlayer" id="randomFirstPlayer-checkbox">
+                            <label for="randomFirstPlayer-checkbox">
+                                <span v-i18n>Random first player</span>
+                            </label>
 
-            <input type="checkbox" v-model="showCorporationList" id="customCorps-checkbox">
-            <label for="customCorps-checkbox">
-              <span v-i18n>Custom Corporation list</span>
-            </label>
+                            <input type="checkbox" name="randomMAToggle" v-model="randomMACheckbox" id="randomMA-checkbox" v-on:change="randomMAToggle()"  v-if="isvip">
+                            <label for="randomMA-checkbox"  :class="{forbidden:!isvip}">
+                                <span v-i18n>Random Milestones/Awards</span>&nbsp;
+                            </label>
 
-            <input type="checkbox" v-model="showCardsBlackList" id="blackList-checkbox"  v-if="isvip">
-            <label for="blackList-checkbox" :class="{forbidden:!isvip}">
-              <span v-i18n>Exclude some cards</span>
-            </label>
+                            <div class="create-game-page-column-row" v-if="false">
+                                <div>
+                                <input type="radio" name="randomMAOption" v-model="randomMA" :value="getRandomMaOptionType('limited')" id="limitedRandomMA-radio">
+                                <label class="label-randomMAOption" for="limitedRandomMA-radio">
+                                    <span v-i18n>{{ getRandomMaOptionType('limited') }}</span>
+                                </label>
+                                </div>
 
-            <template v-if="colonies">
-              <input type="checkbox" v-model="showColoniesList" id="customColonies-checkbox" v-if="isvip">
-              <label for="customColonies-checkbox" :class="{forbidden:!isvip}">
-                <span v-i18n>Custom Colonies list</span>
-              </label>
-            </template>
+                                <div>
+                                <input type="radio" name="randomMAOption" v-model="randomMA" :value="getRandomMaOptionType('full')" id="unlimitedRandomMA-radio">
+                                <label class="label-randomMAOption" for="unlimitedRandomMA-radio">
+                                    <span v-i18n>{{ getRandomMaOptionType('full') }}</span>
+                                </label>
+                                </div>
+                            </div>
 
-            <template v-if="turmoil">
-              <input type="checkbox" v-model="removeNegativeGlobalEventsOption" id="removeNegativeEvent-checkbox" v-if="isvip">
-              <label for="removeNegativeEvent-checkbox" :class="{forbidden:!isvip}">
-                <span v-i18n>Remove negative Global Events</span>&nbsp;
-              </label>
-            </template>
-
-          </div>
-
-
-          <div class="create-game-page-column" v-if="playersCount > 1">
-            <h4 v-i18n>Multiplayer Options</h4>
-
-            <div class="create-game-page-column-row">
-              <div>
-                <input type="checkbox" name="draftVariant" v-model="draftVariant" id="draft-checkbox">
-                <label for="draft-checkbox">
-                  <span v-i18n>Draft variant</span>
-                </label>
-              </div>
-
-              <div>
-                <input type="checkbox" name="initialDraft" v-model="initialDraft" id="initialDraft-checkbox">
-                <label for="initialDraft-checkbox">
-                  <span v-i18n>Initial Draft variant</span>&nbsp;
-                </label>
-              </div>
-            </div>
-
-            <div v-if="initialDraft && doubleCorp" >
-              <input type="checkbox" name="initialCorpDraftVariant" v-model="initialCorpDraftVariant" id="initialCorpDraftVariant-checkbox">
-              <label for="initialCorpDraftVariant-checkbox">
-                <span v-i18n>Initial Draft Double Corp</span>
-              </label>
-            </div>
-
-            <input type="checkbox" v-model="randomFirstPlayer" id="randomFirstPlayer-checkbox">
-            <label for="randomFirstPlayer-checkbox">
-              <span v-i18n>Random first player</span>
-            </label>
-
-            <input type="checkbox" name="randomMAToggle" v-model="randomMACheckbox" id="randomMA-checkbox" v-on:change="randomMAToggle()"  v-if="isvip">
-            <label for="randomMA-checkbox"  :class="{forbidden:!isvip}">
-              <span v-i18n>Random Milestones/Awards</span>&nbsp;
-            </label>
-
-            <div class="create-game-page-column-row" v-if="false">
-              <div>
-                <input type="radio" name="randomMAOption" v-model="randomMA" :value="getRandomMaOptionType('limited')" id="limitedRandomMA-radio">
-                <label class="label-randomMAOption" for="limitedRandomMA-radio">
-                  <span v-i18n>{{ getRandomMaOptionType('limited') }}</span>
-                </label>
-              </div>
-
-              <div>
-                <input type="radio" name="randomMAOption" v-model="randomMA" :value="getRandomMaOptionType('full')" id="unlimitedRandomMA-radio">
-                <label class="label-randomMAOption" for="unlimitedRandomMA-radio">
-                  <span v-i18n>{{ getRandomMaOptionType('full') }}</span>
-                </label>
-              </div>
-            </div>
+                            <input type="checkbox" name="showOtherPlayersVP" v-model="showOtherPlayersVP" id="realTimeVP-checkbox">
+                            <label for="realTimeVP-checkbox">
+                                <span v-i18n>Show real-time VP</span>&nbsp;
+                            </label>
 
                             <input type="checkbox" v-model="fastModeOption" id="fastMode-checkbox">
                             <label for="fastMode-checkbox">
@@ -558,46 +408,6 @@
             <QrCode/>
             <preferences-icon></preferences-icon>
         </div>
-      </div>
-    </div>
-
-
-    <div class="create-game--block" v-if="showCorporationList">
-      <CorporationsFilter
-          ref="corporationsFilter"
-          v-on:corporation-list-changed="updateCustomCorporationsList"
-          v-bind:corporateEra="corporateEra"
-          v-bind:prelude="prelude"
-          v-bind:venusNext="venusNext"
-          v-bind:colonies="colonies"
-          v-bind:turmoil="turmoil"
-          v-bind:promoCardsOption="promoCardsOption"
-          v-bind:erosCardsOption="erosCardsOption"
-          v-bind:communityCardsOption="communityCardsOption"
-          v-bind:moonExpansion="moonExpansion"
-          v-bind:pathfindersExpansion="pathfindersExpansion"
-      ></CorporationsFilter>
-    </div>
-
-    <div class="create-game--block" v-if="showColoniesList">
-      <colonies-filter
-          ref="coloniesFilter"
-          v-on:colonies-list-changed="updateCustomColoniesList"
-          v-bind:venusNext="venusNext"
-          v-bind:turmoil="turmoil"
-          v-bind:communityCardsOption="communityCardsOption"
-      ></colonies-filter>
-    </div>
-
-    <div class="create-game--block" v-if="showCardsBlackList">
-      <cards-filter
-          ref="cardsFilter"
-          v-on:cards-list-changed="updateCardsBlackList"
-      ></cards-filter>
-
-    </div>
-    <QrCode/>
-  </div>
 </template>
 
 <script lang="ts">
