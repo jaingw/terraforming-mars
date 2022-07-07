@@ -65,7 +65,9 @@ import {PathfindersExpansion} from './pathfinders/PathfindersExpansion';
 import {deserializeProjectCard, serializedCardName, serializePlayedCard, deserializeCorpCard} from './cards/CardSerialization';
 import {ColoniesHandler} from './colonies/ColoniesHandler';
 import {AntiGravityExperiment} from './cards/eros/AntiGravityExperiment';
-import {MonsInsurance} from './cards/promo/MonsInsurance'
+import {MonsInsurance} from './cards/promo/MonsInsurance';
+import {InputResponse} from './common/inputs/InputResponse';
+import {SerializedGame} from './SerializedGame';
 
 export class Player {
   public readonly id: PlayerId;
