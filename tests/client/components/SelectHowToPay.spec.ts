@@ -105,6 +105,19 @@ describe('SelectHowToPay', () => {
     tester.expectValue('megaCredits', 0);
   });
 
+  it('Uses data', async () => {
+    const wrapper = setupBill(
+      14,
+      {megaCredits: 6},
+      {canUseData: true, data: 4});
+
+    const tester = new PaymentTester(wrapper);
+    await tester.nextTick();
+
+    tester.expectValue('data', 4);
+    tester.expectValue('megaCredits', 2);
+  });
+
   it('initial values, multiple values', async () => {
     const wrapper = setupBill(
       10,
@@ -121,6 +134,7 @@ describe('SelectHowToPay', () => {
     tester.expectIsAvailable('megaCredits', true);
     tester.expectIsAvailable('science', false);
     tester.expectIsAvailable('seeds', false);
+    tester.expectIsAvailable('data', false);
 
     tester.expectValue('titanium', 2);
     tester.expectValue('heat', 0);
@@ -137,10 +151,58 @@ describe('SelectHowToPay', () => {
     await tester.nextTick();
 
     tester.expectIsAvailable('seeds', false);
+    tester.expectIsAvailable('data', false);
     tester.expectValue('titanium', 0);
     tester.expectValue('steel', 0);
     tester.expectValue('heat', 0);
     tester.expectValue('megaCredits', 10);
+  });
+
+  it('max megacredits', async () => {
+    const wrapper = setupBill(
+      9,
+      {megaCredits: 16, heat: 3},
+      {canUseHeat: true});
+
+    const tester = new PaymentTester(wrapper);
+    await tester.nextTick();
+
+    tester.expectValue('heat', 0);
+    tester.expectValue('megaCredits', 9);
+
+    await tester.clickMax('heat');
+    await tester.nextTick();
+
+    tester.expectValue('heat', 3);
+    tester.expectValue('megaCredits', 6);
+
+    await tester.clickMax('megaCredits');
+    await tester.nextTick();
+
+    tester.expectValue('heat', 0);
+    tester.expectValue('megaCredits', 9);
+  });
+
+  it('max megacredits, 2', async () => {
+    const wrapper = setupBill(
+      10,
+      {megaCredits: 5, titanium: 4, titaniumValue: 4, heat: 3},
+      {canUseTitanium: true, canUseHeat: true});
+
+    const tester = new PaymentTester(wrapper);
+    await tester.nextTick();
+
+    tester.expectValue('titanium', 2);
+    tester.expectValue('heat', 0);
+    tester.expectValue('megaCredits', 2);
+
+    console.log('click');
+    await tester.clickMax('megaCredits');
+    await tester.nextTick();
+
+    tester.expectValue('titanium', 2);
+    tester.expectValue('heat', 0);
+    tester.expectValue('megaCredits', 5);
   });
 
   const setupBill = function(

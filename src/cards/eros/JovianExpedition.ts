@@ -44,9 +44,9 @@ export class JovianExpedition extends Card implements IProjectCard {
 
   public play(player: Player) {
     const game = player.game;
-    if (game.colonyDealer === undefined || !game.gameOptions.coloniesExtension) return undefined;
+    if (!game.gameOptions.coloniesExtension) return undefined;
 
-    const availableColonies: IColony[] = game.colonyDealer.discardedColonies.filter((x) => x.name !== ColonyName.TITANIA);
+    const availableColonies: IColony[] = game.discardedColonies.filter((x) => x.name !== ColonyName.TITANIA);
     if (availableColonies.length === 0) return undefined;
 
     const selectColony = new SelectColony('Select colony tile to add', 'Add colony tile', availableColonies, (colony: IColony) => {
@@ -70,13 +70,13 @@ export class JovianExpedition extends Card implements IProjectCard {
       colony.isActive = true;
       return;
     }
-    if (colony.resourceType === undefined) return;
+    if (colony.metadata.resourceType === undefined) return;
     game.getPlayers().forEach((player) => {
-      if (player.corpResourceType(colony.resourceType!)) {
+      if (colony.metadata.resourceType !== undefined && player.corpResourceType(colony.metadata.resourceType)) {
         colony.isActive = true;
         return;
       }
-      const resourceCard = player.playedCards.find((card) => card.resourceType === colony.resourceType);
+      const resourceCard = player.playedCards.find((card) => card.resourceType === colony.metadata.resourceType);
       if (resourceCard !== undefined) {
         colony.isActive = true;
         return;

@@ -64,7 +64,7 @@ export const MyGames = Vue.component('my-games', {
         <div id="games-overview">
             <h1><a href="/"  v-i18n>Terraforming Mars</a> — <span v-i18n>My Games</span> 
                 <span v-if="this.vipDate"><img src="assets/qrcode/potato.png" style="height: 50px;vertical-align: middle;" />{{vipDate}}<img src="assets/qrcode/potato.png" style="height: 50px;vertical-align: middle;" /></span> 
-                <button class="btn btn-lg btn-success" style="margin-bottom: 7px;min-width: 80px;" v-on:click="changeLogin" v-i18n><span v-if="userName">LoginOut</span><span v-else>Login</span></button>
+                <button class="btn btn-lg btn-success" style="margin-bottom: 7px;min-width: 80px;" v-on:click="changeLogin" v-i18n><span v-if="userName">LoginOut</span><span v-else>Login/Register</span></button>
             </h1>
             <div v-if="userName">
                 <p>Hello <span class="user-name">{{userName}}</span>,the following games are related with you:</p>

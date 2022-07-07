@@ -60,7 +60,7 @@ export interface PublicPlayerModel {
   titaniumValue: number;
   tradesThisGeneration: number;
   victoryPointsBreakdown: IVictoryPointsBreakdown;
-
+  victoryPointsByGeneration: Array<number>
   exited?: boolean;
   waitingFor: {} | undefined;
 }

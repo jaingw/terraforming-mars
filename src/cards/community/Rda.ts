@@ -6,7 +6,7 @@ import {SelectSpace} from '../../inputs/SelectSpace';
 import {SpaceType} from '../../common/boards/SpaceType';
 import {ISpace} from '../../boards/ISpace';
 import {CardName} from '../../common/cards/CardName';
-import {DeferredAction, Priority} from '../../deferredActions/DeferredAction';
+import {SimpleDeferredAction, Priority} from '../../deferredActions/DeferredAction';
 import {CardType} from '../../common/cards/CardType';
 import {CardRenderer} from '../render/CardRenderer';
 import {Size} from '../../common/cards/render/Size';
@@ -23,7 +23,7 @@ const VALID_BONUSES: Array<SpaceBonus> = [
   SpaceBonus.MEGACREDITS,
   SpaceBonus.ANIMAL,
   SpaceBonus.MICROBE,
-  SpaceBonus.POWER,
+  SpaceBonus.ENERGY,
   SpaceBonus.DATA,
   SpaceBonus.SCIENCE,
 ];
@@ -94,7 +94,7 @@ export class Rda extends Card implements ICorporationCard {
       // should not happen.
       return;
     }
-    const action = new DeferredAction(activePlayer, () => options);
+    const action = new SimpleDeferredAction(activePlayer, () => options);
     action.priority = Priority.GAIN_RESOURCE_OR_PRODUCTION;
     activePlayer.game.defer(action);
   }

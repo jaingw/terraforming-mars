@@ -50,13 +50,15 @@ export class CardLoader {
     const expansions: Array<GameModule> = Array.isArray(cf.compatibility) ? cf.compatibility : [cf.compatibility];
     return expansions.every((expansion) => {
       switch (expansion) {
-      case GameModule.Venus:
+      case 'venus':
         return gameOptions.venusNextExtension;
-      case GameModule.Colonies:
+      case 'colonies':
         return gameOptions.coloniesExtension;
-      case GameModule.Turmoil:
+      case 'turmoil':
         return gameOptions.turmoilExtension;
-      case GameModule.Pathfinders:
+      case 'moon':
+        return gameOptions.moonExpansion;
+      case 'pathfinders':
         return gameOptions.pathfindersExpansion;
       default:
         throw new Error(`Unhandled expansion type ${expansion} for card ${cf.cardName}`);
@@ -83,7 +85,14 @@ export class CardLoader {
       .filter((card) => card.name !== CardName.BEGINNER_CORPORATION);
   }
   public getPreludeCards() {
-    return this.getCards((manifest) => manifest.preludeCards);
+    const preludes = this.getCards((manifest) => manifest.preludeCards);
+    // https://github.com/terraforming-mars/terraforming-mars/issues/2833
+    // Make Valley Trust playable even when Preludes is out of the game
+    // by preparing a deck of preludes.
+    if (preludes.length === 0) {
+      this.addDeck(preludes, PRELUDE_CARD_MANIFEST.preludeCards);
+    }
+    return preludes;
   }
 
   private getCards<T extends ICard>(getDeck: (arg0: CardManifest) => Deck<T>) : Array<T> {

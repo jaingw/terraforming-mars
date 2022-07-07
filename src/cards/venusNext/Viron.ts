@@ -1,7 +1,7 @@
 import {ICorporationCard} from '../corporation/ICorporationCard';
 import {Player} from '../../Player';
 import {Tags} from '../../common/cards/Tags';
-import {ICard, isIActionCard} from '../ICard';
+import {IActionCard, ICard, isIActionCard} from '../ICard';
 import {SelectCard} from '../../inputs/SelectCard';
 import {Card} from '../Card';
 import {CardName} from '../../common/cards/CardName';
@@ -32,21 +32,18 @@ export class Viron extends Card implements ICard, ICorporationCard {
     });
   }
 
-  private getActionCards(player: Player):Array<ICard> {
-    const result: Array<ICard> = [];
+  private getActionCards(player: Player): Array<IActionCard & ICard> {
+    const result: Array<IActionCard & ICard> = [];
+
     if (player.corpCard !== undefined && player.corpCard.name !== this.name) {
-      if (
-        player.corpCard.action !== undefined &&
-            player.corpCard.canAct !== undefined &&
-            player.getActionsThisGeneration().has(player.corpCard.name) &&
-            player.corpCard.canAct(player)) {
+      if (isIActionCard(player.corpCard) &&
+          player.getActionsThisGeneration().has(player.corpCard.name) &&
+          player.corpCard.canAct(player)) {
         result.push(player.corpCard);
       }
     }
     if (player.corpCard2 !== undefined && player.corpCard2.name !== this.name) {
-      if (
-        player.corpCard2.action !== undefined &&
-          player.corpCard2.canAct !== undefined &&
+      if (isIActionCard(player.corpCard2) &&
           player.getActionsThisGeneration().has(player.corpCard2.name) &&
           player.corpCard2.canAct(player)) {
         result.push(player.corpCard2);
@@ -55,8 +52,8 @@ export class Viron extends Card implements ICard, ICorporationCard {
 
     for (const playedCard of player.playedCards) {
       if (isIActionCard(playedCard) &&
-                    player.getActionsThisGeneration().has(playedCard.name) &&
-                    playedCard.canAct(player)) {
+          player.getActionsThisGeneration().has(playedCard.name) &&
+          playedCard.canAct(player)) {
         result.push(playedCard);
       }
     }
@@ -76,10 +73,10 @@ export class Viron extends Card implements ICard, ICorporationCard {
       'Perform again an action from a played card',
       'Take action',
       this.getActionCards(player),
-      (foundCards: Array<ICard>) => {
+      (foundCards: Array<IActionCard & ICard>) => {
         const foundCard = foundCards[0];
         player.game.log('${0} used ${1} action with ${2}', (b) => b.player(player).card(foundCard).card(this));
-        return foundCard.action!(player);
+        return foundCard.action(player);
       },
     );
   }

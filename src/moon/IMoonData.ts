@@ -29,7 +29,7 @@ export namespace IMoonData {
   export function deserialize(moonData: SerializedMoonData, players: Array<Player>): IMoonData {
     let lunaFirstPlayer = undefined;
     if (moonData.lunaFirstPlayer !== undefined ) {
-      lunaFirstPlayer = players.find((p) => p.id === moonData.lunaFirstPlayer!.id);
+      lunaFirstPlayer = players.find((p) => p.id === moonData.lunaFirstPlayer?.id);
       if ( lunaFirstPlayer === undefined) {
         throw new Error(`player ${moonData.lunaFirstPlayer.id} not found`);
       }

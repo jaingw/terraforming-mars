@@ -7,15 +7,13 @@ import {CardName} from './common/cards/CardName';
 import {CardType} from './common/cards/CardType';
 import {ClaimedMilestone, serializeClaimedMilestones, deserializeClaimedMilestones} from './milestones/ClaimedMilestone';
 import {IColony} from './colonies/IColony';
-import {ColonyDealer, deserializeColonies, serializeColonies, getColonyByName} from './colonies/ColonyDealer';
+import {ColonyDealer} from './colonies/ColonyDealer';
 import {ColonyName} from './common/colonies/ColonyName';
 import {Color} from './common/Color';
 import {ICorporationCard} from './cards/corporation/ICorporationCard';
 import {Database} from './database/Database';
 import {Dealer} from './Dealer';
-import {ElysiumBoard} from './boards/ElysiumBoard';
 import {FundedAward, serializeFundedAwards, deserializeFundedAwards} from './awards/FundedAward';
-import {HellasBoard} from './boards/HellasBoard';
 import {IAward} from './awards/IAward';
 import {IMilestone} from './milestones/IMilestone';
 import {IProjectCard} from './cards/IProjectCard';
@@ -26,15 +24,14 @@ import {LogHelper} from './LogHelper';
 import {LogMessage} from './common/logs/LogMessage';
 import {ALL_MILESTONES} from './milestones/Milestones';
 import {ALL_AWARDS} from './awards/Awards';
-import {OriginalBoard} from './boards/OriginalBoard';
 import {PartyHooks} from './turmoil/parties/PartyHooks';
 import {Phase} from './common/Phase';
 import {Player} from './Player';
 import {GameId, SpectatorId, SpaceId} from './common/Types';
 import {PlayerInput} from './PlayerInput';
-import {ResourceType} from './common/ResourceType';
+import {CardResource} from './common/CardResource';
 import {Resources} from './common/Resources';
-import {DeferredAction, Priority} from './deferredActions/DeferredAction';
+import {DeferredAction, Priority, SimpleDeferredAction} from './deferredActions/DeferredAction';
 import {DeferredActionsQueue} from './deferredActions/DeferredActionsQueue';
 import {SelectHowToPayDeferred} from './deferredActions/SelectHowToPayDeferred';
 import {SelectInitialCards} from './inputs/SelectInitialCards';
@@ -74,12 +71,11 @@ import {SelectCard} from './inputs/SelectCard';
 import {GrantVenusAltTrackBonusDeferred} from './venusNext/GrantVenusAltTrackBonusDeferred';
 import {PathfindersExpansion} from './pathfinders/PathfindersExpansion';
 import {IPathfindersData} from './pathfinders/IPathfindersData';
-import {ArabiaTerraBoard} from './boards/ArabiaTerraBoard';
 import {AddResourcesToCard} from './deferredActions/AddResourcesToCard';
 import {isProduction} from './utils/server';
 import {GlobalEvent} from './turmoil/globalEvents/IGlobalEvent';
 import {IShortData} from './database/IDatabase';
-import {VastitasBorealisBoard} from './boards/VastitasBorealisBoard';
+import {ColonyDeserializer} from './colonies/ColonyDeserializer';
 
 export enum LoadState {
   HALFLOADED = 'halfloaded',
@@ -244,7 +240,7 @@ export class Game {
 
   // Expansion-specific data
   public colonies: Array<IColony> = [];
-  public colonyDealer: ColonyDealer | undefined = undefined;
+  public discardedColonies: Array<IColony> = []; // Not serialized
   public turmoil: Turmoil | undefined;
   public aresData: IAresData | undefined;
   public moonData: IMoonData | undefined;
@@ -252,7 +248,7 @@ export class Game {
 
   // Card-specific data
   // Mons Insurance promo corp
-  public monsInsuranceOwner: Player | undefined = undefined;
+  public monsInsuranceOwner?: Player;
   // Crash Site promo project
   public someoneHasRemovedOtherPlayersPlants: boolean = false;
   // United Nations Mission One community corp
@@ -262,7 +258,7 @@ export class Game {
   // 星际领航者的殖民判定
   public finishFirstTrading: boolean = false;
   // Syndicate Pirate Raids
-  public syndicatePirateRaider: string | undefined = undefined;
+  public syndicatePirateRaider?: string;
 
   private constructor(
     public id: string,
@@ -336,11 +332,10 @@ export class Game {
 
     // Add colonies stuff
     if (gameOptions.coloniesExtension) {
-      game.colonyDealer = new ColonyDealer(rng);
-      const communityColoniesSelected = GameSetup.includesCommunityColonies(gameOptions);
-      const allowCommunityColonies = gameOptions.communityCardsOption || communityColoniesSelected;
-
-      game.colonies = game.colonyDealer.drawColonies(players.length, gameOptions.customColoniesList, gameOptions.venusNextExtension, gameOptions.turmoilExtension, allowCommunityColonies);
+      const dealer = new ColonyDealer(rng, gameOptions);
+      dealer.drawColonies(players.length);
+      game.colonies = dealer.colonies;
+      game.discardedColonies = dealer.discardedColonies;
     }
 
     // Add Turmoil stuff
@@ -463,7 +458,7 @@ export class Game {
     // Save initial game state
     Game.stringifyPlayers.clear();
     if (!rebuild) {
-      Database.getInstance().saveGameState(game.id, game.lastSaveId, game.toJSON(), game.toShortJSON());
+      Database.getInstance().saveGame(game);
     }
     return game;
   }
@@ -481,7 +476,7 @@ export class Game {
     Game.stringifyPlayers.clear();
     this.updatetime = getDate();
     this.cardDrew = false;
-    Database.getInstance().saveGameState(this.id, this.lastSaveId, this.toJSON(), this.toShortJSON());
+    Database.getInstance().saveGame(this);
   }
   public toShortJSON(): string {
     return JSON.stringify({
@@ -515,9 +510,7 @@ export class Game {
       board: this.board.serialize(),
       claimedMilestones: serializeClaimedMilestones(this.claimedMilestones),
       clonedGamedId: this.clonedGamedId,
-      colonies: serializeColonies(this.colonies),
-      // Dealer 的殖民地是初始状态没有玩家殖民  不需要处理序列化
-      colonyDealer: this.colonyDealer ? {discardedColonies: this.colonyDealer?.discardedColonies.map((x) => ({name: x.name}))} as ColonyDealer : undefined,
+      colonies: this.colonies.map((colony) => colony.serialize()),
       currentSeed: this.rng.current,
       dealer: this.dealer.serialize(),
       deferredActions: [],
@@ -715,20 +708,25 @@ export class Game {
   private playerHasPickedCorporationCard(player: Player, corporationCard: ICorporationCard, corporationCard2: ICorporationCard | undefined) {
     player.pickedCorporationCard = corporationCard;
     player.pickedCorporationCard2 = corporationCard2;
-    // if all players picked corporationCard
     if (this.players.every((p) => p.pickedCorporationCard !== undefined)) {
       if (this.gameOptions.doubleCorp) {
         const game = this;
         const chooseFirstCorp = function() {
           for (const somePlayer of game.getPlayers()) {
             if (somePlayer.corpCard === undefined) {
+              if (somePlayer.pickedCorporationCard === undefined || somePlayer.pickedCorporationCard2 === undefined) {
+                throw new Error(`pickedCorporationCard is not defined for ${somePlayer.id}`);
+              }
               somePlayer.setWaitingFor(new SelectCard(
                 'Select corp card to play first',
                 'Play',
-                [somePlayer.pickedCorporationCard!, somePlayer.pickedCorporationCard2!],
+                [somePlayer.pickedCorporationCard, somePlayer.pickedCorporationCard2],
                 (foundCards: Array<ICorporationCard>) => {
+                  if (somePlayer.pickedCorporationCard === undefined || somePlayer.pickedCorporationCard2 === undefined) {
+                    throw new Error(`pickedCorporationCard is not defined for ${somePlayer.id}`);
+                  }
                   game.playCorporationCard(somePlayer, foundCards[0], false);
-                  game.playCorporationCard(somePlayer, somePlayer.pickedCorporationCard?.name === foundCards[0].name ? somePlayer.pickedCorporationCard2! : somePlayer.pickedCorporationCard!, true);
+                  game.playCorporationCard(somePlayer, somePlayer.pickedCorporationCard.name === foundCards[0].name ? somePlayer.pickedCorporationCard2 : somePlayer.pickedCorporationCard, true);
                   game.playerIsFinishedWithResearchPhase(somePlayer);
                   return undefined;
                 },
@@ -742,7 +740,10 @@ export class Game {
         chooseFirstCorp();
       } else {
         for (const somePlayer of this.getPlayersInGenerationOrder()) {
-          this.playCorporationCard(somePlayer, somePlayer.pickedCorporationCard!, false);
+          if (somePlayer.pickedCorporationCard === undefined) {
+            throw new Error(`pickedCorporationCard is not defined for ${somePlayer.id}`);
+          }
+          this.playCorporationCard(somePlayer, somePlayer.pickedCorporationCard, false);
           this.playerIsFinishedWithResearchPhase(somePlayer);
         }
       }
@@ -756,22 +757,29 @@ export class Game {
     }
     corporationCard.play(player);
     this.log('${0} played ${1}', (b) => b.player(player).card(corporationCard));
+    player.game.log('${0} kept ${1} project cards', (b) => b.player(player).number(player.cardsInHand.length));
 
     // trigger other corp's effect, e.g. SaturnSystems,PharmacyUnion,Splice
     for (const somePlayer of this.getPlayersInGenerationOrder()) {
       if (somePlayer.corpCard !== undefined && somePlayer.corpCard !== corporationCard && somePlayer.corpCard.onCorpCardPlayed !== undefined) {
-        this.defer(new DeferredAction(
+        this.defer(new SimpleDeferredAction(
           player,
           () => {
-            return somePlayer.corpCard!.onCorpCardPlayed!(player, corporationCard) || undefined;
+            if (somePlayer.corpCard !== undefined && somePlayer.corpCard.onCorpCardPlayed !== undefined) {
+              return somePlayer.corpCard.onCorpCardPlayed(player, corporationCard) || undefined;
+            }
+            return undefined;
           },
         ));
       }
       if (somePlayer.corpCard2 !== undefined && somePlayer.corpCard2 !== corporationCard && somePlayer.corpCard2.onCorpCardPlayed !== undefined) {
-        this.defer(new DeferredAction(
+        this.defer(new SimpleDeferredAction(
           player,
           () => {
-            return somePlayer.corpCard2!.onCorpCardPlayed!(player, corporationCard) || undefined;
+            if (somePlayer.corpCard2 !== undefined && somePlayer.corpCard2.onCorpCardPlayed !== undefined) {
+              return somePlayer.corpCard2.onCorpCardPlayed(player, corporationCard) || undefined;
+            }
+            return undefined;
           },
         ));
       }
@@ -780,7 +788,7 @@ export class Game {
     // Activate some colonies
     if (this.gameOptions.coloniesExtension && corporationCard.resourceType !== undefined) {
       this.colonies.forEach((colony) => {
-        if (colony.resourceType !== undefined && colony.resourceType === corporationCard.resourceType) {
+        if (colony.metadata.resourceType !== undefined && colony.metadata.resourceType === corporationCard.resourceType) {
           colony.isActive = true;
         }
       });
@@ -945,8 +953,13 @@ export class Game {
 
     if (this.gameIsOver()) {
       this.log('Final greenery placement', (b) => b.forNewGeneration());
-      this.gotoFinalGreeneryPlacement();
+      // chaos生产之后会需要选择资源，先选完再执行放树
+      this.deferredActions.runAll(() => this.gotoFinalGreeneryPlacement());
       return;
+    } else {
+      this.players.forEach((player) => {
+        player.returnTradeFleets();
+      });
     }
 
     // solar Phase Option
@@ -958,7 +971,7 @@ export class Game {
     this.gotoEndGeneration();
   }
 
-  private gotoEndGeneration() {
+  private endGenerationForColonies() {
     if (this.gameOptions.coloniesExtension) {
       this.colonies.forEach((colony) => {
         colony.endGeneration(this);
@@ -966,26 +979,32 @@ export class Game {
       // Syndicate Pirate Raids hook. Also see Colony.ts and Player.ts
       this.syndicatePirateRaider = undefined;
     }
+  }
+
+  private gotoEndGeneration() {
+    this.endGenerationForColonies();
 
     TurmoilUtil.ifTurmoil(this, (turmoil) => {
       turmoil.endGeneration(this);
     });
 
-    // Resolve Turmoil deferred actions
+    // turmoil.endGeneration might have added actions.
     if (this.deferredActions.length > 0) {
-      this.resolveTurmoilDeferredActions();
-      return;
+      this.deferredActions.runAll(() => this.goToDraftOrResearch());
+    } else {
+      this.phase = Phase.INTERGENERATION;
+      this.goToDraftOrResearch();
     }
-
-    this.phase = Phase.INTERGENERATION;
-    this.goToDraftOrResearch();
   }
 
-  private resolveTurmoilDeferredActions() {
-    this.deferredActions.runAll(() => this.goToDraftOrResearch());
+  private updateVPbyGeneration(): void {
+    this.getPlayers().forEach((player) => {
+      player.victoryPointsByGeneration.push(player.getVictoryPoints().total);
+    });
   }
 
   private goToDraftOrResearch() {
+    this.updateVPbyGeneration();
     this.generation++;
     this.log('Generation ${0}', (b) => b.forNewGeneration().number(this.generation));
     this.incrementFirstPlayer();
@@ -1225,7 +1244,9 @@ export class Game {
       this.log('This game id was ' + this.id);
     }
 
-    Database.getInstance().cleanSaves(this.id);
+    Database.getInstance().cleanSaves(this.id).catch((err) => {
+      console.error(err);
+    });
     const scores: Array<Score> = [];
     const players = this.getAllPlayers();
     players.forEach((player) => {
@@ -1253,7 +1274,7 @@ export class Game {
             this.board.getAvailableSpacesForGreenery(player).length > 0;
   }
 
-  // Called when a player has chosen not to place any more greeneries.
+  // Called when a player cannot or chose not to place any more greeneries.
   public playerIsDoneWithGame(player: Player): void {
     this.donePlayers.add(player);
     this.gotoFinalGreeneryPlacement();
@@ -1264,7 +1285,6 @@ export class Game {
   // Rename to takeNextFinalGreeneryAction?
 
   public /* for testing */ gotoFinalGreeneryPlacement(): void {
-    // this.getPlayers returns in turn order -- a necessary rule for final greenery placement.
     for (const player of this.getPlayersInGenerationOrder()) {
       if (this.donePlayers.has(player)) {
         continue;
@@ -1278,6 +1298,7 @@ export class Game {
         this.donePlayers.add(player);
       }
     }
+    this.updateVPbyGeneration();
     this.gotoEndGame();
   }
 
@@ -1358,14 +1379,13 @@ export class Game {
         player.drawCard(steps);
       }
       if (this.gameOptions.altVenusBoard) {
-        // The second half of this equation removes any increases earler than 16-to-18.
-
         const newValue = this.venusScaleLevel + steps * 2;
         const minimalBaseline = Math.max(this.venusScaleLevel, 16);
         const maximumBaseline = Math.min(newValue, 30);
         const standardResourcesGranted = Math.max((maximumBaseline - minimalBaseline) / 2, 0);
 
         const grantWildResource = this.venusScaleLevel + (steps * 2) >= 30;
+        // The second half of this expression removes any increases earler than 16-to-18.
         if (grantWildResource || standardResourcesGranted > 0) {
           this.defer(new GrantVenusAltTrackBonusDeferred(player, standardResourcesGranted, grantWildResource));
         }
@@ -1466,7 +1486,7 @@ export class Game {
   }
 
   public getCitiesCount(player?: Player): number {
-    let cities = this.board.spaces.filter((space) => Board.isCitySpace(space));
+    let cities = this.board.spaces.filter(Board.isCitySpace);
     if (player !== undefined) cities = cities.filter(Board.ownedBy(player));
     return cities.length;
   }
@@ -1620,25 +1640,28 @@ export class Game {
       // ignore
       break;
     case SpaceBonus.MICROBE:
-      this.defer(new AddResourcesToCard(player, ResourceType.MICROBE, {count: count}));
+      this.defer(new AddResourcesToCard(player, CardResource.MICROBE, {count: count}));
       break;
     case SpaceBonus.DATA:
-      this.defer(new AddResourcesToCard(player, ResourceType.DATA, {count: count}));
+      this.defer(new AddResourcesToCard(player, CardResource.DATA, {count: count}));
       break;
     case SpaceBonus.ENERGY_PRODUCTION:
-      player.addProduction(Resources.ENERGY, count);
+      player.addProduction(Resources.ENERGY, count, {log: true});
       break;
     case SpaceBonus.SCIENCE:
-      this.defer(new AddResourcesToCard(player, ResourceType.SCIENCE, {count: count}));
+      this.defer(new AddResourcesToCard(player, CardResource.SCIENCE, {count: count}));
       break;
     case SpaceBonus.TEMPERATURE:
       if (this.getTemperature() < constants.MAX_TEMPERATURE) {
-        this.defer(new DeferredAction(player, () => this.increaseTemperature(player, 1)));
+        this.defer(new SimpleDeferredAction(player, () => this.increaseTemperature(player, 1)));
         this.defer(new SelectHowToPayDeferred(
           player,
           constants.VASTITAS_BOREALIS_BONUS_TEMPERATURE_COST,
           {title: 'Select how to pay for placement bonus temperature'}));
       }
+      break;
+    case SpaceBonus.ENERGY:
+      player.addResource(Resources.ENERGY, count, {log: true});
       break;
     default:
       // TODO(kberg): Remove the isProduction condition after 2022-01-01.
@@ -1685,7 +1708,7 @@ export class Game {
         orOptions.title = 'Select to increase temperature or not';
       }
 
-      this.defer(new DeferredAction(
+      this.defer(new SimpleDeferredAction(
         player,
         () => {
           return orOptions;
@@ -1782,7 +1805,7 @@ export class Game {
     throw new Error(`No player has played ${name}`);
   }
 
-  public getCardsInHandByResource(player: Player, resourceType: ResourceType) {
+  public getCardsInHandByResource(player: Player, resourceType: CardResource) {
     return player.cardsInHand.filter((card) => card.resourceType === resourceType);
   }
 
@@ -1816,15 +1839,24 @@ export class Game {
     });
   }
 
-  public discardForCost(toPlace: TileType) {
-    const card = this.dealer.dealCard(this);
-    this.dealer.discard(card);
-    this.log('Drew and discarded ${0} (cost ${1}) to place a ${2}', (b) => b.card(card).number(card.cost).tileType(toPlace));
-    return card.cost;
+  public discardForCost(cardCount: 1 | 2, toPlace: TileType) {
+    if (cardCount === 1) {
+      const card = this.dealer.dealCard(this);
+      this.dealer.discard(card);
+      this.log('Drew and discarded ${0} (cost ${1}) to place a ${2}', (b) => b.card(card).number(card.cost).tileType(toPlace));
+      return card.cost;
+    } else {
+      const card1 = this.dealer.dealCard(this);
+      this.dealer.discard(card1);
+      const card2 = this.dealer.dealCard(this);
+      this.dealer.discard(card2);
+      this.log('Drew and discarded ${0} (cost ${1}) and ${2} (cost ${3}) to place a ${4}', (b) => b.card(card1).number(card1.cost).card(card2).number(card2.cost).tileType(toPlace));
+      return card1.cost + card2.cost;
+    }
   }
 
-  public getSpaceByOffset(direction: -1 | 1, toPlace: TileType) {
-    const cost = this.discardForCost(toPlace);
+  public getSpaceByOffset(direction: -1 | 1, toPlace: TileType, cardCount: 1 | 2 = 1) {
+    const cost = this.discardForCost(cardCount, toPlace);
 
     const distance = Math.max(cost-1, 0); // Some cards cost zero.
     const space = this.board.getNthAvailableLandSpace(distance, direction, undefined /* player */,
@@ -1917,7 +1949,7 @@ export class Game {
 
     // Rebuild every player objects
     this.players = d.players.map((element: SerializedPlayer) => {
-      const player : Player = Player.deserialize(element);
+      const player : Player = Player.deserialize(element, d);
       player.game = this;
       return player;
     });
@@ -1925,23 +1957,11 @@ export class Game {
       d.exitedPlayers = [];
     }
     this.exitedPlayers = d.exitedPlayers.map((element: SerializedPlayer) => {
-      const player : Player = Player.deserialize(element);
+      const player : Player = Player.deserialize(element, d);
       player.game = this;
       return player;
     });
-    const playersForBoard = this.getAllPlayers().length !== 1 ? this.getAllPlayers() : [this.getAllPlayers()[0], GameSetup.neutralPlayerFor(d.id)];
-    // Rebuild milestones, awards and board elements
-    if (this.gameOptions.boardName === BoardName.ELYSIUM) {
-      this.board = ElysiumBoard.deserialize(d.board, playersForBoard);
-    } else if (this.gameOptions.boardName === BoardName.HELLAS) {
-      this.board = HellasBoard.deserialize(d.board, playersForBoard);
-    } else if (this.gameOptions.boardName === BoardName.ARABIA_TERRA) {
-      this.board = ArabiaTerraBoard.deserialize(d.board, playersForBoard);
-    } else if (this.gameOptions.boardName === BoardName.VASTITAS_BOREALIS) {
-      this.board = VastitasBorealisBoard.deserialize(d.board, playersForBoard);
-    } else {
-      this.board = OriginalBoard.deserialize(d.board, playersForBoard);
-    }
+    this.board = GameSetup.deserializeBoard(this.getAllPlayers(), this.gameOptions, d);
 
     this.rng = new Random(d.seed, d.currentSeed);
 
@@ -1981,14 +2001,13 @@ export class Game {
     }
     // Reload colonies elements if needed
     if (this.gameOptions.coloniesExtension) {
-      this.colonyDealer = new ColonyDealer(this.rng);
+      this.colonies = ColonyDeserializer.deserializeAndFilter(d.colonies, this.getAllPlayers());
+      const dealer = new ColonyDealer(this.rng, this.gameOptions);
+      dealer.restore(this.colonies);
+      this.discardedColonies = dealer.discardedColonies;
 
-      if (d.colonyDealer !== undefined) {
-        this.colonyDealer.discardedColonies = d.colonyDealer.discardedColonies.map((x) => getColonyByName(x.name)!);
-        // this.colonyDealer.coloniesDeck = d.colonyDealer.coloniesDeck.map((x) => getColonyByName(x.name)!);
-      }
-
-      this.colonies = deserializeColonies(d.colonies, this.getAllPlayers());
+      // this.discardedColonies = d.discardedColonies.map((x) => getColonyByName(x.name)!);
+      // this.colonies = deserializeColonies(d.colonies, this.getAllPlayers());
     }
 
     // Reload turmoil elements if needed
@@ -2048,8 +2067,8 @@ export class Game {
 
 
     // Mons insurance
-    if (d.monsInsuranceOwner) {
-      this.monsInsuranceOwner = this.players.find((player) => player.id === d.monsInsuranceOwner!.id);
+    if (d.monsInsuranceOwner !== undefined) {
+      this.monsInsuranceOwner = this.players.find((player) => player.id === d.monsInsuranceOwner?.id);
     }
 
     // Reinit undrafted cards map
@@ -2093,7 +2112,7 @@ export class Game {
       });
     } else {
       // We should be in ACTION phase, let's prompt the active player for actions
-      this.activePlayer.takeAction();
+      this.activePlayer.takeAction(/* saveBeforeTakingAction */ false);
     }
     this.loadState = LoadState.LOADED;
     return o;

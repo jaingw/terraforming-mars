@@ -1,11 +1,11 @@
 <template>
 <div :class="'sidebar_cont sidebar '+getSideBarClass()">
   <div class="tm" :title="$t('Generation Marker')">
-    <div class="gen-text">GEN</div>
+    <div class="gen-text" v-i18n>GEN</div>
     <div class="gen-marker">{{ getGenMarker() }}</div>
   </div>
   <div v-if="gameOptions.turmoilExtension" :title="$t('Ruling Party')">
-    <div :class="'party-name party-name-indicator party-name--'+rulingPartyToCss()"> {{ getRulingParty() }}</div>
+    <div :class="'party-name party-name-indicator party-name--'+rulingPartyToCss()"> <span v-i18n>{{ getRulingParty() }}</span></div>
   </div>
   <div class="global_params">
     <global-parameter-value :param="this.globalParameter.TEMPERATURE" :value="this.temperature"></global-parameter-value>
@@ -17,7 +17,7 @@
   <div class="sidebar_item preferences_player" :title="$t('Player Color Cube')">
     <div :class="getPlayerColorCubeClass()+' player_bg_color_' + player_color"></div>
   </div>
-  <a  href="https://wx4.sinaimg.cn/mw2000/0081mJiNgy1h02nbunoj0j30ze0zatsn.jpg" target="_blank">
+  <a  href="https://pica.zhimg.com/80/v2-5ecaa322b3329251b4c60b4e607b0750_1440w.png" target="_blank">
       <div class="sidebar_item sidebar_item_shortcut">
           <i class="sidebar_icon sidebar_icon--donate"><div class="deck-size">赞助</div></i>
       </div>
@@ -75,7 +75,7 @@
       <game-setup-detail :gameOptions="gameOptions" :playerNumber="playerNumber" :lastSoloGeneration="lastSoloGeneration"></game-setup-detail>
 
       <div class="info_panel_actions">
-        <button class="btn btn-lg btn-primary" v-on:click="ui.gamesetup_detail_open=false">Ok</button>
+        <button class="btn btn-lg btn-primary" v-on:click="ui.gamesetup_detail_open=false" v-i18n>Ok</button>
       </div>
     </div>
   </div>
@@ -86,10 +86,7 @@
     </div>
   </a>
 
-  <div class="sidebar_item sidebar_item--settings" :title="$t('Player Settings')">
-    <i class="sidebar_icon sidebar_icon--settings" :class="{'sidebar_item--is-active': ui.preferences_panel_open}" v-on:click="ui.preferences_panel_open = !ui.preferences_panel_open"></i>
-    <preferences-dialog v-if="ui.preferences_panel_open" @okButtonClicked="ui.preferences_panel_open = false"  :preferencesManager="preferencesManager"/>
-  </div>
+  <preferences-icon @preferencesPanelOpen="preferencesPanelOpen"  ref='preferences-icon'></preferences-icon>
 </div>
 </template>
 
@@ -103,10 +100,10 @@ import {PartyName} from '@/common/turmoil/PartyName';
 import GameSetupDetail from '@/client/components/GameSetupDetail.vue';
 import {GameOptions} from '@/Game';
 import GlobalParameterValue from '@/client/components/GlobalParameterValue.vue';
-import MoonGlobalParameterValue from '@/client/components/MoonGlobalParameterValue.vue';
+import MoonGlobalParameterValue from '@/client/components/moon/MoonGlobalParameterValue.vue';
 import {GlobalParameter} from '@/common/GlobalParameter';
 import {MoonModel} from '@/common/models/MoonModel';
-import PreferencesDialog from '@/client/components/PreferencesDialog.vue';
+import PreferencesIcon from '@/client/components/PreferencesIcon.vue';
 import {mainAppSettings} from '@/client/components/App';
 import {PlayerViewModel} from '@/common/models/PlayerModel';
 
@@ -160,8 +157,8 @@ export default Vue.extend({
   components: {
     'game-setup-detail': GameSetupDetail,
     'global-parameter-value': GlobalParameterValue,
+    'preferences-icon': PreferencesIcon,
     MoonGlobalParameterValue,
-    'preferences-dialog': PreferencesDialog,
   },
   data() {
     return {
@@ -177,18 +174,24 @@ export default Vue.extend({
     };
   },
   methods: {
-    preferencesPanelOpen: function() :void {
+    preferencesPanelOpen: function(set: Boolean | undefined) :void {
       this.ui.resign_panel_open = false;
       this.ui.resign_wait = false;
       this.ui.resign_time = '';
 
       clearInterval(ui_timeout_id);
-      this.ui.preferences_panel_open = !this.ui.preferences_panel_open;
+      if (set === false) {
+        this.ui.preferences_panel_open = false;
+      } else {
+        this.ui.preferences_panel_open = !this.ui.preferences_panel_open;
+      }
+      // (this.$refs['preferences-icon'] as any).preferences_panel_open = this.ui.preferences_panel_open;
     },
     resignPanelOpen: function(): void {
       const ui = this.ui;
       ui.preferences_panel_open = false;
-
+      (this.$refs['preferences-icon'] as any).preferences_panel_open = false;
+      //
       clearInterval(ui_timeout_id);
       ui.resign_panel_open = ! ui.resign_panel_open;
       ui.resign_wait = false;

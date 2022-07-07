@@ -4,48 +4,41 @@ import {GameSetup} from '../GameSetup';
 import {Player} from '../Player';
 import {SerializedGame} from '../SerializedGame';
 import {SerializedPlayer} from '../SerializedPlayer';
+import {Color} from '../common/Color';
 
 export class Cloner {
   public static clone(
     newGameId: GameId,
     players: Array<Player>,
     firstPlayerIndex: number,
-    err: Error | undefined,
-    serialized: SerializedGame | undefined,
-    cb: () => {}) {
-    const response: {err?: Error, game: Game | undefined} = {err: err, game: undefined};
-
-    try {
-      if ((err === undefined || err === null) && serialized !== undefined) {
-        const sourceGameId: GameId = serialized.id;
-        const oldstrings: Array<string> = serialized.players.map((player) => player.id);
-        const newstrings: Array<string> = players.map((player) => player.id);
-        if (oldstrings.length !== newstrings.length) {
-          throw new Error(`Failing to clone from a ${oldstrings.length} game ${sourceGameId} to a ${newstrings.length} game.`);
-        }
-        Cloner.replacestrings(serialized, oldstrings, newstrings);
-        if (oldstrings.length === 1) {
-          // The neutral player has a different ID in different games, and yet, it isn't serialized. So it gets a special case.
-          Cloner.replacestrings(
-            serialized,
-            [GameSetup.neutralPlayerFor(sourceGameId).id],
-            [GameSetup.neutralPlayerFor(newGameId).id]);
-        }
-        serialized.id = newGameId;
-
-        for (let idx = 0; idx < players.length; idx++) {
-          this.updatePlayer(players[idx], serialized.players[idx]);
-        }
-        serialized.first = serialized.players[firstPlayerIndex];
-        serialized.clonedGamedId = '#' + sourceGameId;
-
-        // response.game = Game.load(serialized);
-      }
-    } catch (e) {
-      response.err = e instanceof Error ? e : new Error(String(e));
+    serialized: SerializedGame): Game {
+    const sourceGameId: GameId = serialized.id;
+    const oldPlayerIds: Array<string> = serialized.players.map((player) => player.id);
+    const newPlayerIds: Array<string> = players.map((player) => player.id);
+    if (oldPlayerIds.length !== newPlayerIds.length) {
+      throw new Error(`Failing to clone from a ${oldPlayerIds.length} game ${sourceGameId} to a ${newPlayerIds.length} game.`);
     }
-    cb();
-    // cb(response.err, response.game);
+    Cloner.replacestrings(serialized, oldPlayerIds, newPlayerIds);
+    if (oldPlayerIds.length === 1) {
+      // The neutral player has a different ID in different games, and yet, it isn't serialized. So it gets a special case.
+      Cloner.replacestrings(
+        serialized,
+        [GameSetup.neutralPlayerFor(sourceGameId).id],
+        [GameSetup.neutralPlayerFor(newGameId).id]);
+    }
+    serialized.id = newGameId;
+
+    for (let idx = 0; idx < players.length; idx++) {
+      this.updatePlayer(players[idx], serialized.players[idx]);
+    }
+    serialized.first = serialized.players[firstPlayerIndex];
+    serialized.clonedGamedId = '#' + sourceGameId;
+
+    const player = new Player('test', Color.BLUE, false, 0, '000');
+    const player2 = new Player('test2', Color.RED, false, 0, '111');
+    const gameToRebuild = Game.newInstance('test', [player, player2], player);
+    const game = gameToRebuild.loadFromJSON(serialized);
+    return game;
   }
 
   private static replacestrings(obj: any, oldstrings:Array<string>, newstrings: Array<string>) {

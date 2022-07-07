@@ -26,7 +26,7 @@ export class SelectInitialCards extends AndOptions implements PlayerInput {
           corporation = foundCards[0];
           corporation2 = foundCards[1];
           return undefined;
-        }, corpNum, corpNum, false, undefined, true, false,
+        }, {max: corpNum, min: corpNum},
       ),
     );
 
@@ -37,7 +37,7 @@ export class SelectInitialCards extends AndOptions implements PlayerInput {
           (preludeCards: Array<IProjectCard>) => {
             player.preludeCardsInHand.push(...preludeCards);
             return undefined;
-          }, 2, 2,
+          }, {min: 2, max: 2},
         ),
       );
     }
@@ -48,7 +48,7 @@ export class SelectInitialCards extends AndOptions implements PlayerInput {
         (foundCards: Array<IProjectCard>) => {
           player.cardsInHand.push(...foundCards);
           return undefined;
-        }, 10, 0,
+        }, {min: 0, max: 10},
       ),
     );
   }

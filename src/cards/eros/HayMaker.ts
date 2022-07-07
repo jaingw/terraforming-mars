@@ -10,7 +10,7 @@ import {Board} from '../../boards/Board';
 import {ISpace} from '../../boards/ISpace';
 import {LogHelper} from '../../LogHelper';
 import {TileType} from '../../common/TileType';
-import {DeferredAction} from '../../deferredActions/DeferredAction';
+import {SimpleDeferredAction} from '../../deferredActions/DeferredAction';
 import {digit} from '../../cards/Options';
 import {Player} from '../../Player';
 
@@ -56,7 +56,7 @@ export class HayMaker extends Card implements IProjectCard {
     );
   }
   public play(player: Player) {
-    player.game.defer(new DeferredAction(player, () => this.removeGreenery(player)));
+    player.game.defer(new SimpleDeferredAction(player, () => this.removeGreenery(player)));
     player.addResource(Resources.HEAT, 12);
     return undefined;
   }

@@ -6,36 +6,227 @@
     </div>
 
     <div class="create-game-discord-invite">
-      <span v-i18n> bug: 反重力先行试验持续生效 - 本地测试没问题，待复现 </span><br>
-      <span v-i18n> bug: 边境检查站允许撤回 - 已修复 </span><br>
+      <span v-i18n> bug: 反重力先行试验持续生效 - 显示bug，应该已经修复，不确定 </span><br>
+      <span v-i18n> bug: 火星击剑允许撤回 - 已修复 </span><br>
     </div>
 
     <div class="create-game-form create-game-panel create-game--block">
 
       <div class="create-game-options">
 
-        <div class="create-game-solo-player form-group" v-if="isSoloModePage" >
-          <div v-for="newPlayer in getPlayers()" :key="newPlayer.index">
-            <div>
-              <input class="form-input form-inline create-game-player-name" placeholder="Your name" v-model="newPlayer.name" />
-            </div>
-            <div class="create-game-colors-wrapper">
-              <label class="form-label form-inline create-game-color-label" v-i18n>Color:</label>
-              <span class="create-game-colors-cont">
-                            <label class="form-radio form-inline create-game-color" v-for="color in ['Red', 'Green', 'Yellow', 'Blue', 'Black', 'Purple', 'Orange', 'Pink']" :key="color">
-                                <input type="radio" :value="color.toLowerCase()" :name="'playerColor' + newPlayer.index" v-model="newPlayer.color">
-                                <i class="form-icon"></i> <div :class="'board-cube board-cube--'+color.toLowerCase()"></div>
+                    <div class="create-game-page-container">
+                        <div class="create-game-page-column">
+                            <h4 v-i18n>№ of Players</h4>
+                                <template v-for="pCount in [1,2,3,4,5,6]">
+                                    <input type="radio" :value="pCount" name="playersCount" v-model="playersCount" :id="pCount+'-radio'" :key="'__input'+pCount">
+                                    <label :for="pCount+'-radio'" :key="'_label'+pCount">
+                                    {{pCount === 1 ? 'Solo' : pCount}}
+                                    </label>
+                                </template>
+                        </div>
+
+                        <div class="create-game-page-column">
+                            <h4 v-i18n>Expansions</h4>
+
+                            <input type="checkbox" name="allOfficialExpansions" id="allOfficialExpansions-checkbox" v-model="allOfficialExpansions">
+                            <label for="allOfficialExpansions-checkbox">
+                                <span v-i18n>All</span>
                             </label>
-                            </span>
-            </div>
-            <div>
-              <label class="form-switch form-inline">
-                <input type="checkbox" v-model="newPlayer.beginner">
-                <i class="form-icon"></i> <span v-i18n>Beginner?</span>
-              </label>
-            </div>
-          </div>
-        </div>
+
+
+                            <input type="checkbox" name="prelude" id="prelude-checkbox" v-model="prelude">
+                            <label for="prelude-checkbox" class="expansion-button">
+                                <div class="create-game-expansion-icon expansion-icon-prelude"></div>
+                                <span v-i18n>Prelude</span>
+                            </label>
+
+                            <input type="checkbox" name="venusNext" id="venusNext-checkbox" v-model="venusNext">
+                            <label for="venusNext-checkbox" class="expansion-button">
+                            <div class="create-game-expansion-icon expansion-icon-venus"></div>
+                                <span v-i18n>Venus Next</span>
+                            </label>
+
+                            <input type="checkbox" name="colonies" id="colonies-checkbox" v-model="colonies">
+                            <label for="colonies-checkbox" class="expansion-button">
+                            <div class="create-game-expansion-icon expansion-icon-colony"></div>
+                                <span v-i18n>Colonies</span>
+                            </label>
+
+                            <input type="checkbox" name="turmoil" id="turmoil-checkbox" v-model="turmoil">
+                            <label for="turmoil-checkbox" class="expansion-button">
+                                <div class="create-game-expansion-icon expansion-icon-turmoil"></div>
+                                <span v-i18n>Turmoil</span>
+                            </label>
+
+                            <input type="checkbox" name="promo" id="promo-checkbox" v-model="promoCardsOption">
+                            <label for="promo-checkbox" class="expansion-button">
+                                <div class="create-game-expansion-icon expansion-icon-promo"></div>
+                                <span v-i18n>Promos</span>&nbsp;
+                            </label>
+
+                            <div class="create-game-subsection-label" v-i18n>Fan-made</div>
+
+                            <input type="checkbox" name="heatFor" id="heatFor-checkbox" v-model="heatFor"  v-if="isvip">
+                            <label for="heatFor-checkbox"  :class="{forbidden:!isvip}">
+                                <span v-i18n>7 Heat Into Temperature</span>
+                            </label>
+
+                            <input type="checkbox" name="breakthrough" id="breakthrough-checkbox" v-model="breakthrough"  v-if="isvip">
+                            <label for="breakthrough-checkbox"  :class="{forbidden:!isvip}">
+                                <span v-i18n>BreakThrough</span>&nbsp;<a href="https://docs.qq.com/pdf/DS29QWFZLeUhWWlRR" class="tooltip" target="_blank">&#9432;</a>
+                            </label>
+
+                            <input type="checkbox" name="doubleCorp" id="doubleCorp-checkbox" v-model="doubleCorp"  v-if="isvip">
+                            <label for="doubleCorp-checkbox"  :class="{forbidden:!isvip}">
+                                <span v-i18n>Double Corp</span>&nbsp;
+                            </label>
+
+                            <input type="checkbox" name="eros" id="erosCards-checkbox" v-model="erosCardsOption"  v-if="isvip">
+                            <label for="erosCards-checkbox" class="expansion-button" :class="{forbidden:!isvip}">
+                                <div class="create-game-expansion-icon expansion-icon-eros"></div>
+                                <span v-i18n>Eros</span>&nbsp;<a href="https://docs.qq.com/doc/DS25WcXdnbHhib3Fy" class="tooltip" target="_blank">&#9432;</a>
+                            </label>
+
+                            <input type="checkbox" name="ares" id="ares-checkbox" v-model="aresExtension"  v-if="isvip">
+                            <label for="ares-checkbox" class="expansion-button" :class="{forbidden:!isvip}">
+                                <div class="create-game-expansion-icon expansion-icon-ares"></div>
+                                <span v-i18n>Ares</span>&nbsp;<a href="https://docs.qq.com/pdf/DQVZqWU5BZURyUkZp" class="tooltip" target="_blank">&#9432;</a>
+                            </label>
+
+                            <input type="checkbox" name="community" id="communityCards-checkbox" v-model="communityCardsOption"  v-if="isvip">
+                            <label for="communityCards-checkbox" class="expansion-button" :class="{forbidden:!isvip}">
+                                <div class="create-game-expansion-icon expansion-icon-community"></div>
+                                <span v-i18n>Community</span>&nbsp;<a href="https://docs.qq.com/pdf/DQUFZaHdMWHl2V21M" class="tooltip" target="_blank">&#9432;</a>
+                            </label>
+
+                            <input type="checkbox" name="themoon" id="themoon-checkbox" v-model="moonExpansion"  v-if="isvip">
+                            <label for="themoon-checkbox" class="expansion-button" :class="{forbidden:!isvip}">
+                                <div class="create-game-expansion-icon expansion-icon-themoon"></div>
+                                <span v-i18n>The Moon</span>&nbsp;<a href="https://github.com/bafolts/terraforming-mars/wiki/The-Moon" class="tooltip" target="_blank">&#9432;</a>
+                            </label>
+
+                            <template v-if="turmoil">
+                                <input type="checkbox" name="politicalAgendas" id="politicalAgendas-checkbox" v-on:change="politicalAgendasExtensionToggle()"  v-if="isvip">
+                                <label for="politicalAgendas-checkbox" class="expansion-button"  :class="{forbidden:!isvip}">
+                                    <div class="create-game-expansion-icon expansion-icon-agendas"></div>
+                                    <span v-i18n>Agendas</span>&nbsp;<a href="https://docs.qq.com/doc/DQUh4RlJFQUxwb09v?pub=1&dver=2.1.0" class="tooltip" target="_blank">&#9432;</a>
+                                </label>
+
+                                <div class="create-game-page-column-row" v-if="isPoliticalAgendasExtensionEnabled()">
+                                    <div>
+                                    <input type="radio" name="agendaStyle" v-model="politicalAgendasExtension" :value="getPoliticalAgendasExtensionAgendaStyle('random')" id="randomAgendaStyle-radio">
+                                    <label class="label-agendaStyle agendaStyle-random" for="randomAgendaStyle-radio">
+                                        <span class="agendas-text" v-i18n>{{ getPoliticalAgendasExtensionAgendaStyle('random') }}</span>
+                                    </label>
+                                    </div>
+
+                                    <div>
+                                    <input type="radio" name="agendaStyle" v-model="politicalAgendasExtension" :value="getPoliticalAgendasExtensionAgendaStyle('chairman')" id="chairmanAgendaStyle-radio">
+                                    <label class="label-agendaStyle agendaStyle-chairman" for="chairmanAgendaStyle-radio">
+                                        <span class="agendas-text" v-i18n>{{ getPoliticalAgendasExtensionAgendaStyle('chairman') }}</span>
+                                    </label>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <input type="checkbox" name="pathfinders" id="pathfinders-checkbox" v-model="pathfindersExpansion" v-if="isvip">
+                            <label for="pathfinders-checkbox" class="expansion-button" :class="{forbidden:!isvip}">
+                                <div class="create-game-expansion-icon expansion-icon-pathfinders"></div>
+                                <span v-i18n>Pathfinders</span>&nbsp;<a href="https://github.com/bafolts/terraforming-mars/wiki/Pathfinders" class="tooltip" target="_blank">&#9432;</a>
+                            </label>
+
+                            <!--
+                            <template v-if="venusNext">
+                                <input type="checkbox" v-model="altVenusBoard" id="altVenusBoard-checkbox">
+                                <label for="altVenusBoard-checkbox">
+                                    <span v-i18n>Alternate Venus Board</span> &nbsp;<a href="https://github.com/bafolts/terraforming-mars/wiki/Variants#alt-venus" class="tooltip" target="_blank">&#9432;</a>
+                                </label>
+                            </template>
+                            -->
+                        </div>
+
+                        <div class="create-game-page-column">
+                            <h4 v-i18n>Board</h4>
+
+                            <template v-for="boardName in boards">
+                                <div v-if="boardName==='arabia terra'" class="create-game-subsection-label" :key="boardName + '-lab'" v-i18n>Fan-made</div>
+                                <input type="radio" :value="boardName" name="board" v-model="board" :id="boardName+'-checkbox'" :key="boardName">
+                                <label :for="boardName+'-checkbox'" class="expansion-button"  :key="'-'+boardName">
+                                    <span :class="getBoardColorClass(boardName)">&#x2B22;</span><span class="capitalized" v-i18n>{{ boardName }}</span>
+                                </label>
+                            </template>
+                        </div>
+
+                        <div class="create-game-page-column">
+                            <h4 v-i18n>Options</h4>
+
+                            <label for="startingCorpNum-checkbox">
+                            <input type="number" class="create-game-corporations-count" value="2" min="1" :max="6" v-model="startingCorporations" id="startingCorpNum-checkbox">
+                                <span v-i18n>Starting Corporations</span>
+                            </label>
+
+                            <input type="checkbox" v-model="solarPhaseOption" id="WGT-checkbox">
+                            <label for="WGT-checkbox">
+                                <span v-i18n>World Government Terraforming</span>&nbsp;
+                            </label>
+
+                            <template v-if="playersCount === 1">
+                            <input type="checkbox" v-model="soloTR" id="soloTR-checkbox">
+                            <label for="soloTR-checkbox">
+                                <span v-i18n>63 TR solo mode</span>&nbsp;
+                            </label>
+                            </template>
+
+                            <!-- <input type="checkbox" v-model="beginnerOption" id="beginnerOption-checkbox">
+                            <label for="beginnerOption-checkbox">
+                                <span v-i18n>Beginner Options</span>
+                            </label> -->
+
+                            <input type="checkbox" v-model="undoOption" id="undo-checkbox">
+                            <label for="undo-checkbox">
+                                <span v-i18n>Allow undo</span>&nbsp;
+                            </label>
+
+                            <input type="checkbox" v-model="showTimers" id="timer-checkbox">
+                            <label for="timer-checkbox">
+                                <span v-i18n>Show timers</span>
+                            </label>
+
+                            <input type="checkbox" v-model="escapeVelocityMode" id="escapevelocity-checkbox">
+                            <label for="escapevelocity-checkbox">
+                                <div class="create-game-expansion-icon expansion-icon-escape-velocity"></div>
+                                <span v-i18n>Escape Velocity</span>&nbsp;<a href="https://github.com/terraforming-mars/terraforming-mars/wiki/Escape-Velocity" class="tooltip" target="_blank">&#9432;</a>
+                            </label>
+
+                            <label for="escapeThreshold-checkbox" v-show="escapeVelocityMode">
+                              <span v-i18n>After&nbsp;</span>
+                              <input type="number" class="create-game-corporations-count" value="30" step="5" min="0" :max="180" v-model="escapeVelocityThreshold" id="escapeThreshold-checkbox">
+                              <span v-i18n>&nbsp;min</span>
+                            </label>
+
+                            <label for="escapePeriod-checkbox" v-show="escapeVelocityMode">
+                              <span v-i18n>Reduce&nbsp;</span>
+                              <input type="number" class="create-game-corporations-count" value="1" min="1" :max="10" v-model="escapeVelocityPenalty" id="escapePeriod-checkbox">
+                              <span v-i18n>&nbsp;VP every&nbsp;</span>
+                              <input type="number" class="create-game-corporations-count" value="2" min="1" :max="10" v-model="escapeVelocityPeriod" id="escapePeriod-checkbox">
+                              <span v-i18n>&nbsp;min</span>
+                            </label>
+
+                            <input type="checkbox" v-model="shuffleMapOption" id="shuffleMap-checkbox"  v-if="isvip">
+                            <label for="shuffleMap-checkbox"  :class="{forbidden:!isvip}">
+                                <span v-i18n>Randomize board tiles</span>&nbsp;
+                            </label>
+
+                            <div v-if="seededGame">
+                                <input type="text" name="clonedGamedId" v-model="clonedGameId" />
+                            </div>
+
+                            <div class="create-game-subsection-label" v-i18n>Filter</div>
+
+                            <input type="checkbox" v-model="showCorporationList" id="customCorps-checkbox">
+                            <label for="customCorps-checkbox">
+                                <span v-i18n>Custom Corporation list</span>
+                            </label>
 
         <div class="create-game-page-container">
           <div class="create-game-page-column" v-if="! isSoloModePage">
@@ -143,101 +334,47 @@
                   </label>
                 </div>
 
-                <div>
-                  <input type="radio" name="agendaStyle" v-model="politicalAgendasExtension" :value="getPoliticalAgendasExtensionAgendaStyle('chairman')" id="chairmanAgendaStyle-radio">
-                  <label class="label-agendaStyle agendaStyle-chairman" for="chairmanAgendaStyle-radio">
-                    <span class="agendas-text" v-i18n>{{ getPoliticalAgendasExtensionAgendaStyle('chairman') }}</span>
-                  </label>
-                </div>
-              </div>
-            </template>
+                            <template v-if="colonies">
+                                <input type="checkbox" v-model="showColoniesList" id="customColonies-checkbox" v-if="isvip">
+                                <label for="customColonies-checkbox" :class="{forbidden:!isvip}">
+                                    <span v-i18n>Custom Colonies list</span>
+                                </label>
+                            </template>
 
-            <input type="checkbox" name="pathfinders" id="pathfinders-checkbox" v-model="pathfindersExpansion">
-            <label for="pathfinders-checkbox" class="expansion-button">
-              <div class="create-game-expansion-icon expansion-icon-pathfinders"></div>
-              <span v-i18n>Pathfinders</span>&nbsp;<a href="https://github.com/bafolts/terraforming-mars/wiki/Pathfinders" class="tooltip" target="_blank">&#9432;</a>
-            </label>
+                            <template v-if="turmoil">
+                                <input type="checkbox" v-model="removeNegativeGlobalEventsOption" id="removeNegativeEvent-checkbox" v-if="isvip">
+                                <label for="removeNegativeEvent-checkbox" :class="{forbidden:!isvip}">
+                                    <span v-i18n>Remove negative Global Events</span>&nbsp;
+                                </label>
+                            </template>
 
-            <!--
-            <template v-if="venusNext">
-                <input type="checkbox" v-model="altVenusBoard" id="altVenusBoard-checkbox">
-                <label for="altVenusBoard-checkbox">
-                    <span v-i18n>Alternate Venus Board</span> &nbsp;<a href="https://github.com/bafolts/terraforming-mars/wiki/Variants#alt-venus" class="tooltip" target="_blank">&#9432;</a>
-                </label>
-            </template>
-            -->
-          </div>
+                        </div>
 
-          <div class="create-game-page-column">
-            <h4 v-i18n>Board</h4>
+                        <div class="create-game-page-column" v-if="playersCount > 1">
+                            <h4 v-i18n>Multiplayer Options</h4>
 
-            <template v-for="boardName in boards">
-              <div v-if="boardName==='arabia terra'" class="create-game-subsection-label" :key="boardName + '-lab'" v-i18n>Fan-made</div>
-              <input type="radio" :value="boardName" name="board" v-model="board" :id="boardName+'-checkbox'" :key="boardName">
-              <label :for="boardName+'-checkbox'" class="expansion-button"  :key="'-'+boardName">
-                <span :class="getBoardColorClass(boardName)">&#x2B22;</span><span class="capitalized" v-i18n>{{ boardName }}</span>
-              </label>
-            </template>
-          </div>
+                            <div class="create-game-page-column-row">
+                                <div>
+                                <input type="checkbox" name="draftVariant" v-model="draftVariant" id="draft-checkbox">
+                                <label for="draft-checkbox">
+                                    <span v-i18n>Draft variant</span>
+                                </label>
+                                </div>
 
-          <div class="create-game-page-column">
-            <h4 v-i18n>Options</h4>
+                                <div>
+                                <input type="checkbox" name="initialDraft" v-model="initialDraft" id="initialDraft-checkbox">
+                                <label for="initialDraft-checkbox">
+                                    <span v-i18n>Initial Draft variant</span>&nbsp;
+                                </label>
+                                </div>
+                            </div>
 
-            <label for="startingCorpNum-checkbox">
-              <input type="number" class="create-game-corporations-count" value="2" min="1" :max="6" v-model="startingCorporations" id="startingCorpNum-checkbox">
-              <span v-i18n>Starting Corporations</span>
-            </label>
-
-            <input type="checkbox" v-model="solarPhaseOption" id="WGT-checkbox">
-            <label for="WGT-checkbox">
-              <span v-i18n>World Government Terraforming</span>&nbsp;
-            </label>
-
-            <template v-if="playersCount === 1">
-              <input type="checkbox" v-model="soloTR" id="soloTR-checkbox">
-              <label for="soloTR-checkbox">
-                <span v-i18n>63 TR solo mode</span>&nbsp;
-              </label>
-            </template>
-
-            <input type="checkbox" v-model="undoOption" id="undo-checkbox">
-            <label for="undo-checkbox">
-              <span v-i18n>Allow undo</span>&nbsp;
-            </label>
-
-            <input type="checkbox" v-model="showTimers" id="timer-checkbox">
-            <label for="timer-checkbox">
-              <span v-i18n>Show timers</span>
-            </label>
-
-            <input type="checkbox" v-model="escapeVelocityMode" id="escapevelocity-checkbox">
-            <label for="escapevelocity-checkbox">
-              <div class="create-game-expansion-icon expansion-icon-escape-velocity"></div>
-              <span v-i18n>Escape Velocity</span>&nbsp;<a href="https://github.com/terraforming-mars/terraforming-mars/wiki/Escape-Velocity" class="tooltip" target="_blank">&#9432;</a>
-            </label>
-
-            <label for="escapeThreshold-checkbox" v-show="escapeVelocityMode">
-              <span v-i18n>After&nbsp;</span>
-              <input type="number" class="create-game-corporations-count" value="30" step="5" min="0" :max="180" v-model="escapeVelocityThreshold" id="escapeThreshold-checkbox">
-              <span v-i18n>&nbsp;min</span>
-            </label>
-
-            <label for="escapePeriod-checkbox" v-show="escapeVelocityMode">
-              <span v-i18n>Reduce&nbsp;</span>
-              <input type="number" class="create-game-corporations-count" value="1" min="1" :max="10" v-model="escapeVelocityPenalty" id="escapePeriod-checkbox">
-              <span v-i18n>&nbsp;VP every&nbsp;</span>
-              <input type="number" class="create-game-corporations-count" value="2" min="1" :max="10" v-model="escapeVelocityPeriod" id="escapePeriod-checkbox">
-              <span v-i18n>&nbsp;min</span>
-            </label>
-
-            <input type="checkbox" v-model="shuffleMapOption" id="shuffleMap-checkbox"  v-if="isvip">
-            <label for="shuffleMap-checkbox"  :class="{forbidden:!isvip}">
-              <span v-i18n>Randomize board tiles</span>&nbsp;
-            </label>
-
-            <div v-if="seededGame">
-              <input type="text" name="clonedGamedId" v-model="clonedGameId" />
-            </div>
+                            <div v-if="initialDraft && doubleCorp" >
+                              <input type="checkbox" name="initialCorpDraftVariant" v-model="initialCorpDraftVariant" id="initialCorpDraftVariant-checkbox">
+                              <label for="initialCorpDraftVariant-checkbox">
+                                <span v-i18n>Initial Draft Double Corp</span>
+                              </label>
+                            </div>
 
             <div class="create-game-subsection-label" v-i18n>Filter</div>
 
@@ -320,67 +457,55 @@
               </div>
             </div>
 
-            <input type="checkbox" name="showOtherPlayersVP" v-model="showOtherPlayersVP" id="realTimeVP-checkbox">
-            <label for="realTimeVP-checkbox">
-              <span v-i18n>Show real-time VP</span>&nbsp;
-            </label>
+                            <input type="checkbox" v-model="fastModeOption" id="fastMode-checkbox">
+                            <label for="fastMode-checkbox">
+                                <span v-i18n>Fast mode</span>&nbsp;
+                            </label>
+                        </div>
 
-            <input type="checkbox" v-model="fastModeOption" id="fastMode-checkbox">
-            <label for="fastMode-checkbox">
-              <span v-i18n>Fast mode</span>&nbsp;
-            </label>
+                        <div class="create-game-players-cont" v-if="playersCount > 1">
+                            <div class="container">
+                                <div class="columns">
+                                    <template v-for="newPlayer in getPlayers()">
+                                    <div :class="'form-group col6 create-game-player '+getPlayerContainerColorClass(newPlayer.color)" :key="newPlayer.index">
+                                        <div>
+                                            <input class="form-input form-inline create-game-player-name" :placeholder="getPlayerNamePlaceholder(newPlayer)" v-model="newPlayer.name" />
+                                        </div>
+                                        <div class="create-game-page-color-row">
+                                            <template v-for="color in ['Red', 'Green', 'Yellow', 'Blue', 'Black', 'Purple', 'Orange', 'Pink']">
+                                                <input type="radio" :value="color.toLowerCase()" :name="'playerColor' + newPlayer.index" v-model="newPlayer.color" :id="'radioBox' + color + newPlayer.index"  :key="color">
+                                                <label :for="'radioBox' + color + newPlayer.index" :key="'_'+color">
+                                                    <div :class="'create-game-colorbox '+getPlayerCubeColorClass(color)"></div>
+                                                </label>
+                                            </template>
+                                        </div>
+                                        <div>
+                                              <!-- <template v-if="beginnerOption">
+                                                <label v-if="isBeginnerToggleEnabled()" class="form-switch form-inline create-game-beginner-option-label">
+                                                    <input type="checkbox" v-model="newPlayer.beginner">
+                                                    <i class="form-icon"></i> <span v-i18n>Beginner?</span>&nbsp;
+                                                </label>
 
-            <!--
-            <input type="checkbox" v-model="beginnerOption" id="beginnerOption-checkbox">
-            <label for="beginnerOption-checkbox">
-                <span v-i18n>Beginner Options</span>
-            </label>
-            -->
-          </div>
+                                                <label class="form-label">
+                                                    <input type="number" class="form-input form-inline player-handicap" value="0" min="0" :max="10" v-model.number="newPlayer.handicap" />
+                                                    <i class="form-icon"></i><span v-i18n>TR Boost</span>&nbsp;
+                                                </label>
+                                               </template> -->
 
-          <div class="create-game-players-cont" v-if="playersCount > 1">
-            <div class="container">
-              <div class="columns">
-                <template v-for="newPlayer in getPlayers()">
-                  <div :class="'form-group col6 create-game-player '+getPlayerContainerColorClass(newPlayer.color)" :key="newPlayer.index">
-                    <div>
-                      <input class="form-input form-inline create-game-player-name" :placeholder="getPlayerNamePlaceholder(newPlayer)" v-model="newPlayer.name" />
-                    </div>
-                    <div class="create-game-page-color-row">
-                      <template v-for="color in ['Red', 'Green', 'Yellow', 'Blue', 'Black', 'Purple', 'Orange', 'Pink']">
-                        <input type="radio" :value="color.toLowerCase()" :name="'playerColor' + newPlayer.index" v-model="newPlayer.color" :id="'radioBox' + color + newPlayer.index"  :key="color">
-                        <label :for="'radioBox' + color + newPlayer.index" :key="'_'+color">
-                          <div :class="'create-game-colorbox '+getPlayerCubeColorClass(color)"></div>
-                        </label>
-                      </template>
-                    </div>
-                    <div>
-                      <template v-if="beginnerOption">
-                        <label v-if="isBeginnerToggleEnabled()" class="form-switch form-inline create-game-beginner-option-label">
-                          <input type="checkbox" v-model="newPlayer.beginner">
-                          <i class="form-icon"></i> <span v-i18n>Beginner?</span>&nbsp;
-                        </label>
+                                            <label class="form-radio form-inline" v-if="!randomFirstPlayer">
+                                                <input type="radio" name="firstIndex" :value="newPlayer.index" v-model="firstIndex">
+                                                <i class="form-icon"></i> <span v-i18n>Goes First?</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
 
-                        <label class="form-label">
-                          <input type="number" class="form-input form-inline player-handicap" value="0" min="0" :max="10" v-model.number="newPlayer.handicap" />
-                          <i class="form-icon"></i><span v-i18n>TR Boost</span>&nbsp;
-                        </label>
-                      </template>
-
-                      <label class="form-radio form-inline" v-if="!randomFirstPlayer">
-                        <input type="radio" name="firstIndex" :value="newPlayer.index" v-model="firstIndex">
-                        <i class="form-icon"></i> <span v-i18n>Goes First?</span>
-                      </label>
-                    </div>
-                  </div>
-                </template>
-              </div>
-            </div>
-          </div>
-
-          <div class="create-game-action">
-            <Button title="Create game" size="big" @click="createGame"/>
-            <span  v-if="isvip">
+                        <div class="create-game-action">
+                            <Button title="Create game" size="big" @click="createGame"/>
+                            <span  v-if="isvip">
                               <label>
                                   <div class="btn btn-primary btn-action btn-lg"><i class="icon icon-upload"></i></div>
                                 <input style="display: none" type="file" accept=".json" id="settings-file" ref="file" v-on:change="handleSettingsUpload()"/>
@@ -390,7 +515,48 @@
                                   <div v-on:click="downloadCurrentSettings()" class="btn btn-primary btn-action btn-lg"><i class="icon icon-download"></i></div>
                               </label>
                             </span>
-          </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="create-game--block" v-if="showCorporationList">
+              <CorporationsFilter
+                  ref="corporationsFilter"
+                  v-on:corporation-list-changed="updateCustomCorporationsList"
+                  v-bind:corporateEra="corporateEra"
+                  v-bind:prelude="prelude"
+                  v-bind:venusNext="venusNext"
+                  v-bind:colonies="colonies"
+                  v-bind:turmoil="turmoil"
+                  v-bind:promoCardsOption="promoCardsOption"
+                  v-bind:erosCardsOption="erosCardsOption"
+                  v-bind:communityCardsOption="communityCardsOption"
+                  v-bind:moonExpansion="moonExpansion"
+                  v-bind:pathfindersExpansion="pathfindersExpansion"
+              ></CorporationsFilter>
+            </div>
+
+            <div class="create-game--block" v-if="showColoniesList">
+              <colonies-filter
+                  ref="coloniesFilter"
+                  v-on:colonies-list-changed="updateCustomColoniesList"
+                  v-bind:venusNext="venusNext"
+                  v-bind:turmoil="turmoil"
+                  v-bind:communityCardsOption="communityCardsOption"
+              ></colonies-filter>
+            </div>
+
+            <div class="create-game--block" v-if="showCardsBlackList">
+              <cards-filter
+                  ref="cardsFilter"
+                  v-on:cards-list-changed="updateCardsBlackList"
+              ></cards-filter>
+
+            </div>
+            <QrCode/>
+            <preferences-icon></preferences-icon>
         </div>
       </div>
     </div>
@@ -436,12 +602,13 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import {WithRefs} from 'vue-typed-refs';
 import {Color} from '@/common/Color';
 import {BoardName} from '@/common/boards/BoardName';
 import {RandomBoardOption} from '@/common/boards/RandomBoardOption';
 import {CardName} from '@/common/cards/CardName';
 import CorporationsFilter from '@/client/components/create/CorporationsFilter.vue';
-import {translateTextWithParams} from '@/client/directives/i18n';
+import {translateText, translateTextWithParams} from '@/client/directives/i18n';
 import ColoniesFilter from '@/client/components/create/ColoniesFilter.vue';
 import {ColonyName} from '@/common/colonies/ColonyName';
 import CardsFilter from '@/client/components/create/CardsFilter.vue';
@@ -450,81 +617,73 @@ import {playerColorClass} from '@/common/utils/utils';
 import {PreferencesManager} from '../../utils/PreferencesManager';
 import {RandomMAOptionType} from '@/common/ma/RandomMAOptionType';
 import {AgendaStyle} from '@/common/turmoil/Types';
+import PreferencesIcon from '@/client/components/PreferencesIcon.vue';
+import {getCard} from '@/client/cards/ClientCardManifest';
+import {GameModule} from '@/common/cards/GameModule';
 
 import * as constants from '@/common/constants';
 import {QrCode} from '../QrCode';
 import {mainAppSettings} from '../App';
-
-type BoardNameType = BoardName | RandomBoardOption;
+import {BoardNameType, NewGameConfig, NewPlayerModel} from '@/common/game/NewGameConfig';
 
 export interface CreateGameModel {
-  isvip: boolean,
-  constants: typeof constants;
-  allOfficialExpansions: boolean;
-  firstIndex: number;
-  playersCount: number;
-  players: Array<NewPlayerModel>;
-  corporateEra: boolean;
-  prelude: boolean;
-  draftVariant: boolean;
-  initialDraft: boolean;
-  initialCorpDraftVariant: boolean;
-  randomMA: RandomMAOptionType;
-  randomFirstPlayer: boolean;
-  showOtherPlayersVP: boolean;
-  beginnerOption: boolean;
-  venusNext: boolean;
-  colonies: boolean;
-  turmoil: boolean;
-  customCorporationsList: Array<CardName>;
-  customColoniesList: Array<ColonyName>;
-  cardsBlackList: Array<CardName>;
-  showCorporationList: boolean;
-  showColoniesList: boolean;
-  showCardsBlackList: boolean;
-  isSoloModePage: boolean;
-  board: BoardNameType;
-  boards: Array<BoardNameType>;
-  seed: number;
-  solarPhaseOption: boolean;
-  shuffleMapOption: boolean;
-  promoCardsOption: boolean;
-  communityCardsOption: boolean;
-  erosCardsOption: boolean;
-  aresExtension: boolean;
-  politicalAgendasExtension: AgendaStyle;
-  moonExpansion: boolean;
-  pathfindersExpansion: boolean;
-  undoOption: boolean;
-  showTimers: boolean;
-  fastModeOption: boolean;
-  removeNegativeGlobalEventsOption: boolean;
-  heatFor: boolean;
-  breakthrough: boolean;
-  doubleCorp: boolean; // 双将
-  includeVenusMA: boolean;
-  startingCorporations: number;
-  soloTR: boolean;
-  clonedGameId: string | undefined;
-  requiresVenusTrackCompletion: boolean;
-  requiresMoonTrackCompletion: boolean;
-  moonStandardProjectVariant: boolean;
-  altVenusBoard: boolean;
-  seededGame: boolean;
-  randomMACheckbox: boolean;// 上传设置之后选中随机里程碑的按钮
-  escapeVelocityMode: boolean;
-  escapeVelocityThreshold: number;
-  escapeVelocityPeriod: number;
-  escapeVelocityPenalty: number;
-}
-
-export interface NewPlayerModel {
-  index: number;
-  name: string;
-  color: Color;
-  beginner: boolean;
-  handicap: number;
-  first: boolean;
+    isvip: boolean,
+    constants: typeof constants;
+    allOfficialExpansions: boolean;
+    firstIndex: number;
+    playersCount: number;
+    players: Array<NewPlayerModel>;
+    corporateEra: boolean;
+    prelude: boolean;
+    draftVariant: boolean;
+    initialDraft: boolean;
+    initialCorpDraftVariant: boolean;
+    randomMA: RandomMAOptionType;
+    randomFirstPlayer: boolean;
+    showOtherPlayersVP: boolean;
+    // beginnerOption: boolean;
+    venusNext: boolean;
+    colonies: boolean;
+    turmoil: boolean;
+    customCorporationsList: Array<CardName>;
+    customColoniesList: Array<ColonyName>;
+    cardsBlackList: Array<CardName>;
+    showCorporationList: boolean;
+    showColoniesList: boolean;
+    showCardsBlackList: boolean;
+    board: BoardNameType;
+    boards: Array<BoardNameType>;
+    seed: number;
+    solarPhaseOption: boolean;
+    shuffleMapOption: boolean;
+    promoCardsOption: boolean;
+    communityCardsOption: boolean;
+    erosCardsOption: boolean;
+    aresExtension: boolean;
+    politicalAgendasExtension: AgendaStyle;
+    moonExpansion: boolean;
+    pathfindersExpansion: boolean;
+    undoOption: boolean;
+    showTimers: boolean;
+    fastModeOption: boolean;
+    removeNegativeGlobalEventsOption: boolean;
+    heatFor: boolean;
+    breakthrough: boolean;
+    doubleCorp: boolean; // 双将
+    includeVenusMA: boolean;
+    startingCorporations: number;
+    soloTR: boolean;
+    clonedGameId: string | undefined;
+    requiresVenusTrackCompletion: boolean;
+    requiresMoonTrackCompletion: boolean;
+    moonStandardProjectVariant: boolean;
+    altVenusBoard: boolean;
+    seededGame: boolean;
+    randomMACheckbox: boolean;// 上传设置之后选中随机里程碑的按钮
+    escapeVelocityMode: boolean;
+    escapeVelocityThreshold: number;
+    escapeVelocityPeriod: number;
+    escapeVelocityPenalty: number;
 }
 
 const vipOptions : any = {
@@ -536,6 +695,7 @@ const vipOptions : any = {
   'communityCardsOption': false,
   'moonExpansion': false,
   'politicalAgendasExtension': AgendaStyle.STANDARD,
+  'pathfindersExpansion': false,
 
   'shuffleMapOption': false,
   'removeNegativeGlobalEventsOption': false,
@@ -548,7 +708,14 @@ const vipOptions : any = {
   'showColoniesList': false,
 };
 
-export default Vue.extend({
+type Refs = {
+  coloniesFilter: InstanceType<typeof ColoniesFilter>,
+  corporationsFilter: InstanceType<typeof CorporationsFilter>,
+  cardsFilter: InstanceType<typeof CardsFilter>,
+  file: HTMLInputElement,
+}
+
+export default (Vue as WithRefs<Refs>).extend({
   name: 'CreateGameForm',
   data(): CreateGameModel {
     return {
@@ -574,7 +741,7 @@ export default Vue.extend({
       randomMA: RandomMAOptionType.NONE,
       randomFirstPlayer: true,
       showOtherPlayersVP: true,
-      beginnerOption: false,
+      // beginnerOption: false,
       venusNext: true,
       colonies: true,
       showColoniesList: false,
@@ -584,7 +751,6 @@ export default Vue.extend({
       customCorporationsList: [],
       customColoniesList: [],
       cardsBlackList: [],
-      isSoloModePage: false,
       board: RandomBoardOption.OFFICIAL,
       boards: [
         BoardName.ORIGINAL,
@@ -592,6 +758,8 @@ export default Vue.extend({
         BoardName.ELYSIUM,
         RandomBoardOption.OFFICIAL,
         BoardName.ARABIA_TERRA,
+        BoardName.AMAZONIS,
+        BoardName.TERRA_CIMMERIA,
         BoardName.VASTITAS_BOREALIS,
         RandomBoardOption.ALL,
       ],
@@ -635,13 +803,35 @@ export default Vue.extend({
     ColoniesFilter,
     CorporationsFilter,
     QrCode,
+    PreferencesIcon,
   },
   mounted() {
-    if (window.location.pathname === '/solo') {
-      this.isSoloModePage = true;
-    }
     const root = this.$root as any;
     this.isvip = root.isvip;
+  },
+  watch: {
+    allOfficialExpansions(value: boolean) {
+      // this.corporateEra = value;
+      this.prelude = value;
+      this.venusNext = value;
+      this.colonies = value;
+      this.turmoil = value;
+      this.promoCardsOption = value;
+      this.solarPhaseOption = value;
+    },
+    venusNext(value: boolean) {
+      this.solarPhaseOption = value;
+    },
+    turmoil(value: boolean) {
+      if (value === false) {
+        this.politicalAgendasExtension = AgendaStyle.STANDARD;
+      }
+    },
+    playersCount(value: number) {
+      if (value === 1) {
+        this.corporateEra = true;
+      }
+    },
   },
   methods: {
     async downloadCurrentSettings() {
@@ -657,7 +847,7 @@ export default Vue.extend({
     },
     handleSettingsUpload() {
       const refs = this.$refs;
-      const file = (refs.file as any).files[0];
+      const file = refs.file.files !== null ? refs.file.files[0] : undefined;
       (refs.file as any).value ='';
       const reader = new FileReader();
       const component = this.$data;
@@ -672,8 +862,12 @@ export default Vue.extend({
           component.showColoniesList = results['customColoniesList'].length > 0;
           component.showCardsBlackList = results['cardsBlackList'].length > 0;
 
+          // Capture the solar phase option since several of the other results will change
+          // it via the watch mechanism.
+          const capturedSolarPhaseOption = results.solarPhaseOption;
+
           for (const k in results) {
-            if (['customCorporationsList', 'customColoniesList', 'cardsBlackList', 'players'].includes(k)) continue;
+            if (['customCorporationsList', 'customColoniesList', 'cardsBlackList', 'players', 'solarPhaseOption'].includes(k)) continue;
             (component as any)[k] = results[k];
           }
 
@@ -697,20 +891,23 @@ export default Vue.extend({
           Vue.nextTick(() => {
             if (component.isvip) {
               if (component.showColoniesList) {
-                (refs.coloniesFilter as any).updateColoniesByNames(results['customColoniesList']);
+                refs.coloniesFilter.updateColoniesByNames(results['customColoniesList']);
               }
 
               if (component.showCorporationList) {
-                (refs.corporationsFilter as any).selectedCorporations = results['customCorporationsList'];
+                refs.corporationsFilter.selectedCorporations = results['customCorporationsList'];
               }
 
               if (component.showCardsBlackList) {
-                (refs.cardsFilter as any).selectedCardNames = results['cardsBlackList'];
+                refs.cardsFilter.selectedCardNames = results['cardsBlackList'];
               }
             }
             if ( ! component.seededGame) {
               component.seed = Math.random();
             }
+
+            // set to alter after any watched properties
+            component.solarPhaseOption = Boolean(capturedSolarPhaseOption);
           });
         }
       }, false);
@@ -726,32 +923,25 @@ export default Vue.extend({
         [String(player.index)],
       );
     },
-    updateCustomCorporationsList(newCustomCorporationsList: Array<CardName>) {
-      const component = (this as any) as CreateGameModel;
-      component.customCorporationsList = newCustomCorporationsList;
+    updateCustomCorporationsList(customCorporationsList: Array<CardName>) {
+      this.customCorporationsList = customCorporationsList;
     },
-    updateCardsBlackList(newCardsBlackList: Array<CardName>) {
-      const component = (this as any) as CreateGameModel;
-      component.cardsBlackList = newCardsBlackList;
+    updateCardsBlackList(cardsBlackList: Array<CardName>) {
+      this.cardsBlackList = cardsBlackList;
     },
-    updateCustomColoniesList(newCustomColoniesList: Array<ColonyName>) {
-      const component = (this as any) as CreateGameModel;
-      component.customColoniesList = newCustomColoniesList;
+    updateCustomColoniesList(customColoniesList: Array<ColonyName>) {
+      this.customColoniesList = customColoniesList;
     },
     getPlayers(): Array<NewPlayerModel> {
-      const component = (this as any) as CreateGameModel;
-      return component.players.slice(0, component.playersCount);
+      return this.players.slice(0, this.playersCount);
     },
     isRandomMAEnabled(): Boolean {
       return this.randomMA !== RandomMAOptionType.NONE;
     },
     randomMAToggle() {
-      const component = (this as any) as CreateGameModel;
-      if (component.randomMA === RandomMAOptionType.NONE) {
-        component.randomMA = RandomMAOptionType.LIMITED;
+      if (this.randomMA === RandomMAOptionType.NONE) {
         this.randomMA = RandomMAOptionType.LIMITED;
       } else {
-        component.randomMA = RandomMAOptionType.NONE;
         this.randomMA = RandomMAOptionType.NONE;
       }
     },
@@ -787,23 +977,6 @@ export default Vue.extend({
     isBeginnerToggleEnabled(): Boolean {
       return !(this.initialDraft || this.prelude || this.venusNext || this.colonies || this.turmoil);
     },
-    selectAll() {
-      // this.corporateEra = this.$data.allOfficialExpansions;
-      this.prelude = this.$data.allOfficialExpansions;
-      this.venusNext = this.$data.allOfficialExpansions;
-      this.colonies = this.$data.allOfficialExpansions;
-      this.turmoil = this.$data.allOfficialExpansions;
-      this.promoCardsOption = this.$data.allOfficialExpansions;
-      this.solarPhaseOption = this.$data.allOfficialExpansions;
-    },
-    toggleVenusNext() {
-      this.solarPhaseOption = this.$data.venusNext;
-    },
-    deselectPoliticalAgendasWhenDeselectingTurmoil() {
-      if (this.$data.turmoil === false) {
-        this.politicalAgendasExtension = AgendaStyle.STANDARD;
-      }
-    },
     deselectVenusCompletion() {
       if (this.$data.venusNext === false) {
         this.requiresVenusTrackCompletion = false;
@@ -822,8 +995,12 @@ export default Vue.extend({
         return 'create-game-board-hexagon create-game-hellas';
       } else if (boardName === BoardName.ELYSIUM) {
         return 'create-game-board-hexagon create-game-elysium';
+      } else if (boardName === BoardName.AMAZONIS) {
+        return 'create-game-board-hexagon create-game-amazonis';
       } else if (boardName === BoardName.ARABIA_TERRA) {
         return 'create-game-board-hexagon create-game-arabia-terra';
+      } else if (boardName === BoardName.TERRA_CIMMERIA) {
+        return 'create-game-board-hexagon create-game-terra-cimmeria';
       } else if (boardName === BoardName.VASTITAS_BOREALIS) {
         return 'create-game-board-hexagon create-game-vastitas-borealis';
       } else {
@@ -836,8 +1013,24 @@ export default Vue.extend({
     getPlayerContainerColorClass(color: string): string {
       return playerColorClass(color.toLowerCase(), 'bg_transparent');
     },
+    isEnabled(module: GameModule): boolean {
+      switch (module) {
+      case 'corpera': return this.$data.corpera;
+      case 'promo': return this.$data.promoCardsOption;
+      case 'venus': return this.$data.venusNext;
+      case 'colonies': return this.$data.colonies;
+      case 'prelude': return this.$data.prelude;
+      case 'turmoil': return this.$data.turmoil;
+      case 'community': return this.$data.communityCardsOption;
+      case 'ares': return this.$data.aresExtension;
+      case 'moon': return this.$data.moonExpansion;
+      case 'pathfinders': return this.$data.pathfindersExpansion;
+      default: return true;
+      }
+    },
     async serializeSettings() {
-      const component = (this as any) as CreateGameModel;
+      // TODO(kberg): remove 'component'
+      const component: CreateGameModel = this;
 
       let players = component.players.slice(0, component.playersCount);
 
@@ -872,10 +1065,10 @@ export default Vue.extend({
             if ( userName.length > 0) {
               player.name = userName;
             } else {
-              player.name = 'You';
+              player.name = this.$t('You');
             }
           } else {
-            const defaultPlayerName = player.color.charAt(0).toUpperCase() + player.color.slice(1);
+            const defaultPlayerName = this.$t(player.color.charAt(0).toUpperCase() + player.color.slice(1));
             player.name = defaultPlayerName;
           }
         }
@@ -920,7 +1113,7 @@ export default Vue.extend({
       const includeVenusMA = component.includeVenusMA;
       const startingCorporations = component.startingCorporations;
       const soloTR = component.soloTR;
-      const beginnerOption = component.beginnerOption;
+      // const beginnerOption = component.beginnerOption;
       const randomFirstPlayer = component.randomFirstPlayer;
       const requiresVenusTrackCompletion = component.requiresVenusTrackCompletion;
       const escapeVelocityMode = component.escapeVelocityMode;
@@ -945,6 +1138,12 @@ export default Vue.extend({
         }
       }
 
+      if (players.length === 1 && corporateEra === false) {
+        const confirm = window.confirm(translateText(
+          'We do not recommend playing a solo game without the Corporate Era. Press OK if you want to play without it.'));
+        if (confirm === false) return;
+      }
+
       // Check custom corp count
       if (component.showCorporationList && customCorporationsList.length > 0) {
         const neededCorpsCount = players.length * startingCorporations;
@@ -952,10 +1151,24 @@ export default Vue.extend({
           window.alert(translateTextWithParams('Must select at least ${0} corporations', [neededCorpsCount.toString()]));
           return;
         }
+        let valid = true;
+        for (const corp of customCorporationsList) {
+          const card = getCard(corp);
+          for (const module of card?.compatibility ?? []) {
+            if (!this.isEnabled(module)) {
+              valid = false;
+            }
+          }
+        }
+        if (valid === false) {
+          const confirm = window.confirm(translateText(
+            'Some of the corps you selected need expansions you have not enabled. Using them might break your game. Press OK to continue or Cancel to change your selections.'));
+          if (confirm === false) return;
+        }
       } else {
         customCorporationsList.length = 0;
       }
-      const dataToSend = JSON.stringify({
+      const dataToSend: NewGameConfig = {
         players,
         corporateEra,
         prelude,
@@ -993,7 +1206,7 @@ export default Vue.extend({
         randomMA,
         shuffleMapOption,
         userId: PreferencesManager.load('userId'),
-        beginnerOption,
+        // beginnerOption,
         randomFirstPlayer,
         requiresVenusTrackCompletion,
         requiresMoonTrackCompletion: component.requiresMoonTrackCompletion,
@@ -1003,8 +1216,8 @@ export default Vue.extend({
         escapeVelocityThreshold,
         escapeVelocityPeriod,
         escapeVelocityPenalty,
-      }, undefined, 4);
-      return dataToSend;
+      };
+      return JSON.stringify(dataToSend, undefined, 4);
     },
     async createGame() {
       const lastcreated = Number(PreferencesManager.load('lastcreated')) || 0;
@@ -1020,22 +1233,31 @@ export default Vue.extend({
       const dataToSend = await this.serializeSettings();
 
       if (dataToSend === undefined) return;
-      const onSucces = (response: any) => {
+      const onSuccess = (json: any) => {
         root.isServerSideRequestInProgress = false;
-        if (response.players.length === 1) {
-          window.location.href = '/player?id=' + response.players[0].id;
+        if (json.players.length === 1) {
+          window.location.href = '/player?id=' + json.players[0].id;
           return;
         } else {
-          window.history.replaceState(response, `${constants.APP_NAME} - Game`, '/game?id=' + response.id);
-          (this as any).$root.$data.game = response;
+          window.history.replaceState(json, `${constants.APP_NAME} - Game`, '/game?id=' + json.id);
+          (this as any).$root.$data.game = json;
           (this as any).$root.$data.screen = 'game-home';
         }
       };
 
       fetch('/game', {'method': 'PUT', 'body': dataToSend, 'headers': {'Content-Type': 'application/json'}})
-        .then((response) => response.json())
-        .then(onSucces)
-        .catch((_) => alert('Unexpected server response'));
+        .then((response) => response.text())
+        .then((text) => {
+          try {
+            const json = JSON.parse(text);
+            onSuccess(json);
+          } catch (err) {
+            throw new Error(text);
+          }
+        })
+        .catch((error: Error) => {
+          alert(error.message);
+        });
     },
   },
 });

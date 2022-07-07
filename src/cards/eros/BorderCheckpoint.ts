@@ -9,7 +9,7 @@ import {PlayerInput} from '../../PlayerInput';
 import {SelectSpace} from '../../inputs/SelectSpace';
 import {ISpace} from '../../boards/ISpace';
 import {DrawCards} from '../../deferredActions/DrawCards';
-import {DeferredAction} from '../..//deferredActions/DeferredAction';
+import {SimpleDeferredAction} from '../../deferredActions/DeferredAction';
 import {Resources} from '../../common/Resources';
 
 export class BorderCheckpoint extends Card implements IProjectCard {
@@ -80,7 +80,7 @@ export class BorderCheckpoint extends Card implements IProjectCard {
   public action(player: Player) {
     const cardIndex = this.getRandomNum(0, 4);
     const cards: Array<IProjectCard> = player.game.dealer.discarded.splice(cardIndex, 1);
-    player.game.defer(new DeferredAction(player, () => DrawCards.choose(player, cards, {keepMax: 1})));
+    player.game.defer(new SimpleDeferredAction(player, () => DrawCards.choose(player, cards, {keepMax: 1})));
     player.game.cardDrew = true;
     return undefined;
   }

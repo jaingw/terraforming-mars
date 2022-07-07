@@ -13,6 +13,8 @@ export class StrategicBasePlanning extends PreludeCard {
       name: CardName.STRATEGIC_BASE_PLANNING,
       tags: [Tags.BUILDING],
 
+      startingMegacredits: -8,
+
       metadata: {
         cardNumber: 'P08',
         renderData: CardRenderer.builder((b) => {
@@ -27,6 +29,10 @@ export class StrategicBasePlanning extends PreludeCard {
     player.game.defer(new PlaceCityTile(player));
     player.game.defer(new BuildColony(player));
     return undefined;
+  }
+
+  public override canPlay(player: Player) {
+    return player.canAfford(8);
   }
 }
 

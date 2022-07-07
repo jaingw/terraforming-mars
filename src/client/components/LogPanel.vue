@@ -10,7 +10,7 @@
               {{ n }}
             </div>
           </div>
-          <span class="label-additional" v-if="players.length === 1"><span :class="lastGenerationClass">of {{this.lastSoloGeneration}}</span></span>
+          <span class="label-additional" v-if="players.length === 1"><span :class="lastGenerationClass" v-i18n>of {{this.lastSoloGeneration}}</span></span>
         </div>
         <div class="panel log-panel">
           <div id="logpanel-scrollable" class="panel-body">
@@ -26,7 +26,7 @@
             <Card :card="{name: card, resources: getResourcesOnCard(card)}"/>
           </div>
           <div id="log_panel_card" class="cardbox" v-for="globalEventName in globalEventNames" :key="globalEventName">
-            <global-event :globalEvent="getGlobalEvent(globalEventName)" type="prior" :showIcons="false"></global-event>
+            <global-event :globalEvent="getGlobalEventModel(globalEventName)" type="prior" :showIcons="false"></global-event>
           </div>
         </div>
       </div>
@@ -49,10 +49,9 @@ import {Color} from '@/common/Color';
 import {SoundManager} from '@/client/utils/SoundManager';
 import {getPreferences} from '@/client/utils/PreferencesManager';
 import {GlobalEventName} from '@/common/turmoil/globalEvents/GlobalEventName';
-import GlobalEvent from '@/client/components/GlobalEvent.vue';
-import {getGlobalEventByName} from '@/turmoil/globalEvents/GlobalEventDealer';
+import GlobalEvent from '@/client/components/turmoil/GlobalEvent.vue';
+import {getGlobalEventModel} from '@/client/turmoil/ClientGlobalEventManifest';
 import {GlobalEventModel} from '@/common/models/TurmoilModel';
-import {PartyName} from '@/common/turmoil/PartyName';
 import Button from '@/client/components/common/Button.vue';
 import {Log} from '@/common/logs/Log';
 import {getCard} from '@/client/cards/ClientCardManifest';
@@ -167,8 +166,8 @@ export default Vue.extend({
           }
         }
         const card = getCard(cardName);
-        if (card && card.card.cardType) {
-          return this.cardToHtml(card.card.cardType, data.value);
+        if (card?.cardType) {
+          return this.cardToHtml(card.cardType, data.value);
         }
         break;
 
@@ -216,7 +215,7 @@ export default Vue.extend({
           const icon = message.playerId === undefined ? '&#x1f551;' : '&#x1f4ac;';
           logEntryBullet = `<span title="${when}">${icon}</span>`;
         }
-        if (message.type !== undefined && message.message !== undefined) {
+        if (message.message !== undefined) {
           message.message = this.$t(message.message);
           return logEntryBullet + Log.applyData(message, this.messageDataToHTML);
         }
@@ -318,22 +317,8 @@ export default Vue.extend({
     lastGenerationClass(): string {
       return this.lastSoloGeneration === this.generation ? 'last-generation blink-animation' : '';
     },
-    getGlobalEvent(globalEventName: GlobalEventName): GlobalEventModel {
-      const globalEvent = getGlobalEventByName(globalEventName);
-      if (globalEvent) {
-        return {
-          name: globalEvent.name,
-          description: globalEvent.description,
-          revealed: globalEvent.revealedDelegate,
-          current: globalEvent.currentDelegate,
-        };
-      }
-      return {
-        name: globalEventName,
-        description: 'global event not found',
-        revealed: PartyName.GREENS,
-        current: PartyName.GREENS,
-      };
+    getGlobalEventModel(globalEventName: GlobalEventName): GlobalEventModel {
+      return getGlobalEventModel(globalEventName);
     },
     getResourcesOnCard(cardName: CardName) {
       for (const player of this.players) {

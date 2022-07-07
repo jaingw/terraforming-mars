@@ -9,7 +9,7 @@ import {Resources} from '../../common/Resources';
 import {Size} from '../../common/cards/render/Size';
 import {OrOptions} from '../../inputs/OrOptions';
 import {SelectOption} from '../../inputs/SelectOption';
-import {DeferredAction} from '../../deferredActions/DeferredAction';
+import {SimpleDeferredAction} from '../../deferredActions/DeferredAction';
 import {IActionCard} from '../../cards/ICard';
 
 export class ScolexIndustries extends Card implements IActionCard, ICorporationCard {
@@ -141,8 +141,8 @@ export class ScolexIndustries extends Card implements IActionCard, ICorporationC
     }
 
     result.options = options;
-    player.game.defer(new DeferredAction(player, () => result));
-    player.game.defer(new DeferredAction(player, () => this.increaseSelectedProduction(player)));
+    player.game.defer(new SimpleDeferredAction(player, () => result));
+    player.game.defer(new SimpleDeferredAction(player, () => this.increaseSelectedProduction(player)));
     return undefined;
   }
 }

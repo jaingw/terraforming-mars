@@ -3,29 +3,25 @@ import {SelectCard} from '../inputs/SelectCard';
 import {ICard} from '../cards/ICard';
 import {OrOptions} from '../inputs/OrOptions';
 import {Resources} from '../common/Resources';
-import {ResourceType} from '../common/ResourceType';
+import {CardResource} from '../common/CardResource';
 import {SelectOption} from '../inputs/SelectOption';
 import {DeferredAction, Priority} from './DeferredAction';
 import {GlobalEventName} from '../common/turmoil/globalEvents/GlobalEventName';
 
-export class CorrosiveRainDeferredAction implements DeferredAction {
-  public priority = Priority.DEFAULT;
+export class CorrosiveRainDeferredAction extends DeferredAction {
   constructor(
-        public player: Player,
-        public title: string = 'Remove 2 floaters from a card or lose up to 10 M€',
-  ) {}
+    player: Player,
+    public title: string = 'Remove 2 floaters from a card or lose up to 10 M€',
+  ) {
+    super(player, Priority.DEFAULT);
+  }
 
   public execute() {
-    const floaterCards = this.player.getCardsWithResources(ResourceType.FLOATER).filter((card) => card.resourceCount ?? 0 >= 2);
-
-    if (floaterCards.length === 0) {
-      this.player.deductResource(Resources.MEGACREDITS, 10, {log: true, from: GlobalEventName.CORROSIVE_RAIN});
-      return undefined;
-    }
+    const floaterCards = this.player.getCardsWithResources(CardResource.FLOATER).filter((card) => (card.resourceCount ?? 0) >= 2);
 
     const selectAction = new OrOptions();
     const payMC = new SelectOption('Lose up to 10 M€', 'Lose M€', () => {
-      this.player.deductResource(Resources.MEGACREDITS, 10);
+      this.player.deductResource(Resources.MEGACREDITS, 10, {log: true, from: GlobalEventName.CORROSIVE_RAIN});
       return undefined;
     });
     const removeFloaters = new SelectCard(
@@ -36,6 +32,11 @@ export class CorrosiveRainDeferredAction implements DeferredAction {
       },
     );
     selectAction.options.push(payMC, removeFloaters);
+
+    if (floaterCards.length === 0) {
+      payMC.cb();
+      return undefined;
+    }
 
     return selectAction;
   }

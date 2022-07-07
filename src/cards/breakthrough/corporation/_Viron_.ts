@@ -8,6 +8,6 @@ export class _Viron_ extends Viron {
     return CardName._VIRON_;
   }
   public override get tags() {
-    return [Tags.WILDCARD];
+    return [Tags.WILD];
   }
 }

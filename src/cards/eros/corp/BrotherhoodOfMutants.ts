@@ -2,7 +2,7 @@ import {CardRenderer} from '../../render/CardRenderer';
 import {Card} from '../../Card';
 import {ICard} from '../../ICard';
 import {Player} from '../../../Player';
-import {DeferredAction} from '../../../deferredActions/DeferredAction';
+import {SimpleDeferredAction} from '../../../deferredActions/DeferredAction';
 import {OrOptions} from '../../../inputs/OrOptions';
 import {SelectOption} from '../../../inputs/SelectOption';
 import {SelectAmount} from '../../../inputs/SelectAmount';
@@ -19,7 +19,7 @@ export class BrotherhoodOfMutants extends Card implements ICard, ICorporationCar
   constructor() {
     super({
       name: CardName.BROTHERHOOD_OF_MUTANTS,
-      tags: [Tags.WILDCARD],
+      tags: [Tags.WILD],
       startingMegaCredits: 36,
       cardType: CardType.CORPORATION,
 
@@ -54,7 +54,7 @@ export class BrotherhoodOfMutants extends Card implements ICard, ICorporationCar
   public action(player: Player) {
     if (player.game.turmoil) {
       const bonus = player.game.turmoil.getPlayerInfluence(player);
-      player.game.defer(new DeferredAction(
+      player.game.defer(new SimpleDeferredAction(
         player,
         () => {
           return new OrOptions(
@@ -64,7 +64,7 @@ export class BrotherhoodOfMutants extends Card implements ICard, ICorporationCar
             }),
             new SelectOption('Select resources equal to your influences', 'Select resource', () => {
               player.game.defer(
-                new DeferredAction(player, () => {
+                new SimpleDeferredAction(player, () => {
                   return this.selectResources(player, bonus);
                 }),
               );

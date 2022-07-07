@@ -39,7 +39,7 @@ export class SelfReplicatingRobots extends Card implements IProjectCard {
 
   public targetCards: Array<RobotCard> = [];
 
-  public getCardDiscount(_player: Player, card: IProjectCard): number {
+  public override getCardDiscount(_player: Player, card: IProjectCard): number {
     for (const targetCard of this.targetCards) {
       if (targetCard.card.name === card.name) {
         return targetCard.resourceCount;
@@ -78,6 +78,7 @@ export class SelfReplicatingRobots extends Card implements IProjectCard {
           });
           return undefined;
         },
+        {played: CardName.SELF_REPLICATING_ROBOTS},
       ));
     }
 
@@ -97,6 +98,7 @@ export class SelfReplicatingRobots extends Card implements IProjectCard {
           player.game.log('${0} linked ${1} with ${2}', (b) => b.player(player).card(foundCards[0]).card(this));
           return undefined;
         },
+        {played: CardName.SELF_REPLICATING_ROBOTS},
       ));
     }
 

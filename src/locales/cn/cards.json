@@ -1,5 +1,5 @@
 {
-    "You start with 42 M€. Instead of choosing from 10 cards during setup, you get 10 cards for free.": "开始游戏时拥有42M€,取代你的第一次研究阶段(第一次购买卡牌阶段),你免费保留这10张牌",
+    "You start with 42 M€. Instead of choosing from 10 cards during setup, you get 10 cards for free.": "开始时拥有42M€,取代你的第一次研究阶段(第一次购买卡牌阶段),你免费保留这10张牌",
     "Colonizer Training Camp": "开拓者训练营",
     "Oxygen must be 5% or less.": "氧气浓度必须少于或等于5%",
 
@@ -407,7 +407,7 @@
     "Place 1 ocean tile.": "放置1个海洋版块",
 
     "Ecological Zone": "生态保护区",
-    "Effect: When you play an animal or plant tag /including these/, add an animal to this card.": "效果: 当你打出1个动物标志或植物标志(包括本牌2个)时,增加1个动物资源到本卡",
+    "Effect: When you play an animal or plant tag INCLUDING THESE, add an animal to this card.": "效果: 当你打出1个动物标志或植物标志(包括本牌2个)时,增加1个动物资源到本卡",
     "Requires that YOU have a greenery tile. Place this tile adjacent to ANY greenery.": "需要你至少拥有一个绿化版块。放置这个版块到任意的绿化版块旁边。",
 
     "Zeppelins": "齐柏林飞艇",

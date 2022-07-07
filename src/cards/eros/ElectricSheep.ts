@@ -10,7 +10,7 @@ import {CardName} from '../../common/cards/CardName';
 import {CardType} from '../../common/cards/CardType';
 import {Tags} from '../../common/cards/Tags';
 import {Resources} from '../../common/Resources';
-import {ResourceType} from '../../common/ResourceType';
+import {CardResource} from '../../common/CardResource';
 
 export class ElectricSheep extends Card implements IActionCard, IProjectCard, IResourceCard {
   constructor() {
@@ -19,7 +19,7 @@ export class ElectricSheep extends Card implements IActionCard, IProjectCard, IR
       name: CardName.ELECTRIC_SHEEP,
       tags: [Tags.ENERGY, Tags.ANIMAL],
       cost: 10,
-      resourceType: ResourceType.ANIMAL,
+      resourceType: CardResource.ANIMAL,
       victoryPoints: VictoryPoints.resource(1, 1),
 
       requirements: CardRequirements.builder((b) => b.tag(Tags.ENERGY, 4)),

@@ -3,7 +3,7 @@ import {Color} from '../common/Color';
 import {Database} from './Database';
 import {Game, LoadState} from '../Game';
 import {Player} from '../Player';
-import {SpectatorId} from '../common/Types';
+import {PlayerId, SpectatorId} from '../common/Types';
 import {User} from '../User';
 import {IGameLoader, State} from './IGameLoader';
 import {IGameShortData} from './IDatabase';
@@ -25,6 +25,11 @@ export class GameLoader implements IGameLoader {
   private static instance?: GameLoader;
 
   private constructor() { }
+
+  public reset(): void {
+    GameLoader.instance = undefined;
+    GameLoader.getInstance().start(() => {});
+  }
 
   public static getInstance(): GameLoader {
     if (GameLoader.instance === undefined) {
@@ -89,6 +94,7 @@ export class GameLoader implements IGameLoader {
     }
   }
 
+  // READY是已读取gameid, 可以处理请求， 否则直接返回空
   public getGameById(gameId: string, cb: LoadCallback): void {
     if (this.state === State.READY && this.games.has(gameId)) {
       const game: any = this.games.get(gameId);
@@ -113,37 +119,41 @@ export class GameLoader implements IGameLoader {
     }
   }
 
-  public getBySpectatorId(spectatorId: SpectatorId, cb: LoadCallback): void {
-    this.getByPlayerId(spectatorId, cb);
+  public getByParticipantId(playerId: PlayerId | SpectatorId ): Promise<Game | undefined> {
+    return this.getByPlayerId(playerId);
   }
 
-  public getByPlayerId(playerId: string, cb: LoadCallback): void {
-    if (this.state === State.READY && this.playerToGame.has(playerId)) {
-      const game: any = this.playerToGame.get(playerId);
-      if (this.games.get(game.id) === undefined) {
-        this.playerToGame.delete(game.id);
-        cb(game);
-        return;
-      }
-      if (game.loadState === LoadState.LOADED) {
-        cb(game);
-        return;
-      }
-      if (game.loadState !== LoadState.LOADING) {
-        game.loadState === LoadState.LOADING;
-        this.loadFullGame(game);
+  public getByPlayerId(playerId: string): Promise<Game | undefined> {
+    return new Promise((resolve) => {
+      if (this.state === State.READY && this.playerToGame.has(playerId)) {
+        const game: any = this.playerToGame.get(playerId);
+        if (this.games.get(game.id) === undefined) {
+          this.playerToGame.delete(game.id);
+          resolve(game);
+          return;
+        }
+        if (game.loadState === LoadState.LOADED) {
+          resolve(game);
+          return;
+        }
+        if (game.loadState !== LoadState.LOADING) {
+          game.loadState === LoadState.LOADING;
+          this.loadFullGame(game);
+        }
+
+        // LOADING 等待读库回调
+        const pendingPlayer = this.pendingPlayer.get(playerId);
+        if (pendingPlayer !== undefined) {
+          pendingPlayer.push(resolve);
+        } else {
+          this.pendingPlayer.set(playerId, [resolve]);
+        }
+      } else {
+        resolve(undefined);
       }
 
-      // LOADING 等待读库回调
-      const pendingPlayer = this.pendingPlayer.get(playerId);
-      if (pendingPlayer !== undefined) {
-        pendingPlayer.push(cb);
-      } else {
-        this.pendingPlayer.set(playerId, [cb]);
-      }
-    } else {
-      cb(undefined);
-    }
+      // reject(new Error(`unknown error loadign player count for ${gameId}`));
+    });
   }
 
   private loadFullGame(game: Game): void {
@@ -262,14 +272,7 @@ export class GameLoader implements IGameLoader {
       });
     });
 
-    Database.getInstance().getGames((err: Error | undefined, allGames:Array<IGameShortData>) => {
-      if (err) {
-        console.error('error loading all games', err);
-        this.onAllGamesLoaded();
-        cb();
-        return;
-      }
-
+    Database.getInstance().getGames().then( (allGames:Array<IGameShortData> ) => {
       if (allGames.length === 0) {
         this.onAllGamesLoaded();
         cb();
@@ -290,6 +293,11 @@ export class GameLoader implements IGameLoader {
         }
       });
       this.loadNextGame(cb);
+    }).catch((err) => {
+      console.error('error loading all games', err);
+      this.onAllGamesLoaded();
+      cb();
+      return;
     });
   }
 

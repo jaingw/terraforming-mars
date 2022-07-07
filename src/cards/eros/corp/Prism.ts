@@ -12,7 +12,7 @@ export class Prism extends Card implements ICorporationCard {
     super({
       cardType: CardType.CORPORATION,
       name: CardName.PRISM,
-      tags: [Tags.WILDCARD],
+      tags: [Tags.WILD],
       startingMegaCredits: 36,
 
       metadata: {
@@ -45,7 +45,7 @@ export class Prism extends Card implements ICorporationCard {
   }
 
 
-  public getCardDiscount(player: Player, card: IProjectCard) {
+  public override getCardDiscount(player: Player, card: IProjectCard) {
     let totalDiscount = 0;
     if (player.isCorporation(CardName.PRISM)) {
       let tagIndex: number;

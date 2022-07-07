@@ -24,16 +24,15 @@ import {_TharsisRepublic_} from './corporation/_TharsisRepublic_';
 import {_MorningStarInc_} from './corporation/_MorningStarInc_';
 import {_InterplanetaryCinematics_} from './corporation/_InterplanetaryCinematics_';
 import {CardName} from '../../common/cards/CardName';
-import {GameModule} from '../../common/cards/GameModule';
 
 export const BREAKTHROUGH_CARD_MANIFEST = new CardManifest({
-  module: GameModule.Breakthrough,
+  module: 'breakthrough',
   projectCards: [],
   corporationCards: [
-    {cardName: CardName._APHRODITE_, Factory: _Aphrodite_, cardName_ori: CardName.APHRODITE, compatibility: GameModule.Venus},
+    {cardName: CardName._APHRODITE_, Factory: _Aphrodite_, cardName_ori: CardName.APHRODITE, compatibility: 'venus'},
     {cardName: CardName._ARCADIAN_COMMUNITIES_, Factory: _ArcadianCommunities_, cardName_ori: CardName.ARCADIAN_COMMUNITIES},
-    {cardName: CardName._ARKLIGHT_, Factory: _Arklight_, cardName_ori: CardName.ARKLIGHT}, // compatibility: GameModule.Colonies},
-    {cardName: CardName._CELESTIC_, Factory: _Celestic_, compatibility: GameModule.Venus, cardName_ori: CardName.CELESTIC},
+    {cardName: CardName._ARKLIGHT_, Factory: _Arklight_, cardName_ori: CardName.ARKLIGHT}, // compatibility: 'colonies'},
+    {cardName: CardName._CELESTIC_, Factory: _Celestic_, compatibility: 'venus', cardName_ori: CardName.CELESTIC},
     {cardName: CardName._ECOLINE_, Factory: _EcoLine_, cardName_ori: CardName.ECOLINE},
     {cardName: CardName._FACTORUM_, Factory: _Factorum_, cardName_ori: CardName.FACTORUM},
     {cardName: CardName._HELION_, Factory: _Helion_, cardName_ori: CardName.HELION},
@@ -46,14 +45,14 @@ export const BREAKTHROUGH_CARD_MANIFEST = new CardManifest({
     {cardName: CardName._RECYCLON_, Factory: _Recyclon_, cardName_ori: CardName.RECYCLON},
     {cardName: CardName._ROBINSON_INDUSTRIES_, Factory: _RobinsonIndustries_, cardName_ori: CardName.ROBINSON_INDUSTRIES},
     {cardName: CardName._SPLICE_, Factory: _Splice_, cardName_ori: CardName.SPLICE},
-    {cardName: CardName._STORMCRAFT_INCORPORATED_, Factory: _StormCraftIncorporated_, cardName_ori: CardName.STORMCRAFT_INCORPORATED, compatibility: GameModule.Venus},
+    {cardName: CardName._STORMCRAFT_INCORPORATED_, Factory: _StormCraftIncorporated_, cardName_ori: CardName.STORMCRAFT_INCORPORATED, compatibility: 'venus'},
     {cardName: CardName._TERACTOR_, Factory: _Teractor_, cardName_ori: CardName.TERACTOR},
-    {cardName: CardName._TERRALABS_RESEARCH_, Factory: _TerralabsResearch_, cardName_ori: CardName.TERRALABS_RESEARCH}, // compatibility: GameModule.Turmoil},
+    {cardName: CardName._TERRALABS_RESEARCH_, Factory: _TerralabsResearch_, cardName_ori: CardName.TERRALABS_RESEARCH}, // compatibility: 'turmoil'},
     {cardName: CardName._THARSIS_REPUBLIC_, Factory: _TharsisRepublic_, cardName_ori: CardName.THARSIS_REPUBLIC},
     {cardName: CardName._THORGATE_, Factory: _Thorgate_, cardName_ori: CardName.THORGATE},
     {cardName: CardName._UNITED_NATIONS_MARS_INITIATIVE_, Factory: _UnitedNationsMarsInitiative_, cardName_ori: CardName.UNITED_NATIONS_MARS_INITIATIVE},
     {cardName: CardName._VALLEY_TRUST_, Factory: _ValleyTrust_, cardName_ori: CardName.VALLEY_TRUST},
-    {cardName: CardName._VIRON_, Factory: _Viron_, cardName_ori: CardName.VIRON}, // compatibility: GameModule.Venus},
+    {cardName: CardName._VIRON_, Factory: _Viron_, cardName_ori: CardName.VIRON}, // compatibility: 'venus'},
   ],
   cardsToRemove: [
     CardName.PHOBOLOG,

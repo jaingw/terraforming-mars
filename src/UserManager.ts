@@ -1,6 +1,5 @@
 
 import * as http from 'http';
-import * as querystring from 'querystring';
 import {User} from './User';
 import {Database} from './database/Database';
 import {getDate, getDay} from './UserUtil';
@@ -8,6 +7,7 @@ import {GameLoader} from './database/GameLoader';
 import {generateRandomId} from './UserUtil';
 import {Server} from './models/ServerModel';
 import {PlayerBlockModel} from './common/models/PlayerModel';
+import {IContext} from './routes/IHandler';
 import * as crypto from 'crypto';
 const colorNames = ['Blue', 'Red', 'Yellow', 'Green', 'Black', 'Purple', 'You', 'blue', 'red', 'yellow', 'green', 'black', 'purple', 'you'];
 
@@ -220,12 +220,9 @@ export function register(req: http.IncomingMessage, res: http.ServerResponse): v
 }
 
 
-export function isvip(req: http.IncomingMessage, res: http.ServerResponse): void {
-  const qs: string = req.url!.substring('/api/isvip?'.length);
-  const queryParams = querystring.parse(qs);
-  const userId = (queryParams as any)['userId'];
-
-  if (userId === undefined || userId === '') {
+export function isvip(req: http.IncomingMessage, res: http.ServerResponse, ctx: IContext): void {
+  const userId = ctx.url.searchParams.get('userId');
+  if (userId === undefined || userId === '' || userId === null) {
     console.warn('didn\'t find user id');
     notFound(req, res);
     return;
@@ -341,7 +338,7 @@ export function sitDown(req: http.IncomingMessage, res: http.ServerResponse): vo
   req.on('data', function(data) {
     body += data.toString();
   });
-  req.once('end', function() {
+  req.once('end', async function() {
     try {
       const userReq:any = JSON.parse(body);
       const userme = GameLoader.getInstance().userIdMap.get(userReq.userId);
@@ -353,47 +350,46 @@ export function sitDown(req: http.IncomingMessage, res: http.ServerResponse): vo
         notFound(req, res);
         return;
       }
-      GameLoader.getInstance().getByPlayerId(userReq.playerId, (game) => {
-        if (game === undefined) {
-          console.warn('sitDown game undefined');
-          notFound(req, res);
-          return;
-        }
-        const player = game.getAllPlayers().find((player) => player.id === userReq.playerId);
-        if (player === undefined || player.userId !== undefined) {
-          console.warn('sitDown player === undefined || player.userId !== undefined');
-          notFound(req, res);
-          return;
-        }
+      const game = await GameLoader.getInstance().getByPlayerId(userReq.playerId);
+      if (game === undefined) {
+        console.warn('sitDown game undefined');
+        notFound(req, res);
+        return;
+      }
+      const player = game.getAllPlayers().find((player) => player.id === userReq.playerId);
+      if (player === undefined || player.userId !== undefined) {
+        console.warn('sitDown player === undefined || player.userId !== undefined');
+        notFound(req, res);
+        return;
+      }
 
-        // 已经属于其他用户
-        const userThat = GameLoader.getInstance().userNameMap.get(player.name);
-        if (userThat !== undefined ) {
-          console.warn('sitDown userThat !== undefined');
-          notFound(req, res);
-          return;
-        }
+      // 已经属于其他用户
+      const userThat = GameLoader.getInstance().userNameMap.get(player.name);
+      if (userThat !== undefined ) {
+        console.warn('sitDown userThat !== undefined');
+        notFound(req, res);
+        return;
+      }
 
-        let haveSit = false;
-        game.getAllPlayers().forEach( (p) => {
-          if (p !== player && ( p.userId === userme.id || p.name === userme.name)) {
-            // res.setHeader('Content-Type', 'application/json');
-            res.write('不能重复坐下，请使用你自己的游戏地址');
-            res.end();
-            haveSit = true;
-            return;
-          }
-        });
-        if (haveSit ) {
+      let haveSit = false;
+      game.getAllPlayers().forEach( (p) => {
+        if (p !== player && ( p.userId === userme.id || p.name === userme.name)) {
+          // res.setHeader('Content-Type', 'application/json');
+          res.write('不能重复坐下，请使用你自己的游戏地址');
+          res.end();
+          haveSit = true;
           return;
         }
-        player.name = userme.name;
-        player.userId = userme.id;
-        game.log('${0} sit down', (b) => b.player(player));
-        GameLoader.getInstance().add(game);
-        res.write('success');
-        res.end();
       });
+      if (haveSit ) {
+        return;
+      }
+      player.name = userme.name;
+      player.userId = userme.id;
+      game.log('${0} sit down', (b) => b.player(player));
+      GameLoader.getInstance().add(game);
+      res.write('success');
+      res.end();
     } catch (err) {
       console.warn('error update', err);
       res.writeHead(500);

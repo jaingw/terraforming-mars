@@ -248,11 +248,14 @@ abstract class Builder<T> {
     return this._appendToRow(item);
   }
 
-  public greenery(size: Size = Size.MEDIUM, withO2: boolean = true) {
+  public greenery(size: Size = Size.MEDIUM, withO2: boolean = true, any: boolean = false) {
     const item = new CardRenderItem(CardRenderItemType.GREENERY);
     item.size = size;
     if (withO2) {
       item.secondaryTag = AltSecondaryTag.OXYGEN;
+    }
+    if (any === true) {
+      item.anyPlayer = true;
     }
     return this._appendToRow(item);
   }
@@ -501,6 +504,10 @@ abstract class Builder<T> {
 
   public equals(size: Size = Size.MEDIUM): Builder<T> {
     return this._appendToRow(CardRenderSymbol.equals(size));
+  }
+
+  public surveyMission(): Builder<T> {
+    return this._appendToRow(CardRenderSymbol.surveyMission());
   }
 
   public empty(): Builder<T> {

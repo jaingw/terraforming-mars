@@ -7,29 +7,41 @@ import {HellasBoard} from './boards/HellasBoard';
 import {OriginalBoard} from './boards/OriginalBoard';
 import {Player} from './Player';
 import {Resources} from './common/Resources';
-import {ColonyName} from './common/colonies/ColonyName';
 import {Color} from './common/Color';
 import {TileType} from './common/TileType';
 import {Random} from './Random';
 import {ArabiaTerraBoard} from './boards/ArabiaTerraBoard';
 import {VastitasBorealisBoard} from './boards/VastitasBorealisBoard';
+import {SerializedBoard} from './boards/SerializedBoard';
+import {SerializedGame} from './SerializedGame';
+import {TerraCimmeriaBoard} from './boards/TerraCimmeriaBoard';
+import {AmazonisBoard} from './boards/AmazonisBoard';
 
+type BoardFactory = {
+  newInstance: (gameOptions: GameOptions, rng: Random) => Board;
+  deserialize: (board: SerializedBoard, players: Array<Player>) => Board;
+}
+const boards: Map<BoardName, BoardFactory> = new Map(
+  [[BoardName.ORIGINAL, OriginalBoard],
+    [BoardName.HELLAS, HellasBoard],
+    [BoardName.ELYSIUM, ElysiumBoard],
+    [BoardName.AMAZONIS, AmazonisBoard],
+    [BoardName.ARABIA_TERRA, ArabiaTerraBoard],
+    [BoardName.TERRA_CIMMERIA, TerraCimmeriaBoard],
+    [BoardName.VASTITAS_BOREALIS, VastitasBorealisBoard]],
+);
 export class GameSetup {
-  // Function to construct the board and milestones/awards list
   public static newBoard(gameOptions: GameOptions, rng: Random): Board {
-    switch (gameOptions.boardName) {
-    case BoardName.ELYSIUM:
-      return ElysiumBoard.newInstance(gameOptions, rng);
-    case BoardName.HELLAS:
-      return HellasBoard.newInstance(gameOptions, rng);
-    case BoardName.ARABIA_TERRA:
-      return ArabiaTerraBoard.newInstance(gameOptions, rng);
-    case BoardName.VASTITAS_BOREALIS:
-      return VastitasBorealisBoard.newInstance(gameOptions, rng);
-    default:
-      return OriginalBoard.newInstance(gameOptions, rng);
-    }
+    const factory = boards.get(gameOptions.boardName) ?? OriginalBoard;
+    return factory.newInstance(gameOptions, rng);
   }
+
+  public static deserializeBoard(players: Array<Player>, gameOptions: GameOptions, d: SerializedGame) {
+    const playersForBoard = players.length !== 1 ? players : [players[0], GameSetup.neutralPlayerFor(d.id)];
+    const factory = boards.get(gameOptions.boardName) ?? OriginalBoard;
+    return factory.deserialize(d.board, playersForBoard);
+  }
+
 
   public static setStartingProductions(player: Player) {
     player.addProduction(Resources.MEGACREDITS, 1);
@@ -38,19 +50,6 @@ export class GameSetup {
     player.addProduction(Resources.PLANTS, 1);
     player.addProduction(Resources.ENERGY, 1);
     player.addProduction(Resources.HEAT, 1);
-  }
-
-  public static includesCommunityColonies(gameOptions: GameOptions) : boolean {
-    if (!gameOptions.customColoniesList) return false;
-    if (gameOptions.customColoniesList.includes(ColonyName.IAPETUS)) return true;
-    if (gameOptions.customColoniesList.includes(ColonyName.MERCURY)) return true;
-    if (gameOptions.customColoniesList.includes(ColonyName.HYGIEA)) return true;
-    if (gameOptions.customColoniesList.includes(ColonyName.TITANIA)) return true;
-    if (gameOptions.customColoniesList.includes(ColonyName.VENUS)) return true;
-    if (gameOptions.customColoniesList.includes(ColonyName.LEAVITT)) return true;
-    if (gameOptions.customColoniesList.includes(ColonyName.PALLAS)) return true;
-
-    return false;
   }
 
   public static neutralPlayerFor(gameId: GameId): Player {
@@ -70,7 +69,7 @@ export class GameSetup {
       if (adjacentSpaces.length === 0) {
         throw new Error('No space for forest');
       }
-      let idx = game.discardForCost(TileType.GREENERY);
+      let idx = game.discardForCost(1, TileType.GREENERY);
       idx = Math.max(idx-1, 0); // Some cards cost zero.
       const forestSpace = adjacentSpaces[idx%adjacentSpaces.length];
       game.simpleAddTile(neutral, forestSpace, {tileType: TileType.GREENERY});

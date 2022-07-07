@@ -1,35 +1,31 @@
 import * as http from 'http';
 import {Server} from '../models/ServerModel';
-import {Handler} from './Handler';
+import {AsyncHandler} from './Handler';
 import {IContext} from './IHandler';
-import * as querystring from 'querystring';
 import {GameLoader} from '../database/GameLoader';
 
-export class ApiPlayer extends Handler {
+export class ApiPlayer extends AsyncHandler {
   public static readonly INSTANCE = new ApiPlayer();
 
   private constructor() {
     super();
   }
 
-  public override get(req: http.IncomingMessage, res: http.ServerResponse, ctx: IContext): void {
-    const qs = req.url!.substring('/api/player?'.length);
-    const queryParams = querystring.parse(qs);
-    const playerId = (queryParams as any)['id'];
-    const userId = (queryParams as any)['userId'];
-    GameLoader.getInstance().getByPlayerId(playerId as string, (game) => {
-      if (game === undefined) {
-        ctx.route.notFound(req, res);
-        return;
-      }
-      const player = game.getAllPlayers().find((player) => player.id === playerId);
-      if (player === undefined) {
-        ctx.route.notFound(req, res);
-        return;
-      }
+  public override async get(req: http.IncomingMessage, res: http.ServerResponse, ctx: IContext): Promise<void> {
+    const userId = ctx.url.searchParams.get('userId');
+    const playerId = ctx.url.searchParams.get('id');
+    const game = await GameLoader.getInstance().getByParticipantId(playerId as string);
+    if (game === undefined) {
+      ctx.route.notFound(req, res);
+      return;
+    }
+    const player = game.getAllPlayers().find((player) => player.id === playerId);
+    if (player === undefined) {
+      ctx.route.notFound(req, res);
+      return;
+    }
 
-      const playerBlockModel = Server.getPlayerBlock(player, userId);
-      ctx.route.writeJson(res, Server.getPlayerModel(player, playerBlockModel));
-    });
+    const playerBlockModel = Server.getPlayerBlock(player, userId);
+    ctx.route.writeJson(res, Server.getPlayerModel(player, playerBlockModel));
   }
 }

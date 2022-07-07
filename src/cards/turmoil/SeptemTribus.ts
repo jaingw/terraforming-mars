@@ -13,7 +13,7 @@ export class SeptemTribus extends Card implements IActionCard, ICorporationCard 
   constructor() {
     super({
       name: CardName.SEPTEM_TRIBUS,
-      tags: [Tags.WILDCARD],
+      tags: [Tags.WILD],
       startingMegaCredits: 36,
       cardType: CardType.CORPORATION,
 

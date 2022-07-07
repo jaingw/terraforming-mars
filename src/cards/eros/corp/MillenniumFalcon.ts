@@ -8,7 +8,7 @@ import {BuildColony} from '../../../deferredActions/BuildColony';
 import {all} from '../../Options';
 import {SelectColony} from '../../../inputs/SelectColony';
 import {IColony} from '../../../colonies/IColony';
-import {DeferredAction} from '../../../deferredActions/DeferredAction';
+import {SimpleDeferredAction} from '../../../deferredActions/DeferredAction';
 import {ColonyName} from '../../../common/colonies/ColonyName';
 export class MillenniumFalcon extends Card implements ICorporationCard {
   constructor() {
@@ -57,7 +57,7 @@ export class MillenniumFalcon extends Card implements ICorporationCard {
     const openColonies = player.game.colonies.filter((colony) =>
       !colony.colonies.includes(player) && colony.colonies.length < 3 &&
         colony.isActive && colony.name !== ColonyName.TITANIA);
-    player.game.defer(new DeferredAction(player, () => this.moveColony(player)), 2); // Let the priority higher than build colony
+    player.game.defer(new SimpleDeferredAction(player, () => this.moveColony(player)), 2); // Let the priority higher than build colony
     player.game.defer(new BuildColony(player, false, 'Move to colony', openColonies));
     return undefined;
   }

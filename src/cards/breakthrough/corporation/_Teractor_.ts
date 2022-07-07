@@ -38,7 +38,7 @@ export class _Teractor_ extends Card implements ICorporationCard {
     return undefined;
   }
 
-  public getCardDiscount(_player: Player, card: IProjectCard) {
+  public override getCardDiscount(_player: Player, card: IProjectCard) {
     return card.tags.filter((tag) => tag === Tags.EARTH).length * 3;
   }
   public play() {

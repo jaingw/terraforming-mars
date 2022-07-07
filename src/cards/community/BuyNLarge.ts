@@ -7,7 +7,7 @@ import {Tags} from '../../common/cards/Tags';
 // import {Size} from '../../common/cards/render/Size';
 import {played, digit} from '../Options';
 import {ICorporationCard} from '../corporation/ICorporationCard';
-import {ResourceType} from '../../common/ResourceType';
+import {CardResource} from '../../common/CardResource';
 import {ISpace} from '../../boards/ISpace';
 import {Board} from '../../boards/Board';
 import {SelectSpace} from '../../inputs/SelectSpace';
@@ -22,7 +22,7 @@ export class BuyNLarge extends Card implements ICorporationCard {
       name: CardName.BUY_N_LARGE,
       tags: [Tags.PLANT],
       startingMegaCredits: 35,
-      resourceType: ResourceType.SEED,
+      resourceType: CardResource.SEED,
 
       metadata: {
         cardNumber: 'XUEBAO08',

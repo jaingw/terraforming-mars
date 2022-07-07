@@ -35,9 +35,9 @@ export class IdoFront extends Card implements ICorporationCard {
   }
 
   public onCardPlayed(player: Player, card: IProjectCard) {
-    if (card.tags.filter((tag) => tag !== Tags.WILDCARD ).length === 0 || !player.isCorporation(this.name)) return undefined;
+    if (card.tags.filter((tag) => tag !== Tags.WILD ).length === 0 || !player.isCorporation(this.name)) return undefined;
     let count = 0;
-    for (const tag of card.tags.filter((tag) => tag !== Tags.WILDCARD )) {
+    for (const tag of card.tags.filter((tag) => tag !== Tags.WILD )) {
       if (this.allTags.has(tag)) {
         count +=1;
       }
@@ -46,7 +46,7 @@ export class IdoFront extends Card implements ICorporationCard {
       }
     }
 
-    const wildCount = player.getTagCount(Tags.WILDCARD);
+    const wildCount = player.getTagCount(Tags.WILD);
     if (card.tags.length >= count) {
       player.addResource(Resources.MEGACREDITS, 2*Math.min(card.tags.length, count+wildCount));
     }

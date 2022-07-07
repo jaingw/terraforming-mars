@@ -1,42 +1,23 @@
 
 import {IActionCard} from '../../ICard';
 import {Player} from '../../../Player';
-import {PartyHooks} from '../../../turmoil/parties/PartyHooks';
 import {CardRenderer} from '../../render/CardRenderer';
-import {Card} from '../../Card';
 import {CardName} from '../../../common/cards/CardName';
-import {CardType} from '../../../common/cards/CardType';
 import {Size} from '../../../common/cards/render/Size';
-import {Tags} from '../../../common/cards/Tags';
-import {REDS_RULING_POLICY_COST} from '../../../common/constants';
-import {PartyName} from '../../../common/turmoil/PartyName';
 import {ICorporationCard} from '../../corporation/ICorporationCard';
+import {UnitedNationsMarsInitiative} from '../../corporation/UnitedNationsMarsInitiative';
 
-export class _UnitedNationsMarsInitiative_ extends Card implements IActionCard, ICorporationCard {
-  constructor() {
-    super({
-      cardType: CardType.CORPORATION,
-      name: CardName._UNITED_NATIONS_MARS_INITIATIVE_,
-      tags: [Tags.EARTH],
-      startingMegaCredits: 40,
-    });
+const ACTION_COST = 5;
+export class _UnitedNationsMarsInitiative_ extends UnitedNationsMarsInitiative implements IActionCard, ICorporationCard {
+  public override get name() {
+    return CardName._UNITED_NATIONS_MARS_INITIATIVE_;
   }
 
-  public play() {
-    return undefined;
-  }
-  public canAct(player: Player): boolean {
-    const hasIncreasedTR = player.hasIncreasedTerraformRatingThisGeneration;
-    const actionCost = 5;
-
-    if (PartyHooks.shouldApplyPolicy(player, PartyName.REDS)) {
-      return hasIncreasedTR && player.canAfford(REDS_RULING_POLICY_COST + actionCost);
-    }
-
-    return hasIncreasedTR && player.canAfford(actionCost);
+  public override canAct(player: Player): boolean {
+    return player.hasIncreasedTerraformRatingThisGeneration && player.canAfford(ACTION_COST, {tr: {tr: 1}});
   }
 
-  public action(player: Player) {
+  public override action(player: Player) {
     player.megaCredits -= 5;
     player.increaseTerraformRating();
     return undefined;

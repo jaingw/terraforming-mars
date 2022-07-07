@@ -6,6 +6,7 @@ import {PlayerInputModel} from '@/common/models/PlayerInputModel';
 import {PlayerViewModel, PublicPlayerModel} from '@/common/models/PlayerModel';
 import {getPreferences} from '@/client/utils/PreferencesManager';
 import Button from '@/client/components/common/Button.vue';
+import {InputResponse} from '@/common/inputs/InputResponse';
 
 export default Vue.extend({
   name: 'SelectHowToPay',
@@ -17,7 +18,7 @@ export default Vue.extend({
       type: Object as () => PlayerInputModel,
     },
     onsave: {
-      type: Function as unknown as () => (out: Array<Array<string>>) => void,
+      type: Function as unknown as () => (out: InputResponse) => void,
     },
     showsave: {
       type: Boolean,
@@ -44,6 +45,7 @@ export default Vue.extend({
       microbes: 0,
       floaters: 0,
       seeds: 0,
+      data: 0,
       warning: undefined,
     };
     return model;
@@ -51,7 +53,7 @@ export default Vue.extend({
   mounted() {
     Vue.nextTick(() => {
       this.setInitialCost();
-      this.$data.megaCredits = (this as any).getMegaCreditsMax();
+      this.$data.megaCredits = this.getMegaCreditsMax();
       this.setDefaultValues();
     });
   },
@@ -69,6 +71,7 @@ export default Vue.extend({
       case 'titanium': return this.canUseTitanium();
       case 'heat': return this.canUseHeat();
       case 'seeds': return this.canUseSeeds();
+      case 'data': return this.canUseData();
       }
       return false;
     },
@@ -98,16 +101,23 @@ export default Vue.extend({
       this.$data[target] = qty;
       return contributingValue;
     },
-    setDefaultValues() {
+    setDefaultValues(reserveMegacredits: boolean = false) {
       const cost = this.$data.cost;
 
-      const targets: Array<Unit> = ['seeds', 'steel', 'titanium', 'heat'];
       const megaCredits = this.getAmount('megaCredits');
-      let amountCovered = 0;
+
+      const targets: Array<Unit> = ['seeds', 'data', 'steel', 'titanium', 'heat'];
+      let amountCovered = reserveMegacredits ? megaCredits : 0;
       for (const target of targets) {
         amountCovered += this.setDefaultValue(amountCovered, target);
       }
-      this.$data.megaCredits = Math.min(megaCredits, Math.max(cost - amountCovered, 0));
+      if (!reserveMegacredits) {
+        this.$data.megaCredits = Math.min(megaCredits, Math.max(cost - amountCovered, 0));
+      }
+    },
+    setMaxMCValue() {
+      this.setMaxValue('megaCredits');
+      this.setDefaultValues(/* reserveMegacredits */ true);
     },
     canAffordWithMcOnly() {
       return this.thisPlayer.megaCredits >= this.$data.cost;
@@ -124,9 +134,12 @@ export default Vue.extend({
     canUseSeeds() {
       return this.playerinput.canUseSeeds && (this.playerinput.seeds ?? 0 > 0);
     },
+    canUseData() {
+      return this.playerinput.canUseData && (this.playerinput.data ?? 0 > 0);
+    },
 
     saveData() {
-      const targets: Array<Unit> = ['seeds', 'steel', 'titanium', 'heat', 'megaCredits'];
+      const targets: Array<Unit> = ['seeds', 'data', 'steel', 'titanium', 'heat', 'megaCredits'];
 
       const htp: HowToPay = {
         heat: this.$data.heat,
@@ -134,6 +147,7 @@ export default Vue.extend({
         steel: this.$data.steel,
         titanium: this.$data.titanium,
         seeds: this.$data.seeds,
+        data: this.$data.data,
         microbes: 0,
         floaters: 0,
         science: 0,
@@ -155,6 +169,11 @@ export default Vue.extend({
         return;
       }
 
+      // This following line was introduced in https://github.com/terraforming-mars/terraforming-mars/pull/2353
+      //
+      // According to bafolts@: I think this is an attempt to fix user error. This was added when the UI was
+      // updated to allow paying with heat. Guessing this was trying to avoid taking the heat or megaCredits
+      // from user when nothing is required. Can probably remove this if server only removes what is required.
       if (requiredAmt === 0) {
         htp.heat = 0;
         htp.megaCredits = 0;
@@ -216,7 +235,7 @@ export default Vue.extend({
       <Button type="max" @click="setMaxValue('heat')" title="MAX" />
     </div>
 
-    <div class="payments_type input-group"  v-if="playerinput.canUseSeeds">
+    <div class="payments_type input-group" v-if="playerinput.canUseSeeds">
       <i class="resource_icon resource_icon--seed payments_type_icon" :title="$t('Pay by Seeds')"></i>
       <Button type="minus" @click="reduceValue('seeds', 1)" />
       <input class="form-input form-inline payments_input" v-model.number="seeds" />
@@ -224,11 +243,20 @@ export default Vue.extend({
       <Button type="max" @click="setMaxValue('seeds')" title="MAX" />
     </div>
 
+    <div class="payments_type input-group" v-if="playerinput.canUseData">
+      <i class="resource_icon resource_icon--data payments_type_icon" :title="$t('Pay by Data')"></i>
+      <Button type="minus" @click="reduceValue('data', 1)" />
+      <input class="form-input form-inline payments_input" v-model.number="data" />
+      <Button type="plus" @click="addValue('data', 1)" />
+      <Button type="max" @click="setMaxValue('data')" title="MAX" />
+    </div>
+
     <div class="payments_type input-group">
       <i class="resource_icon resource_icon--megacredits payments_type_icon" :title="$t('Pay by Megacredits')"></i>
       <Button type="minus" @click="reduceValue('megaCredits', 1)" />
       <input class="form-input form-inline payments_input" v-model.number="megaCredits" />
       <Button type="plus" @click="addValue('megaCredits', 1)" />
+      <Button type="max" @click="setMaxMCValue()" title="MAX" />
     </div>
 
     <div v-if="hasWarning()" class="tm-warning">

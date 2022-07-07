@@ -1,12 +1,11 @@
 {
     "Terraforming Mars": "殖民火星",
-    "Create New Game": "新建游戏",
+    "Create New Game": "新建",
     "№ of Players": "玩家人数",
     "Expansions": "扩展",
     "Options": "选项",
     "Promos": "Promo卡牌",
     "Starting Corporations": "起始公司",
-    "Create Game": "建立游戏",
     "Board": "版图",
     "Beginner?": "使用新手公司?",
     "Red": "红色",
@@ -133,19 +132,19 @@
     "Show event cards": "显示事件卡",
     "Cards In Hand": "手牌",
     "Last Actions": "上一个动作",
-    "Game Log": "游戏记录",
+    "Game Log": "记录",
     "Select initial cards:": "选择起始卡牌:",
     "Select corporation": "选择1个起始公司",
     "Select 2 corporations": "选择2个起始公司",
     "Select 2 Prelude cards": "选择2张前序卡",
     "Select initial cards to buy": "选择购买起始手牌",
-    "Game details": "游戏详细信息",
+    "Game details": "详细信息",
     "Milestones and awards": "里程碑和奖项",
     "Turn order": "回合顺位",
     "click on player name to see details": "点击玩家名字可以查看玩家详情",
-    "Go to game results": "查看游戏结果",
+    "Go to game results": "查看结果",
     "Save": "保存操作",
-    "Create game": "创建游戏",
+    "Create game": "创   建",
 
     "Select which cards to take into hand": "选择保留到手牌的牌(每张3M€)",
 
@@ -206,6 +205,8 @@
     "Victory points details for":"",
     "Final situation on the board":"终局版图状况",
     "Final game log":"结束游戏日志",
+    "Looking for people to play with? Join us qq group: 859050306":"加入QQ群（859050306），和我们一起玩",
+    "Want to play more DIY expansion? Join us qq group: 859050306":"加入QQ群（859050306），查看群公告开启更多diy扩展玩法",
 
     "Claim a milestone":"宣称一个里程碑",
     "Build colony":"建设一个殖民地",
@@ -216,24 +217,25 @@
     "Greenery: 1 VP":"绿化版块：1VP",
     "Commercial District: 1 VP per adjacent city tile":"商业区：每临近一个城市1VP",
 
-    "New game": "新的游戏",
+    "New game": "新的征途",
     "Solo challenge": "单人模式挑战",
+    "How to Play": "查看规则",
     "Cards list": "卡牌列表",
-    "Board game": "桌游介绍",
+    "Board game": "作品介绍",
     "About us": "关于我们",
     "Whats new?": "版本更新内容",
     "Join us on Discord": "在Discord全球约玩",
 
     "OK":"确认",
     "Login": "登录",
+    "Login/Register": "登录/注册",
     "Register": "注册",
     "Go To Register": "前往注册",
-    "My Games": "我的对局",
+    "My Games": "我的记录",
     "Donate": "赞助火星",
     "LoginOut": "登出",
     "Help Translation": "帮助翻译",
     "Help": "操作指引",
-
 
     "Toggle all": "全部切换",
     "Base": "基础",
@@ -250,8 +252,6 @@
     "filter": "过滤器",
     "Filter description": "过滤叙述",
     "Sort by ID": "按编号排序",
-
-
 
      "Remove colony": "移除殖民地",
      "Select colony tile to remove":  "选择你想移除的殖民地",
@@ -301,7 +301,7 @@
     "Drafted Cards": "轮抽已选择的卡牌",
     "show": "看牌",
     "hide": "隐藏",
-    "Game log": "游戏记录",
+    "Game log": "记录",
 
 
     "All": "全选",
@@ -316,14 +316,14 @@
     "63 TR solo mode": "63 TR SOLO获胜模式",
     "Cards to exclude from the game": "游戏中禁用的卡牌",
     "Start typing the card name to exclude": "输入卡牌名称（英文）",
-    "Filter": "游戏过滤器",
+    "Filter": "过滤器",
     "TR Boost": "提升初始TR",
     "Player ${0} name": "输入玩家${0}名字",
-    "Multiplayer Options": "多人玩家游戏选项",
+    "Multiplayer Options": "多人玩家选项",
 
 
 
-     "Terraforming Mars - Game finished!": "殖民火星 - 游戏结束!",
+     "Terraforming Mars - Game finished!": "殖民火星 - 结束!",
      "Go to main page": "回到主页",
      "Victory points breakdown after ${0} generations": "${0} 回合获胜点数",
      "Player": "玩家",

@@ -9,14 +9,15 @@ import {SelectOption} from '../src/inputs/SelectOption';
 import {Resources} from '../src/common/Resources';
 import {TestPlayers} from './TestPlayers';
 import {SerializedPlayer} from '../src/SerializedPlayer';
-import {SerializedTimer} from '../src/SerializedTimer';
+import {SerializedTimer} from '../src/common/SerializedTimer';
+import {SerializedGame} from '../src/SerializedGame';
 import {Player} from '../src/Player';
 import {Color} from '../src/common/Color';
 import {VictoryPointsBreakdown} from '../src/VictoryPointsBreakdown';
 import {TharsisRepublic} from '../src/cards/corporation/TharsisRepublic';
 import {CardName} from '../src/common/cards/CardName';
 import {GlobalParameter} from '../src/common/GlobalParameter';
-import {TestingUtils} from './TestingUtils';
+import {formatLogMessage, setCustomGameOptions} from './TestingUtils';
 import {Units} from '../src/common/Units';
 import {SelfReplicatingRobots} from '../src/cards/promo/SelfReplicatingRobots';
 import {Pets} from '../src/cards/base/Pets';
@@ -95,7 +96,7 @@ describe('Player', function() {
     }).to.throw('Incorrect options provided');
     expect(function() {
       player.process([['foobar']]);
-    }).to.throw('Number not provided for amount');
+    }).to.throw('Amount is not a number');
     player.process([['1']]);
     expect(player.getProduction(Resources.HEAT)).to.eq(1);
     expect(player.getProduction(Resources.MEGACREDITS)).to.eq(1);
@@ -150,7 +151,7 @@ describe('Player', function() {
 
   it('wgt includes all parameters at the game start', () => {
     const player = TestPlayers.BLUE.newPlayer();
-    const gameOptions = TestingUtils.setCustomGameOptions({venusNextExtension: false});
+    const gameOptions = setCustomGameOptions({venusNextExtension: false});
     Game.newInstance('foobar', [player], player, gameOptions);
     player.worldGovernmentTerraforming();
     const parameters = waitingForGlobalParameters(player);
@@ -162,7 +163,7 @@ describe('Player', function() {
 
   it('wgt includes all parameters at the game start, with Venus', () => {
     const player = TestPlayers.BLUE.newPlayer();
-    const gameOptions = TestingUtils.setCustomGameOptions({venusNextExtension: true});
+    const gameOptions = setCustomGameOptions({venusNextExtension: true});
     Game.newInstance('foobar', [player], player, gameOptions);
     player.worldGovernmentTerraforming();
     const parameters = waitingForGlobalParameters(player);
@@ -175,7 +176,7 @@ describe('Player', function() {
 
   // it('wgt includes all parameters at the game start, with The Moon', () => {
   //   const player = TestPlayers.BLUE.newPlayer();
-  //   const gameOptions = TestingUtils.setCustomGameOptions({venusNextExtension: false, moonExpansion: true});
+  //   const gameOptions = setCustomGameOptions({venusNextExtension: false, moonExpansion: true});
   //   Game.newInstance('foobar', [player], player, gameOptions);
   //   player.worldGovernmentTerraforming();
   //   const parameters = waitingForGlobalParameters(player);
@@ -278,6 +279,8 @@ describe('Player', function() {
         afterFirstAction: false,
         lastStoppedAt: 0,
       } as SerializedTimer,
+      totalDelegatesPlaced: 0,
+      victoryPointsByGeneration: [],
       heatForTemperature: 0,
       undoing: false,
       exited: false, // 是否体退
@@ -288,7 +291,7 @@ describe('Player', function() {
       corp2InitialActionDone: false,
     };
 
-    const newPlayer = Player.deserialize(json as SerializedPlayer);
+    const newPlayer = Player.deserialize(json as SerializedPlayer, {generation: 1} as SerializedGame);
 
     expect(newPlayer.color).eq(Color.PURPLE);
     expect(newPlayer.tradesThisGeneration).eq(100);
@@ -732,7 +735,7 @@ describe('Player', function() {
 
     player.addResource(Resources.MEGACREDITS, 12, {log: true});
     const logEntry = log[0];
-    expect(TestingUtils.formatLogMessage(logEntry)).eq('blue\'s megacredits amount increased by 12');
+    expect(formatLogMessage(logEntry)).eq('blue\'s megacredits amount increased by 12');
   });
 
   it('addResource logging from player', () => {
@@ -745,7 +748,7 @@ describe('Player', function() {
 
     const log = game.gameLog;
     const logEntry = log[log.length - 1];
-    expect(TestingUtils.formatLogMessage(logEntry)).eq('blue\'s megacredits amount decreased by 5 by red');
+    expect(formatLogMessage(logEntry)).eq('blue\'s megacredits amount decreased by 5 by red');
   });
 
   it('addResource logging from global event', () => {
@@ -756,7 +759,7 @@ describe('Player', function() {
 
     const log = game.gameLog;
     const logEntry = log[log.length - 1];
-    expect(TestingUtils.formatLogMessage(logEntry)).eq('blue\'s megacredits amount increased by 12 by Asteroid Mining');
+    expect(formatLogMessage(logEntry)).eq('blue\'s megacredits amount increased by 12 by Asteroid Mining');
   });
 
   it('addResource logs error when deducting too much', () => {

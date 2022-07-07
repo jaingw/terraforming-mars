@@ -5,7 +5,7 @@ import {Card} from '../Card';
 import {CardName} from '../../common/cards/CardName';
 import {CardType} from '../../common/cards/CardType';
 import {EROS_CARD_MANIFEST} from '../../cards/eros/ErosCardManifest';
-import {DeferredAction} from '../../deferredActions/DeferredAction';
+import {SimpleDeferredAction} from '../../deferredActions/DeferredAction';
 import {DrawCards} from '../../deferredActions/DrawCards';
 
 export class MartianFencing extends Card implements IProjectCard {
@@ -39,7 +39,7 @@ export class MartianFencing extends Card implements IProjectCard {
       player.game.dealer.deck.splice(cardIndex, 1);
 
       // player.cardsInHand.push(drawnCard);
-      player.game.defer(new DeferredAction(player, () => DrawCards.choose(player, [drawnCard], {paying: true})));
+      player.game.defer(new SimpleDeferredAction(player, () => DrawCards.choose(player, [drawnCard], {paying: true})));
       player.game.cardDrew = true;
       player.game.log('${0} drew ${1}', (b) => b.player(player).card(drawnCard));
     }

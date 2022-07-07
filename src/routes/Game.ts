@@ -11,6 +11,7 @@ import {ServeAsset} from './ServeAsset';
 import {generateRandomId} from '../UserUtil';
 import {RandomMAOptionType} from '../common/ma/RandomMAOptionType';
 import {AgendaStyle} from '../common/turmoil/Types';
+import {NewGameConfig} from '../common/game/NewGameConfig';
 
 // Oh, this could be called Game, but that would introduce all kinds of issues.
 
@@ -22,13 +23,15 @@ export class GameHandler extends Handler {
     super();
   }
 
-  public static boardOptions(board: string) {
+  public static boardOptions(board: RandomBoardOption | BoardName): Array<BoardName> {
     const allBoards = Object.values(BoardName);
 
     if (board === RandomBoardOption.ALL) return allBoards;
     if (board === RandomBoardOption.OFFICIAL) {
       return allBoards.filter((name) => {
-        return name !== BoardName.ARABIA_TERRA && name !== BoardName.VASTITAS_BOREALIS;
+        return name === BoardName.ORIGINAL ||
+          name === BoardName.HELLAS ||
+          name === BoardName.ELYSIUM;
       });
     }
     return [board];
@@ -47,7 +50,7 @@ export class GameHandler extends Handler {
     });
     req.once('end', () => {
       try {
-        const gameReq = JSON.parse(body);
+        const gameReq: NewGameConfig = JSON.parse(body);
         const gameId = generateRandomId('g');
         const spectatorId = generateRandomId('s');
         const players = gameReq.players.map((obj: any) => {
@@ -140,6 +143,7 @@ export class GameHandler extends Handler {
             communityCardsOption: false,
             moonExpansion: false,
             politicalAgendasExtension: AgendaStyle.STANDARD,
+            pathfindersExpansion: false,
 
             shuffleMapOption: false,
             removeNegativeGlobalEventsOption: false,

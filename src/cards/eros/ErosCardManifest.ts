@@ -40,7 +40,7 @@ import {PlantSmuggling} from './PlantSmuggling';
 import {AntiGravityExperiment} from './AntiGravityExperiment';
 import {BorderCheckpoint} from './BorderCheckpoint';
 import {CardName} from '../../common/cards/CardName';
-import {GameModule} from '../../common/cards/GameModule';
+// import {GameModule} from '../../common/cards/GameModule';
 import {Prism} from '../../cards/eros/corp/Prism';
 import {HayMaker} from '../../cards/eros/HayMaker';
 import {MartianFencing} from '../../cards/eros/MartianFencing';
@@ -50,7 +50,7 @@ import {SithOrganizations} from '../../cards/eros/corp/SithOrganizations';
 
 
 export const EROS_CARD_MANIFEST = new CardManifest({
-  module: GameModule.Eros,
+  module: 'eros',
   projectCards: [
     // { cardName: CardName.COSMOS_LIBRARY, Factory: CosmosLibrary },
     // { cardName: CardName.EARTH_CIVIL_COURT, Factory: EarthCivilCourt },
@@ -59,12 +59,12 @@ export const EROS_CARD_MANIFEST = new CardManifest({
     // { cardName: CardName.CUTTING_EDGE_LAB, Factory: CuttingEdgeLab },
     {cardName: CardName.SOLAR_COSMIC_RAYS, Factory: SolarCosmicRays}, // Q01
     {cardName: CardName.LARGE_ECOLOGICAL_RESERVE, Factory: LargeEcologicalReserve}, // Q02
-    {cardName: CardName.INTERPLANETARY_ALLIANCE, Factory: InterplanetaryAlliance, compatibility: GameModule.Venus}, // Q03
+    {cardName: CardName.INTERPLANETARY_ALLIANCE, Factory: InterplanetaryAlliance, compatibility: 'venus'}, // Q03
     {cardName: CardName.CLONE_TECHNOLOGY, Factory: CloneTechnology}, // Q04
-    {cardName: CardName.SISTER_PLANET_SPONSORS, Factory: SisterPlanetSponsors, compatibility: GameModule.Venus}, // Q05
+    {cardName: CardName.SISTER_PLANET_SPONSORS, Factory: SisterPlanetSponsors, compatibility: 'venus'}, // Q05
     {cardName: CardName.MARS_HOT_SPRING, Factory: MarsHotSpring}, // Q06
     {cardName: CardName.STARCORE_MINING, Factory: StarCoreMining}, // Q07
-    {cardName: CardName.JOVIAN_EXPEDITION, Factory: JovianExpedition, compatibility: GameModule.Colonies}, // Q08
+    {cardName: CardName.JOVIAN_EXPEDITION, Factory: JovianExpedition, compatibility: 'colonies'}, // Q08
     {cardName: CardName.RESPIRATION_ENHANCE, Factory: RespirationEnhance}, // Q10
     {cardName: CardName.WASTE_INCINERATOR, Factory: WasteIncinerator}, // Q11
     {cardName: CardName.HYDROTHERMAL_VENT_ARCHAEA, Factory: HydrothermalVentArchaea}, // Q12
@@ -75,12 +75,12 @@ export const EROS_CARD_MANIFEST = new CardManifest({
     {cardName: CardName.FALL_OF_SUNRISE, Factory: FallOfSunrise}, // Q17
     {cardName: CardName.ENERGY_SUPPLY, Factory: EnergySupply}, // Q18
     // {cardName: CardName.STARCORE_PLUNDER, Factory: StarcorePlunder},
-    {cardName: CardName.EM_DRIVE, Factory: EMDrive, compatibility: [GameModule.Colonies, GameModule.Turmoil]}, // Q19
+    {cardName: CardName.EM_DRIVE, Factory: EMDrive, compatibility: ['colonies', 'turmoil']}, // Q19
     {cardName: CardName.COMMUNITY_WORKER, Factory: CommunityWorker}, // Q20
-    {cardName: CardName.VENUS_UNIVERSITY, Factory: VenusUniversity, compatibility: [GameModule.Venus]},
-    {cardName: CardName.FLEET_RECYCLING, Factory: FleetRecycling, compatibility: [GameModule.Colonies]},
+    {cardName: CardName.VENUS_UNIVERSITY, Factory: VenusUniversity, compatibility: ['venus']},
+    {cardName: CardName.FLEET_RECYCLING, Factory: FleetRecycling, compatibility: ['colonies']},
     // {cardName: CardName.SQUID_GAME, Factory: SquidGame},
-    {cardName: CardName.PLANT_SMUGGLING, Factory: PlantSmuggling, compatibility: [GameModule.Colonies]},
+    {cardName: CardName.PLANT_SMUGGLING, Factory: PlantSmuggling, compatibility: ['colonies']},
     {cardName: CardName.ANTI_GRAVITY_EXPERIMENT, Factory: AntiGravityExperiment},
     {cardName: CardName.BORDER_CHECKPOINT, Factory: BorderCheckpoint},
     {cardName: CardName.HAY_MAKER, Factory: HayMaker},
@@ -92,15 +92,15 @@ export const EROS_CARD_MANIFEST = new CardManifest({
     {cardName: CardName.CHAOS, Factory: Chaos}, // Q21
     // {cardName: CardName.WG_PARTERNSHIP, Factory: WGParternship}, // Q22
     {cardName: CardName.IDO_FRONT, Factory: IdoFront}, // Q23
-    {cardName: CardName.INCITE_ENDER, Factory: InciteEnder, compatibility: GameModule.Turmoil}, // Q24
-    {cardName: CardName.TRADE_NAVIGATOR, Factory: TradeNavigator, compatibility: GameModule.Colonies}, // Q25
-    {cardName: CardName.BROTHERHOOD_OF_MUTANTS, Factory: BrotherhoodOfMutants, compatibility: GameModule.Turmoil}, // Q26
+    {cardName: CardName.INCITE_ENDER, Factory: InciteEnder, compatibility: 'turmoil'}, // Q24
+    {cardName: CardName.TRADE_NAVIGATOR, Factory: TradeNavigator, compatibility: 'colonies'}, // Q25
+    {cardName: CardName.BROTHERHOOD_OF_MUTANTS, Factory: BrotherhoodOfMutants, compatibility: 'turmoil'}, // Q26
     {cardName: CardName.VOID, Factory: Void}, // Q27
     {cardName: CardName.TEIAI_GROUP, Factory: TeiaiGroup},
     {cardName: CardName.PRISM, Factory: Prism},
-    {cardName: CardName.MILLENNIUM_FALCON, Factory: MillenniumFalcon, compatibility: GameModule.Colonies},
-    {cardName: CardName.IMPERIAL_STAR_DESTROYER, Factory: ImperialStarDestroyer, compatibility: GameModule.Colonies},
-    {cardName: CardName.SITH_ORGANIZATIONS, Factory: SithOrganizations, compatibility: GameModule.Turmoil},
+    {cardName: CardName.MILLENNIUM_FALCON, Factory: MillenniumFalcon, compatibility: ['colonies']},
+    {cardName: CardName.IMPERIAL_STAR_DESTROYER, Factory: ImperialStarDestroyer, compatibility: ['colonies']},
+    {cardName: CardName.SITH_ORGANIZATIONS, Factory: SithOrganizations, compatibility: ['turmoil']},
 
 
   ],

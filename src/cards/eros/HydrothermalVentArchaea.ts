@@ -7,7 +7,7 @@ import {Card} from '../Card';
 import {CardName} from '../../common/cards/CardName';
 import {CardType} from '../../common/cards/CardType';
 import {Tags} from '../../common/cards/Tags';
-import {ResourceType} from '../../common/ResourceType';
+import {CardResource} from '../../common/CardResource';
 
 export class HydrothermalVentArchaea extends Card implements IProjectCard, IResourceCard {
   constructor() {
@@ -16,7 +16,7 @@ export class HydrothermalVentArchaea extends Card implements IProjectCard, IReso
       name: CardName.HYDROTHERMAL_VENT_ARCHAEA,
       tags: [Tags.MICROBE],
       cost: 8,
-      resourceType: ResourceType.MICROBE,
+      resourceType: CardResource.MICROBE,
       victoryPoints: VictoryPoints.resource(1, 2),
       requirements: CardRequirements.builder((b) => b.oceans(3)),
       metadata: {

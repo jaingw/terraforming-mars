@@ -28,7 +28,7 @@ export class AntiGravityExperiment extends Card implements IProjectCard {
 
   public isDisabled = false;
 
-  public getCardDiscount() {
+  public override getCardDiscount() {
     if (this.isDisabled) return 0;
     return 2;
   }

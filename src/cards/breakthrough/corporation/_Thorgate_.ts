@@ -37,7 +37,7 @@ export class _Thorgate_ extends Card implements ICorporationCard {
   }
 
 
-  public getCardDiscount(_player: Player, card: IProjectCard) {
+  public override getCardDiscount(_player: Player, card: IProjectCard) {
     if (card.tags.includes(Tags.ENERGY)) {
       return 3;
     }

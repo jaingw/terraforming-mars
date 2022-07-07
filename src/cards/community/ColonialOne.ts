@@ -2,7 +2,7 @@ import {Player} from '../../Player';
 import {OrOptions} from '../../inputs/OrOptions';
 import {SelectColony} from '../../inputs/SelectColony';
 import {SelectOption} from '../../inputs/SelectOption';
-import {DeferredAction} from '../../deferredActions/DeferredAction';
+import {SimpleDeferredAction} from '../../deferredActions/DeferredAction';
 import {Card} from '../Card';
 import {CardRenderer} from '../render/CardRenderer';
 import {CardName} from '../../common/cards/CardName';
@@ -10,9 +10,9 @@ import {CardType} from '../../common/cards/CardType';
 import {Size} from '../../common/cards/render/Size';
 import {Tags} from '../../common/cards/Tags';
 import {MAX_COLONY_TRACK_POSITION} from '../../common/constants';
-import {ResourceType} from '../../common/ResourceType';
 import {ICorporationCard} from '../corporation/ICorporationCard';
-import {IColony} from '@/colonies/IColony';
+import {IColony} from '../../colonies/IColony';
+import {CardResource} from '../../common/CardResource';
 
 export class ColonialOne extends Card implements ICorporationCard {
   constructor() {
@@ -21,7 +21,7 @@ export class ColonialOne extends Card implements ICorporationCard {
       name: CardName.COLONIAL_ONE,
       tags: [Tags.SPACE],
       startingMegaCredits: 35,
-      resourceType: ResourceType.FIGHTER,
+      resourceType: CardResource.FIGHTER,
 
       metadata: {
         cardNumber: 'R42',
@@ -57,18 +57,18 @@ export class ColonialOne extends Card implements ICorporationCard {
 
   public action(player: Player) {
     const game = player.game;
-    if (game.colonyDealer === undefined) return undefined;
+    if (game.gameOptions.coloniesExtension === false) return undefined;
 
     const opts: Array<SelectOption> = [];
     const activeColonies = game.colonies.filter((colony) => colony.isActive);
     const openColonies = activeColonies.filter((colony) => colony.visitor === undefined);
 
     const moveColonyTrack = new SelectOption('Increase or decrease a colony tile track', 'Select colony', () => {
-      game.defer(new DeferredAction(
+      game.defer(new SimpleDeferredAction(
         player,
         () => new SelectColony('Select colony tile to increase or decrease track', 'Select', activeColonies, (colony: IColony) => {
           if (activeColonies.includes(colony)) {
-            game.defer(new DeferredAction(player, () => new OrOptions(
+            game.defer(new SimpleDeferredAction(player, () => new OrOptions(
               new SelectOption('Increase track for ' + colony.name, 'Increase', () => {
                 if (colony.trackPosition < MAX_COLONY_TRACK_POSITION) {
                   colony.increaseTrack();
@@ -95,7 +95,7 @@ export class ColonialOne extends Card implements ICorporationCard {
     });
 
     const spendResource = new SelectOption('Spend 1 fighter resource on this card to trade for free', 'Spend resource', () => {
-      game.defer(new DeferredAction(
+      game.defer(new SimpleDeferredAction(
         player,
         () => new SelectColony('Select colony to trade with for free', 'Select', openColonies, (colony: IColony) => {
           if (openColonies.includes(colony)) {

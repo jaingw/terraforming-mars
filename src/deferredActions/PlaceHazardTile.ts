@@ -7,14 +7,15 @@ import {_AresHazardPlacement} from '../ares/AresHazards';
 import {LogHelper} from '../LogHelper';
 import {TileType} from '../common/TileType';
 
-export class PlaceHazardTile implements DeferredAction {
-  public priority = Priority.DEFAULT;
+export class PlaceHazardTile extends DeferredAction {
   constructor(
-        public player: Player,
-        public game: Game,
-        public title: string = 'Select space for hazard tile',
-        public spaces: Array<ISpace> = [],
-  ) {}
+    player: Player,
+    public game: Game,
+    public title: string = 'Select space for hazard tile',
+    public spaces: Array<ISpace> = [],
+  ) {
+    super(player, Priority.DEFAULT);
+  }
 
   public execute() {
     if (this.spaces.length === 0) {

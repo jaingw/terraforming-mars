@@ -3,7 +3,7 @@ import {CardRenderer} from '../../render/CardRenderer';
 import {Game} from '../../../Game';
 import {SelectAmount} from '../../../inputs/SelectAmount';
 import {AndOptions} from '../../../inputs/AndOptions';
-import {DeferredAction} from '../../../deferredActions/DeferredAction';
+import {SimpleDeferredAction} from '../../../deferredActions/DeferredAction';
 import {Card} from '../../Card';
 import {played} from '../../Options';
 import {CardName} from '../../../common/cards/CardName';
@@ -59,9 +59,9 @@ export class Chaos extends Card implements ICorporationCard {
     let playerTags : ITagCount[] = player.getAllTags();
     const game = player.game;
     if (game.isSoloMode() || game.getPlayers().length ===1 ) {
-      bonus = player.getDistinctTagCount(false);
+      bonus = player.getDistinctTagCount('globalEvent');
     } else {
-      playerTags = playerTags.filter((tag) => tag.tag !== Tags.WILDCARD && tag.tag !== Tags.EVENT);
+      playerTags = playerTags.filter((tag) => tag.tag !== Tags.WILD && tag.tag !== Tags.EVENT);
       // 遍历每个玩家，再遍历每个我已打出的标志，过滤其他玩家标志数量大于自己的标志
       game.getPlayers().forEach((other) => {
         if (other === player ) {
@@ -134,7 +134,7 @@ export class Chaos extends Card implements ICorporationCard {
         return undefined;
       }, selectMegacredit, selectSteel, selectTitanium, selectPlants, selectEnergy, selectHeat);
     selectResources.title = 'Chaos effect: select ' + resourceCount + ' resource(s)';
-    game.defer(new DeferredAction(
+    game.defer(new SimpleDeferredAction(
       player,
       () => selectResources,
     ));

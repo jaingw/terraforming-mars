@@ -7,12 +7,15 @@ require('console-stamp')(
 import * as https from 'https';
 import * as http from 'http';
 import * as fs from 'fs';
+import * as raw_settings from './genfiles/settings.json';
 
 import {ApiCloneableGame} from './routes/ApiCloneableGame';
 import {ApiGameLogs} from './routes/ApiGameLogs';
 import {ApiGames} from './routes/ApiGames';
 import {ApiGame} from './routes/ApiGame';
+import {ApiGameHistory} from './routes/ApiGameHistory';
 import {ApiPlayer} from './routes/ApiPlayer';
+import {ApiStats} from './routes/ApiStats';
 import {ApiSpectator} from './routes/ApiSpectator';
 import {ApiWaitingFor} from './routes/ApiWaitingFor';
 import {GameHandler} from './routes/Game';
@@ -41,9 +44,11 @@ const handlers: Map<string, IHandler> = new Map(
     ['/', ServeApp.INSTANCE],
     ['/api/cloneablegame', ApiCloneableGame.INSTANCE],
     ['/api/game', ApiGame.INSTANCE],
+    ['/api/game/history', ApiGameHistory.INSTANCE],
     ['/api/game/logs', ApiGameLogs.INSTANCE],
     ['/api/games', ApiGames.INSTANCE],
     ['/api/player', ApiPlayer.INSTANCE],
+    ['/api/stats', ApiStats.INSTANCE],
     ['/api/spectator', ApiSpectator.INSTANCE],
     ['/api/waitingfor', ApiWaitingFor.INSTANCE],
     ['/cards', ServeApp.INSTANCE],
@@ -59,7 +64,6 @@ const handlers: Map<string, IHandler> = new Map(
     ['/new-game', ServeApp.INSTANCE],
     ['/player', ServeApp.INSTANCE],
     ['/player/input', PlayerInput.INSTANCE],
-    ['/solo', ServeApp.INSTANCE],
     ['/spectator', ServeApp.INSTANCE],
     ['/styles.css', ServeAsset.INSTANCE],
     ['/sw.js', ServeAsset.INSTANCE],
@@ -101,7 +105,7 @@ function processRequest(req: http.IncomingMessage, res: http.ServerResponse): vo
       UserManager.apiGetMyGames(req, res);
       break;
     case '/api/isvip':
-      UserManager.isvip(req, res);
+      UserManager.isvip(req, res, ctx);
       break;
     default:
       if (url.pathname.startsWith('/assets/')) {
@@ -172,6 +176,8 @@ if (process.env.KEY_PATH && process.env.CERT_PATH) {
 }
 
 GameLoader.getInstance().start(() => {
+  console.log(`Starting ${raw_settings.head}, built at ${raw_settings.builtAt}`);
+
   console.log('Starting server on port ' + (process.env.PORT || 8081));
 
   console.log('version 0.X');
@@ -182,3 +188,4 @@ GameLoader.getInstance().start(() => {
   console.log('* Overview of existing games: /games-overview?serverId=' + serverId);
   console.log('* API for game IDs: /api/games?serverId=' + serverId + '\n');
 });
+

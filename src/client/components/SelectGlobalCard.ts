@@ -12,7 +12,7 @@ import {PartyName} from '@/common/turmoil/PartyName';
 import {GlobalEventName} from '@/common/turmoil/globalEvents/GlobalEventName';
 import {GlobalEventModel} from '@/common/models/TurmoilModel';
 import {getGlobalEventByName} from '../../turmoil/globalEvents/GlobalEventDealer';
-import GlobalEvent from './GlobalEvent.vue';
+import GlobalEvent from './turmoil/GlobalEvent.vue';
 
 interface SelectCardModel {
   cards: VueModelRadio<CardModel> | VueModelCheckbox<Array<CardModel>>;

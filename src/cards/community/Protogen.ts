@@ -5,7 +5,7 @@ import {Player} from '../../Player';
 import {CardName} from '../../common/cards/CardName';
 import {CardType} from '../../common/cards/CardType';
 import {CardRenderer} from '../render/CardRenderer';
-import {ResourceType} from '../../common/ResourceType';
+import {CardResource} from '../../common/CardResource';
 import {ICard} from '../../cards/ICard';
 
 export class Protogen extends Card implements ICorporationCard {
@@ -42,7 +42,7 @@ export class Protogen extends Card implements ICorporationCard {
     return undefined;
   }
   public onResourceAdded(player: Player, card: ICard) {
-    if (card.resourceType === ResourceType.MICROBE) {
+    if (card.resourceType === CardResource.MICROBE) {
       player.heat += 2;
     }
   }

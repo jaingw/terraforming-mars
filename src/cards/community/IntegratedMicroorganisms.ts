@@ -6,7 +6,7 @@ import {CardName} from '../../common/cards/CardName';
 import {CardType} from '../../common/cards/CardType';
 import {CardRenderer} from '../render/CardRenderer';
 import {IProjectCard} from '../../cards/IProjectCard';
-import {DeferredAction} from '../../deferredActions/DeferredAction';
+import {SimpleDeferredAction} from '../../deferredActions/DeferredAction';
 import {OrOptions} from '../../inputs/OrOptions';
 import {SelectCard} from '../../inputs/SelectCard';
 import {SelectOption} from '../../inputs/SelectOption';
@@ -53,7 +53,7 @@ export class IntegratedMicroorganisms extends Card implements ICorporationCard {
   private effectResolve(player: Player, card: IProjectCard) {
     const microbeTags = player.cardTagCount(card, Tags.MICROBE);
     for (let i = 0; i < microbeTags; i++) {
-      player.game.defer(new DeferredAction(
+      player.game.defer(new SimpleDeferredAction(
         player,
         () => {
           // No card to discard

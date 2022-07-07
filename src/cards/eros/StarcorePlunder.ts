@@ -5,7 +5,6 @@ import {digit} from '../Options';
 import {Card} from '../Card';
 import {CardName} from '../../common/cards/CardName';
 import {CardType} from '../../common/cards/CardType';
-import {ICardMetadata} from '../../common/cards/ICardMetadata';
 import {Tags} from '../../common/cards/Tags';
 import {Resources} from '../../common/Resources';
 
@@ -16,6 +15,16 @@ export class StarcorePlunder extends Card implements IProjectCard {
       name: CardName.STARCORE_PLUNDER,
       tags: [Tags.PLANT, Tags.ENERGY, Tags.SPACE, Tags.BUILDING],
       cost: 60,
+      metadata: {
+        cardNumber: 'Q07',
+        renderData: CardRenderer.builder((b) => {
+          b.production((pb) => {
+            pb.megacredits(3).nbsp.steel(3, {digit}).nbsp.titanium(3, {digit}).br;
+            pb.plants(3, {digit}).nbsp.energy(3, {digit}).nbsp.heat(3, {digit});
+          });
+        }),
+        description: 'Increase all production 3 steps.Decrease all production 2 steps(as low as 0) after being played 3 gens later.Can\'t be copied by other cards.Can\'t be played before Gen 3.',
+      },
     });
   }
 
@@ -58,19 +67,6 @@ export class StarcorePlunder extends Card implements IProjectCard {
       b.player(player),
     );
     return undefined;
-  }
-
-  public override get metadata(): ICardMetadata {
-    return {
-      cardNumber: 'Q07',
-      renderData: CardRenderer.builder((b) => {
-        b.production((pb) => {
-          pb.megacredits(3).nbsp.steel(3, {digit}).nbsp.titanium(3, {digit}).br;
-          pb.plants(3, {digit}).nbsp.energy(3, {digit}).nbsp.heat(3, {digit});
-        });
-      }),
-      description: 'Increase all production 3 steps.Decrease all production 2 steps(as low as 0) after being played 3 gens later.Can\'t be copied by other cards.Can\'t be played before Gen 3.',
-    };
   }
 }
 

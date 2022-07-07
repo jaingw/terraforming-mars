@@ -1,42 +1,43 @@
 import * as http from 'http';
-import {Game} from '../Game';
-import {Handler} from './Handler';
+import {AsyncHandler} from './Handler';
 import {IContext} from './IHandler';
 import {Server} from '../models/ServerModel';
-import * as querystring from 'querystring';
 import {GameLoader} from '../database/GameLoader';
+import {Game} from '../Game';
 
-export class ApiGame extends Handler {
+export class ApiGame extends AsyncHandler {
   public static readonly INSTANCE = new ApiGame();
   private constructor() {
     super();
   }
 
-  public override get(req: http.IncomingMessage, res: http.ServerResponse, ctx: IContext): void {
+  public override async get(req: http.IncomingMessage, res: http.ServerResponse, ctx: IContext): Promise<void> {
     if (req.url === undefined) {
       console.warn('url not defined');
       ctx.route.notFound(req, res, 'url not defined');
       return;
     }
 
-    const qs: string = req.url!.substring('/api/game?'.length);
-    const queryParams = querystring.parse(qs);
-    const gameId = (queryParams as any)['id'];
-    const userId = (queryParams as any)['userId'];
+    const gameId = ctx.url.searchParams.get('id');
+    const userId = ctx.url.searchParams.get('userId') || '';
 
     if (!gameId) {
       ctx.route.notFound(req, res, 'id parameter missing');
       return;
     }
-    GameLoader.getInstance().getGameById(gameId, (game: Game | undefined) => {
-      if (game === undefined) {
-        console.warn('game not found ' + gameId);
-        ctx.route.notFound(req, res, 'game not found');
-        return;
-      }
+    return new Promise((resolve) => {
+      GameLoader.getInstance().getGameById(gameId, (game: Game | undefined) => {
+        if (game === undefined) {
+          console.warn('game not found ' + gameId);
+          ctx.route.notFound(req, res, 'game not found');
+          resolve();
+          return;
+        }
 
-      const model = Server.getSimpleGameModel(game, userId);
-      ctx.route.writeJson(res, model);
+        const model = Server.getSimpleGameModel(game, userId);
+        ctx.route.writeJson(res, model);
+        resolve();
+      });
     });
   }
 }
