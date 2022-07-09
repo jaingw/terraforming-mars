@@ -221,6 +221,9 @@
     <template v-else-if="title ===  CardName.SITH_ORGANIZATIONS">
       <div class="card-sith-logo"></div>
     </template>
+    <template v-else-if="title ===  CardName.RUNCITER_ASSOCIATES">
+      <div class="card-runciter-associates-logo"></div>
+    </template>
     <template v-else>
       <div :class="logoClass">{{capsTitle}}</div>
     </template>

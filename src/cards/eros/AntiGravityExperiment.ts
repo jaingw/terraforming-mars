@@ -26,13 +26,17 @@ export class AntiGravityExperiment extends Card implements IProjectCard {
     });
   }
 
-  public isDisabled = false;
+  public isDisabled = true;
 
   public override getCardDiscount() {
     if (this.isDisabled) return 0;
     return 2;
   }
   public play() {
+    this.isDisabled = false;
     return undefined;
+  }
+  public onCardPlayed() {
+    console.log(this.isDisabled);
   }
 }

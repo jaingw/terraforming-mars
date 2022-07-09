@@ -47,6 +47,7 @@ import {MartianFencing} from '../../cards/eros/MartianFencing';
 import {MillenniumFalcon} from '../../cards/eros/corp/MillenniumFalcon';
 import {ImperialStarDestroyer} from '../../cards/eros/corp/ImperialStarDestroyer';
 import {SithOrganizations} from '../../cards/eros/corp/SithOrganizations';
+import {RunciterAssociates} from '../../cards/eros/corp/RunciterAssociates';
 
 
 export const EROS_CARD_MANIFEST = new CardManifest({
@@ -101,6 +102,7 @@ export const EROS_CARD_MANIFEST = new CardManifest({
     {cardName: CardName.MILLENNIUM_FALCON, Factory: MillenniumFalcon, compatibility: ['colonies']},
     {cardName: CardName.IMPERIAL_STAR_DESTROYER, Factory: ImperialStarDestroyer, compatibility: ['colonies']},
     {cardName: CardName.SITH_ORGANIZATIONS, Factory: SithOrganizations, compatibility: ['turmoil']},
+    {cardName: CardName.RUNCITER_ASSOCIATES, Factory: RunciterAssociates},
 
 
   ],

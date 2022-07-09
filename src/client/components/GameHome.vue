@@ -112,6 +112,23 @@ export default Vue.extend({
     isPlayerUrlCopied(playerId: string): boolean {
       return playerId === this.urlCopiedPlayerId;
     },
+    gameback: function() {
+      const dataToSend = JSON.stringify({id: this.getGameId(), userId: this.userId});
+
+      const onSucces = (response: any) => {
+        if (!response.ok) {
+          response.text().then((msg: string) =>{
+            alert(msg);
+          });
+        } else {
+          window.location.href = '/game?id='+this.getGameId();
+        }
+      };
+
+      fetch('/api/gameback', {'method': 'POST', 'body': dataToSend, 'headers': {'Content-Type': 'application/json'}})
+        .then(onSucces)
+        .catch((_) => alert('Unexpected server response'));
+    },
   },
 
 

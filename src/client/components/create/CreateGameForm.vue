@@ -9,7 +9,7 @@
             </div>
             <div class="create-game-discord-invite" >
                 <span v-i18n> bug: 反重力先行试验持续生效 - 显示bug，应该已经修复，不确定 </span><br>
-                <span v-i18n> bug: 火星击剑允许撤回 - 已修复 </span><br>
+                <span v-i18n> bug: 回退无法使用 - 可以使用了，但是在回退界面不会有反应，不要一次点击多下 </span><br>
             </div>
             <div class="create-game-form create-game-panel create-game--block">
 

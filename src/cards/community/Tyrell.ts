@@ -81,13 +81,13 @@ export class Tyrell extends Card implements ICard, ICorporationCard {
     }
     player.game.defer(new DiscardCards(player), Priority.DISCARD_BEFORE_DRAW);
     return new SelectCard(
-      'Perform again an action from a  card',
+      'Perform again an action from a card',
       'Take action',
       this.getActionCards(player),
       (foundCards: Array<ICard>) => {
         const foundCard = foundCards[0];
         player.game.log('${0} copy ${1} action with ${2}', (b) => b.player(player).card(foundCard).card(this));
-        return foundCard.action!(player);
+        return foundCard.action?.(player);
       },
     );
   }
