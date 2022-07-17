@@ -144,7 +144,9 @@
 
     "Effect: Your delegates count as neutral delegates. If neutral delegate becomes chairman, you can decide: let all other player lose 1 TR, or ignore their ruling bonus." : "效果：所有场上的中立代表均视为你的代表。当你执政时，你不获得TR，改为选择：让其它玩家失去1TR, 或者让其它玩家忽略本时代的执政奖励。",
 
-    "Action: Discard a card. For each tag it has, draw a card with the same tag." : "行动：弃一张牌。该牌上每有一个标记，你抽一张对应标记的卡牌。"
+    "Action: Discard a card. For each tag it has, draw a card with the same tag." : "行动：弃一张牌。该牌上每有一个标记，你抽一张对应标记的卡牌。",
+
+    "Action: Decrease 1 production (not MC), and Increase 1 production." : "行动：降低一点产能，不能是钱产。提升一点任意产能。"
 
 
 }

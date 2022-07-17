@@ -23,7 +23,7 @@ export class RunciterAssociates extends Card implements ICard, ICorporationCard 
         cardNumber: 'Q30',
         description: '',
         renderData: CardRenderer.builder((b) => {
-          b.br.br;
+          b.br.br.br.br;
           b.megacredits(38).br;
           b.text('(You start with 38 MC.)', Size.TINY, false, false);
           b.corpBox('action', (ce) => {
@@ -56,7 +56,7 @@ export class RunciterAssociates extends Card implements ICard, ICorporationCard 
           player.game.log('${0} discard ${1}.', (b) => {
             b.player(player).card(card);
           });
-          card.tags.filter((tag) => tag !== Tags.EVENT).forEach((tag) => {
+          card.tags.filter((tag) => tag !== Tags.EVENT && tag !== Tags.WILD).forEach((tag) => {
             player.drawCard(1, {tag: tag});
           },
           );

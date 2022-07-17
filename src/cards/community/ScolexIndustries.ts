@@ -18,16 +18,16 @@ export class ScolexIndustries extends Card implements IActionCard, ICorporationC
       cardType: CardType.CORPORATION,
       name: CardName.SCOLEX_INDUSTRIES,
       tags: [Tags.PLANT, Tags.ENERGY],
-      startingMegaCredits: 40,
+      startingMegaCredits: 45,
 
       metadata: {
         cardNumber: 'XUEBAO5',
-        description: 'You start with 1 steel, titanium, plant and energy production, and 40 M€.',
+        description: 'You start with 1 steel, titanium, plant and energy production, and 45 M€.',
         renderData: CardRenderer.builder((b) => {
           b.br.br.br;
-          b.production((pb) => pb.steel(1).titanium(1).plants(1).energy(1)).megacredits(40);
+          b.production((pb) => pb.steel(1).titanium(1).plants(1).energy(1)).megacredits(45);
           b.corpBox('action', (ce) => {
-            ce.action('Decrease 1 production, and Increase 1 production', (eb) => {
+            ce.action('Decrease 1 production (not MC), and Increase 1 production.', (eb) => {
               eb.minus(Size.SMALL).production((eb) => eb.wild(1)).startAction.plus(Size.SMALL).production((eb) => eb.wild(1));
             });
           });
@@ -45,7 +45,7 @@ export class ScolexIndustries extends Card implements IActionCard, ICorporationC
   }
 
   public canAct(player: Player): boolean {
-    return player.getProduction(Resources.MEGACREDITS) >= -5 || player.getProduction(Resources.STEEL) >= 1 ||
+    return player.getProduction(Resources.STEEL) >= 1 ||
     player.getProduction(Resources.TITANIUM) >= 1 || player.getProduction(Resources.PLANTS) >= 1 ||
       player.getProduction(Resources.ENERGY) >= 1 || player.getProduction(Resources.HEAT) >= 1;
   }
@@ -75,12 +75,6 @@ export class ScolexIndustries extends Card implements IActionCard, ICorporationC
 
     const options: Array<SelectOption> = [];
 
-    const reduceMegacredits = new SelectOption('Decrease M€ production', 'Decrease production', () => {
-      player.addProduction(Resources.MEGACREDITS, -1);
-      this.log(player, 'megacredit');
-      this.increaseSelectedProduction(player);
-      return undefined;
-    });
 
     const reduceSteel = new SelectOption('Decrease steel production', 'Decrease production', () => {
       player.addProduction(Resources.STEEL, -1);
@@ -121,9 +115,7 @@ export class ScolexIndustries extends Card implements IActionCard, ICorporationC
       return undefined;
     });
 
-    if (player.getProduction(Resources.MEGACREDITS) > -5) {
-      options.push(reduceMegacredits);
-    }
+
     if (player.getProduction(Resources.STEEL) > 0) {
       options.push(reduceSteel);
     }
