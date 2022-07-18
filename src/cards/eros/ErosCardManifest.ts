@@ -48,6 +48,7 @@ import {MillenniumFalcon} from '../../cards/eros/corp/MillenniumFalcon';
 import {ImperialStarDestroyer} from '../../cards/eros/corp/ImperialStarDestroyer';
 import {SithOrganizations} from '../../cards/eros/corp/SithOrganizations';
 import {RunciterAssociates} from '../../cards/eros/corp/RunciterAssociates';
+import {JovianDefenseDepartment} from '../../cards/eros/JovianDefenseDepartment';
 
 
 export const EROS_CARD_MANIFEST = new CardManifest({
@@ -86,6 +87,7 @@ export const EROS_CARD_MANIFEST = new CardManifest({
     {cardName: CardName.BORDER_CHECKPOINT, Factory: BorderCheckpoint},
     {cardName: CardName.HAY_MAKER, Factory: HayMaker},
     {cardName: CardName.MARTIAN_FENCING, Factory: MartianFencing},
+    {cardName: CardName.JOVIAN_DEFENSE_DEPARTMENT, Factory: JovianDefenseDepartment},
 
 
   ],
