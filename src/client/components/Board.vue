@@ -21,6 +21,7 @@
               <board-space :space="getSpaceById('76')" text="Dyson Screens"></board-space>
               <board-space :space="getSpaceById('77')" text="Lunar Embassy"></board-space>
               <board-space :space="getSpaceById('78')" text="Venera Base"></board-space>
+              <board-space :space="getSpaceById('80')" text="Trantor"></board-space>
             </template>
         </div>
 

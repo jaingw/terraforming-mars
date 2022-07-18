@@ -35,6 +35,9 @@ export enum SpaceName {
     VENERA_BASE = '78',
     // MARTIAN_TRANSHIPMENT_STATION = '79',
 
+    // Eros
+    TRANTOR = '80',
+
     // Amazonis
     MEDUSAE_FOSSAE = '33',
     ALBOR_THOLUS = '09',

@@ -65,6 +65,7 @@ export class BoardBuilder {
     }
 
     this.spaces.push(Space.colony(SpaceName.STANFORD_TORUS));
+    this.spaces.push(Space.colony(SpaceName.TRANTOR));
     if (this.includeVenus) {
       this.spaces.push(
         Space.colony(SpaceName.DAWN_CITY),
