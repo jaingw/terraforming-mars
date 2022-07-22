@@ -18,7 +18,7 @@ export class AntiGravityExperiment extends Card implements IProjectCard {
       // cardDiscount: {amount: 2}, //避免显示bug
       metadata: {
         description: 'Requires 6 science tags.',
-        cardNumber: 'Q35',
+        cardNumber: 'Q37',
         renderData: CardRenderer.builder((b) => {
           b.effect('For this generation, when you play a card, you pay 2 MC less for it.', (be) => be.empty().startEffect.megacredits(-2));
         }),

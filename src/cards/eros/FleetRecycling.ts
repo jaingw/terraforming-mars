@@ -15,7 +15,7 @@ export class FleetRecycling extends Card implements IProjectCard {
       cost: 10,
 
       metadata: {
-        cardNumber: 'Q32',
+        cardNumber: 'Q35',
         renderData: CardRenderer.builder((b) => {
           b.text('-1').tradeFleet().br;
           b.text('4').steel(1).text('4').titanium(1);

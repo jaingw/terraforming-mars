@@ -23,7 +23,7 @@ export class HayMaker extends Card implements IProjectCard {
       cost: 8,
 
       metadata: {
-        cardNumber: 'Q41',
+        cardNumber: 'Q039',
         renderData: CardRenderer.builder((b) => {
           b.minus().greenery().asterix().br;
           b.resourceCube().heat(12, {digit}).br;

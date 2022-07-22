@@ -17,7 +17,7 @@ export class MartianFencing extends Card implements IProjectCard {
       cost: 0,
 
       metadata: {
-        cardNumber: 'Q42',
+        cardNumber: 'Q040',
         renderData: CardRenderer.builder((b) => b.text('1 群友').cards(1)),
         description: 'Find one Eros card. Choose to buy it or not.',
       },

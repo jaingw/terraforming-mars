@@ -21,7 +21,7 @@ export class BorderCheckpoint extends Card implements IProjectCard {
       cost: 18,
 
       metadata: {
-        cardNumber: 'Q36',
+        cardNumber: 'Q38',
         renderData: CardRenderer.builder((b) => {
           b.action('Draw a card from discard pile.', (eb) => {
             eb.empty().startAction.cards(1).asterix();

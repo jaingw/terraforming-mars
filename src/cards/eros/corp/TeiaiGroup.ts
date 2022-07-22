@@ -21,7 +21,7 @@ export class TeiaiGroup extends Card implements ICard, ICorporationCard {
       cardType: CardType.CORPORATION,
 
       metadata: {
-        cardNumber: 'Q30',
+        cardNumber: 'Q028',
         description: '',
         renderData: CardRenderer.builder((b) => {
           b.br.br.br;

@@ -16,12 +16,12 @@ export class JovianDefenseDepartment extends Card implements IResourceCard {
       name: CardName.JOVIAN_DEFENSE_DEPARTMENT,
       cardType: CardType.ACTIVE,
       tags: [Tags.JOVIAN],
-      cost: 16,
+      cost: 14,
       resourceType: CardResource.ASTEROID,
       victoryPoints: VictoryPoints.resource(1, 1),
 
       metadata: {
-        cardNumber: 'Q43',
+        cardNumber: 'Q41',
         renderData: CardRenderer.builder((b) => {
           b.effect('When you play a Jovian tag, including this, add 1 Asteroid to this card.', (eb)=> {
             eb.jovian({played}).startEffect.asteroids(1);

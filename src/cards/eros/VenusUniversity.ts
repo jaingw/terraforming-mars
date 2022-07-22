@@ -16,7 +16,7 @@ export class VenusUniversity extends Card implements IProjectCard {
 
       requirements: CardRequirements.builder((b) => b.venus(8)),
       metadata: {
-        cardNumber: 'Q31',
+        cardNumber: 'Q034',
         renderData: CardRenderer.builder((b) => {
           b.effect('When you increase Venus Rate, draw a card', (eb)=> {
             eb.venus(1).startEffect.cards(1);

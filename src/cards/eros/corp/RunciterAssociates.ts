@@ -20,12 +20,12 @@ export class RunciterAssociates extends Card implements ICard, ICorporationCard 
       cardType: CardType.CORPORATION,
 
       metadata: {
-        cardNumber: 'Q30',
+        cardNumber: 'Q33',
         description: '',
         renderData: CardRenderer.builder((b) => {
           b.br.br.br.br;
-          b.megacredits(38).br;
-          b.text('(You start with 38 MC.)', Size.TINY, false, false);
+          b.megacredits(35).br;
+          b.text('(You start with 35 MC.)', Size.TINY, false, false);
           b.corpBox('action', (ce) => {
             ce.action('Discard a card. For each tag it has, draw a card with the same tag.', (eb) => {
               eb.cards(1, {secondaryTag: Tags.WILD}).startAction.cards(1, {secondaryTag: Tags.WILD}).asterix();

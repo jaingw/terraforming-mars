@@ -18,7 +18,7 @@ export class PlantSmuggling extends Card implements IProjectCard {
 
       requirements: CardRequirements.builder((b) => b.colonies()),
       metadata: {
-        cardNumber: 'Q34',
+        cardNumber: 'Q036',
         renderData: CardRenderer.builder((b) => {
           b.trade().text(':').plants(1).br.br;
           b.production((pb) => pb.megacredits(2));

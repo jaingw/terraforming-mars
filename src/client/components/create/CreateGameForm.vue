@@ -8,9 +8,9 @@
                 <span v-i18n>Looking for people to play with? Join us qq group: 859050306</span> .
             </div>
             <div class="create-game-discord-invite" >
-                <span v-i18n> 修复：弃牌堆抽4选2和五谷丰登打出后静止撤回 </span><br>
+                <span v-i18n> 修复：弃牌堆抽4选2和五谷丰登打出后禁止撤回 </span><br>
                 <span v-i18n> 修复：非星球钛标公司目前可以享受第二张公司的钛标效果 </span><br>
-                <span v-i18n> 修复: 反重力先行试验再也没有bug了 </span><br>
+                <span v-i18n> 修复：反重力先行试验再也没有bug了 </span><br>
             </div>
             <div class="create-game-form create-game-panel create-game--block">
 

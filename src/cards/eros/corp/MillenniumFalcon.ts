@@ -19,7 +19,7 @@ export class MillenniumFalcon extends Card implements ICorporationCard {
       initialActionText: 'Place a colony',
 
       metadata: {
-        cardNumber: 'R02',
+        cardNumber: 'Q30',
         description: 'You start with 28 M€. As your first action, place a colony.',
         renderData: CardRenderer.builder((b) => {
           b.br.br.br.br;

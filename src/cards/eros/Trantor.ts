@@ -19,7 +19,7 @@ export class Trantor extends Card implements IProjectCard {
       victoryPoints: 3,
 
       metadata: {
-        cardNumber: 'Q42',
+        cardNumber: 'Q042',
         renderData: CardRenderer.builder((b) => {
           b.production((pb) => pb.megacredits(2)).br;
           b.city().asterix();

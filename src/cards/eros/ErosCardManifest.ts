@@ -80,16 +80,16 @@ export const EROS_CARD_MANIFEST = new CardManifest({
     // {cardName: CardName.STARCORE_PLUNDER, Factory: StarcorePlunder},
     {cardName: CardName.EM_DRIVE, Factory: EMDrive, compatibility: ['colonies', 'turmoil']}, // Q19
     {cardName: CardName.COMMUNITY_WORKER, Factory: CommunityWorker}, // Q20
-    {cardName: CardName.VENUS_UNIVERSITY, Factory: VenusUniversity, compatibility: ['venus']},
-    {cardName: CardName.FLEET_RECYCLING, Factory: FleetRecycling, compatibility: ['colonies']},
+    {cardName: CardName.VENUS_UNIVERSITY, Factory: VenusUniversity, compatibility: ['venus']}, // Q34
+    {cardName: CardName.FLEET_RECYCLING, Factory: FleetRecycling, compatibility: ['colonies']}, // Q35
     // {cardName: CardName.SQUID_GAME, Factory: SquidGame},
-    {cardName: CardName.PLANT_SMUGGLING, Factory: PlantSmuggling, compatibility: ['colonies']},
-    {cardName: CardName.ANTI_GRAVITY_EXPERIMENT, Factory: AntiGravityExperiment},
-    {cardName: CardName.BORDER_CHECKPOINT, Factory: BorderCheckpoint},
-    {cardName: CardName.HAY_MAKER, Factory: HayMaker},
-    {cardName: CardName.MARTIAN_FENCING, Factory: MartianFencing},
-    {cardName: CardName.JOVIAN_DEFENSE_DEPARTMENT, Factory: JovianDefenseDepartment},
-    {cardName: CardName.TRANTOR, Factory: Trantor},
+    {cardName: CardName.PLANT_SMUGGLING, Factory: PlantSmuggling, compatibility: ['colonies']}, // Q36
+    {cardName: CardName.ANTI_GRAVITY_EXPERIMENT, Factory: AntiGravityExperiment}, // Q37
+    {cardName: CardName.BORDER_CHECKPOINT, Factory: BorderCheckpoint}, // Q38
+    {cardName: CardName.HAY_MAKER, Factory: HayMaker}, // Q39
+    {cardName: CardName.MARTIAN_FENCING, Factory: MartianFencing}, // Q40
+    {cardName: CardName.JOVIAN_DEFENSE_DEPARTMENT, Factory: JovianDefenseDepartment}, // Q41
+    {cardName: CardName.TRANTOR, Factory: Trantor}, // Q42
 
 
   ],
@@ -101,12 +101,12 @@ export const EROS_CARD_MANIFEST = new CardManifest({
     {cardName: CardName.TRADE_NAVIGATOR, Factory: TradeNavigator, compatibility: 'colonies'}, // Q25
     {cardName: CardName.BROTHERHOOD_OF_MUTANTS, Factory: BrotherhoodOfMutants, compatibility: 'turmoil'}, // Q26
     {cardName: CardName.VOID, Factory: Void}, // Q27
-    {cardName: CardName.TEIAI_GROUP, Factory: TeiaiGroup},
-    {cardName: CardName.PRISM, Factory: Prism},
-    {cardName: CardName.MILLENNIUM_FALCON, Factory: MillenniumFalcon, compatibility: ['colonies']},
-    {cardName: CardName.IMPERIAL_STAR_DESTROYER, Factory: ImperialStarDestroyer, compatibility: ['colonies']},
-    {cardName: CardName.SITH_ORGANIZATIONS, Factory: SithOrganizations, compatibility: ['turmoil']},
-    {cardName: CardName.RUNCITER_ASSOCIATES, Factory: RunciterAssociates},
+    {cardName: CardName.TEIAI_GROUP, Factory: TeiaiGroup}, // Q28
+    {cardName: CardName.PRISM, Factory: Prism}, // Q29
+    {cardName: CardName.MILLENNIUM_FALCON, Factory: MillenniumFalcon, compatibility: ['colonies']}, // Q30
+    {cardName: CardName.IMPERIAL_STAR_DESTROYER, Factory: ImperialStarDestroyer, compatibility: ['colonies']}, // Q31
+    {cardName: CardName.SITH_ORGANIZATIONS, Factory: SithOrganizations, compatibility: ['turmoil']}, // Q32
+    {cardName: CardName.RUNCITER_ASSOCIATES, Factory: RunciterAssociates}, // Q33
 
 
   ],

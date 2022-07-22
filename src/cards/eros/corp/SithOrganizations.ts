@@ -20,16 +20,16 @@ export class SithOrganizations extends Card implements ICard, ICorporationCard {
     super({
       name: CardName.SITH_ORGANIZATIONS,
       tags: [Tags.VENUS, Tags.JOVIAN],
-      startingMegaCredits: 38,
+      startingMegaCredits: 35,
       cardType: CardType.CORPORATION,
 
       metadata: {
-        cardNumber: 'Q48',
-        // description: 'You start with 38 M€. As your first action, transform all Neutral delegates to your delegates.',
+        cardNumber: 'Q32',
+        // description: 'You start with 35 M€. As your first action, transform all Neutral delegates to your delegates.',
         renderData: CardRenderer.builder((b) => {
           b.br;
-          b.megacredits(38, {size: Size.TINY}).nbsp.nbsp.chairman().br;
-          b.text('(You start with 38 M€. As your first action, transform all Neutral delegates to your delegates.)', Size.TINY, false, false);
+          b.megacredits(35, {size: Size.TINY}).nbsp.nbsp.chairman().br;
+          b.text('(You start with 35 M€. As your first action, transform all Neutral delegates to your delegates.)', Size.TINY, false, false);
           b.corpBox('action', (ce) => {
             ce.vSpace(Size.LARGE);
             ce.action('Send a delegate to any party.', (eb) => {

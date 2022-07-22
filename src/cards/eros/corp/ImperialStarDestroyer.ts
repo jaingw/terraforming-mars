@@ -11,14 +11,14 @@ export class ImperialStarDestroyer extends Card implements ICorporationCard {
     super({
       name: CardName.IMPERIAL_STAR_DESTROYER,
       tags: [Tags.SPACE],
-      startingMegaCredits: 48,
+      startingMegaCredits: 53,
       cardType: CardType.CORPORATION,
       metadata: {
-        cardNumber: 'Q046',
-        description: 'You start with 48 M€',
+        cardNumber: 'Q031',
+        description: 'You start with 53 M€',
         renderData: CardRenderer.builder((b) => {
           b.br.br.br.br;
-          b.megacredits(48).tradeFleet();
+          b.megacredits(53).tradeFleet();
           b.corpBox('effect', (ce) => {
             ce.effect('You gain double trade bonus.', (eb) => {
               eb.trade().startEffect.text('X 2');
