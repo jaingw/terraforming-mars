@@ -622,7 +622,7 @@ export enum CardName {
   IMPERIAL_STAR_DESTROYER = 'Imperial Star Destroyer',
   SITH_ORGANIZATIONS = 'Sith Organizations',
   RUNCITER_ASSOCIATES = 'Runciter Associates',
-  JOVIAN_DEFENSE_DEPARTMENT = 'Jovian Defense Department,',
+  JOVIAN_DEFENSE_DEPARTMENT = 'Jovian Defense Department',
 
   // The Moon.
   MARE_NECTARIS_MINE = 'Mare Nectaris Mine',

@@ -69,6 +69,7 @@ export class SelectCharityDonationCard extends DeferredAction {
           game.dealer.discard(this.cards[0]);
           game.log('${0} was discarded.', (b) => b.card(this.cards[0]));
         }
+        game.cardDrew = true; // 增加抽卡判定
         return undefined;
       },
     );

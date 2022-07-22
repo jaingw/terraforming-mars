@@ -5,6 +5,7 @@ import {CardName} from '../../common/cards/CardName';
 import {CardType} from '../../common/cards/CardType';
 import {Tags} from '../../common/cards/Tags';
 import {CardRequirements} from '../CardRequirements';
+import {Player} from '../../Player';
 export class AntiGravityExperiment extends Card implements IProjectCard {
   constructor() {
     super({
@@ -28,12 +29,13 @@ export class AntiGravityExperiment extends Card implements IProjectCard {
 
   public isDisabled = true;
 
-  public override getCardDiscount() {
-    if (this.isDisabled) return 0;
-    return 2;
-  }
-  public play() {
+  // public override getCardDiscount() {
+  //   if (this.isDisabled) return 0;
+  //   return 2;
+  // }
+  public play(player: Player) {
     this.isDisabled = false;
+    player.cardDiscount += 2;
     return undefined;
   }
   public onCardPlayed() {

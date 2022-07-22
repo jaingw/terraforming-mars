@@ -146,7 +146,17 @@
 
     "Action: Discard a card. For each tag it has, draw a card with the same tag." : "行动：弃一张牌。该牌上每有一个标记，你抽一张对应标记的卡牌。",
 
-    "Action: Decrease 1 production (not MC), and Increase 1 production." : "行动：降低一点产能，不能是钱产。提升一点任意产能。"
+    "Action: Decrease 1 production (not MC), and Increase 1 production." : "行动：降低一点产能，不能是钱产。提升一点任意产能。",
+
+    "Jovian Defense Department" : "木星防空署",
+
+    "Trantor" : "川陀",
+
+    "Effect: When you play a Jovian tag, including this, add 1 Asteroid to this card." : "效果：每当你打出一个木星标记，在本卡上增加一个陨石标记。",
+
+    "Increase your M€ production 2 steps. Place a city tile IN SPACE, outside and separate from the planet. At the end of the game, if you have most cities not on Mars, gain 3 VPs." : "提升2点钱产。放置一个城市到外太空。终局计分时，如果你拥有最多外太空城市，获得3分。"
+
+
 
 
 }
