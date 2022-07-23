@@ -16,7 +16,7 @@ export class Tyrell extends Card implements ICard, ICorporationCard {
     super({
       name: CardName.TYRELL,
       tags: [Tags.SCIENCE],
-      startingMegaCredits: 46,
+      startingMegaCredits: 50,
       cardType: CardType.CORPORATION,
 
       metadata: {

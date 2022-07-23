@@ -28,7 +28,7 @@ export class RunciterAssociates extends Card implements ICard, ICorporationCard 
           b.text('(You start with 35 MC.)', Size.TINY, false, false);
           b.corpBox('action', (ce) => {
             ce.action('Discard a card. For each tag it has, draw a card with the same tag.', (eb) => {
-              eb.cards(1, {secondaryTag: Tags.WILD}).startAction.cards(1, {secondaryTag: Tags.WILD}).asterix();
+              eb.cards(1, {secondaryTag: Tags.WILD}).startAction.text('X').cards(1, {secondaryTag: Tags.WILD}).asterix();
             });
           });
         }),
