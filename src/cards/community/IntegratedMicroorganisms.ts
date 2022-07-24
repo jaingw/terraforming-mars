@@ -18,15 +18,15 @@ export class IntegratedMicroorganisms extends Card implements ICorporationCard {
       cardType: CardType.CORPORATION,
       name: CardName.INTEGRATED_MICROORGANISMS,
       tags: [Tags.MICROBE],
-      startingMegaCredits: 36,
+      startingMegaCredits: 40,
 
       initialActionText: 'Draw 1 card with a microbe tag',
       metadata: {
         cardNumber: 'XUEBAO07',
-        description: 'You start with 36 M€. As your first action, draw 1 card with a microbe tag.',
+        description: 'You start with 40 M€. As your first action, draw 1 card with a microbe tag.',
         renderData: CardRenderer.builder((b) => {
           b.br.br.br;
-          b.megacredits(36).cards(1, {secondaryTag: Tags.MICROBE});
+          b.megacredits(40).cards(1, {secondaryTag: Tags.MICROBE});
           b.corpBox('effect', (ce) => {
             ce.effect('When you play a Microbe tag, including this, you may discard a card from hand to draw 2 cards.', (eb) => {
               eb.microbes(1, {played}).startEffect.minus().cards(1).nbsp.plus().cards(2);

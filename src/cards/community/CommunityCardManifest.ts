@@ -16,12 +16,12 @@ import {Aristarchus} from './Aristarchus';
 import {LabourUnion} from './LabourUnion';
 import {UnitedNationsMissionOne} from './UnitedNationsMissionOne';
 import {AccumulatedKnowledge} from './AccumulatedKnowledge';
-import {NitrateReducers} from './NitrateReducers';
+// import {NitrateReducers} from './NitrateReducers';
 // import {VitalColony} from './VitalColony';
 import {CuriosityII} from './CuriosityII';
 import {ExecutiveOrder} from './ExecutiveOrder';
 import {ResearchGrant} from './ResearchGrant';
-import {VenusFirst} from './VenusFirst';
+// import {VenusFirst} from './VenusFirst';
 import {ValuableGases} from './ValuableGases';
 import {WeylandYutani} from './WeylandYutani';
 import {ShinraTech} from './ShinraTech';
@@ -71,11 +71,11 @@ export const COMMUNITY_CARD_MANIFEST = new CardManifest({
       Factory: ValuableGases,
       compatibility: 'venus',
     },
-    {
-      cardName: CardName.VENUS_FIRST,
-      Factory: VenusFirst,
-      compatibility: 'venus',
-    },
+    // {
+    //   cardName: CardName.VENUS_FIRST,
+    //   Factory: VenusFirst,
+    //   compatibility: 'venus',
+    // },
     // {
     //   cardName: CardName.VITAL_COLONY,
     //   Factory: VitalColony,
@@ -106,10 +106,10 @@ export const COMMUNITY_CARD_MANIFEST = new CardManifest({
       cardName: CardName.ACCUMULATED_KNOWLEDGE,
       Factory: AccumulatedKnowledge,
     },
-    {
-      cardName: CardName.NITRATE_REDUCERS,
-      Factory: NitrateReducers,
-      compatibility: 'venus',
-    },
+    // {
+    //   cardName: CardName.NITRATE_REDUCERS,
+    //   Factory: NitrateReducers,
+    //   compatibility: 'venus',
+    // },
   ],
 });

@@ -27,8 +27,8 @@ export class CityGreenhouse extends Card implements ICorporationCard {
           b.br.br.br.br;
           b.megacredits(49);
           b.corpBox('effect', (ce) => {
-            ce.effect('When any city tile is placed, gain 4 heat.', (eb) => {
-              eb.city({size: Size.MEDIUM, all}).startEffect.heat(4, {digit});
+            ce.effect('When any city tile is placed, gain 6 heat.', (eb) => {
+              eb.city({size: Size.MEDIUM, all}).startEffect.heat(6, {digit});
             });
           });
         }),
@@ -39,7 +39,7 @@ export class CityGreenhouse extends Card implements ICorporationCard {
 
   public onTilePlaced(cardOwner: Player, activePlayer: Player, space: ISpace) {
     if (Board.isCitySpace(space)) {
-      cardOwner.game.defer(new GainResources(cardOwner, Resources.HEAT, {count: 4}));
+      cardOwner.game.defer(new GainResources(cardOwner, Resources.HEAT, {count: 6}));
       cardOwner.game.log('${0} received 4 Heat from ${1} city', (b) =>
         b.player(cardOwner)
           .player(activePlayer),
