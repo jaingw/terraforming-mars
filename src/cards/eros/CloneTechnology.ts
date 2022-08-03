@@ -56,6 +56,7 @@ export class CloneTechnology extends Card implements IProjectCard {
     CardName.DOME_FARMING,
     CardName.ECOLOGY_EXPERTS,
     CardName.OCEAN_FARM,
+    CardName.PLANT_SMUGGLING,
     // moon
     CardName.ALGAE_BIOREACTORS,
     CardName.ARCHIMEDES_HYDROPONICS_STATION,
@@ -65,6 +66,7 @@ export class CloneTechnology extends Card implements IProjectCard {
     CardName.ORBITAL_LABORATORIES,
     CardName.POLLINATORS,
     CardName.SOIL_DETOXIFICATION,
+    CardName.DESIGNED_MICRO_ORGANISMS,
   ];
 
   public corporationCardsNames: ReadonlyArray<CardName> = [
@@ -185,6 +187,8 @@ export class CloneTechnology extends Card implements IProjectCard {
         new Updater(CardName._ECOLINE_, 0, 0, 2, 0, 3),
 
         new Updater(CardName.AGRICOLA_INC, 0, 1, 1, 0, 0),
+        new Updater(CardName.SCOLEX_INDUSTRIES, 1, 0, 1, 0, 0),
+        new Updater(CardName.PLANT_SMUGGLING, 0, 2, 2, 0, 3),
 
         // moon
         new Updater(CardName.ALGAE_BIOREACTORS, 0, 0, -1, 0, 0),
@@ -195,6 +199,7 @@ export class CloneTechnology extends Card implements IProjectCard {
         new Updater(CardName.ORBITAL_LABORATORIES, 0, 0, 2, 0, 1),
         new Updater(CardName.POLLINATORS, 0, 2, 1, 0, 0),
         new Updater(CardName.SOIL_DETOXIFICATION, 0, 0, 1, 0, 0),
+        new Updater(CardName.DESIGNED_MICRO_ORGANISMS, 0, 0, 2, 0, 3),
 
 
       ];
