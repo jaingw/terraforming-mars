@@ -498,6 +498,7 @@ export enum CardName {
   _THARSIS_REPUBLIC_ = 'Tharsis_republic (breakthrough)',
   _MORNING_STAR_INC_ = 'MorningStar Inc (breakthrough)',
   _INTERPLANETARY_CINEMATICS_ = 'Interplanetary Cinematics (breakthrough)',
+  _PRISTAR_ = 'Pristar',
 
   // Community corps
   AGRICOLA_INC = 'Agricola Inc',

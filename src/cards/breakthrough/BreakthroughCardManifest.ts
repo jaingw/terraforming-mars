@@ -24,6 +24,7 @@ import {_TharsisRepublic_} from './corporation/_TharsisRepublic_';
 import {_MorningStarInc_} from './corporation/_MorningStarInc_';
 import {_InterplanetaryCinematics_} from './corporation/_InterplanetaryCinematics_';
 import {CardName} from '../../common/cards/CardName';
+import {_Pristar_} from './corporation/_Pristar_';
 
 export const BREAKTHROUGH_CARD_MANIFEST = new CardManifest({
   module: 'breakthrough',
@@ -53,6 +54,7 @@ export const BREAKTHROUGH_CARD_MANIFEST = new CardManifest({
     {cardName: CardName._UNITED_NATIONS_MARS_INITIATIVE_, Factory: _UnitedNationsMarsInitiative_, cardName_ori: CardName.UNITED_NATIONS_MARS_INITIATIVE},
     {cardName: CardName._VALLEY_TRUST_, Factory: _ValleyTrust_, cardName_ori: CardName.VALLEY_TRUST},
     {cardName: CardName._VIRON_, Factory: _Viron_, cardName_ori: CardName.VIRON}, // compatibility: 'venus'},
+    {cardName: CardName._PRISTAR_, Factory: _Pristar_, cardName_ori: CardName.PRISTAR},
   ],
   cardsToRemove: [
     CardName.PHOBOLOG,
@@ -79,5 +81,6 @@ export const BREAKTHROUGH_CARD_MANIFEST = new CardManifest({
     CardName.THARSIS_REPUBLIC,
     CardName.MORNING_STAR_INC,
     CardName.INTERPLANETARY_CINEMATICS,
+    CardName.PRISTAR,
   ],
 });
