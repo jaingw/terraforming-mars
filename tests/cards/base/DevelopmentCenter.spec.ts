@@ -1,20 +1,20 @@
 import {expect} from 'chai';
-import {DevelopmentCenter} from '../../../src/cards/base/DevelopmentCenter';
-import {Game} from '../../../src/Game';
-import {Player} from '../../../src/Player';
-import {TestPlayers} from '../../TestPlayers';
+import {DevelopmentCenter} from '../../../src/server/cards/base/DevelopmentCenter';
+import {Game} from '../../../src/server/Game';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('DevelopmentCenter', function() {
-  let card : DevelopmentCenter; let player : Player;
+  let card: DevelopmentCenter;
+  let player: TestPlayer;
 
   beforeEach(function() {
     card = new DevelopmentCenter();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    Game.newInstance('foobar', [player, redPlayer], player);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    Game.newInstance('gameid', [player, redPlayer], player);
   });
 
-  it('Can\'t act', function() {
+  it('Can not act', function() {
     expect(card.canAct(player)).is.not.true;
   });
 

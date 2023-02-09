@@ -1,11 +1,10 @@
 import {expect} from 'chai';
-import {AsteroidStandardProject} from '../../../../src/cards/base/standardProjects/AsteroidStandardProject';
-import {setCustomGameOptions, runAllActions} from '../../../TestingUtils';
+import {AsteroidStandardProject} from '../../../../src/server/cards/base/standardProjects/AsteroidStandardProject';
+import {testGameOptions, runAllActions} from '../../../TestingUtils';
 import {TestPlayer} from '../../../TestPlayer';
-import {Game} from '../../../../src/Game';
-import {TestPlayers} from '../../../TestPlayers';
-import {PoliticalAgendas} from '../../../../src/turmoil/PoliticalAgendas';
-import {Reds} from '../../../../src/turmoil/parties/Reds';
+import {Game} from '../../../../src/server/Game';
+import {PoliticalAgendas} from '../../../../src/server/turmoil/PoliticalAgendas';
+import {Reds} from '../../../../src/server/turmoil/parties/Reds';
 import {Phase} from '../../../../src/common/Phase';
 import {MAX_OXYGEN_LEVEL} from '../../../../src/common/constants';
 
@@ -16,8 +15,8 @@ describe('AsteroidStandardProject', function() {
 
   beforeEach(function() {
     card = new AsteroidStandardProject();
-    player = TestPlayers.BLUE.newPlayer();
-    game = Game.newInstance('foobar', [player], player);
+    player = TestPlayer.BLUE.newPlayer();
+    game = Game.newInstance('gameid', [player], player);
   });
 
   it('Can act', function() {
@@ -48,8 +47,8 @@ describe('AsteroidStandardProject', function() {
   });
 
   it('Can not act with reds', () => {
-    player = TestPlayers.BLUE.newPlayer();
-    game = Game.newInstance('foobar', [player], player, setCustomGameOptions({turmoilExtension: true}));
+    player = TestPlayer.BLUE.newPlayer();
+    game = Game.newInstance('gameid', [player], player, testGameOptions({turmoilExtension: true}));
 
     player.megaCredits = card.cost;
     player.game.phase = Phase.ACTION;

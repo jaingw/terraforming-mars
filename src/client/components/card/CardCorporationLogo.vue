@@ -120,6 +120,9 @@
     <template v-else-if="title === CardName.PROJECT_WORKSHOP">
       <div class="card-project-workshop-logo">PROJECT<br/>WORKSHOP</div>
     </template>
+    <template v-else-if="title === CardName.UNITED_NATIONS_MISSION_ONE">
+      <span class="card-unmo-logo">UNITED NATIONS<br/>MISSION ONE</span>
+    </template>
     <template v-else-if="title === CardName.MONS_INSURANCE">
       <div class="card-mons-logo">
       <div class="mons0">▲</div>
@@ -149,9 +152,6 @@
     <template v-else-if="title === CardName.LABOUR_UNION">
       <div class="card-labour-union-logo">Labour Union</div>
     </template>
-    <template v-else-if="title === CardName.UNITED_NATIONS_MISSION_ONE">
-      <span class="card-unmo-logo">UNITED NATIONS<br/>MISSION ONE</span>
-    </template>
     <template v-else-if="title === CardName.CHAOS">
       <span class="card-chaos-logo">CHAOS</span><div class="naming-award  naming-award-chaos"></div>
     </template>
@@ -170,8 +170,62 @@
     <template v-else-if="title === CardName.BROTHERHOOD_OF_MUTANTS">
       <div class="card-mutant-logo"></div><div class="naming-award  naming-award-brotherhood"></div>
     </template>
+    <template v-else-if="title === CardName.TEIAI_GROUP">
+      <div class="card-teiai-group-logo"></div>
+    </template>
     <template v-else-if="title === CardName.VOID">
       <div class="card-midas-logo">VOID</div>
+    </template>
+    <template v-else-if="title === CardName.SHINRA_TECH">
+      <div class="card-playwrights-logo">🌸SHINRA<br/>TECH🌸</div>
+    </template>
+    <template v-else-if="title === CardName.TYRELL">
+      <div class="card-incite-logo">TYRELL</div>
+    </template>
+    <template v-else-if="title === CardName.WEYLAND_YUTANI">
+      <div class="card-project-workshop-logo">🌸WEYLAND<br/>YUTANI🌸</div>
+    </template>
+    <template v-else-if="title === CardName.SCOLEX_INDUSTRIES">
+      <div class="card-scolex-logo">
+        <div class="utopia-corp-name-1">scolex</div>
+        <div class="utopia-corp-name-2">✡Ind✡</div>
+      </div>
+    </template>
+    <template v-else-if="title === CardName.INTEGRATED_MICROORGANISMS">
+      <div class="card-protogen-logo">🌸INTEGRATED<br/>MICROORGANISMS🌸</div>
+    </template>
+    <template v-else-if="title === CardName.PROTOGEN">
+      <div class="card-protogen-logo">🌸PROTOGEN🌸</div>
+    </template>
+    <template v-else-if="title === CardName.MINING_CORP">
+      <div class="card-curiosity-ii-logo">MINING CORP</div>
+    </template>
+    <template v-else-if="title ===  CardName.BUY_N_LARGE">
+      <div class="card-buy-n-large-logo"></div>
+    </template>
+    <template v-else-if="title ===  CardName.RDA">
+      <div class="card-rda-logo"></div>
+    </template>
+    <template v-else-if="title ===  CardName.PRISM">
+      <div class="card-prism-logo"></div>
+    </template>
+    <template v-else-if="title ===  CardName.MILLENNIUM_FALCON">
+      <div class="card-millennium-falcon-logo"></div>
+    </template>
+    <template v-else-if="title ===  CardName.IMPERIAL_STAR_DESTROYER">
+      <div class="card-imperial-star-destroyer-logo"></div>
+    </template>
+    <template v-else-if="title ===  CardName.CITY_GREENHOUSE">
+      <div class="card-city-greenhouse-logo"></div>
+    </template>
+    <template v-else-if="title ===  CardName.SITH_ORGANIZATIONS">
+      <div class="card-sith-logo"></div>
+    </template>
+    <template v-else-if="title ===  CardName.RUNCITER_ASSOCIATES">
+      <div class="card-runciter-associates-logo"></div>
+    </template>
+    <template v-else-if="title ===  CardName.ARK_NOVA">
+      <div class="card-ark-nova-logo"></div>
     </template>
     <template v-else>
       <div :class="logoClass">{{capsTitle}}</div>
@@ -193,6 +247,7 @@ const imageOnlyLogos: Map<CardName, string> = new Map([
   [CardName.LUNA_FIRST_INCORPORATED, 'card-luna-first-incorporated-logo'],
   [CardName.THE_GRAND_LUNA_CAPITAL_GROUP, 'card-the-grand-luna-capital-group-logo'],
   [CardName.INTRAGEN_SANCTUARY_HEADQUARTERS, 'card-intragen-sanctuary-headquarters-logo'],
+  [CardName.LUNA_TRADE_FEDERATION, 'card-luna-trade-federation-logo'],
   [CardName.THE_ARCHAIC_FOUNDATION_INSTITUTE, 'card-the-archaic-foundation-institute-logo'],
   [CardName.POLARIS, 'card-polaris-logo'],
   [CardName.RINGCOM, 'card-ringcom-logo'],

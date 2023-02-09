@@ -1,22 +1,25 @@
 import {expect} from 'chai';
-import {AerialMappers} from '../../src/cards/venusNext/AerialMappers';
-import {Dirigibles} from '../../src/cards/venusNext/Dirigibles';
-import {Titan} from '../../src/colonies/Titan';
-import {AddResourcesToCard} from '../../src/deferredActions/AddResourcesToCard';
-import {Game} from '../../src/Game';
-import {Player} from '../../src/Player';
-import {TestPlayers} from '../TestPlayers';
+import {AerialMappers} from '../../src/server/cards/venusNext/AerialMappers';
+import {Dirigibles} from '../../src/server/cards/venusNext/Dirigibles';
+import {Titan} from '../../src/server/colonies/Titan';
+import {AddResourcesToCard} from '../../src/server/deferredActions/AddResourcesToCard';
+import {Game} from '../../src/server/Game';
+import {TestPlayer} from '../TestPlayer';
 import {cast, runAllActions} from '../TestingUtils';
 
 describe('Titan', function() {
-  let titan: Titan; let aerialMappers: AerialMappers; let player: Player; let player2: Player; let game: Game;
+  let titan: Titan;
+  let aerialMappers: AerialMappers;
+  let player: TestPlayer;
+  let player2: TestPlayer;
+  let game: Game;
 
   beforeEach(function() {
     titan = new Titan();
     aerialMappers = new AerialMappers();
-    player = TestPlayers.BLUE.newPlayer();
-    player2 = TestPlayers.RED.newPlayer();
-    game = Game.newInstance('foobar', [player, player2], player);
+    player = TestPlayer.BLUE.newPlayer();
+    player2 = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, player2], player);
     game.gameOptions.coloniesExtension = true;
     game.colonies.push(titan);
   });

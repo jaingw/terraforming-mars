@@ -1,30 +1,27 @@
 import {expect} from 'chai';
-import {DeepWellHeating} from '../../../src/cards/base/DeepWellHeating';
-import {MartianRails} from '../../../src/cards/base/MartianRails';
-import {ParliamentHall} from '../../../src/cards/turmoil/ParliamentHall';
-import {Game} from '../../../src/Game';
-import {Resources} from '../../../src/common/Resources';
+import {DeepWellHeating} from '../../../src/server/cards/base/DeepWellHeating';
+import {MartianRails} from '../../../src/server/cards/base/MartianRails';
+import {ParliamentHall} from '../../../src/server/cards/turmoil/ParliamentHall';
 import {PartyName} from '../../../src/common/turmoil/PartyName';
-import {setCustomGameOptions} from '../../TestingUtils';
-import {TestPlayers} from '../../TestPlayers';
+import {testGameOptions} from '../../TestingUtils';
+import {getTestPlayer, newTestGame} from '../../TestGame';
 
 describe('ParliamentHall', function() {
   it('Should play', function() {
     const card = new ParliamentHall();
     const card2 = new DeepWellHeating();
     const card3 = new MartianRails();
-    const player = TestPlayers.BLUE.newPlayer();
+    const game = newTestGame(1, testGameOptions({turmoilExtension: true}));
+    const player = getTestPlayer(game, 0);
 
-    const gameOptions = setCustomGameOptions();
-    const game = Game.newInstance('foobar', [player], player, gameOptions);
     expect(player.canPlayIgnoringCost(card)).is.not.true;
 
-    const mars = game.turmoil!.getPartyByName(PartyName.MARS)!;
-    mars.delegates.push(player, player);
+    const mars = game.turmoil!.getPartyByName(PartyName.MARS);
+    mars.delegates.add(player.id, 2);
     expect(player.canPlayIgnoringCost(card)).is.true;
 
     player.playedCards.push(card2, card3);
     card.play(player);
-    expect(player.getProduction(Resources.MEGACREDITS)).to.eq(1);
+    expect(player.production.megacredits).to.eq(1);
   });
 });

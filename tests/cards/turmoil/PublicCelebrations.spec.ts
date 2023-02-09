@@ -1,20 +1,18 @@
 import {expect} from 'chai';
-import {PublicCelebrations} from '../../../src/cards/turmoil/PublicCelebrations';
-import {Game} from '../../../src/Game';
-import {setCustomGameOptions} from '../../TestingUtils';
-import {TestPlayers} from '../../TestPlayers';
+import {PublicCelebrations} from '../../../src/server/cards/turmoil/PublicCelebrations';
+import {testGameOptions} from '../../TestingUtils';
+import {getTestPlayer, newTestGame} from '../../TestGame';
 
 describe('PublicCelebrations', function() {
   it('Should play', function() {
     const card = new PublicCelebrations();
-    const player = TestPlayers.BLUE.newPlayer();
+    const game = newTestGame(1, testGameOptions({turmoilExtension: true}));
+    const player = getTestPlayer(game, 0);
 
-    const gameOptions = setCustomGameOptions();
-    const game = Game.newInstance('foobar', [player], player, gameOptions);
     expect(player.canPlayIgnoringCost(card)).is.not.true;
 
-        game.turmoil!.chairman = player;
+        game.turmoil!.chairman = player.id;
         expect(player.canPlayIgnoringCost(card)).is.true;
-        card.play();
+        card.play(player);
   });
 });

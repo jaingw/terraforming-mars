@@ -7,16 +7,18 @@ export interface GameOptionsModel_ {
   aresExtension: boolean,
   altVenusBoard: boolean,
   boardName: BoardName,
-  cardsBlackList: Array<CardName>;
+  bannedCards: Array<CardName>;
   coloniesExtension: boolean,
   communityCardsOption: boolean,
   corporateEra: boolean,
   draftVariant: boolean,
+  _corporationsDraft: boolean, // NOT
   escapeVelocityMode: boolean,
   escapeVelocityThreshold?: number,
   escapeVelocityPeriod?: number,
   escapeVelocityPenalty?: number,
   fastModeOption: boolean,
+  includeFanMA: boolean,
   includeVenusMA: boolean,
   initialDraftVariant: boolean,
   moonExpansion: boolean,
@@ -24,7 +26,7 @@ export interface GameOptionsModel_ {
   preludeExtension: boolean,
   promoCardsOption: boolean,
   politicalAgendasExtension: AgendaStyle,
-  removeNegativeGlobalEvents: boolean,
+  removeNegativeGlobalEventsOption: boolean,
   showOtherPlayersVP: boolean,
   showTimers: boolean,
   shuffleMapOption: boolean,
@@ -36,4 +38,5 @@ export interface GameOptionsModel_ {
   turmoilExtension: boolean,
   venusNextExtension: boolean,
   undoOption: boolean,
+  twoCorpsVariant: boolean,
 }

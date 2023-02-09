@@ -1,38 +1,38 @@
 import {expect} from 'chai';
-import {AsteroidDeflectionSystem} from '../../../src/cards/promo/AsteroidDeflectionSystem';
-import {Tags} from '../../../src/common/cards/Tags';
-import {Game} from '../../../src/Game';
-import {Player} from '../../../src/Player';
+import {AsteroidDeflectionSystem} from '../../../src/server/cards/promo/AsteroidDeflectionSystem';
+import {Tag} from '../../../src/common/cards/Tag';
+import {Game} from '../../../src/server/Game';
 import {Resources} from '../../../src/common/Resources';
-import {TestPlayers} from '../../TestPlayers';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('AsteroidDeflectionSystem', function() {
-  let card : AsteroidDeflectionSystem; let player : Player;
+  let card: AsteroidDeflectionSystem;
+  let player: TestPlayer;
 
   beforeEach(function() {
     card = new AsteroidDeflectionSystem();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    Game.newInstance('foobar', [player, redPlayer], player);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    Game.newInstance('gameid', [player, redPlayer], player);
   });
 
-  it('Can\'t play', function() {
+  it('Can not play', function() {
     expect(card.canPlay(player)).is.not.true;
   });
 
   it('Should play', function() {
-    player.addProduction(Resources.ENERGY, 1);
+    player.production.add(Resources.ENERGY, 1);
     expect(card.canPlay(player)).is.true;
 
     card.play(player);
-    expect(player.getProduction(Resources.ENERGY)).to.eq(0);
+    expect(player.production.energy).to.eq(0);
   });
 
   it('Should act', function() {
     player.playedCards.push(card);
     expect(card.canAct()).is.true;
 
-    while (player.game.dealer.discarded.find((card) => card.tags.includes(Tags.SPACE)) === undefined) {
+    while (player.game.projectDeck.discardPile.find((card) => card.tags.includes(Tag.SPACE)) === undefined) {
       card.action(player);
     }
 

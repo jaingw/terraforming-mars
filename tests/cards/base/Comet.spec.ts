@@ -1,21 +1,24 @@
 import {expect} from 'chai';
-import {Comet} from '../../../src/cards/base/Comet';
-import {Player} from '../../../src/Player';
-import {Game} from '../../../src/Game';
+import {Comet} from '../../../src/server/cards/base/Comet';
+import {Game} from '../../../src/server/Game';
 import {cast, maxOutOceans} from '../../TestingUtils';
-import {SelectSpace} from '../../../src/inputs/SelectSpace';
-import {OrOptions} from '../../../src/inputs/OrOptions';
-import {TestPlayers} from '../../TestPlayers';
+import {SelectSpace} from '../../../src/server/inputs/SelectSpace';
+import {OrOptions} from '../../../src/server/inputs/OrOptions';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('Comet', function() {
-  let card : Comet; let player : Player; let player2 : Player; let player3: Player; let game : Game;
+  let card: Comet;
+  let player: TestPlayer;
+  let player2: TestPlayer;
+  let player3: TestPlayer;
+  let game: Game;
 
   beforeEach(function() {
     card = new Comet();
-    player = TestPlayers.BLUE.newPlayer();
-    player2 = TestPlayers.RED.newPlayer();
-    player3 = TestPlayers.YELLOW.newPlayer();
-    game = Game.newInstance('foobar', [player, player2, player3], player);
+    player = TestPlayer.BLUE.newPlayer();
+    player2 = TestPlayer.RED.newPlayer();
+    player3 = TestPlayer.YELLOW.newPlayer();
+    game = Game.newInstance('gameid', [player, player2, player3], player);
   });
 
   it('Should play', function() {
@@ -48,7 +51,7 @@ describe('Comet', function() {
   });
 
   it('Works fine in solo mode', function() {
-    Game.newInstance('solo_game', [player], player);
+    Game.newInstance('gameid', [player], player);
     player.plants = 8;
 
     const action = card.play(player);

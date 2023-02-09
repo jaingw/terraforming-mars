@@ -1,21 +1,21 @@
 import {expect} from 'chai';
-import {SpaceMirrors} from '../../../src/cards/base/SpaceMirrors';
-import {Game} from '../../../src/Game';
-import {Player} from '../../../src/Player';
-import {Resources} from '../../../src/common/Resources';
-import {TestPlayers} from '../../TestPlayers';
+import {SpaceMirrors} from '../../../src/server/cards/base/SpaceMirrors';
+import {Game} from '../../../src/server/Game';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('SpaceMirrors', function() {
-  let card : SpaceMirrors; let player : Player; let game : Game;
+  let card: SpaceMirrors;
+  let player: TestPlayer;
+  let game: Game;
 
   beforeEach(function() {
     card = new SpaceMirrors();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    game = Game.newInstance('foobar', [player, redPlayer], player);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, redPlayer], player);
   });
 
-  it('Can\'t act', function() {
+  it('Can not act', function() {
     player.megaCredits = 6;
     expect(card.canAct(player)).is.not.true;
   });
@@ -27,6 +27,6 @@ describe('SpaceMirrors', function() {
     card.action(player);
     game.deferredActions.runNext();
     expect(player.megaCredits).to.eq(0);
-    expect(player.getProduction(Resources.ENERGY)).to.eq(1);
+    expect(player.production.energy).to.eq(1);
   });
 });

@@ -82,7 +82,84 @@
 
     "Starcore Mining":"星核开采",
 
-    "EM Drive":"无工质推进飞船"
+    "EM Drive":"无工质推进飞船",
+
+    "You start with 51 MC":"你起始获得51MC",
+
+    "Action: Decrease 1 TR to draw 2 card. If you have no card, you do not need to decrease TR.":"行动：降低1点TR，抽2张牌。如果你没有手牌，则不需要降低TR。",
+
+    "Fleet Recycling":"飞船回收",
+
+    "Lose 1 Trade Fleet. Gain 4 steel and 4 titanium":"失去一艘贸易飞船。获得4点钢铁以及4点钛",
+
+    "Venus University":"金星大学",
+
+    "Squid Game":"鱿鱼游戏",
+
+    "FOR EACH MILESTONE YOU HAVE, DECREASE 5 MC":"你每设立一个里程碑，本卡费用-5",
+
+    "Draw 6 new awards. Select one and add to this game":"随机抽取6个未加入游戏的奖励，选择一个设立",
+
+    "Plant Smuggling":"植物走私集团",
+
+    "Requires a colony. Increase your MC production 2 step. When any player trades, you gain 1 plant.":"需要有一个殖民地。提升2点金钱产能。每当有玩家贸易，你获得1点植物。",
+
+    "AntiGravity Experiment":"反重力先行试验",
+
+    "Effect: For this generation, when you play a card, you pay 2 MC less for it":"效果：本时代内，你打出卡牌费用-2",
+
+    "Action: Draw a card from discard pile":"行动：从弃牌堆中抽一张牌。",
+
+    "Border Checkpoint": "边境检查站",
+
+    "Place a city tile on the border":"放置一片城市到火星边缘。无视其它放置规则。",
+
+    "scolex":"星核",
+
+    "✡Ind✡": "✡工业✡",
+
+    "Action: Discard a card, and use a non resource card action from other opponents.": "行动：弃置一张牌，使用其它玩家的一张的行动卡，该卡上资源数量必须为0。",
+
+    "Effect: For each different tag, get 1 MC discount per 3 related tags": "效果：每3个相同的标记使拥有该标记卡牌费用-1。",
+
+    "Hay Maker" : "炎拳",
+
+    "Remove one of your greenery and place a neutral cube. Gain 12 heat.": "移除你的一片绿化。放置一个中立标记。获得12点热能。",
+
+    "Martian Fencing" : "火星击剑",
+
+    "Find one Eros card. Choose to buy it or not." : "找1张群友扩卡牌，选择是否购买。",
+
+    "Action: Move one of your colony to another colony (Could not be TITANIA for both case)." : "行动：将你的一个殖民地移动到另一个殖民地，同时获得放置奖励（本行动不包含分数殖民地）。",
+
+    "Effect: You gain double trade bonus." : "效果：你获得双倍殖民地贸易奖励，如luna的2钱，牌星的摸1弃1。",
+
+    "Action: If you have no card, draw 2 card." : "行动：如果你没有手牌，抽2张牌。",
+
+    "Action: Or you can discard X cards to draw X-1 cards. Maximum X is current generation number." : "行动：或者你可以弃X摸X-1牌。X不大于当前时代数。",
+
+    "Effect: When you gain microbes in one action, also gain 2 heat." : "效果：每次你获得微生物时，获得2热。如果一次获得多个微生物也只获得2热。",
+
+    "Action: Send a Neutral delegate to any party." : "行动：放置一个中立代表。",
+
+    "Effect: Your delegates count as neutral delegates. If neutral delegate becomes chairman, you can decide: let all other player lose 1 TR, or ignore their ruling bonus." : "效果：所有场上的中立代表均视为你的代表。当你执政时，你不获得TR，改为选择：让其它玩家失去1TR, 或者让其它玩家忽略本时代的执政奖励。",
+
+    "Action: Discard a card. For each tag it has, draw a card with the same tag." : "行动：弃一张牌。该牌上每有一个标记，你抽一张对应标记的卡牌。",
+
+    "Action: Decrease 1 production (not MC), and Increase 1 production." : "行动：降低一点产能，不能是钱产。提升一点任意产能。",
+
+    "Jovian Defense Department" : "木星防空署",
+
+    "Trantor" : "川陀",
+
+    "Effect: When you play a Jovian tag, including this, add 1 Asteroid to this card." : "效果：每当你打出一个木星标记，在本卡上增加一个陨石标记。",
+
+    "Increase your M€ production 2 steps. Place a city tile IN SPACE, outside and separate from the planet. At the end of the game, if you have most cities not on Mars, gain 3 VPs." : "提升2点钱产。放置一个城市到外太空。终局计分时，如果你拥有最多外太空城市，获得3分。",
+
+    "You start with 41 M€. As your first action, transform all Neutral delegates to your delegates." : "游戏开始时你获得41MC。作为第一个行动，将所有中立代表转化为你的代表。"
+
+
+
 
 }
 

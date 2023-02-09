@@ -1,20 +1,16 @@
-import {Game} from '../../../src/Game';
-import {setCustomGameOptions} from '../../TestingUtils';
-import {TestPlayers} from '../../TestPlayers';
-import {SolarPanelFoundry} from '../../../src/cards/moon/SolarPanelFoundry';
+import {Game} from '../../../src/server/Game';
+import {testGameOptions} from '../../TestingUtils';
+import {SolarPanelFoundry} from '../../../src/server/cards/moon/SolarPanelFoundry';
 import {expect} from 'chai';
-import {Resources} from '../../../src/common/Resources';
 import {TestPlayer} from '../../TestPlayer';
-
-const MOON_OPTIONS = setCustomGameOptions({moonExpansion: true});
 
 describe('SolarPanelFoundry', () => {
   let player: TestPlayer;
   let card: SolarPanelFoundry;
 
   beforeEach(() => {
-    player = TestPlayers.BLUE.newPlayer();
-    Game.newInstance('id', [player], player, MOON_OPTIONS);
+    player = TestPlayer.BLUE.newPlayer();
+    Game.newInstance('gameid', [player], player, testGameOptions({moonExpansion: true}));
     card = new SolarPanelFoundry();
   });
 
@@ -29,11 +25,11 @@ describe('SolarPanelFoundry', () => {
 
   it('act', () => {
     player.steel = 2;
-    player.setProductionForTest({energy: 0});
+    player.production.override({energy: 0});
 
     card.action(player);
 
-    expect(player.getProduction(Resources.ENERGY)).eq(1);
+    expect(player.production.energy).eq(1);
     expect(player.steel).eq(0);
   });
 });

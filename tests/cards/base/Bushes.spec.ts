@@ -1,21 +1,21 @@
 import {expect} from 'chai';
-import {Bushes} from '../../../src/cards/base/Bushes';
-import {Player} from '../../../src/Player';
-import {Game} from '../../../src/Game';
-import {Resources} from '../../../src/common/Resources';
-import {TestPlayers} from '../../TestPlayers';
+import {Bushes} from '../../../src/server/cards/base/Bushes';
+import {Game} from '../../../src/server/Game';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('Bushes', function() {
-  let card : Bushes; let player : Player; let game : Game;
+  let card: Bushes;
+  let player: TestPlayer;
+  let game: Game;
 
   beforeEach(function() {
     card = new Bushes();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    game = Game.newInstance('foobar', [player, redPlayer], player);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, redPlayer], player);
   });
 
-  it('Can\'t play', function() {
+  it('Can not play', function() {
     expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
 
@@ -24,7 +24,7 @@ describe('Bushes', function() {
     expect(player.canPlayIgnoringCost(card)).is.true;
 
     card.play(player);
-    expect(player.getProduction(Resources.PLANTS)).to.eq(2);
+    expect(player.production.plants).to.eq(2);
     expect(player.plants).to.eq(2);
   });
 });

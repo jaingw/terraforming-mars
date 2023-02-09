@@ -37,14 +37,16 @@ export function translateText(englishText: string): string {
   // Check if translated word is in brackets
   if (translatedText === undefined) {
     const isTextInBrackets = englishText.startsWith('(') && englishText.endsWith(')');
-
+    let temp = englishText;
     if (isTextInBrackets) {
       const translationAttempt = translations[englishText.slice(1, -1)];
       if (translationAttempt) {
         translatedText = `(${translationAttempt})`;
       }
-    } else if (englishText.endsWith('.') ) {
-      const stripedText = englishText.slice(0, -1);
+      temp = englishText.slice(1, -1);
+    }
+    if (translatedText === undefined && temp.endsWith('.') ) {
+      const stripedText = temp.slice(0, -1);
       translatedText = translateText(stripedText);
     }
   }
@@ -62,6 +64,7 @@ export function translateText(englishText: string): string {
       }
     }
     if (!translated.has(englishText)) {
+      translated.add(englishText);// 避免重复打印
       console.log(`${lang} - please translate: ${englishText}`);
     }
   }
@@ -85,7 +88,7 @@ export function translateTextWithParams(englishText: string, params: Array<strin
 }
 
 function normalizeText(text: string): string {
-  return text.replace(/[\n\r]/g, '').replace(/[ ]+/g, ' ').trim();
+  return text.replace(/[\n\r]/g, '').replace(/[ ]+/g, ' ');
 }
 
 function translateChildren(node: Node) {

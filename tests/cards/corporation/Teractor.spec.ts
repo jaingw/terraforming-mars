@@ -1,22 +1,22 @@
 import {expect} from 'chai';
-import {Birds} from '../../../src/cards/base/Birds';
-import {Cartel} from '../../../src/cards/base/Cartel';
-import {LunaGovernor} from '../../../src/cards/colonies/LunaGovernor';
-import {Teractor} from '../../../src/cards/corporation/Teractor';
-import {Game} from '../../../src/Game';
-import {Player} from '../../../src/Player';
-import {TestPlayers} from '../../TestPlayers';
+import {Birds} from '../../../src/server/cards/base/Birds';
+import {Cartel} from '../../../src/server/cards/base/Cartel';
+import {LunaGovernor} from '../../../src/server/cards/colonies/LunaGovernor';
+import {Teractor} from '../../../src/server/cards/corporation/Teractor';
+import {Game} from '../../../src/server/Game';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('Teractor', function() {
-  let card : Teractor; let player : Player;
+  let card: Teractor;
+  let player: TestPlayer;
 
   beforeEach(function() {
     card = new Teractor();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    Game.newInstance('foobar', [player, redPlayer], player);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    Game.newInstance('gameid', [player, redPlayer], player);
 
-    const action = card.play();
+    const action = card.play(player);
     expect(action).is.undefined;
   });
 

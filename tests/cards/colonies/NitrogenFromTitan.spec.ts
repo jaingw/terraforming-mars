@@ -1,21 +1,23 @@
 import {expect} from 'chai';
-import {JovianLanterns} from '../../../src/cards/colonies/JovianLanterns';
-import {NitrogenFromTitan} from '../../../src/cards/colonies/NitrogenFromTitan';
-import {TitanFloatingLaunchPad} from '../../../src/cards/colonies/TitanFloatingLaunchPad';
-import {ICard} from '../../../src/cards/ICard';
-import {Game} from '../../../src/Game';
-import {SelectCard} from '../../../src/inputs/SelectCard';
-import {Player} from '../../../src/Player';
-import {TestPlayers} from '../../TestPlayers';
+import {cast} from '../../TestingUtils';
+import {JovianLanterns} from '../../../src/server/cards/colonies/JovianLanterns';
+import {NitrogenFromTitan} from '../../../src/server/cards/colonies/NitrogenFromTitan';
+import {TitanFloatingLaunchPad} from '../../../src/server/cards/colonies/TitanFloatingLaunchPad';
+import {ICard} from '../../../src/server/cards/ICard';
+import {Game} from '../../../src/server/Game';
+import {SelectCard} from '../../../src/server/inputs/SelectCard';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('NitrogenFromTitan', function() {
-  let card : NitrogenFromTitan; let player : Player; let game : Game;
+  let card: NitrogenFromTitan;
+  let player: TestPlayer;
+  let game: Game;
 
   beforeEach(function() {
     card = new NitrogenFromTitan();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    game = Game.newInstance('foobar', [player, redPlayer], player);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, redPlayer], player);
   });
 
   it('Can play without floaters', function() {
@@ -42,7 +44,7 @@ describe('NitrogenFromTitan', function() {
     card.play(player);
     expect(game.deferredActions).has.lengthOf(1);
 
-    const selectCard = game.deferredActions.peek()!.execute() as SelectCard<ICard>;
+    const selectCard = cast(game.deferredActions.peek()!.execute(), SelectCard<ICard>);
     selectCard.cb([jovianLanterns]);
     expect(jovianLanterns.resourceCount).to.eq(2);
   });

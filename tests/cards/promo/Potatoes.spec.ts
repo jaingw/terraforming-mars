@@ -1,19 +1,20 @@
 import {expect} from 'chai';
-import {ViralEnhancers} from '../../../src/cards/base/ViralEnhancers';
-import {Potatoes} from '../../../src/cards/promo/Potatoes';
-import {Player} from '../../../src/Player';
-import {Resources} from '../../../src/common/Resources';
-import {TestPlayers} from '../../TestPlayers';
+import {ViralEnhancers} from '../../../src/server/cards/base/ViralEnhancers';
+import {Potatoes} from '../../../src/server/cards/promo/Potatoes';
+import {TestPlayer} from '../../TestPlayer';
+import {getTestPlayer, newTestGame} from '../../TestGame';
 
 describe('Potatoes', function() {
-  let card : Potatoes; let player : Player;
+  let card: Potatoes;
+  let player: TestPlayer;
 
   beforeEach(function() {
     card = new Potatoes();
-    player = TestPlayers.BLUE.newPlayer();
+    const game = newTestGame(1);
+    player = getTestPlayer(game, 0);
   });
 
-  it('Can\'t play', function() {
+  it('Can not play', function() {
     player.plants = 1;
     expect(card.canPlay(player)).is.not.true;
   });
@@ -30,6 +31,6 @@ describe('Potatoes', function() {
 
     card.play(player);
     expect(player.plants).to.eq(0);
-    expect(player.getProduction(Resources.MEGACREDITS)).to.eq(2);
+    expect(player.production.megacredits).to.eq(2);
   });
 });

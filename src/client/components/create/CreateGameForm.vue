@@ -59,7 +59,7 @@
                             <input type="checkbox" name="promo" id="promo-checkbox" v-model="promoCardsOption">
                             <label for="promo-checkbox" class="expansion-button">
                                 <div class="create-game-expansion-icon expansion-icon-promo"></div>
-                                <span v-i18n>Promos</span>&nbsp;
+                                <span v-i18n>Promos</span>&nbsp;<a href="https://github.com/terraforming-mars/terraforming-mars/wiki/Variants#promo-cards" class="tooltip" target="_blank">&#9432;</a>
                             </label>
 
                             <div class="create-game-subsection-label" v-i18n>Fan-made</div>
@@ -70,12 +70,14 @@
                             </label>
 
                             <input type="checkbox" name="breakthrough" id="breakthrough-checkbox" v-model="breakthrough"  v-if="isvip">
-                            <label for="breakthrough-checkbox"  :class="{forbidden:!isvip}">
+                            <label for="breakthrough-checkbox" class="expansion-button" :class="{forbidden:!isvip}">
+                                <div class="create-game-expansion-icon expansion-icon-breakthrough"></div>
                                 <span v-i18n>BreakThrough</span>&nbsp;<a href="https://docs.qq.com/pdf/DS29QWFZLeUhWWlRR" class="tooltip" target="_blank">&#9432;</a>
                             </label>
 
                             <input type="checkbox" name="doubleCorp" id="doubleCorp-checkbox" v-model="doubleCorp"  v-if="isvip">
-                            <label for="doubleCorp-checkbox"  :class="{forbidden:!isvip}">
+                            <label for="doubleCorp-checkbox" class="expansion-button" :class="{forbidden:!isvip}">
+                                <div class="create-game-expansion-icon expansion-icon-double-corp"></div>
                                 <span v-i18n>Double Corp</span>&nbsp;
                             </label>
 
@@ -100,7 +102,7 @@
                             <input type="checkbox" name="themoon" id="themoon-checkbox" v-model="moonExpansion"  v-if="isvip">
                             <label for="themoon-checkbox" class="expansion-button" :class="{forbidden:!isvip}">
                                 <div class="create-game-expansion-icon expansion-icon-themoon"></div>
-                                <span v-i18n>The Moon</span>&nbsp;<a href="https://github.com/bafolts/terraforming-mars/wiki/The-Moon" class="tooltip" target="_blank">&#9432;</a>
+                                <span v-i18n>The Moon</span>&nbsp;<a href="https://github.com/terraforming-mars/terraforming-mars/wiki/The-Moon" class="tooltip" target="_blank">&#9432;</a>
                             </label>
 
                             <template v-if="turmoil">
@@ -130,14 +132,14 @@
                             <input type="checkbox" name="pathfinders" id="pathfinders-checkbox" v-model="pathfindersExpansion" v-if="isvip">
                             <label for="pathfinders-checkbox" class="expansion-button" :class="{forbidden:!isvip}">
                                 <div class="create-game-expansion-icon expansion-icon-pathfinders"></div>
-                                <span v-i18n>Pathfinders</span>&nbsp;<a href="https://github.com/bafolts/terraforming-mars/wiki/Pathfinders" class="tooltip" target="_blank">&#9432;</a>
+                                <span v-i18n>Pathfinders</span>&nbsp;<a href="https://github.com/terraforming-mars/terraforming-mars/wiki/Pathfinders" class="tooltip" target="_blank">&#9432;</a>
                             </label>
 
                             <!--
                             <template v-if="venusNext">
                                 <input type="checkbox" v-model="altVenusBoard" id="altVenusBoard-checkbox">
                                 <label for="altVenusBoard-checkbox">
-                                    <span v-i18n>Alternate Venus Board</span> &nbsp;<a href="https://github.com/bafolts/terraforming-mars/wiki/Variants#alt-venus" class="tooltip" target="_blank">&#9432;</a>
+                                    <span v-i18n>Alt. Venus Board</span> &nbsp;<a href="https://github.com/terraforming-mars/terraforming-mars/wiki/Alternative-Venus-Board" class="tooltip" target="_blank">&#9432;</a>
                                 </label>
                             </template>
                             -->
@@ -147,11 +149,17 @@
                             <h4 v-i18n>Board</h4>
 
                             <template v-for="boardName in boards">
+                              <div v-bind:key="boardName">
                                 <div v-if="boardName==='arabia terra'" class="create-game-subsection-label" :key="boardName + '-lab'" v-i18n>Fan-made</div>
                                 <input type="radio" :value="boardName" name="board" v-model="board" :id="boardName+'-checkbox'" :key="boardName">
                                 <label :for="boardName+'-checkbox'" class="expansion-button"  :key="'-'+boardName">
-                                    <span :class="getBoardColorClass(boardName)">&#x2B22;</span><span class="capitalized" v-i18n>{{ boardName }}</span>
+                                    <span :class="getBoardColorClass(boardName)">&#x2B22;</span>
+                                    <span class="capitalized" v-i18n>{{ boardName }}</span>
+                                    <template v-if="boardName !== RandomBoardOption.OFFICIAL && boardName !== RandomBoardOption.ALL">
+                                      &nbsp;<a :href="boardHref(boardName)" class="tooltip" target="_blank">&#9432;</a>
+                                    </template>
                                 </label>
+                              </div>
                             </template>
                         </div>
 
@@ -197,18 +205,19 @@
                             </label>
 
                             <label for="escapeThreshold-checkbox" v-show="escapeVelocityMode">
-                              <span v-i18n>After&nbsp;</span>
+                              <span v-i18n>After</span><span>&nbsp;</span>
                               <input type="number" class="create-game-corporations-count" value="30" step="5" min="0" :max="180" v-model="escapeVelocityThreshold" id="escapeThreshold-checkbox">
-                              <span v-i18n>&nbsp;min</span>
+                              <span v-i18n>min</span>
                             </label>
 
                             <label for="escapePeriod-checkbox" v-show="escapeVelocityMode">
-                              <span v-i18n>Reduce&nbsp;</span>
+                              <span v-i18n>Reduce</span><span>&nbsp;</span>
                               <input type="number" class="create-game-corporations-count" value="1" min="1" :max="10" v-model="escapeVelocityPenalty" id="escapePeriod-checkbox">
-                              <span v-i18n>&nbsp;VP every&nbsp;</span>
+                              <span v-i18n>VP every</span><span>&nbsp;</span>
                               <input type="number" class="create-game-corporations-count" value="2" min="1" :max="10" v-model="escapeVelocityPeriod" id="escapePeriod-checkbox">
-                              <span v-i18n>&nbsp;min</span>
+                              <span v-i18n>min</span>
                             </label>
+
 
                             <input type="checkbox" v-model="shuffleMapOption" id="shuffleMap-checkbox"  v-if="isvip">
                             <label for="shuffleMap-checkbox"  :class="{forbidden:!isvip}">
@@ -226,8 +235,15 @@
                                 <span v-i18n>Custom Corporation list</span>
                             </label>
 
-                            <input type="checkbox" v-model="showCardsBlackList" id="blackList-checkbox"  v-if="isvip">
-                            <label for="blackList-checkbox" :class="{forbidden:!isvip}">
+                            <template v-if="prelude">
+                              <input type="checkbox" v-model="showPreludesList" id="customPreludes-checkbox" v-if="isvip">
+                              <label for="customPreludes-checkbox"  :class="{forbidden:!isvip}">
+                                  <span v-i18n>Custom Preludes list</span>
+                              </label>
+                            </template>
+
+                            <input type="checkbox" v-model="showBannedCards" id="bannedCards-checkbox"  v-if="isvip">
+                            <label for="bannedCards-checkbox"  :class="{forbidden:!isvip}">
                                 <span v-i18n>Exclude some cards</span>
                             </label>
 
@@ -298,6 +314,7 @@
                                 </label>
                                 </div>
                             </div>
+
 
                             <input type="checkbox" name="showOtherPlayersVP" v-model="showOtherPlayersVP" id="realTimeVP-checkbox">
                             <label for="realTimeVP-checkbox">
@@ -371,7 +388,7 @@
             <div class="create-game--block" v-if="showCorporationList">
               <CorporationsFilter
                   ref="corporationsFilter"
-                  v-on:corporation-list-changed="updateCustomCorporationsList"
+                  v-on:corporation-list-changed="updatecustomCorporations"
                   v-bind:corporateEra="corporateEra"
                   v-bind:prelude="prelude"
                   v-bind:venusNext="venusNext"
@@ -386,20 +403,32 @@
             </div>
 
             <div class="create-game--block" v-if="showColoniesList">
-              <colonies-filter
+              <ColoniesFilter
                   ref="coloniesFilter"
-                  v-on:colonies-list-changed="updateCustomColoniesList"
+                  v-on:colonies-list-changed="updatecustomColonies"
                   v-bind:venusNext="venusNext"
                   v-bind:turmoil="turmoil"
+                  v-bind:pathfinders="pathfindersExpansion"
                   v-bind:communityCardsOption="communityCardsOption"
-              ></colonies-filter>
+              ></ColoniesFilter>
             </div>
 
-            <div class="create-game--block" v-if="showCardsBlackList">
-              <cards-filter
+            <div class="create-game--block" v-if="showPreludesList">
+              <PreludesFilter
+                  ref="preludesFilter"
+                  v-on:prelude-list-changed="updateCustomPreludes"
+                  v-bind:promoCardsOption="promoCardsOption"
+                  v-bind:communityCardsOption="communityCardsOption"
+                  v-bind:moonExpansion="moonExpansion"
+                  v-bind:pathfindersExpansion="pathfindersExpansion"
+              ></PreludesFilter>
+            </div>
+
+            <div class="create-game--block" v-if="showBannedCards">
+              <CardsFilter
                   ref="cardsFilter"
-                  v-on:cards-list-changed="updateCardsBlackList"
-              ></cards-filter>
+                  v-on:cards-list-changed="updateBannedCards"
+              ></CardsFilter>
 
             </div>
             <QrCode/>
@@ -415,6 +444,7 @@ import {BoardName} from '@/common/boards/BoardName';
 import {RandomBoardOption} from '@/common/boards/RandomBoardOption';
 import {CardName} from '@/common/cards/CardName';
 import CorporationsFilter from '@/client/components/create/CorporationsFilter.vue';
+import PreludesFilter from '@/client/components/create/PreludesFilter.vue';
 import {translateText, translateTextWithParams} from '@/client/directives/i18n';
 import ColoniesFilter from '@/client/components/create/ColoniesFilter.vue';
 import {ColonyName} from '@/common/colonies/ColonyName';
@@ -429,9 +459,13 @@ import {getCard} from '@/client/cards/ClientCardManifest';
 import {GameModule} from '@/common/cards/GameModule';
 
 import * as constants from '@/common/constants';
+import * as json_constants from '@/client/components/create/json';
 import {QrCode} from '../QrCode';
 import {mainAppSettings} from '../App';
 import {BoardNameType, NewGameConfig, NewPlayerModel} from '@/common/game/NewGameConfig';
+import {GameId} from '../../../common/Types';
+
+const REVISED_COUNT_ALGORITHM = false;
 
 export interface CreateGameModel {
     isvip: boolean,
@@ -448,16 +482,17 @@ export interface CreateGameModel {
     randomMA: RandomMAOptionType;
     randomFirstPlayer: boolean;
     showOtherPlayersVP: boolean;
-    // beginnerOption: boolean;
     venusNext: boolean;
     colonies: boolean;
     turmoil: boolean;
-    customCorporationsList: Array<CardName>;
-    customColoniesList: Array<ColonyName>;
-    cardsBlackList: Array<CardName>;
+    bannedCards: Array<CardName>;
+    customColonies: Array<ColonyName>;
+    customCorporations: Array<CardName>;
+    customPreludes: Array<CardName>;
+    showBannedCards: boolean;
     showCorporationList: boolean;
     showColoniesList: boolean;
-    showCardsBlackList: boolean;
+    showPreludesList: boolean;
     board: BoardNameType;
     boards: Array<BoardNameType>;
     seed: number;
@@ -478,9 +513,10 @@ export interface CreateGameModel {
     breakthrough: boolean;
     doubleCorp: boolean; // 双将
     includeVenusMA: boolean;
+    includeFanMA: boolean;
     startingCorporations: number;
     soloTR: boolean;
-    clonedGameId: string | undefined;
+    clonedGameId: GameId | undefined;
     requiresVenusTrackCompletion: boolean;
     requiresMoonTrackCompletion: boolean;
     moonStandardProjectVariant: boolean;
@@ -491,6 +527,9 @@ export interface CreateGameModel {
     escapeVelocityThreshold: number;
     escapeVelocityPeriod: number;
     escapeVelocityPenalty: number;
+    twoCorpsVariant: boolean;
+    leadersExtension: boolean;
+    customLeaders: Array<CardName>;
 }
 
 const vipOptions : any = {
@@ -509,15 +548,18 @@ const vipOptions : any = {
   'randomMA': RandomMAOptionType.NONE,
 
   // 这四参数跟后端 routes/game不一样
-  'cardsBlackList': [],
-  'customColoniesList': [],
-  'showCardsBlackList': false,
+  'bannedCards': [],
+  'customColoniesList': [], // customColonies
+  'showBannedCards': false,
   'showColoniesList': false,
+  'showPreludesList': false,
+  'customPreludes': [],
 };
 
 type Refs = {
   coloniesFilter: InstanceType<typeof ColoniesFilter>,
   corporationsFilter: InstanceType<typeof CorporationsFilter>,
+  preludesFilter: InstanceType<typeof PreludesFilter>,
   cardsFilter: InstanceType<typeof CardsFilter>,
   file: HTMLInputElement,
 }
@@ -553,14 +595,16 @@ export default (Vue as WithRefs<Refs>).extend({
       colonies: true,
       showColoniesList: false,
       showCorporationList: false,
-      showCardsBlackList: false,
+      showPreludesList: false,
+      showBannedCards: false,
       turmoil: true,
-      customCorporationsList: [],
-      customColoniesList: [],
-      cardsBlackList: [],
+      customColonies: [],
+      customCorporations: [],
+      customPreludes: [],
+      bannedCards: [],
       board: RandomBoardOption.OFFICIAL,
       boards: [
-        BoardName.ORIGINAL,
+        BoardName.THARSIS,
         BoardName.HELLAS,
         BoardName.ELYSIUM,
         RandomBoardOption.OFFICIAL,
@@ -589,6 +633,7 @@ export default (Vue as WithRefs<Refs>).extend({
       breakthrough: false,
       doubleCorp: false,
       includeVenusMA: true,
+      includeFanMA: false,
       startingCorporations: 4,
       soloTR: false,
       clonedGameId: undefined,
@@ -602,6 +647,9 @@ export default (Vue as WithRefs<Refs>).extend({
       escapeVelocityThreshold: constants.DEFAULT_ESCAPE_VELOCITY_THRESHOLD,
       escapeVelocityPeriod: constants.DEFAULT_ESCAPE_VELOCITY_PERIOD,
       escapeVelocityPenalty: constants.DEFAULT_ESCAPE_VELOCITY_PENALTY,
+      twoCorpsVariant: false,
+      leadersExtension: false,
+      customLeaders: [],
     };
   },
   components: {
@@ -610,6 +658,7 @@ export default (Vue as WithRefs<Refs>).extend({
     ColoniesFilter,
     CorporationsFilter,
     QrCode,
+    PreludesFilter,
     PreferencesIcon,
   },
   mounted() {
@@ -640,6 +689,14 @@ export default (Vue as WithRefs<Refs>).extend({
       }
     },
   },
+  computed: {
+    RandomBoardOption(): typeof RandomBoardOption {
+      return RandomBoardOption;
+    },
+    RandomMAOptionType(): typeof RandomMAOptionType {
+      return RandomMAOptionType;
+    },
+  },
   methods: {
     async downloadCurrentSettings() {
       const serializedData = await this.serializeSettings();
@@ -653,69 +710,96 @@ export default (Vue as WithRefs<Refs>).extend({
       }
     },
     handleSettingsUpload() {
-      const refs = this.$refs;
+      const refs: Refs = this.$refs;
       const file = refs.file.files !== null ? refs.file.files[0] : undefined;
-      (refs.file as any).value ='';
+      (refs.file as any).value =''; //  避免上传相同文件时不触发更新事件
       const reader = new FileReader();
-      const component = this.$data;
+      const component = this.$data as CreateGameModel;
 
       reader.addEventListener('load', function() {
-        const readerResults = reader.result;
-        if (typeof(readerResults) === 'string') {
-          const results = JSON.parse(readerResults);
-          const players = results['players'];
-          component.playersCount = players.length;
-          component.showCorporationList = results['customCorporationsList'].length > 0;
-          component.showColoniesList = results['customColoniesList'].length > 0;
-          component.showCardsBlackList = results['cardsBlackList'].length > 0;
+        const warnings: Array<string> = [];
+        try {
+          const readerResults = reader.result;
+          if (typeof(readerResults) === 'string') {
+            const results = JSON.parse(readerResults);
 
-          // Capture the solar phase option since several of the other results will change
-          // it via the watch mechanism.
-          const capturedSolarPhaseOption = results.solarPhaseOption;
+            const customCorporations = results[json_constants.CUSTOM_CORPORATIONS] || results[json_constants.OLD_CUSTOM_CORPORATIONS] || [];
+            const customColonies = results[json_constants.CUSTOM_COLONIES] || results[json_constants.OLD_CUSTOM_COLONIES] || [];
+            const bannedCards = results[json_constants.BANNED_CARDS] || results[json_constants.OLD_BANNED_CARDS] || [];
+            const customPreludes = results[json_constants.CUSTOM_PRELUDES] || [];
 
-          for (const k in results) {
-            if (['customCorporationsList', 'customColoniesList', 'cardsBlackList', 'players', 'solarPhaseOption'].includes(k)) continue;
-            (component as any)[k] = results[k];
-          }
+            const players = results['players'];
+            component.playersCount = players.length;
+            component.showCorporationList = customCorporations.length > 0;
+            component.showColoniesList = customColonies.length > 0;
+            component.showBannedCards = bannedCards.length > 0;
+            component.showPreludesList = customPreludes.length > 0;
 
-          for (let i = 0; i < players.length; i++) {
-            Object.assign(component.players[i], players[i]);
+            // Capture the solar phase option since several of the other results will change
+            // it via the watch mechanism.
+            const capturedSolarPhaseOption = results.solarPhaseOption;
+
+            const specialFields = [
+              json_constants.CUSTOM_CORPORATIONS,
+              json_constants.OLD_CUSTOM_CORPORATIONS,
+              json_constants.CUSTOM_COLONIES,
+              json_constants.OLD_CUSTOM_COLONIES,
+              json_constants.CUSTOM_PRELUDES,
+              json_constants.BANNED_CARDS,
+              json_constants.OLD_BANNED_CARDS,
+              '_corporationsDraft',
+              'userId',
+              'players',
+              'constants'];
+            for (const k in results) {
+              if (specialFields.includes(k)) continue;
+              if (!Object.prototype.hasOwnProperty.call(component, k)) {
+                warnings.push('Unknown property: ' + k);
+              }
+              // This is safe because of the hasOwnProperty check, above. hasOwnProperty doesn't help with type declarations.
+              (component as any)[k] = results[k];
+            }
+
+            for (let i = 0; i < players.length; i++) {
+              Object.assign(component.players[i], players[i]);
             // component.players[i] = players[i];  这会使player对象替换，vue检测不到更换玩家颜色事件,不会自动修改背景色
-          }
-
-          // 非vip还原部分设置
-          if (!component.isvip) {
-            for (const k in vipOptions) {
-              if (['customCorporationsList', 'customColoniesList', 'cardsBlackList', 'players'].includes(k)) continue;
-              (component as any)[k] = vipOptions[k];
-            }
-          }
-          if (component.randomMA !== RandomMAOptionType.NONE) {
-            component.randomMACheckbox = true;
-          }
-
-
-          Vue.nextTick(() => {
-            if (component.isvip) {
-              if (component.showColoniesList) {
-                refs.coloniesFilter.updateColoniesByNames(results['customColoniesList']);
-              }
-
-              if (component.showCorporationList) {
-                refs.corporationsFilter.selectedCorporations = results['customCorporationsList'];
-              }
-
-              if (component.showCardsBlackList) {
-                refs.cardsFilter.selectedCardNames = results['cardsBlackList'];
-              }
-            }
-            if ( ! component.seededGame) {
-              component.seed = Math.random();
             }
 
-            // set to alter after any watched properties
-            component.solarPhaseOption = Boolean(capturedSolarPhaseOption);
-          });
+            // 非vip还原部分设置
+            if (!component.isvip) {
+              for (const k in vipOptions) {
+                if (['customCorporationsList', 'customColoniesList', 'bannedCards', 'players', 'showPreludesList'].includes(k)) continue;
+                (component as any)[k] = vipOptions[k];
+              }
+            }
+            if (component.randomMA !== RandomMAOptionType.NONE) {
+              component.randomMACheckbox = true;
+            }
+
+
+            Vue.nextTick(() => {
+              try {
+                if (component.isvip) {
+                  if (component.showColoniesList) refs.coloniesFilter.updateColoniesByNames(customColonies);
+                  if (component.showCorporationList) refs.corporationsFilter.selectedCorporations = customCorporations;
+                  if (component.showPreludesList) refs.preludesFilter.updatePreludes(customPreludes);
+                  if (component.showBannedCards) refs.cardsFilter.selectedCardNames = bannedCards;
+                }
+                if (!component.seededGame) component.seed = Math.random();
+                // set to alter after any watched properties
+                component.solarPhaseOption = Boolean(capturedSolarPhaseOption);
+              } catch (e) {
+                window.alert('Error reading JSON ' + e);
+              }
+            });
+          }
+          if (warnings.length > 0) {
+            window.alert('Settings loaded, with these errors: \n' + warnings.join('\n'));
+          } else {
+            // window.alert('Settings loaded.');
+          }
+        } catch (e) {
+          window.alert('Error reading JSON ' + e);
         }
       }, false);
       if (file) {
@@ -730,14 +814,17 @@ export default (Vue as WithRefs<Refs>).extend({
         [String(player.index)],
       );
     },
-    updateCustomCorporationsList(customCorporationsList: Array<CardName>) {
-      this.customCorporationsList = customCorporationsList;
+    updatecustomCorporations(customCorporations: Array<CardName>) {
+      this.customCorporations = customCorporations;
     },
-    updateCardsBlackList(cardsBlackList: Array<CardName>) {
-      this.cardsBlackList = cardsBlackList;
+    updateCustomPreludes(customPreludes: Array<CardName>) {
+      this.customPreludes = customPreludes;
     },
-    updateCustomColoniesList(customColoniesList: Array<ColonyName>) {
-      this.customColoniesList = customColoniesList;
+    updateBannedCards(bannedCards: Array<CardName>) {
+      this.bannedCards = bannedCards;
+    },
+    updatecustomColonies(customColonies: Array<ColonyName>) {
+      this.customColonies = customColonies;
     },
     getPlayers(): Array<NewPlayerModel> {
       return this.players.slice(0, this.playersCount);
@@ -796,7 +883,7 @@ export default (Vue as WithRefs<Refs>).extend({
       }
     },
     getBoardColorClass(boardName: string): string {
-      if (boardName === BoardName.ORIGINAL) {
+      if (boardName === BoardName.THARSIS) {
         return 'create-game-board-hexagon create-game-tharsis';
       } else if (boardName === BoardName.HELLAS) {
         return 'create-game-board-hexagon create-game-hellas';
@@ -835,7 +922,21 @@ export default (Vue as WithRefs<Refs>).extend({
       default: return true;
       }
     },
-    async serializeSettings() {
+    boardHref(boardName: BoardName | RandomBoardOption) {
+      const options: Record<BoardName | RandomBoardOption, string> = {
+        [BoardName.THARSIS]: 'tharsis',
+        [BoardName.HELLAS]: 'hellas',
+        [BoardName.ELYSIUM]: 'elysium',
+        [BoardName.ARABIA_TERRA]: 'arabia-terra',
+        [BoardName.VASTITAS_BOREALIS]: 'vastitas-borealis',
+        [BoardName.AMAZONIS]: 'amazonis-planatia',
+        [BoardName.TERRA_CIMMERIA]: 'terra-cimmeria',
+        [RandomBoardOption.OFFICIAL]: '',
+        [RandomBoardOption.ALL]: '',
+      };
+      return 'https://github.com/terraforming-mars/terraforming-mars/wiki/Maps#' + options[boardName];
+    },
+    serializeSettings() {
       // TODO(kberg): remove 'component'
       const component: CreateGameModel = this;
 
@@ -865,7 +966,7 @@ export default (Vue as WithRefs<Refs>).extend({
       // Set player name automatically if not entered
       const isSoloMode = component.playersCount === 1;
 
-      component.players.forEach((player) => {
+      players.forEach((player) => {
         if (player.name === '') {
           if (isSoloMode) {
             const userName = PreferencesManager.load('userName');
@@ -898,9 +999,10 @@ export default (Vue as WithRefs<Refs>).extend({
       const turmoil = component.turmoil;
       const solarPhaseOption = this.solarPhaseOption;
       const shuffleMapOption = this.shuffleMapOption;
-      const customCorporationsList = component.customCorporationsList;
-      const customColoniesList = component.customColoniesList;
-      const cardsBlackList = component.cardsBlackList;
+      const customColonies = component.customColonies;
+      const customCorporations = component.customCorporations;
+      const customPreludes = component.customPreludes;
+      const bannedCards = component.bannedCards;
       const board = component.board;
       const seed = component.seed;
       const promoCardsOption = component.promoCardsOption;
@@ -918,6 +1020,7 @@ export default (Vue as WithRefs<Refs>).extend({
       const breakthrough = component.breakthrough;
       const doubleCorp = component.doubleCorp;
       const includeVenusMA = component.includeVenusMA;
+      const includeFanMA = component.includeFanMA;
       const startingCorporations = component.startingCorporations;
       const soloTR = component.soloTR;
       // const beginnerOption = component.beginnerOption;
@@ -927,10 +1030,13 @@ export default (Vue as WithRefs<Refs>).extend({
       const escapeVelocityThreshold = component.escapeVelocityMode ? component.escapeVelocityThreshold : undefined;
       const escapeVelocityPeriod = component.escapeVelocityMode ? component.escapeVelocityPeriod : undefined;
       const escapeVelocityPenalty = component.escapeVelocityMode ? component.escapeVelocityPenalty : undefined;
+      const twoCorpsVariant = component.twoCorpsVariant;
+      const leadersExtension = component.leadersExtension;
+      const customLeaders = component.customLeaders;
       const clonedGamedId: undefined | string = undefined;
 
       // Check custom colony count
-      if (customColoniesList.length > 0) {
+      if (customColonies.length > 0) {
         const playersCount = players.length;
         let neededColoniesCount = playersCount + 2;
         if (playersCount === 1) {
@@ -939,7 +1045,7 @@ export default (Vue as WithRefs<Refs>).extend({
           neededColoniesCount = 5;
         }
 
-        if (customColoniesList.length < neededColoniesCount) {
+        if (customColonies.length < neededColoniesCount) {
           window.alert(translateTextWithParams('Must select at least ${0} colonies', [neededColoniesCount.toString()]));
           return;
         }
@@ -952,14 +1058,27 @@ export default (Vue as WithRefs<Refs>).extend({
       }
 
       // Check custom corp count
-      if (component.showCorporationList && customCorporationsList.length > 0) {
-        const neededCorpsCount = players.length * startingCorporations;
-        if (customCorporationsList.length < neededCorpsCount) {
+      if (component.showCorporationList && customCorporations.length > 0) {
+        let neededCorpsCount = players.length * startingCorporations;
+        if (REVISED_COUNT_ALGORITHM) {
+          if (this.twoCorpsVariant) {
+            // Add an additional 4 for the Merger prelude
+            // Everyone-Merger needs an additional 4 corps per player
+            //  NB: This will not cover the case when no custom corp list is set!
+            //  It _can_ come about if  the number of corps included in all expansions is still not enough.
+            neededCorpsCount = (players.length * startingCorporations) + (players.length * 4);
+          } else {
+            neededCorpsCount = players.length * startingCorporations;
+            // Merger Prelude alone needs 4 additional preludes
+            if (this.prelude && this.promoCardsOption) neededCorpsCount += 4;
+          }
+        }
+        if (customCorporations.length < neededCorpsCount) {
           window.alert(translateTextWithParams('Must select at least ${0} corporations', [neededCorpsCount.toString()]));
           return;
         }
         let valid = true;
-        for (const corp of customCorporationsList) {
+        for (const corp of customCorporations) {
           const card = getCard(corp);
           for (const module of card?.compatibility ?? []) {
             if (!this.isEnabled(module)) {
@@ -968,12 +1087,38 @@ export default (Vue as WithRefs<Refs>).extend({
           }
         }
         if (valid === false) {
+          // const confirm = window.confirm(translateText(
+          //   'Some of the corps you selected need expansions you have not enabled. Using them might break your game. Press OK to continue or Cancel to change your selections.'));
+          // if (confirm === false) return;
+        }
+      } else {
+        customCorporations.length = 0;
+      }
+
+      // TODO(kberg): this is a direct copy of the code right above.
+      // Check custom prelude count
+      if (component.showPreludesList && customPreludes.length > 0) {
+        const requiredPreludeCount = players.length * constants.PRELUDE_CARDS_DEALT_PER_PLAYER;
+        if (customPreludes.length < requiredPreludeCount) {
+          window.alert(translateTextWithParams('Must select at least ${0} Preludes', [requiredPreludeCount.toString()]));
+          return;
+        }
+        let valid = true;
+        for (const prelude of customPreludes) {
+          const card = getCard(prelude);
+          for (const module of card?.compatibility ?? []) {
+            if (!this.isEnabled(module)) {
+              valid = false;
+            }
+          }
+        }
+        if (valid === false) {
           const confirm = window.confirm(translateText(
-            'Some of the corps you selected need expansions you have not enabled. Using them might break your game. Press OK to continue or Cancel to change your selections.'));
+            'Some of the Preludes you selected need expansions you have not enabled. Using them might break your game. Press OK to continue or Cancel to change your selections.'));
           if (confirm === false) return;
         }
       } else {
-        customCorporationsList.length = 0;
+        customPreludes.length = 0;
       }
       const dataToSend: NewGameConfig = {
         players,
@@ -984,19 +1129,20 @@ export default (Vue as WithRefs<Refs>).extend({
         venusNext,
         colonies,
         turmoil,
-        customCorporationsList,
-        customColoniesList,
-        cardsBlackList,
+        'customCorporationsList': customCorporations,
+        'customColoniesList': customColonies,
+        customPreludes,
+        bannedCards,
         board,
         seed,
         solarPhaseOption,
         promoCardsOption,
         communityCardsOption,
         erosCardsOption,
-        aresExtension: aresExtension,
-        politicalAgendasExtension: politicalAgendasExtension,
-        moonExpansion: moonExpansion,
-        pathfindersExpansion: pathfindersExpansion,
+        'aresExtension': aresExtension,
+        'politicalAgendasExtension': politicalAgendasExtension,
+        'moonExpansion': moonExpansion,
+        'pathfindersExpansion': pathfindersExpansion,
         undoOption,
         showTimers,
         fastModeOption,
@@ -1005,24 +1151,29 @@ export default (Vue as WithRefs<Refs>).extend({
         breakthrough,
         doubleCorp,
         includeVenusMA,
+        includeFanMA,
         startingCorporations,
         soloTR,
         clonedGamedId,
         initialDraft,
         initialCorpDraftVariant,
+        '_corporationsDraft': false,
         randomMA,
         shuffleMapOption,
-        userId: PreferencesManager.load('userId'),
+        'userId': PreferencesManager.load('userId'),
         // beginnerOption,
         randomFirstPlayer,
         requiresVenusTrackCompletion,
-        requiresMoonTrackCompletion: component.requiresMoonTrackCompletion,
-        moonStandardProjectVariant: component.moonStandardProjectVariant,
-        altVenusBoard: component.altVenusBoard,
+        'requiresMoonTrackCompletion': component.requiresMoonTrackCompletion,
+        'moonStandardProjectVariant': component.moonStandardProjectVariant,
+        'altVenusBoard': component.altVenusBoard,
         escapeVelocityMode,
         escapeVelocityThreshold,
         escapeVelocityPeriod,
         escapeVelocityPenalty,
+        twoCorpsVariant,
+        leadersExtension,
+        customLeaders,
       };
       return JSON.stringify(dataToSend, undefined, 4);
     },

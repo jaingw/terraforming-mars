@@ -4,12 +4,14 @@
         "target": "es5",
         "experimentalDecorators": true,
         "allowJs": true,
-        "composite": true
+        "composite": true,
+        "downlevelIteration":true
         // "target": "es2017"
     },
     "extends": "../tsconfig.json",
     "include": [
         "**/*.ts",
-        "genfiles/*.json",
+        "**/genfiles/*.json",
+        "**/genfiles/translations.json",
     ],
 }

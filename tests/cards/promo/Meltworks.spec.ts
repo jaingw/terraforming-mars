@@ -1,17 +1,17 @@
 import {expect} from 'chai';
-import {Meltworks} from '../../../src/cards/promo/Meltworks';
-import {Player} from '../../../src/Player';
-import {TestPlayers} from '../../TestPlayers';
+import {Meltworks} from '../../../src/server/cards/promo/Meltworks';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('Meltworks', function() {
-  let card : Meltworks; let player : Player;
+  let card: Meltworks;
+  let player: TestPlayer;
 
   beforeEach(function() {
     card = new Meltworks();
-    player = TestPlayers.BLUE.newPlayer();
+    player = TestPlayer.BLUE.newPlayer();
   });
 
-  it('Can\'t act', function() {
+  it('Can not act', function() {
     player.heat = 4;
     expect(card.canAct(player)).is.not.true;
   });

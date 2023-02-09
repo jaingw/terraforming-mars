@@ -1,26 +1,23 @@
-import {Game} from '../../../src/Game';
-import {Player} from '../../../src/Player';
-import {setCustomGameOptions} from '../../TestingUtils';
-import {TestPlayers} from '../../TestPlayers';
-import {HE3ProductionQuotas} from '../../../src/cards/moon/HE3ProductionQuotas';
+import {Game} from '../../../src/server/Game';
+import {testGameOptions} from '../../TestingUtils';
+import {TestPlayer} from '../../TestPlayer';
+import {HE3ProductionQuotas} from '../../../src/server/cards/moon/HE3ProductionQuotas';
 import {expect} from 'chai';
-import {MoonExpansion} from '../../../src/moon/MoonExpansion';
-import {IMoonData} from '../../../src/moon/IMoonData';
+import {MoonExpansion} from '../../../src/server/moon/MoonExpansion';
+import {IMoonData} from '../../../src/server/moon/IMoonData';
 import {TileType} from '../../../src/common/TileType';
-import {Kelvinists} from '../../../src/turmoil/parties/Kelvinists';
-import {Greens} from '../../../src/turmoil/parties/Greens';
-
-const MOON_OPTIONS = setCustomGameOptions({moonExpansion: true});
+import {Kelvinists} from '../../../src/server/turmoil/parties/Kelvinists';
+import {Greens} from '../../../src/server/turmoil/parties/Greens';
 
 describe('HE3ProductionQuotas', () => {
-  let player: Player;
+  let player: TestPlayer;
   let game: Game;
   let card: HE3ProductionQuotas;
   let moonData: IMoonData;
 
   beforeEach(() => {
-    player = TestPlayers.BLUE.newPlayer();
-    game = Game.newInstance('id', [player], player, MOON_OPTIONS);
+    player = TestPlayer.BLUE.newPlayer();
+    game = Game.newInstance('gameid', [player], player, testGameOptions({moonExpansion: true, turmoilExtension: true}));
     card = new HE3ProductionQuotas();
     moonData = MoonExpansion.moonData(game);
   });

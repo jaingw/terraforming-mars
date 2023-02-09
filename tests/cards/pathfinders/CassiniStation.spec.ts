@@ -1,17 +1,19 @@
 import {expect} from 'chai';
-import {CassiniStation} from '../../../src/cards/pathfinders/CassiniStation';
-import {Game} from '../../../src/Game';
+import {CassiniStation} from '../../../src/server/cards/pathfinders/CassiniStation';
+import {Game} from '../../../src/server/Game';
 import {TestPlayer} from '../../TestPlayer';
 import {getTestPlayer, newTestGame} from '../../TestGame';
-import {Leavitt} from '../../../src/cards/community/Leavitt';
-import {Mercury} from '../../../src/cards/community/Mercury';
+import {Leavitt} from '../../../src/server/cards/community/Leavitt';
+import {Mercury} from '../../../src/server/cards/community/Mercury';
 import {Units} from '../../../src/common/Units';
-import {IProjectCard} from '../../../src/cards/IProjectCard';
-import {TitanShuttles} from '../../../src/cards/colonies/TitanShuttles';
-import {FloatingHabs} from '../../../src/cards/venusNext/FloatingHabs';
-import {MartianCulture} from '../../../src/cards/pathfinders/MartianCulture';
-import {EconomicEspionage} from '../../../src/cards/pathfinders/EconomicEspionage';
-import {SearchForLife} from '../../../src/cards/base/SearchForLife';
+import {IProjectCard} from '../../../src/server/cards/IProjectCard';
+import {TitanShuttles} from '../../../src/server/cards/colonies/TitanShuttles';
+import {FloatingHabs} from '../../../src/server/cards/venusNext/FloatingHabs';
+import {MartianCulture} from '../../../src/server/cards/pathfinders/MartianCulture';
+import {EconomicEspionage} from '../../../src/server/cards/pathfinders/EconomicEspionage';
+import {SearchForLife} from '../../../src/server/cards/base/SearchForLife';
+import {SelectCard} from '../../../src/server/inputs/SelectCard';
+import {cast} from '../../TestingUtils';
 
 describe('CassiniStation', function() {
   let card: CassiniStation;
@@ -40,22 +42,22 @@ describe('CassiniStation', function() {
     const colonyTile2 = new Mercury();
     game.colonies = [colonyTile1, colonyTile2];
     const options = card.play(player);
-    expect(player.getProductionForTest()).deep.eq(Units.of({energy: 0}));
+    expect(player.production.asUnits()).deep.eq(Units.of({energy: 0}));
     expect(options).is.undefined;
 
     colonyTile1.colonies.push(player);
 
     card.play(player);
 
-    expect(player.getProductionForTest()).deep.eq(Units.of({energy: 1}));
+    expect(player.production.asUnits()).deep.eq(Units.of({energy: 1}));
 
-    player.setProductionForTest(Units.EMPTY);
+    player.production.override(Units.EMPTY);
     colonyTile2.colonies.push(player);
     colonyTile2.colonies.push(getTestPlayer(game, 1));
 
     card.play(player);
 
-    expect(player.getProductionForTest()).deep.eq(Units.of({energy: 3}));
+    expect(player.production.asUnits()).deep.eq(Units.of({energy: 3}));
   });
 
   it('play - one floater card', function() {
@@ -74,7 +76,7 @@ describe('CassiniStation', function() {
 
   it('play - all', function() {
     player.playedCards = [floater1, floater2, data1, data2, other];
-    const options = card.play(player);
+    const options = cast(card.play(player), SelectCard);
 
     expect(options?.cards.length).eq(4);
 

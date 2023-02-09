@@ -1,28 +1,31 @@
 import {expect} from 'chai';
-import {Mangrove} from '../../../src/cards/base/Mangrove';
-import {Game} from '../../../src/Game';
+import {Mangrove} from '../../../src/server/cards/base/Mangrove';
+import {Game} from '../../../src/server/Game';
 import {TestPlayer} from '../../TestPlayer';
 import {TileType} from '../../../src/common/TileType';
-import {TestPlayers} from '../../TestPlayers';
+import {cast, runAllActions} from '../../TestingUtils';
+import {SelectSpace} from '../../../src/server/inputs/SelectSpace';
 
 describe('Mangrove', function() {
-  let card : Mangrove; let player : TestPlayer;
+  let card: Mangrove;
+  let player: TestPlayer;
+  let game: Game;
 
   beforeEach(function() {
     card = new Mangrove();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    Game.newInstance('foobar', [player, redPlayer], player);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, redPlayer], player);
   });
 
-  it('Can\'t play', function() {
+  it('Can not play', function() {
     expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
 
   it('Should play', function() {
-    const action = card.play(player);
-    expect(action).is.not.undefined;
-
+    expect(card.play(player)).is.undefined;
+    runAllActions(game);
+    const action = cast(player.popWaitingFor(), SelectSpace);
     action.cb(action.availableSpaces[0]);
     expect(action.availableSpaces[0].tile && action.availableSpaces[0].tile.tileType).to.eq(TileType.GREENERY);
     expect(action.availableSpaces[0].player).to.eq(player);

@@ -1,12 +1,11 @@
 import {expect} from 'chai';
-import {DeclarationOfIndependence} from '../../../src/cards/pathfinders/DeclarationOfIndependence';
-import {Game} from '../../../src/Game';
+import {DeclarationOfIndependence} from '../../../src/server/cards/pathfinders/DeclarationOfIndependence';
+import {Game} from '../../../src/server/Game';
 import {TestPlayer} from '../../TestPlayer';
-import {TestPlayers} from '../../TestPlayers';
-import {cast, runAllActions, setCustomGameOptions} from '../../TestingUtils';
-import {Turmoil} from '../../../src/turmoil/Turmoil';
+import {cast, runAllActions, testGameOptions} from '../../TestingUtils';
+import {Turmoil} from '../../../src/server/turmoil/Turmoil';
 import {PartyName} from '../../../src/common/turmoil/PartyName';
-import {SelectPartyToSendDelegate} from '../../../src/inputs/SelectPartyToSendDelegate';
+import {SelectPartyToSendDelegate} from '../../../src/server/inputs/SelectPartyToSendDelegate';
 
 describe('DeclarationOfIndependence', function() {
   let card: DeclarationOfIndependence;
@@ -15,8 +14,8 @@ describe('DeclarationOfIndependence', function() {
 
   beforeEach(function() {
     card = new DeclarationOfIndependence();
-    player = TestPlayers.BLUE.newPlayer();
-    Game.newInstance('foobar', [player], player, setCustomGameOptions());
+    player = TestPlayer.BLUE.newPlayer();
+    Game.newInstance('gameid', [player], player, testGameOptions({turmoilExtension: true}));
     turmoil = player.game.turmoil!;
   });
 
@@ -29,22 +28,21 @@ describe('DeclarationOfIndependence', function() {
     player.tagsForTest = {mars: 6};
     expect(player.canPlay(card)).is.true;
 
-    turmoil.delegateReserve = [];
+    turmoil.delegateReserve.clear();
     expect(player.canPlay(card)).is.false;
   });
 
 
   it('play', function() {
-    expect(turmoil.getAvailableDelegateCount(player, 'reserve')).eq(6);
-    // This test is brittle - it assumes mars first will be orOptions[0]. But OK.
-    const marsFirst = turmoil.getPartyByName(PartyName.MARS)!;
-    expect(marsFirst.getDelegates(player)).eq(0);
+    expect(turmoil.getAvailableDelegateCount(player.id)).eq(7);
+    const marsFirst = turmoil.getPartyByName(PartyName.MARS);
+    expect(marsFirst.delegates.get(player.id)).eq(0);
     card.play(player);
     runAllActions(player.game);
     const action = cast(player.getWaitingFor(), SelectPartyToSendDelegate);
     action.cb(marsFirst.name);
 
-    expect(turmoil.getAvailableDelegateCount(player, 'reserve')).eq(4);
-    expect(marsFirst.getDelegates(player)).eq(2);
+    expect(turmoil.getAvailableDelegateCount(player.id)).eq(5);
+    expect(marsFirst.delegates.get(player.id)).eq(2);
   });
 });

@@ -1,31 +1,31 @@
 import {expect} from 'chai';
-import {AdvancedAlloys} from '../../../src/cards/base/AdvancedAlloys';
-import {Research} from '../../../src/cards/base/Research';
-import {ResearchCoordination} from '../../../src/cards/prelude/ResearchCoordination';
-import {OrbitalCleanup} from '../../../src/cards/promo/OrbitalCleanup';
-import {Game} from '../../../src/Game';
-import {Player} from '../../../src/Player';
+import {AdvancedAlloys} from '../../../src/server/cards/base/AdvancedAlloys';
+import {Research} from '../../../src/server/cards/base/Research';
+import {ResearchCoordination} from '../../../src/server/cards/prelude/ResearchCoordination';
+import {OrbitalCleanup} from '../../../src/server/cards/promo/OrbitalCleanup';
+import {Game} from '../../../src/server/Game';
 import {Resources} from '../../../src/common/Resources';
-import {TestPlayers} from '../../TestPlayers';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('OrbitalCleanup', function() {
-  let card : OrbitalCleanup; let player : Player;
+  let card: OrbitalCleanup;
+  let player: TestPlayer;
 
   beforeEach(function() {
     card = new OrbitalCleanup();
-    player = TestPlayers.BLUE.newPlayer();
-    Game.newInstance('id', [player], player);
+    player = TestPlayer.BLUE.newPlayer();
+    Game.newInstance('gameid', [player], player);
   });
 
-  it('Can\'t play if cannot decrease MC production', function() {
-    player.addProduction(Resources.MEGACREDITS, -4);
+  it('Can not play if cannot decrease MC production', function() {
+    player.production.add(Resources.MEGACREDITS, -4);
     expect(card.canPlay(player)).is.not.true;
   });
 
   it('Should play', function() {
     expect(card.canPlay(player)).is.true;
     card.play(player);
-    expect(player.getProduction(Resources.MEGACREDITS)).to.eq(-2);
+    expect(player.production.megacredits).to.eq(-2);
   });
 
   it('Should act', function() {
@@ -34,7 +34,7 @@ describe('OrbitalCleanup', function() {
     player.playedCards.push(new ResearchCoordination());
 
     card.action(player);
-    expect(player.getResource(Resources.MEGACREDITS)).to.eq(4);
+    expect(player.megaCredits).to.eq(4);
   });
 
   it('Should give victory points', function() {

@@ -1,19 +1,19 @@
 import {expect} from 'chai';
 import {cast} from '../../TestingUtils';
-import {AtmoCollectors} from '../../../src/cards/colonies/AtmoCollectors';
-import {Game} from '../../../src/Game';
-import {OrOptions} from '../../../src/inputs/OrOptions';
-import {Player} from '../../../src/Player';
-import {TestPlayers} from '../../TestPlayers';
+import {AtmoCollectors} from '../../../src/server/cards/colonies/AtmoCollectors';
+import {Game} from '../../../src/server/Game';
+import {OrOptions} from '../../../src/server/inputs/OrOptions';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('AtmoCollectors', function() {
-  let card : AtmoCollectors; let player : Player;
+  let card: AtmoCollectors;
+  let player: TestPlayer;
 
   beforeEach(function() {
     card = new AtmoCollectors();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    Game.newInstance('foobar', [player, redPlayer], player);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    Game.newInstance('gameid', [player, redPlayer], player);
   });
 
   it('Should play', function() {

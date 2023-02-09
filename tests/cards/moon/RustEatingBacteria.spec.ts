@@ -1,19 +1,16 @@
-import {Game} from '../../../src/Game';
-import {Player} from '../../../src/Player';
-import {setCustomGameOptions} from '../../TestingUtils';
-import {TestPlayers} from '../../TestPlayers';
-import {RustEatingBacteria} from '../../../src/cards/moon/RustEatingBacteria';
+import {Game} from '../../../src/server/Game';
+import {testGameOptions} from '../../TestingUtils';
+import {TestPlayer} from '../../TestPlayer';
+import {RustEatingBacteria} from '../../../src/server/cards/moon/RustEatingBacteria';
 import {expect} from 'chai';
 
-const MOON_OPTIONS = setCustomGameOptions({moonExpansion: true});
-
 describe('RustEatingBacteria', () => {
-  let player: Player;
+  let player: TestPlayer;
   let card: RustEatingBacteria;
 
   beforeEach(() => {
-    player = TestPlayers.BLUE.newPlayer();
-    Game.newInstance('id', [player], player, MOON_OPTIONS);
+    player = TestPlayer.BLUE.newPlayer();
+    Game.newInstance('gameid', [player], player, testGameOptions({moonExpansion: true}));
     card = new RustEatingBacteria();
   });
 

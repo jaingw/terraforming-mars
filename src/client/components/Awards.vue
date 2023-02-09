@@ -2,16 +2,7 @@
   <div class="awards_cont" v-trim-whitespace>
     <div class="awards">
       <div class="ma-title">
-        <a
-          @click.prevent="toggleList"
-          class="ma-clickable awards-padding"
-          href="#"
-          v-i18n
-          data-test="toggle-awards"
-        >
-          Awards
-        </a>
-
+        <a @click.prevent="toggleList" class="ma-clickable awards-padding" href="#" data-test="toggle-awards" v-i18n>Awards</a>
         <span
           v-for="award in fundedAwards"
           :key="award.name"
@@ -40,7 +31,7 @@
         </span>
       </div>
 
-      <span @click="toggleDescription" title="press to show or hide the description" data-test="toggle-description">
+      <span @click="toggleDescription" :title="$t('press to show or hide the description')" data-test="toggle-description">
         <div v-show="showAwards">
           <Award
             v-for="award in awards"

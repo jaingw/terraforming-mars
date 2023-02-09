@@ -1,14 +1,14 @@
 import {expect} from 'chai';
 import {getTestPlayer, newTestGame} from '../../TestGame';
-import {ValuableGases} from '../../../src/cards/pathfinders/ValuableGases';
-import {Game} from '../../../src/Game';
+import {ValuableGases} from '../../../src/server/cards/pathfinders/ValuableGases';
+import {Game} from '../../../src/server/Game';
 import {TestPlayer} from '../../TestPlayer';
-import {FloatingHabs} from '../../../src/cards/venusNext/FloatingHabs';
-import {JovianLanterns} from '../../../src/cards/colonies/JovianLanterns';
-import {LocalShading} from '../../../src/cards/venusNext/LocalShading';
-import {AirRaid} from '../../../src/cards/colonies/AirRaid';
+import {FloatingHabs} from '../../../src/server/cards/venusNext/FloatingHabs';
+import {JovianLanterns} from '../../../src/server/cards/colonies/JovianLanterns';
+import {LocalShading} from '../../../src/server/cards/venusNext/LocalShading';
+import {AirRaid} from '../../../src/server/cards/colonies/AirRaid';
 import {cast, runAllActions} from '../../TestingUtils';
-import {SelectHowToPayForProjectCard} from '../../../src/inputs/SelectHowToPayForProjectCard';
+import {SelectProjectCardToPlay} from '../../../src/server/inputs/SelectProjectCardToPlay';
 
 describe('ValuableGases', function() {
   let card: ValuableGases;
@@ -40,17 +40,17 @@ describe('ValuableGases', function() {
     expect(player.getPlayableCards()).is.empty;
 
     // Using playCard instead because playCard impacts lastCardPlayed.
-    player.playCard(card, undefined, true);
+    player.playCard(card);
 
     runAllActions(player.game);
 
     const input = player.popWaitingFor();
 
-    const selectHowToPay = cast(input, SelectHowToPayForProjectCard);
-    expect(selectHowToPay.cards).has.members([localShading]);
+    const selectProjectCardToPlay = cast(input, SelectProjectCardToPlay);
+    expect(selectProjectCardToPlay.cards).has.members([localShading]);
     expect(player.megaCredits).eq(10);
 
-    selectHowToPay.cb(localShading, {
+    selectProjectCardToPlay.cb(localShading, {
       heat: 0,
       megaCredits: localShading.cost,
       steel: 0,
@@ -64,7 +64,7 @@ describe('ValuableGases', function() {
 
     expect(localShading.resourceCount).eq(5);
 
-    player.playCard(jovianLanters, undefined, true);
+    player.playCard(jovianLanters);
     expect(airRaid.resourceCount).eq(0);
   });
 });

@@ -4,17 +4,21 @@ import {TurmoilModel} from './TurmoilModel';
 import {ClaimedMilestoneModel} from './ClaimedMilestoneModel';
 import {FundedAwardModel} from './FundedAwardModel';
 import {Phase} from '../Phase';
-import {IAresData} from '../ares/IAresData';
+import {AresData} from '../ares/AresData';
 import {SpaceModel} from './SpaceModel';
 import {MoonModel} from './MoonModel';
-import {GameOptions} from '../../Game';
 import {PathfindersModel} from './PathfindersModel';
+import {CardModel} from './CardModel';
+import {SpectatorId} from '../Types';
+import {GameOptions} from '../../server/GameOptions';
 
 // Common data about a game not assocaited with a player (eg the temperature.)
-export interface GameModel {
-  aresData: IAresData | undefined;
+export type GameModel = {
+  aresData: AresData | undefined;
   awards: Array<FundedAwardModel>;
   colonies: Array<ColonyModel>;
+  discardedColonies: Array<ColonyModel>; // TODO(kberg): Replace with Array<ColonyName>
+  corporationsToDraft: Array<CardModel>;
   deckSize: number;
   gameAge: number;
   gameOptions: GameOptions;
@@ -29,7 +33,7 @@ export interface GameModel {
   pathfinders: PathfindersModel | undefined;
   phase: Phase;
   spaces: Array<SpaceModel>;
-  spectatorId?: string;
+  spectatorId?: SpectatorId;
   step: number;
   temperature: number;
   isTerraformed: boolean;

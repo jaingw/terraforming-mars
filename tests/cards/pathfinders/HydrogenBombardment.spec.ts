@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 import {getTestPlayer, newTestGame} from '../../TestGame';
-import {HydrogenBombardment} from '../../../src/cards/pathfinders/HydrogenBombardment';
-import {Game} from '../../../src/Game';
+import {HydrogenBombardment} from '../../../src/server/cards/pathfinders/HydrogenBombardment';
+import {Game} from '../../../src/server/Game';
 import {Units} from '../../../src/common/Units';
 import {TestPlayer} from '../../TestPlayer';
 
@@ -20,6 +20,6 @@ describe('HydrogenBombardment', function() {
     card.play(player);
     expect(game.getVenusScaleLevel()).to.eq(2);
     expect(player.megaCredits).eq(6);
-    expect(player.getProductionForTest()).deep.eq(Units.of({titanium: 1}));
+    expect(player.production.asUnits()).deep.eq(Units.of({titanium: 1}));
   });
 });

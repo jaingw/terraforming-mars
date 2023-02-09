@@ -1,12 +1,11 @@
 import {expect} from 'chai';
-import {AsteroidResources} from '../../../src/cards/pathfinders/AsteroidResources';
-import {Game} from '../../../src/Game';
+import {AsteroidResources} from '../../../src/server/cards/pathfinders/AsteroidResources';
+import {Game} from '../../../src/server/Game';
 import {TestPlayer} from '../../TestPlayer';
-import {SelectSpace} from '../../../src/inputs/SelectSpace';
+import {SelectSpace} from '../../../src/server/inputs/SelectSpace';
 import {getTestPlayer, newTestGame} from '../../TestGame';
-import {OrOptions} from '../../../src/inputs/OrOptions';
-import {Resources} from '../../../src/common/Resources';
-import {PlaceOceanTile} from '../../../src/deferredActions/PlaceOceanTile';
+import {OrOptions} from '../../../src/server/inputs/OrOptions';
+import {PlaceOceanTile} from '../../../src/server/deferredActions/PlaceOceanTile';
 import {SpaceType} from '../../../src/common/boards/SpaceType';
 import {TileType} from '../../../src/common/TileType';
 import {cast} from '../../TestingUtils';
@@ -35,8 +34,8 @@ describe('AsteroidResources', function() {
     const options = cast(card.play(player), OrOptions);
     options.options[0].cb();
     expect(player.energy).eq(0);
-    expect(player.getProduction(Resources.TITANIUM)).eq(1);
-    expect(player.getProduction(Resources.STEEL)).eq(1);
+    expect(player.production.titanium).eq(1);
+    expect(player.production.steel).eq(1);
     expect(player.titanium).eq(0);
     expect(player.steel).eq(0);
   });
@@ -47,12 +46,12 @@ describe('AsteroidResources', function() {
     const options = cast(card.play(player), OrOptions);
     options.options[1].cb();
     expect(player.energy).eq(0);
-    expect(player.getProduction(Resources.TITANIUM)).eq(0);
-    expect(player.getProduction(Resources.STEEL)).eq(0);
+    expect(player.production.titanium).eq(0);
+    expect(player.production.steel).eq(0);
     expect(player.titanium).eq(1);
     expect(player.steel).eq(2);
-    const action = player.game.deferredActions.peek()! as PlaceOceanTile;
-    const select = action.execute() as SelectSpace;
+    const action = cast(player.game.deferredActions.peek(), PlaceOceanTile);
+    const select = cast(action.execute(), SelectSpace);
     const space = select.availableSpaces[0];
 
     expect(space.spaceType).eq(SpaceType.OCEAN);

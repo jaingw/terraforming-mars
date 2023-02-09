@@ -8,7 +8,7 @@
 <script lang="ts">
 
 import Vue from 'vue';
-import {GameOptions} from '@/Game';
+import {GameOptions} from '@/server/GameOptions';
 import {PlanetaryTrackSpace} from '@/common/pathfinders/PlanetaryTrack';
 import PlanetaryTrackReward from './PlanetaryTrackReward.vue';
 import {Reward} from '@/common/pathfinders/Reward';

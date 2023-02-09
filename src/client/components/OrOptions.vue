@@ -32,8 +32,8 @@ import Button from '@/client/components/common/Button.vue';
 import {PlayerViewModel, PublicPlayerModel} from '@/common/models/PlayerModel';
 import {PlayerInputModel} from '@/common/models/PlayerInputModel';
 import {getPreferences} from '@/client/utils/PreferencesManager';
-import {InputResponse} from '@/common/inputs/InputResponse';
-import {PlayerInputTypes} from '@/common/input/PlayerInputTypes';
+import {InputResponse, OrOptionsResponse} from '@/common/inputs/InputResponse';
+import {PlayerInputType} from '@/common/input/PlayerInputType';
 
 let unique = 0;
 
@@ -50,7 +50,7 @@ export default Vue.extend({
       type: Object as () => PlayerInputModel,
     },
     onsave: {
-      type: Function as unknown as () => (out: InputResponse) => void,
+      type: Function as unknown as () => (out: OrOptionsResponse) => void,
     },
     showsave: {
       type: Boolean,
@@ -68,16 +68,20 @@ export default Vue.extend({
     }
     const displayedOptions = this.playerinput.options.filter((o) => Boolean(o.showOnlyInLearnerMode) === false || getPreferences().learner_mode);
     // Special case: If the first displayed option is SelectCard, and none of them are enabled, skip it.
-    let selectedOption = displayedOptions[0];
+    let selectedOption:PlayerInputModel|undefined = displayedOptions[0];
     if (displayedOptions.length > 1 &&
-      selectedOption.inputType === PlayerInputTypes.SELECT_CARD &&
+      selectedOption.inputType === PlayerInputType.SELECT_CARD &&
       !selectedOption.cards?.some((card) => card.isDisabled === false)) {
       selectedOption = displayedOptions[1];
+    }
+    // 除顶级列表外 默认选中第一项
+    if (this.playerinput.id !== undefined && displayedOptions.length >= 1 ) {
+      selectedOption = undefined;
     }
     return {
       displayedOptions,
       radioElementName: 'selectOption' + unique++,
-      selectedOption: undefined,
+      selectedOption,
     };
   },
   methods: {
@@ -87,14 +91,14 @@ export default Vue.extend({
       }
       const idx = this.playerinput.options?.indexOf(this.selectedOption );
       if (idx === undefined || idx === -1) {
-        throw new Error('option not found!');
+        throw new Error('option not found');
       }
       return (out: InputResponse) => {
-        const copy = [[String(idx)]];
-        for (let i = 0; i < out.length; i++) {
-          copy.push(out[i].slice());
-        }
-        this.onsave(copy);
+        this.onsave({
+          type: 'or',
+          index: idx,
+          response: out,
+        });
       };
     },
     saveData() {

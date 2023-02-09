@@ -1,10 +1,10 @@
 
 import {Color} from '../Color';
-import {GameOptions} from '../../Game';
-import {GameId, SpectatorId} from '../Types';
+import {GameId, PlayerId, SpectatorId} from '../Types';
 import {Phase} from '../Phase';
+import {GameOptions} from '../../server/GameOptions';
 
-export interface SimpleGameModel {
+export type SimpleGameModel = {
     activePlayer: Color;
     id: GameId;
     phase: Phase;
@@ -24,8 +24,8 @@ export interface SimpleGameModel {
     breakthrough: boolean ;
 }
 
-interface SimplePlayerModel {
+type SimplePlayerModel = {
     color: Color;
-    id: string;
+    id: PlayerId;
     name: string;
 }

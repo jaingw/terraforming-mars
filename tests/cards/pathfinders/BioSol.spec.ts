@@ -1,28 +1,29 @@
 import {expect} from 'chai';
-import {BioSol} from '../../../src/cards/pathfinders/BioSol';
-import {Game} from '../../../src/Game';
-import {Player} from '../../../src/Player';
+import {BioSol} from '../../../src/server/cards/pathfinders/BioSol';
+import {Game} from '../../../src/server/Game';
+import {TestPlayer} from '../../TestPlayer';
 import {newTestGame, getTestPlayer} from '../../TestGame';
-import {Tags} from '../../../src/common/cards/Tags';
+import {Tag} from '../../../src/common/cards/Tag';
 import {runAllActions} from '../../TestingUtils';
 
 describe('BioSol', function() {
   let card: BioSol;
-  let player: Player;
+  let player: TestPlayer;
   let game: Game;
 
   beforeEach(function() {
     card = new BioSol();
     game = newTestGame(1);
     player = getTestPlayer(game, 0);
-    player.corpCard = card;
+    player.setCorporationForTest(card);
   });
 
   it('initialAction', function() {
     expect(player.cardsInHand).is.empty;
-    card.initialAction(player);
+    player.runInitialAction(card);
+    runAllActions(game);
     expect(player.cardsInHand).has.length(2);
-    expect(player.cardsInHand.filter((card) => card.tags.includes(Tags.MICROBE))).has.length(2);
+    expect(player.cardsInHand.filter((card) => card.tags.includes(Tag.MICROBE))).has.length(2);
   });
 
   it('action', function() {

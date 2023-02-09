@@ -1,28 +1,30 @@
 import {expect} from 'chai';
-import {Ants} from '../../../src/cards/base/Ants';
-import {Fish} from '../../../src/cards/base/Fish';
-import {NitriteReducingBacteria} from '../../../src/cards/base/NitriteReducingBacteria';
-import {ProtectedHabitats} from '../../../src/cards/base/ProtectedHabitats';
-import {SecurityFleet} from '../../../src/cards/base/SecurityFleet';
-import {Tardigrades} from '../../../src/cards/base/Tardigrades';
-import {Game} from '../../../src/Game';
-import {SelectCard} from '../../../src/inputs/SelectCard';
+import {Ants} from '../../../src/server/cards/base/Ants';
+import {Fish} from '../../../src/server/cards/base/Fish';
+import {NitriteReducingBacteria} from '../../../src/server/cards/base/NitriteReducingBacteria';
+import {ProtectedHabitats} from '../../../src/server/cards/base/ProtectedHabitats';
+import {SecurityFleet} from '../../../src/server/cards/base/SecurityFleet';
+import {Tardigrades} from '../../../src/server/cards/base/Tardigrades';
+import {Game} from '../../../src/server/Game';
+import {SelectCard} from '../../../src/server/inputs/SelectCard';
 import {TestPlayer} from '../../TestPlayer';
-import {TestPlayers} from '../../TestPlayers';
 import {runAllActions, cast} from '../../TestingUtils';
 
 describe('Ants', function() {
-  let card : Ants; let player : TestPlayer; let player2 : TestPlayer; let game : Game;
+  let card: Ants;
+  let player: TestPlayer;
+  let player2: TestPlayer;
+  let game: Game;
 
   beforeEach(function() {
     card = new Ants();
-    player = TestPlayers.BLUE.newPlayer();
-    player2 = TestPlayers.RED.newPlayer();
-    game = Game.newInstance('foobar', [player, player2], player);
+    player = TestPlayer.BLUE.newPlayer();
+    player2 = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, player2], player);
     player.popWaitingFor();
   });
 
-  it('Can\'t play without oxygen', function() {
+  it('Can not play without oxygen', function() {
     (game as any).oxygenLevel = 3;
     expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
@@ -31,7 +33,7 @@ describe('Ants', function() {
     (game as any).oxygenLevel = 4;
     expect(player.canPlayIgnoringCost(card)).is.true;
 
-    card.play();
+    card.play(player);
     card.resourceCount += 5;
     expect(card.getVictoryPoints()).to.eq(2);
   });

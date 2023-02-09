@@ -1,5 +1,5 @@
-  // TODO(chosta): consolidate repetition into a reusable component.
 <template>
+  <!-- TODO(chosta): consolidate repetition into a reusable component. -->
   <div class="wf-component wf-component--select-production-to-lose">
     <div v-if="showtitle === true" class="nofloat wf-component-title">{{ $t(playerinput.title) }}</div>
 
@@ -55,9 +55,9 @@
 import Vue from 'vue';
 
 import {PlayerInputModel} from '@/common/models/PlayerInputModel';
-import {IPayProductionModel} from '@/common/models/IPayProductionUnitsModel';
+import {PayProductionModel} from '@/common/models/PayProductionUnitsModel';
 import {Units} from '@/common/Units';
-import {InputResponse} from '@/common/inputs/InputResponse';
+import {SelectProductionToLoseResponse} from '@/common/inputs/InputResponse';
 
 interface SelectProductionToLoseModel {
     megacredits: number;
@@ -76,7 +76,7 @@ export default Vue.extend({
       type: Object as () => Required<Pick<PlayerInputModel, 'title' | 'payProduction' | 'buttonLabel'>>,
     },
     onsave: {
-      type: Function as unknown as () => (out: InputResponse) => void,
+      type: Function as unknown as () => (out: SelectProductionToLoseResponse) => void,
     },
     showsave: {
       type: Boolean,
@@ -85,7 +85,7 @@ export default Vue.extend({
       type: Boolean,
     },
   },
-  data() {
+  data(): SelectProductionToLoseModel {
     return {
       megacredits: 0,
       steel: 0,
@@ -94,7 +94,7 @@ export default Vue.extend({
       energy: 0,
       heat: 0,
       warning: undefined,
-    } as SelectProductionToLoseModel;
+    };
   },
   methods: {
     canDeductMegaCredits() {
@@ -119,7 +119,7 @@ export default Vue.extend({
       return this.$data.warning !== undefined;
     },
     delta(type: string, direction: number) {
-      const expendableProductionQuantity = function(type: string, model: IPayProductionModel): number {
+      const expendableProductionQuantity = function(type: string, model: PayProductionModel): number {
         switch (type) {
         case 'megacredits':
           return model.units.megacredits + 5;
@@ -139,12 +139,12 @@ export default Vue.extend({
       const current = this.$data[type];
       let newValue = current + direction;
       const lowestValue = (type === 'megacredit') ? -5 : 0;
-      const expendableQuantity = expendableProductionQuantity(type, this.playerinput.payProduction as IPayProductionModel);
+      const expendableQuantity = expendableProductionQuantity(type, this.playerinput.payProduction);
       newValue = Math.min(Math.max(newValue, lowestValue), expendableQuantity);
       this.$data[type] = newValue;
     },
     saveData() {
-      const htp: Units = {
+      const units: Units = {
         megacredits: this.$data.megacredits,
         steel: this.$data.steel,
         titanium: this.$data.titanium,
@@ -165,9 +165,7 @@ export default Vue.extend({
         return;
       }
 
-      this.onsave([[
-        JSON.stringify(htp),
-      ]]);
+      this.onsave({type: 'productionToLose', units});
     },
   },
 });

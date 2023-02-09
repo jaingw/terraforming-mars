@@ -1,30 +1,28 @@
-import {Game} from '../../../src/Game';
-import {IMoonData} from '../../../src/moon/IMoonData';
-import {MoonExpansion} from '../../../src/moon/MoonExpansion';
-import {Player} from '../../../src/Player';
-import {cast, setCustomGameOptions} from '../../TestingUtils';
-import {LunarSecurityStations} from '../../../src/cards/moon/LunarSecurityStations';
+import {Game} from '../../../src/server/Game';
+import {IMoonData} from '../../../src/server/moon/IMoonData';
+import {MoonExpansion} from '../../../src/server/moon/MoonExpansion';
+import {Player} from '../../../src/server/Player';
+import {cast, testGameOptions} from '../../TestingUtils';
+import {LunarSecurityStations} from '../../../src/server/cards/moon/LunarSecurityStations';
 import {expect} from 'chai';
-import {OrOptions} from '../../../src/inputs/OrOptions';
-import {HiredRaiders} from '../../../src/cards/base/HiredRaiders';
+import {OrOptions} from '../../../src/server/inputs/OrOptions';
+import {HiredRaiders} from '../../../src/server/cards/base/HiredRaiders';
 import {TileType} from '../../../src/common/TileType';
-import {TestPlayers} from '../../TestPlayers';
-
-const MOON_OPTIONS = setCustomGameOptions({moonExpansion: true});
+import {TestPlayer} from '../../TestPlayer';
 
 describe('LunarSecurityStations', () => {
   let game: Game;
-  let player: Player;
+  let player: TestPlayer;
   let opponent1: Player;
   let opponent2: Player;
   let moonData: IMoonData;
   let card: LunarSecurityStations;
 
   beforeEach(() => {
-    player = TestPlayers.BLUE.newPlayer();
-    opponent1 = TestPlayers.RED.newPlayer();
-    opponent2 = TestPlayers.GREEN.newPlayer();
-    game = Game.newInstance('id', [player, opponent1, opponent2], player, MOON_OPTIONS);
+    player = TestPlayer.BLUE.newPlayer();
+    opponent1 = TestPlayer.RED.newPlayer();
+    opponent2 = TestPlayer.GREEN.newPlayer();
+    game = Game.newInstance('gameid', [player, opponent1, opponent2], player, testGameOptions({moonExpansion: true}));
     moonData = MoonExpansion.moonData(game);
     card = new LunarSecurityStations();
   });
@@ -40,7 +38,7 @@ describe('LunarSecurityStations', () => {
 
     expect(player.getPlayableCards()).includes(card);
 
-    spaces[1].tile = {tileType: TileType.MOON_COLONY};
+    spaces[1].tile = {tileType: TileType.MOON_HABITAT};
     expect(player.getPlayableCards()).does.not.include(card);
   });
 

@@ -1,9 +1,10 @@
-import {ITestDatabase, describeDatabaseSuite} from './IDatabaseSuite';
-import {Game} from '../../src/Game';
-import {IN_MEMORY_SQLITE_PATH, SQLite} from '../../src/database/SQLite';
+import {ITestDatabase, describeDatabaseSuite} from './databaseSuite';
+import {Game} from '../../src/server/Game';
+import {IN_MEMORY_SQLITE_PATH, SQLite} from '../../src/server/database/SQLite';
+import {Database} from '../../src/server/database/Database';
 
 class TestSQLite extends SQLite implements ITestDatabase {
-  public saveGamePromise: Promise<void> = Promise.resolve();
+  public lastSaveGamePromise: Promise<void> = Promise.resolve();
 
   constructor() {
     super(IN_MEMORY_SQLITE_PATH, true);
@@ -14,11 +15,17 @@ class TestSQLite extends SQLite implements ITestDatabase {
   }
 
   public override saveGame(game: Game): Promise<void> {
-    this.saveGamePromise = super.saveGame(game);
-    return this.saveGamePromise;
+    this.lastSaveGamePromise = super.saveGame(game);
+    return this.lastSaveGamePromise;
   }
 }
 
+const newgame = Game.newInstance;
+Game.newInstance = (...args) => {
+  const game = newgame(...args);
+  Database.getInstance().saveGame(game);
+  return game;
+};
 describeDatabaseSuite({
   name: 'SQLite',
   constructor: () => new TestSQLite(),

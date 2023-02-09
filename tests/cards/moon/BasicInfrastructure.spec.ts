@@ -1,42 +1,38 @@
-import {Game} from '../../../src/Game';
-import {IMoonData} from '../../../src/moon/IMoonData';
-import {MoonExpansion} from '../../../src/moon/MoonExpansion';
-import {Player} from '../../../src/Player';
-import {setCustomGameOptions} from '../../TestingUtils';
-import {TestPlayers} from '../../TestPlayers';
-import {BasicInfrastructure} from '../../../src/cards/moon/BasicInfrastructure';
+import {Game} from '../../../src/server/Game';
+import {IMoonData} from '../../../src/server/moon/IMoonData';
+import {MoonExpansion} from '../../../src/server/moon/MoonExpansion';
+import {cast, testGameOptions} from '../../TestingUtils';
+import {TestPlayer} from '../../TestPlayer';
+import {BasicInfrastructure} from '../../../src/server/cards/moon/BasicInfrastructure';
 import {expect} from 'chai';
-import {Resources} from '../../../src/common/Resources';
-import {PlaceMoonRoadTile} from '../../../src/moon/PlaceMoonRoadTile';
-
-const MOON_OPTIONS = setCustomGameOptions({moonExpansion: true});
+import {PlaceMoonRoadTile} from '../../../src/server/moon/PlaceMoonRoadTile';
 
 describe('BasicInfrastructure', () => {
   let game: Game;
-  let player: Player;
+  let player: TestPlayer;
   let moonData: IMoonData;
   let card: BasicInfrastructure;
 
   beforeEach(() => {
-    player = TestPlayers.BLUE.newPlayer();
-    game = Game.newInstance('id', [player], player, MOON_OPTIONS);
+    player = TestPlayer.BLUE.newPlayer();
+    game = Game.newInstance('gameid', [player], player, testGameOptions({moonExpansion: true}));
     moonData = MoonExpansion.moonData(game);
     card = new BasicInfrastructure();
   });
 
   it('play', () => {
-    expect(player.getProduction(Resources.MEGACREDITS)).eq(0);
+    expect(player.production.megacredits).eq(0);
     expect(player.getTerraformRating()).eq(14);
     expect(moonData.logisticRate).eq(0);
-    expect(player.getFleetSize()).eq(1);
+    expect(player.colonies.getFleetSize()).eq(1);
 
     card.play(player);
-    const placeTileAction = game.deferredActions.peek() as PlaceMoonRoadTile;
-    placeTileAction!.execute()!.cb(moonData.moon.spaces[2]);
+    const placeTileAction = cast(game.deferredActions.peek(), PlaceMoonRoadTile);
+    placeTileAction.execute()!.cb(moonData.moon.spaces[2]);
 
     expect(moonData.logisticRate).eq(1);
     expect(player.getTerraformRating()).eq(15);
-    expect(player.getFleetSize()).eq(2);
+    expect(player.colonies.getFleetSize()).eq(2);
   });
 });
 

@@ -1,14 +1,14 @@
 import {expect} from 'chai';
-import {deserializeFundedAwards, serializeFundedAwards} from '../../src/awards/FundedAward';
-import {FundedAward} from '../../src/awards/FundedAward';
-import {Cultivator} from '../../src/awards/Cultivator';
-import {Industrialist} from '../../src/awards/Industrialist';
-import {TestPlayers} from '../TestPlayers';
+import {deserializeFundedAwards, serializeFundedAwards} from '../../src/server/awards/FundedAward';
+import {FundedAward} from '../../src/server/awards/FundedAward';
+import {Cultivator} from '../../src/server/awards/Cultivator';
+import {Industrialist} from '../../src/server/awards/Industrialist';
+import {TestPlayer} from '../TestPlayer';
 
 describe('FundedAwards', function() {
   it('test serialization', () => {
-    const bluePlayer = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
+    const bluePlayer = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
     const FundedAwards: Array<FundedAward> = [
       {
         award: new Cultivator(),

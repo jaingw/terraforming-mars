@@ -1,23 +1,20 @@
-import {Game} from '../../../src/Game';
-import {IMoonData} from '../../../src/moon/IMoonData';
-import {MoonExpansion} from '../../../src/moon/MoonExpansion';
-import {Player} from '../../../src/Player';
-import {setCustomGameOptions} from '../../TestingUtils';
-import {TestPlayers} from '../../TestPlayers';
-import {MiningRobotsManufCenter} from '../../../src/cards/moon/MiningRobotsManufCenter';
+import {Game} from '../../../src/server/Game';
+import {IMoonData} from '../../../src/server/moon/IMoonData';
+import {MoonExpansion} from '../../../src/server/moon/MoonExpansion';
+import {testGameOptions} from '../../TestingUtils';
+import {TestPlayer} from '../../TestPlayer';
+import {MiningRobotsManufCenter} from '../../../src/server/cards/moon/MiningRobotsManufCenter';
 import {expect} from 'chai';
-
-const MOON_OPTIONS = setCustomGameOptions({moonExpansion: true});
 
 describe('MiningRobotsManufCenter', () => {
   let game: Game;
-  let player: Player;
+  let player: TestPlayer;
   let moonData: IMoonData;
   let card: MiningRobotsManufCenter;
 
   beforeEach(() => {
-    player = TestPlayers.BLUE.newPlayer();
-    game = Game.newInstance('id', [player], player, MOON_OPTIONS);
+    player = TestPlayer.BLUE.newPlayer();
+    game = Game.newInstance('gameid', [player], player, testGameOptions({moonExpansion: true}));
     moonData = MoonExpansion.moonData(game);
     card = new MiningRobotsManufCenter();
   });

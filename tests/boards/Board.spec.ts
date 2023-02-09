@@ -1,30 +1,32 @@
 import {expect} from 'chai';
-import {OriginalBoard} from '../../src/boards/OriginalBoard';
-import {Player} from '../../src/Player';
+import {TharsisBoard} from '../../src/server/boards/TharsisBoard';
+import {Player} from '../../src/server/Player';
 import {TileType} from '../../src/common/TileType';
-import {ISpace} from '../../src/boards/ISpace';
+import {ISpace} from '../../src/server/boards/ISpace';
 import {SpaceType} from '../../src/common/boards/SpaceType';
-import {TestPlayers} from '../TestPlayers';
-import {Board} from '../../src/boards/Board';
+import {TestPlayer} from '../TestPlayer';
+import {Board} from '../../src/server/boards/Board';
 import {Color} from '../../src/common/Color';
-import {SerializedBoard} from '../../src/boards/SerializedBoard';
-import {MoonSpaces} from '../../src/moon/MoonSpaces';
-import {Random} from '../../src/Random';
-import {DEFAULT_GAME_OPTIONS, GameOptions} from '../../src/Game';
+import {SerializedBoard} from '../../src/server/boards/SerializedBoard';
+import {MoonSpaces} from '../../src/common/moon/MoonSpaces';
+import {SeededRandom} from '../../src/server/Random';
+import {DEFAULT_GAME_OPTIONS, GameOptions} from '../../src/server/GameOptions';
 import {MultiSet} from 'mnemonist';
 
 describe('Board', function() {
-  let board : OriginalBoard; let player : Player; let player2 : Player;
+  let board: TharsisBoard;
+  let player: TestPlayer;
+  let player2: TestPlayer;
 
   beforeEach(function() {
-    board = OriginalBoard.newInstance(DEFAULT_GAME_OPTIONS, new Random(0));
-    player = TestPlayers.BLUE.newPlayer();
-    player2 = TestPlayers.RED.newPlayer();
+    board = TharsisBoard.newInstance(DEFAULT_GAME_OPTIONS, new SeededRandom(0));
+    player = TestPlayer.BLUE.newPlayer();
+    player2 = TestPlayer.RED.newPlayer();
 
     // Rather than create a whole game around this test, I'm mocking data to make the tests pass.
     const gameOptions: Partial<GameOptions> = {pathfindersExpansion: false};
-    (player as any)._game = {gameOptions};
-    (player2 as any)._game = {gameOptions};
+    (player as any).game = {gameOptions};
+    (player2 as any).game = {gameOptions};
   });
 
   it('getSpace', () => {
@@ -126,7 +128,7 @@ describe('Board', function() {
       ['69', []],
     ]);
     board.spaces.forEach((space) => {
-      const expected = expectedAdjacentSpaces.get(space.id);
+      const expected = expectedAdjacentSpaces.get(space.id) || [];
       const actual = board.getAdjacentSpaces(space).map((s) => s.id);
       expect(expected).to.eql(actual);
     });
@@ -267,13 +269,13 @@ describe('Board', function() {
         {
           'id': '01',
           'spaceType': 'colony', 'bonus': [],
-          'x': -1, 'y': -1, 'player': {'id': 'name-1-id'},
+          'x': -1, 'y': -1, 'player': {'id': 'p-name-1-id'},
           'tile': {'tileType': 2},
         },
         {
           'id': '03',
           'spaceType': 'land', 'bonus': [1, 1],
-          'x': 4, 'y': 0, 'player': {'id': 'name-2-id'},
+          'x': 4, 'y': 0, 'player': {'id': 'p-name-2-id'},
           'tile': {'tileType': 0},
         },
         {
@@ -289,8 +291,8 @@ describe('Board', function() {
         },
       ],
     };
-    const player1 = new Player('name-1', Color.RED, false, 0, 'name-1-id');
-    const player2 = new Player('name-2', Color.YELLOW, false, 0, 'name-2-id');
+    const player1 = new Player('name-1', Color.RED, false, 0, 'p-name-1-id');
+    const player2 = new Player('name-2', Color.YELLOW, false, 0, 'p-name-2-id');
 
     const board = new TestBoard(Board.deserializeSpaces((boardJson as SerializedBoard).spaces, [player1, player2]));
     expect(board.getSpace('01').player).eq(player1);
@@ -301,11 +303,11 @@ describe('Board', function() {
     const spaces = new MultiSet<string>();
     for (let idx = 0; idx < 4_000; idx++) {
       const seed = Math.random();
-      board = OriginalBoard.newInstance({
+      board = TharsisBoard.newInstance({
         ...DEFAULT_GAME_OPTIONS,
         shuffleMapOption: true,
       },
-      new Random(seed));
+      new SeededRandom(seed));
       for (const space of board.spaces) {
         if (space.spaceType === undefined) {
           console.log(`Bad seed ${seed}`);

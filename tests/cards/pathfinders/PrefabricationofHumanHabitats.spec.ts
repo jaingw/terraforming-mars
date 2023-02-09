@@ -1,10 +1,9 @@
 import {expect} from 'chai';
-import {PrefabricationofHumanHabitats} from '../../../src/cards/pathfinders/PrefabricationofHumanHabitats';
-import {Game} from '../../../src/Game';
+import {PrefabricationofHumanHabitats} from '../../../src/server/cards/pathfinders/PrefabricationofHumanHabitats';
+import {Game} from '../../../src/server/Game';
 import {TestPlayer} from '../../TestPlayer';
-import {TestPlayers} from '../../TestPlayers';
-import {ImmigrantCity} from '../../../src/cards/base/ImmigrantCity';
-import {CityStandardProject} from '../../../src/cards/base/standardProjects/CityStandardProject';
+import {ImmigrantCity} from '../../../src/server/cards/base/ImmigrantCity';
+import {CityStandardProject} from '../../../src/server/cards/base/standardProjects/CityStandardProject';
 
 describe('PrefabricationofHumanHabitats', function() {
   let card: PrefabricationofHumanHabitats;
@@ -12,18 +11,18 @@ describe('PrefabricationofHumanHabitats', function() {
 
   beforeEach(function() {
     card = new PrefabricationofHumanHabitats();
-    player = TestPlayers.BLUE.newPlayer();
-    Game.newInstance('foobar', [player], player);
+    player = TestPlayer.BLUE.newPlayer();
+    Game.newInstance('gameid', [player], player);
     player.playedCards.push(card);
   });
 
   it('canPlay', function() {
     expect(player.canPlayIgnoringCost(card)).is.false;
 
-    player.setProductionForTest({steel: 0});
+    player.production.override({steel: 0});
     expect(player.canPlayIgnoringCost(card)).is.false;
 
-    player.setProductionForTest({steel: 1});
+    player.production.override({steel: 1});
     expect(player.canPlayIgnoringCost(card)).is.true;
   });
 

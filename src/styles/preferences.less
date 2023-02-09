@@ -145,6 +145,12 @@
     height: 60px;
 }
 
+.sidebar_item--language {
+    position: absolute;
+    bottom: 162px;
+    height: 46px;
+}
+
 .sidebar_item--info {
     position: absolute;
     bottom: 111px;
@@ -227,6 +233,10 @@
     background-image: url(assets/sidebar/preferences_board.png);
 }
 
+.sidebar_icon.sidebar_icon--language {
+  font-size: 15px;
+}
+
 .sidebar_icon.sidebar_icon--info {
     background-image: url(assets/sidebar/preferences_info.png);
     background-size: 36px 36px;
@@ -288,6 +298,17 @@
     margin: -0px -10px -15px -10px;
 }
 
+/*Selection check box room for smaller cards */
+.preferences_small_cards input[type="checkbox"] + .filterDiv.card-container,
+.preferences_small_cards input[type="radio"] + .filterDiv.card-container{
+    margin-top: -8px;
+}
+
+.preferences_small_cards input[type="checkbox"] + .filterDiv.card-standard-project,
+.preferences_small_cards input[type="radio"] + .filterDiv.card-standard-project{
+    margin-top: 0px;
+}
+
 .preferences_small_cards input[type="checkbox"]:checked + .filterDiv,
 .preferences_small_cards input[type="radio"]:checked + .filterDiv {
     transform: scale(0.8);
@@ -310,25 +331,30 @@
 }
 
 /* Card Magnification */
-.preferences_magnify_cards .filterDiv {
-    transition: transform 0.15s;
-}
-.preferences_magnify_cards .filterDiv:hover {
-    transform: scale(1.2);
-    z-index: 100;
-}
+.preferences_magnify_cards {
+    .filterDiv {
+        transition: transform 0.15s;
+    }
+    .filterDiv:hover {
+        transform: scale(1.2);
+        z-index: 100;
+    }
 
-.preferences_magnify_cards .cards-stack:hover,
-.preferences_magnify_cards .cards-stack-first:hover {
-    z-index: 2;
-    transform: scale(1);
-}
+    .dragging .filterDiv:hover {
+        transform: none;
+    }
 
-.preferences_magnify_cards .global-event:hover {
-    transform: scale(1.2);
-    z-index: 2;
-}
+    .cards-stack:hover,
+    .cards-stack-first:hover {
+        z-index: 2;
+        transform: scale(1);
+    }
 
+    .global-event:hover {
+        transform: scale(1.2);
+        z-index: 2;
+    }
+}
 /* Magnify the wee little cards in a special way, if requested */
 .preferences_small_cards.preferences_magnify_cards .filterDiv:hover {
     transform: scale(0.95);

@@ -1,20 +1,16 @@
-import {Game} from '../../../src/Game';
-import {Player} from '../../../src/Player';
-import {setCustomGameOptions} from '../../TestingUtils';
-import {TestPlayers} from '../../TestPlayers';
-import {CopernicusSolarArrays} from '../../../src/cards/moon/CopernicusSolarArrays';
+import {Game} from '../../../src/server/Game';
+import {testGameOptions} from '../../TestingUtils';
+import {TestPlayer} from '../../TestPlayer';
+import {CopernicusSolarArrays} from '../../../src/server/cards/moon/CopernicusSolarArrays';
 import {expect} from 'chai';
-import {Resources} from '../../../src/common/Resources';
-
-const MOON_OPTIONS = setCustomGameOptions({moonExpansion: true});
 
 describe('CopernicusSolarArrays', () => {
-  let player: Player;
+  let player: TestPlayer;
   let card: CopernicusSolarArrays;
 
   beforeEach(() => {
-    player = TestPlayers.BLUE.newPlayer();
-    Game.newInstance('id', [player], player, MOON_OPTIONS);
+    player = TestPlayer.BLUE.newPlayer();
+    Game.newInstance('gameid', [player], player, testGameOptions({moonExpansion: true}));
     card = new CopernicusSolarArrays();
   });
 
@@ -37,6 +33,6 @@ describe('CopernicusSolarArrays', () => {
 
     expect(player.titanium).eq(0);
     expect(player.heat).eq(2);
-    expect(player.getProduction(Resources.ENERGY)).eq(1);
+    expect(player.production.energy).eq(1);
   });
 });

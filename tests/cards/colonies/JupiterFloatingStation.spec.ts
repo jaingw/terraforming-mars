@@ -1,23 +1,23 @@
 import {expect} from 'chai';
 import {cast} from '../../TestingUtils';
-import {JupiterFloatingStation} from '../../../src/cards/colonies/JupiterFloatingStation';
-import {Game} from '../../../src/Game';
-import {OrOptions} from '../../../src/inputs/OrOptions';
-import {Player} from '../../../src/Player';
-import {TestPlayers} from '../../TestPlayers';
+import {JupiterFloatingStation} from '../../../src/server/cards/colonies/JupiterFloatingStation';
+import {Game} from '../../../src/server/Game';
+import {OrOptions} from '../../../src/server/inputs/OrOptions';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('JupiterFloatingStation', function() {
-  let card : JupiterFloatingStation; let player : Player;
+  let card: JupiterFloatingStation;
+  let player: TestPlayer;
 
   beforeEach(function() {
     card = new JupiterFloatingStation();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    Game.newInstance('foobar', [player, redPlayer], player);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    Game.newInstance('gameid', [player, redPlayer], player);
   });
 
   it('Should play', function() {
-    const action = card.play();
+    const action = card.play(player);
     expect(action).is.undefined;
   });
 

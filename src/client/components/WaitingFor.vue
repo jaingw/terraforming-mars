@@ -15,8 +15,7 @@
 <script lang="ts">
 
 import Vue from 'vue';
-
-import {mainAppSettings} from '@/client/components/App';
+import {MainAppData, mainAppSettings} from '@/client/components/App';
 import {PlayerInputModel} from '@/common/models/PlayerInputModel';
 import {PlayerViewModel, PublicPlayerModel} from '@/common/models/PlayerModel';
 import {getPreferences, PreferencesManager} from '@/client/utils/PreferencesManager';
@@ -25,7 +24,9 @@ import {WaitingForModel} from '@/common/models/WaitingForModel';
 
 import * as constants from '@/common/constants';
 import * as raw_settings from '@/genfiles/settings.json';
-import {isPlayerId} from '@/common/utils/utils';
+import * as paths from '@/common/app/paths';
+import * as HTTPResponseCode from '@/client/utils/HTTPResponseCode';
+import {isPlayerId} from '@/common/Types';
 import {InputResponse} from '@/common/inputs/InputResponse';
 
 let ui_update_timeout_id: number | undefined;
@@ -46,9 +47,6 @@ export default Vue.extend({
     waitingfor: {
       type: Object as () => PlayerInputModel | undefined,
     },
-    soundtip: {
-      type: String,
-    },
   },
   data() {
     return {
@@ -68,8 +66,9 @@ export default Vue.extend({
     },
     onsave(out: InputResponse) {
       const xhr = new XMLHttpRequest();
-      const root = this.$root as unknown as typeof mainAppSettings.data;
+      const root = this.$root as unknown as MainAppData;
       const showAlert = (this.$root as unknown as typeof mainAppSettings.methods).showAlert;
+
       if (root.isServerSideRequestInProgress) {
         console.warn('Server request in progress');
         return;
@@ -77,22 +76,22 @@ export default Vue.extend({
 
       root.isServerSideRequestInProgress = true;
       const userId = PreferencesManager.load('userId');
-      let url = '/player/input?id=' + (this.$parent as any).playerView.id;
+      let url = paths.PLAYER_INPUT + '?id=' + (this.$parent as any).playerView.id;
       if (userId.length > 0) {
         url += '&userId=' + userId;
       }
       xhr.open('POST', url);
       xhr.responseType = 'json';
       xhr.onload = () => {
-        if (xhr.status === 200) {
+        if (xhr.status === HTTPResponseCode.OK) {
           root.screen = 'empty';
           root.playerView = xhr.response;
           root.playerkey++;
           root.screen = 'player-home';
           if (root?.playerView?.game.phase === 'end' && window.location.pathname !== '/the-end') {
-            (window).location = (window).location;
+            (window).location = (window).location; // eslint-disable-line no-self-assign
           }
-        } else if (xhr.status === 400 && xhr.responseType === 'json') {
+        } else if (xhr.status === HTTPResponseCode.BAD_REQUEST && xhr.responseType === 'json') {
           showAlert(xhr.response.message);
         } else {
           showAlert('Unexpected response from server. Please try again.');
@@ -113,13 +112,17 @@ export default Vue.extend({
       let allnum = 0;
       const askForUpdate = () => {
         const xhr = new XMLHttpRequest();
-        xhr.open('GET', '/api/waitingfor' + window.location.search + '&gameAge=' + this.playerView.game.gameAge + '&undoCount=' + this.playerView.game.undoCount);
+        xhr.open('GET', paths.API_WAITING_FOR + window.location.search + '&gameAge=' + this.playerView.game.gameAge + '&undoCount=' + this.playerView.game.undoCount);
         xhr.onerror = function() {
-          root.showAlert('Unable to reach the server. The server may be restarting or down for maintenance.', () => {});
+          failednum ++;
+          if (failednum < 5) {
+            root.showAlert('Unable to reach the server. The server may be restarting or down for maintenance.', () => {});
+          }
         };
         xhr.onload = () => {
-          if (xhr.status === 200) {
+          if (xhr.status === HTTPResponseCode.OK) {
             allnum ++;
+            failednum = 0;
             if (rootdata.playerView?.game.phase === 'end') {
               clearInterval(ui_update_timeout_id);
               return;
@@ -173,15 +176,15 @@ export default Vue.extend({
             root.showAlert(`Received unexpected response from server (${xhr.status}). This is often due to the server restarting.`, () => {});
             failednum ++;
           }
-          if (failednum >= 5 || allnum > 100) {
-            // 失败5次不再发送请求 需手动刷新
-            clearInterval(ui_update_timeout_id);
-          }
-          console.log('allnum' + allnum);
+          console.log(`allnum:${allnum}, failednum:${failednum}` );
           // (vueApp as any).waitForUpdate();
         };
         xhr.responseType = 'json';
         xhr.send();
+        if (failednum >= 5 || allnum > 200) {
+          // 失败5次不再发送请求 需手动刷新
+          clearInterval(ui_update_timeout_id);
+        }
       };
       if (faster) {
         askForUpdate();

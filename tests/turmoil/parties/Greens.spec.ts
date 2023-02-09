@@ -1,26 +1,27 @@
 import {expect} from 'chai';
-import {Player} from '../../../src/Player';
-import {Game} from '../../../src/Game';
-import {Turmoil} from '../../../src/turmoil/Turmoil';
-import {ISpace} from '../../../src/boards/ISpace';
-import {cast, setCustomGameOptions, setRulingPartyAndRulingPolicy} from '../../TestingUtils';
-import {TestPlayers} from '../../TestPlayers';
-import {Greens, GREENS_BONUS_1, GREENS_BONUS_2, GREENS_POLICY_4} from '../../../src/turmoil/parties/Greens';
-import {Lichen} from '../../../src/cards/base/Lichen';
-import {Fish} from '../../../src/cards/base/Fish';
-import {Tardigrades} from '../../../src/cards/base/Tardigrades';
+import {Game} from '../../../src/server/Game';
+import {Turmoil} from '../../../src/server/turmoil/Turmoil';
+import {ISpace} from '../../../src/server/boards/ISpace';
+import {cast, testGameOptions, setRulingPartyAndRulingPolicy, addGreenery} from '../../TestingUtils';
+import {TestPlayer} from '../../TestPlayer';
+import {Greens, GREENS_BONUS_1, GREENS_BONUS_2, GREENS_POLICY_4} from '../../../src/server/turmoil/parties/Greens';
+import {Lichen} from '../../../src/server/cards/base/Lichen';
+import {Fish} from '../../../src/server/cards/base/Fish';
+import {Tardigrades} from '../../../src/server/cards/base/Tardigrades';
 import {TileType} from '../../../src/common/TileType';
 import {SpaceType} from '../../../src/common/boards/SpaceType';
-import {OrOptions} from '../../../src/inputs/OrOptions';
+import {OrOptions} from '../../../src/server/inputs/OrOptions';
 
 describe('Greens', function() {
-  let player : Player; let game : Game; let turmoil: Turmoil; let greens: Greens;
+  let player: TestPlayer;
+  let game: Game;
+  let turmoil: Turmoil;
+  let greens: Greens;
 
   beforeEach(function() {
-    player = TestPlayers.BLUE.newPlayer();
-    const otherPlayer = TestPlayers.RED.newPlayer();
-    const gameOptions = setCustomGameOptions();
-    game = Game.newInstance('foobar', [player, otherPlayer], player, gameOptions);
+    player = TestPlayer.BLUE.newPlayer();
+    const otherPlayer = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, otherPlayer], player, testGameOptions({turmoilExtension: true}));
     turmoil = game.turmoil!;
     greens = new Greens();
   });
@@ -47,7 +48,7 @@ describe('Greens', function() {
   it('Ruling policy 1: When you place a greenery tile, gain 4 MC', function() {
     setRulingPartyAndRulingPolicy(game, turmoil, greens, greens.policies[0].id);
 
-    game.addGreenery(player, '10');
+    addGreenery(player, '10');
     expect(player.megaCredits).to.eq(4);
   });
 
@@ -55,7 +56,7 @@ describe('Greens', function() {
     setRulingPartyAndRulingPolicy(game, turmoil, greens, greens.policies[1].id);
 
     const emptySpace: ISpace = game.board.spaces.find((space) => space.spaceType === SpaceType.LAND && space.bonus.length === 0) as ISpace;
-    game.addTile(player, emptySpace.spaceType, emptySpace, {tileType: TileType.NATURAL_PRESERVE});
+    game.addTile(player, emptySpace, {tileType: TileType.NATURAL_PRESERVE});
     expect(player.plants).to.eq(1);
   });
 

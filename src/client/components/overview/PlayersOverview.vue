@@ -58,8 +58,8 @@ export default Vue.extend({
       }
 
       let result: Array<PublicPlayerModel> = [];
-      let currentPlayerOffset: number = 0;
-      const currentPlayerIndex: number = playerIndex(
+      let currentPlayerOffset = 0;
+      const currentPlayerIndex = playerIndex(
         this.thisPlayer.color,
         this.players,
       );
@@ -101,7 +101,7 @@ export default Vue.extend({
         (p: PublicPlayerModel) => !this.playerView.game.passedPlayers.includes(p.color),
       );
 
-      const currentPlayerIndex: number = playerIndex(
+      const currentPlayerIndex = playerIndex(
         player.color,
         notPassedPlayers,
       );
@@ -155,7 +155,7 @@ export default Vue.extend({
                 :playerIndex="index"/>
             </template>
             <div v-if="playerView.players.length > 1 && thisPlayer !== undefined" class="player-divider" />
-            <div v-if="thisPlayer.corporationCard2" class="player-info-top" >
+            <div v-if="thisPlayer !== undefined && thisPlayer.corporationCard2" class="player-info-top" >
                 <div v-if="thisPlayer.corporationCard !== undefined" :title="thisPlayer.corporationCard.name"  class="player-corp-left" :class="getClasses(thisPlayer)" >{{thisPlayer.corporationCard.name }}</div>
                 <div :title="thisPlayer.corporationCard2.name" class="player-corp-right" :class="getClasses(thisPlayer)" >{{thisPlayer.corporationCard2.name }}</div>
             </div>

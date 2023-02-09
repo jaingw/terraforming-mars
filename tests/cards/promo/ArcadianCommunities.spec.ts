@@ -1,22 +1,22 @@
-import {Player} from '@/Player';
 import {expect} from 'chai';
+import {TestPlayer} from '../../TestPlayer';
 import {getTestPlayer, newTestGame} from '../../TestGame';
-import {ArcadianCommunities} from '../../../src/cards/promo/ArcadianCommunities';
-import {SelectSpace} from '../../../src/inputs/SelectSpace';
+import {ArcadianCommunities} from '../../../src/server/cards/promo/ArcadianCommunities';
+import {SelectSpace} from '../../../src/server/inputs/SelectSpace';
 import {cast, runAllActions} from '../../TestingUtils';
-import {Board} from '../../../src/boards/Board';
+import {Board} from '../../../src/server/boards/Board';
 import {SpaceType} from '../../../src/common/boards/SpaceType';
 
 describe('ArcadianCommunities', function() {
   let card: ArcadianCommunities;
-  let player: Player;
+  let player: TestPlayer;
   let board: Board;
 
   beforeEach(() => {
     card = new ArcadianCommunities();
     const game = newTestGame(2);
     player = getTestPlayer(game, 0);
-    player.corpCard = card;
+    player.setCorporationForTest(card);
     board = game.board;
   });
 
@@ -57,7 +57,7 @@ describe('ArcadianCommunities', function() {
     expect(player.megaCredits).to.eq(0);
 
     // This describes the effect.
-    player.game.addCityTile(player, space.id);
+    player.game.addCityTile(player, space);
     runAllActions(player.game);
     expect(player.megaCredits).to.eq(3);
   });

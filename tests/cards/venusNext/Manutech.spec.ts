@@ -1,25 +1,25 @@
 import {expect} from 'chai';
-import {PowerPlantStandardProject} from '../../../src/cards/base/standardProjects/PowerPlantStandardProject';
-import {Manutech} from '../../../src/cards/venusNext/Manutech';
-import {Game} from '../../../src/Game';
-import {Player} from '../../../src/Player';
-import {Resources} from '../../../src/common/Resources';
-import {TestPlayers} from '../../TestPlayers';
+import {PowerPlantStandardProject} from '../../../src/server/cards/base/standardProjects/PowerPlantStandardProject';
+import {Manutech} from '../../../src/server/cards/venusNext/Manutech';
+import {Game} from '../../../src/server/Game';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('Manutech', function() {
-  let card : Manutech; let player : Player; let game : Game;
+  let card: Manutech;
+  let player: TestPlayer;
+  let game: Game;
 
   beforeEach(function() {
     card = new Manutech();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    game = Game.newInstance('foobar', [player, redPlayer], player);
-    player.corpCard = card;
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, redPlayer], player);
+    player.setCorporationForTest(card);
   });
 
   it('Should play', function() {
     card.play(player);
-    expect(player.getProduction(Resources.STEEL)).to.eq(1);
+    expect(player.production.steel).to.eq(1);
     expect(player.steel).to.eq(1);
   });
 
@@ -27,6 +27,6 @@ describe('Manutech', function() {
     player.megaCredits = 11;
     new PowerPlantStandardProject().action(player);
     game.deferredActions.pop()!.execute();
-    expect(player.getResource(Resources.ENERGY)).to.eq(1);
+    expect(player.energy).to.eq(1);
   });
 });

@@ -1,23 +1,23 @@
 import {expect} from 'chai';
-import {Ants} from '../../../src/cards/base/Ants';
-import {Fish} from '../../../src/cards/base/Fish';
-import {DiversitySupport} from '../../../src/cards/promo/DiversitySupport';
-import {Dirigibles} from '../../../src/cards/venusNext/Dirigibles';
-import {Game} from '../../../src/Game';
-import {Player} from '../../../src/Player';
-import {TestPlayers} from '../../TestPlayers';
+import {Ants} from '../../../src/server/cards/base/Ants';
+import {Fish} from '../../../src/server/cards/base/Fish';
+import {DiversitySupport} from '../../../src/server/cards/promo/DiversitySupport';
+import {Dirigibles} from '../../../src/server/cards/venusNext/Dirigibles';
+import {Game} from '../../../src/server/Game';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('DiversitySupport', function() {
-  let card : DiversitySupport; let player : Player;
+  let card: DiversitySupport;
+  let player: TestPlayer;
 
   beforeEach(function() {
     card = new DiversitySupport();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    Game.newInstance('foobar', [player, redPlayer], player);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    Game.newInstance('gameid', [player, redPlayer], player);
   });
 
-  it('Can\'t play', function() {
+  it('Can not play', function() {
     expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
 

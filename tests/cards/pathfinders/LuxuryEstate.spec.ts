@@ -1,8 +1,7 @@
 import {expect} from 'chai';
-import {LuxuryEstate} from '../../../src/cards/pathfinders/LuxuryEstate';
-import {Game} from '../../../src/Game';
+import {LuxuryEstate} from '../../../src/server/cards/pathfinders/LuxuryEstate';
+import {Game} from '../../../src/server/Game';
 import {TestPlayer} from '../../TestPlayer';
-import {TestPlayers} from '../../TestPlayers';
 import {addGreenery, addCity} from '../../TestingUtils';
 
 describe('LuxuryEstate', function() {
@@ -13,9 +12,9 @@ describe('LuxuryEstate', function() {
 
   beforeEach(function() {
     card = new LuxuryEstate();
-    player = TestPlayers.BLUE.newPlayer();
-    player2 = TestPlayers.RED.newPlayer();
-    game = Game.newInstance('foobar', [player, player2], player);
+    player = TestPlayer.BLUE.newPlayer();
+    player2 = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, player2], player);
     player.playedCards.push(card);
   });
 
@@ -49,6 +48,12 @@ describe('LuxuryEstate', function() {
     // Other player's cities don't count.
     player.titanium = 0;
     addCity(player2);
+    card.play(player);
+    expect(player.titanium).eq(3);
+
+    // Other player's greeneries don't count.
+    player.titanium = 0;
+    addGreenery(player2);
     card.play(player);
     expect(player.titanium).eq(3);
   });

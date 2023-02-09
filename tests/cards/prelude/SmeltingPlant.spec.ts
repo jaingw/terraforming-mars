@@ -1,12 +1,11 @@
 import {expect} from 'chai';
-import {SmeltingPlant} from '../../../src/cards/prelude/SmeltingPlant';
-import {Game} from '../../../src/Game';
-import {TestPlayers} from '../../TestPlayers';
+import {SmeltingPlant} from '../../../src/server/cards/prelude/SmeltingPlant';
+import {getTestPlayer, newTestGame} from '../../TestGame';
 
 describe('SmeltingPlant', function() {
   it('Should play', function() {
-    const player = TestPlayers.BLUE.newPlayer();
-    const game = Game.newInstance('bar', [player], player);
+    const game = newTestGame(1);
+    const player = getTestPlayer(game, 0);
     const card = new SmeltingPlant();
     const action = card.play(player);
     expect(action).is.undefined;

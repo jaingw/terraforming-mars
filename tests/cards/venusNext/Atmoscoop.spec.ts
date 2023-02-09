@@ -1,29 +1,33 @@
 import {expect} from 'chai';
 import * as constants from '../../../src/common/constants';
-import {Research} from '../../../src/cards/base/Research';
-import {SearchForLife} from '../../../src/cards/base/SearchForLife';
-import {ICard} from '../../../src/cards/ICard';
-import {Atmoscoop} from '../../../src/cards/venusNext/Atmoscoop';
-import {Dirigibles} from '../../../src/cards/venusNext/Dirigibles';
-import {FloatingHabs} from '../../../src/cards/venusNext/FloatingHabs';
-import {Game} from '../../../src/Game';
-import {OrOptions} from '../../../src/inputs/OrOptions';
-import {SelectCard} from '../../../src/inputs/SelectCard';
-import {Player} from '../../../src/Player';
-import {TestPlayers} from '../../TestPlayers';
-import {cast, setCustomGameOptions} from '../../TestingUtils';
-import {SelectOption} from '../../../src/inputs/SelectOption';
+import {Research} from '../../../src/server/cards/base/Research';
+import {SearchForLife} from '../../../src/server/cards/base/SearchForLife';
+import {ICard} from '../../../src/server/cards/ICard';
+import {Atmoscoop} from '../../../src/server/cards/venusNext/Atmoscoop';
+import {Dirigibles} from '../../../src/server/cards/venusNext/Dirigibles';
+import {FloatingHabs} from '../../../src/server/cards/venusNext/FloatingHabs';
+import {Game} from '../../../src/server/Game';
+import {OrOptions} from '../../../src/server/inputs/OrOptions';
+import {SelectCard} from '../../../src/server/inputs/SelectCard';
+import {TestPlayer} from '../../TestPlayer';
+import {cast, runAllActions, testGameOptions} from '../../TestingUtils';
+import {SelectOption} from '../../../src/server/inputs/SelectOption';
 
 describe('Atmoscoop', function() {
-  let card : Atmoscoop; let player : Player; let game : Game; let dirigibles: Dirigibles; let floatingHabs: FloatingHabs;
+  let card: Atmoscoop;
+  let player: TestPlayer;
+  let game: Game;
+  let dirigibles: Dirigibles;
+  let floatingHabs: FloatingHabs;
 
   beforeEach(function() {
     card = new Atmoscoop();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    game = Game.newInstance('foobar', [player, redPlayer], player, setCustomGameOptions({venusNextExtension: true}));
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, redPlayer], player, testGameOptions({venusNextExtension: true}));
     dirigibles = new Dirigibles();
     floatingHabs = new FloatingHabs();
+    player.popSelectInitialCards();
   });
 
   it('Cannot play', function() {
@@ -47,10 +51,13 @@ describe('Atmoscoop', function() {
   it('Should play - single target', function() {
     player.playedCards.push(dirigibles);
 
-    const action = cast(card.play(player), OrOptions);
+    const orOptions = cast(card.play(player), OrOptions);
+    const selectOption = cast(orOptions.options[1], SelectOption);
+    selectOption.cb();
 
-    const orOptions = cast(action.options[1], SelectOption);
-    orOptions.cb();
+    runAllActions(game);
+    expect(player.popWaitingFor()).is.undefined;
+
     expect(game.getVenusScaleLevel()).to.eq(4);
     expect(dirigibles.resourceCount).to.eq(2);
   });
@@ -66,8 +73,10 @@ describe('Atmoscoop', function() {
     orOptions.options[1].cb();
     expect(game.getVenusScaleLevel()).to.eq(4);
 
+
     // Then the floaters
-    const selectCard = orOptions.cb() as SelectCard<ICard>;
+    runAllActions(game);
+    const selectCard = cast(player.popWaitingFor(), SelectCard<ICard>);
     selectCard.cb([dirigibles]);
     expect(dirigibles.resourceCount).to.eq(2);
     selectCard.cb([floatingHabs]);
@@ -80,6 +89,10 @@ describe('Atmoscoop', function() {
 
     const action = card.play(player);
     expect(action).is.undefined;
+
+    runAllActions(game);
+    expect(player.popWaitingFor()).is.undefined;
+
     expect(game.getVenusScaleLevel()).to.eq(4);
     expect(dirigibles.resourceCount).to.eq(2);
   });
@@ -89,8 +102,10 @@ describe('Atmoscoop', function() {
     (game as any).venusScaleLevel = constants.MAX_VENUS_SCALE;
     (game as any).temperature = constants.MAX_TEMPERATURE;
 
-    const action = card.play(player);
-    expect(action).is.undefined;
+    expect(card.play(player)).is.undefined;
+    runAllActions(game);
+
+    expect(player.popWaitingFor()).is.undefined;
     expect(dirigibles.resourceCount).to.eq(2);
   });
 
@@ -98,8 +113,9 @@ describe('Atmoscoop', function() {
     player.playedCards.push(dirigibles, floatingHabs);
     (game as any).temperature = constants.MAX_TEMPERATURE;
 
-    const action = card.play(player) as SelectCard<ICard>;
-    expect(action).instanceOf(SelectCard);
+    expect(card.play(player)).is.undefined;
+    runAllActions(game);
+    const action = cast(player.popWaitingFor(), SelectCard<ICard>);
 
     action.cb([dirigibles]);
     expect(game.getVenusScaleLevel()).to.eq(4);
@@ -111,8 +127,10 @@ describe('Atmoscoop', function() {
     (game as any).venusScaleLevel = constants.MAX_VENUS_SCALE;
     (game as any).temperature = constants.MAX_TEMPERATURE;
 
-    const action = card.play(player) as SelectCard<ICard>;
-    expect(action).instanceOf(SelectCard);
+    expect(card.play(player)).is.undefined;
+    runAllActions(game);
+    const action = cast(player.popWaitingFor(), SelectCard<ICard>);
+
     action.cb([dirigibles]);
     expect(dirigibles.resourceCount).to.eq(2);
   });

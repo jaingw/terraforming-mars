@@ -11,13 +11,16 @@ import LoadGameForm from '@/client/components/LoadGameForm.vue';
 import DebugUI from '@/client/components/DebugUI.vue';
 import {SimpleGameModel} from '@/common/models/SimpleGameModel';
 import Help from '@/client/components/help/Help.vue';
+import CardHTML from '@/client/components/card/Card_HTML.vue';
 
 import {$t} from '@/client/directives/i18n';
 
 import * as constants from '@/common/constants';
+import * as paths from '@/common/app/paths';
+import * as HTTPResponseCode from '@/client/utils/HTTPResponseCode';
 import * as raw_settings from '@/genfiles/settings.json';
 import {SpectatorModel} from '@/common/models/SpectatorModel';
-import {isPlayerId, isSpectatorId} from '@/common/utils/utils';
+import {isPlayerId, isSpectatorId} from '@/common/Types';
 import {hasShowModal, showModal, windowHasHTMLDialogElement} from './HTMLDialogElementCompatibility';
 
 const dialogPolyfill = require('dialog-polyfill');
@@ -96,6 +99,8 @@ export const mainAppSettings = {
     'register': Register,
     'my-games': MyGames,
     'donate': Donate,
+    // 这里引入是为了统一编译进去，渲染 card 并在card_HTML.spec.ts中获取html 保存到json中
+    'cardHTML': CardHTML,
   },
   'methods': {
     showAlert(message: string, cb: () => void = () => {}): void {
@@ -117,15 +122,15 @@ export const mainAppSettings = {
     },
     setVisibilityState(targetVar: string, isVisible: boolean) {
       if (isVisible === this.getVisibilityState(targetVar)) return;
-      (this as unknown as typeof mainAppSettings.data).componentsVisibility[targetVar] = isVisible;
+      (this as unknown as MainAppData).componentsVisibility[targetVar] = isVisible;
     },
     getVisibilityState(targetVar: string): boolean {
-      return (this as unknown as typeof mainAppSettings.data).componentsVisibility[targetVar] ? true : false;
+      return (this as unknown as MainAppData).componentsVisibility[targetVar] ? true : false;
     },
     update(path: '/player' | '/spectator'): void {
-      const currentPathname: string = window.location.pathname;
+      const currentPathname = window.location.pathname;
       const xhr = new XMLHttpRequest();
-      const app = this as unknown as typeof mainAppSettings.data;
+      const app = this as unknown as MainAppData;
 
       const userId = PreferencesManager.load('userId');
       let url = '/api' + path + window.location.search.replace('&noredirect', '');
@@ -138,7 +143,7 @@ export const mainAppSettings = {
       };
       xhr.onload = function() {
         try {
-          if (xhr.status === 200) {
+          if (xhr.status === HTTPResponseCode.OK) {
             const scrollablePanel = document.getElementById('logpanel-scrollable');
             if (scrollablePanel !== null) {
             // 如果此时接近底部， 继续滚动到底部
@@ -194,7 +199,7 @@ export const mainAppSettings = {
             alert('Unexpected server response: ' + xhr.statusText);
           }
         } catch (e) {
-          console.log('Error processing XHR response: ' + e);
+          console.warn('Error processing XHR response: ' + e);
         }
       };
       xhr.responseType = 'json';
@@ -258,8 +263,8 @@ export const mainAppSettings = {
   mounted() {
     // document.title = constants.APP_NAME;
     if (!windowHasHTMLDialogElement()) dialogPolyfill.default.registerDialog(document.getElementById('alert-dialog'));
-    const currentPathname: string = window.location.pathname;
-    const app = this as unknown as (typeof mainAppSettings.data) & (typeof mainAppSettings.methods);
+    const currentPathname = window.location.pathname;
+    const app = this as unknown as (MainAppData) & (typeof mainAppSettings.methods);
     const userId = PreferencesManager.load('userId');
     if (userId !== '') {
       if (currentPathname === '/') {// 首页强制更新vip
@@ -287,7 +292,7 @@ export const mainAppSettings = {
         alert('Error getting game data');
       };
       xhr.onload = function() {
-        if (xhr.status === 200) {
+        if (xhr.status === HTTPResponseCode.OK) {
           window.history.replaceState(
             xhr.response,
             `${constants.APP_NAME} - Game`,
@@ -300,16 +305,18 @@ export const mainAppSettings = {
       };
       xhr.responseType = 'json';
       xhr.send();
-    } else if (currentPathname === '/games-overview') {
+    } else if (currentPathname === paths.GAMES_OVERVIEW) {
       app.screen = 'games-overview';
-    } else if (currentPathname === '/new-game') {
+    } else if (currentPathname === paths.NEW_GAME) {
       app.screen = 'create-game-form';
-    } else if (currentPathname === '/load') {
+    } else if (currentPathname === paths.LOAD) {
       app.screen = 'load';
-    } else if (currentPathname === '/cards') {
+    } else if (currentPathname === paths.CARDS) {
       app.screen = 'cards';
-    } else if (currentPathname === '/help') {
+    } else if (currentPathname === paths.HELP) {
       app.screen = 'help';
+    } else if (currentPathname === paths.ADMIN) {
+      app.screen = 'admin';
     } else if (currentPathname === '/login') {
       app.screen = 'login';
     } else if (currentPathname === '/register') {

@@ -1,40 +1,43 @@
 import {expect} from 'chai';
-import {ArtificialLake} from '../../../src/cards/base/ArtificialLake';
+import {ArtificialLake} from '../../../src/server/cards/base/ArtificialLake';
 import * as constants from '../../../src/common/constants';
-import {Game} from '../../../src/Game';
-import {SelectSpace} from '../../../src/inputs/SelectSpace';
+import {Game} from '../../../src/server/Game';
+import {SelectSpace} from '../../../src/server/inputs/SelectSpace';
 import {TestPlayer} from '../../TestPlayer';
 import {SpaceType} from '../../../src/common/boards/SpaceType';
 import {TileType} from '../../../src/common/TileType';
-import {TestPlayers} from '../../TestPlayers';
-import {cast, maxOutOceans} from '../../TestingUtils';
+import {cast, maxOutOceans, runAllActions} from '../../TestingUtils';
 
 describe('ArtificialLake', function() {
-  let card : ArtificialLake; let player : TestPlayer; let game : Game;
+  let card: ArtificialLake;
+  let player: TestPlayer;
+  let game: Game;
 
   beforeEach(function() {
     card = new ArtificialLake();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    game = Game.newInstance('foobar', [player, redPlayer], player);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, redPlayer], player);
   });
 
-  it('Can\'t play', function() {
+  it('Can not play', function() {
     expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
 
   it('Should play', function() {
-    const action = cast(card.play(player), SelectSpace);
+    expect(card.play(player)).is.undefined;
+    runAllActions(game);
+    const action = cast(player.popWaitingFor(), SelectSpace);
 
-        action!.availableSpaces.forEach((space) => {
-          expect(space.spaceType).to.eq(SpaceType.LAND);
-        });
+    action.availableSpaces.forEach((space) => {
+      expect(space.spaceType).to.eq(SpaceType.LAND);
+    });
 
-        action!.cb(action!.availableSpaces[0]);
-        const placedTile = action!.availableSpaces[0].tile;
-        expect(placedTile!.tileType).to.eq(TileType.OCEAN);
+    action.cb(action!.availableSpaces[0]);
+    const placedTile = action.availableSpaces[0].tile;
+    expect(placedTile!.tileType).to.eq(TileType.OCEAN);
 
-        expect(card.getVictoryPoints()).to.eq(1);
+    expect(card.getVictoryPoints()).to.eq(1);
   });
 
   it('Cannot place ocean if all oceans are already placed', function() {
@@ -44,7 +47,7 @@ describe('ArtificialLake', function() {
     // Set oceans count to the max value
     for (const space of game.board.getSpaces(SpaceType.OCEAN, player)) {
       if (game.board.getOceanCount() < constants.MAX_OCEAN_TILES) {
-        game.addOceanTile(player, space.id);
+        game.addOceanTile(player, space);
       }
     }
 

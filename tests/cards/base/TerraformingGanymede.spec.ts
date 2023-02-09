@@ -1,12 +1,11 @@
 import {expect} from 'chai';
-import {TerraformingGanymede} from '../../../src/cards/base/TerraformingGanymede';
-import {Game} from '../../../src/Game';
-import {TestPlayers} from '../../TestPlayers';
+import {TerraformingGanymede} from '../../../src/server/cards/base/TerraformingGanymede';
+import {Game} from '../../../src/server/Game';
 import {Phase} from '../../../src/common/Phase';
-import {PoliticalAgendas} from '../../../src/turmoil/PoliticalAgendas';
+import {PoliticalAgendas} from '../../../src/server/turmoil/PoliticalAgendas';
 import {TestPlayer} from '../../TestPlayer';
-import {Reds} from '../../../src/turmoil/parties/Reds';
-import {setCustomGameOptions} from '../../TestingUtils';
+import {Reds} from '../../../src/server/turmoil/parties/Reds';
+import {testGameOptions} from '../../TestingUtils';
 
 describe('TerraformingGanymede', function() {
   let card: TerraformingGanymede;
@@ -16,9 +15,9 @@ describe('TerraformingGanymede', function() {
 
   beforeEach(() => {
     card = new TerraformingGanymede();
-    player = TestPlayers.BLUE.newPlayer();
-    player2 = TestPlayers.RED.newPlayer();
-    game = Game.newInstance('foobar', [player, player2], player, setCustomGameOptions());
+    player = TestPlayer.BLUE.newPlayer();
+    player2 = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, player2], player, testGameOptions({turmoilExtension: true}));
   });
 
   it('Should play', function() {

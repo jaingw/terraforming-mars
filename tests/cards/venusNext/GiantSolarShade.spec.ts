@@ -1,26 +1,25 @@
 import {expect} from 'chai';
-import {Dirigibles} from '../../../src/cards/venusNext/Dirigibles';
-import {GiantSolarShade} from '../../../src/cards/venusNext/GiantSolarShade';
-import {Game} from '../../../src/Game';
+import {Dirigibles} from '../../../src/server/cards/venusNext/Dirigibles';
+import {GiantSolarShade} from '../../../src/server/cards/venusNext/GiantSolarShade';
+import {Game} from '../../../src/server/Game';
 import {Phase} from '../../../src/common/Phase';
-import {Player} from '../../../src/Player';
-import {Reds} from '../../../src/turmoil/parties/Reds';
-import {PoliticalAgendas} from '../../../src/turmoil/PoliticalAgendas';
-import {setCustomGameOptions} from '../../TestingUtils';
-import {TestPlayers} from '../../TestPlayers';
+import {Player} from '../../../src/server/Player';
+import {Reds} from '../../../src/server/turmoil/parties/Reds';
+import {PoliticalAgendas} from '../../../src/server/turmoil/PoliticalAgendas';
+import {testGameOptions} from '../../TestingUtils';
+import {TestPlayer} from '../../TestPlayer';
 let card: GiantSolarShade;
-let player: Player;
+let player: TestPlayer;
 let redPlayer: Player;
 let game: Game;
 
 describe('GiantSolarShade', function() {
   beforeEach(() => {
     card = new GiantSolarShade();
-    player = TestPlayers.BLUE.newPlayer();
-    redPlayer = TestPlayers.RED.newPlayer();
+    player = TestPlayer.BLUE.newPlayer();
+    redPlayer = TestPlayer.RED.newPlayer();
 
-    const gameOptions = setCustomGameOptions();
-    game = Game.newInstance('foobar', [player, redPlayer], player, gameOptions);
+    game = Game.newInstance('gameid', [player, redPlayer], player, testGameOptions({venusNextExtension: true, turmoilExtension: true}));
   });
 
   it('Should play', function() {

@@ -1,9 +1,8 @@
 import {expect} from 'chai';
-import {MicroMills} from '../../../src/cards/base/MicroMills';
-import {Conscription} from '../../../src/cards/colonies/Conscription';
-import {Game} from '../../../src/Game';
+import {MicroMills} from '../../../src/server/cards/base/MicroMills';
+import {Conscription} from '../../../src/server/cards/colonies/Conscription';
+import {Game} from '../../../src/server/Game';
 import {TestPlayer} from '../../TestPlayer';
-import {TestPlayers} from '../../TestPlayers';
 
 describe('Conscription', function() {
   let card: Conscription;
@@ -11,12 +10,12 @@ describe('Conscription', function() {
 
   beforeEach(() => {
     card = new Conscription();
-    player = TestPlayers.BLUE.newPlayer();
-    Game.newInstance('foobar', [player, TestPlayers.RED.newPlayer()], player);
+    player = TestPlayer.BLUE.newPlayer();
+    Game.newInstance('gameid', [player, TestPlayer.RED.newPlayer()], player);
   });
 
   it('play', () => {
-    const action = card.play();
+    const action = card.play(player);
     expect(action).is.undefined;
     expect(card.getVictoryPoints()).to.eq(-1);
     expect(card.getCardDiscount(player)).to.eq(0);

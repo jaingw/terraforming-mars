@@ -11,8 +11,9 @@ import {Color} from '@/common/Color';
 import {PartyName} from '@/common/turmoil/PartyName';
 import {GlobalEventName} from '@/common/turmoil/globalEvents/GlobalEventName';
 import {GlobalEventModel} from '@/common/models/TurmoilModel';
-import {getGlobalEventByName} from '../../turmoil/globalEvents/GlobalEventDealer';
 import GlobalEvent from './turmoil/GlobalEvent.vue';
+import {getGlobalEventByName} from '../../server/turmoil/globalEvents/GlobalEventDealer';
+import {SelectCardResponse} from '../../common/inputs/InputResponse';
 
 interface SelectCardModel {
   cards: VueModelRadio<CardModel> | VueModelCheckbox<Array<CardModel>>;
@@ -33,7 +34,7 @@ export const SelectGlobalCard = Vue.component('select-global-card', {
       type: Object as () => PlayerInputModel,
     },
     onsave: {
-      type: Function as unknown as () => (out: Array<Array<string>>) => void,
+      type: Function as unknown as () => (out: SelectCardResponse) => void,
     },
     showsave: {
       type: Boolean,
@@ -76,15 +77,15 @@ export const SelectGlobalCard = Vue.component('select-global-card', {
       return false;
     },
     isOptionalToManyCards: function(): boolean {
-      return this.playerinput.maxCardsToSelect !== undefined &&
-             this.playerinput.maxCardsToSelect > 1 &&
-             this.playerinput.minCardsToSelect === 0;
+      return this.playerinput.max !== undefined &&
+             this.playerinput.max > 1 &&
+             this.playerinput.min === 0;
     },
     getData: function(): Array<CardName> {
       return Array.isArray(this.$data.cards) ? this.$data.cards.map((card) => card.name) : [this.$data.cards.name];
     },
     saveData: function() {
-      this.onsave([this.getData()]);
+      this.onsave({type: 'card', cards: this.getData()});
     },
     getCardBoxClass: function(card: CardModel): string {
       if (this.playerinput.showOwner && this.getOwner(card) !== undefined) {
@@ -94,8 +95,8 @@ export const SelectGlobalCard = Vue.component('select-global-card', {
     },
     getOwner: function(card: CardModel): OwnerModel | undefined {
       for (const player of this.player.players) {
-        if (player.playedCards.find((c) => c.name === card.name)) {
-          return {name: player.name, color: player.color} as OwnerModel;
+        if (player.tableau.find((c) => c.name === card.name)) {
+          return {name: player.name, color: player.color};
         }
       }
       return undefined;
@@ -130,8 +131,8 @@ export const SelectGlobalCard = Vue.component('select-global-card', {
         <div class="turmoil" style="width: auto;margin: auto;margin-left: -50px;"><div class="events-board"  style="width: auto;">
           <label v-for="card in playerinput.globalEventCards" :key="card.name" :class="getCardBoxClass(card)">
               <template v-if="!card.isDisabled">
-                <input v-if="playerinput.maxCardsToSelect === 1 && playerinput.minCardsToSelect === 1" type="radio" v-model="cards" :value="card" />
-                <input v-else type="checkbox" v-model="cards" :value="card" :disabled="playerinput.maxCardsToSelect !== undefined && Array.isArray(cards) && cards.length >= playerinput.maxCardsToSelect && cards.includes(card) === false" />
+                <input v-if="playerinput.max === 1 && playerinput.min === 1" type="radio" v-model="cards" :value="card" />
+                <input v-else type="checkbox" v-model="cards" :value="card" :disabled="playerinput.max !== undefined && Array.isArray(cards) && cards.length >= playerinput.max && cards.includes(card) === false" />
               </template>
               <global-event :class="'filterDiv'"  style="margin-right: 25px;border: none;" :globalEvent="getGlobalEvent(card.name)" type="prior" :showIcons="false"></global-event>
           </label>

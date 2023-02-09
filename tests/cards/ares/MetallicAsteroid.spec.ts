@@ -1,20 +1,25 @@
 import {expect} from 'chai';
-import {MetallicAsteroid} from '../../../src/cards/ares/MetallicAsteroid';
-import {Game} from '../../../src/Game';
-import {Player} from '../../../src/Player';
+import {MetallicAsteroid} from '../../../src/server/cards/ares/MetallicAsteroid';
+import {Game} from '../../../src/server/Game';
+import {Player} from '../../../src/server/Player';
 import {SpaceBonus} from '../../../src/common/boards/SpaceBonus';
 import {TileType} from '../../../src/common/TileType';
 import {ARES_OPTIONS_NO_HAZARDS} from '../../ares/AresTestHelper';
-import {TestPlayers} from '../../TestPlayers';
+import {TestPlayer} from '../../TestPlayer';
+import {cast, runAllActions} from '../../TestingUtils';
+import {SelectSpace} from '../../../src/server/inputs/SelectSpace';
 
 describe('MetallicAsteroid', function() {
-  let card: MetallicAsteroid; let player: Player; let otherPlayer: Player; let game: Game;
+  let card: MetallicAsteroid;
+  let player: TestPlayer;
+  let otherPlayer: Player;
+  let game: Game;
 
   beforeEach(function() {
     card = new MetallicAsteroid();
-    player = TestPlayers.BLUE.newPlayer();
-    otherPlayer = TestPlayers.RED.newPlayer();
-    game = Game.newInstance('foobar', [player, otherPlayer], player, ARES_OPTIONS_NO_HAZARDS);
+    player = TestPlayer.BLUE.newPlayer();
+    otherPlayer = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, otherPlayer], player, ARES_OPTIONS_NO_HAZARDS);
   });
 
   it('Play', function() {
@@ -24,7 +29,10 @@ describe('MetallicAsteroid', function() {
     expect(game.getTemperature()).eq(-30);
     expect(game.deferredActions).has.lengthOf(0);
 
-    const action = card.play(player);
+    card.play(player);
+    runAllActions(game);
+    const action = cast(player.popWaitingFor(), SelectSpace);
+
     expect(player.titanium).eq(1);
     expect(game.getTemperature()).eq(-28);
     // This interrupt is for removing four plants. Not going to do further

@@ -1,32 +1,33 @@
 import {expect} from 'chai';
 import {cast} from '../../TestingUtils';
-import {Tardigrades} from '../../../src/cards/base/Tardigrades';
-import {PharmacyUnion} from '../../../src/cards/promo/PharmacyUnion';
-import {Recyclon} from '../../../src/cards/promo/Recyclon';
-import {Splice} from '../../../src/cards/promo/Splice';
-import {Game} from '../../../src/Game';
-import {AndOptions} from '../../../src/inputs/AndOptions';
-import {OrOptions} from '../../../src/inputs/OrOptions';
-import {Player} from '../../../src/Player';
-import {TestPlayers} from '../../TestPlayers';
-import {SelectOption} from '../../../src/inputs/SelectOption';
+import {Tardigrades} from '../../../src/server/cards/base/Tardigrades';
+import {PharmacyUnion} from '../../../src/server/cards/promo/PharmacyUnion';
+import {Recyclon} from '../../../src/server/cards/promo/Recyclon';
+import {Splice} from '../../../src/server/cards/promo/Splice';
+import {Game} from '../../../src/server/Game';
+import {AndOptions} from '../../../src/server/inputs/AndOptions';
+import {OrOptions} from '../../../src/server/inputs/OrOptions';
+import {TestPlayer} from '../../TestPlayer';
+import {SelectOption} from '../../../src/server/inputs/SelectOption';
 
 describe('Splice', function() {
-  let card : Splice; let player : Player; let player2 : Player;
+  let card: Splice;
+  let player: TestPlayer;
+  let player2: TestPlayer;
 
   beforeEach(function() {
     card = new Splice();
-    player = TestPlayers.BLUE.newPlayer();
-    player2 = TestPlayers.RED.newPlayer();
-    Game.newInstance('foobar', [player, player2], player);
+    player = TestPlayer.BLUE.newPlayer();
+    player2 = TestPlayer.RED.newPlayer();
+    Game.newInstance('gameid', [player, player2], player);
   });
 
   it('Should play', function() {
     const card2 = new Tardigrades();
-    const play = card.play();
+    const play = card.play(player);
     expect(play).is.undefined;
 
-    player.corpCard = card;
+    player.setCorporationForTest(card);
 
     player2.playedCards.push(card2);
     const action = cast(card.onCardPlayed(player2, card2), OrOptions);
@@ -41,10 +42,10 @@ describe('Splice', function() {
 
   it('Should play with multiple microbe tags', function() {
     const card2 = new PharmacyUnion();
-    const play = card.play();
-    player.corpCard = card;
+    const play = card.play(player);
+    player.setCorporationForTest(card);
     const play2 = card2.play(player);
-    player2.corpCard = card2;
+    player2.setCorporationForTest(card2);
     expect(play).is.undefined;
     expect(play2).is.undefined;
 

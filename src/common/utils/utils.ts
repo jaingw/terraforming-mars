@@ -23,7 +23,7 @@ export const range = (n: number): Array<number> => Array.from(Array(n).keys());
  * @param {Array<T>} b: the second array
  * @return {Array<T>} the intersection of both array elements
  */
-export function intersection<T>(a: Array<T>, b: Array<T>) {
+export function intersection<T>(a: Array<T>, b: Array<T>): Array<T> {
   return a.filter((e) => b.includes(e));
 }
 
@@ -35,10 +35,13 @@ export type RecursivePartial<T> = {
   [P in keyof T]?: RecursivePartial<T[P]>;
 };
 
-export function isPlayerId(id: string): boolean {
-  return id.charAt(0) === 'p';
+export function inplaceRemove<T>(array: Array<T>, element: T) {
+  const idx = array.findIndex((e) => e === element);
+  if (idx > -1) {
+    array.splice(idx, 1);
+  }
 }
 
-export function isSpectatorId(id: string): boolean {
-  return id.charAt(0) === 's';
+export function sum(array: Array<number>): number {
+  return array.reduce((a, b) => a + b, 0);
 }

@@ -1,20 +1,21 @@
 import {expect} from 'chai';
-import {IceCapMelting} from '../../../src/cards/base/IceCapMelting';
-import {Game} from '../../../src/Game';
-import {Player} from '../../../src/Player';
-import {TestPlayers} from '../../TestPlayers';
+import {IceCapMelting} from '../../../src/server/cards/base/IceCapMelting';
+import {Game} from '../../../src/server/Game';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('IceCapMelting', function() {
-  let card : IceCapMelting; let player : Player; let game : Game;
+  let card: IceCapMelting;
+  let player: TestPlayer;
+  let game: Game;
 
   beforeEach(function() {
     card = new IceCapMelting();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    game = Game.newInstance('foobar', [player, redPlayer], player);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, redPlayer], player);
   });
 
-  it('Can\'t play', function() {
+  it('Can not play', function() {
     expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
 

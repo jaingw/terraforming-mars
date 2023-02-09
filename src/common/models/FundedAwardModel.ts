@@ -1,15 +1,15 @@
 
 import {Color} from '../Color';
+import {AwardName} from '../ma/AwardName';
 
-export interface IAwardScore {
+export type AwardScore = {
   playerColor: Color;
   playerScore: number;
 }
 
-export interface FundedAwardModel {
-  name: string;
-  description: string;
+export type FundedAwardModel = {
+  name: AwardName;
   player_name: string;
   player_color: string;
-  scores: Array<IAwardScore>;
+  scores: Array<AwardScore>;
 }

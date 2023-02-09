@@ -1,11 +1,10 @@
 import {expect} from 'chai';
-import {LunarEmbassy} from '../../../src/cards/pathfinders/LunarEmbassy';
-import {Game} from '../../../src/Game';
+import {LunarEmbassy} from '../../../src/server/cards/pathfinders/LunarEmbassy';
+import {Game} from '../../../src/server/Game';
 import {TestPlayer} from '../../TestPlayer';
-import {TestPlayers} from '../../TestPlayers';
 import {Units} from '../../../src/common/Units';
-import {SpaceName} from '../../../src/SpaceName';
-import {setCustomGameOptions} from '../../TestingUtils';
+import {SpaceName} from '../../../src/server/SpaceName';
+import {testGameOptions} from '../../TestingUtils';
 
 describe('LunarEmbassy', function() {
   let card: LunarEmbassy;
@@ -13,19 +12,19 @@ describe('LunarEmbassy', function() {
 
   beforeEach(function() {
     card = new LunarEmbassy();
-    player = TestPlayers.BLUE.newPlayer();
-    Game.newInstance('foobar', [player], player, setCustomGameOptions({pathfindersExpansion: true}));
+    player = TestPlayer.BLUE.newPlayer();
+    Game.newInstance('gameid', [player], player, testGameOptions({pathfindersExpansion: true}));
   });
 
   it('play', function() {
-    player.setProductionForTest({});
+    player.production.override({});
     player.tagsForTest = {earth: 9};
     player.cardsInHand = [];
     expect(player.game.board.getSpace(SpaceName.LUNAR_EMBASSY).player).is.undefined;
 
     card.play(player);
 
-    expect(player.getProductionForTest()).deep.eq(Units.of({megacredits: 3, plants: 5}));
+    expect(player.production.asUnits()).deep.eq(Units.of({megacredits: 3, plants: 5}));
     expect(player.cardsInHand).has.length(1);
     expect(player.game.board.getSpace(SpaceName.LUNAR_EMBASSY).player?.id).eq(player.id);
   });

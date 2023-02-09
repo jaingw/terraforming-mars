@@ -1,21 +1,17 @@
-import {Game} from '../../../src/Game';
-import {Player} from '../../../src/Player';
-import {setCustomGameOptions} from '../../TestingUtils';
-import {TestPlayers} from '../../TestPlayers';
-import {SphereHabitats} from '../../../src/cards/moon/SphereHabitats';
+import {Game} from '../../../src/server/Game';
+import {testGameOptions} from '../../TestingUtils';
+import {TestPlayer} from '../../TestPlayer';
+import {SphereHabitats} from '../../../src/server/cards/moon/SphereHabitats';
 import {expect} from 'chai';
-import {Resources} from '../../../src/common/Resources';
-import {PlaceMoonColonyTile} from '../../../src/moon/PlaceMoonColonyTile';
-
-const MOON_OPTIONS = setCustomGameOptions({moonExpansion: true});
+import {PlaceMoonHabitatTile} from '../../../src/server/moon/PlaceMoonHabitatTile';
 
 describe('SphereHabitats', () => {
-  let player: Player;
+  let player: TestPlayer;
   let card: SphereHabitats;
 
   beforeEach(() => {
-    player = TestPlayers.BLUE.newPlayer();
-    Game.newInstance('id', [player], player, MOON_OPTIONS);
+    player = TestPlayer.BLUE.newPlayer();
+    Game.newInstance('gameid', [player], player, testGameOptions({moonExpansion: true}));
     card = new SphereHabitats();
   });
 
@@ -30,17 +26,17 @@ describe('SphereHabitats', () => {
 
   it('play', () => {
     player.titanium = 3;
-    expect(player.getProduction(Resources.STEEL)).eq(0);
+    expect(player.production.steel).eq(0);
     expect(player.getTerraformRating()).eq(14);
 
     card.play(player);
 
     expect(player.titanium).eq(2);
-    // PlaceMoonColonyTile is what's responsible for raising the colony rate.
+    // PlaceMoonHabitatTile is what's responsible for raising the colony rate.
     // Currently that path is already tested with existing code.
     // So I won't keep repeating it.
     // That said, PlaceMoonRoadTile could have its own test. :D
-    expect(player.game.deferredActions.peek()).instanceOf(PlaceMoonColonyTile);
+    expect(player.game.deferredActions.peek()).instanceOf(PlaceMoonHabitatTile);
   });
 });
 

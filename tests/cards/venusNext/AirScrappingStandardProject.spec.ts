@@ -1,11 +1,10 @@
 import {expect} from 'chai';
-import {AirScrappingStandardProject} from '../../../src/cards/venusNext/AirScrappingStandardProject';
-import {runAllActions, setCustomGameOptions} from '../../TestingUtils';
+import {AirScrappingStandardProject} from '../../../src/server/cards/venusNext/AirScrappingStandardProject';
+import {runAllActions, testGameOptions} from '../../TestingUtils';
+import {Game} from '../../../src/server/Game';
 import {TestPlayer} from '../../TestPlayer';
-import {Game} from '../../../src/Game';
-import {TestPlayers} from '../../TestPlayers';
-import {PoliticalAgendas} from '../../../src/turmoil/PoliticalAgendas';
-import {Reds} from '../../../src/turmoil/parties/Reds';
+import {PoliticalAgendas} from '../../../src/server/turmoil/PoliticalAgendas';
+import {Reds} from '../../../src/server/turmoil/parties/Reds';
 import {Phase} from '../../../src/common/Phase';
 import {MAX_VENUS_SCALE} from '../../../src/common/constants';
 
@@ -16,8 +15,8 @@ describe('AirScrappingStandardProject', function() {
 
   beforeEach(function() {
     card = new AirScrappingStandardProject();
-    player = TestPlayers.BLUE.newPlayer();
-    game = Game.newInstance('foobar', [player], player, setCustomGameOptions({altVenusBoard: false}));
+    player = TestPlayer.BLUE.newPlayer();
+    game = Game.newInstance('gameid', [player], player, testGameOptions({venusNextExtension: true, altVenusBoard: false, turmoilExtension: true}));
   });
 
   it('Can act', function() {

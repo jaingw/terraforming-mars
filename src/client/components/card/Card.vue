@@ -3,12 +3,18 @@
       <div class="card-content-wrapper" v-i18n>
           <div v-if="!isStandardProject()" class="card-cost-and-tags">
               <CardCost :amount="getCost()" :newCost="getReducedCost()" />
-              <card-help v-show="hasHelp" :name="card.name" />
+              <card-help v-if="hasHelp" :name="card.name" />
               <CardTags :tags="getTags()" />
           </div>
-          <CardTitle :title="card.name" :type="getCardType()"/>
-          <CardContent v-if="getCardMetadata() !== undefined" :metadata="getCardMetadata()" :requirements="getCardRequirements()" :isCorporation="isCorporationCard()"/>
-      </div>
+
+          <template v-if="this.getCardContent() === ''">
+              <CardTitle :title="card.name" :type="getCardType()"/>
+              <CardContent v-if="getCardMetadata() !== undefined" :metadata="getCardMetadata()" :requirements="getCardRequirements()" :isCorporation="isCorporationCard()"/>
+          </template>
+          <template v-else >
+            <div  v-html="this.getCardContent()"></div>
+          </template>
+        </div>
       <CardExpansion :expansion="getCardExpansion()" :isCorporation="isCorporationCard()"/>
       <CardResourceCounter v-if="hasResourceType" :amount="getResourceAmount()" :type="resourceType" />
       <CardExtraContent :card="card" />
@@ -32,11 +38,12 @@ import CardContent from './CardContent.vue';
 import CardHelp from './CardHelp.vue';
 import {ICardMetadata} from '@/common/cards/ICardMetadata';
 import {ICardRequirements} from '@/common/cards/ICardRequirements';
-import {Tags} from '@/common/cards/Tags';
+import {Tag} from '@/common/cards/Tag';
 import {getPreferences} from '@/client/utils/PreferencesManager';
 import {CardResource} from '@/common/CardResource';
 import {getCardOrThrow} from '@/client/cards/ClientCardManifest';
 import {CardName} from '@/common/cards/CardName';
+import * as HTML_DATA from '@/genfiles/cards-html-cn.json';
 
 const names = [
   CardName.BOTANICAL_EXPERIENCE,
@@ -44,6 +51,12 @@ const names = [
   CardName.LUNA_ECUMENOPOLIS,
   CardName.ROBOTIC_WORKFORCE,
 ];
+
+function getCardContentCN(cardName: string): string {
+  let htmlData: string | undefined = '';
+  htmlData = (HTML_DATA as any)[cardName];
+  return htmlData || '';
+}
 
 export default Vue.extend({
   name: 'Card',
@@ -82,6 +95,12 @@ export default Vue.extend({
     };
   },
   methods: {
+    getCardContent: function() {
+      if ((getPreferences().lang || 'cn') === 'cn') {
+        return getCardContentCN(this.card.name);
+      }
+      return '';
+    },
     getCardExpansion(): string {
       return this.cardInstance.module;
     },
@@ -91,12 +110,12 @@ export default Vue.extend({
       tags.forEach((tag, idx) => {
         // Clone are changed on card implementations but that's not passed down directly through the
         // model, however, it sends down the `cloneTag` field. So this function does the substitution.
-        if (tag === Tags.CLONE && this.card.cloneTag !== undefined) {
+        if (tag === Tag.CLONE && this.card.cloneTag !== undefined) {
           tags[idx] = this.card.cloneTag;
         }
       });
       if (type === CardType.EVENT) {
-        tags.push(Tags.EVENT);
+        tags.push(Tag.EVENT);
       }
       return tags;
     },
@@ -129,8 +148,7 @@ export default Vue.extend({
       }
       return classes.join(' ');
     },
-    getCardMetadata(): ICardMetadata | undefined {
-      // TODO(kberg): This doesn't return undefined anymore.
+    getCardMetadata(): ICardMetadata {
       return this.cardInstance.metadata;
     },
     getCardRequirements(): ICardRequirements | undefined {
@@ -148,15 +166,12 @@ export default Vue.extend({
   },
   computed: {
     hasResourceType(): boolean {
-      return this.card.resourceType !== undefined ||
-        this.cardInstance.resourceType !== undefined ||
-        this.robotCard !== undefined;
+      return this.card.isSelfReplicatingRobotsCard === true || this.cardInstance.resourceType !== undefined || this.robotCard !== undefined;
     },
     resourceType(): CardResource {
-      if (this.robotCard !== undefined) return CardResource.RESOURCE_CUBE;
-      if (this.card.resourceType !== undefined) return this.card.resourceType;
-      if (this.cardInstance.resourceType !== undefined) return this.cardInstance.resourceType;
-      return CardResource.RESOURCE_CUBE;
+      if (this.robotCard !== undefined || this.card.isSelfReplicatingRobotsCard === true) return CardResource.RESOURCE_CUBE;
+      // This last RESOURCE_CUBE is functionally unnecessary and serves to satisfy the type contract.
+      return this.cardInstance.resourceType ?? CardResource.RESOURCE_CUBE;
     },
     hasHelp(): boolean {
       return names.includes(this.card.name) && getPreferences().experimental_ui;

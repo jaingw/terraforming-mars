@@ -1,21 +1,21 @@
 import {expect} from 'chai';
-import {Research} from '../../../src/cards/base/Research';
-import {SubCrustMeasurements} from '../../../src/cards/promo/SubCrustMeasurements';
-import {Game} from '../../../src/Game';
-import {Player} from '../../../src/Player';
-import {TestPlayers} from '../../TestPlayers';
+import {Research} from '../../../src/server/cards/base/Research';
+import {SubCrustMeasurements} from '../../../src/server/cards/promo/SubCrustMeasurements';
+import {Game} from '../../../src/server/Game';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('SubCrustMeasurements', function() {
-  let card : SubCrustMeasurements; let player : Player;
+  let card: SubCrustMeasurements;
+  let player: TestPlayer;
 
   beforeEach(function() {
     card = new SubCrustMeasurements();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    Game.newInstance('foobar', [player, redPlayer], player);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    Game.newInstance('gameid', [player, redPlayer], player);
   });
 
-  it('Can\'t play if not enough science tags', function() {
+  it('Can not play if not enough science tags', function() {
     expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
 
@@ -23,7 +23,7 @@ describe('SubCrustMeasurements', function() {
     player.playedCards.push(new Research());
     expect(player.canPlayIgnoringCost(card)).is.true;
 
-    card.play();
+    card.play(player);
     expect(card.getVictoryPoints()).to.eq(2);
   });
 

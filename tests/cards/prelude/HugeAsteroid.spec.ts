@@ -1,20 +1,20 @@
 import {expect} from 'chai';
-import {HugeAsteroid} from '../../../src/cards/prelude/HugeAsteroid';
-import {Game} from '../../../src/Game';
-import {Player} from '../../../src/Player';
-import {Resources} from '../../../src/common/Resources';
-import {TestPlayers} from '../../TestPlayers';
+import {HugeAsteroid} from '../../../src/server/cards/prelude/HugeAsteroid';
+import {Game} from '../../../src/server/Game';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('HugeAsteroid', function() {
-  let card : HugeAsteroid; let player : Player; let game : Game;
+  let card: HugeAsteroid;
+  let player: TestPlayer;
+  let game: Game;
 
   beforeEach(function() {
     card = new HugeAsteroid();
-    player = TestPlayers.BLUE.newPlayer();
-    game = Game.newInstance('foobar', [player], player);
+    player = TestPlayer.BLUE.newPlayer();
+    game = Game.newInstance('gameid', [player], player);
   });
 
-  it('Can\'t play', function() {
+  it('Can not play', function() {
     player.megaCredits = 4;
     expect(card.canPlay(player)).is.not.true;
   });
@@ -26,11 +26,11 @@ describe('HugeAsteroid', function() {
 
     card.play(player);
 
-    // SelectHowToPayDeferred
+    // SelectPaymentDeferred
     game.deferredActions.runNext();
 
     expect(player.megaCredits).to.eq(0);
-    expect(player.getProduction(Resources.HEAT)).to.eq(1);
+    expect(player.production.heat).to.eq(1);
     expect(player.getTerraformRating()).to.eq(initialTR + 3);
   });
 });

@@ -1,38 +1,42 @@
-import {MediaGroup} from '../../../src/cards/base/MediaGroup';
+import {MediaGroup} from '../../../src/server/cards/base/MediaGroup';
 import {expect} from 'chai';
-import {AdvancedEcosystems} from '../../../src/cards/base/AdvancedEcosystems';
-import {Ants} from '../../../src/cards/base/Ants';
-import {Fish} from '../../../src/cards/base/Fish';
-import {LagrangeObservatory} from '../../../src/cards/base/LagrangeObservatory';
-import {Lichen} from '../../../src/cards/base/Lichen';
-import {Research} from '../../../src/cards/base/Research';
-import {SearchForLife} from '../../../src/cards/base/SearchForLife';
-import {ViralEnhancers} from '../../../src/cards/base/ViralEnhancers';
-import {PharmacyUnion} from '../../../src/cards/promo/PharmacyUnion';
-import {Tags} from '../../../src/common/cards/Tags';
-import {Game} from '../../../src/Game';
-import {AndOptions} from '../../../src/inputs/AndOptions';
-import {OrOptions} from '../../../src/inputs/OrOptions';
-import {Player} from '../../../src/Player';
-import {TestPlayers} from '../../TestPlayers';
-import {Virus} from '../../../src/cards/base/Virus';
+import {AdvancedEcosystems} from '../../../src/server/cards/base/AdvancedEcosystems';
+import {Ants} from '../../../src/server/cards/base/Ants';
+import {Fish} from '../../../src/server/cards/base/Fish';
+import {LagrangeObservatory} from '../../../src/server/cards/base/LagrangeObservatory';
+import {Lichen} from '../../../src/server/cards/base/Lichen';
+import {Research} from '../../../src/server/cards/base/Research';
+import {SearchForLife} from '../../../src/server/cards/base/SearchForLife';
+import {ViralEnhancers} from '../../../src/server/cards/base/ViralEnhancers';
+import {PharmacyUnion} from '../../../src/server/cards/promo/PharmacyUnion';
+import {Tag} from '../../../src/common/cards/Tag';
+import {Game} from '../../../src/server/Game';
+import {SelectInitialCards} from '../../../src/server/inputs/SelectInitialCards';
+import {OrOptions} from '../../../src/server/inputs/OrOptions';
+import {TestPlayer} from '../../TestPlayer';
+import {Virus} from '../../../src/server/cards/base/Virus';
 import {cast, runAllActions} from '../../TestingUtils';
+import {Player} from '../../../src/server/Player';
 
 describe('PharmacyUnion', function() {
-  let card : PharmacyUnion; let player : Player; let player2 : Player;
+  let card: PharmacyUnion;
+  let player: TestPlayer;
+  let player2: TestPlayer;
+  let game: Game;
 
   beforeEach(function() {
     card = new PharmacyUnion();
-    player = TestPlayers.BLUE.newPlayer();
-    player2 = TestPlayers.RED.newPlayer();
-    Game.newInstance('foobar', [player, player2], player);
+    player = TestPlayer.BLUE.newPlayer();
+    player2 = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, player2], player);
 
-    player.corpCard = card;
+    player.setCorporationForTest(card);
   });
 
   it('Should play', function() {
-    Game.newInstance('foobar', [player], player);
-    const pi = player.getWaitingFor() as AndOptions;
+    player.corporations.length = 0; // Resetting so when setting the corproation it doesn't do anything flaky.
+    Game.newInstance('gameid', [player], player);
+    const pi = cast(player.getWaitingFor(), SelectInitialCards);
     pi.options[0].cb([card]);
     pi.options[1].cb([]);
     pi.cb();
@@ -41,13 +45,14 @@ describe('PharmacyUnion', function() {
     // Should not pay for the free Science card
     expect(player.megaCredits).to.eq(46);
     expect(player.cardsInHand).has.lengthOf(1);
-    expect(player.cardsInHand[0].tags.includes(Tags.SCIENCE)).is.true;
+    expect(player.cardsInHand[0].tags.includes(Tag.SCIENCE)).is.true;
   });
 
   it('Gains diseases and removes MC when ANY player plays microbe cards', function() {
     player.megaCredits = 8;
     player2.megaCredits = 8;
     card.play(player);
+    runAllActions(game);
 
     const ants = new Ants();
     player.playedCards.push(ants);
@@ -67,6 +72,7 @@ describe('PharmacyUnion', function() {
 
   it('Removes diseases and gives TR only when corp owner plays science cards', function() {
     card.play(player);
+    runAllActions(game);
 
     const searchForLife = new SearchForLife();
     player.playedCards.push(searchForLife);
@@ -88,6 +94,8 @@ describe('PharmacyUnion', function() {
 
   it('Works correctly with Research', function() {
     card.play(player);
+    runAllActions(game);
+
     expect(card.resourceCount).to.eq(2);
 
     const research = new Research();
@@ -127,7 +135,7 @@ describe('PharmacyUnion', function() {
   });
 
   it('Corporation tags do not count when corporation is disabled', function() {
-    expect(player.getTagCount(Tags.MICROBE)).to.eq(2);
+    expect(player.tags.count(Tag.MICROBE)).to.eq(2);
     const advancedEcosystems = new AdvancedEcosystems();
     player.playedCards.push(new Fish());
     player.playedCards.push(new Lichen());
@@ -139,7 +147,7 @@ describe('PharmacyUnion', function() {
     const orOptions = cast(player.game.deferredActions.peek()!.execute(), OrOptions);
     orOptions.options[0].cb();
     expect(card.isDisabled).is.true;
-    expect(player.getTagCount(Tags.MICROBE)).to.eq(0);
+    expect(player.tags.count(Tag.MICROBE)).to.eq(0);
     expect(player.canPlayIgnoringCost(advancedEcosystems)).is.not.true;
   });
 
@@ -184,5 +192,28 @@ describe('PharmacyUnion', function() {
     player.playCard(new Virus());
     runAllActions(player.game);
     expect(player.megaCredits).eq(3);
+  });
+
+  it('serialization test for Player with Pharmacy Union, when false', () => {
+    card.play(player);
+    card.isDisabled = false;
+    const serializedPlayer = player.serialize();
+
+    expect(serializedPlayer.corporations?.[0].isDisabled).is.false;
+
+    const reserializedPlayer = Player.deserialize(serializedPlayer);
+    const reserializedPharmacyUnion = cast(reserializedPlayer.corporations?.[0], PharmacyUnion);
+    expect(reserializedPharmacyUnion.isDisabled).is.false;
+  });
+
+  it('serialization test for Player with Pharmacy Union, when true', () => {
+    card.isDisabled = true;
+    const serializedPlayer = player.serialize();
+
+    expect(serializedPlayer.corporations?.[0].isDisabled).is.true;
+
+    const reserializedPlayer = Player.deserialize(serializedPlayer);
+    const reserializedPharmacyUnion = cast(reserializedPlayer.corporations?.[0], PharmacyUnion);
+    expect(reserializedPharmacyUnion.isDisabled).is.true;
   });
 });

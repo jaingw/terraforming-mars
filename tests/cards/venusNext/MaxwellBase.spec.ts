@@ -1,51 +1,50 @@
 import {expect} from 'chai';
-import {Birds} from '../../../src/cards/base/Birds';
-import {ICard} from '../../../src/cards/ICard';
-import {AerialMappers} from '../../../src/cards/venusNext/AerialMappers';
-import {MaxwellBase} from '../../../src/cards/venusNext/MaxwellBase';
-import {StratosphericBirds} from '../../../src/cards/venusNext/StratosphericBirds';
-import {Game} from '../../../src/Game';
-import {SelectCard} from '../../../src/inputs/SelectCard';
-import {Player} from '../../../src/Player';
+import {Birds} from '../../../src/server/cards/base/Birds';
+import {AerialMappers} from '../../../src/server/cards/venusNext/AerialMappers';
+import {MaxwellBase} from '../../../src/server/cards/venusNext/MaxwellBase';
+import {StratosphericBirds} from '../../../src/server/cards/venusNext/StratosphericBirds';
+import {Game} from '../../../src/server/Game';
+import {SelectCard} from '../../../src/server/inputs/SelectCard';
 import {Resources} from '../../../src/common/Resources';
-import {setCustomGameOptions} from '../../TestingUtils';
-import {TestPlayers} from '../../TestPlayers';
+import {cast, testGameOptions} from '../../TestingUtils';
+import {TestPlayer} from '../../TestPlayer';
 import {CardName} from '../../../src/common/cards/CardName';
-import {Tags} from '../../../src/common/cards/Tags';
+import {Tag} from '../../../src/common/cards/Tag';
 import {CardType} from '../../../src/common/cards/CardType';
 import {CardResource} from '../../../src/common/CardResource';
-import {IProjectCard} from '../../../src/cards/IProjectCard';
+import {IProjectCard} from '../../../src/server/cards/IProjectCard';
 
 describe('MaxwellBase', function() {
-  let card : MaxwellBase; let player : Player; let game : Game;
+  let card: MaxwellBase;
+  let player: TestPlayer;
+  let game: Game;
 
   beforeEach(function() {
     card = new MaxwellBase();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    const gameOptions = setCustomGameOptions();
-    game = Game.newInstance('foobar', [player, redPlayer], player, gameOptions);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, redPlayer], player, testGameOptions({venusNextExtension: true}));
   });
 
-  it('Can\'t play without energy production', function() {
+  it('Can not play without energy production', function() {
     (game as any).venusScaleLevel = 12;
     expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
 
-  it('Can\'t play if Venus requirement not met', function() {
-    player.addProduction(Resources.ENERGY, 1);
+  it('Can not play if Venus requirement not met', function() {
+    player.production.add(Resources.ENERGY, 1);
     (game as any).venusScaleLevel = 10;
     expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
 
   it('Should play', function() {
-    player.addProduction(Resources.ENERGY, 1);
+    player.production.add(Resources.ENERGY, 1);
     (game as any).venusScaleLevel = 12;
     expect(player.canPlayIgnoringCost(card)).is.true;
 
     const action = card.play(player);
     expect(action).is.undefined;
-    expect(player.getProduction(Resources.ENERGY)).to.eq(0);
+    expect(player.production.energy).to.eq(0);
   });
 
   it('Should act - single target', function() {
@@ -67,9 +66,8 @@ describe('MaxwellBase', function() {
     player.playedCards.push(card, card2, card3);
     expect(card.canAct(player)).is.true;
 
-    const action = card.action(player);
-    expect(action).instanceOf(SelectCard);
-    (action as SelectCard<ICard>).cb([card2]);
+    const action = cast(card.action(player), SelectCard);
+    action.cb([card2]);
     expect(card2.resourceCount).to.eq(1);
   });
 
@@ -83,7 +81,7 @@ describe('MaxwellBase', function() {
     const fakeCard: IProjectCard = {
       name: 'HELLO' as CardName,
       cost: 1,
-      tags: [Tags.VENUS],
+      tags: [Tag.VENUS],
       canPlay: () => true,
       play: () => undefined,
       getVictoryPoints: () => 0,

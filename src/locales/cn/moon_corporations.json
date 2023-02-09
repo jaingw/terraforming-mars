@@ -3,11 +3,11 @@
  "You start with 50 M€. 1 VP for every 3 Moon tags you have.":"开始拥有50M€ 每3个月球标志获得 1 VP。",
  
  "Effect: When any player plays an animal tag (including this), add 1 animal on this card.":"效果:当任何玩家使用动物标志(包括此牌)时，在此卡上加1只动物。",
- "You start with 38 M€. As your first action, place a colony tile on the Moon and raise the Colony Rate 1 step. 1 VP for every 2 animals on this card.":"你从38M€开始。作为你的第一个行动，在月球上放置一个殖民地版块，并提高殖民地速度1步。这张卡片上每2只动物对应1个VP",
+ "You start with 38 M€. As your first action, place a habitat tile on The Moon and raise the habitat rate 1 step. 1 VP for every 2 animals on this card.":"你从38M€开始。作为你的第一个行动，在月球上放置一个殖民地版块，并提高殖民地速度1步。这张卡片上每2只动物对应1个VP",
  
  "Effect: When you raise any Moon Rate, increase your M€ production 1 step per step.":"效果:当你提高任何月亮效率时，每增加1你的M€产量提高1。",
  "Effect: When any player raises any Moon Rate, gain 1M€ per step.":"效果:当任何玩家提升任何月亮率时，每步增加1M€。",
- "You start with 40 M€, 2 steel, and 2 Titanium.":"一开始是40M€, 2钢和2钛。",
+ "You start with 40 M€, 2 steel, and 2 Titanium.":"一开始是40 M€, 2钢和2钛。",
  
  "Action: Gain 1 M€ for each road tile on the Moon.":"行动:月球上的每条道版块路获得1 M€。",
  "1 VP for each road tile on the Moon.":"月球上的每个道路版块算1个VP",
@@ -29,8 +29,8 @@
  "You start with 40 M€ and 2 syndicate fleets on this card.":"从40 M€和2个辛迪加舰队开始。",
  
  "Effect: When you place a colony tile, gain 2 M€ for each adjacent colony tile.":"效果:当你放置一个殖民地版块，每个相邻的殖民地版块获得2 M€。",
- "1 VP for each colony tile adjacent to your colony tiles.":"每与殖民地版块相邻的殖民地版块算1VP。",
-  "You start with 32 M€ and 1 titanium. As your first action, place a colony tile on the Moon and raise the Colony Rate 1 step.":"一开始有32M€和1个钛。作为你的第一个行动，在月球上放置一个殖民地瓷砖，并提高殖民地率1步。"
+ "1 VP for each habitat tile adjacent to your habitat tiles.":"每与殖民地版块相邻的殖民地版块算1VP。",
+  "You start with 32 M€ and 1 titanium. As your first action, place a habitat tile on the Moon and raise the habitat Rate 1 step.":"一开始有32M€和1个钛。作为你的第一个行动，在月球上放置一个殖民地瓷砖，并提高殖民地率1步。"
 
 
 }

@@ -1,16 +1,16 @@
 import {expect} from 'chai';
-import {Game} from '../../../src/Game';
-import {GlobalDustStorm} from '../../../src/turmoil/globalEvents/GlobalDustStorm';
-import {GlobalEventDealer, getGlobalEventByName} from '../../../src/turmoil/globalEvents/GlobalEventDealer';
+import {Game} from '../../../src/server/Game';
+import {GlobalDustStorm} from '../../../src/server/turmoil/globalEvents/GlobalDustStorm';
+import {GlobalEventDealer, getGlobalEventByName} from '../../../src/server/turmoil/globalEvents/GlobalEventDealer';
 import {GlobalEventName} from '../../../src/common/turmoil/globalEvents/GlobalEventName';
-import {IGlobalEvent} from '../../../src/turmoil/globalEvents/IGlobalEvent';
-import {ScientificCommunity} from '../../../src/turmoil/globalEvents/ScientificCommunity';
-import {SerializedGlobalEventDealer} from '../../../src/turmoil/globalEvents/SerializedGlobalEventDealer';
-import {SponsoredProjects} from '../../../src/turmoil/globalEvents/SponsoredProjects';
-import {SuccessfulOrganisms} from '../../../src/turmoil/globalEvents/SuccessfulOrganisms';
-import {WarOnEarth} from '../../../src/turmoil/globalEvents/WarOnEarth';
-import {setCustomGameOptions} from '../../TestingUtils';
-import {TestPlayers} from '../../TestPlayers';
+import {IGlobalEvent} from '../../../src/server/turmoil/globalEvents/IGlobalEvent';
+import {ScientificCommunity} from '../../../src/server/turmoil/globalEvents/ScientificCommunity';
+import {SerializedGlobalEventDealer} from '../../../src/server/turmoil/globalEvents/SerializedGlobalEventDealer';
+import {SponsoredProjects} from '../../../src/server/turmoil/globalEvents/SponsoredProjects';
+import {SuccessfulOrganisms} from '../../../src/server/turmoil/globalEvents/SuccessfulOrganisms';
+import {WarOnEarth} from '../../../src/server/turmoil/globalEvents/WarOnEarth';
+import {testGameOptions} from '../../TestingUtils';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('GlobalEventDealer', () => {
   it('serialize/deserialize - empty', () => {
@@ -44,7 +44,7 @@ describe('GlobalEventDealer', () => {
   });
 
   it('getGlobalEventByName can retrieve all cards', () => {
-    const gameOptions = setCustomGameOptions({
+    const gameOptions = testGameOptions({
       preludeExtension: true,
       venusNextExtension: true,
       coloniesExtension: true,
@@ -53,8 +53,8 @@ describe('GlobalEventDealer', () => {
       communityCardsOption: true,
       removeNegativeGlobalEventsOption: false,
     });
-    const player = TestPlayers.BLUE.newPlayer();
-    const game = Game.newInstance('foobar', [player], player, gameOptions);
+    const player = TestPlayer.BLUE.newPlayer();
+    const game = Game.newInstance('gameid', [player], player, gameOptions);
     const dealer = GlobalEventDealer.newInstance(game);
     for (const card of dealer.globalEventsDeck) {
       expect(getGlobalEventByName(card.name), card.name + ' cannot be retrieved, card is probably missing from ALL_EVENTS').to.deep.eq(card);

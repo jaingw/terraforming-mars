@@ -13,7 +13,7 @@
             <span class="turn-order">{{getTurnOrder(index)}}</span>
             <span class="player_name" :class="getPlayerCubeColorClass(player.color)"><a :href="'/player?id=' + player.id">{{player.name}}</a></span>
             <Button title="copy" size="tiny" @click="copyUrl(player.id)"/>
-            <span v-if="isPlayerUrlCopied(player.id)" class="copied-notice">Playable link for {{player.name}} copied to clipboard <span class="dismissed" @click="setCopiedIdToDefault" >dismiss</span></span>
+            <span v-if="isPlayerUrlCopied(player.id)" class="copied-notice"><span v-i18n>Copied!</span></span>
           </li>
         </ul>
 
@@ -73,7 +73,7 @@ export default Vue.extend({
     return {
       userId: PreferencesManager.load('userId'),
       // Variable to keep the state for the current copied player id. Used to display message of which button and which player playable link is currently in the clipboard
-      urlCopiedPlayerId: DEFAULT_COPIED_PLAYER_ID as string,
+      urlCopiedPlayerId: DEFAULT_COPIED_PLAYER_ID,
     };
   },
   methods: {
@@ -105,7 +105,8 @@ export default Vue.extend({
       }
       return `/player?id=${playerId}`;
     },
-    copyUrl(playerId: PlayerId | SpectatorId): void {
+    copyUrl(playerId: PlayerId | SpectatorId | undefined ): void {
+      if (playerId === undefined) return;
       copyToClipboard(window.location.origin + this.getHref(playerId));
       this.urlCopiedPlayerId = playerId;
     },

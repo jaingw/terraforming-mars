@@ -1,14 +1,14 @@
 import {Color} from '../Color';
+import {MilestoneName} from '../ma/MilestoneName';
 
-export interface IMilestoneScore {
+export type MilestoneScore = {
     playerColor: Color;
     playerScore: number;
 }
 
-export interface ClaimedMilestoneModel {
-    name: string;
-    description: string;
+export type ClaimedMilestoneModel = {
+    name: MilestoneName;
     player_name: string;
     player_color: string;
-    scores: Array<IMilestoneScore>;
+    scores: Array<MilestoneScore>;
 }

@@ -1,26 +1,24 @@
 import {expect} from 'chai';
-import {Research} from '../../../src/cards/base/Research';
-import {AerialMappers} from '../../../src/cards/venusNext/AerialMappers';
-import {Stratopolis} from '../../../src/cards/venusNext/Stratopolis';
-import {Game} from '../../../src/Game';
-import {SelectCard} from '../../../src/inputs/SelectCard';
-import {Player} from '../../../src/Player';
-import {Resources} from '../../../src/common/Resources';
-import {setCustomGameOptions} from '../../TestingUtils';
-import {TestPlayers} from '../../TestPlayers';
+import {Research} from '../../../src/server/cards/base/Research';
+import {AerialMappers} from '../../../src/server/cards/venusNext/AerialMappers';
+import {Stratopolis} from '../../../src/server/cards/venusNext/Stratopolis';
+import {Game} from '../../../src/server/Game';
+import {SelectCard} from '../../../src/server/inputs/SelectCard';
+import {cast, testGameOptions} from '../../TestingUtils';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('Stratopolis', function() {
-  let card: Stratopolis; let player: Player;
+  let card: Stratopolis;
+  let player: TestPlayer;
 
   beforeEach(function() {
     card = new Stratopolis();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    const gameOptions = setCustomGameOptions();
-    Game.newInstance('foobar', [player, redPlayer], player, gameOptions);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    Game.newInstance('gameid', [player, redPlayer], player, testGameOptions({venusNextExtension: true}));
   });
 
-  it('Can\'t play', function() {
+  it('Can not play', function() {
     expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
 
@@ -29,7 +27,7 @@ describe('Stratopolis', function() {
     expect(player.canPlayIgnoringCost(card)).is.true;
 
     card.play(player);
-    expect(player.getProduction(Resources.MEGACREDITS)).to.eq(2);
+    expect(player.production.megacredits).to.eq(2);
   });
 
   it('Should act - single target', function() {
@@ -42,9 +40,9 @@ describe('Stratopolis', function() {
     const card2 = new AerialMappers();
     player.playedCards.push(card, card2);
 
-    const action = card.action(player);
-    expect(action).instanceOf(SelectCard);
-        action!.cb([card2]);
-        expect(card2.resourceCount).to.eq(2);
+    const action = cast(card.action(player), SelectCard);
+    action.cb([card2]);
+
+    expect(card2.resourceCount).to.eq(2);
   });
 });

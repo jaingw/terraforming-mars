@@ -17,7 +17,13 @@ import Button from '@/client/components/common/Button.vue';
 import {PlayerInputModel} from '@/common/models/PlayerInputModel';
 import {PublicPlayerModel} from '@/common/models/PlayerModel';
 import SelectPlayerRow from '@/client/components/SelectPlayerRow.vue';
-import {InputResponse} from '@/common/inputs/InputResponse';
+import {SelectDelegateResponse} from '@/common/inputs/InputResponse';
+import {PlayerId} from '../../common/Types';
+import {Color} from '../../common/Color';
+
+interface DataModel {
+  selectedPlayer: PlayerId | Color | 'NEUTRAL' | undefined;
+}
 
 export default Vue.extend({
   name: 'SelectPartyPlayer',
@@ -29,7 +35,7 @@ export default Vue.extend({
       type: Object as () => PlayerInputModel,
     },
     onsave: {
-      type: Function as unknown as () => (out: InputResponse) => void,
+      type: Function as unknown as () => (out: SelectDelegateResponse) => void,
     },
     showsave: {
       type: Boolean,
@@ -38,9 +44,9 @@ export default Vue.extend({
       type: Boolean,
     },
   },
-  data() {
+  data(): DataModel {
     return {
-      selectedPlayer: undefined as string | undefined,
+      selectedPlayer: undefined,
     };
   },
   components: {
@@ -49,12 +55,9 @@ export default Vue.extend({
   },
   methods: {
     saveData() {
-      const result: string[][] = [];
-      result.push([]);
       if (this.selectedPlayer !== undefined) {
-        result[0].push(this.selectedPlayer);
+        this.onsave({type: 'delegate', player: this.selectedPlayer});
       }
-      this.onsave(result);
     },
   },
 });

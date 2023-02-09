@@ -29,7 +29,7 @@ to foster. Note that any new features you see on this repo made available on tha
 The board game is great and this repository highly recommends [purchasing it](https://www.amazon.com/Stronghold-Games-6005SG-Terraforming-Board/dp/B01GSYA4K2) for personal use.
 
 ## ⬤ I want to join the community!
-[Join us over on Discord!](https://discord.gg/VR8TbrD).
+[Join us over on Discord!](https://discord.gg/afeyggbN6Y).
 
 ## ⬤ I want to play!
 There's a instance available at https://terraforming-mars.herokuapp.com/. It's generally reliable, but read more below.
@@ -52,14 +52,17 @@ Honestly, it's really simple.
 ## ⬤ I want to run a copy of the server on Heroku
 Check out our [Heroku setup wiki page](https://github.com/bafolts/terraforming-mars/wiki/Heroku-Setup)
 
-(Good choice. A free Heroku account will satisfy most needs, and will take five minutes to set up. This is
-our preferred recommendation for online hosting.)
+(As of 2022-11-28, Heroku no longer has a free tier. However, it is still our recommended way to deploy,
+as they're the clearest instructions.)
 
 ## ⬤ I want to run a copy of the server on Docker
 Check out our [Docker setup wiki page](https://github.com/bafolts/terraforming-mars/wiki/Docker-Setup)
 
 ## ⬤ I want to report a bug or feature request
 Add it to our [issues tab](https://github.com/bafolts/terraforming-mars/issues/new).
+
+## ⬤ I want to contribute to development
+See [contribution guide](https://github.com/terraforming-mars/terraforming-mars/blob/main/CONTRIBUTING.md) and [local development setup](https://github.com/terraforming-mars/terraforming-mars/wiki/Local-Setup).
 
 ## ⬤ I want to win!
 Me too, pal. Me too.

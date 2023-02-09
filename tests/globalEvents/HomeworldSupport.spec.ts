@@ -1,18 +1,17 @@
 import {expect} from 'chai';
-import {Sponsors} from '../../src/cards/base/Sponsors';
-import {Game} from '../../src/Game';
-import {Resources} from '../../src/common/Resources';
-import {HomeworldSupport} from '../../src/turmoil/globalEvents/HomeworldSupport';
-import {Kelvinists} from '../../src/turmoil/parties/Kelvinists';
-import {Turmoil} from '../../src/turmoil/Turmoil';
-import {TestPlayers} from '../TestPlayers';
+import {Sponsors} from '../../src/server/cards/base/Sponsors';
+import {Game} from '../../src/server/Game';
+import {HomeworldSupport} from '../../src/server/turmoil/globalEvents/HomeworldSupport';
+import {Kelvinists} from '../../src/server/turmoil/parties/Kelvinists';
+import {Turmoil} from '../../src/server/turmoil/Turmoil';
+import {TestPlayer} from '../TestPlayer';
 
 describe('HomeworldSupport', function() {
   it('resolve play', function() {
     const card = new HomeworldSupport();
-    const player = TestPlayers.BLUE.newPlayer();
-    const player2 = TestPlayers.RED.newPlayer();
-    const game = Game.newInstance('foobar', [player, player2], player);
+    const player = TestPlayer.BLUE.newPlayer();
+    const player2 = TestPlayer.RED.newPlayer();
+    const game = Game.newInstance('gameid', [player, player2], player);
     const turmoil = Turmoil.newInstance(game);
 
     turmoil.initGlobalEvent(game);
@@ -20,14 +19,14 @@ describe('HomeworldSupport', function() {
     player2.playedCards.push(new Sponsors());
     player2.playedCards.push(new Sponsors());
 
-    turmoil.chairman = player2;
+    turmoil.chairman = player2.id;
     turmoil.dominantParty = new Kelvinists();
-    turmoil.dominantParty.partyLeader = player2;
-    turmoil.dominantParty.delegates.push(player2);
-    turmoil.dominantParty.delegates.push(player2);
+    turmoil.dominantParty.partyLeader = player2.id;
+    turmoil.dominantParty.delegates.add(player2.id);
+    turmoil.dominantParty.delegates.add(player2.id);
 
     card.resolve(game, turmoil);
-    expect(player.getResource(Resources.MEGACREDITS)).to.eq(2);
-    expect(player2.getResource(Resources.MEGACREDITS)).to.eq(10);
+    expect(player.megaCredits).to.eq(2);
+    expect(player2.megaCredits).to.eq(10);
   });
 });

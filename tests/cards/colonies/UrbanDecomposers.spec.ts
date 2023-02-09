@@ -1,34 +1,36 @@
 import {expect} from 'chai';
-import {Ants} from '../../../src/cards/base/Ants';
-import {Decomposers} from '../../../src/cards/base/Decomposers';
-import {UrbanDecomposers} from '../../../src/cards/colonies/UrbanDecomposers';
-import {ICard} from '../../../src/cards/ICard';
-import {Luna} from '../../../src/colonies/Luna';
-import {Game} from '../../../src/Game';
-import {SelectCard} from '../../../src/inputs/SelectCard';
-import {Player} from '../../../src/Player';
-import {Resources} from '../../../src/common/Resources';
+import {Ants} from '../../../src/server/cards/base/Ants';
+import {Decomposers} from '../../../src/server/cards/base/Decomposers';
+import {UrbanDecomposers} from '../../../src/server/cards/colonies/UrbanDecomposers';
+import {ICard} from '../../../src/server/cards/ICard';
+import {Luna} from '../../../src/server/colonies/Luna';
+import {Game} from '../../../src/server/Game';
+import {SelectCard} from '../../../src/server/inputs/SelectCard';
 import {TileType} from '../../../src/common/TileType';
-import {TestPlayers} from '../../TestPlayers';
+import {TestPlayer} from '../../TestPlayer';
+import {cast} from '../../TestingUtils';
 
 describe('UrbanDecomposers', function() {
-  let card : UrbanDecomposers; let player : Player; let game : Game;
+  let card: UrbanDecomposers;
+  let player: TestPlayer;
+  let game: Game;
+  let luna: Luna;
 
   beforeEach(function() {
     card = new UrbanDecomposers();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    game = Game.newInstance('foobar', [player, redPlayer], player);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, redPlayer], player);
+    luna = new Luna();
+    game.colonies.push(luna);
   });
 
-  it('Can\'t play if player has no city', function() {
-    const colony = new Luna();
-    colony.colonies.push(player);
-    player.game.colonies.push(colony);
+  it('Can not play if player has no city', function() {
+    luna.colonies.push(player);
     expect(card.canPlay(player)).is.not.true;
   });
 
-  it('Can\'t play if player has no colony', function() {
+  it('Can not play if player has no colony', function() {
     const lands = player.game.board.getAvailableSpacesOnLand(player);
     lands[0].player = player;
     lands[0].tile = {tileType: TileType.CITY};
@@ -40,13 +42,11 @@ describe('UrbanDecomposers', function() {
     lands[0].player = player;
     lands[0].tile = {tileType: TileType.CITY};
 
-    const colony = new Luna();
-    colony.colonies.push(player);
-    player.game.colonies.push(colony);
+    luna.colonies.push(player);
 
     expect(card.canPlay(player)).is.true;
     card.play(player);
-    expect(player.getProduction(Resources.PLANTS)).to.eq(1);
+    expect(player.production.plants).to.eq(1);
   });
 
   it('Should play with single target', function() {
@@ -59,7 +59,7 @@ describe('UrbanDecomposers', function() {
     game.deferredActions.pop();
     expect(input).is.undefined;
     expect(decomposers.resourceCount).to.eq(2);
-    expect(player.getProduction(Resources.PLANTS)).to.eq(1);
+    expect(player.production.plants).to.eq(1);
   });
 
   it('Should play with multiple targets', function() {
@@ -71,9 +71,9 @@ describe('UrbanDecomposers', function() {
     expect(game.deferredActions).has.lengthOf(1);
 
     // add two microbes to Ants
-    const selectCard = game.deferredActions.peek()!.execute() as SelectCard<ICard>;
+    const selectCard = cast(game.deferredActions.peek()!.execute(), SelectCard<ICard>);
     selectCard.cb([ants]);
     expect(ants.resourceCount).to.eq(2);
-    expect(player.getProduction(Resources.PLANTS)).to.eq(1);
+    expect(player.production.plants).to.eq(1);
   });
 });

@@ -1,42 +1,42 @@
 import {expect} from 'chai';
-import {Dirigibles} from '../../../src/cards/venusNext/Dirigibles';
-import {FloatingHabs} from '../../../src/cards/venusNext/FloatingHabs';
-import {Game} from '../../../src/Game';
-import {SelectCard} from '../../../src/inputs/SelectCard';
-import {Player} from '../../../src/Player';
-import {TestPlayers} from '../../TestPlayers';
+import {cast} from '../../TestingUtils';
+import {Dirigibles} from '../../../src/server/cards/venusNext/Dirigibles';
+import {FloatingHabs} from '../../../src/server/cards/venusNext/FloatingHabs';
+import {Game} from '../../../src/server/Game';
+import {SelectCard} from '../../../src/server/inputs/SelectCard';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('Dirigibles', function() {
-  let card : Dirigibles; let player : Player;
+  let card: Dirigibles;
+  let player: TestPlayer;
 
   beforeEach(function() {
     card = new Dirigibles();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    Game.newInstance('foobar', [player, redPlayer], player);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    Game.newInstance('gameid', [player, redPlayer], player);
     player.playedCards.push(card);
   });
 
   it('Should play', function() {
-    const action = card.play();
+    const action = card.play(player);
     expect(action).is.undefined;
   });
 
   it('Should act - single target', function() {
-    expect(player.getFloatersCanSpend()).to.eq(0);
+    expect(player.getSpendableFloaters()).to.eq(0);
     const action = card.action(player);
     expect(action).is.undefined;
     expect(player.getCardsWithResources()).has.lengthOf(1);
-    expect(player.getFloatersCanSpend()).to.eq(1);
+    expect(player.getSpendableFloaters()).to.eq(1);
     expect(card.resourceCount).to.eq(1);
   });
 
   it('Should act - multiple targets', function() {
     player.playedCards.push(new FloatingHabs());
-    const action = card.action(player);
-    expect(action).instanceOf(SelectCard);
+    const action = cast(card.action(player), SelectCard);
+    action.cb([card]);
 
-    action!.cb([card]);
     expect(card.resourceCount).to.eq(1);
   });
 });

@@ -1,16 +1,16 @@
 import {expect} from 'chai';
-import {RegoPlastics} from '../../../src/cards/promo/RegoPlastics';
-import {Player} from '../../../src/Player';
-import {TestPlayers} from '../../TestPlayers';
-import {Game} from '../../../src/Game';
+import {RegoPlastics} from '../../../src/server/cards/promo/RegoPlastics';
+import {TestPlayer} from '../../TestPlayer';
+import {Game} from '../../../src/server/Game';
 
 describe('RegoPlastics', function() {
-  let card : RegoPlastics; let player : Player;
+  let card: RegoPlastics;
+  let player: TestPlayer;
 
   beforeEach(function() {
     card = new RegoPlastics();
-    player = TestPlayers.BLUE.newPlayer();
-    Game.newInstance('foobar', [player], player);
+    player = TestPlayer.BLUE.newPlayer();
+    Game.newInstance('gameid', [player], player);
   });
 
   it('Should play', function() {

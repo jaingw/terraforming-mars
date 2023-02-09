@@ -1,13 +1,12 @@
 import {expect} from 'chai';
-import {SmallOpenPitMine} from '../../../src/cards/pathfinders/SmallOpenPitMine';
-import {Game} from '../../../src/Game';
+import {SmallOpenPitMine} from '../../../src/server/cards/pathfinders/SmallOpenPitMine';
+import {Game} from '../../../src/server/Game';
 import {Units} from '../../../src/common/Units';
 import {TestPlayer} from '../../TestPlayer';
-import {TestPlayers} from '../../TestPlayers';
-import {OrOptions} from '../../../src/inputs/OrOptions';
-import {IProjectCard} from '../../../src/cards/IProjectCard';
-import {JovianLanterns} from '../../../src/cards/colonies/JovianLanterns';
-import {GHGProducingBacteria} from '../../../src/cards/base/GHGProducingBacteria';
+import {OrOptions} from '../../../src/server/inputs/OrOptions';
+import {IProjectCard} from '../../../src/server/cards/IProjectCard';
+import {JovianLanterns} from '../../../src/server/cards/colonies/JovianLanterns';
+import {GHGProducingBacteria} from '../../../src/server/cards/base/GHGProducingBacteria';
 import {cast} from '../../TestingUtils';
 
 describe('SmallOpenPitMine', function() {
@@ -18,8 +17,8 @@ describe('SmallOpenPitMine', function() {
 
   beforeEach(function() {
     card = new SmallOpenPitMine();
-    player = TestPlayers.BLUE.newPlayer();
-    Game.newInstance('foobar', [player], player);
+    player = TestPlayer.BLUE.newPlayer();
+    Game.newInstance('gameid', [player], player);
     microbeCard = new GHGProducingBacteria();
     floaterCard = new JovianLanterns();
     player.playedCards = [microbeCard, floaterCard];
@@ -32,7 +31,7 @@ describe('SmallOpenPitMine', function() {
 
     twoSteel.cb();
 
-    expect(player.getProductionForTest()).deep.eq(Units.of({steel: 2}));
+    expect(player.production.asUnits()).deep.eq(Units.of({steel: 2}));
   });
 
   it('play - titanium', function() {
@@ -42,6 +41,6 @@ describe('SmallOpenPitMine', function() {
 
     oneTitanium.cb();
 
-    expect(player.getProductionForTest()).deep.eq(Units.of({titanium: 1}));
+    expect(player.production.asUnits()).deep.eq(Units.of({titanium: 1}));
   });
 });

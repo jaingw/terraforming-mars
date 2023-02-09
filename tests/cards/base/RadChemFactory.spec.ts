@@ -1,30 +1,30 @@
 import {expect} from 'chai';
-import {RadChemFactory} from '../../../src/cards/base/RadChemFactory';
-import {Game} from '../../../src/Game';
-import {Player} from '../../../src/Player';
+import {RadChemFactory} from '../../../src/server/cards/base/RadChemFactory';
+import {Game} from '../../../src/server/Game';
 import {Resources} from '../../../src/common/Resources';
-import {TestPlayers} from '../../TestPlayers';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('RadChemFactory', function() {
-  let card : RadChemFactory; let player : Player;
+  let card: RadChemFactory;
+  let player: TestPlayer;
 
   beforeEach(function() {
     card = new RadChemFactory();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    Game.newInstance('foobar', [player, redPlayer], player);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    Game.newInstance('gameid', [player, redPlayer], player);
   });
 
-  it('Can\'t play', function() {
+  it('Can not play', function() {
     expect(card.canPlay(player)).is.not.true;
   });
 
   it('Should play', function() {
-    player.addProduction(Resources.ENERGY, 1);
+    player.production.add(Resources.ENERGY, 1);
     expect(card.canPlay(player)).is.true;
 
     card.play(player);
-    expect(player.getProduction(Resources.ENERGY)).to.eq(0);
+    expect(player.production.energy).to.eq(0);
     expect(player.getTerraformRating()).to.eq(22);
   });
 });

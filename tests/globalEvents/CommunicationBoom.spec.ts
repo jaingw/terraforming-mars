@@ -1,20 +1,20 @@
 import {expect} from 'chai';
 import {cast, fakeCard, runAllActions} from '../TestingUtils';
-import {Game} from '../../src/Game';
-import {CommunicationBoom} from '../../src/turmoil/globalEvents/CommunicationBoom';
-import {Kelvinists} from '../../src/turmoil/parties/Kelvinists';
-import {Turmoil} from '../../src/turmoil/Turmoil';
-import {TestPlayers} from '../TestPlayers';
+import {Game} from '../../src/server/Game';
+import {CommunicationBoom} from '../../src/server/turmoil/globalEvents/CommunicationBoom';
+import {Kelvinists} from '../../src/server/turmoil/parties/Kelvinists';
+import {Turmoil} from '../../src/server/turmoil/Turmoil';
+import {TestPlayer} from '../TestPlayer';
 import {CardName} from '../../src/common/cards/CardName';
 import {CardResource} from '../../src/common/CardResource';
-import {AndOptions} from '../../src/inputs/AndOptions';
+import {AndOptions} from '../../src/server/inputs/AndOptions';
 
 describe('CommunicationBoom', function() {
   it('resolve play', function() {
     const card = new CommunicationBoom();
-    const player = TestPlayers.BLUE.newPlayer();
-    const player2 = TestPlayers.RED.newPlayer();
-    const game = Game.newInstance('foobar', [player, player2], player);
+    const player = TestPlayer.BLUE.newPlayer();
+    const player2 = TestPlayer.RED.newPlayer();
+    const game = Game.newInstance('gameid', [player, player2], player);
     const turmoil = Turmoil.newInstance(game);
 
     const a = fakeCard({name: 'A' as CardName, resourceType: CardResource.MICROBE});
@@ -31,12 +31,12 @@ describe('CommunicationBoom', function() {
     player2.megaCredits = 12;
 
     turmoil.initGlobalEvent(game);
-    turmoil.chairman = player2;
+    turmoil.chairman = player2.id;
     turmoil.dominantParty = new Kelvinists();
-    turmoil.dominantParty.partyLeader = player2;
-    turmoil.dominantParty.delegates.push(player);
-    turmoil.dominantParty.delegates.push(player2);
-    turmoil.dominantParty.delegates.push(player2);
+    turmoil.dominantParty.partyLeader = player2.id;
+    turmoil.dominantParty.delegates.add(player.id);
+    turmoil.dominantParty.delegates.add(player2.id);
+    turmoil.dominantParty.delegates.add(player2.id);
 
     card.resolve(game, turmoil);
 
@@ -50,11 +50,8 @@ describe('CommunicationBoom', function() {
     expect(e.resourceCount).eq(2);
     expect(f.resourceCount).eq(2);
 
-    (player as any).waitingFor = undefined;
-    (player as any).waitingForCb = undefined;
-
-    (player2 as any).waitingFor = undefined;
-    (player2 as any).waitingForCb = undefined;
+    player.popWaitingFor();
+    player2.popWaitingFor();
 
     runAllActions(game);
 
@@ -72,7 +69,6 @@ describe('CommunicationBoom', function() {
 
     runAllActions(game);
 
-    expect(player.getWaitingFor()).instanceOf(AndOptions);
     const playerOptions2 = cast(player2.getWaitingFor(), AndOptions);
     expect(playerOptions2.options).has.length(2);
     expect(playerOptions2.options[0].title).contains(e.name);

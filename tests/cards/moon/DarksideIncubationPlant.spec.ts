@@ -1,13 +1,10 @@
-import {Game} from '../../../src/Game';
-import {cast, setCustomGameOptions} from '../../TestingUtils';
-import {TestPlayers} from '../../TestPlayers';
-import {TestPlayer} from '../../TestPlayer';
-import {DarksideIncubationPlant} from '../../../src/cards/moon/DarksideIncubationPlant';
 import {expect} from 'chai';
-import {OrOptions} from '../../../src/inputs/OrOptions';
-import {MoonExpansion} from '../../../src/moon/MoonExpansion';
-
-const MOON_OPTIONS = setCustomGameOptions({moonExpansion: true});
+import {Game} from '../../../src/server/Game';
+import {cast, testGameOptions} from '../../TestingUtils';
+import {TestPlayer} from '../../TestPlayer';
+import {DarksideIncubationPlant} from '../../../src/server/cards/moon/DarksideIncubationPlant';
+import {OrOptions} from '../../../src/server/inputs/OrOptions';
+import {MoonExpansion} from '../../../src/server/moon/MoonExpansion';
 
 describe('DarksideIncubationPlant', () => {
   let player: TestPlayer;
@@ -15,8 +12,8 @@ describe('DarksideIncubationPlant', () => {
   let game: Game;
 
   beforeEach(() => {
-    player = TestPlayers.BLUE.newPlayer();
-    game = Game.newInstance('id', [player], player, MOON_OPTIONS);
+    player = TestPlayer.BLUE.newPlayer();
+    game = Game.newInstance('gameid', [player], player, testGameOptions({moonExpansion: true}));
     card = new DarksideIncubationPlant();
   });
 

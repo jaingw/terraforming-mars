@@ -1,11 +1,11 @@
 import {expect} from 'chai';
 import {getTestPlayer, newTestGame} from '../../TestGame';
-import {CoordinatedRaid} from '../../../src/cards/pathfinders/CoordinatedRaid';
-import {SelectColony} from '../../../src/inputs/SelectColony';
+import {CoordinatedRaid} from '../../../src/server/cards/pathfinders/CoordinatedRaid';
+import {SelectColony} from '../../../src/server/inputs/SelectColony';
 import {ColonyName} from '../../../src/common/colonies/ColonyName';
-import {Game} from '../../../src/Game';
+import {Game} from '../../../src/server/Game';
 import {TestPlayer} from '../../TestPlayer';
-import {Colony} from '../../../src/colonies/Colony';
+import {Colony} from '../../../src/server/colonies/Colony';
 import {ColonyBenefit} from '../../../src/common/colonies/ColonyBenefit';
 import {Resources} from '../../../src/common/Resources';
 import {cast, runAllActions} from '../../TestingUtils';
@@ -72,7 +72,7 @@ describe('CoordinatedRaid', function() {
   });
 
   it('Coordinated Raid ignores Trade Envoys', function() {
-    player.colonyTradeOffset += 2;
+    player.colonies.tradeOffset += 2;
     const colony = game.colonies[1];
     colony.addColony(player2);
     const selectColony = cast(card.play(player), SelectColony);

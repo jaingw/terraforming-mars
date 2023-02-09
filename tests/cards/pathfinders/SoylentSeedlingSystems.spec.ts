@@ -1,46 +1,47 @@
 import {expect} from 'chai';
-import {SoylentSeedlingSystems} from '../../../src/cards/pathfinders/SoylentSeedlingSystems';
-import {Game} from '../../../src/Game';
+import {SoylentSeedlingSystems} from '../../../src/server/cards/pathfinders/SoylentSeedlingSystems';
+import {Game} from '../../../src/server/Game';
 import {TestPlayer} from '../../TestPlayer';
 import {getTestPlayer, newTestGame} from '../../TestGame';
 import {CardName} from '../../../src/common/cards/CardName';
-import {fakeCard} from '../../TestingUtils';
-import {Tags} from '../../../src/common/cards/Tags';
-import {Celestic} from '../../../src/cards/venusNext/Celestic';
-import {GreeneryStandardProject} from '../../../src/cards/base/standardProjects/GreeneryStandardProject';
+import {addGreenery, fakeCard} from '../../TestingUtils';
+import {Tag} from '../../../src/common/cards/Tag';
+import {Celestic} from '../../../src/server/cards/venusNext/Celestic';
+import {GreeneryStandardProject} from '../../../src/server/cards/base/standardProjects/GreeneryStandardProject';
 import {TileType} from '../../../src/common/TileType';
-import {SpaceType} from '../../../src/common/boards/SpaceType';
 
 describe('SoylentSeedlingSystems', function() {
-  let card: SoylentSeedlingSystems;
+  let soylent: SoylentSeedlingSystems;
+  let celestic: Celestic;
   let player: TestPlayer;
   let player2: TestPlayer;
   let game: Game;
 
   beforeEach(function() {
-    card = new SoylentSeedlingSystems();
+    soylent = new SoylentSeedlingSystems();
     game = newTestGame(2);
     player = getTestPlayer(game, 0);
     player2 = getTestPlayer(game, 1);
-    player.corpCard = card;
+    player.setCorporationForTest(soylent);
     // Giving it a corporation card that stores resources to show it doesn't have any.
-    player2.corpCard = new Celestic();
+    celestic = new Celestic();
+    player2.setCorporationForTest(celestic);
   });
 
   it('on greenery placed', () => {
-    expect(player.corpCard!.resourceCount).eq(0);
-    expect(player2.corpCard!.resourceCount).eq(0);
-    game.addGreenery(player, game.board.getAvailableSpacesForGreenery(player)[0]!.id);
-    expect(player.corpCard!.resourceCount).eq(1);
-    expect(player2.corpCard!.resourceCount).eq(0);
+    expect(soylent.resourceCount).eq(0);
+    expect(celestic.resourceCount).eq(0);
+    addGreenery(player);
+    expect(soylent.resourceCount).eq(1);
+    expect(celestic.resourceCount).eq(0);
   });
 
   it('on greenery placed by other player', () => {
-    expect(player.corpCard!.resourceCount).eq(0);
-    expect(player2.corpCard!.resourceCount).eq(0);
-    game.addGreenery(player2, game.board.getAvailableSpacesForGreenery(player)[0]!.id);
-    expect(player.corpCard!.resourceCount).eq(0);
-    expect(player2.corpCard!.resourceCount).eq(0);
+    expect(soylent.resourceCount).eq(0);
+    expect(celestic.resourceCount).eq(0);
+    addGreenery(player2);
+    expect(soylent.resourceCount).eq(0);
+    expect(celestic.resourceCount).eq(0);
   });
 
   it('greenery standard project', () => {
@@ -56,17 +57,17 @@ describe('SoylentSeedlingSystems', function() {
     player.megaCredits = 18;
     expect(greenery.canAct(player)).is.false;
 
-    player.corpCard!.resourceCount++;
+    soylent.resourceCount++;
     expect(greenery.canAct(player)).is.true;
 
     // Doesn't apply to player2
     player2.megaCredits = 18;
-    player2.corpCard!.resourceCount++;
+    celestic.resourceCount++;
     expect(greenery.canAct(player2)).is.false;
   });
 
   it('plant tag', () => {
-    const plantCard = fakeCard({name: 'A' as CardName, cost: 10, tags: [Tags.PLANT]});
+    const plantCard = fakeCard({name: 'A' as CardName, cost: 10, tags: [Tag.PLANT]});
 
     player.megaCredits = 10;
     expect(player.canPlay(plantCard)).is.true;
@@ -77,19 +78,18 @@ describe('SoylentSeedlingSystems', function() {
     player.megaCredits = 5;
     expect(player.canPlay(plantCard)).is.false;
 
-    player.corpCard!.resourceCount++;
+    soylent.resourceCount++;
     expect(player.canPlay(plantCard)).is.true;
   });
 
   it('on wetlands placed', () => {
-    expect(player.corpCard!.resourceCount).eq(0);
-    expect(player2.corpCard!.resourceCount).eq(0);
+    expect(soylent.resourceCount).eq(0);
+    expect(celestic.resourceCount).eq(0);
     player.game.addTile(
       player,
-      SpaceType.LAND,
       player.game.board.getAvailableSpacesOnLand(player)[0],
       {tileType: TileType.WETLANDS});
-    expect(player.corpCard!.resourceCount).eq(1);
-    expect(player2.corpCard!.resourceCount).eq(0);
+    expect(soylent.resourceCount).eq(1);
+    expect(celestic.resourceCount).eq(0);
   });
 });

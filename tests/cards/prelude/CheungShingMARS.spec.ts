@@ -1,19 +1,18 @@
 import {expect} from 'chai';
-import {Ants} from '../../../src/cards/base/Ants';
-import {BuildingIndustries} from '../../../src/cards/base/BuildingIndustries';
-import {CheungShingMARS} from '../../../src/cards/prelude/CheungShingMARS';
-import {Game} from '../../../src/Game';
-import {Player} from '../../../src/Player';
-import {Resources} from '../../../src/common/Resources';
-import {TestPlayers} from '../../TestPlayers';
+import {Ants} from '../../../src/server/cards/base/Ants';
+import {BuildingIndustries} from '../../../src/server/cards/base/BuildingIndustries';
+import {CheungShingMARS} from '../../../src/server/cards/prelude/CheungShingMARS';
+import {Game} from '../../../src/server/Game';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('CheungShingMARS', function() {
-  let card : CheungShingMARS; let player : Player;
+  let card: CheungShingMARS;
+  let player: TestPlayer;
 
   beforeEach(function() {
     card = new CheungShingMARS();
-    player = TestPlayers.BLUE.newPlayer();
-    Game.newInstance('foobar', [player], player);
+    player = TestPlayer.BLUE.newPlayer();
+    Game.newInstance('gameid', [player], player);
   });
 
   it('Gets card discount', function() {
@@ -25,6 +24,6 @@ describe('CheungShingMARS', function() {
 
   it('Should play', function() {
     card.play(player);
-    expect(player.getProduction(Resources.MEGACREDITS)).to.eq(3);
+    expect(player.production.megacredits).to.eq(3);
   });
 });

@@ -1,19 +1,20 @@
 import {expect} from 'chai';
 import {cast} from '../../TestingUtils';
-import {Sabotage} from '../../../src/cards/base/Sabotage';
-import {Game} from '../../../src/Game';
-import {OrOptions} from '../../../src/inputs/OrOptions';
-import {Player} from '../../../src/Player';
-import {TestPlayers} from '../../TestPlayers';
+import {Sabotage} from '../../../src/server/cards/base/Sabotage';
+import {Game} from '../../../src/server/Game';
+import {OrOptions} from '../../../src/server/inputs/OrOptions';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('Sabotage', function() {
-  let card : Sabotage; let player : Player; let player2: Player;
+  let card: Sabotage;
+  let player: TestPlayer;
+  let player2: TestPlayer;
 
   beforeEach(function() {
     card = new Sabotage();
-    player = TestPlayers.BLUE.newPlayer();
-    player2 = TestPlayers.RED.newPlayer();
-    Game.newInstance('foobar', [player, player2], player);
+    player = TestPlayer.BLUE.newPlayer();
+    player2 = TestPlayer.RED.newPlayer();
+    Game.newInstance('gameid', [player, player2], player);
   });
 
   it('Should play', function() {

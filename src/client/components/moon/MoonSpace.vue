@@ -2,9 +2,12 @@
   <div :class="mainClass" :data_space_id="space.id" :title="verboseTitle">
     <div :class="tileClass" data-test="tile"/>
     <div class="board-space-text" v-if="text" v-i18n>{{ text }}</div>
-    <bonus v-if="space.tileType === undefined || hideTiles" :bonus="space.bonus" />
+    <bonus v-if="space.tileType === undefined || tileView === 'hide'" :bonus="space.bonus" />
+    <template v-if="tileView === 'coords'">
+      <div class="board-space-coords">({{ space.y }}, {{ space.x }}) ({{ space.id }})</div>
+    </template>
     <div
-      v-if="space.color !== undefined && !hideTiles"
+      v-if="space.color !== undefined && tileView === 'show'"
       class="board-cube"
       :class="`board-cube--${space.color}`"
     />
@@ -16,10 +19,11 @@ import Vue from 'vue';
 import {SpaceModel} from '@/common/models/SpaceModel';
 import {TileType} from '@/common/TileType';
 import Bonus from '@/client/components/Bonus.vue';
+import {TileView} from '../board/TileView';
 
 const tileTypeToCssClass = new Map<TileType, string>([
   [TileType.MOON_ROAD, 'road'],
-  [TileType.MOON_COLONY, 'colony'],
+  [TileType.MOON_HABITAT, 'colony'],
   [TileType.MOON_MINE, 'mine'],
   [TileType.LUNA_TRADE_STATION, 'luna-trade-station'],
   [TileType.LUNA_MINING_HUB, 'luna-mining-hub'],
@@ -27,6 +31,7 @@ const tileTypeToCssClass = new Map<TileType, string>([
   [TileType.LUNAR_MINE_URBANIZATION, 'lunar-mine-urbanization'],
 ]);
 
+// TODO(kberg): Can part of this become BoardSpaceTile?
 export default Vue.extend({
   name: 'MoonSpace',
   props: {
@@ -39,9 +44,9 @@ export default Vue.extend({
     is_selectable: {
       type: Boolean,
     },
-    hideTiles: {
-      type: Boolean,
-      default: false,
+    tileView: {
+      type: String as () => TileView,
+      default: 'show',
     },
   },
   components: {
@@ -81,7 +86,7 @@ export default Vue.extend({
 
       if (tileType !== undefined) {
         switch (this.space.tileType) {
-        case TileType.MOON_COLONY:
+        case TileType.MOON_HABITAT:
           css += ' board-space-tile--colony';
           break;
         case TileType.MOON_ROAD:
@@ -96,7 +101,7 @@ export default Vue.extend({
         }
       }
 
-      if (this.hideTiles) {
+      if (this.tileView === 'hide') {
         css += ' board-hidden-tile';
       }
 

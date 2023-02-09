@@ -1,25 +1,24 @@
 import {expect} from 'chai';
-import {AsteroidHollowing} from '../../../src/cards/promo/AsteroidHollowing';
-import {Game} from '../../../src/Game';
-import {Player} from '../../../src/Player';
-import {Resources} from '../../../src/common/Resources';
-import {TestPlayers} from '../../TestPlayers';
+import {AsteroidHollowing} from '../../../src/server/cards/promo/AsteroidHollowing';
+import {Game} from '../../../src/server/Game';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('AsteroidHollowing', function() {
-  let card : AsteroidHollowing; let player : Player;
+  let card: AsteroidHollowing;
+  let player: TestPlayer;
 
   beforeEach(function() {
     card = new AsteroidHollowing();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    Game.newInstance('foobar', [player, redPlayer], player);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    Game.newInstance('gameid', [player, redPlayer], player);
   });
 
   it('Should play', function() {
-    expect(card.play()).is.undefined;
+    expect(card.play(player)).is.undefined;
   });
 
-  it('Can\'t act', function() {
+  it('Can not act', function() {
     player.playedCards.push(card);
     expect(card.canAct(player)).is.not.true;
   });
@@ -31,7 +30,7 @@ describe('AsteroidHollowing', function() {
     card.action(player);
     expect(player.titanium).to.eq(0);
     expect(card.resourceCount).to.eq(1);
-    expect(player.getProduction(Resources.MEGACREDITS)).to.eq(1);
+    expect(player.production.megacredits).to.eq(1);
   });
 
   it('Should give victory points', function() {

@@ -1,26 +1,26 @@
 import {expect} from 'chai';
-import {AerospaceMission} from '../../../src/cards/community/AerospaceMission';
-import {Callisto} from '../../../src/colonies/Callisto';
-import {Ceres} from '../../../src/colonies/Ceres';
+import {AerospaceMission} from '../../../src/server/cards/community/AerospaceMission';
+import {Callisto} from '../../../src/server/colonies/Callisto';
+import {Ceres} from '../../../src/server/colonies/Ceres';
 import {ColonyName} from '../../../src/common/colonies/ColonyName';
-import {Io} from '../../../src/colonies/Io';
-import {Luna} from '../../../src/colonies/Luna';
-import {Game} from '../../../src/Game';
-import {SelectColony} from '../../../src/inputs/SelectColony';
-import {Player} from '../../../src/Player';
-import {Resources} from '../../../src/common/Resources';
-import {setCustomGameOptions} from '../../TestingUtils';
-import {TestPlayers} from '../../TestPlayers';
+import {Io} from '../../../src/server/colonies/Io';
+import {Luna} from '../../../src/server/colonies/Luna';
+import {Game} from '../../../src/server/Game';
+import {SelectColony} from '../../../src/server/inputs/SelectColony';
+import {cast, testGameOptions} from '../../TestingUtils';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('AerospaceMission', function() {
-  let card : AerospaceMission; let player : Player; let game : Game;
+  let card: AerospaceMission;
+  let player: TestPlayer;
+  let game: Game;
 
   beforeEach(function() {
     card = new AerospaceMission();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    const gameOptions = setCustomGameOptions({coloniesExtension: true});
-    game = Game.newInstance('foobar', [player, redPlayer], player, gameOptions);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    const gameOptions = testGameOptions({coloniesExtension: true});
+    game = Game.newInstance('gameid', [player, redPlayer], player, gameOptions);
     // Ignore randomly generated colonies, and add some colonies that can be built independently of cards
     game.colonies = [new Callisto(), new Ceres(), new Io(), new Luna()];
   });
@@ -35,16 +35,16 @@ describe('AerospaceMission', function() {
     expect(game.colonies[1].name).to.eq(ColonyName.CERES);
 
     // Build the first free on Callisto
-    const selectColony = game.deferredActions.peek()!.execute() as SelectColony;
+    const selectColony = cast(game.deferredActions.peek()!.execute(), SelectColony);
     game.deferredActions.pop();
     selectColony.cb(selectColony.colonies[0]);
-    expect(player.getProduction(Resources.ENERGY)).to.eq(1);
+    expect(player.production.energy).to.eq(1);
 
     // Build the second free on Ceres
-    const selectColony2 = game.deferredActions.peek()!.execute() as SelectColony;
+    const selectColony2 = cast(game.deferredActions.peek()!.execute(), SelectColony);
     game.deferredActions.pop();
     selectColony2.cb(selectColony2.colonies[0]);
-    expect(player.getProduction(Resources.STEEL)).to.eq(1);
+    expect(player.production.steel).to.eq(1);
 
     // Check that we built two colonies
     const builtColonies = game.colonies.filter((colony) => colony.isActive && colony.colonies.length > 0);

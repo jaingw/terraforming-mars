@@ -1,22 +1,21 @@
 import {expect} from 'chai';
-import {GeneRepair} from '../../../src/cards/base/GeneRepair';
-import {LightningHarvest} from '../../../src/cards/base/LightningHarvest';
-import {Game} from '../../../src/Game';
+import {GeneRepair} from '../../../src/server/cards/base/GeneRepair';
+import {LightningHarvest} from '../../../src/server/cards/base/LightningHarvest';
+import {Game} from '../../../src/server/Game';
 import {TestPlayer} from '../../TestPlayer';
-import {Resources} from '../../../src/common/Resources';
-import {TestPlayers} from '../../TestPlayers';
 
 describe('LightningHarvest', function() {
-  let card : LightningHarvest; let player : TestPlayer;
+  let card: LightningHarvest;
+  let player: TestPlayer;
 
   beforeEach(function() {
     card = new LightningHarvest();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    Game.newInstance('foobar', [player, redPlayer], player);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    Game.newInstance('gameid', [player, redPlayer], player);
   });
 
-  it('Can\'t play', function() {
+  it('Can not play', function() {
     expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
 
@@ -25,8 +24,8 @@ describe('LightningHarvest', function() {
     expect(player.canPlayIgnoringCost(card)).is.true;
 
     card.play(player);
-    expect(player.getProduction(Resources.ENERGY)).to.eq(1);
-    expect(player.getProduction(Resources.MEGACREDITS)).to.eq(1);
+    expect(player.production.energy).to.eq(1);
+    expect(player.production.megacredits).to.eq(1);
 
     expect(card.getVictoryPoints()).to.eq(1);
   });

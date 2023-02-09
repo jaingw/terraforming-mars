@@ -1,24 +1,21 @@
 import {expect} from 'chai';
-import {LakefrontResorts} from '../../../src/cards/turmoil/LakefrontResorts';
-import {Game} from '../../../src/Game';
-import {Resources} from '../../../src/common/Resources';
-import {runAllActions} from '../../TestingUtils';
-import {TestPlayers} from '../../TestPlayers';
+import {LakefrontResorts} from '../../../src/server/cards/turmoil/LakefrontResorts';
+import {addOceanTile, runAllActions} from '../../TestingUtils';
+import {getTestPlayer, newTestGame} from '../../TestGame';
 
 describe('LakefrontResorts', function() {
   it('Should play', function() {
     const card2 = new LakefrontResorts();
-    const player = TestPlayers.BLUE.newPlayer();
-    const player2 = TestPlayers.RED.newPlayer();
-    const game = Game.newInstance('foobar', [player, player2], player);
+    const game = newTestGame(2);
+    const player = getTestPlayer(game, 0);
     const play = card2.play(player);
     expect(play).is.undefined;
-    player.corpCard = card2;
-    game.addOceanTile(player, '06');
-    game.addOceanTile(player, '07');
+    player.setCorporationForTest(card2);
+    addOceanTile(player, '06');
+    addOceanTile(player, '07');
     runAllActions(game);
 
-    expect(player.getProduction(Resources.MEGACREDITS)).to.eq(2);
+    expect(player.production.megacredits).to.eq(2);
     // The 2 oceans are adjacent
     expect(player.megaCredits).to.eq(3);
   });

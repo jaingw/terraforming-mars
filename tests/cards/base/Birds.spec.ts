@@ -1,19 +1,21 @@
 import {expect} from 'chai';
-import {Birds} from '../../../src/cards/base/Birds';
-import {Player} from '../../../src/Player';
-import {Game} from '../../../src/Game';
+import {Birds} from '../../../src/server/cards/base/Birds';
+import {Game} from '../../../src/server/Game';
 import {Resources} from '../../../src/common/Resources';
-import {SelectPlayer} from '../../../src/inputs/SelectPlayer';
-import {TestPlayers} from '../../TestPlayers';
+import {SelectPlayer} from '../../../src/server/inputs/SelectPlayer';
+import {TestPlayer} from '../../TestPlayer';
+import {cast} from '../../TestingUtils';
 
 describe('Birds', function() {
-  let card : Birds; let player : Player; let player2 : Player;
+  let card: Birds;
+  let player: TestPlayer;
+  let player2: TestPlayer;
 
   beforeEach(function() {
     card = new Birds();
-    player = TestPlayers.BLUE.newPlayer();
-    player2 = TestPlayers.RED.newPlayer();
-    Game.newInstance('foobar', [player, player2], player);
+    player = TestPlayer.BLUE.newPlayer();
+    player2 = TestPlayer.RED.newPlayer();
+    Game.newInstance('gameid', [player, player2], player);
   });
 
   it('Cannot play without oxygen', function() {
@@ -21,21 +23,21 @@ describe('Birds', function() {
   });
 
   it('Should play', function() {
-    const player3 = TestPlayers.GREEN.newPlayer();
-    const game = Game.newInstance('foobar', [player, player2, player3], player);
+    const player3 = TestPlayer.GREEN.newPlayer();
+    const game = Game.newInstance('gameid', [player, player2, player3], player);
 
-    player2.addProduction(Resources.PLANTS, 2);
-    player3.addProduction(Resources.PLANTS, 7);
+    player2.production.add(Resources.PLANTS, 2);
+    player3.production.add(Resources.PLANTS, 7);
     (game as any).oxygenLevel = 13;
     expect(card.canPlay(player)).is.true;
 
     card.play(player);
     expect(game.deferredActions).has.lengthOf(1);
-    const selectPlayer = game.deferredActions.peek()!.execute() as SelectPlayer;
+    const selectPlayer = cast(game.deferredActions.peek()!.execute(), SelectPlayer);
     selectPlayer.cb(player2);
 
-    expect(player2.getProduction(Resources.PLANTS)).to.eq(0);
-    expect(player3.getProduction(Resources.PLANTS)).to.eq(7);
+    expect(player2.production.plants).to.eq(0);
+    expect(player3.production.plants).to.eq(7);
   });
 
   it('Should act', function() {

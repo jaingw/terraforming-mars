@@ -1,26 +1,22 @@
-import {Game} from '../../../src/Game';
-import {IMoonData} from '../../../src/moon/IMoonData';
-import {MoonExpansion} from '../../../src/moon/MoonExpansion';
-import {Player} from '../../../src/Player';
-import {setCustomGameOptions} from '../../TestingUtils';
-import {TestPlayers} from '../../TestPlayers';
-import {MareNectarisMine} from '../../../src/cards/moon/MareNectarisMine';
+import {Game} from '../../../src/server/Game';
+import {IMoonData} from '../../../src/server/moon/IMoonData';
+import {MoonExpansion} from '../../../src/server/moon/MoonExpansion';
+import {runAllActions, testGameOptions} from '../../TestingUtils';
+import {TestPlayer} from '../../TestPlayer';
+import {MareNectarisMine} from '../../../src/server/cards/moon/MareNectarisMine';
 import {expect} from 'chai';
-import {Resources} from '../../../src/common/Resources';
-import {MoonSpaces} from '../../../src/moon/MoonSpaces';
+import {MoonSpaces} from '../../../src/common/moon/MoonSpaces';
 import {TileType} from '../../../src/common/TileType';
-
-const MOON_OPTIONS = setCustomGameOptions({moonExpansion: true});
 
 describe('MareNectarisMine', () => {
   let game: Game;
-  let player: Player;
+  let player: TestPlayer;
   let moonData: IMoonData;
   let card: MareNectarisMine;
 
   beforeEach(() => {
-    player = TestPlayers.BLUE.newPlayer();
-    game = Game.newInstance('id', [player], player, MOON_OPTIONS);
+    player = TestPlayer.BLUE.newPlayer();
+    game = Game.newInstance('gameid', [player], player, testGameOptions({moonExpansion: true}));
     moonData = MoonExpansion.moonData(game);
     card = new MareNectarisMine();
   });
@@ -36,14 +32,15 @@ describe('MareNectarisMine', () => {
 
   it('play', () => {
     player.titanium = 3;
-    expect(player.getProduction(Resources.STEEL)).eq(0);
+    expect(player.production.steel).eq(0);
     expect(player.getTerraformRating()).eq(14);
     expect(moonData.miningRate).eq(0);
 
     card.play(player);
+    runAllActions(game);
 
     expect(player.titanium).eq(2);
-    expect(player.getProduction(Resources.STEEL)).eq(1);
+    expect(player.production.steel).eq(1);
     expect(player.getTerraformRating()).eq(15);
     expect(moonData.miningRate).eq(1);
 

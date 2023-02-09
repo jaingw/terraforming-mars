@@ -11,7 +11,7 @@
 import Vue from 'vue';
 import {range} from '@/common/utils/utils';
 import {PlanetaryTrack as Track} from '@/common/pathfinders/PlanetaryTrack';
-import {GameOptions} from '@/Game';
+import {GameOptions} from '@/server/GameOptions';
 import PlanetaryTrackRewards from './PlanetaryTrackRewards.vue';
 
 export default Vue.extend({

@@ -1,15 +1,12 @@
 import {expect} from 'chai';
-import {JovianEmbassy} from '../../../src/cards/promo/JovianEmbassy';
-import {Game} from '../../../src/Game';
-import {TestPlayers} from '../../TestPlayers';
+import {JovianEmbassy} from '../../../src/server/cards/promo/JovianEmbassy';
+import {getTestPlayer, newTestGame} from '../../TestGame';
 
 describe('JovianEmbassy', function() {
   it('Should play', function() {
     const card = new JovianEmbassy();
-    const player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-
-    Game.newInstance('foobar', [player, redPlayer], player);
+    const game = newTestGame(2);
+    const player = getTestPlayer(game, 0);
 
     card.play(player);
     expect(player.getTerraformRating()).to.eq(21);

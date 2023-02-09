@@ -1,23 +1,20 @@
-import {Game} from '../../../src/Game';
-import {Player} from '../../../src/Player';
-import {setCustomGameOptions} from '../../TestingUtils';
-import {TestPlayers} from '../../TestPlayers';
-import {SmallDutyRovers} from '../../../src/cards/moon/SmallDutyRovers';
+import {Game} from '../../../src/server/Game';
+import {testGameOptions} from '../../TestingUtils';
+import {TestPlayer} from '../../TestPlayer';
+import {SmallDutyRovers} from '../../../src/server/cards/moon/SmallDutyRovers';
 import {expect} from 'chai';
-import {MoonExpansion} from '../../../src/moon/MoonExpansion';
-import {IMoonData} from '../../../src/moon/IMoonData';
+import {MoonExpansion} from '../../../src/server/moon/MoonExpansion';
+import {IMoonData} from '../../../src/server/moon/IMoonData';
 import {TileType} from '../../../src/common/TileType';
 
-const MOON_OPTIONS = setCustomGameOptions({moonExpansion: true});
-
 describe('SmallDutyRovers', () => {
-  let player: Player;
+  let player: TestPlayer;
   let card: SmallDutyRovers;
   let moonData: IMoonData;
 
   beforeEach(() => {
-    player = TestPlayers.BLUE.newPlayer();
-    const game = Game.newInstance('id', [player], player, MOON_OPTIONS);
+    player = TestPlayer.BLUE.newPlayer();
+    const game = Game.newInstance('gameid', [player], player, testGameOptions({moonExpansion: true}));
     card = new SmallDutyRovers();
     moonData = MoonExpansion.moonData(game);
   });
@@ -44,10 +41,10 @@ describe('SmallDutyRovers', () => {
     });
 
     MoonExpansion.addTile(player, 'm04', {tileType: TileType.MOON_MINE});
-    MoonExpansion.addTile(player, 'm05', {tileType: TileType.MOON_COLONY});
+    MoonExpansion.addTile(player, 'm05', {tileType: TileType.MOON_HABITAT});
     MoonExpansion.addTile(player, 'm06', {tileType: TileType.MOON_ROAD});
     MoonExpansion.addTile(player, 'm07', {tileType: TileType.MOON_MINE});
-    MoonExpansion.addTile(player, 'm08', {tileType: TileType.MOON_COLONY});
+    MoonExpansion.addTile(player, 'm08', {tileType: TileType.MOON_HABITAT});
     MoonExpansion.addTile(player, 'm09', {tileType: TileType.MOON_ROAD});
 
     card.play(player);

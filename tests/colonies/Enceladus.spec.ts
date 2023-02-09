@@ -1,22 +1,25 @@
 import {expect} from 'chai';
-import {RegolithEaters} from '../../src/cards/base/RegolithEaters';
-import {Tardigrades} from '../../src/cards/base/Tardigrades';
-import {Enceladus} from '../../src/colonies/Enceladus';
-import {AddResourcesToCard} from '../../src/deferredActions/AddResourcesToCard';
-import {Game} from '../../src/Game';
-import {Player} from '../../src/Player';
-import {TestPlayers} from '../TestPlayers';
+import {RegolithEaters} from '../../src/server/cards/base/RegolithEaters';
+import {Tardigrades} from '../../src/server/cards/base/Tardigrades';
+import {Enceladus} from '../../src/server/colonies/Enceladus';
+import {AddResourcesToCard} from '../../src/server/deferredActions/AddResourcesToCard';
+import {Game} from '../../src/server/Game';
+import {TestPlayer} from '../TestPlayer';
 import {cast, runAllActions} from '../TestingUtils';
 
 describe('Enceladus', function() {
-  let enceladus: Enceladus; let tardigrades: Tardigrades; let player: Player; let player2: Player; let game: Game;
+  let enceladus: Enceladus;
+  let tardigrades: Tardigrades;
+  let player: TestPlayer;
+  let player2: TestPlayer;
+  let game: Game;
 
   beforeEach(function() {
     enceladus = new Enceladus();
     tardigrades = new Tardigrades();
-    player = TestPlayers.BLUE.newPlayer();
-    player2 = TestPlayers.RED.newPlayer();
-    game = Game.newInstance('foobar', [player, player2], player);
+    player = TestPlayer.BLUE.newPlayer();
+    player2 = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, player2], player);
     game.gameOptions.coloniesExtension = true;
     game.colonies.push(enceladus);
   });
@@ -32,8 +35,7 @@ describe('Enceladus', function() {
     enceladus.addColony(player);
 
     expect(game.deferredActions).has.lengthOf(1);
-    const action = game.deferredActions.pop()!;
-    expect(action).to.be.an.instanceof(AddResourcesToCard);
+    const action = cast(game.deferredActions.pop(), AddResourcesToCard);
     expect(action.player).to.eq(player);
     // Should directly add to Tardigrades, since there's no other target
     action.execute();

@@ -1,27 +1,29 @@
 import {expect} from 'chai';
-import {SmallAnimals} from '../../../src/cards/base/SmallAnimals';
-import {Game} from '../../../src/Game';
-import {Player} from '../../../src/Player';
+import {SmallAnimals} from '../../../src/server/cards/base/SmallAnimals';
+import {Game} from '../../../src/server/Game';
 import {Resources} from '../../../src/common/Resources';
-import {TestPlayers} from '../../TestPlayers';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('SmallAnimals', function() {
-  let card : SmallAnimals; let player : Player; let player2 : Player; let game : Game;
+  let card: SmallAnimals;
+  let player: TestPlayer;
+  let player2: TestPlayer;
+  let game: Game;
 
   beforeEach(function() {
     card = new SmallAnimals();
-    player = TestPlayers.BLUE.newPlayer();
-    player2 = TestPlayers.RED.newPlayer();
-    game = Game.newInstance('foobar', [player, player2], player);
+    player = TestPlayer.BLUE.newPlayer();
+    player2 = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, player2], player);
   });
 
-  it('Can\'t play if oxygen level too low', function() {
-    player2.addProduction(Resources.PLANTS, 1);
+  it('Can not play if oxygen level too low', function() {
+    player2.production.add(Resources.PLANTS, 1);
     (game as any).oxygenLevel = 5;
     expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
 
-  it('Can\'t play if no one has plant production', function() {
+  it('Can not play if no one has plant production', function() {
     (game as any).oxygenLevel = 6;
     expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
@@ -34,14 +36,14 @@ describe('SmallAnimals', function() {
 
   it('Should play', function() {
     (game as any).oxygenLevel = 6;
-    player2.addProduction(Resources.PLANTS, 1);
+    player2.production.add(Resources.PLANTS, 1);
     expect(player.canPlayIgnoringCost(card)).is.true;
 
     player.playedCards.push(card);
     card.play(player);
     const input = game.deferredActions.peek()!.execute();
     expect(input).is.undefined;
-    expect(player2.getProduction(Resources.PLANTS)).to.eq(0);
+    expect(player2.production.plants).to.eq(0);
   });
 
   it('Gives victory points', function() {

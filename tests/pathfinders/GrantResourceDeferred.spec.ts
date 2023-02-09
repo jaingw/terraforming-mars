@@ -1,13 +1,13 @@
 import {expect} from 'chai';
 import {TestPlayer} from '../TestPlayer';
-import {GrantResourceDeferred} from '../../src/pathfinders/GrantResourceDeferred';
-import {OrOptions} from '../../src/inputs/OrOptions';
-import {SelectResources} from '../../src/inputs/SelectResources';
-import {SelectCard} from '../../src/inputs/SelectCard';
+import {GrantResourceDeferred} from '../../src/server/pathfinders/GrantResourceDeferred';
+import {OrOptions} from '../../src/server/inputs/OrOptions';
+import {SelectResources} from '../../src/server/inputs/SelectResources';
+import {SelectCard} from '../../src/server/inputs/SelectCard';
 import {getTestPlayer, newTestGame} from '../TestGame';
-import {Ants} from '../../src/cards/base/Ants';
-import {Tardigrades} from '../../src/cards/base/Tardigrades';
-import {IProjectCard} from '../../src/cards/IProjectCard';
+import {Ants} from '../../src/server/cards/base/Ants';
+import {Tardigrades} from '../../src/server/cards/base/Tardigrades';
+import {IProjectCard} from '../../src/server/cards/IProjectCard';
 import {cast} from '../TestingUtils';
 
 describe('GrantResourceDeferred', function() {
@@ -27,8 +27,7 @@ describe('GrantResourceDeferred', function() {
   it('grant single bonus', () => {
     const input = cast(new GrantResourceDeferred(player, false).execute(), OrOptions);
     expect(input.options).has.length(1);
-    expect(input.options[0]).instanceOf(SelectResources);
-    const selectOptions = input.options[0] as SelectResources;
+    const selectOptions = cast(input.options[0], SelectResources);
     selectOptions.options[0].cb(0);
     selectOptions.options[1].cb(0);
     selectOptions.options[2].cb(0);
@@ -50,8 +49,7 @@ describe('GrantResourceDeferred', function() {
     const input = cast(new GrantResourceDeferred(player, true).execute(), OrOptions);
     expect(input.options).has.length(2);
     expect(input.options[0]).instanceOf(SelectResources);
-    expect(input.options[1]).instanceOf(SelectCard);
-    const selectCard = input.options[1] as SelectCard<IProjectCard>;
+    const selectCard = cast(input.options[1], SelectCard<IProjectCard>);
     expect(selectCard.cards).has.members([ants, tardigrades]);
     expect(ants.resourceCount).eq(0);
 

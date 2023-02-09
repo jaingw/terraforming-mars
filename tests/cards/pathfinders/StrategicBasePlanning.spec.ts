@@ -1,17 +1,17 @@
 import {expect} from 'chai';
 import {getTestPlayer, newTestGame} from '../../TestGame';
-import {StrategicBasePlanning} from '../../../src/cards/pathfinders/StrategicBasePlanning';
-import {Player} from '../../../src/Player';
-import {SelectSpace} from '../../../src/inputs/SelectSpace';
+import {StrategicBasePlanning} from '../../../src/server/cards/pathfinders/StrategicBasePlanning';
+import {SelectSpace} from '../../../src/server/inputs/SelectSpace';
 import {TileType} from '../../../src/common/TileType';
-import {SelectColony} from '../../../src/inputs/SelectColony';
+import {SelectColony} from '../../../src/server/inputs/SelectColony';
 import {ColonyName} from '../../../src/common/colonies/ColonyName';
-import {Game} from '../../../src/Game';
+import {Game} from '../../../src/server/Game';
 import {cast} from '../../TestingUtils';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('StrategicBasePlanning', function() {
   let card: StrategicBasePlanning;
-  let player: Player;
+  let player: TestPlayer;
   let game: Game;
 
   beforeEach(function() {

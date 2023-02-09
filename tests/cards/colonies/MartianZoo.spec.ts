@@ -1,35 +1,35 @@
 import {expect} from 'chai';
-import {LunaGovernor} from '../../../src/cards/colonies/LunaGovernor';
-import {MartianZoo} from '../../../src/cards/colonies/MartianZoo';
-import {Game} from '../../../src/Game';
-import {Player} from '../../../src/Player';
-import {TestPlayers} from '../../TestPlayers';
+import {LunaGovernor} from '../../../src/server/cards/colonies/LunaGovernor';
+import {MartianZoo} from '../../../src/server/cards/colonies/MartianZoo';
+import {Game} from '../../../src/server/Game';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('MartianZoo', function() {
-  let card : MartianZoo; let player : Player;
+  let card: MartianZoo;
+  let player: TestPlayer;
 
   beforeEach(function() {
     card = new MartianZoo();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    Game.newInstance('foobar', [player, redPlayer], player);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    Game.newInstance('gameid', [player, redPlayer], player);
   });
 
-  it('Can\'t play', function() {
+  it('Can not play', function() {
     expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
 
   it('Should play', function() {
     const lands = player.game.board.getAvailableSpacesOnLand(player);
-    player.game.addCityTile(player, lands[0].id);
-    player.game.addCityTile(player, lands[1].id);
+    player.game.addCityTile(player, lands[0]);
+    player.game.addCityTile(player, lands[1]);
     expect(player.canPlayIgnoringCost(card)).is.true;
 
-    const action = card.play();
+    const action = card.play(player);
     expect(action).is.undefined;
   });
 
-  it('Can\'t act', function() {
+  it('Can not act', function() {
     player.playedCards.push(card);
     expect(card.canAct()).is.not.true;
   });

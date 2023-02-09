@@ -1,27 +1,28 @@
 import {expect} from 'chai';
 import {cast} from '../../TestingUtils';
-import {Ants} from '../../../src/cards/base/Ants';
-import {Birds} from '../../../src/cards/base/Birds';
-import {EcologicalZone} from '../../../src/cards/base/EcologicalZone';
-import {Moss} from '../../../src/cards/base/Moss';
-import {ViralEnhancers} from '../../../src/cards/base/ViralEnhancers';
-import {Game} from '../../../src/Game';
-import {OrOptions} from '../../../src/inputs/OrOptions';
-import {Player} from '../../../src/Player';
-import {TestPlayers} from '../../TestPlayers';
+import {Ants} from '../../../src/server/cards/base/Ants';
+import {Birds} from '../../../src/server/cards/base/Birds';
+import {EcologicalZone} from '../../../src/server/cards/base/EcologicalZone';
+import {Moss} from '../../../src/server/cards/base/Moss';
+import {ViralEnhancers} from '../../../src/server/cards/base/ViralEnhancers';
+import {Game} from '../../../src/server/Game';
+import {OrOptions} from '../../../src/server/inputs/OrOptions';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('ViralEnhancers', function() {
-  let card : ViralEnhancers; let player : Player; let game : Game;
+  let card: ViralEnhancers;
+  let player: TestPlayer;
+  let game: Game;
 
   beforeEach(function() {
     card = new ViralEnhancers();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    game = Game.newInstance('foobar', [player, redPlayer], player);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, redPlayer], player);
   });
 
   it('Should play', function() {
-    card.play();
+    card.play(player);
 
     const ants = new Ants();
     const birds = new Birds();
@@ -48,7 +49,7 @@ describe('ViralEnhancers', function() {
   });
 
   it('Should play for each tag', function() {
-    card.play();
+    card.play(player);
 
     const ecologicalZone = new EcologicalZone();
     card.onCardPlayed(player, ecologicalZone);

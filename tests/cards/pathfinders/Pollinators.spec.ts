@@ -1,6 +1,6 @@
 import {expect} from 'chai';
-import {Pollinators} from '../../../src/cards/pathfinders/Pollinators';
-import {Game} from '../../../src/Game';
+import {Pollinators} from '../../../src/server/cards/pathfinders/Pollinators';
+import {Game} from '../../../src/server/Game';
 import {TestPlayer} from '../../TestPlayer';
 import {getTestPlayer, newTestGame} from '../../TestGame';
 import {Units} from '../../../src/common/Units';
@@ -26,7 +26,7 @@ describe('Pollinators', function() {
 
   it('play', () => {
     card.play(player);
-    expect(player.getProductionForTest()).deep.eq(Units.of({plants: 1, megacredits: 2}));
+    expect(player.production.asUnits()).deep.eq(Units.of({plants: 1, megacredits: 2}));
   });
 
   it('act', () => {

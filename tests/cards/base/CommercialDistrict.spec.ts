@@ -1,36 +1,39 @@
 import {expect} from 'chai';
-import {CommercialDistrict} from '../../../src/cards/base/CommercialDistrict';
-import {Game} from '../../../src/Game';
-import {SelectSpace} from '../../../src/inputs/SelectSpace';
-import {Player} from '../../../src/Player';
+import {CommercialDistrict} from '../../../src/server/cards/base/CommercialDistrict';
+import {Game} from '../../../src/server/Game';
+import {SelectSpace} from '../../../src/server/inputs/SelectSpace';
 import {Resources} from '../../../src/common/Resources';
 import {TileType} from '../../../src/common/TileType';
-import {TestPlayers} from '../../TestPlayers';
+import {TestPlayer} from '../../TestPlayer';
+import {cast, runAllActions} from '../../TestingUtils';
 
 describe('CommercialDistrict', function() {
-  let card : CommercialDistrict; let player : Player; let game : Game;
+  let card: CommercialDistrict;
+  let player: TestPlayer;
+  let game: Game;
 
   beforeEach(function() {
     card = new CommercialDistrict();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    game = Game.newInstance('foobar', [player, redPlayer], player);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, redPlayer], player);
   });
 
-  it('Can\'t play', function() {
+  it('Can not play', function() {
     expect(card.canPlay(player)).is.not.true;
   });
 
   it('Should play', function() {
-    player.addProduction(Resources.ENERGY, 1);
+    player.production.add(Resources.ENERGY, 1);
     expect(card.canPlay(player)).is.true;
 
-    const action = card.play(player);
-    expect(action instanceof SelectSpace);
+    card.play(player);
+    runAllActions(game);
+    const action = cast(player.popWaitingFor(), SelectSpace);
     action.cb(action.availableSpaces[0]);
 
-    expect(player.getProduction(Resources.ENERGY)).to.eq(0);
-    expect(player.getProduction(Resources.MEGACREDITS)).to.eq(4);
+    expect(player.production.energy).to.eq(0);
+    expect(player.production.megacredits).to.eq(4);
 
     const adjacent = game.board.getAdjacentSpaces(action.availableSpaces[0]);
     adjacent[0].tile = {tileType: TileType.CITY, card: card.name};

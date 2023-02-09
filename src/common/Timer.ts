@@ -44,6 +44,7 @@ export class Timer {
       timer.running = d.running || false;
       timer.afterFirstAction = d.afterFirstAction || false;
 
+      // Should this be `Math.max(Timer.lastStoppedAt, d.lastStoppedAt)`?
       Timer.lastStoppedAt = d.lastStoppedAt || 0;
     }
     return timer;

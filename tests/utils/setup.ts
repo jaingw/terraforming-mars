@@ -1,40 +1,52 @@
-import {Database} from '../../src/database/Database';
-import {IDatabase} from '../../src/database/IDatabase';
-import {SerializedGame} from '../../src/SerializedGame';
+import {Database} from '../../src/server/database/Database';
+import {IDatabase} from '../../src/server/database/IDatabase';
+import {SerializedGame} from '../../src/server/SerializedGame';
+import {GameLoader} from '../../src/server/database/GameLoader';
+import {registerBehaviorExecutor} from '../../src/server/behavior/BehaviorExecutor';
+import {Executor} from '../../src/server/behavior/Executor';
+
+registerBehaviorExecutor(new Executor());
 
 const FAKE_DATABASE: IDatabase = {
-  cleanSaves: () => Promise.resolve(),
-  deleteGameNbrSaves: () => {},
+  cleanGame: () => Promise.resolve(),
+  deleteGameNbrSaves: () => Promise.resolve(),
   getPlayerCount: () => Promise.resolve(0),
-  getGame: () => {},
-  getGameId: () => Promise.resolve(''),
+  getGame: () => Promise.resolve({} as SerializedGame),
+  getGameId: () => Promise.resolve('g'),
   getGameVersion: () => Promise.resolve({} as SerializedGame),
   getGames: () => Promise.resolve([]),
   getSaveIds: () => Promise.resolve([]),
   initialize: () => Promise.resolve(),
-  restoreGame: () => {
-    throw new Error('game not found');
-  },
+  restoreGame: () => Promise.reject(new Error('game not found')),
   saveGameResults: () => {},
-  saveGame: () => {},
-  purgeUnfinishedGames: () => {},
+  saveGame: () => Promise.resolve(),
+  purgeUnfinishedGames: () => Promise.resolve(),
   stats: () => Promise.resolve({}),
-  cleanGame: () => {},
+  cleanGameAllSaves: () => {},
   cleanGameSave: () => {},
   saveUser: () => {},
   getUsers: () => {},
   refresh: () => {},
   loadCloneableGame: () => Promise.resolve({} as SerializedGame),
+  storeParticipants: () => Promise.resolve(),
+  getParticipants: () => Promise.resolve([]),
 };
 
 let databaseUnderTest: IDatabase = FAKE_DATABASE;
-
 export function restoreTestDatabase() {
   setTestDatabase(FAKE_DATABASE);
 }
-
 export function setTestDatabase(db: IDatabase) {
   databaseUnderTest = db;
 }
-
 Database.getInstance = () => databaseUnderTest;
+
+const defaultGameLoader = GameLoader.getInstance();
+let gameLoaderUnderTest: GameLoader = GameLoader.getInstance();
+export function restoreTestGameLoader() {
+  setTestGameLoader(defaultGameLoader);
+}
+export function setTestGameLoader(gameLoader: GameLoader) {
+  gameLoaderUnderTest = gameLoader;
+}
+GameLoader.getInstance = () => gameLoaderUnderTest;

@@ -1,21 +1,23 @@
 import {expect} from 'chai';
-import {LakeMarineris} from '../../../src/cards/base/LakeMarineris';
-import {Game} from '../../../src/Game';
-import {SelectSpace} from '../../../src/inputs/SelectSpace';
+import {cast} from '../../TestingUtils';
+import {LakeMarineris} from '../../../src/server/cards/base/LakeMarineris';
+import {Game} from '../../../src/server/Game';
+import {SelectSpace} from '../../../src/server/inputs/SelectSpace';
 import {TestPlayer} from '../../TestPlayer';
-import {TestPlayers} from '../../TestPlayers';
 
 describe('LakeMarineris', function() {
-  let card : LakeMarineris; let player : TestPlayer; let game : Game;
+  let card: LakeMarineris;
+  let player: TestPlayer;
+  let game: Game;
 
   beforeEach(function() {
     card = new LakeMarineris();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    game = Game.newInstance('foobar', [player, redPlayer], player);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, redPlayer], player);
   });
 
-  it('Can\'t play', function() {
+  it('Can not play', function() {
     expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
 
@@ -25,9 +27,9 @@ describe('LakeMarineris', function() {
     card.play(player);
 
     expect(game.deferredActions).has.lengthOf(2);
-    const firstOcean = game.deferredActions.pop()!.execute() as SelectSpace;
+    const firstOcean = cast(game.deferredActions.pop()!.execute(), SelectSpace);
     firstOcean.cb(firstOcean.availableSpaces[0]);
-    const secondOcean = game.deferredActions.pop()!.execute() as SelectSpace;
+    const secondOcean = cast(game.deferredActions.pop()!.execute(), SelectSpace);
     secondOcean.cb(secondOcean.availableSpaces[1]);
     expect(player.getTerraformRating()).to.eq(22);
 

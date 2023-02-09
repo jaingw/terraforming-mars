@@ -1,22 +1,19 @@
-import {Game} from '../../../src/Game';
-import {Player} from '../../../src/Player';
-import {setCustomGameOptions} from '../../TestingUtils';
-import {TestPlayers} from '../../TestPlayers';
-import {DarksideMeteorBombardment} from '../../../src/cards/moon/DarksideMeteorBombardment';
+import {Game} from '../../../src/server/Game';
+import {testGameOptions} from '../../TestingUtils';
+import {TestPlayer} from '../../TestPlayer';
+import {DarksideMeteorBombardment} from '../../../src/server/cards/moon/DarksideMeteorBombardment';
 import {expect} from 'chai';
-import {MoonExpansion} from '../../../src/moon/MoonExpansion';
-import {IMoonData} from '../../../src/moon/IMoonData';
-
-const MOON_OPTIONS = setCustomGameOptions({moonExpansion: true});
+import {MoonExpansion} from '../../../src/server/moon/MoonExpansion';
+import {IMoonData} from '../../../src/server/moon/IMoonData';
 
 describe('DarksideMeteorBombardment', () => {
-  let player: Player;
+  let player: TestPlayer;
   let card: DarksideMeteorBombardment;
   let moonData: IMoonData;
 
   beforeEach(() => {
-    player = TestPlayers.BLUE.newPlayer();
-    const game = Game.newInstance('id', [player], player, MOON_OPTIONS);
+    player = TestPlayer.BLUE.newPlayer();
+    const game = Game.newInstance('gameid', [player], player, testGameOptions({moonExpansion: true}));
     card = new DarksideMeteorBombardment();
     moonData = MoonExpansion.moonData(game);
   });

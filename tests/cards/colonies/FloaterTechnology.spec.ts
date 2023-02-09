@@ -1,25 +1,27 @@
 import {expect} from 'chai';
-import {FloaterTechnology} from '../../../src/cards/colonies/FloaterTechnology';
-import {ICard} from '../../../src/cards/ICard';
-import {Dirigibles} from '../../../src/cards/venusNext/Dirigibles';
-import {FloatingHabs} from '../../../src/cards/venusNext/FloatingHabs';
-import {Game} from '../../../src/Game';
-import {SelectCard} from '../../../src/inputs/SelectCard';
-import {Player} from '../../../src/Player';
-import {TestPlayers} from '../../TestPlayers';
+import {cast} from '../../TestingUtils';
+import {FloaterTechnology} from '../../../src/server/cards/colonies/FloaterTechnology';
+import {ICard} from '../../../src/server/cards/ICard';
+import {Dirigibles} from '../../../src/server/cards/venusNext/Dirigibles';
+import {FloatingHabs} from '../../../src/server/cards/venusNext/FloatingHabs';
+import {Game} from '../../../src/server/Game';
+import {SelectCard} from '../../../src/server/inputs/SelectCard';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('FloaterTechnology', function() {
-  let card : FloaterTechnology; let player : Player; let game : Game;
+  let card: FloaterTechnology;
+  let player: TestPlayer;
+  let game: Game;
 
   beforeEach(function() {
     card = new FloaterTechnology();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    game = Game.newInstance('foobar', [player, redPlayer], player);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, redPlayer], player);
   });
 
   it('Can play', function() {
-    const result = card.play();
+    const result = card.play(player);
     expect(result).is.undefined;
   });
 
@@ -47,7 +49,7 @@ describe('FloaterTechnology', function() {
     card.action(player);
     expect(game.deferredActions).has.lengthOf(1);
 
-    const selectCard = game.deferredActions.peek()!.execute() as SelectCard<ICard>;
+    const selectCard = cast(game.deferredActions.peek()!.execute(), SelectCard<ICard>);
     selectCard.cb([floatingHabs]);
     expect(floatingHabs.resourceCount).to.eq(1);
     expect(dirigibles.resourceCount).to.eq(0);

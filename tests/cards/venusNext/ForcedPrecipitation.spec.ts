@@ -1,23 +1,24 @@
 import {expect} from 'chai';
 import {cast} from '../../TestingUtils';
-import {ForcedPrecipitation} from '../../../src/cards/venusNext/ForcedPrecipitation';
-import {Game} from '../../../src/Game';
-import {OrOptions} from '../../../src/inputs/OrOptions';
-import {Player} from '../../../src/Player';
-import {TestPlayers} from '../../TestPlayers';
+import {ForcedPrecipitation} from '../../../src/server/cards/venusNext/ForcedPrecipitation';
+import {Game} from '../../../src/server/Game';
+import {OrOptions} from '../../../src/server/inputs/OrOptions';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('ForcedPrecipitation', function() {
-  let card : ForcedPrecipitation; let player : Player; let game : Game;
+  let card: ForcedPrecipitation;
+  let player: TestPlayer;
+  let game: Game;
 
   beforeEach(function() {
     card = new ForcedPrecipitation();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    game = Game.newInstance('foobar', [player, redPlayer], player);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, redPlayer], player);
   });
 
   it('Should play', function() {
-    const action = card.play();
+    const action = card.play(player);
     expect(action).is.undefined;
   });
 
@@ -35,7 +36,6 @@ describe('ForcedPrecipitation', function() {
     expect(card.resourceCount).to.eq(2);
 
     const orOptions2 = cast(card.action(player), OrOptions);
-    expect(orOptions2 instanceof OrOptions).is.true;
     orOptions2.options[0].cb();
     expect(card.resourceCount).to.eq(0);
     expect(game.getVenusScaleLevel()).to.eq(2);

@@ -1,0 +1,33 @@
+import {IProjectCard} from '../IProjectCard';
+import {Tag} from '../../../common/cards/Tag';
+import {Card} from '../Card';
+import {CardType} from '../../../common/cards/CardType';
+import {Player} from '../../Player';
+import {CardName} from '../../../common/cards/CardName';
+import {CardRenderer} from '../render/CardRenderer';
+import {played} from '../Options';
+
+export class OptimalAerobraking extends Card implements IProjectCard {
+  constructor() {
+    super({
+      cardType: CardType.ACTIVE,
+      name: CardName.OPTIMAL_AEROBRAKING,
+      tags: [Tag.SPACE],
+      cost: 7,
+
+      metadata: {
+        cardNumber: '031',
+        renderData: CardRenderer.builder((b) => b.effect('When you play a space event, you gain 3 M€ and 3 heat.', (be) => {
+          be.space({played}).event({played}).startEffect.megacredits(3).heat(3);
+        })),
+      },
+    });
+  }
+
+  public onCardPlayed(player: Player, card: IProjectCard) {
+    if (card.cardType === CardType.EVENT && card.tags.includes(Tag.SPACE)) {
+      player.megaCredits += 3;
+      player.heat += 3;
+    }
+  }
+}

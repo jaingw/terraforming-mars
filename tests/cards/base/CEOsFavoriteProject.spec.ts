@@ -1,26 +1,28 @@
 import {expect} from 'chai';
-import {Birds} from '../../../src/cards/base/Birds';
-import {CEOsFavoriteProject} from '../../../src/cards/base/CEOsFavoriteProject';
-import {Decomposers} from '../../../src/cards/base/Decomposers';
-import {SearchForLife} from '../../../src/cards/base/SearchForLife';
-import {SecurityFleet} from '../../../src/cards/base/SecurityFleet';
-import {SelfReplicatingRobots} from '../../../src/cards/promo/SelfReplicatingRobots';
-import {Game} from '../../../src/Game';
-import {SelectCard} from '../../../src/inputs/SelectCard';
-import {Player} from '../../../src/Player';
-import {TestPlayers} from '../../TestPlayers';
+import {cast} from '../../TestingUtils';
+import {Birds} from '../../../src/server/cards/base/Birds';
+import {CEOsFavoriteProject} from '../../../src/server/cards/base/CEOsFavoriteProject';
+import {Decomposers} from '../../../src/server/cards/base/Decomposers';
+import {SearchForLife} from '../../../src/server/cards/base/SearchForLife';
+import {SecurityFleet} from '../../../src/server/cards/base/SecurityFleet';
+import {SelfReplicatingRobots} from '../../../src/server/cards/promo/SelfReplicatingRobots';
+import {Game} from '../../../src/server/Game';
+import {SelectCard} from '../../../src/server/inputs/SelectCard';
+import {TestPlayer} from '../../TestPlayer';
+import {ICard} from '../../../src/server/cards/ICard';
 
 describe('CEOsFavoriteProject', function() {
-  let card : CEOsFavoriteProject; let player : Player;
+  let card: CEOsFavoriteProject;
+  let player: TestPlayer;
 
   beforeEach(function() {
     card = new CEOsFavoriteProject();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    Game.newInstance('foobar', [player, redPlayer], player);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    Game.newInstance('gameid', [player, redPlayer], player);
   });
 
-  it('Can\'t play', function() {
+  it('Can not play', function() {
     expect(card.canPlay(player)).is.not.true;
   });
 
@@ -36,8 +38,7 @@ describe('CEOsFavoriteProject', function() {
     player.addResourceTo(searchForLife);
     player.addResourceTo(birds);
 
-    const action = card.play(player);
-    expect(action).instanceOf(SelectCard);
+    const action = cast(card.play(player), SelectCard<ICard>);
 
     action.cb([searchForLife]);
     expect(searchForLife.resourceCount).to.eq(2);
@@ -54,9 +55,19 @@ describe('CEOsFavoriteProject', function() {
     const birds = new Birds();
     player.playedCards.push(srr);
     srr.targetCards.push({card: birds, resourceCount: 0});
-    const action = card.play(player);
-    expect(action).instanceOf(SelectCard);
+    const action = cast(card.play(player), SelectCard<ICard>);
     action.cb([birds]);
     expect(srr.targetCards[0].resourceCount).to.eq(1);
+  });
+
+  it('Cannot play on card with no resources', function() {
+    const birds = new Birds();
+    const securityFleet = new SecurityFleet();
+    securityFleet.resourceCount++;
+    player.playedCards.push(securityFleet, birds);
+    const action = cast(card.play(player), SelectCard<ICard>);
+    expect(action.cards).does.not.contain(birds);
+    expect(action.cards).does.contain(securityFleet);
+    expect(() => action.cb([birds])).to.throw(Error, /Invalid card/);
   });
 });

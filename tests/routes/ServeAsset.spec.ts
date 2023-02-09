@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {FileAPI, ServeAsset} from '../../src/routes/ServeAsset';
+import {FileAPI, ServeAsset} from '../../src/server/routes/ServeAsset';
 import {MockResponse} from './HttpMocks';
 import {RouteTestScaffolding} from './RouteTestScaffolding';
 class FileApiMock extends FileAPI {
@@ -15,9 +15,9 @@ class FileApiMock extends FileAPI {
     this.counts.readFileSync++;
     return Buffer.from('data: ' + path);
   }
-  public override readFile(path: string, cb: (err: NodeJS.ErrnoException | null, data: Buffer) => void): void {
+  public override readFile(path: string): Promise<Buffer> {
     this.counts.readFile++;
-    cb(null, Buffer.from('data: ' + path));
+    return Promise.resolve(Buffer.from('data: ' + path));
   }
   public override existsSync(_path: string): boolean {
     this.counts.existsSync++;
@@ -48,68 +48,35 @@ describe('ServeAsset', () => {
   afterEach(() => {
     process.env.NODE_ENV = storedNodeEnv;
   });
-  it('bad filename', () => {
+  it('bad filename', async () => {
     scaffolding.url = 'goo.goo.gaa.gaa';
     scaffolding.req.headers['accept-encoding'] = '';
-    scaffolding.get(instance, res);
+    await scaffolding.get(instance, res);
     expect(res.statusCode).eq(404);
     expect(res.content).eq('Not found');
   });
 
-  it('index.html', () => {
+  it('index.html', async () => {
     scaffolding.url = '/assets/index.html';
     scaffolding.req.headers['accept-encoding'] = '';
-    scaffolding.get(instance, res);
+    await scaffolding.get(instance, res);
     expect(res.content.startsWith('<!DOCTYPE html>'));
   });
 
-  it('styles.css', () => {
+  it('styles.css', async () => {
     instance = new ServeAsset(undefined, false, fileApi);
     scaffolding.url = '/styles.css';
     scaffolding.req.headers['accept-encoding'] = '';
-    scaffolding.get(instance, res);
+    await scaffolding.get(instance, res);
     expect(res.content).eq('data: build/styles.css');
   });
 
-  // it('styles.css.gz', () => {
-  //   instance = new ServeAsset(undefined, false, fileApi);
-  //   setRequest('/styles.css', [['accept-encoding', 'gzip']]);
-  //   instance.get(req, res.hide(), ctx);
-  //   expect(res.content).eq('data: build/styles.css.gz');
-  // });
 
-  // it('styles.css: uncached', () => {
-  //   instance = new ServeAsset(undefined, false, fileApi);
-  //   // Primes the cache.
-  //  expect(fileApi.counts).deep.eq(primedCache);
-
-  //   setRequest('/styles.css', [['accept-encoding', '']]);
-  //   instance.get(req, res.hide(), ctx);
-
-  //   expect(res.content).eq('data: build/styles.css');
-  //   expect(fileApi.counts).deep.eq({
-  //    ...primedCache,
-  //     readFile: 1, // Still read.
-  //   });
-  // });
-
-  // it('styles.css.gz: cached', () => {
-  //   instance = new ServeAsset(undefined, true, fileApi);
-  //   // Primes the cache.
-  //  expect(fileApi.counts).deep.eq(primedCache);
-
-  //   setRequest('/styles.css', [['accept-encoding', 'gzip']]);
-  //   instance.get(req, res.hide(), ctx);
-
-  //   expect(res.content).eq('data: build/styles.css.gz');
-  //   expect(fileApi.counts).deep.eq({
-  //     readFile: 0, // Does not change
-
-  it('development main.js', () => {
+  it('development main.js', async () => {
     instance = new ServeAsset(undefined, false, fileApi);
     scaffolding.url = '/main.js';
     scaffolding.req.headers['accept-encoding'] = '';
-    scaffolding.get(instance, res);
+    await scaffolding.get(instance, res);
     expect(res.content).eq('data: build/main.js');
     // expect(fileApi.counts).deep.eq({
     //   ...primedCache,
@@ -118,12 +85,12 @@ describe('ServeAsset', () => {
     // });
   });
 
-  it('production main.js', () => {
+  it('production main.js', async () => {
     process.env.NODE_ENV = 'production';
     instance = new ServeAsset(undefined, false, fileApi);
     scaffolding.url = '/main.js';
     scaffolding.req.headers['accept-encoding'] = '';
-    scaffolding.get(instance, res);
+    await scaffolding.get(instance, res);
     expect(res.content).eq('data: build/main.js');
     // expect(fileApi.counts).deep.eq({
     //   ...primedCache,
@@ -132,11 +99,11 @@ describe('ServeAsset', () => {
     // });
   });
 
-  it('sw.js', () => {
+  it('sw.js', async () => {
     instance = new ServeAsset(undefined, false, fileApi);
     scaffolding.url = '/sw.js';
     scaffolding.req.headers['accept-encoding'] = '';
-    scaffolding.get(instance, res);
+    await scaffolding.get(instance, res);
     expect(res.content).eq('data: build/src/client/sw.js');
     // expect(fileApi.counts).deep.eq({
     //   ...primedCache,

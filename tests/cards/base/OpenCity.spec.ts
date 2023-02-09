@@ -1,42 +1,47 @@
 import {expect} from 'chai';
-import {OpenCity} from '../../../src/cards/base/OpenCity';
-import {Game} from '../../../src/Game';
+import {OpenCity} from '../../../src/server/cards/base/OpenCity';
+import {Game} from '../../../src/server/Game';
 import {TestPlayer} from '../../TestPlayer';
 import {Resources} from '../../../src/common/Resources';
-import {TestPlayers} from '../../TestPlayers';
+import {SelectSpace} from '../../../src/server/inputs/SelectSpace';
+import {cast, runAllActions} from '../../TestingUtils';
 
 describe('OpenCity', function() {
-  let card : OpenCity; let player : TestPlayer; let game : Game;
+  let card: OpenCity;
+  let player: TestPlayer;
+  let game: Game;
 
   beforeEach(function() {
     card = new OpenCity();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    game = Game.newInstance('foobar', [player, redPlayer], player);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, redPlayer], player);
   });
 
-  it('Can\'t play without energy production', function() {
-    expect(player.canPlayIgnoringCost(card)).is.not.true;
+  it('Can not play without energy production', function() {
+    expect(card.canPlay(player)).is.not.true;
   });
 
-  it('Can\'t play if oxygen level too low', function() {
-    player.addProduction(Resources.ENERGY, 1);
+  it('Can not play if oxygen level too low', function() {
+    player.production.add(Resources.ENERGY, 1);
     (game as any).oxygenLevel = 11;
-    expect(player.canPlayIgnoringCost(card)).is.not.true;
+    expect(card.canPlay(player)).is.not.true;
   });
 
   it('Should play', function() {
-    player.addProduction(Resources.ENERGY, 1);
+    player.production.add(Resources.ENERGY, 1);
     (game as any).oxygenLevel = 12;
-    expect(player.canPlayIgnoringCost(card)).is.true;
+    expect(card.canPlay(player)).is.true;
 
-    const action = card.play(player);
-    expect(action).is.not.undefined;
+    expect(card.play(player)).is.undefined;
+    runAllActions(player.game);
+    const action = cast(player.popWaitingFor(), SelectSpace);
+
     action.cb(action.availableSpaces[0]);
     expect(game.getCitiesOnMarsCount()).to.eq(1);
 
-    expect(player.getProduction(Resources.ENERGY)).to.eq(0);
-    expect(player.getProduction(Resources.MEGACREDITS)).to.eq(4);
+    expect(player.production.energy).to.eq(0);
+    expect(player.production.megacredits).to.eq(4);
     expect(player.plants).to.eq(2);
 
     expect(card.getVictoryPoints()).to.eq(1);

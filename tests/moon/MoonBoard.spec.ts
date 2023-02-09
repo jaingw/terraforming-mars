@@ -1,10 +1,10 @@
 import {expect} from 'chai';
 import {SpaceType} from '../../src/common/boards/SpaceType';
-import {MoonBoard} from '../../src/moon/MoonBoard';
-import {MoonSpaces} from '../../src/moon/MoonSpaces';
+import {MoonBoard} from '../../src/server/moon/MoonBoard';
+import {MoonSpaces} from '../../src/common/moon/MoonSpaces';
 
 describe('MoonBoard', function() {
-  let board : MoonBoard;
+  let board: MoonBoard;
 
   beforeEach(function() {
     board = MoonBoard.newInstance();

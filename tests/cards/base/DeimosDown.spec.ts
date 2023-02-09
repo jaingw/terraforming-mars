@@ -1,19 +1,21 @@
 import {expect} from 'chai';
 import {cast} from '../../TestingUtils';
-import {DeimosDown} from '../../../src/cards/base/DeimosDown';
-import {Game} from '../../../src/Game';
-import {OrOptions} from '../../../src/inputs/OrOptions';
-import {Player} from '../../../src/Player';
-import {TestPlayers} from '../../TestPlayers';
+import {DeimosDown} from '../../../src/server/cards/base/DeimosDown';
+import {Game} from '../../../src/server/Game';
+import {OrOptions} from '../../../src/server/inputs/OrOptions';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('DeimosDown', function() {
-  let card : DeimosDown; let player : Player; let player2 : Player; let game : Game;
+  let card: DeimosDown;
+  let player: TestPlayer;
+  let player2: TestPlayer;
+  let game: Game;
 
   beforeEach(function() {
     card = new DeimosDown();
-    player = TestPlayers.BLUE.newPlayer();
-    player2 = TestPlayers.RED.newPlayer();
-    game = Game.newInstance('foobar', [player, player2], player);
+    player = TestPlayer.BLUE.newPlayer();
+    player2 = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, player2], player);
   });
 
   it('Should play', function() {
@@ -30,7 +32,7 @@ describe('DeimosDown', function() {
   });
 
   it('Works fine in solo mode', function() {
-    const game = Game.newInstance('foobar', [player], player);
+    const game = Game.newInstance('gameid', [player], player);
 
     player.plants = 15;
     card.play(player);

@@ -1,15 +1,15 @@
 import {expect} from 'chai';
 import {getTestPlayer, newTestGame} from '../../TestGame';
-import {HuygensObservatory} from '../../../src/cards/pathfinders/HuygensObservatory';
-import {SelectColony} from '../../../src/inputs/SelectColony';
-import {SelectOption} from '../../../src/inputs/SelectOption';
-import {OrOptions} from '../../../src/inputs/OrOptions';
+import {HuygensObservatory} from '../../../src/server/cards/pathfinders/HuygensObservatory';
+import {SelectColony} from '../../../src/server/inputs/SelectColony';
+import {SelectOption} from '../../../src/server/inputs/SelectOption';
+import {OrOptions} from '../../../src/server/inputs/OrOptions';
 import {ColonyName} from '../../../src/common/colonies/ColonyName';
-import {Game} from '../../../src/Game';
+import {Game} from '../../../src/server/Game';
 import {TestPlayer} from '../../TestPlayer';
 import {cast, runAllActions} from '../../TestingUtils';
 import {Units} from '../../../src/common/Units';
-import {IColony} from '../../../src/colonies/IColony';
+import {IColony} from '../../../src/server/colonies/IColony';
 
 describe('HuygensObservatory', function() {
   let card: HuygensObservatory;
@@ -40,7 +40,7 @@ describe('HuygensObservatory', function() {
     const action = card.play(player);
 
     expect(action).is.undefined;
-    expect(player.getProductionForTest()).deep.eq(Units.EMPTY);
+    expect(player.production.asUnits()).deep.eq(Units.EMPTY);
     expect(player.getTerraformRating()).eq(21);
 
     runAllActions(game);
@@ -52,7 +52,7 @@ describe('HuygensObservatory', function() {
     // Gain plant production
     selectColony.cb(ganymede);
 
-    expect(player.getProductionForTest()).deep.eq(Units.of({plants: 1}));
+    expect(player.production.asUnits()).deep.eq(Units.of({plants: 1}));
     expect(player.getResourcesForTest()).deep.eq(Units.EMPTY);
     expect(ganymede.visitor).is.undefined;
 
@@ -66,13 +66,13 @@ describe('HuygensObservatory', function() {
     tradeDestination.cb(ganymede);
     expect(ganymede.visitor).eq(player);
 
-    expect(player.getProductionForTest()).deep.eq(Units.of({plants: 1}));
+    expect(player.production.asUnits()).deep.eq(Units.of({plants: 1}));
     expect(player.getResourcesForTest()).deep.eq(Units.of({plants: 1}));
   });
 
   it('play, place colony where you already have one', function() {
     ganymede.addColony(player);
-    expect(player.getProductionForTest()).deep.eq(Units.of({plants: 1}));
+    expect(player.production.asUnits()).deep.eq(Units.of({plants: 1}));
     const action = card.play(player);
 
     expect(action).is.undefined;
@@ -86,7 +86,7 @@ describe('HuygensObservatory', function() {
     // Gain plant production
     selectColony.cb(ganymede);
 
-    expect(player.getProductionForTest()).deep.eq(Units.of({plants: 2}));
+    expect(player.production.asUnits()).deep.eq(Units.of({plants: 2}));
   });
 
   it('play, cannot place a colony', function() {
@@ -108,7 +108,7 @@ describe('HuygensObservatory', function() {
     tradeDestination.cb(ganymede);
     expect(ganymede.visitor).eq(player);
 
-    expect(player.getProductionForTest()).deep.eq(Units.EMPTY);
+    expect(player.production.asUnits()).deep.eq(Units.EMPTY);
     expect(player.getResourcesForTest()).deep.eq(Units.of({plants: 1}));
   });
 
@@ -119,7 +119,7 @@ describe('HuygensObservatory', function() {
     const action = card.play(player);
 
     expect(action).is.undefined;
-    expect(player.getProductionForTest()).deep.eq(Units.EMPTY);
+    expect(player.production.asUnits()).deep.eq(Units.EMPTY);
 
     runAllActions(game);
     const selectColony = cast(player.popWaitingFor(), SelectColony);
@@ -149,12 +149,12 @@ describe('HuygensObservatory', function() {
   it('play, trade fleet on colony or home', function() {
     ganymede.trade(player);
     expect(ganymede.visitor).eq(player);
-    player.increaseFleetSize();
+    player.colonies.increaseFleetSize();
 
     const action = card.play(player);
 
     expect(action).is.undefined;
-    expect(player.getProductionForTest()).deep.eq(Units.EMPTY);
+    expect(player.production.asUnits()).deep.eq(Units.EMPTY);
 
     runAllActions(game);
     const selectColony = cast(player.popWaitingFor(), SelectColony);

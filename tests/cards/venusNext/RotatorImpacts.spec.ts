@@ -1,21 +1,22 @@
 import {expect} from 'chai';
 import {cast} from '../../TestingUtils';
-import {MorningStarInc} from '../../../src/cards/venusNext/MorningStarInc';
-import {RotatorImpacts} from '../../../src/cards/venusNext/RotatorImpacts';
+import {MorningStarInc} from '../../../src/server/cards/venusNext/MorningStarInc';
+import {RotatorImpacts} from '../../../src/server/cards/venusNext/RotatorImpacts';
 import {MAX_VENUS_SCALE} from '../../../src/common/constants';
-import {Game} from '../../../src/Game';
-import {OrOptions} from '../../../src/inputs/OrOptions';
-import {Player} from '../../../src/Player';
-import {TestPlayers} from '../../TestPlayers';
+import {Game} from '../../../src/server/Game';
+import {OrOptions} from '../../../src/server/inputs/OrOptions';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('RotatorImpacts', () => {
-  let card : RotatorImpacts; let player : Player; let game : Game;
+  let card: RotatorImpacts;
+  let player: TestPlayer;
+  let game: Game;
 
   beforeEach(() => {
     card = new RotatorImpacts();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    game = Game.newInstance('foobar', [player, redPlayer], player);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, redPlayer], player);
   });
 
   it('Cannot play', () => {
@@ -30,14 +31,14 @@ describe('RotatorImpacts', () => {
 
   it('Should play', () => {
     expect(player.canPlayIgnoringCost(card)).is.true;
-    const action = card.play();
+    const action = card.play(player);
     expect(action).is.undefined;
   });
 
   it('Works with MSI corporation', () => {
     const corp = new MorningStarInc();
-    corp.play();
-    player.corpCard = corp;
+    corp.play(player);
+    player.setCorporationForTest(corp);
 
     (game as any).venusScaleLevel = 18;
     expect(player.canPlayIgnoringCost(card)).is.true;

@@ -1,20 +1,22 @@
 import {expect} from 'chai';
-import {Player} from '../src/Player';
-import {DEFAULT_GAME_OPTIONS, Game, GameOptions} from '../src/Game';
+import {Player} from '../src/server/Player';
+import {Game} from '../src/server/Game';
+import {DEFAULT_GAME_OPTIONS, GameOptions} from '../src/server/GameOptions';
 import * as constants from '../src/common/constants';
-import {ISpace} from '../src/boards/ISpace';
+import {ISpace} from '../src/server/boards/ISpace';
 import {Phase} from '../src/common/Phase';
-import {IParty} from '../src/turmoil/parties/IParty';
-import {Turmoil} from '../src/turmoil/Turmoil';
+import {IParty} from '../src/server/turmoil/parties/IParty';
+import {Turmoil} from '../src/server/turmoil/Turmoil';
 import {LogMessage} from '../src/common/logs/LogMessage';
 import {PolicyId} from '../src/common/turmoil/Types';
 import {Log} from '../src/common/logs/Log';
-import {Greens} from '../src/turmoil/parties/Greens';
-import {PoliticalAgendas} from '../src/turmoil/PoliticalAgendas';
-import {Reds} from '../src/turmoil/parties/Reds';
-import {IProjectCard} from '../src/cards/IProjectCard';
+import {Greens} from '../src/server/turmoil/parties/Greens';
+import {PoliticalAgendas} from '../src/server/turmoil/PoliticalAgendas';
+import {Reds} from '../src/server/turmoil/parties/Reds';
+import {IProjectCard} from '../src/server/cards/IProjectCard';
 import {CardName} from '../src/common/cards/CardName';
 import {CardType} from '../src/common/cards/CardType';
+import {SpaceId} from '../src/common/Types';
 
 // Returns the oceans created during this operation which may not reflect all oceans.
 export function maxOutOceans(player: Player, toValue: number = 0): Array<ISpace> {
@@ -29,21 +31,35 @@ export function maxOutOceans(player: Player, toValue: number = 0): Array<ISpace>
   return oceans;
 }
 
-export function addGreenery(player: Player): ISpace {
-  const space = player.game.board.getAvailableSpacesForGreenery(player)[0];
-  player.game.addGreenery(player, space.id);
+export function addGreenery(player: Player, spaceId?: SpaceId): ISpace {
+  const space = spaceId ?
+    player.game.board.getSpace(spaceId) :
+    player.game.board.getAvailableSpacesForGreenery(player)[0];
+  player.game.addGreenery(player, space);
   return space;
 }
 
-export function addOcean(player: Player): ISpace {
-  const space = player.game.board.getAvailableSpacesForOcean(player)[0];
-  player.game.addOceanTile(player, space.id);
+export function addOceanTile(player: Player, spaceId?: SpaceId): ISpace {
+  return addOcean(player, spaceId);
+}
+
+export function addOcean(player: Player, spaceId?: SpaceId): ISpace {
+  const space = spaceId ?
+    player.game.board.getSpace(spaceId) :
+    player.game.board.getAvailableSpacesForOcean(player)[0];
+  player.game.addOceanTile(player, space);
   return space;
 }
 
-export function addCity(player: Player): ISpace {
-  const space = player.game.board.getAvailableSpacesForCity(player)[0];
-  player.game.addCityTile(player, space.id);
+export function addCityTile(player: Player, spaceId?: SpaceId): ISpace {
+  return addCity(player, spaceId);
+}
+
+export function addCity(player: Player, spaceId?: SpaceId): ISpace {
+  const space = spaceId ?
+    player.game.board.getSpace(spaceId) :
+    player.game.board.getAvailableSpacesForCity(player)[0];
+  player.game.addCityTile(player, space);
   return space;
 }
 
@@ -54,6 +70,11 @@ export function resetBoard(game: Game): void {
   });
 }
 
+export function testGameOptions(options: Partial<GameOptions>): GameOptions {
+  return {...DEFAULT_GAME_OPTIONS, ...options};
+}
+
+// Use gameOptions, which doesn't hide that certain features are on.
 export function setCustomGameOptions(options: Partial<GameOptions> = {}): GameOptions {
   const defaultOptions = {
     ...DEFAULT_GAME_OPTIONS,
@@ -91,7 +112,7 @@ export function runNextAction(game: Game) {
 }
 
 export function forceGenerationEnd(game: Game) {
-  while (game.deferredActions.pop() !== undefined) {}
+  while (game.deferredActions.pop() !== undefined) {} // eslint-disable-line no-empty
   game.getPlayersInGenerationOrder().forEach((player) => player.pass());
   game.playerIsFinishedTakingActions();
 }
@@ -115,23 +136,24 @@ export function testRedsCosts(cb: () => boolean, player: Player, initialMegacred
   expect(cb(), 'Reds in power, enough money').is.true;
 }
 
+const FAKE_CARD_TEMPLATE: IProjectCard = {
+  name: 'HELLO' as CardName,
+  cost: 0,
+  tags: [],
+  canPlay: () => true,
+  play: () => undefined,
+  getVictoryPoints: () => 0,
+  cardType: CardType.ACTIVE,
+  metadata: {},
+  resourceCount: 0,
+};
 export function fakeCard(card: Partial<IProjectCard>): IProjectCard {
-  const template: IProjectCard = {
-    name: 'HELLO' as CardName,
-    cost: 0,
-    tags: [],
-    canPlay: () => true,
-    play: () => undefined,
-    getVictoryPoints: () => 0,
-    cardType: CardType.ACTIVE,
-    metadata: {
-      cardNumber: '1',
-    },
-    resourceCount: 0,
-  };
-  return Object.assign(template, card);
+  return {...FAKE_CARD_TEMPLATE, ...card};
 }
 
+/*
+ * Confirms `obj` is defined and of type `klass`, otherwise it throws an Error.
+ */
 export function cast<T>(obj: any, klass: new (...args: any[]) => T): T {
   if (!(obj instanceof klass)) {
     throw new Error(`Not an instance of ${klass.name}: ${obj.constructor.name}`);
@@ -139,7 +161,7 @@ export function cast<T>(obj: any, klass: new (...args: any[]) => T): T {
   return obj;
 }
 
-export function sleep(ms: number) {
+export async function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
@@ -156,3 +178,9 @@ export function finishGeneration(game: Game): void {
     throw new Error('expected new generation');
   }
 }
+
+export function getSendADelegateOption(player: Player) {
+  return player.getActions().options.find(
+    (option) => option.title.toString().startsWith('Send a delegate'));
+}
+

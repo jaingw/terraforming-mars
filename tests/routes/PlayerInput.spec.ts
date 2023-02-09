@@ -1,7 +1,7 @@
 import * as http from 'http';
 import * as EventEmitter from 'events';
 import {expect} from 'chai';
-import {PlayerInput} from '../../src/routes/PlayerInput';
+import {PlayerInput} from '../../src/server/routes/PlayerInput';
 import {MockResponse} from './HttpMocks';
 import {RouteTestScaffolding} from './RouteTestScaffolding';
 
@@ -18,8 +18,8 @@ describe('PlayerInput', function() {
 
   it('fails when id not provided', async () => {
     scaffolding.url = '/player/input';
-    await scaffolding.asyncPost(PlayerInput.INSTANCE, res);
-    expect(res.content).eq('Bad request: must provide player id');
+    await scaffolding.post(PlayerInput.INSTANCE, res);
+    expect(res.content).eq('Bad request: missing id parameter');
   });
 
   // it('performs undo action', () => {

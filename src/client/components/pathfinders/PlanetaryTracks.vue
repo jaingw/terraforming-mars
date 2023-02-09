@@ -54,12 +54,12 @@
 <script lang="ts">
 
 import Vue from 'vue';
-import {GameOptions} from '@/Game';
 import {PathfindersModel} from '@/common/models/PathfindersModel';
-import {Tags} from '@/common/cards/Tags';
+import {Tag} from '@/common/cards/Tag';
 import {range} from '@/common/utils/utils';
 import PlanetaryTrack from '@/client/components/pathfinders/PlanetaryTrack.vue';
 import {PlanetaryTracks as Tracks} from '@/common/pathfinders/PlanetaryTracks';
+import {GameOptions} from '@/server/GameOptions';
 
 export default Vue.extend({
   name: 'PlanetaryTracks',
@@ -76,11 +76,11 @@ export default Vue.extend({
   },
   data() {
     return {
-      venus: Tags.VENUS,
-      earth: Tags.EARTH,
-      mars: Tags.MARS,
-      jovian: Tags.JOVIAN,
-      moon: Tags.MOON,
+      venus: Tag.VENUS,
+      earth: Tag.EARTH,
+      mars: Tag.MARS,
+      jovian: Tag.JOVIAN,
+      moon: Tag.MOON,
       range: range(23),
       rewards: Tracks.initialize(),
     };

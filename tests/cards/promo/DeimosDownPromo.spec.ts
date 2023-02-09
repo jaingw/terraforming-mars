@@ -1,25 +1,28 @@
 import {expect} from 'chai';
-import {cast} from '../../TestingUtils';
-import {DeimosDownPromo} from '../../../src/cards/promo/DeimosDownPromo';
-import {Game} from '../../../src/Game';
-import {OrOptions} from '../../../src/inputs/OrOptions';
-import {SelectSpace} from '../../../src/inputs/SelectSpace';
-import {Player} from '../../../src/Player';
-import {TestPlayers} from '../../TestPlayers';
+import {cast, runAllActions} from '../../TestingUtils';
+import {DeimosDownPromo} from '../../../src/server/cards/promo/DeimosDownPromo';
+import {Game} from '../../../src/server/Game';
+import {OrOptions} from '../../../src/server/inputs/OrOptions';
+import {SelectSpace} from '../../../src/server/inputs/SelectSpace';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('DeimosDownPromo', function() {
-  let card : DeimosDownPromo; let player : Player; let player2 : Player;
+  let card: DeimosDownPromo;
+  let player: TestPlayer;
+  let player2: TestPlayer;
+  let game: Game;
 
   beforeEach(function() {
     card = new DeimosDownPromo();
-    player = TestPlayers.BLUE.newPlayer();
-    player2 = TestPlayers.RED.newPlayer();
-    Game.newInstance('foobar', [player, player2], player);
+    player = TestPlayer.BLUE.newPlayer();
+    player2 = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, player2], player);
   });
 
   it('Should play without plants', function() {
-    const action = card.play(player);
-    expect(action).instanceOf(SelectSpace);
+    expect(card.play(player)).is.undefined;
+    runAllActions(game);
+    cast(player.popWaitingFor(), SelectSpace);
     expect(player.game.getTemperature()).to.eq(-24);
     expect(player.steel).to.eq(4);
     const input = player.game.deferredActions.peek()!.execute();
@@ -29,8 +32,9 @@ describe('DeimosDownPromo', function() {
   it('Can remove plants', function() {
     player2.plants = 5;
 
-    const action = card.play(player);
-    expect(action).instanceOf(SelectSpace);
+    expect(card.play(player)).is.undefined;
+    runAllActions(game);
+    cast(player.popWaitingFor(), SelectSpace);
     expect(player.game.getTemperature()).to.eq(-24);
     expect(player.steel).to.eq(4);
 
@@ -44,11 +48,12 @@ describe('DeimosDownPromo', function() {
   });
 
   it('Works fine in solo mode', function() {
-    Game.newInstance('foobar', [player], player);
+    game = Game.newInstance('gameid', [player], player);
 
     player.plants = 15;
-    const action = card.play(player);
-    expect(action).instanceOf(SelectSpace);
+    expect(card.play(player)).is.undefined;
+    runAllActions(game);
+    cast(player.popWaitingFor(), SelectSpace);
 
     expect(player.game.getTemperature()).to.eq(-24);
     expect(player.steel).to.eq(4);

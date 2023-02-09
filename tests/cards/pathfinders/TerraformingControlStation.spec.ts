@@ -1,11 +1,10 @@
 import {expect} from 'chai';
-import {TerraformingControlStation} from '../../../src/cards/pathfinders/TerraformingControlStation';
-import {Game} from '../../../src/Game';
+import {TerraformingControlStation} from '../../../src/server/cards/pathfinders/TerraformingControlStation';
+import {Game} from '../../../src/server/Game';
 import {TestPlayer} from '../../TestPlayer';
-import {TestPlayers} from '../../TestPlayers';
-import {Ants} from '../../../src/cards/base/Ants';
-import {AgroDrones} from '../../../src/cards/pathfinders/AgroDrones';
-import {CorroderSuits} from '../../../src/cards/venusNext/CorroderSuits';
+import {Ants} from '../../../src/server/cards/base/Ants';
+import {AgroDrones} from '../../../src/server/cards/pathfinders/AgroDrones';
+import {CorroderSuits} from '../../../src/server/cards/venusNext/CorroderSuits';
 
 describe('TerraformingControlStation', function() {
   let card: TerraformingControlStation;
@@ -14,9 +13,9 @@ describe('TerraformingControlStation', function() {
 
   beforeEach(function() {
     card = new TerraformingControlStation();
-    player = TestPlayers.BLUE.newPlayer();
-    player2 = TestPlayers.RED.newPlayer();
-    Game.newInstance('foobar', [player, player2], player);
+    player = TestPlayer.BLUE.newPlayer();
+    player2 = TestPlayer.RED.newPlayer();
+    Game.newInstance('gameid', [player, player2], player);
   });
 
   it('play', function() {

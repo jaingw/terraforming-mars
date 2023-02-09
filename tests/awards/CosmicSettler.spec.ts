@@ -1,10 +1,9 @@
 import {expect} from 'chai';
-import {Game} from '../../src/Game';
-import {CosmicSettler} from '../../src/awards/CosmicSettler';
+import {Game} from '../../src/server/Game';
+import {CosmicSettler} from '../../src/server/awards/CosmicSettler';
 import {SpaceType} from '../../src/common/boards/SpaceType';
-import {TestPlayers} from '../TestPlayers';
 import {TestPlayer} from '../TestPlayer';
-import {Board} from '../../src/boards/Board';
+import {Board} from '../../src/server/boards/Board';
 import {TileType} from '../../src/common/TileType';
 
 describe('CosmicSettler', function() {
@@ -16,9 +15,9 @@ describe('CosmicSettler', function() {
 
   beforeEach(function() {
     award = new CosmicSettler();
-    player = TestPlayers.BLUE.newPlayer();
-    player2 = TestPlayers.RED.newPlayer();
-    game = Game.newInstance('id', [player, player2], player);
+    player = TestPlayer.BLUE.newPlayer();
+    player2 = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, player2], player);
     board = game.board;
   });
 

@@ -1,31 +1,28 @@
 import {expect} from 'chai';
-import {AcquiredCompany} from '../../../src/cards/base/AcquiredCompany';
-import {Sponsors} from '../../../src/cards/base/Sponsors';
-import {PROffice} from '../../../src/cards/turmoil/PROffice';
-import {Game} from '../../../src/Game';
-import {Resources} from '../../../src/common/Resources';
+import {AcquiredCompany} from '../../../src/server/cards/base/AcquiredCompany';
+import {Sponsors} from '../../../src/server/cards/base/Sponsors';
+import {PROffice} from '../../../src/server/cards/turmoil/PROffice';
 import {PartyName} from '../../../src/common/turmoil/PartyName';
-import {setCustomGameOptions} from '../../TestingUtils';
-import {TestPlayers} from '../../TestPlayers';
+import {testGameOptions} from '../../TestingUtils';
+import {getTestPlayer, newTestGame} from '../../TestGame';
 
 describe('PROffice', function() {
   it('Should play', function() {
     const card = new PROffice();
     const card2 = new Sponsors();
     const card3 = new AcquiredCompany();
-    const player = TestPlayers.BLUE.newPlayer();
+    const game = newTestGame(1, testGameOptions({turmoilExtension: true}));
+    const player = getTestPlayer(game, 0);
 
-    const gameOptions = setCustomGameOptions();
-    const game = Game.newInstance('foobar', [player], player, gameOptions);
     expect(player.canPlayIgnoringCost(card)).is.not.true;
 
-    const unity = game.turmoil!.getPartyByName(PartyName.UNITY)!;
-    unity.delegates.push(player, player);
+    const unity = game.turmoil!.getPartyByName(PartyName.UNITY);
+    unity.delegates.add(player.id, 2);
     expect(player.canPlayIgnoringCost(card)).is.true;
 
     player.playedCards.push(card2, card3);
     card.play(player);
-    expect(player.getResource(Resources.MEGACREDITS)).to.eq(3);
+    expect(player.megaCredits).to.eq(3);
     expect(player.getTerraformRating()).to.eq(15);
   });
 });

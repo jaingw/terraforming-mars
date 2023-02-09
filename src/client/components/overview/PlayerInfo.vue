@@ -9,6 +9,8 @@ import {mainAppSettings} from '@/client/components/App';
 import {range} from '@/common/utils/utils';
 import {PlayerMixin} from '@/client/mixins/PlayerMixin';
 import Button from '@/client/components/common/Button.vue';
+import {CardType} from '@/common/cards/CardType';
+import {CardName} from '@/common/cards/CardName';
 
 const isPinned = (root: any, playerIndex: number): boolean => {
   return (root as any).getVisibilityState('pinned_player_' + playerIndex);
@@ -58,21 +60,6 @@ export default Vue.extend({
     },
   },
   methods: {
-    getClasses(): string {
-      const classes = ['player-info'];
-      classes.push(playerColorClass(this.player.color, 'bg_transparent'));
-      if (this.player.exited) {
-        classes.push('player_overview_bg_color_gray');
-      }
-      if (this.player.corporationCard2) {
-        classes.push('player-info-dcorp');
-      }
-      return classes.join(' ');
-    },
-    getPlayerStatusAndResClasses(): string {
-      const classes = ['player-status-and-res'];
-      return classes.join(' ');
-    },
     pinPlayer() {
       let hiddenPlayersIndexes: Array<Number> = [];
       const playerPinned = isPinned(this.$root, this.playerIndex);
@@ -98,7 +85,7 @@ export default Vue.extend({
     togglePlayerDetails() {
       // for the player viewing this page => scroll to cards UI
       if (this.player.color === this.playerView.thisPlayer?.color) {
-        const el: HTMLElement = document.getElementsByClassName(
+        const el = document.getElementsByClassName(
           'sidebar_icon--cards',
         )[0] as HTMLElement;
         el.click();
@@ -108,11 +95,27 @@ export default Vue.extend({
       // any other player show cards container and hide all other
       this.pinPlayer();
     },
-    getNrPlayedCards(): number {
-      return this.player.playedCards.length;
+    getClasses(): string {
+      const classes = ['player-info'];
+      classes.push(playerColorClass(this.player.color, 'bg_transparent'));
+      if (this.player.exited) {
+        classes.push('player_overview_bg_color_gray');
+      }
+      if (this.player.corporationCard2) {
+        classes.push('player-info-dcorp');
+      }
+      return classes.join(' ');
     },
-    getAvailableBlueActionCount(): number {
+    numberOfPlayedCards(): number {
+      return this.player.tableau.length;
+    },
+    availableBlueActionCount(): number {
       return this.player.availableBlueCardActionCount;
+    },
+    corporationCardName(): CardName | undefined {
+      const card = this.player.tableau[0];
+      if (card?.cardType !== CardType.CORPORATION) return undefined;
+      return card.name;
     },
   },
 });
@@ -120,12 +123,12 @@ export default Vue.extend({
 
 <template>
       <div :class="getClasses()">
-        <div :class="getPlayerStatusAndResClasses()">
+        <div class="player-status-and-res">
         <div class="player-status">
           <div class="player-info-details">
             <div class="player-info-name"  @click="togglePlayerDetails">{{ player.name }} <em title="vip" v-if="player.isvip" :class="'icon_vip'+player.isvip" /></div>
-            <div class="icon-first-player" v-if="firstForGen && playerView.players.length > 1">1st</div>
-            <div class="player-info-corp" @click="togglePlayerDetails" v-if="player.corporationCard !== undefined" :title="player.corporationCard.name">{{ player.corporationCard.name }}</div>
+            <div class="icon-first-player" v-if="firstForGen && playerView.players.length > 1" v-i18n>1st</div>
+            <div class="player-info-corp" @click="togglePlayerDetails" v-if="corporationCardName() !== undefined" :title="$t(corporationCardName())"><span v-i18n>{{ corporationCardName() }}</span></div>
           </div>
           <player-status :timer="player.timer" :showTimers="playerView.game.gameOptions.showTimers" :firstForGen="firstForGen" v-trim-whitespace :actionLabel="actionLabel" />
         </div>
@@ -136,11 +139,7 @@ export default Vue.extend({
                 <div class="played-cards-icon hiding-card-button active"></div>
                 <div class="played-cards-icon hiding-card-button automated"></div>
                 <div class="played-cards-icon hiding-card-button event"></div>
-                <div class="played-cards-count">
-                  {{
-                    getNrPlayedCards()
-                  }}
-                </div>
+                <div class="played-cards-count">{{numberOfPlayedCards()}}</div>
               </div>
             </div>
             <Button class="played-cards-button" size="tiny" @click="togglePlayerDetails" :title="buttonLabel()" />
@@ -150,7 +149,7 @@ export default Vue.extend({
               <div class="blue-stripe"></div>
               <div class="red-arrow"></div>
             </div>
-            <span class="tag-count-display">{{ getAvailableBlueActionCount() }}</span>
+            <span class="tag-count-display">{{ availableBlueActionCount() }}</span>
           </div>
         </div>
         <PlayerTags :player="player" :playerView="playerView" :hideZeroTags="hideZeroTags" :isTopBar="isTopBar" />

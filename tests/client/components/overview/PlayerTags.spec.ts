@@ -6,7 +6,7 @@ import {Color} from '@/common/Color';
 import PlayerTags from '@/client/components/overview/PlayerTags.vue';
 import {PlayerViewModel, PublicPlayerModel} from '@/common/models/PlayerModel';
 import {RecursivePartial} from '@/common/utils/utils';
-import {Tags} from '@/common/cards/Tags';
+import {Tag} from '@/common/cards/Tag';
 import {Wrapper} from '@vue/test-utils';
 
 describe('PlayerTags', function() {
@@ -14,18 +14,18 @@ describe('PlayerTags', function() {
 
   beforeEach(() => {
     const player: RecursivePartial<PublicPlayerModel> = {
-      corporationCard: {
-        name: CardName.CRESCENT_RESEARCH_ASSOCIATION, // 1/3 VP per moon tag
-      },
       color: Color.BLUE,
-      playedCards: [
+      tableau: [
+        {
+          name: CardName.CRESCENT_RESEARCH_ASSOCIATION, // 1/3 VP per moon tag
+        },
         {
           name: CardName.ACQUIRED_COMPANY,
-          discount: [{tag: Tags.MICROBE, amount: 1}],
+          discount: [{tag: Tag.MICROBE, amount: 1}],
         },
         {
           name: CardName.BACTOVIRAL_RESEARCH,
-          discount: [{tag: Tags.VENUS, amount: 1}, {tag: Tags.MICROBE, amount: 2}],
+          discount: [{tag: Tag.VENUS, amount: 1}, {tag: Tag.MICROBE, amount: 2}],
         },
         {
           name: CardName.MOON_TETHER,
@@ -47,7 +47,7 @@ describe('PlayerTags', function() {
     };
     const playerView: RecursivePartial<PlayerViewModel> = {
       thisPlayer: player,
-      id: 'foobar',
+      id: 'playerid-foo',
       game: {
         gameOptions: {
           showTimers: false,
@@ -74,24 +74,24 @@ describe('PlayerTags', function() {
   });
 
   it('tag discounts', function() {
-    const test = function(tag: Tags | 'all', value: number) {
+    const test = function(tag: Tag | 'all', value: number) {
       const elem = wrapper.find(`[data-test="discount-${tag}"]`);
       expect(elem.attributes()['amount']).to.eq(`${value}`);
     };
-    test(Tags.MICROBE, 3);
-    test(Tags.VENUS, 1);
-    expect(() => test(Tags.EARTH, 0)).to.throw(/find did not return/);
+    test(Tag.MICROBE, 3);
+    test(Tag.VENUS, 1);
+    expect(() => test(Tag.EARTH, 0)).to.throw(/find did not return/);
     test('all', 4);
   });
 
   it('victoryPoints', function() {
-    const test = function(tag: Tags | 'all', value: string) {
+    const test = function(tag: Tag | 'all', value: string) {
       const elem = wrapper.find(`[data-test="vps-${tag}"]`);
       expect(elem.attributes()['amount']).to.eq(value);
     };
-    // expect(() => test(Tags.JOVIAN, '')).to.throw(/find did not return/);
+    // expect(() => test(Tag.JOVIAN, '')).to.throw(/find did not return/);
     // Victory Points come from the cards themselves, and not the props.
-    test(Tags.VENUS, '½');
-    test(Tags.MOON, '1⅓');
+    test(Tag.VENUS, '½');
+    test(Tag.MOON, '1⅓');
   });
 });

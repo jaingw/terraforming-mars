@@ -3,7 +3,7 @@ import {getLocalVue} from './getLocalVue';
 import {expect} from 'chai';
 import ShiftAresGlobalParameters from '@/client/components/ShiftAresGlobalParameters.vue';
 import {PlayerInputModel} from '@/common/models/PlayerInputModel';
-import {PlayerInputTypes} from '@/common/input/PlayerInputTypes';
+import {PlayerInputType} from '@/common/input/PlayerInputType';
 import {PartyName} from '@/common/turmoil/PartyName';
 
 describe('ShiftAresGlobalParameters', function() {
@@ -11,22 +11,21 @@ describe('ShiftAresGlobalParameters', function() {
     id: 'idd',
     title: 'Testing, baby!',
     buttonLabel: 'Click me!',
-    inputType: PlayerInputTypes.SHIFT_ARES_GLOBAL_PARAMETERS,
+    inputType: PlayerInputType.SHIFT_ARES_GLOBAL_PARAMETERS,
     amount: undefined,
     options: undefined,
     cards: undefined,
-    maxCardsToSelect: undefined,
-    minCardsToSelect: undefined,
+    max: undefined,
+    min: undefined,
     canUseSteel: undefined,
     canUseTitanium: undefined,
+    canUseLunaTradeFederationTitanium: undefined,
     canUseHeat: undefined,
     canUseSeeds: undefined,
     canUseData: undefined,
     players: undefined,
     availableSpaces: undefined,
     availableParties: [PartyName.MARS, PartyName.SCIENTISTS, PartyName.UNITY, PartyName.GREENS, PartyName.REDS, PartyName.KELVINISTS],
-    min: undefined,
-    max: undefined,
     microbes: undefined,
     floaters: undefined,
     science: undefined,
@@ -35,7 +34,6 @@ describe('ShiftAresGlobalParameters', function() {
     coloniesModel: undefined,
     payProduction: undefined,
     aresData: {
-      active: true,
       includeHazards: true,
       hazardData: {
         erosionOceanCount: {

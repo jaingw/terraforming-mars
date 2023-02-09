@@ -1,37 +1,30 @@
 import {expect} from 'chai';
-import {SeptemTribus} from '../../../src/cards/turmoil/SeptemTribus';
-import {Game} from '../../../src/Game';
 import {PartyName} from '../../../src/common/turmoil/PartyName';
-import {setCustomGameOptions} from '../../TestingUtils';
-import {TestPlayers} from '../../TestPlayers';
+import {testGameOptions} from '../../TestingUtils';
+import {getTestPlayer, newTestGame} from '../../TestGame';
+import {SeptemTribus} from '../../../src/server/cards/turmoil/SeptemTribus';
 
-describe('SeptumTribus', function() {
+describe('SeptemTribus', function() {
   it('Should play', function() {
     const card = new SeptemTribus();
-    const player = TestPlayers.BLUE.newPlayer();
-    const player2 = TestPlayers.RED.newPlayer();
+    const game = newTestGame(1, testGameOptions({turmoilExtension: true}));
+    const player = getTestPlayer(game, 0);
+    card.play(player);
 
-    const gameOptions = setCustomGameOptions();
-    const game = Game.newInstance('foobar', [player, player2], player, gameOptions);
-    card.play();
-
-    player.corpCard = card;
+    player.setCorporationForTest(card);
     player.megaCredits = 0;
 
-    const turmoil = game.turmoil;
-    expect(game.turmoil).is.not.undefined;
+    const turmoil = game.turmoil!;
 
-    if (turmoil) {
-      turmoil.sendDelegateToParty(player, PartyName.REDS, game);
-      turmoil.sendDelegateToParty(player, PartyName.REDS, game);
-      card.action(player);
-      expect(player.megaCredits).to.eq(2);
+    turmoil.sendDelegateToParty(player.id, PartyName.REDS, game);
+    turmoil.sendDelegateToParty(player.id, PartyName.REDS, game);
+    card.action(player);
+    expect(player.megaCredits).to.eq(2);
 
-      player.megaCredits = 0;
-      turmoil.sendDelegateToParty(player, PartyName.KELVINISTS, game);
-      turmoil.sendDelegateToParty(player, PartyName.GREENS, game);
-      card.action(player);
-      expect(player.megaCredits).to.eq(6);
-    }
+    player.megaCredits = 0;
+    turmoil.sendDelegateToParty(player.id, PartyName.KELVINISTS, game);
+    turmoil.sendDelegateToParty(player.id, PartyName.GREENS, game);
+    card.action(player);
+    expect(player.megaCredits).to.eq(6);
   });
 });

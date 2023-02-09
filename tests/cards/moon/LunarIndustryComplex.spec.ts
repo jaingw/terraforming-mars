@@ -1,16 +1,12 @@
-import {Game} from '../../../src/Game';
-import {setCustomGameOptions} from '../../TestingUtils';
-import {TestPlayer} from '../../TestPlayer';
-import {TestPlayers} from '../../TestPlayers';
-import {LunarIndustryComplex} from '../../../src/cards/moon/LunarIndustryComplex';
 import {expect} from 'chai';
-import {MoonExpansion} from '../../../src/moon/MoonExpansion';
-import {IMoonData} from '../../../src/moon/IMoonData';
+import {Game} from '../../../src/server/Game';
+import {testGameOptions} from '../../TestingUtils';
+import {TestPlayer} from '../../TestPlayer';
+import {LunarIndustryComplex} from '../../../src/server/cards/moon/LunarIndustryComplex';
+import {MoonExpansion} from '../../../src/server/moon/MoonExpansion';
+import {IMoonData} from '../../../src/server/moon/IMoonData';
 import {Units} from '../../../src/common/Units';
-import {Resources} from '../../../src/common/Resources';
-import {PlaceMoonMineTile} from '../../../src/moon/PlaceMoonMineTile';
-
-const MOON_OPTIONS = setCustomGameOptions({moonExpansion: true});
+import {PlaceMoonMineTile} from '../../../src/server/moon/PlaceMoonMineTile';
 
 describe('LunarIndustryComplex', () => {
   let player: TestPlayer;
@@ -19,8 +15,8 @@ describe('LunarIndustryComplex', () => {
   let moonData: IMoonData;
 
   beforeEach(() => {
-    player = TestPlayers.BLUE.newPlayer();
-    game = Game.newInstance('id', [player], player, MOON_OPTIONS);
+    player = TestPlayer.BLUE.newPlayer();
+    game = Game.newInstance('gameid', [player], player, testGameOptions({moonExpansion: true}));
     card = new LunarIndustryComplex();
     moonData = MoonExpansion.moonData(game);
   });
@@ -37,12 +33,13 @@ describe('LunarIndustryComplex', () => {
   });
 
   it('play', () => {
-    player.setProductionForTest(Units.EMPTY);
+    player.production.override(Units.EMPTY);
     expect(moonData.miningRate).eq(0);
     expect(player.getTerraformRating()).eq(14);
     player.titanium = 2;
 
     card.play(player);
+
     const placeMineTile = game.deferredActions.pop() as PlaceMoonMineTile;
     placeMineTile.execute()!.cb(moonData.moon.getSpace('m02'));
 
@@ -50,10 +47,10 @@ describe('LunarIndustryComplex', () => {
     expect(player.getTerraformRating()).eq(15);
 
     expect(player.titanium).eq(0);
-    expect(player.getProduction(Resources.STEEL)).eq(1);
-    expect(player.getProduction(Resources.TITANIUM)).eq(1);
-    expect(player.getProduction(Resources.ENERGY)).eq(2);
-    expect(player.getProduction(Resources.HEAT)).eq(1);
+    expect(player.production.steel).eq(1);
+    expect(player.production.titanium).eq(1);
+    expect(player.production.energy).eq(2);
+    expect(player.production.heat).eq(1);
   });
 });
 

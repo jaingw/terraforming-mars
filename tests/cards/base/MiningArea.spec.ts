@@ -1,22 +1,22 @@
 import {expect} from 'chai';
-import {MiningArea} from '../../../src/cards/base/MiningArea';
-import {Game} from '../../../src/Game';
-import {SelectSpace} from '../../../src/inputs/SelectSpace';
+import {MiningArea} from '../../../src/server/cards/base/MiningArea';
+import {Game} from '../../../src/server/Game';
+import {SelectSpace} from '../../../src/server/inputs/SelectSpace';
 import {TestPlayer} from '../../TestPlayer';
-import {Resources} from '../../../src/common/Resources';
 import {SpaceBonus} from '../../../src/common/boards/SpaceBonus';
 import {TileType} from '../../../src/common/TileType';
-import {TestPlayers} from '../../TestPlayers';
 import {cast, runAllActions} from '../../TestingUtils';
 
 describe('MiningArea', function() {
-  let card : MiningArea; let player : TestPlayer; let game : Game;
+  let card: MiningArea;
+  let player: TestPlayer;
+  let game: Game;
 
   beforeEach(function() {
     card = new MiningArea();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    game = Game.newInstance('foobar', [player, redPlayer], player);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, redPlayer], player);
   });
 
   it('Cannot play', function() {
@@ -30,7 +30,7 @@ describe('MiningArea', function() {
         const adjacents = game.board.getAdjacentSpaces(land);
         for (const adjacent of adjacents) {
           if (adjacent.tile === undefined && adjacent.bonus.length === 0) {
-            game.addTile(player, adjacent.spaceType, adjacent, {tileType: TileType.MINING_AREA});
+            game.addTile(player, adjacent, {tileType: TileType.MINING_AREA});
           }
         }
       }
@@ -48,7 +48,7 @@ describe('MiningArea', function() {
 
     expect(titaniumSpace!.player).to.eq(player);
     expect(titaniumSpace!.tile && titaniumSpace!.tile!.tileType).to.eq(TileType.MINING_AREA);
-    expect(player.getProduction(Resources.TITANIUM)).to.eq(1);
+    expect(player.production.titanium).to.eq(1);
     expect(titaniumSpace!.adjacency?.bonus).eq(undefined);
 
     const steelSpace = action.availableSpaces.find((space) => space.bonus.includes(SpaceBonus.TITANIUM) === false && space.bonus.includes(SpaceBonus.STEEL));
@@ -60,7 +60,7 @@ describe('MiningArea', function() {
 
     expect(steelSpace!.player).to.eq(player);
     expect(steelSpace!.tile && steelSpace!.tile!.tileType).to.eq(TileType.MINING_AREA);
-    expect(player.getProduction(Resources.TITANIUM)).to.eq(1);
+    expect(player.production.titanium).to.eq(1);
     expect(steelSpace!.adjacency?.bonus).eq(undefined);
   });
 });

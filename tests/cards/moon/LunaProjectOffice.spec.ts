@@ -1,18 +1,16 @@
-import {Game} from '../../../src/Game';
-import {finishGeneration, setCustomGameOptions} from '../../TestingUtils';
-import {TestPlayers} from '../../TestPlayers';
-import {LunaProjectOffice} from '../../../src/cards/moon/LunaProjectOffice';
+import {Game} from '../../../src/server/Game';
+import {cast, finishGeneration, testGameOptions} from '../../TestingUtils';
+import {TestPlayer} from '../../TestPlayer';
+import {LunaProjectOffice} from '../../../src/server/cards/moon/LunaProjectOffice';
 import {expect} from 'chai';
-import {SelectCard} from '../../../src/inputs/SelectCard';
-import {IProjectCard} from '../../../src/cards/IProjectCard';
-import {Player} from '../../../src/Player';
-
-const MOON_OPTIONS = setCustomGameOptions({moonExpansion: true});
+import {SelectCard} from '../../../src/server/inputs/SelectCard';
+import {IProjectCard} from '../../../src/server/cards/IProjectCard';
+import {Player} from '../../../src/server/Player';
 
 describe('LunaProjectOffice', () => {
   it('can play', () => {
-    const player = TestPlayers.BLUE.newPlayer();
-    Game.newInstance('id', [player], player, MOON_OPTIONS);
+    const player = TestPlayer.BLUE.newPlayer();
+    Game.newInstance('gameid', [player], player, testGameOptions({moonExpansion: true}));
     const card = new LunaProjectOffice();
 
     player.cardsInHand = [card];
@@ -26,12 +24,12 @@ describe('LunaProjectOffice', () => {
   });
 
   it('play - solo', function() {
-    const player = TestPlayers.BLUE.newPlayer();
+    const player = TestPlayer.BLUE.newPlayer();
     const game = Game.newInstance(
-      'id',
+      'gameid',
       [player],
       player,
-      setCustomGameOptions({
+      testGameOptions({
         moonExpansion: true,
         turmoilExtension: false,
       }));
@@ -73,13 +71,13 @@ describe('LunaProjectOffice', () => {
   // This test is almost exactly the same as the solo test, but they take
   // different paths in the code.
   it('play - 2 player - draft', function() {
-    const player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
+    const player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
     const game = Game.newInstance(
-      'id',
+      'gameid',
       [player, redPlayer],
       player,
-      setCustomGameOptions({
+      testGameOptions({
         moonExpansion: true,
         draftVariant: true,
         turmoilExtension: false,
@@ -129,13 +127,13 @@ describe('LunaProjectOffice', () => {
   // This test is almost exactly the same as the solo test, but it takes
   // different paths in the code.
   it('play - 2 player - no draft', function() {
-    const player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
+    const player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
     const game = Game.newInstance(
-      'id',
+      'gameid',
       [player, redPlayer],
       player,
-      setCustomGameOptions({
+      testGameOptions({
         moonExpansion: true,
         draftVariant: false,
         turmoilExtension: false,
@@ -180,7 +178,5 @@ describe('LunaProjectOffice', () => {
 });
 
 function getWaitingFor(player: Player): SelectCard<IProjectCard> {
-  const action = player.getWaitingFor();
-  expect(action).instanceof(SelectCard);
-  return action as SelectCard<IProjectCard>;
+  return cast(player.getWaitingFor(), SelectCard<IProjectCard>);
 }

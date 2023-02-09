@@ -1,22 +1,23 @@
 import {expect} from 'chai';
-import {EcologicalZone} from '../../../src/cards/base/EcologicalZone';
-import {EcologyExperts} from '../../../src/cards/prelude/EcologyExperts';
-import {Game} from '../../../src/Game';
-import {SelectSpace} from '../../../src/inputs/SelectSpace';
+import {EcologicalZone} from '../../../src/server/cards/base/EcologicalZone';
+import {EcologyExperts} from '../../../src/server/cards/prelude/EcologyExperts';
+import {Game} from '../../../src/server/Game';
+import {SelectSpace} from '../../../src/server/inputs/SelectSpace';
 import {Phase} from '../../../src/common/Phase';
-import {Player} from '../../../src/Player';
 import {TileType} from '../../../src/common/TileType';
-import {TestPlayers} from '../../TestPlayers';
+import {TestPlayer} from '../../TestPlayer';
 import {cast} from '../../TestingUtils';
 
 describe('EcologicalZone', function() {
-  let card : EcologicalZone; let player : Player; let game : Game;
+  let card: EcologicalZone;
+  let player: TestPlayer;
+  let game: Game;
 
   beforeEach(function() {
     card = new EcologicalZone();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    game = Game.newInstance('foobar', [player, redPlayer], player);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, redPlayer], player);
   });
 
   it('Cannot play', function() {
@@ -25,7 +26,7 @@ describe('EcologicalZone', function() {
 
   it('Should play', function() {
     const landSpace = game.board.getAvailableSpacesOnLand(player)[0];
-    game.addGreenery(player, landSpace.id);
+    game.addGreenery(player, landSpace);
     expect(card.canPlay(player)).is.true;
 
     const action = cast(card.play(player), SelectSpace);
@@ -44,7 +45,7 @@ describe('EcologicalZone', function() {
     game.phase = Phase.PRELUDES;
 
     const landSpace = game.board.getAvailableSpacesOnLand(player)[0];
-    game.addGreenery(player, landSpace.id);
+    game.addGreenery(player, landSpace);
 
     const ecoExpertCard = new EcologyExperts();
     player.playCard(ecoExpertCard);

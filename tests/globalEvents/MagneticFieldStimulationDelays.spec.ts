@@ -1,19 +1,18 @@
 import {expect} from 'chai';
 import {MAX_OXYGEN_LEVEL, MAX_TEMPERATURE} from '../../src/common/constants';
-import {Game} from '../../src/Game';
-import {Player} from '../../src/Player';
-import {MagneticFieldStimulationDelays} from '../../src/turmoil/globalEvents/MagneticFieldStimulationDelays';
-import {TestPlayers} from '../TestPlayers';
+import {Game} from '../../src/server/Game';
+import {MagneticFieldStimulationDelays} from '../../src/server/turmoil/globalEvents/MagneticFieldStimulationDelays';
+import {TestPlayer} from '../TestPlayer';
 
 describe('MagneticFieldStimulationDelays', function() {
   let card: MagneticFieldStimulationDelays;
-  let player: Player;
+  let player: TestPlayer;
   let game: Game;
 
   beforeEach(function() {
     card = new MagneticFieldStimulationDelays();
-    player = TestPlayers.BLUE.newPlayer();
-    game = Game.newInstance('foobar', [player], player);
+    player = TestPlayer.BLUE.newPlayer();
+    game = Game.newInstance('gameid', [player], player);
   });
 
   it('resolve play', function() {

@@ -1,25 +1,26 @@
 import {expect} from 'chai';
-import {StormCraftIncorporated} from '../../../src/cards/colonies/StormCraftIncorporated';
+import {StormCraftIncorporated} from '../../../src/server/cards/colonies/StormCraftIncorporated';
 import * as constants from '../../../src/common/constants';
-import {Game} from '../../../src/Game';
-import {SelectAmount} from '../../../src/inputs/SelectAmount';
-import {Player} from '../../../src/Player';
-import {TestPlayers} from '../../TestPlayers';
+import {Game} from '../../../src/server/Game';
+import {SelectAmount} from '../../../src/server/inputs/SelectAmount';
+import {TestPlayer} from '../../TestPlayer';
+import {cast} from '../../TestingUtils';
 
 describe('StormCraftIncorporated', function() {
-  let card : StormCraftIncorporated; let player : Player;
+  let card: StormCraftIncorporated;
+  let player: TestPlayer;
 
   beforeEach(function() {
     card = new StormCraftIncorporated();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    Game.newInstance('foobar', [player, redPlayer], player);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    Game.newInstance('gameid', [player, redPlayer], player);
 
-    player.corpCard = card;
+    player.setCorporationForTest(card);
   });
 
   it('Should play', function() {
-    const play = card.play();
+    const play = card.play(player);
     expect(play).is.undefined;
 
     const action = card.action(player);
@@ -32,9 +33,9 @@ describe('StormCraftIncorporated', function() {
     card.resourceCount = 10;
     const options = card.spendHeat(player, constants.HEAT_FOR_TEMPERATURE);
     expect(options.options.length).to.eq(2);
-    const heatOption = options.options[0] as SelectAmount;
+    const heatOption = cast(options.options[0], SelectAmount);
     expect(heatOption.max).to.eq(constants.HEAT_FOR_TEMPERATURE);
-    const floaterOption = options.options[1] as SelectAmount;
+    const floaterOption = cast(options.options[1], SelectAmount);
     expect(floaterOption.max).to.eq(constants.HEAT_FOR_TEMPERATURE / 2);
   });
 
@@ -42,8 +43,8 @@ describe('StormCraftIncorporated', function() {
     player.heat = 10;
     card.resourceCount = 10;
     const options = card.spendHeat(player, constants.HEAT_FOR_TEMPERATURE);
-    const heatOption = options.options[0] as SelectAmount;
-    const floaterOption = options.options[1] as SelectAmount;
+    const heatOption = cast(options.options[0], SelectAmount);
+    const floaterOption = cast(options.options[1], SelectAmount);
     heatOption.cb(4);
     floaterOption.cb(0);
     expect(function() {
@@ -55,8 +56,8 @@ describe('StormCraftIncorporated', function() {
     player.heat = 10;
     card.resourceCount = 10;
     const options = card.spendHeat(player, constants.HEAT_FOR_TEMPERATURE);
-    const heatOption = options.options[0] as SelectAmount;
-    const floaterOption = options.options[1] as SelectAmount;
+    const heatOption = cast(options.options[0], SelectAmount);
+    const floaterOption = cast(options.options[1], SelectAmount);
     heatOption.cb(2);
     floaterOption.cb(3);
     options.cb();

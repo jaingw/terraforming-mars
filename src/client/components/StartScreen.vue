@@ -12,8 +12,8 @@
           <a class="start-screen-link start-screen-link--new-game" href="/new-game" v-i18n>New game</a>
           <a class="start-screen-link start-screen-link--how-to-play" href="/mygames" v-if="userName" v-i18n>My Games</a>
           <a class="start-screen-link start-screen-link--how-to-play" href="/login" v-else v-i18n>Login</a>
-          <!-- <a class="start-screen-link start-screen-link--cards-list" href="https://wx4.sinaimg.cn/mw2000/0081mJiNgy1h02nbunoj0j30ze0zatsn.jpg" v-i18n>Donate</a> -->
-          <a class="start-screen-link start-screen-link--cards-list" href="https://docs.qq.com/doc/DQU5vYmtJeGRQaVpN"  target="_blank" v-i18n>Help Translation</a>
+          <a class="start-screen-link start-screen-link--cards-list" href="/donate" v-i18n>Donate</a>
+          <!-- <a class="start-screen-link start-screen-link--cards-list" href="https://docs.qq.com/doc/DQU5vYmtJeGRQaVpN"  target="_blank" v-i18n>Help Translation</a> -->
           <a class="start-screen-link start-screen-link--board-game" href="/help"  target="_blank"  v-i18n>Help</a>
           <a class="start-screen-link start-screen-link--about" href="cards"  target="_blank"  v-i18n>Cards list</a>
           <a class="start-screen-link start-screen-link--changelog" href="https://boardgamegeek.com/boardgame/167791/terraforming-mars"  target="_blank"  v-i18n>Board game</a>
@@ -21,8 +21,8 @@
           <div class="start-screen-header  start-screen-link--languages">
             <language-switcher />
             <div class="start-screen-version-cont">
-        <div class="nowrap start-screen-date"><span v-i18n>deployed</span>: {{raw_settings.builtAt}}</div>
-        <div class="nowrap start-screen-version"><span v-i18n>version</span>: {{raw_settings.head}}</div>
+              <div class="nowrap start-screen-date"><span v-i18n>deployed</span>: {{raw_settings.builtAt}}</div>
+              <div class="nowrap start-screen-version"><span v-i18n>version</span>: {{raw_settings.head}}</div>
             </div>
           </div>
       </div>

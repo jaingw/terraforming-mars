@@ -30,16 +30,20 @@
 
             <li v-if="playerNumber > 1">
               <div class="setup-item" v-i18n>Milestones and Awards:</div>
-              <div v-if="isRandomMANone()" class="game-config generic" v-i18n>Board-defined</div>
-              <div v-if="isRandomMALimited()" class="game-config generic" v-i18n>Randomized with limited synergy</div>
-              <div v-if="isRandomMAUnlimited()" class="game-config generic" v-i18n>Full randomized</div>
+
+              <div v-if="gameOptions.randomMA === RandomMAOptionType.NONE" class="game-config generic" v-i18n>Board-defined</div>
+              <div v-if="gameOptions.randomMA === RandomMAOptionType.LIMITED" class="game-config generic" v-i18n>Randomized with limited synergy</div>
+              <div v-if="gameOptions.randomMA === RandomMAOptionType.UNLIMITED" class="game-config generic" v-i18n>Full randomized</div>
+              <div v-if="gameOptions.venusNextExtension && gameOptions.includeVenusMA" class="game-config generic" v-18n>Venus Milestone/Award</div>
+              <div v-if="gameOptions.randomMA !== RandomMAOptionType.NONE && gameOptions.includeFanMA" class="game-config generic" v-18n>Include fan Milestones/Awards</div>
             </li>
 
             <li v-if="playerNumber > 1">
               <div class="setup-item" v-i18n>Draft:</div>
+              <div v-if="gameOptions.initialCorpDraftVariant" class="game-config generic" v-i18n>Corporation</div>
               <div v-if="gameOptions.initialDraftVariant" class="game-config generic" v-i18n>Initial</div>
               <div v-if="gameOptions.draftVariant" class="game-config generic" v-i18n>Research phase</div>
-              <div v-if="!gameOptions.initialDraftVariant && !gameOptions.draftVariant" class="game-config generic" v-i18n>Off</div>
+              <div v-if="!gameOptions.initialDraftVariant && !gameOptions.draftVariant && !gameOptions.initialCorpDraftVariant" class="game-config generic" v-i18n>Off</div>
             </li>
 
             <li v-if="gameOptions.escapeVelocityMode">
@@ -47,7 +51,7 @@
               <span>After {{gameOptions.escapeVelocityThreshold}} min, reduce {{gameOptions.escapeVelocityPenalty}} VP every {{gameOptions.escapeVelocityPeriod}} min.</span>
             </li>
 
-            <li v-if="gameOptions.turmoilExtension && gameOptions.removeNegativeGlobalEvents">
+            <li v-if="gameOptions.turmoilExtension && gameOptions.removeNegativeGlobalEventsOption">
               <div class="setup-item" v-i18n>Turmoil:</div>
               <div class="game-config generic" v-i18n>No negative Turmoil event</div>
             </li>
@@ -69,7 +73,7 @@
               <div v-if="gameOptions.doubleCorp" class="game-config generic" v-i18n>Double Corp</div>
             </li>
 
-            <li v-if="gameOptions.cardsBlackList.length > 0"><div class="setup-item" v-i18n>Banned cards:</div>{{ gameOptions.cardsBlackList.join(', ') }}</li>
+            <li v-if="gameOptions.bannedCards.length > 0"><div class="setup-item" v-i18n>Banned cards:</div>{{ gameOptions.bannedCards.join(', ') }}</li>
           </ul>
         </div>
 </template>
@@ -80,7 +84,7 @@ import Vue from 'vue';
 import {BoardName} from '@/common/boards/BoardName';
 import {RandomMAOptionType} from '@/common/ma/RandomMAOptionType';
 import {AgendaStyle} from '@/common/turmoil/Types';
-import {GameOptions} from '@/Game';
+import {GameOptions} from '@/server/GameOptions';
 
 export default Vue.extend({
   name: 'game-setup-detail',
@@ -101,7 +105,7 @@ export default Vue.extend({
     },
     getBoardColorClass(boardName: BoardName): string {
       switch (boardName) {
-      case BoardName.ORIGINAL:
+      case BoardName.THARSIS:
         return 'game-config board-tharsis map';
       case BoardName.HELLAS:
         return 'game-config board-hellas map';
@@ -119,14 +123,10 @@ export default Vue.extend({
         return 'game-config board-other map';
       }
     },
-    isRandomMANone(): boolean {
-      return this.gameOptions.randomMA === RandomMAOptionType.NONE;
-    },
-    isRandomMALimited(): boolean {
-      return this.gameOptions.randomMA === RandomMAOptionType.LIMITED;
-    },
-    isRandomMAUnlimited(): boolean {
-      return this.gameOptions.randomMA === RandomMAOptionType.UNLIMITED;
+  },
+  computed: {
+    RandomMAOptionType(): typeof RandomMAOptionType {
+      return RandomMAOptionType;
     },
   },
 });

@@ -1,21 +1,20 @@
 import {expect} from 'chai';
-import {GeneRepair} from '../../../src/cards/base/GeneRepair';
-import {Game} from '../../../src/Game';
+import {GeneRepair} from '../../../src/server/cards/base/GeneRepair';
+import {Game} from '../../../src/server/Game';
 import {TestPlayer} from '../../TestPlayer';
-import {Resources} from '../../../src/common/Resources';
-import {TestPlayers} from '../../TestPlayers';
 
 describe('GeneRepair', function() {
-  let card : GeneRepair; let player : TestPlayer;
+  let card: GeneRepair;
+  let player: TestPlayer;
 
   beforeEach(function() {
     card = new GeneRepair();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    Game.newInstance('foobar', [player, redPlayer], player);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    Game.newInstance('gameid', [player, redPlayer], player);
   });
 
-  it('Can\'t play', function() {
+  it('Can not play', function() {
     expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
 
@@ -24,7 +23,7 @@ describe('GeneRepair', function() {
     expect(player.canPlayIgnoringCost(card)).is.true;
     card.play(player);
 
-    expect(player.getProduction(Resources.MEGACREDITS)).to.eq(2);
+    expect(player.production.megacredits).to.eq(2);
     expect(card.getVictoryPoints()).to.eq(2);
   });
 });

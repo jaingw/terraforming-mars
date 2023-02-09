@@ -1,4 +1,4 @@
-import {mount} from '@vue/test-utils';
+import {shallowMount} from '@vue/test-utils';
 import {getLocalVue} from '../getLocalVue';
 import {expect} from 'chai';
 import {CardName} from '@/common/cards/CardName';
@@ -10,17 +10,11 @@ import {RecursivePartial} from '@/common/utils/utils';
 describe('PlayerInfo', function() {
   it('Played card count test', function() {
     const thisPlayer: RecursivePartial<PublicPlayerModel> = {
-      corporationCard: {
-        name: CardName.HELION,
-      },
       color: Color.BLUE,
-      playedCards: [
-        {
-          name: CardName.ACQUIRED_COMPANY,
-        },
-        {
-          name: CardName.BACTOVIRAL_RESEARCH,
-        },
+      tableau: [
+        {name: CardName.HELION},
+        {name: CardName.ACQUIRED_COMPANY},
+        {name: CardName.BACTOVIRAL_RESEARCH},
       ],
       victoryPointsBreakdown: {
         total: 1,
@@ -29,7 +23,7 @@ describe('PlayerInfo', function() {
     };
     const playerView: RecursivePartial<PlayerViewModel> = {
       thisPlayer: thisPlayer,
-      id: 'foobar',
+      id: 'playerid-foo',
       game: {
         gameOptions: {
           showTimers: false,
@@ -37,7 +31,7 @@ describe('PlayerInfo', function() {
       },
       players: [thisPlayer],
     };
-    const playerStatus = mount(PlayerInfo, {
+    const playerInfo = shallowMount(PlayerInfo, {
       localVue: getLocalVue(),
       parentComponent: {
         methods: {
@@ -50,7 +44,7 @@ describe('PlayerInfo', function() {
         playerIndex: 0,
       },
     });
-    const test = playerStatus.find('div[class*="played-cards-count"]');
-    expect(test.text()).to.eq('2');
+    const test = playerInfo.find('div[class*="played-cards-count"]');
+    expect(test.text()).to.eq('3');
   });
 });

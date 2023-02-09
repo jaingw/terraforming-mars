@@ -1,10 +1,9 @@
 import {expect} from 'chai';
-import {setCustomGameOptions} from '../../TestingUtils';
-import {DysonScreens} from '../../../src/cards/pathfinders/DysonScreens';
-import {Game} from '../../../src/Game';
+import {testGameOptions} from '../../TestingUtils';
+import {DysonScreens} from '../../../src/server/cards/pathfinders/DysonScreens';
+import {Game} from '../../../src/server/Game';
 import {TestPlayer} from '../../TestPlayer';
-import {TestPlayers} from '../../TestPlayers';
-import {SpaceName} from '../../../src/SpaceName';
+import {SpaceName} from '../../../src/server/SpaceName';
 import {Units} from '../../../src/common/Units';
 
 describe('DysonScreens', function() {
@@ -13,22 +12,22 @@ describe('DysonScreens', function() {
 
   beforeEach(function() {
     card = new DysonScreens();
-    player = TestPlayers.BLUE.newPlayer();
-    Game.newInstance('foobar', [player], player, setCustomGameOptions({pathfindersExpansion: true}));
+    player = TestPlayer.BLUE.newPlayer();
+    Game.newInstance('gameid', [player], player, testGameOptions({pathfindersExpansion: true}));
   });
 
   it('play', () => {
     player.cardsInHand = [];
     expect(player.game.board.getSpace(SpaceName.DYSON_SCREENS).player).is.undefined;
     expect(player.game.getTemperature()).eq(-30);
-    expect(player.getProductionForTest()).deep.eq(Units.EMPTY);
+    expect(player.production.asUnits()).deep.eq(Units.EMPTY);
 
     card.play(player);
 
     expect(player.cardsInHand).has.length(1);
     expect(player.game.board.getSpace(SpaceName.DYSON_SCREENS).player?.id).eq(player.id);
     expect(player.game.getTemperature()).eq(-28);
-    expect(player.getProductionForTest()).deep.eq(Units.of({energy: 2, heat: 2}));
+    expect(player.production.asUnits()).deep.eq(Units.of({energy: 2, heat: 2}));
   });
 
   it('canAct', function() {
@@ -44,7 +43,7 @@ describe('DysonScreens', function() {
 
     card.action(player);
 
-    expect(player.getProductionForTest()).deep.eq(Units.of({heat: 1, energy: 1}));
+    expect(player.production.asUnits()).deep.eq(Units.of({heat: 1, energy: 1}));
     expect(player.titanium).eq(1);
   });
 });

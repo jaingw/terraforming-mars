@@ -1,23 +1,20 @@
-import {Game} from '../../../src/Game';
-import {Player} from '../../../src/Player';
-import {setCustomGameOptions} from '../../TestingUtils';
-import {TestPlayers} from '../../TestPlayers';
+import {Game} from '../../../src/server/Game';
+import {testGameOptions} from '../../TestingUtils';
+import {TestPlayer} from '../../TestPlayer';
 import {expect} from 'chai';
-import {MoonColonyStandardProjectVariant2, MoonMineStandardProjectVariant2, MoonRoadStandardProjectVariant2} from '../../../src/cards/moon/MoonStandardProjectVariants';
-
-const MOON_OPTIONS = setCustomGameOptions({moonExpansion: true});
+import {MoonHabitatStandardProjectVariant2, MoonMineStandardProjectVariant2, MoonRoadStandardProjectVariant2} from '../../../src/server/cards/moon/MoonStandardProjectVariants';
 
 describe('MoonStandardProjectVariants', () => {
-  let player: Player;
+  let player: TestPlayer;
 
   beforeEach(() => {
-    player = TestPlayers.BLUE.newPlayer();
-    Game.newInstance('id', [player], player, MOON_OPTIONS);
+    player = TestPlayer.BLUE.newPlayer();
+    Game.newInstance('gameid', [player], player, testGameOptions({moonExpansion: true}));
   });
 
-  describe('MoonColonyStandardProjectVariant2', () => {
+  describe('MoonHabitatStandardProjectVariant2', () => {
     it('can act', () => {
-      const card = new MoonColonyStandardProjectVariant2();
+      const card = new MoonHabitatStandardProjectVariant2();
       player.titanium = 1;
       player.megaCredits = 22;
       expect(player.canPlay(card)).is.false;

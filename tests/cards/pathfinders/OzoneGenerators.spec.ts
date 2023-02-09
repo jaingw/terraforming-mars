@@ -1,8 +1,7 @@
 import {expect} from 'chai';
-import {OzoneGenerators} from '../../../src/cards/pathfinders/OzoneGenerators';
-import {Game} from '../../../src/Game';
+import {OzoneGenerators} from '../../../src/server/cards/pathfinders/OzoneGenerators';
+import {Game} from '../../../src/server/Game';
 import {TestPlayer} from '../../TestPlayer';
-import {TestPlayers} from '../../TestPlayers';
 
 describe('OzoneGenerators', function() {
   let card: OzoneGenerators;
@@ -11,8 +10,8 @@ describe('OzoneGenerators', function() {
 
   beforeEach(function() {
     card = new OzoneGenerators();
-    player = TestPlayers.BLUE.newPlayer();
-    game = Game.newInstance('foobar', [player], player);
+    player = TestPlayer.BLUE.newPlayer();
+    game = Game.newInstance('gameid', [player], player);
   });
 
   it('canPlay', function() {

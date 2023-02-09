@@ -1,22 +1,22 @@
 import {expect} from 'chai';
 import {cast} from '../../TestingUtils';
-import {TitanAirScrapping} from '../../../src/cards/colonies/TitanAirScrapping';
-import {Game} from '../../../src/Game';
-import {OrOptions} from '../../../src/inputs/OrOptions';
-import {Player} from '../../../src/Player';
-import {TestPlayers} from '../../TestPlayers';
+import {TitanAirScrapping} from '../../../src/server/cards/colonies/TitanAirScrapping';
+import {Game} from '../../../src/server/Game';
+import {OrOptions} from '../../../src/server/inputs/OrOptions';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('TitanAirScrapping', function() {
-  let card : TitanAirScrapping; let player : Player;
+  let card: TitanAirScrapping;
+  let player: TestPlayer;
 
   beforeEach(function() {
     card = new TitanAirScrapping();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    Game.newInstance('foobar', [player, redPlayer], player);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    Game.newInstance('gameid', [player, redPlayer], player);
   });
 
-  it('Can\'t act', function() {
+  it('Can not act', function() {
     player.playedCards.push(card);
     expect(card.canAct(player)).is.not.true;
   });

@@ -1,24 +1,20 @@
 import {expect} from 'chai';
-import {ICard} from '../../../src/cards/ICard';
-import {AirScrappingExpedition} from '../../../src/cards/venusNext/AirScrappingExpedition';
-import {Celestic} from '../../../src/cards/venusNext/Celestic';
-import {Game} from '../../../src/Game';
-import {SelectCard} from '../../../src/inputs/SelectCard';
-import {TestPlayers} from '../../TestPlayers';
+import {cast} from '../../TestingUtils';
+import {ICard} from '../../../src/server/cards/ICard';
+import {AirScrappingExpedition} from '../../../src/server/cards/venusNext/AirScrappingExpedition';
+import {Celestic} from '../../../src/server/cards/venusNext/Celestic';
+import {getTestPlayer, newTestGame} from '../../TestGame';
+import {SelectCard} from '../../../src/server/inputs/SelectCard';
 
 describe('AirScrappingExpedition', function() {
   it('Should play', function() {
     const card = new AirScrappingExpedition();
     const corp = new Celestic();
-    const player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    const game = Game.newInstance('foobar', [player, redPlayer], player);
-    player.corpCard = corp;
+    const game = newTestGame(2);
+    const player = getTestPlayer(game, 0);
+    player.setCorporationForTest(corp);
 
-
-    const selectCard = card.play(player) as SelectCard<ICard>;
-    expect(selectCard).is.not.undefined;
-    expect(selectCard instanceof SelectCard).is.true;
+    const selectCard = cast(card.play(player), SelectCard<ICard>);
 
     selectCard.cb([selectCard.cards[0]]);
     expect(corp.resourceCount).to.eq(3);

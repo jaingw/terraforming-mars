@@ -19,23 +19,24 @@ function getAllTranslations() {
 
       const files = fs.readdirSync(translationDir);
       files.forEach((file) => {
-        if ( file === undefined || ! file.endsWith('.json')) return;
+        if (file === undefined || !file.endsWith('.json')) return;
+        const filename = path.join(translationDir, file);
         try {
-          const dataJson = JSON.parse(fs.readFileSync(path.join(translationDir, file), 'utf8'));
+          const dataJson = JSON.parse(fs.readFileSync(filename, 'utf8'));
 
           for (const phrase in dataJson) {
             if (dataJson.hasOwnProperty(phrase)) {
               if (translations[phrase] === undefined) {
                 translations[phrase] = {};
-            }
-            if (lang === 'cn' && translations[phrase][lang] !== undefined) {
-              console.log('重复翻译： '+ phrase);
+              }
+              if (lang === 'cn' && translations[phrase][lang] !== undefined) {
+                console.log('重复翻译： '+ phrase);
               }
               translations[phrase][lang] = dataJson[phrase];
             }
           }
         } catch (e) {
-          throw new Error(`While parsing ${file}:` + e);
+          throw new Error(`While parsing ${filename}:` + e);
         }
       });
     }
@@ -67,7 +68,7 @@ function getWaitingForTimeout() {
   if (process.env.WAITING_FOR_TIMEOUT) {
     return Number(process.env.WAITING_FOR_TIMEOUT);
   }
-  return 1000;
+  return 5000;
 }
 
 function getLogLength() {

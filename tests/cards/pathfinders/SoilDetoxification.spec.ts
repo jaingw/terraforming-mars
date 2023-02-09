@@ -1,14 +1,14 @@
 import {expect} from 'chai';
-import {SoilDetoxification} from '../../../src/cards/pathfinders/SoilDetoxification';
-import {Game} from '../../../src/Game';
+import {SoilDetoxification} from '../../../src/server/cards/pathfinders/SoilDetoxification';
+import {Game} from '../../../src/server/Game';
 import {TestPlayer} from '../../TestPlayer';
 import {getTestPlayer, newTestGame} from '../../TestGame';
-import {EcoLine} from '../../../src/cards/corporation/EcoLine';
-import {ConvertPlants} from '../../../src/cards/base/standardActions/ConvertPlants';
-import {Unity} from '../../../src/turmoil/parties/Unity';
-import {Greens} from '../../../src/turmoil/parties/Greens';
+import {EcoLine} from '../../../src/server/cards/corporation/EcoLine';
+import {ConvertPlants} from '../../../src/server/cards/base/standardActions/ConvertPlants';
+import {Unity} from '../../../src/server/turmoil/parties/Unity';
+import {Greens} from '../../../src/server/turmoil/parties/Greens';
 import {Units} from '../../../src/common/Units';
-import {TurmoilUtil} from '../../../src/turmoil/TurmoilUtil';
+import {TurmoilUtil} from '../../../src/server/turmoil/TurmoilUtil';
 
 describe('SoilDetoxification', function() {
   let card: SoilDetoxification;
@@ -31,9 +31,9 @@ describe('SoilDetoxification', function() {
   });
 
   it('play', function() {
-    expect(player.getProductionForTest()).deep.eq(Units.of({}));
+    expect(player.production.asUnits()).deep.eq(Units.of({}));
     card.play(player);
-    expect(player.getProductionForTest()).deep.eq(Units.of({plants: 1}));
+    expect(player.production.asUnits()).deep.eq(Units.of({plants: 1}));
   });
 
   it('standard project', function() {

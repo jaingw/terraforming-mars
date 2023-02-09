@@ -1,27 +1,24 @@
-import {Game} from '../../../src/Game';
-import {Player} from '../../../src/Player';
-import {setCustomGameOptions} from '../../TestingUtils';
-import {TestPlayers} from '../../TestPlayers';
-import {ThoriumRush} from '../../../src/cards/moon/ThoriumRush';
+import {Game} from '../../../src/server/Game';
+import {testGameOptions} from '../../TestingUtils';
+import {TestPlayer} from '../../TestPlayer';
+import {ThoriumRush} from '../../../src/server/cards/moon/ThoriumRush';
 import {expect} from 'chai';
-import {MoonExpansion} from '../../../src/moon/MoonExpansion';
-import {IMoonData} from '../../../src/moon/IMoonData';
+import {MoonExpansion} from '../../../src/server/moon/MoonExpansion';
+import {IMoonData} from '../../../src/server/moon/IMoonData';
 import {Phase} from '../../../src/common/Phase';
-import {Greens} from '../../../src/turmoil/parties/Greens';
-import {PoliticalAgendas} from '../../../src/turmoil/PoliticalAgendas';
-import {Reds} from '../../../src/turmoil/parties/Reds';
-
-const MOON_OPTIONS = setCustomGameOptions({moonExpansion: true});
+import {Greens} from '../../../src/server/turmoil/parties/Greens';
+import {PoliticalAgendas} from '../../../src/server/turmoil/PoliticalAgendas';
+import {Reds} from '../../../src/server/turmoil/parties/Reds';
 
 describe('ThoriumRush', () => {
-  let player: Player;
+  let player: TestPlayer;
   let game: Game;
   let card: ThoriumRush;
   let moonData: IMoonData;
 
   beforeEach(() => {
-    player = TestPlayers.BLUE.newPlayer();
-    game = Game.newInstance('id', [player], player, MOON_OPTIONS);
+    player = TestPlayer.BLUE.newPlayer();
+    game = Game.newInstance('gameid', [player], player, testGameOptions({moonExpansion: true}));
     card = new ThoriumRush();
     moonData = MoonExpansion.moonData(game);
   });
@@ -51,9 +48,9 @@ describe('ThoriumRush', () => {
     expect(player.getTerraformRating()).eq(17);
   });
 
-  it('canPlay when Reds are in power.', () => {
-    const player = TestPlayers.BLUE.newPlayer();
-    const game = Game.newInstance('foobar', [player], player, MOON_OPTIONS);
+  it('canPlay when Reds are in power', () => {
+    const player = TestPlayer.BLUE.newPlayer();
+    const game = Game.newInstance('gameid', [player], player, testGameOptions({moonExpansion: true, turmoilExtension: true}));
     const turmoil = game.turmoil!;
     const moonData = MoonExpansion.moonData(game);
     game.phase = Phase.ACTION;

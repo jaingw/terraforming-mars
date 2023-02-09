@@ -1,19 +1,21 @@
 import {expect} from 'chai';
 import {cast} from '../../TestingUtils';
-import {ImpactorSwarm} from '../../../src/cards/colonies/ImpactorSwarm';
-import {Game} from '../../../src/Game';
-import {OrOptions} from '../../../src/inputs/OrOptions';
-import {Player} from '../../../src/Player';
-import {TestPlayers} from '../../TestPlayers';
+import {ImpactorSwarm} from '../../../src/server/cards/colonies/ImpactorSwarm';
+import {Game} from '../../../src/server/Game';
+import {OrOptions} from '../../../src/server/inputs/OrOptions';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('ImpactorSwarm', function() {
-  let card : ImpactorSwarm; let player : Player; let player2 : Player; let game : Game;
+  let card: ImpactorSwarm;
+  let player: TestPlayer;
+  let player2: TestPlayer;
+  let game: Game;
 
   beforeEach(function() {
     card = new ImpactorSwarm();
-    player = TestPlayers.BLUE.newPlayer();
-    player2 = TestPlayers.RED.newPlayer();
-    game = Game.newInstance('foobar', [player, player2], player);
+    player = TestPlayer.BLUE.newPlayer();
+    player2 = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, player2], player);
   });
 
   it('Should play when no other player has plants', function() {

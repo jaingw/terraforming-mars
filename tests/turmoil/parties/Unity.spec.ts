@@ -1,23 +1,24 @@
 import {expect} from 'chai';
-import {Player} from '../../../src/Player';
-import {Game} from '../../../src/Game';
-import {Turmoil} from '../../../src/turmoil/Turmoil';
-import {cast, setCustomGameOptions, setRulingPartyAndRulingPolicy} from '../../TestingUtils';
-import {TestPlayers} from '../../TestPlayers';
-import {Unity, UNITY_BONUS_1, UNITY_BONUS_2, UNITY_POLICY_2, UNITY_POLICY_3} from '../../../src/turmoil/parties/Unity';
-import {SisterPlanetSupport} from '../../../src/cards/venusNext/SisterPlanetSupport';
-import {VestaShipyard} from '../../../src/cards/base/VestaShipyard';
-import {LocalShading} from '../../../src/cards/venusNext/LocalShading';
-import {OrOptions} from '../../../src/inputs/OrOptions';
-import {Tags} from '../../../src/common/cards/Tags';
+import {Game} from '../../../src/server/Game';
+import {Turmoil} from '../../../src/server/turmoil/Turmoil';
+import {cast, testGameOptions, setRulingPartyAndRulingPolicy} from '../../TestingUtils';
+import {TestPlayer} from '../../TestPlayer';
+import {Unity, UNITY_BONUS_1, UNITY_BONUS_2, UNITY_POLICY_2, UNITY_POLICY_3} from '../../../src/server/turmoil/parties/Unity';
+import {SisterPlanetSupport} from '../../../src/server/cards/venusNext/SisterPlanetSupport';
+import {VestaShipyard} from '../../../src/server/cards/base/VestaShipyard';
+import {LocalShading} from '../../../src/server/cards/venusNext/LocalShading';
+import {OrOptions} from '../../../src/server/inputs/OrOptions';
+import {Tag} from '../../../src/common/cards/Tag';
 
 describe('Unity', function() {
-  let player : Player; let game : Game; let turmoil: Turmoil; let unity: Unity;
+  let player: TestPlayer;
+  let game: Game;
+  let turmoil: Turmoil;
+  let unity: Unity;
 
   beforeEach(function() {
-    player = TestPlayers.BLUE.newPlayer();
-    const gameOptions = setCustomGameOptions();
-    game = Game.newInstance('foobar', [player], player, gameOptions);
+    player = TestPlayer.BLUE.newPlayer();
+    game = Game.newInstance('gameid', [player], player, testGameOptions({turmoilExtension: true}));
     turmoil = game.turmoil!;
     unity = new Unity();
   });
@@ -79,7 +80,7 @@ describe('Unity', function() {
 
     expect(player.cardsInHand).has.lengthOf(1);
     expect(player.megaCredits).to.eq(3);
-    expect(player.cardsInHand[0].tags.includes(Tags.SPACE)).to.be.true;
+    expect(player.cardsInHand[0].tags.includes(Tag.SPACE)).to.be.true;
     expect(unityPolicy.canAct(player)).to.be.false;
   });
 

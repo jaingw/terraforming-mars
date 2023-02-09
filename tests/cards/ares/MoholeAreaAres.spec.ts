@@ -1,21 +1,23 @@
 import {expect} from 'chai';
-import {Game} from '../../../src/Game';
-import {SelectSpace} from '../../../src/inputs/SelectSpace';
+import {Game} from '../../../src/server/Game';
+import {SelectSpace} from '../../../src/server/inputs/SelectSpace';
 import {TileType} from '../../../src/common/TileType';
-import {MoholeAreaAres} from '../../../src/cards/ares/MoholeAreaAres';
+import {MoholeAreaAres} from '../../../src/server/cards/ares/MoholeAreaAres';
 import {SpaceBonus} from '../../../src/common/boards/SpaceBonus';
 import {ARES_OPTIONS_NO_HAZARDS} from '../../ares/AresTestHelper';
-import {TestPlayers} from '../../TestPlayers';
-import {cast} from '../../TestingUtils';
+import {TestPlayer} from '../../TestPlayer';
+import {cast, runAllActions} from '../../TestingUtils';
 
 describe('MoholeAreaAres', function() {
   it('Should play', function() {
     const card = new MoholeAreaAres();
-    const player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
+    const player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
 
-    Game.newInstance('foobar', [player, redPlayer], player, ARES_OPTIONS_NO_HAZARDS);
-    const action = cast(card.play(player), SelectSpace);
+    const game = Game.newInstance('gameid', [player, redPlayer], player, ARES_OPTIONS_NO_HAZARDS);
+    card.play(player);
+    runAllActions(game);
+    const action = cast(player.popWaitingFor(), SelectSpace);
     const space = action.availableSpaces[0];
     action.cb(space);
 

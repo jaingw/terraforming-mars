@@ -1,13 +1,10 @@
-import {Game} from '../../../src/Game';
-import {MarsDirect} from '../../../src/cards/pathfinders/MarsDirect';
+import {Game} from '../../../src/server/Game';
+import {MarsDirect} from '../../../src/server/cards/pathfinders/MarsDirect';
 import {expect} from 'chai';
 import {TestPlayer} from '../../TestPlayer';
-import {TestPlayers} from '../../TestPlayers';
-import {PowerPlant} from '../../../src/cards/pathfinders/PowerPlant';
-import {ControlledBloom} from '../../../src/cards/pathfinders/ControlledBloom';
+import {PowerPlant} from '../../../src/server/cards/pathfinders/PowerPlant';
+import {ControlledBloom} from '../../../src/server/cards/pathfinders/ControlledBloom';
 import {addOcean} from '../../TestingUtils';
-import {PATHFINDERS_CARD_MANIFEST} from '../../../src/cards/pathfinders/PathfindersCardManifest';
-import {Tags} from '../../../src/common/cards/Tags';
 
 describe('MarsDirect', () => {
   let player: TestPlayer;
@@ -15,9 +12,9 @@ describe('MarsDirect', () => {
   let card: MarsDirect;
 
   beforeEach(() => {
-    player = TestPlayers.BLUE.newPlayer();
-    player2 = TestPlayers.RED.newPlayer();
-    Game.newInstance('id', [player, player2], player);
+    player = TestPlayer.BLUE.newPlayer();
+    player2 = TestPlayer.RED.newPlayer();
+    Game.newInstance('gameid', [player, player2], player);
     card = new MarsDirect();
   });
 
@@ -33,7 +30,7 @@ describe('MarsDirect', () => {
     addOcean(player2);
 
     player.cardsInHand = [powerPlant, controlledBloom];
-    player.corpCard = card;
+    player.setCorporationForTest(card);
 
     player.tagsForTest = {mars: 0};
     player.megaCredits = 13;
@@ -54,17 +51,6 @@ describe('MarsDirect', () => {
     player.tagsForTest = {mars: 2};
     player.megaCredits = 11;
     expect(player.getPlayableCards()).has.members([powerPlant]);
-  });
-
-  it('verify buff is lined up with game state', () => {
-    let count = 0;
-    PATHFINDERS_CARD_MANIFEST.projectCards.factories.forEach((factory) => {
-      if (new factory.Factory().tags.includes(Tags.MARS)) {
-        count++;
-      }
-    });
-    // When this fails, reduce starting MC by 1.5MC per fail.
-    expect(count).eq(32);
   });
 });
 

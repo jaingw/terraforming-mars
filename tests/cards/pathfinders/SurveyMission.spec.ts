@@ -1,15 +1,15 @@
 import {expect} from 'chai';
 import {getTestPlayer, newTestGame} from '../../TestGame';
-import {SurveyMission} from '../../../src/cards/pathfinders/SurveyMission';
-import {Game} from '../../../src/Game';
+import {SurveyMission} from '../../../src/server/cards/pathfinders/SurveyMission';
+import {Game} from '../../../src/server/Game';
 import {TestPlayer} from '../../TestPlayer';
 import {cast, runAllActions} from '../../TestingUtils';
 import {EmptyBoard} from '../../ares/EmptyBoard';
 import {SpaceType} from '../../../src/common/boards/SpaceType';
 import {TileType} from '../../../src/common/TileType';
-import {ISpace} from '../../../src/boards/ISpace';
-import {SelectSpace} from '../../../src/inputs/SelectSpace';
-import {MiningGuild} from '../../../src/cards/corporation/MiningGuild';
+import {ISpace} from '../../../src/server/boards/ISpace';
+import {SelectSpace} from '../../../src/server/inputs/SelectSpace';
+import {MiningGuild} from '../../../src/server/cards/corporation/MiningGuild';
 import {SpaceBonus} from '../../../src/common/boards/SpaceBonus';
 import {Units} from '../../../src/common/Units';
 
@@ -57,7 +57,7 @@ describe('SurveyMission', () => {
   });
 
   it('Play', () => {
-    const selectSpace = card.play(player);
+    const selectSpace = cast(card.play(player), SelectSpace);
 
     // Available triplets are
     // 4, 5, 10
@@ -89,7 +89,7 @@ describe('SurveyMission', () => {
     expect(player.heat).eq(0);
     expect(player.plants).eq(0);
 
-    const selectSpace = card.play(player);
+    const selectSpace = cast(card.play(player), SelectSpace);
     const space = board.getSpace('04');
     space.bonus = [SpaceBonus.HEAT, SpaceBonus.PLANT];
     selectSpace.cb(space);
@@ -99,12 +99,12 @@ describe('SurveyMission', () => {
   });
 
   it('Compatible with Mining Guild', () => {
-    player.corpCard = new MiningGuild();
-    const selectSpace = card.play(player);
+    player.setCorporationForTest(new MiningGuild());
+    const selectSpace = cast(card.play(player), SelectSpace);
 
     expect(player.steel).eq(5); // Comes from playing the Prelude
     expect(player.plants).eq(0);
-    expect(player.getProductionForTest()).deep.eq(Units.EMPTY);
+    expect(player.production.asUnits()).deep.eq(Units.EMPTY);
 
     const space = board.getSpace('04');
     space.bonus = [SpaceBonus.STEEL, SpaceBonus.PLANT];
@@ -113,7 +113,7 @@ describe('SurveyMission', () => {
 
     expect(player.steel).eq(6);
     expect(player.plants).eq(1);
-    expect(player.getProductionForTest()).deep.eq(Units.of({steel: 1}));
+    expect(player.production.asUnits()).deep.eq(Units.of({steel: 1}));
   });
   // TODO Hazards are playable, but you won't get anything.
   // TODO Arcadian communities should not interfere with Survey Mission.

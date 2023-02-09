@@ -1,20 +1,20 @@
 import {expect} from 'chai';
-import {VeneraBase} from '../../../src/cards/pathfinders/VeneraBase';
-import {Game} from '../../../src/Game';
+import {VeneraBase} from '../../../src/server/cards/pathfinders/VeneraBase';
+import {Game} from '../../../src/server/Game';
 import {TestPlayer} from '../../TestPlayer';
 import {TileType} from '../../../src/common/TileType';
 import {getTestPlayer, newTestGame} from '../../TestGame';
-import {Greens} from '../../../src/turmoil/parties/Greens';
-import {Unity} from '../../../src/turmoil/parties/Unity';
+import {Greens} from '../../../src/server/turmoil/parties/Greens';
+import {Unity} from '../../../src/server/turmoil/parties/Unity';
 import {Units} from '../../../src/common/Units';
-import {SpaceName} from '../../../src/SpaceName';
-import {IProjectCard} from '../../../src/cards/IProjectCard';
-import {TitanShuttles} from '../../../src/cards/colonies/TitanShuttles';
-import {FloatingHabs} from '../../../src/cards/venusNext/FloatingHabs';
-import {Stratopolis} from '../../../src/cards/venusNext/Stratopolis';
-import {MartianCulture} from '../../../src/cards/pathfinders/MartianCulture';
-import {SelectCard} from '../../../src/inputs/SelectCard';
-import {TurmoilUtil} from '../../../src/turmoil/TurmoilUtil';
+import {SpaceName} from '../../../src/server/SpaceName';
+import {IProjectCard} from '../../../src/server/cards/IProjectCard';
+import {TitanShuttles} from '../../../src/server/cards/colonies/TitanShuttles';
+import {FloatingHabs} from '../../../src/server/cards/venusNext/FloatingHabs';
+import {Stratopolis} from '../../../src/server/cards/venusNext/Stratopolis';
+import {MartianCulture} from '../../../src/server/cards/pathfinders/MartianCulture';
+import {SelectCard} from '../../../src/server/inputs/SelectCard';
+import {TurmoilUtil} from '../../../src/server/turmoil/TurmoilUtil';
 import {cast} from '../../TestingUtils';
 
 describe('VeneraBase', function() {
@@ -47,14 +47,14 @@ describe('VeneraBase', function() {
   });
 
   it('play', function() {
-    expect(player.getProductionForTest()).deep.eq(Units.EMPTY);
+    expect(player.production.asUnits()).deep.eq(Units.EMPTY);
     const space = game.board.getSpace(SpaceName.VENERA_BASE);
     expect(space.tile).is.undefined;
     expect(space.player).is.undefined;
 
     card.play(player);
 
-    expect(player.getProductionForTest()).deep.eq(Units.of({megacredits: 3}));
+    expect(player.production.asUnits()).deep.eq(Units.of({megacredits: 3}));
     expect(space.tile?.tileType).eq(TileType.CITY);
     expect(space.player?.id).eq(player.id);
   });

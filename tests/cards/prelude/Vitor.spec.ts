@@ -1,23 +1,24 @@
 import {expect} from 'chai';
-import {Ants} from '../../../src/cards/base/Ants';
-import {LavaFlows} from '../../../src/cards/base/LavaFlows';
-import {DustSeals} from '../../../src/cards/base/DustSeals';
-import {Vitor} from '../../../src/cards/prelude/Vitor';
-import {AncientShipyards} from '../../../src/cards/moon/AncientShipyards';
-import {Game} from '../../../src/Game';
-import {OrOptions} from '../../../src/inputs/OrOptions';
-import {Player} from '../../../src/Player';
-import {TestPlayers} from '../../TestPlayers';
+import {Ants} from '../../../src/server/cards/base/Ants';
+import {LavaFlows} from '../../../src/server/cards/base/LavaFlows';
+import {DustSeals} from '../../../src/server/cards/base/DustSeals';
+import {Vitor} from '../../../src/server/cards/prelude/Vitor';
+import {AncientShipyards} from '../../../src/server/cards/moon/AncientShipyards';
+import {Game} from '../../../src/server/Game';
+import {OrOptions} from '../../../src/server/inputs/OrOptions';
+import {TestPlayer} from '../../TestPlayer';
 import {cast} from '../../TestingUtils';
 
 describe('Vitor', function() {
-  let card : Vitor; let player : Player; let game : Game;
+  let card: Vitor;
+  let player: TestPlayer;
+  let game: Game;
 
   beforeEach(function() {
     card = new Vitor();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    game = Game.newInstance('foobar', [player, redPlayer], player);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, redPlayer], player);
   });
 
   it('Should play', function() {
@@ -33,13 +34,13 @@ describe('Vitor', function() {
   });
 
   it('No initial action for solo games', function() {
-    Game.newInstance('foobar', [player], player);
-    const action = card.initialAction(player);
+    Game.newInstance('gameid', [player], player);
+    const action = player.runInitialAction(card);
     expect(action).is.undefined;
   });
 
   it('Give megacredits when card played', function() {
-    player.corpCard = card;
+    player.setCorporationForTest(card);
 
     // Dust Seals has victory points
     card.onCardPlayed(player, new DustSeals());

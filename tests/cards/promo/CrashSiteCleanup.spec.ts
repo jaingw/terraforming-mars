@@ -1,29 +1,29 @@
 import {expect} from 'chai';
 import {cast} from '../../TestingUtils';
-import {CrashSiteCleanup} from '../../../src/cards/promo/CrashSiteCleanup';
-import {SmallAsteroid} from '../../../src/cards/promo/SmallAsteroid';
-import {Game} from '../../../src/Game';
-import {OrOptions} from '../../../src/inputs/OrOptions';
-import {Player} from '../../../src/Player';
-import {TestPlayers} from '../../TestPlayers';
+import {CrashSiteCleanup} from '../../../src/server/cards/promo/CrashSiteCleanup';
+import {SmallAsteroid} from '../../../src/server/cards/promo/SmallAsteroid';
+import {Game} from '../../../src/server/Game';
+import {OrOptions} from '../../../src/server/inputs/OrOptions';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('CrashSiteCleanup', function() {
-  let card : CrashSiteCleanup; let player : Player;
+  let card: CrashSiteCleanup;
+  let player: TestPlayer;
 
   beforeEach(function() {
     card = new CrashSiteCleanup();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    Game.newInstance('foobar', [player, redPlayer], player);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    Game.newInstance('gameid', [player, redPlayer], player);
   });
 
-  it('Can\'t play', function() {
+  it('Can not play', function() {
     expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
 
   it('Can play if removed plants from another player this generation', function() {
-    const player2 = TestPlayers.RED.newPlayer();
-    Game.newInstance('foobar', [player, player2], player);
+    const player2 = TestPlayer.RED.newPlayer();
+    Game.newInstance('gameid', [player, player2], player);
     player2.plants = 1;
 
     const smallAsteroid = new SmallAsteroid();
@@ -43,7 +43,7 @@ describe('CrashSiteCleanup', function() {
   });
 
   it('Can play if removed plants from neutral player in solo mode', function() {
-    Game.newInstance('foobar', [player], player);
+    Game.newInstance('gameid', [player], player);
     const smallAsteroid = new SmallAsteroid();
     smallAsteroid.play(player);
 

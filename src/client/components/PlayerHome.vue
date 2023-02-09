@@ -1,10 +1,9 @@
 <template>
   <div id="player-home" :class="(game.turmoil ? 'with-turmoil': '')">
-        <confirm-dialog message="开启后其他玩家可以通过你的游戏链接查看你的手牌，但不能帮你操作" ref="showHand"  />
-            <h2 :class="'game-title player_color_'+ playerView.color">
-                <a :href="'/game?id='+ playerView.gameId" v-i18n>Terraforming Mars</a>
-                <a :href="'mygames'" v-if="userName">- {{userName}}</a>
-            </h2>
+      <h2 :class="'game-title player_color_'+ thisPlayer.color">
+          <a :href="'/game?id='+ playerView.gameId" v-i18n>Terraforming Mars</a>
+          <a :href="'mygames'" v-if="userName">- {{userName}}</a>
+      </h2>
       <top-bar :playerView="playerView" />
 
       <div v-if="game.phase === 'end'">
@@ -32,8 +31,7 @@
           <div class="deck-size">{{ game.deckSize }}</div>
       </sidebar>
 
-      <div v-if="thisPlayer.corporationCard">
-
+      <div v-if="thisPlayer.tableau.length > 0">
           <div class="player_home_block">
               <a name="board" class="player_home_anchor"></a>
               <board
@@ -46,21 +44,22 @@
                 :temperature="game.temperature"
                 :aresExtension="game.gameOptions.aresExtension"
                 :pathfindersExpansion="game.gameOptions.pathfindersExpansion"
+                :erosCardsOption="game.gameOptions.erosCardsOption"
                 :altVenusBoard="game.gameOptions.altVenusBoard"
                 :aresData="game.aresData"
-                :hideTiles="hideTiles"
-                @toggleHideTiles="hideTiles = !hideTiles"
+                :tileView="tileView"
+                @toggleTileView="cycleTileView()"
                 id="shortkey-board"
               />
 
               <turmoil v-if="game.turmoil" :turmoil="game.turmoil"/>
 
-              <MoonBoard v-if="game.gameOptions.moonExpansion" :model="game.moon" :hideTiles="hideTiles"/>
+              <MoonBoard v-if="game.gameOptions.moonExpansion" :model="game.moon" :tileView="tileView" id="shortkey-moonBoard"/>
 
               <PlanetaryTracks v-if="game.gameOptions.pathfindersExpansion" :tracks="game.pathfinders" :gameOptions="game.gameOptions"/>
 
               <div v-if="playerView.players.length > 1" class="player_home_block--milestones-and-awards">
-                  <Milestone :milestones_list="game.milestones" />
+                  <Milestones :milestones_list="game.milestones" />
                   <Awards :awards="game.awards" show-scores/>
               </div>
           </div>
@@ -80,15 +79,7 @@
           <div class="player_home_block player_home_block--actions nofloat">
               <a name="actions" class="player_home_anchor"></a>
               <dynamic-title title="Actions" :color="thisPlayer.color"/>
-                    <label class="form-switch" style="margin-left: 20px;display: inline-block;">
-                        <input type="checkbox" name="soundtip" v-model="soundtip" v-on:change="updateTips" >
-                        <i class="form-icon"></i> <span v-i18n>Soundtip</span>
-                    </label>
-                    <label v-if="playerView.isme" class="form-switch" style="margin-left: 20px;display: inline-block;">
-                        <input type="checkbox" name="showhandcards" v-model="showhandcards" v-on:change="updateShowHandCards" >
-                        <i class="form-icon"></i> <span v-i18n>Show cards in hand to others</span>
-                    </label>
-                    <label v-if="!playerView.isme && !playerView.block" class="form-switch" style="display: inline-block;">
+                    <label v-if="!playerView.isme && !playerView.block && userId" class="form-switch" style="display: inline-block;">
                         <button id="sitdown" class="played-cards-button btn btn-tiny"  v-on:click="sitDown()"><span v-i18n>Sit down</span></button>
                     </label>
               <waiting-for v-if="game.phase !== 'end'" :players="playerView.players" :playerView="playerView" :settings="settings" :waitingfor="playerView.waitingFor"></waiting-for>
@@ -112,40 +103,37 @@
                   <dynamic-title title="Played Cards" :color="thisPlayer.color" />
                   <div class="played-cards-filters">
                     <div :class="getHideButtonClass('ACTIVE')" v-on:click.prevent="toggle('ACTIVE')">
-                      <div class="played-cards-count">{{getCardsByType(thisPlayer.playedCards, [getActiveCardType()]).length.toString()}}</div>
+                      <div class="played-cards-count">{{getCardsByType(thisPlayer.tableau, [CardType.ACTIVE]).length.toString()}}</div>
                       <div class="played-cards-selection" v-i18n>{{ getToggleLabel('ACTIVE')}}</div>
                     </div>
                     <div :class="getHideButtonClass('AUTOMATED')" v-on:click.prevent="toggle('AUTOMATED')">
-                      <div class="played-cards-count">{{getCardsByType(thisPlayer.playedCards, [getAutomatedCardType(), getPreludeCardType()]).length.toString()}}</div>
+                      <div class="played-cards-count">{{getCardsByType(thisPlayer.tableau, [CardType.AUTOMATED, CardType.PRELUDE]).length.toString()}}</div>
                       <div class="played-cards-selection" v-i18n>{{ getToggleLabel('AUTOMATED')}}</div>
                     </div>
                     <div :class="getHideButtonClass('EVENT')" v-on:click.prevent="toggle('EVENT')">
-                      <div class="played-cards-count">{{getCardsByType(thisPlayer.playedCards, [getEventCardType()]).length.toString()}}</div>
+                      <div class="played-cards-count">{{getCardsByType(thisPlayer.tableau, [CardType.EVENT]).length.toString()}}</div>
                       <div class="played-cards-selection" v-i18n>{{ getToggleLabel('EVENT')}}</div>
                     </div>
                   </div>
                   <div class="text-overview" v-i18n>[ toggle cards filters ]</div>
               </div>
-              <div v-if="thisPlayer.corporationCard !== undefined" class="cardbox">
-                  <Card :card="thisPlayer.corporationCard" :actionUsed="isCardActivated(thisPlayer.corporationCard, thisPlayer)"/>
-                    </div>
-                    <div v-if="thisPlayer.corporationCard2 !== undefined" class="cardbox">
-                        <Card :card="thisPlayer.corporationCard2" :actionUsed="isCardActivated(thisPlayer.corporationCard2, thisPlayer)"/>
+              <div v-for="card in getCardsByType(thisPlayer.tableau, [CardType.CORPORATION])" :key="card.name" class="cardbox">
+                  <Card :card="card" :actionUsed="isCardActivated(card, thisPlayer)"/>
               </div>
-              <div v-show="isVisible('ACTIVE')" v-for="card in sortActiveCards(getCardsByType(thisPlayer.playedCards, [getActiveCardType()]))" :key="card.name" class="cardbox">
+              <div v-show="isVisible('ACTIVE')" v-for="card in sortActiveCards(getCardsByType(thisPlayer.tableau, [CardType.ACTIVE]))" :key="card.name" class="cardbox">
                   <Card :card="card" :actionUsed="isCardActivated(card, thisPlayer)"/>
               </div>
 
-              <stacked-cards v-show="isVisible('AUTOMATED')" :cards="getCardsByType(thisPlayer.playedCards, [getAutomatedCardType(), getPreludeCardType()])" ></stacked-cards>
+              <stacked-cards v-show="isVisible('AUTOMATED')" :cards="getCardsByType(thisPlayer.tableau, [CardType.AUTOMATED, CardType.PRELUDE])" ></stacked-cards>
 
-              <stacked-cards v-show="isVisible('EVENT')" :cards="getCardsByType(thisPlayer.playedCards, [getEventCardType()])" ></stacked-cards>
+              <stacked-cards v-show="isVisible('EVENT')" :cards="getCardsByType(thisPlayer.tableau, [CardType.EVENT])" ></stacked-cards>
 
           </div>
 
           <div v-if="thisPlayer.selfReplicatingRobotsCards.length > 0" class="player_home_block">
               <dynamic-title title="Self-Replicating Robots cards" :color="thisPlayer.color"/>
               <div>
-                  <div v-for="card in getCardsByType(thisPlayer.selfReplicatingRobotsCards, [getActiveCardType()])" :key="card.name" class="cardbox">
+                  <div v-for="card in getCardsByType(thisPlayer.selfReplicatingRobotsCards, [CardType.ACTIVE])" :key="card.name" class="cardbox">
                       <Card :card="card"/>
                   </div>
               </div>
@@ -153,7 +141,32 @@
 
       </div>
 
-      <div class="player_home_block player_home_block--setup nofloat"  v-if="!thisPlayer.corporationCard">
+      <div class="player_home_block player_home_block--setup nofloat"  v-if="thisPlayer.tableau.length === 0">
+          <template v-if="isCorporationDraftingPhase()">
+            <div>
+              <dynamic-title title="Corporations To Draft" :color="thisPlayer.color"/>
+              <div v-for="card in game.corporationsToDraft" :key="card.name" class="cardbox">
+                <Card :card="card"/>
+              </div>
+            </div>
+            <br/>
+            <br/>
+            <div>
+              <dynamic-title title="Your Picked Corporations" :color="thisPlayer.color"/>
+              <div v-for="card in playerView.draftedCorporations" :key="card.name" class="cardbox">
+                <Card :card="card"/>
+              </div>
+            </div>
+            <div>
+              <dynamic-title title="Your cards" :color="thisPlayer.color" v-if="isCorporationDraftingPhase()"/>
+              <div v-for="card in playerView.dealtPreludeCards" :key="card.name" class="cardbox">
+                <Card :card="card"/>
+              </div>
+              <div v-for="card in playerView.dealtProjectCards" :key="card.name" class="cardbox">
+                <Card :card="card"/>
+              </div>
+            </div>
+          </template>
 
           <template v-if="isInitialDraftingPhase()">
             <div v-for="card in playerView.dealtCorporationCards" :key="card.name" class="cardbox">
@@ -203,7 +216,7 @@
           <dynamic-title title="Game details" :color="thisPlayer.color"/>
 
           <div class="player_home_block" v-if="playerView.players.length > 1">
-              <Milestone :show_scores="false" :milestones_list="game.milestones" />
+              <Milestones :show_scores="false" :milestones_list="game.milestones" />
               <Awards :awards="game.awards" />
           </div>
           <div class="player_home_block player_home_block--turnorder nofloat" v-if="playerView.players.length>1">
@@ -237,7 +250,8 @@
 
                   <turmoil v-if="game.turmoil" :turmoil="game.turmoil"></turmoil>
 
-                  <MoonBoard v-if="game.gameOptions.moonExpansion" :model="game.moon"></MoonBoard>
+                  <a name="moonBoard" class="player_home_anchor"></a>
+                  <MoonBoard v-if="game.gameOptions.moonExpansion" :model="game.moon" :tileView="tileView"></MoonBoard>
 
               </div>
           </details>
@@ -246,7 +260,7 @@
       <div v-if="game.colonies.length > 0" class="player_home_block" ref="colonies" id="shortkey-colonies">
           <a name="colonies" class="player_home_anchor"></a>
           <dynamic-title title="Colonies" :color="thisPlayer.color"/>
-          <div class="colonies-fleets-cont" v-if="thisPlayer.corporationCard">
+          <div class="colonies-fleets-cont">
               <div class="colonies-player-fleets" v-for="colonyPlayer in playerView.players" :key="colonyPlayer.color">
                   <div :class="'colonies-fleet colonies-fleet-'+ colonyPlayer.color" v-for="idx in getFleetsCountRange(colonyPlayer)" :key="idx"></div>
               </div>
@@ -266,7 +280,7 @@ import axios from 'axios';
 
 import Board from '@/client/components/Board.vue';
 import Card from '@/client/components/card/Card.vue';
-import Milestone from '@/client/components/Milestone.vue';
+import Milestones from '@/client/components/Milestones.vue';
 import Awards from '@/client/components/Awards.vue';
 import PlayersOverview from '@/client/components/overview/PlayersOverview.vue';
 import WaitingFor from '@/client/components/WaitingFor.vue';
@@ -287,18 +301,17 @@ import {Phase} from '@/common/Phase';
 import StackedCards from '@/client/components/StackedCards.vue';
 import {GameModel} from '@/common/models/GameModel';
 import {PlayerViewModel, PublicPlayerModel} from '@/common/models/PlayerModel';
+import {CardType} from '@/common/cards/CardType';
+import {nextTileView, TileView} from './board/TileView';
 
 import * as raw_settings from '@/genfiles/settings.json';
-import ConfirmDialog from './common/ConfirmDialog.vue';
 
 export interface PlayerHomeModel {
   showActiveCards: boolean;
   showAutomatedCards: boolean;
   showEventCards: boolean;
-  hideTiles: boolean;
+  tileView: TileView;
   userId: string;
-  soundtip: boolean ;
-  showhandcards: boolean ;
   userName: string;
 }
 
@@ -314,10 +327,8 @@ export default Vue.extend({
       showActiveCards: !preferences.hide_active_cards,
       showAutomatedCards: !preferences.hide_automated_cards,
       showEventCards: !preferences.hide_event_cards,
-      hideTiles: false,
+      tileView: 'show',
       userId: PreferencesManager.load('userId'),
-      soundtip: false,
-      showhandcards: false,
       userName: '',
     };
   },
@@ -347,14 +358,18 @@ export default Vue.extend({
     game(): GameModel {
       return this.playerView.game;
     },
+    CardType(): typeof CardType {
+      return CardType;
+    },
   },
+
   components: {
     'board': Board,
     DynamicTitle,
     Card,
     'players-overview': PlayersOverview,
     'waiting-for': WaitingFor,
-    Milestone,
+    Milestones,
     Awards,
     'sidebar': Sidebar,
     'colony': Colony,
@@ -364,7 +379,6 @@ export default Vue.extend({
     'top-bar': TopBar,
     MoonBoard,
     PlanetaryTracks,
-    'confirm-dialog': ConfirmDialog,
     'stacked-cards': StackedCards,
   },
   mixins: [PlayerMixin],
@@ -373,24 +387,24 @@ export default Vue.extend({
     navigatePage(event: KeyboardEvent) {
       const inputSource = event.target as Element;
       if (inputSource.nodeName.toLowerCase() !== 'input') {
-        let idSuffix: string | undefined = undefined;
+        let id: string | undefined = undefined;
         switch (event.code) {
         case KeyboardNavigation.GAMEBOARD:
-          idSuffix = 'board';
+          id = 'shortkey-board';
           break;
         case KeyboardNavigation.PLAYERSOVERVIEW:
-          idSuffix = 'playersoverview';
+          id = 'shortkey-playersoverview';
           break;
         case KeyboardNavigation.HAND:
-          idSuffix = 'hand';
+          id = 'shortkey-hand';
           break;
         case KeyboardNavigation.COLONIES:
-          idSuffix = 'colonies';
+          id = 'shortkey-colonies';
           break;
         default:
           return;
         }
-        const el = document.getElementById('shortkey-' + idSuffix);
+        const el = document.getElementById(id);
         if (el) {
           event.preventDefault();
           el.scrollIntoView({block: 'center', inline: 'center', behavior: 'auto'});
@@ -428,30 +442,9 @@ export default Vue.extend({
       }
       return fleetsRange;
     },
-    updateTips: function() {
-      PreferencesManager.INSTANCE.set('enable_sounds', this.soundtip );
-    },
-    updateShowHandCards: function() {
-      const userId = PreferencesManager.load('userId');
-      if ( userId === undefined) {
-        return;
-      }
-      const $this =this;
-      axios.post('/api/showHand', {
-        userId: userId,
-        showhandcards: this.showhandcards,
-      }).then(function(response) {
-        if ($this.showhandcards) {
-          ($this.$refs['showHand'] as any).show();
-        }
-        console.log(response);
-      }).catch(function(error) {
-        alert(error);
-      });
-    },
     sitDown: function() {
       const userId = PreferencesManager.load('userId');
-      if ( userId === undefined) {
+      if ( userId === undefined || userId === '') {
         return;
       }
       axios.post('/api/sitDown', {
@@ -462,7 +455,7 @@ export default Vue.extend({
         if (response.data !== 'success' && response.data?.length > 0) {
           alert(response.data);
         } else {
-          window.location=window.location;
+          window.location.href = window.location.href + '';
         }
       }, function(error) {
         alert(error);
@@ -483,6 +476,9 @@ export default Vue.extend({
         break;
       }
     },
+    cycleTileView(): void {
+      this.tileView = nextTileView(this.tileView);
+    },
     isVisible(type: string): boolean {
       switch (type) {
       case 'ACTIVE':
@@ -496,6 +492,9 @@ export default Vue.extend({
     },
     isInitialDraftingPhase(): boolean {
       return (this.game.phase === Phase.INITIALDRAFTING) && this.game.gameOptions.initialDraftVariant;
+    },
+    isCorporationDraftingPhase(): boolean { // false forever
+      return (this.game.phase === Phase.CORPORATIONDRAFTING) && this.game.gameOptions.initialCorpDraftVariant;
     },
     getToggleLabel(hideType: string): string {
       if (hideType === 'ACTIVE') {
@@ -521,20 +520,14 @@ export default Vue.extend({
       }
     },
   },
-  created() {
-    if (window.localStorage) {
-      this.soundtip = getPreferences().enable_sounds;
-      this.userName = PreferencesManager.load('userName');
-    }
-    this.showhandcards = this.playerView.showhandcards;
-  },
   destroyed() {
     window.removeEventListener('keydown', this.navigatePage);
   },
   mounted() {
     window.addEventListener('keydown', this.navigatePage);
+    this.userName = PreferencesManager.load('userName');
     if (this.game.isTerraformed && TerraformedAlertDialog.shouldAlert && getPreferences().show_alerts) {
-      alert('Mars is Terraformed!');
+      // alert('Mars is Terraformed!');
       // Avoids repeated calls.
       TerraformedAlertDialog.shouldAlert = false;
     }

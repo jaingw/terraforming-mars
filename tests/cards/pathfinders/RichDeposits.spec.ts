@@ -1,8 +1,7 @@
 import {expect} from 'chai';
-import {RichDeposits} from '../../../src/cards/pathfinders/RichDeposits';
-import {Game} from '../../../src/Game';
+import {RichDeposits} from '../../../src/server/cards/pathfinders/RichDeposits';
+import {Game} from '../../../src/server/Game';
 import {TestPlayer} from '../../TestPlayer';
-import {TestPlayers} from '../../TestPlayers';
 
 describe('RichDeposits', function() {
   let card: RichDeposits;
@@ -10,8 +9,8 @@ describe('RichDeposits', function() {
 
   beforeEach(function() {
     card = new RichDeposits();
-    player = TestPlayers.BLUE.newPlayer();
-    Game.newInstance('foobar', [player], player);
+    player = TestPlayer.BLUE.newPlayer();
+    Game.newInstance('gameid', [player], player);
   });
   it('canPlay', function() {
     player.megaCredits = card.cost;
@@ -23,8 +22,8 @@ describe('RichDeposits', function() {
   });
 
   it('play', function() {
-    expect(player.getProductionForTest().steel).eq(0);
+    expect(player.production.asUnits().steel).eq(0);
     card.play(player);
-    expect(player.getProductionForTest().steel).eq(3);
+    expect(player.production.asUnits().steel).eq(3);
   });
 });

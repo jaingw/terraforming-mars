@@ -1,26 +1,26 @@
-import {Game} from '../../../src/Game';
-import {Player} from '../../../src/Player';
-import {setCustomGameOptions} from '../../TestingUtils';
-import {TestPlayers} from '../../TestPlayers';
-import {WeGrowAsOne} from '../../../src/cards/moon/WeGrowAsOne';
+import {Game} from '../../../src/server/Game';
+import {testGameOptions} from '../../TestingUtils';
+import {TestPlayer} from '../../TestPlayer';
+import {WeGrowAsOne} from '../../../src/server/cards/moon/WeGrowAsOne';
 import {expect} from 'chai';
-import {Unity} from '../../../src/turmoil/parties/Unity';
-import {Greens} from '../../../src/turmoil/parties/Greens';
+import {Unity} from '../../../src/server/turmoil/parties/Unity';
+import {Greens} from '../../../src/server/turmoil/parties/Greens';
 
 describe('WeGrowAsOne', () => {
-  let player: Player;
+  let player: TestPlayer;
   let game: Game;
   let card: WeGrowAsOne;
 
   beforeEach(() => {
-    player = TestPlayers.BLUE.newPlayer();
+    player = TestPlayer.BLUE.newPlayer();
     game = Game.newInstance(
-      'id',
+      'gameid',
       [player],
       player,
-      setCustomGameOptions({
+      testGameOptions({
         moonExpansion: true,
         coloniesExtension: true,
+        turmoilExtension: true,
       }));
     card = new WeGrowAsOne();
   });

@@ -1,14 +1,10 @@
-import {Game} from '../../../src/Game';
-import {setCustomGameOptions} from '../../TestingUtils';
-import {TestPlayers} from '../../TestPlayers';
+import {Game} from '../../../src/server/Game';
+import {testGameOptions} from '../../TestingUtils';
 import {TestPlayer} from '../../TestPlayer';
-import {RoverDriversUnion} from '../../../src/cards/moon/RoverDriversUnion';
+import {RoverDriversUnion} from '../../../src/server/cards/moon/RoverDriversUnion';
 import {expect} from 'chai';
-import {MoonExpansion} from '../../../src/moon/MoonExpansion';
-import {IMoonData} from '../../../src/moon/IMoonData';
-import {Resources} from '../../../src/common/Resources';
-
-const MOON_OPTIONS = setCustomGameOptions({moonExpansion: true});
+import {MoonExpansion} from '../../../src/server/moon/MoonExpansion';
+import {IMoonData} from '../../../src/server/moon/IMoonData';
 
 describe('RoverDriversUnion', () => {
   let player: TestPlayer;
@@ -16,8 +12,8 @@ describe('RoverDriversUnion', () => {
   let moonData: IMoonData;
 
   beforeEach(() => {
-    player = TestPlayers.BLUE.newPlayer();
-    const game = Game.newInstance('id', [player], player, MOON_OPTIONS);
+    player = TestPlayer.BLUE.newPlayer();
+    const game = Game.newInstance('gameid', [player], player, testGameOptions({moonExpansion: true}));
     card = new RoverDriversUnion();
     moonData = MoonExpansion.moonData(game);
   });
@@ -36,21 +32,21 @@ describe('RoverDriversUnion', () => {
   it('play', () => {
     moonData.logisticRate = 2;
     expect(player.getTerraformRating()).eq(14);
-    player.setProductionForTest({megacredits: 0});
+    player.production.override({megacredits: 0});
 
     card.play(player);
 
     expect(moonData.logisticRate).eq(3);
     expect(player.getTerraformRating()).eq(15);
-    expect(player.getProduction(Resources.MEGACREDITS)).eq(3);
+    expect(player.production.megacredits).eq(3);
 
-    player.setProductionForTest({megacredits: 0});
+    player.production.override({megacredits: 0});
 
     card.play(player);
 
     expect(moonData.logisticRate).eq(4);
     expect(player.getTerraformRating()).eq(16);
-    expect(player.getProduction(Resources.MEGACREDITS)).eq(4);
+    expect(player.production.megacredits).eq(4);
   });
 });
 

@@ -1,20 +1,17 @@
-import {Game} from '../../../src/Game';
-import {Player} from '../../../src/Player';
-import {setCustomGameOptions} from '../../TestingUtils';
-import {TestPlayers} from '../../TestPlayers';
-import {NanotechIndustries} from '../../../src/cards/moon/NanotechIndustries';
+import {Game} from '../../../src/server/Game';
+import {cast, testGameOptions} from '../../TestingUtils';
+import {TestPlayer} from '../../TestPlayer';
+import {NanotechIndustries} from '../../../src/server/cards/moon/NanotechIndustries';
 import {expect} from 'chai';
-import {PhysicsComplex} from '../../../src/cards/base/PhysicsComplex';
-import {SearchForLife} from '../../../src/cards/base/SearchForLife';
-import {OlympusConference} from '../../../src/cards/base/OlympusConference';
-import {PrideoftheEarthArkship} from '../../../src/cards/moon/PrideoftheEarthArkship';
-import {SelectCard} from '../../../src/inputs/SelectCard';
-import {IProjectCard} from '../../../src/cards/IProjectCard';
-
-const MOON_OPTIONS = setCustomGameOptions({moonExpansion: true});
+import {PhysicsComplex} from '../../../src/server/cards/base/PhysicsComplex';
+import {SearchForLife} from '../../../src/server/cards/base/SearchForLife';
+import {OlympusConference} from '../../../src/server/cards/base/OlympusConference';
+import {PrideoftheEarthArkship} from '../../../src/server/cards/moon/PrideoftheEarthArkship';
+import {SelectCard} from '../../../src/server/inputs/SelectCard';
+import {IProjectCard} from '../../../src/server/cards/IProjectCard';
 
 describe('NanotechIndustries', () => {
-  let player: Player;
+  let player: TestPlayer;
   let nanotechIndustries: NanotechIndustries;
 
   // Physics Complex: 2 points per resource.
@@ -27,20 +24,19 @@ describe('NanotechIndustries', () => {
   const prideoftheEarthArkship = new PrideoftheEarthArkship();
 
   beforeEach(() => {
-    player = TestPlayers.BLUE.newPlayer();
-    Game.newInstance('id', [player], player, MOON_OPTIONS);
+    player = TestPlayer.BLUE.newPlayer();
+    Game.newInstance('gameid', [player], player, testGameOptions({moonExpansion: true}));
     nanotechIndustries = new NanotechIndustries();
   });
 
   it('act', () => {
-    player.corpCard = nanotechIndustries;
+    player.setCorporationForTest(nanotechIndustries);
     player.playedCards = [physicsComplex, searchForLife, olympusConference, prideoftheEarthArkship];
     nanotechIndustries.action(player);
 
-    const action: SelectCard<IProjectCard> =
-      player.game.deferredActions.pop()?.execute() as SelectCard<IProjectCard>;
+    const action = cast(player.game.deferredActions.pop()?.execute(), SelectCard<IProjectCard>);
 
-    expect(action!.cards).has.members([nanotechIndustries, olympusConference, prideoftheEarthArkship]);
+    expect(action.cards).has.members([nanotechIndustries, olympusConference, prideoftheEarthArkship]);
 
     olympusConference.resourceCount = 0;
     action.cb([olympusConference]);

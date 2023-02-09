@@ -1,27 +1,28 @@
 import {expect} from 'chai';
-import {Luna} from '../../src/colonies/Luna';
-import {Game} from '../../src/Game';
-import {Player} from '../../src/Player';
-import {Resources} from '../../src/common/Resources';
-import {TestPlayers} from '../TestPlayers';
+import {Luna} from '../../src/server/colonies/Luna';
+import {Game} from '../../src/server/Game';
+import {TestPlayer} from '../TestPlayer';
 import {runAllActions} from '../TestingUtils';
 
 describe('Luna', function() {
-  let luna: Luna; let player: Player; let player2: Player; let game: Game;
+  let luna: Luna;
+  let player: TestPlayer;
+  let player2: TestPlayer;
+  let game: Game;
 
   beforeEach(function() {
     luna = new Luna();
-    player = TestPlayers.BLUE.newPlayer();
-    player2 = TestPlayers.RED.newPlayer();
-    game = Game.newInstance('foobar', [player, player2], player);
+    player = TestPlayer.BLUE.newPlayer();
+    player2 = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, player2], player);
     game.gameOptions.coloniesExtension = true;
     game.colonies.push(luna);
   });
 
   it('Should build', function() {
     luna.addColony(player);
-    expect(player.getProduction(Resources.MEGACREDITS)).to.eq(2);
-    expect(player2.getProduction(Resources.MEGACREDITS)).to.eq(0);
+    expect(player.production.megacredits).to.eq(2);
+    expect(player2.production.megacredits).to.eq(0);
   });
 
   it('Should trade', function() {
@@ -36,8 +37,8 @@ describe('Luna', function() {
     luna.trade(player2);
     runAllActions(game);
 
-    expect(player.getProduction(Resources.MEGACREDITS)).to.eq(2);
-    expect(player2.getProduction(Resources.MEGACREDITS)).to.eq(0);
+    expect(player.production.megacredits).to.eq(2);
+    expect(player2.production.megacredits).to.eq(0);
     expect(player.megaCredits).to.eq(2);
     expect(player2.megaCredits).to.eq(2);
   });

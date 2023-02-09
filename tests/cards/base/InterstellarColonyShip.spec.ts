@@ -1,22 +1,22 @@
 import {expect} from 'chai';
-import {GeneRepair} from '../../../src/cards/base/GeneRepair';
-import {InterstellarColonyShip} from '../../../src/cards/base/InterstellarColonyShip';
-import {Research} from '../../../src/cards/base/Research';
-import {Game} from '../../../src/Game';
+import {GeneRepair} from '../../../src/server/cards/base/GeneRepair';
+import {InterstellarColonyShip} from '../../../src/server/cards/base/InterstellarColonyShip';
+import {Research} from '../../../src/server/cards/base/Research';
+import {Game} from '../../../src/server/Game';
 import {TestPlayer} from '../../TestPlayer';
-import {TestPlayers} from '../../TestPlayers';
 
 describe('InterstellarColonyShip', function() {
-  let card : InterstellarColonyShip; let player : TestPlayer;
+  let card: InterstellarColonyShip;
+  let player: TestPlayer;
 
   beforeEach(function() {
     card = new InterstellarColonyShip();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    Game.newInstance('foobar', [player, redPlayer], player);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    Game.newInstance('gameid', [player, redPlayer], player);
   });
 
-  it('Can\'t play', function() {
+  it('Can not play', function() {
     expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
 
@@ -24,7 +24,7 @@ describe('InterstellarColonyShip', function() {
     player.playedCards.push(new Research(), new Research(), new GeneRepair());
     expect(player.canPlayIgnoringCost(card)).is.true;
 
-    card.play();
+    card.play(player);
     expect(card.getVictoryPoints()).to.eq(4);
   });
 });

@@ -1,32 +1,32 @@
 import {expect} from 'chai';
-import {CollegiumCopernicus} from '../../../src/cards/pathfinders/CollegiumCopernicus';
-import {Luna} from '../../../src/colonies/Luna';
-import {Triton} from '../../../src/colonies/Triton';
-import {Game} from '../../../src/Game';
-import {OrOptions} from '../../../src/inputs/OrOptions';
-import {SelectColony} from '../../../src/inputs/SelectColony';
-import {Player} from '../../../src/Player';
-import {AndOptions} from '../../../src/inputs/AndOptions';
+import {CollegiumCopernicus} from '../../../src/server/cards/pathfinders/CollegiumCopernicus';
+import {Luna} from '../../../src/server/colonies/Luna';
+import {Triton} from '../../../src/server/colonies/Triton';
+import {Game} from '../../../src/server/Game';
+import {OrOptions} from '../../../src/server/inputs/OrOptions';
+import {SelectColony} from '../../../src/server/inputs/SelectColony';
+import {AndOptions} from '../../../src/server/inputs/AndOptions';
 import {cast, fakeCard, runAllActions} from '../../TestingUtils';
 import {newTestGame, getTestPlayer} from '../../TestGame';
-import {Enceladus} from '../../../src/colonies/Enceladus';
-import {Europa} from '../../../src/colonies/Europa';
-import {Io} from '../../../src/colonies/Io';
-import {Pluto} from '../../../src/colonies/Pluto';
-import {LunarObservationPost} from '../../../src/cards/moon/LunarObservationPost';
-import {Tags} from '../../../src/common/cards/Tags';
-import {SelectCard} from '../../../src/inputs/SelectCard';
+import {TestPlayer} from '../../TestPlayer';
+import {Enceladus} from '../../../src/server/colonies/Enceladus';
+import {Europa} from '../../../src/server/colonies/Europa';
+import {Io} from '../../../src/server/colonies/Io';
+import {Pluto} from '../../../src/server/colonies/Pluto';
+import {LunarObservationPost} from '../../../src/server/cards/moon/LunarObservationPost';
+import {Tag} from '../../../src/common/cards/Tag';
+import {SelectCard} from '../../../src/server/inputs/SelectCard';
 
 describe('CollegiumCopernicus', function() {
   let card: CollegiumCopernicus;
-  let player: Player;
+  let player: TestPlayer;
   let game: Game;
 
   beforeEach(function() {
     card = new CollegiumCopernicus();
     game = newTestGame(2, {coloniesExtension: true, pathfindersExpansion: true});
     player = getTestPlayer(game, 0);
-    player.corpCard = card;
+    player.setCorporationForTest(card);
     // Looks as though when Enceladus is first, the test fails. So removing flakiness by defining colonies.
     game.colonies = [
       new Europa(),
@@ -61,7 +61,7 @@ describe('CollegiumCopernicus', function() {
     card.resourceCount = 10;
 
     card.action(player);
-    const selectColony = game.deferredActions.peek()!.execute() as SelectColony;
+    const selectColony = cast(game.deferredActions.peek()!.execute(), SelectColony);
     selectColony.cb(selectColony.colonies[0]);
     expect(card.resourceCount).to.eq(7);
     expect(player.megaCredits).to.eq(2);
@@ -77,7 +77,6 @@ describe('CollegiumCopernicus', function() {
 
     expect(getTradeAction()).is.undefined;
 
-    player.corpCard = card;
     card.resourceCount = 2;
 
     expect(getTradeAction()).is.undefined;
@@ -113,7 +112,7 @@ describe('CollegiumCopernicus', function() {
     const lunarObservationPost = new LunarObservationPost();
     player.playedCards = [lunarObservationPost];
 
-    card.onCardPlayed(player, fakeCard({tags: [Tags.SCIENCE]}));
+    card.onCardPlayed(player, fakeCard({tags: [Tag.SCIENCE]}));
     runAllActions(game);
     const selectCard = cast(player.getWaitingFor(), SelectCard);
 
@@ -129,8 +128,9 @@ describe('CollegiumCopernicus', function() {
 
   it('initialAction', function() {
     expect(player.cardsInHand).is.empty;
-    card.initialAction(player);
+    player.runInitialAction(card);
+    runAllActions(game);
     expect(player.cardsInHand).has.length(2);
-    expect(player.cardsInHand.filter((card) => card.tags.includes(Tags.SCIENCE))).has.length(2);
+    expect(player.cardsInHand.filter((card) => card.tags.includes(Tag.SCIENCE))).has.length(2);
   });
 });

@@ -1,25 +1,26 @@
 import {expect} from 'chai';
-import {SearchForLife} from '../../../src/cards/base/SearchForLife';
-import {Tags} from '../../../src/common/cards/Tags';
-import {Game} from '../../../src/Game';
-import {Player} from '../../../src/Player';
-import {TestPlayers} from '../../TestPlayers';
+import {SearchForLife} from '../../../src/server/cards/base/SearchForLife';
+import {Tag} from '../../../src/common/cards/Tag';
+import {Game} from '../../../src/server/Game';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('SearchForLife', function() {
-  let card : SearchForLife; let player : Player; let game : Game;
+  let card: SearchForLife;
+  let player: TestPlayer;
+  let game: Game;
 
   beforeEach(function() {
     card = new SearchForLife();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    game = Game.newInstance('foobar', [player, redPlayer], player);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, redPlayer], player);
   });
 
-  it('Can\'t act if no MC', function() {
+  it('Can not act if no MC', function() {
     expect(card.canAct(player)).is.not.true;
   });
 
-  it('Can\'t play if oxygen level too high', function() {
+  it('Can not play if oxygen level too high', function() {
     (game as any).oxygenLevel = 7;
     expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
@@ -28,7 +29,7 @@ describe('SearchForLife', function() {
     (game as any).oxygenLevel = 6;
     expect(player.canPlayIgnoringCost(card)).is.true;
     player.playedCards.push(card);
-    card.play();
+    card.play(player);
 
     expect(card.getVictoryPoints()).to.eq(0);
     player.addResourceTo(card);
@@ -39,8 +40,8 @@ describe('SearchForLife', function() {
   it('Should act', function() {
     player.playedCards.push(card);
 
-    while (game.dealer.discarded.find((c) => c.tags.length === 1 && c.tags[0] === Tags.MICROBE) === undefined ||
-               game.dealer.discarded.find((c) => c.tags.length === 1 && c.tags[0] !== Tags.MICROBE) === undefined) {
+    while (game.projectDeck.discardPile.find((c) => c.tags.length === 1 && c.tags[0] === Tag.MICROBE) === undefined ||
+               game.projectDeck.discardPile.find((c) => c.tags.length === 1 && c.tags[0] !== Tag.MICROBE) === undefined) {
       player.megaCredits = 1;
       card.action(player);
       game.deferredActions.runNext();

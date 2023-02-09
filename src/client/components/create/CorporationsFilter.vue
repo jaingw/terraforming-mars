@@ -90,6 +90,7 @@ export default Vue.extend({
         cardsByModule[card.module].push(card.name);
       }
     });
+    GAME_MODULES.forEach((module) => cardsByModule[module].sort());
 
     return {
       cardsByModule: cardsByModule,
@@ -179,6 +180,7 @@ export default Vue.extend({
       case 'ares': return 'Ares';
       case 'moon': return 'The Moon';
       case 'pathfinders': return 'Pathfinders';
+      case 'leader': return 'CEOs';
       }
       return '';
     },

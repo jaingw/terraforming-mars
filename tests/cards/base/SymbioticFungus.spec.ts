@@ -1,22 +1,25 @@
+import {SelectCard} from '../../../src/server/inputs/SelectCard';
 import {expect} from 'chai';
-import {Ants} from '../../../src/cards/base/Ants';
-import {Decomposers} from '../../../src/cards/base/Decomposers';
-import {SymbioticFungus} from '../../../src/cards/base/SymbioticFungus';
-import {Game} from '../../../src/Game';
-import {Player} from '../../../src/Player';
-import {TestPlayers} from '../../TestPlayers';
+import {cast} from '../../TestingUtils';
+import {Ants} from '../../../src/server/cards/base/Ants';
+import {Decomposers} from '../../../src/server/cards/base/Decomposers';
+import {SymbioticFungus} from '../../../src/server/cards/base/SymbioticFungus';
+import {Game} from '../../../src/server/Game';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('SymbioticFungus', function() {
-  let card : SymbioticFungus; let player : Player; let game : Game;
+  let card: SymbioticFungus;
+  let player: TestPlayer;
+  let game: Game;
 
   beforeEach(function() {
     card = new SymbioticFungus();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    game = Game.newInstance('foobar', [player, redPlayer], player);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, redPlayer], player);
   });
 
-  it('Can\'t play', function() {
+  it('Can not play', function() {
     expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
 
@@ -37,10 +40,9 @@ describe('SymbioticFungus', function() {
 
   it('Should act - multiple targets', function() {
     player.playedCards.push(new Ants(), new Decomposers());
-    const action = card.action(player);
-    expect(action).is.not.undefined;
+    const action = cast(card.action(player), SelectCard);
 
-        action!.cb([player.playedCards[0]]);
-        expect(player.playedCards[0].resourceCount).to.eq(1);
+    action.cb([player.playedCards[0]]);
+    expect(player.playedCards[0].resourceCount).to.eq(1);
   });
 });

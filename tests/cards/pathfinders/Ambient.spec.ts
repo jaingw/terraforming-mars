@@ -1,14 +1,13 @@
 import {expect} from 'chai';
-import {Ambient} from '../../../src/cards/pathfinders/Ambient';
-import {Game} from '../../../src/Game';
+import {Ambient} from '../../../src/server/cards/pathfinders/Ambient';
+import {Game} from '../../../src/server/Game';
 import {TestPlayer} from '../../TestPlayer';
 import {getTestPlayer, newTestGame} from '../../TestGame';
 import {cast, fakeCard, runAllActions} from '../../TestingUtils';
-import {Tags} from '../../../src/common/cards/Tags';
-import {Resources} from '../../../src/common/Resources';
+import {Tag} from '../../../src/common/cards/Tag';
 import {MAX_TEMPERATURE} from '../../../src/common/constants';
-import {OrOptions} from '../../../src/inputs/OrOptions';
-import {SelectCard} from '../../../src/inputs/SelectCard';
+import {OrOptions} from '../../../src/server/inputs/OrOptions';
+import {SelectCard} from '../../../src/server/inputs/SelectCard';
 
 describe('Ambient', function() {
   let card: Ambient;
@@ -21,35 +20,36 @@ describe('Ambient', function() {
     game = newTestGame(2);
     player = getTestPlayer(game, 0);
     player2 = getTestPlayer(game, 1);
-    player.corpCard = card;
+    player.setCorporationForTest(card);
   });
 
   it('initialAction', function() {
     expect(game.getVenusScaleLevel()).eq(0);
     expect(player.getTerraformRating()).eq(20);
 
-    card.initialAction(player);
+    player.runInitialAction(card);
+    runAllActions(game);
 
     expect(game.getVenusScaleLevel()).eq(4);
     expect(player.getTerraformRating()).eq(22);
   });
 
   it('onCardPlayed', function() {
-    expect(player.getProduction(Resources.HEAT)).eq(0);
+    expect(player.production.heat).eq(0);
 
     card.onCardPlayed(player, fakeCard({tags: []}));
-    expect(player.getProduction(Resources.HEAT)).eq(0);
+    expect(player.production.heat).eq(0);
 
-    card.onCardPlayed(player, fakeCard({tags: [Tags.EARTH]}));
-    expect(player.getProduction(Resources.HEAT)).eq(0);
+    card.onCardPlayed(player, fakeCard({tags: [Tag.EARTH]}));
+    expect(player.production.heat).eq(0);
 
-    card.onCardPlayed(player, fakeCard({tags: [Tags.VENUS]}));
-    expect(player.getProduction(Resources.HEAT)).eq(1);
-    expect(player2.getProduction(Resources.HEAT)).eq(0);
+    card.onCardPlayed(player, fakeCard({tags: [Tag.VENUS]}));
+    expect(player.production.heat).eq(1);
+    expect(player2.production.heat).eq(0);
 
-    card.onCardPlayed(player2, fakeCard({tags: [Tags.VENUS]}));
-    expect(player.getProduction(Resources.HEAT)).eq(1);
-    expect(player2.getProduction(Resources.HEAT)).eq(0);
+    card.onCardPlayed(player2, fakeCard({tags: [Tag.VENUS]}));
+    expect(player.production.heat).eq(1);
+    expect(player2.production.heat).eq(0);
   });
 
   it('canAct', function() {
@@ -99,22 +99,25 @@ describe('Ambient', function() {
 
     getBlueActions()!.cb([card]);
 
+    runAllActions(game);
+
     expect(player.heat).eq(8);
     expect(game.getTemperature()).eq(MAX_TEMPERATURE);
     expect(player.getTerraformRating()).eq(21);
 
-    expect(getBlueActions()).is.undefined;
-    runAllActions(game);
+    // 原站本来是runall之前为undefined  runall之后才有，本站一次执行多个行动， action也放到runall里面去了
+    // expect(getBlueActions()).is.undefined;
     expect(getBlueActions()!.cards.map((c) => (c as any).name)).deep.eq([card.name]);
 
     getBlueActions()!.cb([card]);
+    runAllActions(game);
 
     expect(player.heat).eq(0);
     expect(game.getTemperature()).eq(MAX_TEMPERATURE);
     expect(player.getTerraformRating()).eq(22);
 
-    expect(getBlueActions()).is.undefined;
-    runAllActions(game);
+    // expect(getBlueActions()).is.undefined;
+    // runAllActions(game);
     expect(getBlueActions()).is.undefined;
   });
 });

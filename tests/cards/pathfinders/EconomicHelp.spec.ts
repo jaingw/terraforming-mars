@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 import {getTestPlayer, newTestGame} from '../../TestGame';
-import {EconomicHelp} from '../../../src/cards/pathfinders/EconomicHelp';
-import {Game} from '../../../src/Game';
+import {EconomicHelp} from '../../../src/server/cards/pathfinders/EconomicHelp';
+import {Game} from '../../../src/server/Game';
 import {TestPlayer} from '../../TestPlayer';
 import {Units} from '../../../src/common/Units';
 
@@ -12,12 +12,12 @@ describe('EconomicHelp', function() {
 
   beforeEach(function() {
     card = new EconomicHelp();
-    game = newTestGame(1, {pathfindersExpansion: true});
+    game = newTestGame(1, {pathfindersExpansion: true, venusNextExtension: true});
     player = getTestPlayer(game, 0);
   });
 
   it('Play - one lowest influence tracks', function() {
-    expect(player.getProductionForTest()).deep.eq(Units.EMPTY);
+    expect(player.production.asUnits()).deep.eq(Units.EMPTY);
     game.pathfindersData = {
       venus: 0,
       earth: 1,
@@ -29,7 +29,7 @@ describe('EconomicHelp', function() {
 
     card.play(player);
 
-    expect(player.getProductionForTest()).deep.eq(Units.of({megacredits: 1}));
+    expect(player.production.asUnits()).deep.eq(Units.of({megacredits: 1}));
     expect(game.pathfindersData).deep.eq({
       venus: 3,
       earth: 1,

@@ -1,35 +1,36 @@
 import {expect} from 'chai';
-import {DeimosDown} from '../../../src/cards/base/DeimosDown';
-import {IndenturedWorkers} from '../../../src/cards/base/IndenturedWorkers';
-import {LocalHeatTrapping} from '../../../src/cards/base/LocalHeatTrapping';
-import {ReleaseOfInertGases} from '../../../src/cards/base/ReleaseOfInertGases';
-import {Playwrights} from '../../../src/cards/community/Playwrights';
-import {IProjectCard} from '../../../src/cards/IProjectCard';
-import {MartianSurvey} from '../../../src/cards/prelude/MartianSurvey';
-import {LawSuit} from '../../../src/cards/promo/LawSuit';
-import {Game} from '../../../src/Game';
-import {SelectCard} from '../../../src/inputs/SelectCard';
-import {SelectPlayer} from '../../../src/inputs/SelectPlayer';
-import {Player} from '../../../src/Player';
-import {Resources} from '../../../src/common/Resources';
-import {TestPlayers} from '../../TestPlayers';
-import {runAllActions} from '../../TestingUtils';
+import {DeimosDown} from '../../../src/server/cards/base/DeimosDown';
+import {IndenturedWorkers} from '../../../src/server/cards/base/IndenturedWorkers';
+import {LocalHeatTrapping} from '../../../src/server/cards/base/LocalHeatTrapping';
+import {ReleaseOfInertGases} from '../../../src/server/cards/base/ReleaseOfInertGases';
+import {Playwrights} from '../../../src/server/cards/community/Playwrights';
+import {IProjectCard} from '../../../src/server/cards/IProjectCard';
+import {MartianSurvey} from '../../../src/server/cards/prelude/MartianSurvey';
+import {LawSuit} from '../../../src/server/cards/promo/LawSuit';
+import {Game} from '../../../src/server/Game';
+import {SelectCard} from '../../../src/server/inputs/SelectCard';
+import {SelectPlayer} from '../../../src/server/inputs/SelectPlayer';
+import {TestPlayer} from '../../TestPlayer';
+import {cast, runAllActions} from '../../TestingUtils';
 
 describe('Playwrights', () => {
-  let card : Playwrights; let player : Player; let player2: Player; let game : Game;
+  let card: Playwrights;
+  let player: TestPlayer;
+  let player2: TestPlayer;
+  let game: Game;
 
   beforeEach(() => {
     card = new Playwrights();
-    player = TestPlayers.BLUE.newPlayer();
-    player2 = TestPlayers.RED.newPlayer();
-    game = Game.newInstance('foobar', [player, player2], player);
+    player = TestPlayer.BLUE.newPlayer();
+    player2 = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, player2], player);
 
     card.play(player);
-    player.corpCard = card;
+    player.setCorporationForTest(card);
   });
 
   it('Cannot act without any played events', () => {
-    expect(player.getProduction(Resources.ENERGY)).eq(1);
+    expect(player.production.energy).eq(1);
     expect(card.canAct(player)).is.not.true;
   });
 
@@ -45,10 +46,10 @@ describe('Playwrights', () => {
     player.megaCredits = event.cost;
     expect(card.canAct(player)).is.true;
 
-    const selectCard = card.action(player) as SelectCard<IProjectCard>;
+    const selectCard = cast(card.action(player), SelectCard<IProjectCard>);
     selectCard.cb([event]);
 
-    game.deferredActions.pop()!.execute(); // SelectHowToPay
+    game.deferredActions.pop()!.execute(); // SelectPayment
     runAllActions(game);
 
     expect(player.getTerraformRating()).to.eq(tr + 4);
@@ -65,10 +66,10 @@ describe('Playwrights', () => {
 
     player.megaCredits = event.cost;
     expect(card.canAct(player)).is.true;
-    const selectCard = card.action(player) as SelectCard<IProjectCard>;
+    const selectCard = cast(card.action(player), SelectCard<IProjectCard>);
     selectCard.cb([event]);
 
-    game.deferredActions.pop()!.execute(); // SelectHowToPay
+    game.deferredActions.pop()!.execute(); // SelectPayment
     runAllActions(game);
 
     expect(player.getTerraformRating()).to.eq(tr + 2);
@@ -90,9 +91,9 @@ describe('Playwrights', () => {
     const indenturedWorkers = new IndenturedWorkers();
     player.playedCards.push(indenturedWorkers);
 
-    const selectCard = card.action(player) as SelectCard<IProjectCard>;
+    const selectCard = cast(card.action(player), SelectCard<IProjectCard>);
     selectCard.cb([indenturedWorkers]);
-    // SelectHowToPay
+    // SelectPayment
     game.deferredActions.pop()!.execute();
 
     const deimosDown = new DeimosDown();
@@ -110,11 +111,11 @@ describe('Playwrights', () => {
     player.removingPlayers = [player2.id];
     expect(card.canAct(player)).is.true;
 
-    const selectCard = card.action(player) as SelectCard<IProjectCard>;
+    const selectCard = cast(card.action(player), SelectCard<IProjectCard>);
     selectCard.cb([event]);
 
-    game.deferredActions.pop()!.execute(); // SelectHowToPay
-    const selectPlayer = game.deferredActions.pop()!.execute() as SelectPlayer;
+    game.deferredActions.pop()!.execute(); // SelectPayment
+    const selectPlayer = cast(game.deferredActions.pop()!.execute(), SelectPlayer);
     selectPlayer.cb(player2);
 
     runAllActions(player.game);

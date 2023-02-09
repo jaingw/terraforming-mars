@@ -1,6 +1,6 @@
 
 import Vue from 'vue';
-
+import {$t} from '@/client/directives/i18n';
 export const Register = Vue.component('register', {
   data: function() {
     return {
@@ -11,11 +11,11 @@ export const Register = Vue.component('register', {
   methods: {
     register: function() {
       if (this.userName === undefined || this.userName.length <=1) {
-        alert('Please enter more than 1 characters for userName');
+        alert($t('Please enter at least 2 characters for userName'));
         return;
       }
-      if (this.password === undefined || this.password.length <=1) {
-        alert('Please enter more than 1 characters for password');
+      if (this.password === undefined || this.password.length <=2) {
+        alert($t('Please enter at least 3 characters for password'));
         return;
       }
       const dataToSend = JSON.stringify({userName: this.userName, password: this.password});
@@ -23,7 +23,7 @@ export const Register = Vue.component('register', {
       const onSucces = (response: any) => {
         if (!response.ok) {
           response.text().then((msg: any) =>{
-            alert(msg);
+            alert($t(msg));
           });
         } else {
           window.location.href = '/login';

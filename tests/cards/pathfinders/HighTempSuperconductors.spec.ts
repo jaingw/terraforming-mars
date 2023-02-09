@@ -1,17 +1,17 @@
 import {expect} from 'chai';
-import {HighTempSuperconductors} from '../../../src/cards/pathfinders/HighTempSuperconductors';
-import {Thorgate} from '../../../src/cards/corporation/Thorgate';
-import {Game} from '../../../src/Game';
+import {HighTempSuperconductors} from '../../../src/server/cards/pathfinders/HighTempSuperconductors';
+import {Thorgate} from '../../../src/server/cards/corporation/Thorgate';
+import {Game} from '../../../src/server/Game';
 import {TestPlayer} from '../../TestPlayer';
 import {getTestPlayer, newTestGame} from '../../TestGame';
-import {Reds} from '../../../src/turmoil/parties/Reds';
-import {Kelvinists, KELVINISTS_POLICY_1} from '../../../src/turmoil/parties/Kelvinists';
-import {Turmoil} from '../../../src/turmoil/Turmoil';
+import {Reds} from '../../../src/server/turmoil/parties/Reds';
+import {Kelvinists, KELVINISTS_POLICY_1} from '../../../src/server/turmoil/parties/Kelvinists';
+import {Turmoil} from '../../../src/server/turmoil/Turmoil';
 import {fakeCard, setRulingPartyAndRulingPolicy} from '../../TestingUtils';
 import {Units} from '../../../src/common/Units';
-import {Tags} from '../../../src/common/cards/Tags';
-import {PowerPlantStandardProject} from '../../../src/cards/base/standardProjects/PowerPlantStandardProject';
-import {TurmoilUtil} from '../../../src/turmoil/TurmoilUtil';
+import {Tag} from '../../../src/common/cards/Tag';
+import {PowerPlantStandardProject} from '../../../src/server/cards/base/standardProjects/PowerPlantStandardProject';
+import {TurmoilUtil} from '../../../src/server/turmoil/TurmoilUtil';
 
 describe('HighTempSuperconductors', function() {
   let card: HighTempSuperconductors;
@@ -36,20 +36,20 @@ describe('HighTempSuperconductors', function() {
 
   it('play', function() {
     card.play(player);
-    expect(player.getProductionForTest()).deep.eq(Units.of({energy: 2}));
+    expect(player.production.asUnits()).deep.eq(Units.of({energy: 2}));
   });
 
   it('discount power tag', function() {
     player.playedCards.push(card);
 
     // Not power tag
-    const cost10 = fakeCard({cost: 10, tags: [Tags.CITY]});
+    const cost10 = fakeCard({cost: 10, tags: [Tag.CITY]});
     player.megaCredits = 9;
     expect(player.canPlay(cost10)).is.false;
     player.megaCredits = 10;
     expect(player.canPlay(cost10)).is.true;
 
-    const cost10WithTag = fakeCard({cost: 10, tags: [Tags.ENERGY]});
+    const cost10WithTag = fakeCard({cost: 10, tags: [Tag.POWER]});
     player.megaCredits = 6;
     expect(player.canPlay(cost10WithTag)).is.false;
     player.megaCredits = 7;
@@ -69,7 +69,7 @@ describe('HighTempSuperconductors', function() {
 
   it('double-discount with Thorgate', function() {
     player.playedCards.push(card);
-    player.corpCard = new Thorgate();
+    player.setCorporationForTest(new Thorgate());
 
     const powerPlant = new PowerPlantStandardProject();
     player.megaCredits = powerPlant.cost - 7;

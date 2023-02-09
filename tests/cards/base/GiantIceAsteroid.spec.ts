@@ -1,21 +1,25 @@
 import {expect} from 'chai';
-import {GiantIceAsteroid} from '../../../src/cards/base/GiantIceAsteroid';
-import {Game} from '../../../src/Game';
-import {OrOptions} from '../../../src/inputs/OrOptions';
-import {SelectSpace} from '../../../src/inputs/SelectSpace';
-import {Player} from '../../../src/Player';
-import {TestPlayers} from '../../TestPlayers';
+import {GiantIceAsteroid} from '../../../src/server/cards/base/GiantIceAsteroid';
+import {Game} from '../../../src/server/Game';
+import {OrOptions} from '../../../src/server/inputs/OrOptions';
+import {SelectSpace} from '../../../src/server/inputs/SelectSpace';
+import {Player} from '../../../src/server/Player';
+import {TestPlayer} from '../../TestPlayer';
 import {cast} from '../../TestingUtils';
 
 describe('GiantIceAsteroid', function() {
-  let card : GiantIceAsteroid; let player : Player; let player2 : Player; let player3 : Player; let game : Game;
+  let card: GiantIceAsteroid;
+  let player: TestPlayer;
+  let player2: TestPlayer;
+  let player3:Player;
+  let game: Game;
 
   beforeEach(function() {
     card = new GiantIceAsteroid();
-    player = TestPlayers.BLUE.newPlayer();
-    player2 = TestPlayers.RED.newPlayer();
-    player3 = TestPlayers.YELLOW.newPlayer();
-    game = Game.newInstance('foobar', [player, player2, player3], player);
+    player = TestPlayer.BLUE.newPlayer();
+    player2 = TestPlayer.RED.newPlayer();
+    player3 = TestPlayer.YELLOW.newPlayer();
+    game = Game.newInstance('gameid', [player, player2, player3], player);
   });
 
   it('Should play', function() {
@@ -24,9 +28,9 @@ describe('GiantIceAsteroid', function() {
     card.play(player);
     expect(game.deferredActions).has.lengthOf(3);
 
-    const firstOcean = game.deferredActions.pop()!.execute() as SelectSpace;
+    const firstOcean = cast(game.deferredActions.pop()!.execute(), SelectSpace);
     firstOcean.cb(firstOcean.availableSpaces[0]);
-    const secondOcean = game.deferredActions.pop()!.execute() as SelectSpace;
+    const secondOcean = cast(game.deferredActions.pop()!.execute(), SelectSpace);
     secondOcean.cb(secondOcean.availableSpaces[1]);
 
     const orOptions = cast(game.deferredActions.pop()!.execute(), OrOptions);
@@ -42,4 +46,3 @@ describe('GiantIceAsteroid', function() {
     expect(player.getTerraformRating()).to.eq(24);
   });
 });
-

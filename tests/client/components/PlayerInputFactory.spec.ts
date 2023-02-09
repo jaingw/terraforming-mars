@@ -1,9 +1,8 @@
-
 import {mount} from '@vue/test-utils';
 import {getLocalVue} from './getLocalVue';
 import {expect} from 'chai';
 import PlayerInputFactory from '@/client/components/PlayerInputFactory.vue';
-import {PlayerInputTypes} from '@/common/input/PlayerInputTypes';
+import {PlayerInputType} from '@/common/input/PlayerInputType';
 import {CardModel} from '@/common/models/CardModel';
 import {PlayerInputModel} from '@/common/models/PlayerInputModel';
 import {Units} from '@/common/Units';
@@ -16,20 +15,19 @@ const baseInput = {
   canUseHeat: undefined,
   canUseSteel: undefined,
   canUseTitanium: undefined,
+  canUseLunaTradeFederationTitanium: undefined,
   canUseSeeds: undefined,
   canUseData: undefined,
   cards: undefined,
   options: undefined,
   min: undefined,
   max: undefined,
-  maxCardsToSelect: undefined,
   microbes: undefined,
   floaters: undefined,
   science: undefined,
   seeds: undefined,
   data: undefined,
   title: 'test input',
-  minCardsToSelect: undefined,
   players: undefined,
   buttonLabel: 'save',
   coloniesModel: undefined,
@@ -40,38 +38,38 @@ const baseInput = {
 const typesToTest: PlayerInputModel[] = [
   {
     ...baseInput,
-    inputType: PlayerInputTypes.AND_OPTIONS,
+    inputType: PlayerInputType.AND_OPTIONS,
     options: [],
   },
   {
     ...baseInput,
-    inputType: PlayerInputTypes.OR_OPTIONS,
+    inputType: PlayerInputType.OR_OPTIONS,
     options: [],
   },
   {
     ...baseInput,
-    inputType: PlayerInputTypes.SELECT_AMOUNT,
+    inputType: PlayerInputType.SELECT_AMOUNT,
   },
   {
     ...baseInput,
-    inputType: PlayerInputTypes.SELECT_CARD,
+    inputType: PlayerInputType.SELECT_CARD,
   },
   {
     ...baseInput,
-    inputType: PlayerInputTypes.SELECT_OPTION,
+    inputType: PlayerInputType.SELECT_OPTION,
   },
   {
     ...baseInput,
-    inputType: PlayerInputTypes.SELECT_HOW_TO_PAY,
+    inputType: PlayerInputType.SELECT_PAYMENT,
   },
   {
     ...baseInput,
-    inputType: PlayerInputTypes.SELECT_HOW_TO_PAY_FOR_PROJECT_CARD,
-    cards: [{name: CardName.ANTS, reserveUnits: Units.of({})} as CardModel],
+    inputType: PlayerInputType.SELECT_PROJECT_CARD_TO_PLAY,
+    cards: [{name: CardName.ANTS, reserveUnits: {}} as CardModel],
   },
   {
     ...baseInput,
-    inputType: PlayerInputTypes.SELECT_INITIAL_CARDS,
+    inputType: PlayerInputType.SELECT_INITIAL_CARDS,
     options: [
         {} as PlayerInputModel,
         {} as PlayerInputModel,
@@ -79,15 +77,15 @@ const typesToTest: PlayerInputModel[] = [
   },
   {
     ...baseInput,
-    inputType: PlayerInputTypes.SELECT_SPACE,
+    inputType: PlayerInputType.SELECT_SPACE,
   },
   {
     ...baseInput,
-    inputType: PlayerInputTypes.SELECT_PLAYER,
+    inputType: PlayerInputType.SELECT_PLAYER,
   },
   {
     ...baseInput,
-    inputType: PlayerInputTypes.SELECT_PARTY_TO_SEND_DELEGATE,
+    inputType: PlayerInputType.SELECT_PARTY_TO_SEND_DELEGATE,
     turmoil: {
       dominant: undefined,
       ruling: undefined,
@@ -104,11 +102,11 @@ const typesToTest: PlayerInputModel[] = [
   },
   {
     ...baseInput,
-    inputType: PlayerInputTypes.SELECT_COLONY,
+    inputType: PlayerInputType.SELECT_COLONY,
   },
   {
     ...baseInput,
-    inputType: PlayerInputTypes.SELECT_PRODUCTION_TO_LOSE,
+    inputType: PlayerInputType.SELECT_PRODUCTION_TO_LOSE,
     payProduction: {
       cost: 0,
       units: Units.EMPTY,
@@ -116,9 +114,8 @@ const typesToTest: PlayerInputModel[] = [
   },
   {
     ...baseInput,
-    inputType: PlayerInputTypes.SHIFT_ARES_GLOBAL_PARAMETERS,
+    inputType: PlayerInputType.SHIFT_ARES_GLOBAL_PARAMETERS,
     aresData: {
-      active: false,
       includeHazards: false,
       hazardData: {
         erosionOceanCount: {threshold: 0, available: false},
@@ -140,7 +137,8 @@ describe('PlayerInputFactory', function() {
           players: [],
           playerView: {
             id: 'foo',
-            thisPlayer: {megaCredits: 0},
+            thisPlayer: {megaCredits: 0, tableau: []},
+            dealtCorporationCards: [],
           },
           playerinput,
           onsave: function() {

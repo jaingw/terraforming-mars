@@ -1,17 +1,18 @@
 import {expect} from 'chai';
-import {VenusianInsects} from '../../../src/cards/venusNext/VenusianInsects';
-import {Game} from '../../../src/Game';
-import {Player} from '../../../src/Player';
-import {TestPlayers} from '../../TestPlayers';
+import {VenusianInsects} from '../../../src/server/cards/venusNext/VenusianInsects';
+import {Game} from '../../../src/server/Game';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('VenusianInsects', () => {
-  let card : VenusianInsects; let player : Player; let game : Game;
+  let card: VenusianInsects;
+  let player: TestPlayer;
+  let game: Game;
 
   beforeEach(() => {
     card = new VenusianInsects();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    game = Game.newInstance('foobar', [player, redPlayer], player);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, redPlayer], player);
   });
 
   it('Cannot play', () => {
@@ -29,7 +30,7 @@ describe('VenusianInsects', () => {
     expect(player.canPlayIgnoringCost(card)).is.true;
     player.playedCards.push(card);
 
-    const action = card.play();
+    const action = card.play(player);
     expect(action).is.undefined;
   });
 

@@ -1,31 +1,34 @@
 import {expect} from 'chai';
-import {OceanSanctuary} from '../../../src/cards/ares/OceanSanctuary';
-import {CuriosityII} from '../../../src/cards/community/CuriosityII';
-import {Game} from '../../../src/Game';
-import {OrOptions} from '../../../src/inputs/OrOptions';
+import {OceanSanctuary} from '../../../src/server/cards/ares/OceanSanctuary';
+import {CuriosityII} from '../../../src/server/cards/community/CuriosityII';
+import {Game} from '../../../src/server/Game';
+import {OrOptions} from '../../../src/server/inputs/OrOptions';
 import {Phase} from '../../../src/common/Phase';
-import {Player} from '../../../src/Player';
 import {TileType} from '../../../src/common/TileType';
-import {setCustomGameOptions, runAllActions, cast} from '../../TestingUtils';
-import {TestPlayers} from '../../TestPlayers';
+import {testGameOptions, runAllActions, cast} from '../../TestingUtils';
+import {TestPlayer} from '../../TestPlayer';
+import {SelectSpace} from '../../../src/server/inputs/SelectSpace';
 
 describe('CuriosityII', function() {
-  let card : CuriosityII; let player : Player; let player2 : Player; let game : Game;
+  let card: CuriosityII;
+  let player: TestPlayer;
+  let player2: TestPlayer;
+  let game: Game;
 
   beforeEach(function() {
     card = new CuriosityII();
-    player = TestPlayers.BLUE.newPlayer();
-    player2 = TestPlayers.RED.newPlayer();
-    game = Game.newInstance('foobar', [player, player2], player, setCustomGameOptions({aresExtension: true, aresHazards: false}));
+    player = TestPlayer.BLUE.newPlayer();
+    player2 = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, player2], player, testGameOptions({aresExtension: true, aresHazards: false}));
     game.phase = Phase.ACTION;
 
-    player.corpCard = card;
+    player.setCorporationForTest(card);
     player.megaCredits = 2;
   });
 
   it('Can pay 2 M€ to draw card when placing a tile on a non-empty space', function() {
     const nonEmptySpace = game.board.getAvailableSpacesOnLand(player).find((space) => space.bonus.length > 0)!;
-    game.addCityTile(player, nonEmptySpace.id);
+    game.addCityTile(player, nonEmptySpace);
     player.cardsInHand = [];
 
     expect(game.deferredActions.length).to.eq(1);
@@ -43,7 +46,7 @@ describe('CuriosityII', function() {
 
   it('Does not trigger when placing a tile on an empty space', function() {
     const emptySpace = game.board.getAvailableSpacesOnLand(player).find((space) => space.bonus.length === 0)!;
-    game.addCityTile(player, emptySpace.id);
+    game.addCityTile(player, emptySpace);
     runAllActions(game);
 
     expect(player.cardsInHand).is.empty;
@@ -52,7 +55,7 @@ describe('CuriosityII', function() {
 
   it('Does not trigger when opponent places a tile', function() {
     const nonEmptySpace = game.board.getAvailableSpacesOnLand(player2).find((space) => space.bonus.length > 0)!;
-    game.addCityTile(player2, nonEmptySpace.id);
+    game.addCityTile(player2, nonEmptySpace);
     runAllActions(game);
 
     expect(player.cardsInHand).is.empty;
@@ -64,12 +67,17 @@ describe('CuriosityII', function() {
     const oceanSpace = game.board.getAvailableSpacesForOcean(player2).find((space) => space.bonus.length === 0)!;
     game.board.getSpace(oceanSpace.id).tile = {tileType: TileType.OCEAN};
 
-    const oceanCity = new OceanSanctuary();
-    const action = oceanCity.play(player);
+    const oceanSanctuary = new OceanSanctuary();
+    oceanSanctuary.play(player);
+    runAllActions(game);
+    const action = cast(player.popWaitingFor(), SelectSpace);
     action.cb(oceanSpace);
 
-    const orOptions = cast(game.deferredActions.pop()!.execute(), OrOptions);
+    runAllActions(game);
+
+    const orOptions = cast(player.popWaitingFor(), OrOptions);
     orOptions.options[0].cb(); // Pay 2 M€ to draw a card
+
     runAllActions(game);
 
     expect(player.cardsInHand).has.lengthOf(1);

@@ -1,27 +1,25 @@
-import {Game} from '../../../src/Game';
-import {Player} from '../../../src/Player';
-import {setCustomGameOptions} from '../../TestingUtils';
-import {TestPlayers} from '../../TestPlayers';
-import {CosmicRadiation} from '../../../src/cards/moon/CosmicRadiation';
+import {Game} from '../../../src/server/Game';
+import {Player} from '../../../src/server/Player';
+import {testGameOptions} from '../../TestingUtils';
+import {TestPlayer} from '../../TestPlayer';
+import {CosmicRadiation} from '../../../src/server/cards/moon/CosmicRadiation';
 import {expect} from 'chai';
-import {MoonExpansion} from '../../../src/moon/MoonExpansion';
-import {IMoonData} from '../../../src/moon/IMoonData';
+import {MoonExpansion} from '../../../src/server/moon/MoonExpansion';
+import {IMoonData} from '../../../src/server/moon/IMoonData';
 import {TileType} from '../../../src/common/TileType';
 
-const MOON_OPTIONS = setCustomGameOptions({moonExpansion: true});
-
 describe('CosmicRadiation', () => {
-  let player1: Player;
-  let player2: Player;
-  let player3: Player;
+  let player1: TestPlayer;
+  let player2: TestPlayer;
+  let player3: TestPlayer;
   let card: CosmicRadiation;
   let moonData: IMoonData;
 
   beforeEach(() => {
-    player1 = TestPlayers.BLUE.newPlayer();
-    player2 = TestPlayers.RED.newPlayer();
-    player3 = TestPlayers.YELLOW.newPlayer();
-    const game = Game.newInstance('id', [player1, player2, player3], player1, MOON_OPTIONS);
+    player1 = TestPlayer.BLUE.newPlayer();
+    player2 = TestPlayer.RED.newPlayer();
+    player3 = TestPlayer.YELLOW.newPlayer();
+    const game = Game.newInstance('gameid', [player1, player2, player3], player1, testGameOptions({moonExpansion: true}));
     card = new CosmicRadiation();
     moonData = MoonExpansion.moonData(game);
   });

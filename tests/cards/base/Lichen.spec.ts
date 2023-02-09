@@ -1,21 +1,21 @@
 import {expect} from 'chai';
-import {Lichen} from '../../../src/cards/base/Lichen';
-import {Game} from '../../../src/Game';
-import {Player} from '../../../src/Player';
-import {Resources} from '../../../src/common/Resources';
-import {TestPlayers} from '../../TestPlayers';
+import {Lichen} from '../../../src/server/cards/base/Lichen';
+import {Game} from '../../../src/server/Game';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('Lichen', function() {
-  let card : Lichen; let player : Player; let game : Game;
+  let card: Lichen;
+  let player: TestPlayer;
+  let game: Game;
 
   beforeEach(function() {
     card = new Lichen();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    game = Game.newInstance('foobar', [player, redPlayer], player);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, redPlayer], player);
   });
 
-  it('Can\'t play', function() {
+  it('Can not play', function() {
     expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
 
@@ -24,6 +24,6 @@ describe('Lichen', function() {
     expect(player.canPlayIgnoringCost(card)).is.true;
 
     card.play(player);
-    expect(player.getProduction(Resources.PLANTS)).to.eq(1);
+    expect(player.production.plants).to.eq(1);
   });
 });

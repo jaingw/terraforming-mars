@@ -1,27 +1,27 @@
 import {expect} from 'chai';
-import {AdvancedAlloys} from '../../../src/cards/base/AdvancedAlloys';
-import {AdvancedEcosystems} from '../../../src/cards/base/AdvancedEcosystems';
-import {ColonizerTrainingCamp} from '../../../src/cards/base/ColonizerTrainingCamp';
-import {CupolaCity} from '../../../src/cards/base/CupolaCity';
-import {LunarBeam} from '../../../src/cards/base/LunarBeam';
-import {MarsUniversity} from '../../../src/cards/base/MarsUniversity';
-import {SpaceElevator} from '../../../src/cards/base/SpaceElevator';
-import {ResearchCoordination} from '../../../src/cards/prelude/ResearchCoordination';
-import {InterplanetaryTrade} from '../../../src/cards/promo/InterplanetaryTrade';
-import {MaxwellBase} from '../../../src/cards/venusNext/MaxwellBase';
-import {DeclarationOfIndependence} from '../../../src/cards/pathfinders/DeclarationOfIndependence';
-import {Game} from '../../../src/Game';
-import {Player} from '../../../src/Player';
-import {Resources} from '../../../src/common/Resources';
-import {TestPlayers} from '../../TestPlayers';
+import {AdvancedAlloys} from '../../../src/server/cards/base/AdvancedAlloys';
+import {AdvancedEcosystems} from '../../../src/server/cards/base/AdvancedEcosystems';
+import {ColonizerTrainingCamp} from '../../../src/server/cards/base/ColonizerTrainingCamp';
+import {CupolaCity} from '../../../src/server/cards/base/CupolaCity';
+import {LunarBeam} from '../../../src/server/cards/base/LunarBeam';
+import {MarsUniversity} from '../../../src/server/cards/base/MarsUniversity';
+import {SpaceElevator} from '../../../src/server/cards/base/SpaceElevator';
+import {ResearchCoordination} from '../../../src/server/cards/prelude/ResearchCoordination';
+import {InterplanetaryTrade} from '../../../src/server/cards/promo/InterplanetaryTrade';
+import {MaxwellBase} from '../../../src/server/cards/venusNext/MaxwellBase';
+import {DeclarationOfIndependence} from '../../../src/server/cards/pathfinders/DeclarationOfIndependence';
+import {Game} from '../../../src/server/Game';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('InterplanetaryTrade', function() {
-  let card : InterplanetaryTrade; let player : Player; let game: Game;
+  let card: InterplanetaryTrade;
+  let player: TestPlayer;
+  let game: Game;
 
   beforeEach(function() {
     card = new InterplanetaryTrade();
-    player = TestPlayers.BLUE.newPlayer();
-    game = Game.newInstance('foo', [player], player);
+    player = TestPlayer.BLUE.newPlayer();
+    game = Game.newInstance('gameid', [player], player);
   });
 
   it('Should play', function() {
@@ -31,7 +31,7 @@ describe('InterplanetaryTrade', function() {
     player.playedCards.push(new ResearchCoordination());
 
     card.play(player);
-    expect(player.getProduction(Resources.MEGACREDITS)).to.eq(4);
+    expect(player.production.megacredits).to.eq(4);
   });
 
   it('Should only count wild tags up to the max amount of tag types existing (10 at base)', function() {
@@ -44,7 +44,7 @@ describe('InterplanetaryTrade', function() {
     player.playedCards.push(new LunarBeam());
     player.playedCards.push(new ColonizerTrainingCamp());
     card.play(player);
-    expect(player.getProduction(Resources.MEGACREDITS)).to.eq(10);
+    expect(player.production.megacredits).to.eq(10);
   });
 
   it('Should only count wild tags up to the max amount of tag types existing (11 with venus)', function() {
@@ -58,7 +58,7 @@ describe('InterplanetaryTrade', function() {
     player.playedCards.push(new LunarBeam());
     player.playedCards.push(new ColonizerTrainingCamp());
     card.play(player);
-    expect(player.getProduction(Resources.MEGACREDITS)).to.eq(11);
+    expect(player.production.megacredits).to.eq(11);
   });
 
   it('Should only count wild tags up to the max amount of tag types existing (12 with venus and moon)', function() {
@@ -73,7 +73,7 @@ describe('InterplanetaryTrade', function() {
     player.playedCards.push(new LunarBeam());
     player.playedCards.push(new ColonizerTrainingCamp());
     card.play(player);
-    expect(player.getProduction(Resources.MEGACREDITS)).to.eq(12);
+    expect(player.production.megacredits).to.eq(12);
   });
 
   it('Should only count wild tags up to the max amount of tag types existing (13 with venus, moon, and Mars)', function() {
@@ -89,7 +89,7 @@ describe('InterplanetaryTrade', function() {
     player.playedCards.push(new ColonizerTrainingCamp());
     player.playedCards.push(new DeclarationOfIndependence());
     card.play(player);
-    expect(player.getProduction(Resources.MEGACREDITS)).to.eq(12);
+    expect(player.production.megacredits).to.eq(12);
   });
 
   it('Should give victory points', function() {
@@ -99,6 +99,6 @@ describe('InterplanetaryTrade', function() {
 
   it('Should raise MC production by one', function() {
     card.play(player);
-    expect(player.getProduction(Resources.MEGACREDITS)).to.eq(1);
+    expect(player.production.megacredits).to.eq(1);
   });
 });

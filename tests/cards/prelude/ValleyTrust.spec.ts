@@ -1,17 +1,17 @@
-import {SelectCard} from '../../../src/inputs/SelectCard';
+import {SelectCard} from '../../../src/server/inputs/SelectCard';
 import {expect} from 'chai';
 import {cast} from '../../TestingUtils';
-import {Ants} from '../../../src/cards/base/Ants';
-import {MedicalLab} from '../../../src/cards/base/MedicalLab';
-import {Research} from '../../../src/cards/base/Research';
-import {ValleyTrust} from '../../../src/cards/prelude/ValleyTrust';
+import {Ants} from '../../../src/server/cards/base/Ants';
+import {MedicalLab} from '../../../src/server/cards/base/MedicalLab';
+import {Research} from '../../../src/server/cards/base/Research';
+import {ValleyTrust} from '../../../src/server/cards/prelude/ValleyTrust';
 import {TestPlayer} from '../../TestPlayer';
 import {CardType} from '../../../src/common/cards/CardType';
 import {getTestPlayer, newTestGame} from '../../TestGame';
 
 describe('ValleyTrust', function() {
-  let card : ValleyTrust;
-  let player : TestPlayer;
+  let card: ValleyTrust;
+  let player: TestPlayer;
 
   beforeEach(function() {
     card = new ValleyTrust();
@@ -29,7 +29,7 @@ describe('ValleyTrust', function() {
   });
 
   it('Should play', function() {
-    const action = card.play();
+    const action = card.play(player);
     expect(action).is.undefined;
   });
 
@@ -39,7 +39,7 @@ describe('ValleyTrust', function() {
     expect(selectCard.cards.filter((c) => c.cardType === CardType.PRELUDE)).has.length(3);
   });
 
-  it('Card works even without prelude', () => {
+  it('Card works even without prelude expansion enabled', () => {
     const game = newTestGame(1, {preludeExtension: false});
     const player = getTestPlayer(game, 0);
     const selectCard = cast(card.initialAction(player), SelectCard);

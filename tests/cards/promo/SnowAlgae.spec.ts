@@ -1,21 +1,20 @@
 import {expect} from 'chai';
-import {SnowAlgae} from '../../../src/cards/promo/SnowAlgae';
-import {Game} from '../../../src/Game';
-import {Player} from '../../../src/Player';
-import {Resources} from '../../../src/common/Resources';
+import {SnowAlgae} from '../../../src/server/cards/promo/SnowAlgae';
+import {Game} from '../../../src/server/Game';
 import {maxOutOceans} from '../../TestingUtils';
-import {TestPlayers} from '../../TestPlayers';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('SnowAlgae', function() {
-  let card : SnowAlgae; let player : Player;
+  let card: SnowAlgae;
+  let player: TestPlayer;
 
   beforeEach(function() {
     card = new SnowAlgae();
-    player = TestPlayers.BLUE.newPlayer();
-    Game.newInstance('foobar', [player], player);
+    player = TestPlayer.BLUE.newPlayer();
+    Game.newInstance('gameid', [player], player);
   });
 
-  it('Can\'t play', function() {
+  it('Can not play', function() {
     maxOutOceans(player, 1);
     expect(player.canPlayIgnoringCost(card)).is.not.true;
   });
@@ -25,7 +24,7 @@ describe('SnowAlgae', function() {
     expect(player.canPlayIgnoringCost(card)).is.true;
 
     card.play(player);
-    expect(player.getProduction(Resources.PLANTS)).to.eq(1);
-    expect(player.getProduction(Resources.HEAT)).to.eq(1);
+    expect(player.production.plants).to.eq(1);
+    expect(player.production.heat).to.eq(1);
   });
 });

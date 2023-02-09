@@ -1,16 +1,16 @@
 import {expect} from 'chai';
-import {PowerPlant} from '../../src/cards/pathfinders/PowerPlant';
-import {Game} from '../../src/Game';
-import {BalancedDevelopment} from '../../src/turmoil/globalEvents/BalancedDevelopment';
-import {Turmoil} from '../../src/turmoil/Turmoil';
-import {TestPlayers} from '../TestPlayers';
+import {PowerPlant} from '../../src/server/cards/pathfinders/PowerPlant';
+import {Game} from '../../src/server/Game';
+import {BalancedDevelopment} from '../../src/server/turmoil/globalEvents/BalancedDevelopment';
+import {Turmoil} from '../../src/server/turmoil/Turmoil';
+import {TestPlayer} from '../TestPlayer';
 
 describe('BalancedDevelopment', function() {
   it('resolve play', function() {
     const card = new BalancedDevelopment();
-    const player = TestPlayers.BLUE.newPlayer();
-    const player2 = TestPlayers.RED.newPlayer();
-    const game = Game.newInstance('foobar', [player, player2], player);
+    const player = TestPlayer.BLUE.newPlayer();
+    const player2 = TestPlayer.RED.newPlayer();
+    const game = Game.newInstance('gameid', [player, player2], player);
     const turmoil = Turmoil.newInstance(game);
 
     turmoil.initGlobalEvent(game);
@@ -18,10 +18,10 @@ describe('BalancedDevelopment', function() {
     player2.playedCards.push(new PowerPlant());
     player2.playedCards.push(new PowerPlant());
 
-    turmoil.chairman = player2;
-    turmoil.dominantParty.partyLeader = player2;
-    turmoil.dominantParty.delegates.push(player2);
-    turmoil.dominantParty.delegates.push(player2);
+    turmoil.chairman = player2.id;
+    turmoil.dominantParty.partyLeader = player2.id;
+    turmoil.dominantParty.delegates.add(player2.id);
+    turmoil.dominantParty.delegates.add(player2.id);
 
     card.resolve(game, turmoil);
 

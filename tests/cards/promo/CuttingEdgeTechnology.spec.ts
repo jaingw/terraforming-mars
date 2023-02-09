@@ -1,18 +1,16 @@
 import {expect} from 'chai';
-import {DustSeals} from '../../../src/cards/base/DustSeals';
-import {HeatTrappers} from '../../../src/cards/base/HeatTrappers';
-import {CuttingEdgeTechnology} from '../../../src/cards/promo/CuttingEdgeTechnology';
-import {VoteOfNoConfidence} from '../../../src/cards/turmoil/VoteOfNoConfidence';
-import {Game} from '../../../src/Game';
-import {TestPlayers} from '../../TestPlayers';
+import {DustSeals} from '../../../src/server/cards/base/DustSeals';
+import {HeatTrappers} from '../../../src/server/cards/base/HeatTrappers';
+import {CuttingEdgeTechnology} from '../../../src/server/cards/promo/CuttingEdgeTechnology';
+import {VoteOfNoConfidence} from '../../../src/server/cards/turmoil/VoteOfNoConfidence';
+import {getTestPlayer, newTestGame} from '../../TestGame';
 
 describe('CuttingEdgeTechnology', function() {
   it('Should play', function() {
     const card = new CuttingEdgeTechnology();
-    const player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    Game.newInstance('foobar', [player, redPlayer], player);
-    card.play();
+    const game = newTestGame(2);
+    const player = getTestPlayer(game, 0);
+    card.play(player);
 
     const discountedCard = new DustSeals();
     const discountedCard2 = new VoteOfNoConfidence();

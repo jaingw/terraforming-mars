@@ -1,26 +1,23 @@
-import {Game} from '../../../src/Game';
-import {Player} from '../../../src/Player';
-import {setCustomGameOptions} from '../../TestingUtils';
-import {TestPlayers} from '../../TestPlayers';
-import {LunaConference} from '../../../src/cards/moon/LunaConference';
+import {Game} from '../../../src/server/Game';
+import {testGameOptions} from '../../TestingUtils';
+import {TestPlayer} from '../../TestPlayer';
+import {LunaConference} from '../../../src/server/cards/moon/LunaConference';
 import {expect} from 'chai';
-import {MoonExpansion} from '../../../src/moon/MoonExpansion';
-import {IMoonData} from '../../../src/moon/IMoonData';
+import {MoonExpansion} from '../../../src/server/moon/MoonExpansion';
+import {IMoonData} from '../../../src/server/moon/IMoonData';
 import {TileType} from '../../../src/common/TileType';
-import {Scientists} from '../../../src/turmoil/parties/Scientists';
-import {Greens} from '../../../src/turmoil/parties/Greens';
-
-const MOON_OPTIONS = setCustomGameOptions({moonExpansion: true});
+import {Scientists} from '../../../src/server/turmoil/parties/Scientists';
+import {Greens} from '../../../src/server/turmoil/parties/Greens';
 
 describe('LunaConference', () => {
-  let player: Player;
+  let player: TestPlayer;
   let game: Game;
   let card: LunaConference;
   let moonData: IMoonData;
 
   beforeEach(() => {
-    player = TestPlayers.BLUE.newPlayer();
-    game = Game.newInstance('id', [player], player, MOON_OPTIONS);
+    player = TestPlayer.BLUE.newPlayer();
+    game = Game.newInstance('gameid', [player], player, testGameOptions({moonExpansion: true, turmoilExtension: true}));
     card = new LunaConference();
     moonData = MoonExpansion.moonData(game);
   });
@@ -46,9 +43,9 @@ describe('LunaConference', () => {
 
     expect(player.megaCredits).eq(4);
 
-    spaces[0].tile = {tileType: TileType.MOON_COLONY};
-    spaces[1].tile = {tileType: TileType.MOON_COLONY};
-    spaces[2].tile = {tileType: TileType.MOON_COLONY};
+    spaces[0].tile = {tileType: TileType.MOON_HABITAT};
+    spaces[1].tile = {tileType: TileType.MOON_HABITAT};
+    spaces[2].tile = {tileType: TileType.MOON_HABITAT};
 
     player.megaCredits = 0;
     card.play(player);

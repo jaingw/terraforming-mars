@@ -1,24 +1,24 @@
 import {expect} from 'chai';
-import {CaretakerContract} from '../../../src/cards/base/CaretakerContract';
-import {Game} from '../../../src/Game';
-import {Player} from '../../../src/Player';
-import {setCustomGameOptions} from '../../TestingUtils';
-import {TestPlayers} from '../../TestPlayers';
+import {CaretakerContract} from '../../../src/server/cards/base/CaretakerContract';
+import {Game} from '../../../src/server/Game';
+import {TestPlayer} from '../../TestPlayer';
 import {Phase} from '../../../src/common/Phase';
-import {Greens} from '../../../src/turmoil/parties/Greens';
-import {Reds} from '../../../src/turmoil/parties/Reds';
-import {PoliticalAgendas} from '../../../src/turmoil/PoliticalAgendas';
-import {Helion} from '../../../src/cards/corporation/Helion';
-import {StormCraftIncorporated} from '../../../src/cards/colonies/StormCraftIncorporated';
+import {Greens} from '../../../src/server/turmoil/parties/Greens';
+import {Reds} from '../../../src/server/turmoil/parties/Reds';
+import {PoliticalAgendas} from '../../../src/server/turmoil/PoliticalAgendas';
+import {Helion} from '../../../src/server/cards/corporation/Helion';
+import {StormCraftIncorporated} from '../../../src/server/cards/colonies/StormCraftIncorporated';
+import {getTestPlayer, newTestGame} from '../../TestGame';
 
 describe('CaretakerContract', function() {
-  let card : CaretakerContract; let player : Player; let game : Game;
+  let card: CaretakerContract;
+  let player: TestPlayer;
+  let game: Game;
 
   beforeEach(function() {
     card = new CaretakerContract();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    game = Game.newInstance('foobar', [player, redPlayer], player);
+    game = newTestGame(2),
+    player = getTestPlayer(game, 0);
   });
 
   it('Cannot play or act', function() {
@@ -45,8 +45,8 @@ describe('CaretakerContract', function() {
   });
 
   it('Cannot act if cannot afford reds tax', function() {
-    const player = TestPlayers.BLUE.newPlayer();
-    const game = Game.newInstance('foobar', [player], player, setCustomGameOptions());
+    const game = newTestGame(1, {turmoilExtension: true});
+    const player = getTestPlayer(game, 0);
     const turmoil = game.turmoil!;
     game.phase = Phase.ACTION;
 
@@ -66,10 +66,11 @@ describe('CaretakerContract', function() {
   });
 
   it('Do not double-account heat with Helion using Reds tax', function() {
-    const player = TestPlayers.BLUE.newPlayer();
-    player.corpCard = new Helion();
-    player.corpCard.play(player);
-    const game = Game.newInstance('foobar', [player], player, setCustomGameOptions());
+    const game = newTestGame(1, {turmoilExtension: true});
+    const player = getTestPlayer(game, 0);
+    const helion = new Helion();
+    player.corporations.push(helion);
+    helion.play(player);
     const turmoil = game.turmoil!;
     game.phase = Phase.ACTION;
 
@@ -90,9 +91,10 @@ describe('CaretakerContract', function() {
   });
 
   it('Can use Stormcraft Incorporated', function() {
-    player.corpCard = new StormCraftIncorporated();
-    player.corpCard.play(player);
-    player.corpCard.resourceCount = 3;
+    const stormcraft = new StormCraftIncorporated();
+    player.setCorporationForTest(stormcraft);
+    stormcraft.play(player);
+    stormcraft.resourceCount = 3;
     player.heat = 1;
     expect(card.canAct(player)).is.false;
     player.heat = 2;

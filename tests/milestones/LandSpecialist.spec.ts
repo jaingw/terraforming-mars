@@ -1,17 +1,16 @@
 import {expect} from 'chai';
-import {Game} from '../../src/Game';
-import {LandSpecialist} from '../../src/milestones/LandSpecialist';
-import {setCustomGameOptions} from '../TestingUtils';
-import {TestPlayers} from '../TestPlayers';
+import {Game} from '../../src/server/Game';
+import {LandSpecialist} from '../../src/server/milestones/LandSpecialist';
+import {testGameOptions} from '../TestingUtils';
 import {TestPlayer} from '../TestPlayer';
 import {BoardName} from '../../src/common/boards/BoardName';
-import {Board} from '../../src/boards/Board';
-import {ISpace} from '../../src/boards/ISpace';
+import {Board} from '../../src/server/boards/Board';
+import {ISpace} from '../../src/server/boards/ISpace';
 import {TileType} from '../../src/common/TileType';
-import {MoonExpansion} from '../../src/moon/MoonExpansion';
+import {MoonExpansion} from '../../src/server/moon/MoonExpansion';
 
 describe('LandSpecialist', function() {
-  let milestone : LandSpecialist;
+  let milestone: LandSpecialist;
   let player: TestPlayer;
   let player2: TestPlayer;
   let game: Game;
@@ -20,9 +19,9 @@ describe('LandSpecialist', function() {
 
   beforeEach(function() {
     milestone = new LandSpecialist();
-    player = TestPlayers.BLUE.newPlayer();
-    player2 = TestPlayers.RED.newPlayer();
-    game = Game.newInstance('id', [player, player2], player, setCustomGameOptions({boardName: BoardName.ARABIA_TERRA, moonExpansion: true}));
+    player = TestPlayer.BLUE.newPlayer();
+    player2 = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, player2], player, testGameOptions({boardName: BoardName.ARABIA_TERRA, moonExpansion: true}));
     board = game.board;
     spaces = board.getAvailableSpacesOnLand(player);
   });
@@ -49,6 +48,7 @@ describe('LandSpecialist', function() {
     game.simpleAddTile(player, spaces[0], {tileType: TileType.CITY});
     game.simpleAddTile(player, spaces[1], {tileType: TileType.CITY});
     game.simpleAddTile(player, spaces[2], {tileType: TileType.GREENERY});
+    game.simpleAddTile(player, spaces[3], {tileType: TileType.EROSION_MILD});
     expect(milestone.getScore(player)).eq(0);
     expect(milestone.canClaim(player)).is.false;
   });
@@ -67,7 +67,7 @@ describe('LandSpecialist', function() {
     const moonSpaces = MoonExpansion.moonData(game).moon.getAvailableSpacesOnLand(player);
 
     game.simpleAddTile(player, moonSpaces[0], {tileType: TileType.MOON_MINE});
-    game.simpleAddTile(player, moonSpaces[1], {tileType: TileType.MOON_COLONY});
+    game.simpleAddTile(player, moonSpaces[1], {tileType: TileType.MOON_HABITAT});
     game.simpleAddTile(player, moonSpaces[2], {tileType: TileType.MOON_ROAD});
     expect(milestone.getScore(player)).eq(0);
     expect(milestone.canClaim(player)).is.false;

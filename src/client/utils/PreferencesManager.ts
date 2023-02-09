@@ -1,4 +1,4 @@
-export interface IPreferences {
+export type Preferences = {
   learner_mode: boolean,
   enable_sounds: boolean,
   magnify_cards: boolean,
@@ -15,6 +15,7 @@ export interface IPreferences {
   hide_discount_on_cards: boolean,
   hide_animated_sidebar: boolean,
   experimental_ui: boolean,
+  debug_view: boolean,
   lang: string,
   donateupdate : string,
   userId : string,
@@ -25,12 +26,12 @@ export interface IPreferences {
   lastcreated: string,
 }
 
-export type Preference = keyof IPreferences;
+export type Preference = keyof Preferences;
 
-const defaults: IPreferences = {
+const defaults: Preferences = {
   learner_mode: true,
   enable_sounds: true,
-  magnify_cards: true,
+  magnify_cards: false,
   show_alerts: true,
   lang: 'cn',
 
@@ -47,6 +48,7 @@ const defaults: IPreferences = {
   hide_animated_sidebar: false,
   experimental_ui: false,
 
+  debug_view: false,
   donateupdate: '',
   userId: '',
   vipupdate: '',
@@ -58,7 +60,7 @@ const defaults: IPreferences = {
 
 export class PreferencesManager {
   public static INSTANCE = new PreferencesManager();
-  private readonly _values: IPreferences;
+  private readonly _values: Preferences;
 
   private localStorageSupported(): boolean {
     return typeof localStorage !== 'undefined';
@@ -92,7 +94,7 @@ export class PreferencesManager {
     return (PreferencesManager.INSTANCE.values()[name] ?? defaultValue).toString();
   }
 
-  private _set(key: Preference, val: IPreferences[Preference] ) {
+  private _set(key: Preference, val: Preferences[Preference] ) {
     if (typeof(this._values[key]) === 'string') {
       (this._values[key] as any) = String(val);
     } else {
@@ -102,7 +104,7 @@ export class PreferencesManager {
 
   // Making this Readonly means that it's Typescript-impossible to
   // set preferences through the fields themselves.
-  values(): Readonly<IPreferences> {
+  values(): Readonly<Preferences> {
     return this._values;
   }
 
@@ -112,9 +114,9 @@ export class PreferencesManager {
     this._set(name, val);
     if (this.localStorageSupported()) {
       if (typeof(this._values[name]) === 'string') {
-        localStorage?.setItem(name, val as string);
+        localStorage.setItem(name, val as string);
       } else {
-        localStorage?.setItem(name, val ? '1' : '0');
+        localStorage.setItem(name, val ? '1' : '0');
       }
     }
   }
@@ -128,6 +130,6 @@ export class PreferencesManager {
   }
 }
 
-export function getPreferences(): Readonly<IPreferences> {
+export function getPreferences(): Readonly<Preferences> {
   return PreferencesManager.INSTANCE.values();
 }

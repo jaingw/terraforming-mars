@@ -1,21 +1,21 @@
 import {expect} from 'chai';
-import {PowerPlant} from '../../src/cards/base/PowerPlant';
-import {SolarPower} from '../../src/cards/base/SolarPower';
-import {SpaceMirrors} from '../../src/cards/base/SpaceMirrors';
-import {ResearchCoordination} from '../../src/cards/prelude/ResearchCoordination';
-import {FieldCappedCity} from '../../src/cards/promo/FieldCappedCity';
-import {Game} from '../../src/Game';
-import {Electrician} from '../../src/milestones/Electrician';
-import {Player} from '../../src/Player';
-import {TestPlayers} from '../TestPlayers';
+import {PowerPlant} from '../../src/server/cards/base/PowerPlant';
+import {SolarPower} from '../../src/server/cards/base/SolarPower';
+import {SpaceMirrors} from '../../src/server/cards/base/SpaceMirrors';
+import {ResearchCoordination} from '../../src/server/cards/prelude/ResearchCoordination';
+import {FieldCappedCity} from '../../src/server/cards/promo/FieldCappedCity';
+import {Game} from '../../src/server/Game';
+import {Electrician} from '../../src/server/milestones/Electrician';
+import {TestPlayer} from '../TestPlayer';
 
 describe('Electrician', () => {
-  let milestone : Electrician; let player : Player;
+  let milestone: Electrician;
+  let player: TestPlayer;
 
   beforeEach(() => {
     milestone = new Electrician();
-    player = TestPlayers.BLUE.newPlayer();
-    Game.newInstance('test', [player], player);
+    player = TestPlayer.BLUE.newPlayer();
+    Game.newInstance('gameid', [player], player);
 
     player.playedCards.push(new SolarPower(), new PowerPlant(), new SpaceMirrors());
   });

@@ -1,13 +1,13 @@
 import {expect} from 'chai';
-import {AquiferStandardProject} from '../../../../src/cards/base/standardProjects/AquiferStandardProject';
-import {maxOutOceans, setCustomGameOptions, runAllActions} from '../../../TestingUtils';
+import {cast} from '../../../TestingUtils';
+import {AquiferStandardProject} from '../../../../src/server/cards/base/standardProjects/AquiferStandardProject';
+import {maxOutOceans, testGameOptions, runAllActions} from '../../../TestingUtils';
 import {TestPlayer} from '../../../TestPlayer';
-import {Game} from '../../../../src/Game';
-import {TestPlayers} from '../../../TestPlayers';
-import {PoliticalAgendas} from '../../../../src/turmoil/PoliticalAgendas';
-import {Reds} from '../../../../src/turmoil/parties/Reds';
+import {Game} from '../../../../src/server/Game';
+import {PoliticalAgendas} from '../../../../src/server/turmoil/PoliticalAgendas';
+import {Reds} from '../../../../src/server/turmoil/parties/Reds';
 import {Phase} from '../../../../src/common/Phase';
-import {SelectSpace} from '../../../../src/inputs/SelectSpace';
+import {SelectSpace} from '../../../../src/server/inputs/SelectSpace';
 import {SpaceType} from '../../../../src/common/boards/SpaceType';
 import {TileType} from '../../../../src/common/TileType';
 
@@ -18,8 +18,8 @@ describe('AquiferStandardProject', function() {
 
   beforeEach(function() {
     card = new AquiferStandardProject();
-    player = TestPlayers.BLUE.newPlayer();
-    game = Game.newInstance('foobar', [player], player);
+    player = TestPlayer.BLUE.newPlayer();
+    game = Game.newInstance('gameid', [player], player);
   });
 
   it('Can act', function() {
@@ -37,7 +37,7 @@ describe('AquiferStandardProject', function() {
     card.action(player);
     runAllActions(game);
 
-    const selectSpace = player.getWaitingFor() as SelectSpace;
+    const selectSpace = cast(player.getWaitingFor(), SelectSpace);
     const availableSpace = selectSpace.availableSpaces[0];
 
     expect(availableSpace.spaceType).eq(SpaceType.OCEAN);
@@ -57,8 +57,8 @@ describe('AquiferStandardProject', function() {
   });
 
   it('Can not act with reds', () => {
-    player = TestPlayers.BLUE.newPlayer();
-    game = Game.newInstance('foobar', [player], player, setCustomGameOptions({turmoilExtension: true}));
+    player = TestPlayer.BLUE.newPlayer();
+    game = Game.newInstance('gameid', [player], player, testGameOptions({turmoilExtension: true}));
 
     player.megaCredits = card.cost;
     player.game.phase = Phase.ACTION;

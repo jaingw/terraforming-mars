@@ -1,8 +1,8 @@
 import {expect} from 'chai';
-import {ApiGame} from '../../src/routes/ApiGame';
-import {Game} from '../../src/Game';
+import {ApiGame} from '../../src/server/routes/ApiGame';
+import {Game} from '../../src/server/Game';
 import {MockResponse} from './HttpMocks';
-import {TestPlayers} from '../TestPlayers';
+import {TestPlayer} from '../TestPlayer';
 import {RouteTestScaffolding} from './RouteTestScaffolding';
 
 describe('ApiGame', () => {
@@ -16,16 +16,16 @@ describe('ApiGame', () => {
 
   it('no parameter', async () => {
     scaffolding.url = '/api/game';
-    await scaffolding.asyncGet(ApiGame.INSTANCE, res);
-    expect(res.statusCode).eq(404);
-    expect(res.content).eq('Not found: id parameter missing');
+    await scaffolding.get(ApiGame.INSTANCE, res);
+    expect(res.statusCode).eq(400);
+    expect(res.content).eq('Bad request: missing id parameter');
   });
 
   it('invalid id', async () => {
-    const player = TestPlayers.BLACK.newPlayer();
-    scaffolding.ctx.gameLoader.add(Game.newInstance('validId', [player], player));
+    const player = TestPlayer.BLACK.newPlayer();
+    scaffolding.ctx.gameLoader.add(Game.newInstance('game-valid-id', [player], player));
     scaffolding.url = '/api/game?id=invalidId';
-    await scaffolding.asyncGet(ApiGame.INSTANCE, res);
+    await scaffolding.get(ApiGame.INSTANCE, res);
     expect(res.statusCode).eq(404);
     expect(res.content).eq('Not found: game not found');
   });
@@ -55,7 +55,7 @@ describe('ApiGame', () => {
   //         'altVenusBoard': false,
   //         'aresExtension': false,
   //         'boardName': 'tharsis',
-  //         'cardsBlackList': [],
+  //        'bannedCards': [],
   //         'coloniesExtension': false,
   //         'communityCardsOption': false,
   //         'corporateEra': true,

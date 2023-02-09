@@ -1,22 +1,19 @@
 import {expect} from 'chai';
-import {EventAnalysts} from '../../../src/cards/turmoil/EventAnalysts';
-import {Game} from '../../../src/Game';
+import {EventAnalysts} from '../../../src/server/cards/turmoil/EventAnalysts';
 import {PartyName} from '../../../src/common/turmoil/PartyName';
-import {setCustomGameOptions} from '../../TestingUtils';
-import {TestPlayers} from '../../TestPlayers';
+import {testGameOptions} from '../../TestingUtils';
+import {getTestPlayer, newTestGame} from '../../TestGame';
 
 describe('EventAnalysts', function() {
   it('Should play', function() {
     const card = new EventAnalysts();
-    const player = TestPlayers.BLUE.newPlayer();
-
-    const gameOptions = setCustomGameOptions();
-    const game = Game.newInstance('foobar', [player], player, gameOptions);
+    const game = newTestGame(1, testGameOptions({turmoilExtension: true}));
+    const player = getTestPlayer(game, 0);
     expect(player.canPlayIgnoringCost(card)).is.not.true;
 
-        game.turmoil!.sendDelegateToParty(player, PartyName.SCIENTISTS, game);
-        game.turmoil!.sendDelegateToParty(player, PartyName.SCIENTISTS, game);
-        game.turmoil!.sendDelegateToParty(player, PartyName.SCIENTISTS, game);
+        game.turmoil!.sendDelegateToParty(player.id, PartyName.SCIENTISTS, game);
+        game.turmoil!.sendDelegateToParty(player.id, PartyName.SCIENTISTS, game);
+        game.turmoil!.sendDelegateToParty(player.id, PartyName.SCIENTISTS, game);
         expect(player.canPlayIgnoringCost(card)).is.true;
 
         card.play(player);

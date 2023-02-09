@@ -1,19 +1,20 @@
 import {expect} from 'chai';
 import {cast} from '../../TestingUtils';
-import {RegolithEaters} from '../../../src/cards/base/RegolithEaters';
-import {Game} from '../../../src/Game';
-import {OrOptions} from '../../../src/inputs/OrOptions';
-import {Player} from '../../../src/Player';
-import {TestPlayers} from '../../TestPlayers';
+import {RegolithEaters} from '../../../src/server/cards/base/RegolithEaters';
+import {Game} from '../../../src/server/Game';
+import {OrOptions} from '../../../src/server/inputs/OrOptions';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('RegolithEaters', function() {
-  let card : RegolithEaters; let player : Player; let game : Game;
+  let card: RegolithEaters;
+  let player: TestPlayer;
+  let game: Game;
 
   beforeEach(function() {
     card = new RegolithEaters();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    game = Game.newInstance('foobar', [player, redPlayer], player);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, redPlayer], player);
   });
 
   it('Should act', function() {

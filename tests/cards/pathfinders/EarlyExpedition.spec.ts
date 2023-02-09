@@ -1,12 +1,11 @@
-import {LunarObservationPost} from '../../../src/cards/moon/LunarObservationPost';
+import {LunarObservationPost} from '../../../src/server/cards/moon/LunarObservationPost';
 import {expect} from 'chai';
-import {EarlyExpedition} from '../../../src/cards/pathfinders/EarlyExpedition';
-import {Game} from '../../../src/Game';
+import {EarlyExpedition} from '../../../src/server/cards/pathfinders/EarlyExpedition';
+import {Game} from '../../../src/server/Game';
 import {TestPlayer} from '../../TestPlayer';
-import {TestPlayers} from '../../TestPlayers';
 import {Units} from '../../../src/common/Units';
-import {runAllActions} from '../../TestingUtils';
-import {SelectSpace} from '../../../src/inputs/SelectSpace';
+import {cast, runAllActions} from '../../TestingUtils';
+import {SelectSpace} from '../../../src/server/inputs/SelectSpace';
 
 describe('EarlyExpedition', function() {
   let card: EarlyExpedition;
@@ -15,37 +14,36 @@ describe('EarlyExpedition', function() {
 
   beforeEach(function() {
     card = new EarlyExpedition();
-    player = TestPlayers.BLUE.newPlayer();
-    game = Game.newInstance('foobar', [player], player);
+    player = TestPlayer.BLUE.newPlayer();
+    game = Game.newInstance('gameid', [player], player);
     player.playedCards.push(card);
   });
 
   it('canPlay', function() {
     (game as any).temperature = -16;
-    player.setProductionForTest({energy: 1});
-    expect(player.canPlayIgnoringCost(card)).is.false;
+    player.production.override({energy: 1});
+    expect(card.canPlay(player)).is.false;
 
     (game as any).temperature = -18;
-    player.setProductionForTest({energy: 0});
-    expect(player.canPlayIgnoringCost(card)).is.false;
+    player.production.override({energy: 0});
+    expect(card.canPlay(player)).is.false;
 
     (game as any).temperature = -18;
-    player.setProductionForTest({energy: 1});
-    expect(player.canPlayIgnoringCost(card)).is.true;
+    player.production.override({energy: 1});
+    expect(card.canPlay(player)).is.true;
   });
 
   it('play', function() {
-    player.setProductionForTest({energy: 1});
+    player.production.override({energy: 1});
     const lunarObservationPost = new LunarObservationPost(); // Holds data.
     player.playedCards = [lunarObservationPost];
 
-    const selectSpace = card.play(player);
+    expect(card.play(player)).is.undefined;
     runAllActions(game);
+    const selectSpace = cast(player.popWaitingFor(), SelectSpace);
 
-    expect(player.getProductionForTest()).eql(Units.of({megacredits: 3}));
-    expect(lunarObservationPost.resourceCount).eq(1);
+    expect(player.production.asUnits()).eql(Units.of({megacredits: 3}));
 
-    expect(selectSpace).instanceOf(SelectSpace);
     let tiles = 0;
     selectSpace.availableSpaces.forEach((space) => {
       game.board.getAdjacentSpaces(space).forEach((s) => {
@@ -53,5 +51,11 @@ describe('EarlyExpedition', function() {
       });
     });
     expect(tiles).eq(0);
+
+    selectSpace.cb(selectSpace.availableSpaces[0]);
+
+    runAllActions(game);
+
+    expect(lunarObservationPost.resourceCount).eq(1);
   });
 });

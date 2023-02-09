@@ -28,6 +28,7 @@
         "resolveJsonModule": true,
         "allowUnreachableCode": false,
         "baseUrl": ".",
+        "downlevelIteration":true,
         "paths": {
             "@/*": ["./src/*"]
         },

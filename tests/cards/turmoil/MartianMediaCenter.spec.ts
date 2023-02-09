@@ -1,25 +1,22 @@
 import {expect} from 'chai';
-import {MartianMediaCenter} from '../../../src/cards/turmoil/MartianMediaCenter';
-import {Game} from '../../../src/Game';
-import {Resources} from '../../../src/common/Resources';
+import {MartianMediaCenter} from '../../../src/server/cards/turmoil/MartianMediaCenter';
 import {PartyName} from '../../../src/common/turmoil/PartyName';
-import {setCustomGameOptions} from '../../TestingUtils';
-import {TestPlayers} from '../../TestPlayers';
+import {testGameOptions} from '../../TestingUtils';
+import {getTestPlayer, newTestGame} from '../../TestGame';
 
 describe('MartianMediaCenter', function() {
   it('Should play', function() {
     const card = new MartianMediaCenter();
-    const player = TestPlayers.BLUE.newPlayer();
+    const game = newTestGame(1, testGameOptions({turmoilExtension: true}));
+    const player = getTestPlayer(game, 0);
 
-    const gameOptions = setCustomGameOptions();
-    const game = Game.newInstance('foobar', [player], player, gameOptions);
-    expect(player.canPlayIgnoringCost(card)).is.not.true;
+    expect(card.canPlay(player)).is.not.true;
 
-    const mars = game.turmoil!.getPartyByName(PartyName.MARS)!;
-    mars.delegates.push(player, player);
-    expect(player.canPlayIgnoringCost(card)).is.true;
+    const mars = game.turmoil!.getPartyByName(PartyName.MARS);
+    mars.delegates.add(player.id, 2);
+    expect(card.canPlay(player)).is.true;
 
     card.play(player);
-    expect(player.getProduction(Resources.MEGACREDITS)).to.eq(2);
+    expect(player.production.megacredits).to.eq(2);
   });
 });

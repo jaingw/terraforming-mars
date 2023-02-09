@@ -1,16 +1,17 @@
 import {expect} from 'chai';
-import {Psychrophiles} from '../../../src/cards/prelude/Psychrophiles';
-import {Game} from '../../../src/Game';
-import {Player} from '../../../src/Player';
-import {TestPlayers} from '../../TestPlayers';
+import {Psychrophiles} from '../../../src/server/cards/prelude/Psychrophiles';
+import {Game} from '../../../src/server/Game';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('Psychrophiles', () => {
-  let card : Psychrophiles; let player : Player; let game : Game;
+  let card: Psychrophiles;
+  let player: TestPlayer;
+  let game: Game;
 
   beforeEach(() => {
     card = new Psychrophiles();
-    player = TestPlayers.BLUE.newPlayer();
-    game = Game.newInstance('foobar', [player], player);
+    player = TestPlayer.BLUE.newPlayer();
+    game = Game.newInstance('gameid', [player], player);
   });
 
   it('Cannot play', () => {
@@ -25,7 +26,7 @@ describe('Psychrophiles', () => {
 
   it('Should play', () => {
     expect(player.canPlayIgnoringCost(card)).is.true;
-    const action = card.play();
+    const action = card.play(player);
     expect(action).is.undefined;
   });
 
@@ -34,11 +35,11 @@ describe('Psychrophiles', () => {
   });
 
   it('Should act', () => {
-    expect(player.getMicrobesCanSpend()).to.eq(0);
+    expect(player.getSpendableMicrobes()).to.eq(0);
     player.playedCards.push(card);
 
     card.action(player);
     expect(player.getCardsWithResources()).has.lengthOf(1);
-    expect(player.getMicrobesCanSpend()).to.eq(1);
+    expect(player.getSpendableMicrobes()).to.eq(1);
   });
 });

@@ -27,6 +27,7 @@ export interface NewGameConfig {
   board: BoardNameType;
   seed: number;
   initialDraft: boolean;
+  _corporationsDraft: boolean; // NOT
   randomFirstPlayer: boolean;
 
   // boardName: BoardName;
@@ -55,6 +56,7 @@ export interface NewGameConfig {
   includeVenusMA: boolean;
   moonExpansion: boolean;
   pathfindersExpansion: boolean;
+  leadersExtension: boolean;
 
   // jaing
   userId: string;
@@ -69,10 +71,12 @@ export interface NewGameConfig {
   startingCorporations: number;
   shuffleMapOption: boolean;
   randomMA: RandomMAOptionType;
+  includeFanMA: boolean,
   soloTR: boolean; // Solo victory by getting TR 63 by game end
   customCorporationsList: Array<CardName>;
-  cardsBlackList: Array<CardName>;
+  bannedCards: Array<CardName>;
   customColoniesList: Array<ColonyName>;
+  customPreludes: Array<CardName>;
   requiresMoonTrackCompletion: boolean; // Moon must be completed to end the game
   requiresVenusTrackCompletion: boolean; // Venus must be completed to end the game
   moonStandardProjectVariant: boolean;
@@ -81,4 +85,6 @@ export interface NewGameConfig {
   escapeVelocityThreshold: number | undefined;
   escapeVelocityPeriod: number | undefined;
   escapeVelocityPenalty: number | undefined;
+  twoCorpsVariant: boolean,
+  customLeaders: Array<CardName>;
 }

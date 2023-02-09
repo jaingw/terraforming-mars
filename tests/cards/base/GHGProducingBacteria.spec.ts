@@ -1,19 +1,20 @@
 import {expect} from 'chai';
-import {GHGProducingBacteria} from '../../../src/cards/base/GHGProducingBacteria';
-import {Game} from '../../../src/Game';
-import {OrOptions} from '../../../src/inputs/OrOptions';
-import {Player} from '../../../src/Player';
-import {TestPlayers} from '../../TestPlayers';
+import {GHGProducingBacteria} from '../../../src/server/cards/base/GHGProducingBacteria';
+import {Game} from '../../../src/server/Game';
+import {OrOptions} from '../../../src/server/inputs/OrOptions';
+import {TestPlayer} from '../../TestPlayer';
 import {cast} from '../../TestingUtils';
 
 describe('GHGProducingBacteria', () => {
-  let card : GHGProducingBacteria; let player : Player; let game : Game;
+  let card: GHGProducingBacteria;
+  let player: TestPlayer;
+  let game: Game;
 
   beforeEach(() => {
     card = new GHGProducingBacteria();
-    player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    game = Game.newInstance('foobar', [player, redPlayer], player);
+    player = TestPlayer.BLUE.newPlayer();
+    const redPlayer = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, redPlayer], player);
   });
 
   it('Can play', () => {
@@ -25,7 +26,7 @@ describe('GHGProducingBacteria', () => {
 
   it('Should play', () => {
     (game as any).oxygenLevel = 4;
-    const action = card.play();
+    const action = card.play(player);
     expect(action).is.undefined;
   });
 

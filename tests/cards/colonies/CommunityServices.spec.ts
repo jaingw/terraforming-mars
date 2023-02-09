@@ -1,12 +1,11 @@
 import {expect} from 'chai';
-import {Aridor} from '../../../src/cards/colonies/Aridor';
-import {CommunityServices} from '../../../src/cards/colonies/CommunityServices';
-import {EccentricSponsor} from '../../../src/cards/prelude/EccentricSponsor';
-import {ResearchCoordination} from '../../../src/cards/prelude/ResearchCoordination';
-import {SeptemTribus} from '../../../src/cards/turmoil/SeptemTribus';
-import {Game} from '../../../src/Game';
-import {Resources} from '../../../src/common/Resources';
-import {TestPlayers} from '../../TestPlayers';
+import {Aridor} from '../../../src/server/cards/colonies/Aridor';
+import {CommunityServices} from '../../../src/server/cards/colonies/CommunityServices';
+import {EccentricSponsor} from '../../../src/server/cards/prelude/EccentricSponsor';
+import {ResearchCoordination} from '../../../src/server/cards/prelude/ResearchCoordination';
+import {SeptemTribus} from '../../../src/server/cards/turmoil/SeptemTribus';
+import {Game} from '../../../src/server/Game';
+import {TestPlayer} from '../../TestPlayer';
 
 describe('CommunityServices', function() {
   it('Should play', function() {
@@ -14,27 +13,27 @@ describe('CommunityServices', function() {
     const corpo = new Aridor();
     const prelude = new EccentricSponsor();
     const researchCoordination = new ResearchCoordination();
-    const player = TestPlayers.BLUE.newPlayer();
-    Game.newInstance('foobar', [player], player);
+    const player = TestPlayer.BLUE.newPlayer();
+    Game.newInstance('gameid', [player], player);
     player.playedCards.push(prelude, researchCoordination);
-    player.corpCard = corpo;
+    player.setCorporationForTest(corpo);
     const action = card.play(player);
     expect(action).is.undefined;
     expect(card.getVictoryPoints()).to.eq(1);
-    expect(player.getProduction(Resources.MEGACREDITS)).to.eq(4);
+    expect(player.production.megacredits).to.eq(4);
   });
   it('Wild Tags', function() {
     const card = new CommunityServices();
     const corpo = new SeptemTribus();
     const prelude = new EccentricSponsor();
     const researchCoordination = new ResearchCoordination();
-    const player = TestPlayers.BLUE.newPlayer();
-    Game.newInstance('foobar', [player], player);
+    const player = TestPlayer.BLUE.newPlayer();
+    Game.newInstance('gameid', [player], player);
     player.playedCards.push(prelude, researchCoordination);
-    player.corpCard = corpo;
+    player.setCorporationForTest(corpo);
     const action = card.play(player);
     expect(action).is.undefined;
     expect(card.getVictoryPoints()).to.eq(1);
-    expect(player.getProduction(Resources.MEGACREDITS)).to.eq(4);
+    expect(player.production.megacredits).to.eq(4);
   });
 });

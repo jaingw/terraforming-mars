@@ -1,15 +1,15 @@
 import {expect} from 'chai';
-import {BotanicalExperience} from '../../../src/cards/pathfinders/BotanicalExperience';
-import {Game} from '../../../src/Game';
+import {BotanicalExperience} from '../../../src/server/cards/pathfinders/BotanicalExperience';
+import {Game} from '../../../src/server/Game';
 import {TestPlayer} from '../../TestPlayer';
 import {cast, runAllActions} from '../../TestingUtils';
 import {getTestPlayer, newTestGame} from '../../TestGame';
-import {ISpace} from '../../../src/boards/ISpace';
+import {ISpace} from '../../../src/server/boards/ISpace';
 import {TileType} from '../../../src/common/TileType';
 import {Resources} from '../../../src/common/Resources';
-import {StealResources} from '../../../src/deferredActions/StealResources';
-import {OrOptions} from '../../../src/inputs/OrOptions';
-import {RemoveAnyPlants} from '../../../src/deferredActions/RemoveAnyPlants';
+import {StealResources} from '../../../src/server/deferredActions/StealResources';
+import {OrOptions} from '../../../src/server/inputs/OrOptions';
+import {RemoveAnyPlants} from '../../../src/server/deferredActions/RemoveAnyPlants';
 
 describe('BotanicalExperience', function() {
   let card: BotanicalExperience;
@@ -30,7 +30,7 @@ describe('BotanicalExperience', function() {
   it('canPlay', () => {
     expect(player.canPlayIgnoringCost(card)).is.false;
 
-    game.addGreenery(otherPlayer, space.id);
+    game.addGreenery(otherPlayer, space);
     expect(player.canPlayIgnoringCost(card)).is.true;
   });
 
@@ -51,19 +51,19 @@ describe('BotanicalExperience', function() {
     card.onTilePlaced(player, player, space);
     expect(card.resourceCount).eq(2);
 
-    expect(player.getProduction(Resources.PLANTS)).eq(0);
+    expect(player.production.plants).eq(0);
     space.tile = {tileType: TileType.GREENERY};
     card.onTilePlaced(player, player, space);
     expect(card.resourceCount).eq(0);
-    expect(player.getProduction(Resources.PLANTS)).eq(1);
+    expect(player.production.plants).eq(1);
   });
 
   it('card.addResourceTo', () => {
     card.resourceCount = 2;
-    expect(player.getProduction(Resources.PLANTS)).eq(0);
+    expect(player.production.plants).eq(0);
     player.addResourceTo(card, 8);
     expect(card.resourceCount).eq(1);
-    expect(player.getProduction(Resources.PLANTS)).eq(3);
+    expect(player.production.plants).eq(3);
   });
 
   it('targeted to remove plants', () => {

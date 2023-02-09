@@ -1,22 +1,21 @@
 import {expect} from 'chai';
-import {ALL_CARD_MANIFESTS} from '../../../src/cards/AllCards';
-import {Celestic} from '../../../src/cards/venusNext/Celestic';
-import {Game} from '../../../src/Game';
-import {TestPlayers} from '../../TestPlayers';
+import {ALL_MODULE_MANIFESTS} from '../../../src/server/cards/AllCards';
+import {Celestic} from '../../../src/server/cards/venusNext/Celestic';
+import {getTestPlayer, newTestGame} from '../../TestGame';
 import {CardName} from '../../../src/common/cards/CardName';
 import {CardResource} from '../../../src/common/CardResource';
 import {RequirementType} from '../../../src/common/cards/RequirementType';
+import {CardManifest} from '../../../src/server/cards/ModuleManifest';
 
 describe('Celestic', function() {
   it('Should play', function() {
     const card = new Celestic();
-    const player = TestPlayers.BLUE.newPlayer();
-    const redPlayer = TestPlayers.RED.newPlayer();
-    Game.newInstance('foobar', [player, redPlayer], player);
-    const play = card.play();
+    const game = newTestGame(2);
+    const player = getTestPlayer(game, 0);
+    const play = card.play(player);
     expect(play).is.undefined;
 
-    player.corpCard = card;
+    player.setCorporationForTest(card);
 
     const action = card.action(player);
     expect(action).is.undefined;
@@ -27,9 +26,10 @@ describe('Celestic', function() {
 
   it('Ensure static list contains all cards that mention floaters', function() {
     const found: Array<CardName> = [];
-    ALL_CARD_MANIFESTS.forEach((manifest) => {
-      manifest.projectCards.factories.forEach((factory) => {
-        const card = new factory.Factory();
+    ALL_MODULE_MANIFESTS.forEach((manifest) => {
+      CardManifest.entries(manifest.projectCards).forEach((entry) => {
+        const factory = entry[1];
+        const card = new factory!.Factory();
 
         // Only looking for cards that mention floaters in the metadata
         // or requirements. Cards with floater resources don't need to be hand-verified.

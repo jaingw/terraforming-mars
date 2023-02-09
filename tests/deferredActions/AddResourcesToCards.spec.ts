@@ -1,13 +1,12 @@
 import {expect} from 'chai';
-import {Ants} from '../../src/cards/base/Ants';
-import {GHGProducingBacteria} from '../../src/cards/base/GHGProducingBacteria';
-import {Tardigrades} from '../../src/cards/base/Tardigrades';
-import {AddResourcesToCards} from '../../src/deferredActions/AddResourcesToCards';
-import {Game} from '../../src/Game';
-import {TestPlayers} from '../TestPlayers';
+import {Ants} from '../../src/server/cards/base/Ants';
+import {GHGProducingBacteria} from '../../src/server/cards/base/GHGProducingBacteria';
+import {Tardigrades} from '../../src/server/cards/base/Tardigrades';
+import {AddResourcesToCards} from '../../src/server/deferredActions/AddResourcesToCards';
+import {Game} from '../../src/server/Game';
 import {TestPlayer} from '../TestPlayer';
 import {CardResource} from '../../src/common/CardResource';
-import {AndOptions} from '../../src/inputs/AndOptions';
+import {AndOptions} from '../../src/server/inputs/AndOptions';
 import {cast} from '../TestingUtils';
 
 describe('AddResourcesToCards', function() {
@@ -17,8 +16,8 @@ describe('AddResourcesToCards', function() {
   let ants: Ants;
 
   beforeEach(function() {
-    player = TestPlayers.BLUE.newPlayer();
-    Game.newInstance('foobar', [player], player);
+    player = TestPlayer.BLUE.newPlayer();
+    Game.newInstance('gameid', [player], player);
     ghgProducingBacteria = new GHGProducingBacteria();
     tardigrades = new Tardigrades();
     ants = new Ants();

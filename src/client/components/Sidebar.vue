@@ -17,7 +17,7 @@
   <div class="sidebar_item preferences_player" :title="$t('Player Color Cube')">
     <div :class="getPlayerColorCubeClass()+' player_bg_color_' + player_color"></div>
   </div>
-  <a  href="https://pica.zhimg.com/80/v2-5ecaa322b3329251b4c60b4e607b0750_1440w.png" target="_blank">
+  <a  href="/donate" target="_blank">
       <div class="sidebar_item sidebar_item_shortcut">
           <i class="sidebar_icon sidebar_icon--donate"><div class="deck-size">赞助</div></i>
       </div>
@@ -33,7 +33,7 @@
               <li> 游戏处于行动阶段</li>
               <li> 剩余玩家人数至少2人</li>
               <li> 玩家当前回合才能体退</li>
-              <li> 玩家名称未注册 或者 <br>&nbsp;&nbsp;&nbsp;&nbsp;玩家注册名称与登录名称相同</li>
+              <li> 玩家名称未注册 或者 本人登录<br></li>
 
           </div>
           <div style="padding: 10px;border-top: dashed;">玩家只剩1人时不能再获得新的里程牌<br>以及设立奖项</div>
@@ -63,6 +63,8 @@
           <i class="sidebar_icon sidebar_icon--colonies"></i>
       </div>
   </a>
+
+  <language-icon v-if="preferencesManager.values().experimental_ui"></language-icon>
 
   <div class="sidebar_item sidebar_item--info" :title="$t('Information panel')">
     <i class="sidebar_icon sidebar_icon--info"
@@ -98,7 +100,6 @@ import {getPreferences, PreferencesManager} from '@/client/utils/PreferencesMana
 import {TurmoilModel} from '@/common/models/TurmoilModel';
 import {PartyName} from '@/common/turmoil/PartyName';
 import GameSetupDetail from '@/client/components/GameSetupDetail.vue';
-import {GameOptions} from '@/Game';
 import GlobalParameterValue from '@/client/components/GlobalParameterValue.vue';
 import MoonGlobalParameterValue from '@/client/components/moon/MoonGlobalParameterValue.vue';
 import {GlobalParameter} from '@/common/GlobalParameter';
@@ -106,6 +107,8 @@ import {MoonModel} from '@/common/models/MoonModel';
 import PreferencesIcon from '@/client/components/PreferencesIcon.vue';
 import {mainAppSettings} from '@/client/components/App';
 import {PlayerViewModel} from '@/common/models/PlayerModel';
+import {GameOptions} from '../../server/GameOptions';
+import LanguageIcon from '@/client/components/LanguageIcon.vue';
 
 let ui_timeout_id : number;
 export default Vue.extend({
@@ -159,6 +162,7 @@ export default Vue.extend({
     'global-parameter-value': GlobalParameterValue,
     'preferences-icon': PreferencesIcon,
     MoonGlobalParameterValue,
+    LanguageIcon,
   },
   data() {
     return {
@@ -259,15 +263,17 @@ export default Vue.extend({
       return this.turmoil.ruling.toLowerCase().split(' ').join('_');
     },
     getRulingParty(): string {
-      const rulingPartyName = this.turmoil.ruling;
-      if (rulingPartyName === PartyName.MARS) {
+      switch (this.turmoil.ruling) {
+      case PartyName.MARS:
         return 'Mars';
-      } else if (rulingPartyName === PartyName.SCIENTISTS) {
+      case PartyName.SCIENTISTS:
         return 'Science';
-      } else if (rulingPartyName === PartyName.KELVINISTS) {
+      case PartyName.KELVINISTS:
         return 'Kelvin';
-      } else {
-        return rulingPartyName as string;
+      case undefined:
+        return '???';
+      default:
+        return this.turmoil.ruling;
       }
     },
   },

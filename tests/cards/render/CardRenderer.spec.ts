@@ -1,6 +1,6 @@
 import {expect} from 'chai';
-import {CardRenderer} from '../../../src/cards/render/CardRenderer';
-import {CardRenderItem} from '../../../src/cards/render/CardRenderItem';
+import {CardRenderer} from '../../../src/server/cards/render/CardRenderer';
+import {CardRenderItem} from '../../../src/server/cards/render/CardRenderItem';
 import {CardRenderItemType} from '../../../src/common/cards/render/CardRenderItemType';
 import {Size} from '../../../src/common/cards/render/Size';
 import {AltSecondaryTag} from '../../../src/common/cards/render/AltSecondaryTag';
@@ -308,6 +308,12 @@ describe('CardRenderer', function() {
     const renderer = CardRenderer.builder((b) => b.prelude());
     const item = renderer.rows[0][0] as CardRenderItem;
     expect(item.type).to.equal(CardRenderItemType.PRELUDE);
+    expect(item.amount).to.equal(-1);
+  });
+  it('corporation: success', () => {
+    const renderer = CardRenderer.builder((b) => b.corporation());
+    const item = renderer.rows[0][0] as CardRenderItem;
+    expect(item.type).to.equal(CardRenderItemType.CORPORATION);
     expect(item.amount).to.equal(-1);
   });
   it('award: success', () => {

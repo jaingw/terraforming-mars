@@ -10,13 +10,14 @@ function createAward(
   {funded: boolean, scores?: FundedAwardModel['scores']},
 ): FundedAwardModel {
   return {
-    name: `Award name`,
-    description: `Award description`,
+    name: `Cosmic Settler`,
     player_name: funded ? 'Foo' : '',
     player_color: funded ? 'red': '',
     scores,
   };
 }
+
+const DESCRIPTION = 'Having the most city tiles not on Mars';
 
 describe('Award', () => {
   it('shows passed award', () => {
@@ -36,7 +37,7 @@ describe('Award', () => {
       propsData: {award},
     });
 
-    expect(wrapper.text()).to.not.include(award.description);
+    expect(wrapper.text()).to.not.include(DESCRIPTION);
   });
 
   it(`doesn't show scores`, () => {
@@ -127,6 +128,6 @@ describe('Award', () => {
       propsData: {award},
     });
 
-    expect(wrapper.find('.ma-name--award-name').exists()).to.be.true;
+    expect(wrapper.find('.ma-name--cosmic-settler').exists()).to.be.true;
   });
 });

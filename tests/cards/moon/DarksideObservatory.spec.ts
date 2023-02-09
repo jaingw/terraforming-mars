@@ -1,20 +1,17 @@
-import {Game} from '../../../src/Game';
-import {Player} from '../../../src/Player';
-import {setCustomGameOptions} from '../../TestingUtils';
-import {TestPlayers} from '../../TestPlayers';
-import {DarksideObservatory} from '../../../src/cards/moon/DarksideObservatory';
+import {Game} from '../../../src/server/Game';
+import {testGameOptions} from '../../TestingUtils';
+import {TestPlayer} from '../../TestPlayer';
+import {DarksideObservatory} from '../../../src/server/cards/moon/DarksideObservatory';
 import {expect} from 'chai';
-import {PhysicsComplex} from '../../../src/cards/base/PhysicsComplex';
-import {SearchForLife} from '../../../src/cards/base/SearchForLife';
-import {OlympusConference} from '../../../src/cards/base/OlympusConference';
-import {PrideoftheEarthArkship} from '../../../src/cards/moon/PrideoftheEarthArkship';
-import {ProcessorFactory} from '../../../src/cards/moon/ProcessorFactory';
-import {NanotechIndustries} from '../../../src/cards/moon/NanotechIndustries';
-
-const MOON_OPTIONS = setCustomGameOptions({moonExpansion: true});
+import {PhysicsComplex} from '../../../src/server/cards/base/PhysicsComplex';
+import {SearchForLife} from '../../../src/server/cards/base/SearchForLife';
+import {OlympusConference} from '../../../src/server/cards/base/OlympusConference';
+import {PrideoftheEarthArkship} from '../../../src/server/cards/moon/PrideoftheEarthArkship';
+import {ProcessorFactory} from '../../../src/server/cards/moon/ProcessorFactory';
+import {NanotechIndustries} from '../../../src/server/cards/moon/NanotechIndustries';
 
 describe('DarksideObservatory', () => {
-  let player: Player;
+  let player: TestPlayer;
   let card: DarksideObservatory;
 
   // Physics Complex: 2 points per resource.
@@ -31,8 +28,8 @@ describe('DarksideObservatory', () => {
   const nanotechIndustries = new NanotechIndustries();
 
   beforeEach(() => {
-    player = TestPlayers.BLUE.newPlayer();
-    Game.newInstance('id', [player], player, MOON_OPTIONS);
+    player = TestPlayer.BLUE.newPlayer();
+    Game.newInstance('gameid', [player], player, testGameOptions({moonExpansion: true}));
     card = new DarksideObservatory();
   });
 
@@ -56,13 +53,13 @@ describe('DarksideObservatory', () => {
     expect(card.canAct(player)).is.true;
 
     player.playedCards = [];
-    player.corpCard = nanotechIndustries;
+    player.setCorporationForTest(nanotechIndustries);
     expect(card.canAct(player)).is.true;
   });
 
   it('act', () => {
     player.playedCards = [physicsComplex, searchForLife, olympusConference, prideoftheEarthArkship, processorFactory];
-    player.corpCard = nanotechIndustries;
+    player.setCorporationForTest(nanotechIndustries);
     const input = card.action(player);
 
     expect(input.cards).has.members([olympusConference, prideoftheEarthArkship, processorFactory, nanotechIndustries]);
