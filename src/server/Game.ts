@@ -246,7 +246,7 @@ export class Game implements Logger {
       corporationCards.forEach((card, index) => {
         const cardFactory = breakCards.find((cardFactory) => cardFactory.cardName_ori === card.name);
         if (cardFactory !== undefined) {
-          corporationCards.splice(index, 0, new cardFactory.Factory() );
+          corporationCards.splice(index, 1, new cardFactory.Factory() );
         }
       });
       customCorporationCards.forEach((cardName ) => {

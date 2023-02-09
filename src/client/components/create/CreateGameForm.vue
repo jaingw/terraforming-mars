@@ -1180,7 +1180,7 @@ export default (Vue as WithRefs<Refs>).extend({
     async createGame() {
       const lastcreated = Number(PreferencesManager.load('lastcreated')) || 0;
       const nowtime = new Date().getTime();
-      if (nowtime - lastcreated < 60000 && !this.isvip || nowtime - lastcreated < 5000 ) { // location.href.indexOf("localhost") < 0){
+      if (nowtime - lastcreated < 60000 && !this.isvip || nowtime - lastcreated < 3000 ) { // location.href.indexOf("localhost") < 0){
         alert('请不要频繁创建游戏');
         return;
       }
