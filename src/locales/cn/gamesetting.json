@@ -8,6 +8,7 @@
 	"Fanmade expansion:":"玩家DIY扩展包：",
 	"Board:":"版图：",
 	"(randomized tiles)":"随机摆放版块",
+	"Game settings":"游戏设置",
 	"WGT:":"全球政府改造：",
 	"On":"开",
 	"Off":"关",
@@ -21,5 +22,6 @@
 	"timer":"计时器",
 	"real-time vp":"实时计分",
 	"fast mode":"强制两动",
-	"Banned cards:":"禁用卡牌："
+	"Banned cards:":"禁用卡牌：",
+	"Board-defined": "跟随版图"
 }

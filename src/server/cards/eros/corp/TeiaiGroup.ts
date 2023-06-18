@@ -17,7 +17,7 @@ export class TeiaiGroup extends Card implements ICard, ICorporationCard {
       name: CardName.TEIAI_GROUP,
       tags: [Tag.BUILDING],
       startingMegaCredits: 47,
-      cardType: CardType.CORPORATION,
+      type: CardType.CORPORATION,
 
       metadata: {
         cardNumber: 'Q028',

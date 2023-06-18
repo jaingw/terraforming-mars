@@ -1,14 +1,13 @@
 import {expect} from 'chai';
 import {PartyName} from '../../../src/common/turmoil/PartyName';
 import {testGameOptions} from '../../TestingUtils';
-import {getTestPlayer, newTestGame} from '../../TestGame';
+import {testGame} from '../../TestGame';
 import {SeptemTribus} from '../../../src/server/cards/turmoil/SeptemTribus';
 
 describe('SeptemTribus', function() {
   it('Should play', function() {
     const card = new SeptemTribus();
-    const game = newTestGame(1, testGameOptions({turmoilExtension: true}));
-    const player = getTestPlayer(game, 0);
+    const [game, player] = testGame(1, testGameOptions({turmoilExtension: true}));
     card.play(player);
 
     player.setCorporationForTest(card);

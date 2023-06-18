@@ -4,6 +4,7 @@ import {GameOptions} from '../GameOptions';
 import {GameId} from '../../common/Types';
 import {SerializedGame} from '../SerializedGame';
 import {Dirent} from 'fs';
+import {UserRank} from '../../common/rank/RankManager';
 
 const path = require('path');
 const fs = require('fs');
@@ -35,10 +36,10 @@ export class LocalFilesystem implements IDatabase {
     fs.writeFileSync(this.historyFilename(serializedGame.id, serializedGame.lastSaveId), text);
   }
 
-  getGame(game_id: GameId): Promise<SerializedGame> {
+  getGame(gameId: GameId): Promise<SerializedGame> {
     try {
-      console.log(`Loading ${game_id}`);
-      const text = fs.readFileSync(this.filename(game_id));
+      console.log(`Loading ${gameId}`);
+      const text = fs.readFileSync(this.filename(gameId));
       const serializedGame = JSON.parse(text);
       return Promise.resolve(serializedGame);
     } catch (e) {
@@ -161,6 +162,18 @@ export class LocalFilesystem implements IDatabase {
     throw new Error('Method not implemented.');
   }
   getParticipants(): Promise<Array<GameIdLedger>> {
+    throw new Error('Method not implemented.');
+  }
+  addUserRank(_userRank:UserRank): void {
+    throw new Error('Method not implemented.');
+  }
+  getUserRanks(): Promise<Array<UserRank>> {
+    throw new Error('Method not implemented.');
+  }
+  updateUserRank(): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+  saveUserGameResult(): Promise<void> {
     throw new Error('Method not implemented.');
   }
 }

@@ -4,7 +4,7 @@ import {Card} from '../Card';
 import {CardName} from '../../../common/cards/CardName';
 import {CardType} from '../../../common/cards/CardType';
 import {Tag} from '../../../common/cards/Tag';
-import {Resources} from '../../../common/Resources';
+import {Resource} from '../../../common/Resource';
 import {SelectSpace} from '../../inputs/SelectSpace';
 import {Board} from '../../boards/Board';
 import {ISpace} from '../../boards/ISpace';
@@ -18,7 +18,7 @@ export class HayMaker extends Card implements IProjectCard {
   constructor() {
     super({
       name: CardName.HAY_MAKER,
-      cardType: CardType.EVENT,
+      type: CardType.EVENT,
       tags: [Tag.SPACE],
       cost: 8,
 
@@ -57,7 +57,7 @@ export class HayMaker extends Card implements IProjectCard {
   }
   public override bespokePlay(player: Player) {
     player.game.defer(new SimpleDeferredAction(player, () => this.removeGreenery(player)));
-    player.addResource(Resources.HEAT, 12);
+    player.addResource(Resource.HEAT, 12);
     return undefined;
   }
 }

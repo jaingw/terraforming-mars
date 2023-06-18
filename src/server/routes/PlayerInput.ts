@@ -43,7 +43,7 @@ export class PlayerInput extends Handler {
     this.processInput(req, res, ctx, player, userId);
   }
 
-  private processInput(req: http.IncomingMessage, res: http.ServerResponse, ctx: Context, player: Player,userId: string | null): Promise<void> {
+  private processInput(req: http.IncomingMessage, res: http.ServerResponse, ctx: Context, player: Player, userId: string | null): Promise<void> {
     return new Promise((resolve) => {
       let body = '';
       req.on('data', (data) => {

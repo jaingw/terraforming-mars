@@ -180,7 +180,7 @@ export default Vue.extend({
       case 'ares': return 'Ares';
       case 'moon': return 'The Moon';
       case 'pathfinders': return 'Pathfinders';
-      case 'leader': return 'CEOs';
+      case 'ceo': return 'CEOs';
       }
       return '';
     },

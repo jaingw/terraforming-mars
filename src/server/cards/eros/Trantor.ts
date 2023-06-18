@@ -6,12 +6,12 @@ import {Player} from '../../Player';
 import {SpaceName} from '../../SpaceName';
 import {CardName} from '../../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
-import {Resources} from '../../../common/Resources';
+import {Resource} from '../../../common/Resource';
 
 export class Trantor extends Card implements IProjectCard {
   constructor() {
     super({
-      cardType: CardType.AUTOMATED,
+      type: CardType.AUTOMATED,
       name: CardName.TRANTOR,
       tags: [Tag.SPACE, Tag.CITY],
       cost: 10,
@@ -29,7 +29,7 @@ export class Trantor extends Card implements IProjectCard {
   }
 
   public override bespokePlay(player: Player) {
-    player.production.add(Resources.MEGACREDITS, 2);
+    player.production.add(Resource.MEGACREDITS, 2);
     const space = player.game.board.getSpace(SpaceName.TRANTOR);
     player.game.addCityTile(player, space);
     return undefined;

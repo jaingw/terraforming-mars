@@ -9,18 +9,18 @@ import {Player} from '../../Player';
 import {IProjectCard} from '../IProjectCard';
 import {Tag} from '../../../common/cards/Tag';
 import {Size} from '../../../common/cards/render/Size';
-import {ICard, VictoryPoints} from '../../cards/ICard';
-import {Resources} from '../../../common/Resources';
+import {ICard} from '../../cards/ICard';
+import {Resource} from '../../../common/Resource';
 
 export class ArkNova extends Card implements ICorporationCard {
   constructor() {
     super({
-      cardType: CardType.CORPORATION,
+      type: CardType.CORPORATION,
       name: CardName.ARK_NOVA,
       tags: [Tag.BUILDING, Tag.CITY],
       startingMegaCredits: 42,
       resourceType: CardResource.ANIMAL,
-      victoryPoints: VictoryPoints.tags(Tag.BUILDING, 1, 3),
+      victoryPoints: {tag: Tag.BUILDING, per: 3},
 
       metadata: {
         cardNumber: 'XB10',
@@ -62,7 +62,7 @@ export class ArkNova extends Card implements ICorporationCard {
       const delta = Math.floor(this.resourceCount / resourceNum);
       const deducted = delta * resourceNum;
       this.resourceCount -= deducted;
-      player.addResource(Resources.STEEL, delta, {log: true});
+      player.addResource(Resource.STEEL, delta, {log: true});
       player.drawCard(delta);
       player.game.log('${0} removed ${1} animals from ${2} to gain ${3} steels and ${4} cards.',
         (b) => b.player(player).number(deducted).card(this).number(delta).number(delta));

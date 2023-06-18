@@ -6,7 +6,7 @@ import {CardName} from '../../../../common/cards/CardName';
 import {ICardMetadata} from '../../../../common/cards/ICardMetadata';
 import {Size} from '../../../../common/cards/render/Size';
 import {Tag} from '../../../../common/cards/Tag';
-import {Resources} from '../../../../common/Resources';
+import {Resource} from '../../../../common/Resource';
 import {SerializedCard} from '../../../SerializedCard';
 
 export class _MorningStarInc_ extends MorningStarInc {
@@ -23,7 +23,7 @@ export class _MorningStarInc_ extends MorningStarInc {
     return false;
   }
   public action(player: Player) {
-    player.production.add(Resources.MEGACREDITS, player.tags.count(Tag.VENUS));
+    player.production.add(Resource.MEGACREDITS, player.tags.count(Tag.VENUS));
     this.isUsed = true;
     return undefined;
   }

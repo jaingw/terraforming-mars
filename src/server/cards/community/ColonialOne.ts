@@ -17,7 +17,7 @@ import {CardResource} from '../../../common/CardResource';
 export class ColonialOne extends Card implements ICorporationCard {
   constructor() {
     super({
-      cardType: CardType.CORPORATION,
+      type: CardType.CORPORATION,
       name: CardName.COLONIAL_ONE,
       tags: [Tag.SPACE],
       startingMegaCredits: 35,

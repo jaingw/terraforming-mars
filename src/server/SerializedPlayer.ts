@@ -11,9 +11,9 @@ export interface SerializedGameId {
     id: string;
 }
 interface DeprecatedFields {
-    // corporationCard?: SerializedCard | undefined; // TODO(kberg): remove after 2022-09-01
-    // corporationInitialActionDone?: boolean; // TODO(kberg): remove field after 2022-09-01
+    tradesThisTurn?: number; // TODO(kberg): Remove tradesThisTurn after 2023-06-01
 }
+
 export interface SerializedPlayer extends DeprecatedFields{
     actionsTakenThisGame: number;
     actionsTakenThisRound: number;
@@ -35,6 +35,7 @@ export interface SerializedPlayer extends DeprecatedFields{
     corpInitialActionDone?: boolean, // 已换成pendingInitialActions
     corp2InitialActionDone?: boolean, // 已换成pendingInitialActions
     dealtCorporationCards: Array<SerializedCard>;
+    dealtCeoCards: Array<CardName>;
     dealtPreludeCards: Array<SerializedCard>;
     dealtProjectCards: Array<SerializedCard>;
     draftedCards: Array<SerializedCard>;
@@ -49,6 +50,7 @@ export interface SerializedPlayer extends DeprecatedFields{
     heatProductionStepsIncreasedThisGeneration: number;
     id: PlayerId;
     lastCardPlayed?: CardName;
+    ceoCardsInHand: Array<CardName>;
     megaCreditProduction: number;
     megaCredits: number;
     name: string;
@@ -75,8 +77,8 @@ export interface SerializedPlayer extends DeprecatedFields{
     titaniumProduction: number;
     titaniumValue: number;
     totalDelegatesPlaced: number;
-    // TODO(kberg): change tradesThisTurn to tradeThisGeneration later
-    tradesThisGeneration: number;
+    // TODO(kberg): Remove ? by 2023-06-01
+    tradesThisGeneration?: number;
     turmoilPolicyActionUsed: boolean;
     victoryPointsByGeneration: Array<number>;
     heatForTemperature: number;

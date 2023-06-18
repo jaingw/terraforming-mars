@@ -10,7 +10,7 @@ import {Tag} from '../../../common/cards/Tag';
 export class CommunityWorker extends Card implements IProjectCard {
   constructor() {
     super({
-      cardType: CardType.ACTIVE,
+      type: CardType.ACTIVE,
       name: CardName.COMMUNITY_WORKER,
       tags: [],
       cost: 9,
@@ -28,7 +28,7 @@ export class CommunityWorker extends Card implements IProjectCard {
   }
 
   public onCardPlayed(player: Player, card: IProjectCard) {
-    if (card.cardType !== CardType.EVENT && card.tags.filter((x)=> x!==Tag.WILD).length === 0) {
+    if (card.type !== CardType.EVENT && card.tags.filter((x)=> x!==Tag.WILD).length === 0) {
       player.megaCredits += 4;
     }
   }

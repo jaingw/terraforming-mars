@@ -14,7 +14,7 @@ export class SithOrganizations extends Card implements ICard, ICorporationCard {
       name: CardName.SITH_ORGANIZATIONS,
       tags: [Tag.VENUS, Tag.JOVIAN],
       startingMegaCredits: 41,
-      cardType: CardType.CORPORATION,
+      type: CardType.CORPORATION,
 
       metadata: {
         cardNumber: 'Q32',

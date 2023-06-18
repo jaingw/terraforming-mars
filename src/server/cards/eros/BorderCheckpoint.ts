@@ -10,12 +10,12 @@ import {SelectSpace} from '../../inputs/SelectSpace';
 import {ISpace} from '../../boards/ISpace';
 import {DrawCards} from '../../deferredActions/DrawCards';
 import {SimpleDeferredAction} from '../..//deferredActions/DeferredAction';
-import {Resources} from '../../../common/Resources';
+import {Resource} from '../../../common/Resource';
 
 export class BorderCheckpoint extends Card implements IProjectCard {
   constructor() {
     super({
-      cardType: CardType.ACTIVE,
+      type: CardType.ACTIVE,
       name: CardName.BORDER_CHECKPOINT,
       tags: [Tag.CITY, Tag.BUILDING],
       cost: 18,
@@ -50,9 +50,9 @@ export class BorderCheckpoint extends Card implements IProjectCard {
 
   private getAvailableSpaces(player: Player): Array<ISpace> {
     return player.game.board.getAvailableSpacesOnLand(player)
-      .filter((space) => space.player === undefined &&
-            space.tile === undefined &&
-            this.isOnEdge(space.x, space.y));
+      .filter((space) =>
+        space.tile === undefined &&
+        this.isOnEdge(space.x, space.y));
   }
 
   private getRandomNum(Min:number, Max:number):number {
@@ -63,7 +63,7 @@ export class BorderCheckpoint extends Card implements IProjectCard {
 
 
   public override canPlay(player: Player): boolean {
-    return player.production.get(Resources.ENERGY) >= 1 && this.getAvailableSpaces(player).length > 0;
+    return player.production.get(Resource.ENERGY) >= 1 && this.getAvailableSpaces(player).length > 0;
   }
 
   public override bespokePlay(player: Player): PlayerInput {

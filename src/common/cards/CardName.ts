@@ -474,6 +474,8 @@ export enum CardName {
     MERGER = 'Merger',
     CORPORATE_ARCHIVES = 'Corporate Archives',
     DOUBLE_DOWN = 'Double Down',
+    PSYCHE = '16 Psyche',
+    ROBOT_POLLINATORS = 'Robot Pollinators',
 
 
     // /// breakthrough
@@ -529,7 +531,7 @@ export enum CardName {
     RDA = '🌸RDA🌸',
     CITY_GREENHOUSE = '🌸City Greenhouse🌸',
     ARK_NOVA = '🌸Ark Nova🌸',
-
+    THERMOPOLI = '🌸Thermopoli🌸',
 
     // Community preludes
     VALUABLE_GASES = 'Valuable Gases',
@@ -554,16 +556,21 @@ export enum CardName {
     // Community colonies
     SCIENCE_TAG_BLANK_CARD = '',
 
+    // For Playwright.
+    SPECIAL_DESIGN_PROXY = 'Special Design:proxy',
+
     // Ares expansion.
     BIOENGINEERING_ENCLOSURE = 'Bioengineering Enclosure',
     BIOFERTILIZER_FACILITY = 'Bio-Fertilizer Facility',
     BUTTERFLY_EFFECT = 'Butterfly Effect',
     CAPITAL_ARES = 'Capital:ares',
     COMMERCIAL_DISTRICT_ARES = 'Commercial District:ares',
+    DEIMOS_DOWN_ARES = 'Deimos Down:ares',
     DESPERATE_MEASURES = 'Desperate Measures',
     ECOLOGICAL_SURVEY = 'Ecological Survey',
     ECOLOGICAL_ZONE_ARES = 'Ecological Zone:ares',
     GEOLOGICAL_SURVEY = 'Geological Survey',
+    GREAT_DAM_ARES = 'Great Dam:ares',
     INDUSTRIAL_CENTER_ARES = 'Industrial Center:ares',
     LAVA_FLOWS_ARES = 'Lava Flows:ares',
     MARKETING_EXPERTS = 'Marketing Experts',
@@ -861,7 +868,7 @@ export enum CardName {
     HABITAT_MARTE = 'Habitat Marte',
     ADHAI_HIGH_ORBIT_CONSTRUCTIONS = 'Adhai High Orbit Constructions',
 
-    // CEOs/Leader
+    // CEOs
     ASIMOV = 'Asimov',
     BJORN = 'Bjorn',
     CLARKE = 'Clarke',
@@ -875,6 +882,7 @@ export enum CardName {
     JANSSON = 'Jansson',
     KAREN = 'Karen',
     LOWELL = 'Lowell',
+    MUSK = 'Musk',
     MARIA = 'Maria',
     NAOMI = 'Naomi',
     OSCAR = 'Oscar',
@@ -889,12 +897,15 @@ export enum CardName {
     XAVIER = 'Xavier',
     YVONNE = 'Yvonne',
     ZAN = 'Zan',
-    FARADAY = 'Faraday',
-    SWEENEY = 'Sweeney',
-    HUAN = 'Huan',
-    RYU = 'Ryu',
-    CAESAR = 'Caesar',
-    GAIA = 'Gaia',
-    NEIL = 'Neil',
     APOLLO = 'Apollo',
+    CAESAR = 'Caesar',
+    FARADAY = 'Faraday',
+    GAIA = 'Gaia',
+    HUAN = 'Huan',
+    NEIL = 'Neil',
+    RYU = 'Ryu',
+    SHARA = 'Shara',
+    XU = 'Xu',
+    // CEO Preludes
+    CO_LEADERSHIP = 'Co-leadership',
 }

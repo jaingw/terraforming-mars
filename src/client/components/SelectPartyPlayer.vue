@@ -7,22 +7,21 @@
       <span v-if="player === 'NEUTRAL'" >Neutral</span>
       <select-player-row v-else :player="players.find((otherPlayer) => otherPlayer.id === player || otherPlayer.color === player)"></select-player-row>
     </label>
-    <Button v-if="showsave === true" size="big" @click="saveData" :title="$t(playerinput.buttonLabel)" />
+    <AppButton v-if="showsave === true" size="big" @click="saveData" :title="$t(playerinput.buttonLabel)" />
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import Button from '@/client/components/common/Button.vue';
+import AppButton from '@/client/components/common/AppButton.vue';
 import {PlayerInputModel} from '@/common/models/PlayerInputModel';
 import {PublicPlayerModel} from '@/common/models/PlayerModel';
 import SelectPlayerRow from '@/client/components/SelectPlayerRow.vue';
 import {SelectDelegateResponse} from '@/common/inputs/InputResponse';
-import {PlayerId} from '../../common/Types';
-import {Color} from '../../common/Color';
+import {ColorWithNeutral} from '../../common/Color';
 
 interface DataModel {
-  selectedPlayer: PlayerId | Color | 'NEUTRAL' | undefined;
+  selectedPlayer: ColorWithNeutral | undefined;
 }
 
 export default Vue.extend({
@@ -50,7 +49,7 @@ export default Vue.extend({
     };
   },
   components: {
-    Button,
+    AppButton,
     'select-player-row': SelectPlayerRow,
   },
   methods: {

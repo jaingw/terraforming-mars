@@ -51,6 +51,7 @@ export enum CardRenderItemType {
   IGNORE_GLOBAL_REQUIREMENTS = 'ignore_global_requirements',
   PRELUDE = 'prelude',
   AWARD = 'award',
+  MILESTONE = 'milestone',
   CORPORATION = 'corporation',
   VP = 'vp',
   COMMUNITY = 'community',
@@ -77,5 +78,10 @@ export enum CardRenderItemType {
   GLOBAL_EVENT = 'global-event',
   FIRST_PLAYER = '1p',
   RULING_PARTY = 'ruling-party',
-  ARROW_OPG = 'arrow_opg',
+
+  // CEO Extension:
+  ARROW_OPG = 'arrow-opg',
+  REDS = 'reds',
+  REDS_DEACTIVATED = 'reds-deactivated',
+  ADJACENCY_BONUS = 'adjacency-bonus',
 }

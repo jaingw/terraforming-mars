@@ -7,13 +7,13 @@ import {CardName} from '../../../common/cards/CardName';
 import {CardType} from '../../../common/cards/CardType';
 import {Size} from '../../../common/cards/render/Size';
 import {Tag} from '../../../common/cards/Tag';
-import {Resources} from '../../../common/Resources';
+import {Resource} from '../../../common/Resource';
 
 export class SolarCosmicRays extends Card implements IProjectCard {
   constructor() {
     super({
       name: CardName.SOLAR_COSMIC_RAYS,
-      cardType: CardType.AUTOMATED,
+      type: CardType.AUTOMATED,
       tags: [Tag.SPACE],
       cost: 25,
 
@@ -28,13 +28,13 @@ export class SolarCosmicRays extends Card implements IProjectCard {
     });
   }
   public override bespokePlay(player: Player) {
-    player.production.add(Resources.ENERGY, 1);
+    player.production.add(Resource.ENERGY, 1);
     let alllEnergyProd = 0;
     for (const otherPlayer of player.game.getPlayers().filter((p) => p.id !== player.id)) {
-      alllEnergyProd += otherPlayer.production.get(Resources.ENERGY);
+      alllEnergyProd += otherPlayer.production.get(Resource.ENERGY);
     }
     alllEnergyProd= Math.min(alllEnergyProd, 15);
-    player.production.add(Resources.HEAT, alllEnergyProd);
+    player.production.add(Resource.HEAT, alllEnergyProd);
     return undefined;
   }
 }

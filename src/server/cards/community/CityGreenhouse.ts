@@ -8,14 +8,14 @@ import {CardName} from '../../../common/cards/CardName';
 import {CardType} from '../../../common/cards/CardType';
 import {Size} from '../../../common/cards/render/Size';
 import {Tag} from '../../../common/cards/Tag';
-import {Resources} from '../../../common/Resources';
+import {Resource} from '../../../common/Resource';
 import {ICorporationCard} from '../corporation/ICorporationCard';
 import {digit, all} from '../../cards/Options';
 
 export class CityGreenhouse extends Card implements ICorporationCard {
   constructor() {
     super({
-      cardType: CardType.CORPORATION,
+      type: CardType.CORPORATION,
       name: CardName.CITY_GREENHOUSE,
       tags: [Tag.BUILDING],
       startingMegaCredits: 49,
@@ -39,7 +39,7 @@ export class CityGreenhouse extends Card implements ICorporationCard {
 
   public onTilePlaced(cardOwner: Player, activePlayer: Player, space: ISpace) {
     if (Board.isCitySpace(space)) {
-      cardOwner.game.defer(new GainResources(cardOwner, Resources.HEAT, {count: 6}));
+      cardOwner.game.defer(new GainResources(cardOwner, Resource.HEAT, {count: 6}));
       cardOwner.game.log('${0} received 4 Heat from ${1} city', (b) =>
         b.player(cardOwner)
           .player(activePlayer),
@@ -51,7 +51,7 @@ export class CityGreenhouse extends Card implements ICorporationCard {
   public override bespokePlay(player: Player) {
     if (player.game.getPlayers().length === 1) {
       // Get bonus for 2 neutral cities
-      player.addResource(Resources.HEAT, 8);
+      player.addResource(Resource.HEAT, 8);
     }
     return undefined;
   }

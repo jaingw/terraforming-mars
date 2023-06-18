@@ -9,7 +9,7 @@
 
           <template v-if="this.getCardContent() === ''">
               <CardTitle :title="card.name" :type="getCardType()"/>
-              <CardContent v-if="getCardMetadata() !== undefined" :metadata="getCardMetadata()" :requirements="getCardRequirements()" :isCorporation="isCorporationCard()"/>
+          <CardContent v-if="getCardMetadata() !== undefined" :metadata="getCardMetadata()" :requirements="getCardRequirements()" :isCorporation="isCorporationCard()" :padBottom="hasResourceType" />
           </template>
           <template v-else >
             <div  v-html="this.getCardContent()"></div>
@@ -43,11 +43,12 @@ import {getPreferences} from '@/client/utils/PreferencesManager';
 import {CardResource} from '@/common/CardResource';
 import {getCardOrThrow} from '@/client/cards/ClientCardManifest';
 import {CardName} from '@/common/cards/CardName';
-import * as HTML_DATA from '@/genfiles/cards-html-cn.json';
+// import * as HTML_DATA from '@/genfiles/cards-html-cn.json';
+import * as HTML_DATA from '@/genfiles/cards.json';
 
-const names = [
+
+const CARDS_WITH_EXTERNAL_DOCUMENTATION = [
   CardName.BOTANICAL_EXPERIENCE,
-  CardName.MARS_DIRECT,
   CardName.LUNA_ECUMENOPOLIS,
   CardName.ROBOTIC_WORKFORCE,
 ];
@@ -120,17 +121,13 @@ export default Vue.extend({
       return tags;
     },
     getCost(): number | undefined {
-      const cost = this.cardInstance.cost;
-      const type = this.getCardType();
-      return cost === undefined || type === CardType.PRELUDE || type === CardType.CORPORATION ? undefined : cost;
+      return this.isProjectCard() ? this.cardInstance.cost : undefined;
     },
     getReducedCost(): number | undefined {
-      const cost = this.card.calculatedCost;
-      const type = this.getCardType();
-      return cost === undefined || type === CardType.PRELUDE || type === CardType.CORPORATION ? undefined : cost;
+      return this.isProjectCard() ? this.card.calculatedCost : undefined;
     },
     getCardType(): CardType {
-      return this.cardInstance.cardType;
+      return this.cardInstance.type;
     },
     getCardClasses(card: CardModel): string {
       const classes = ['card-container', 'filterDiv', 'hover-hide-res'];
@@ -160,6 +157,10 @@ export default Vue.extend({
     isCorporationCard() : boolean {
       return this.getCardType() === CardType.CORPORATION;
     },
+    isProjectCard(): boolean {
+      const type = this.getCardType();
+      return type !== CardType.PRELUDE && type !== CardType.CORPORATION && type !== CardType.CEO;
+    },
     isStandardProject() : boolean {
       return this.getCardType() === CardType.STANDARD_PROJECT || this.getCardType() === CardType.STANDARD_ACTION;
     },
@@ -174,7 +175,7 @@ export default Vue.extend({
       return this.cardInstance.resourceType ?? CardResource.RESOURCE_CUBE;
     },
     hasHelp(): boolean {
-      return names.includes(this.card.name) && getPreferences().experimental_ui;
+      return CARDS_WITH_EXTERNAL_DOCUMENTATION.includes(this.card.name) && getPreferences().experimental_ui;
     },
   },
 });

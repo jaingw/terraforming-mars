@@ -10,7 +10,7 @@ import {CardName} from '../../../../common/cards/CardName';
 export class Prism extends Card implements ICorporationCard {
   constructor() {
     super({
-      cardType: CardType.CORPORATION,
+      type: CardType.CORPORATION,
       name: CardName.PRISM,
       tags: [Tag.WILD],
       startingMegaCredits: 33,

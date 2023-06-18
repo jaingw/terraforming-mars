@@ -8,13 +8,15 @@ import {FundedAwardModel} from '@/common/models/FundedAwardModel';
 import {AWARD_COSTS} from '@/common/constants';
 import {AwardName} from '@/common/ma/AwardName';
 import {getMilestoneAwardDescription} from '@/client/MilestoneAwardManifest';
+import {Color} from '@/common/Color';
+import {Preferences} from '@/client/utils/PreferencesManager';
 
 const names: Array<AwardName> = ['Banker', 'Celebrity'];
 function createAward({id = 1, funded = false}): FundedAwardModel {
   return {
     name: names[id - 1],
-    player_name: funded ? 'Foo' : '',
-    player_color: funded ? 'red': '',
+    playerName: funded ? 'Foo' : '',
+    playerColor: funded ? Color.RED: '',
     scores: [],
   };
 }
@@ -40,7 +42,25 @@ describe('Awards', () => {
     });
   });
 
-  it('hides awards on click', async () => {
+  it('awards start showing their details', async () => {
+    const awards = [
+      createAward({id: 1, funded: true}),
+      createAward({id: 2, funded: false}),
+    ];
+
+    const wrapper = shallowMount(Awards, {
+      localVue: getLocalVue(),
+      propsData: {
+        awards,
+      },
+    });
+
+    expect(
+      wrapper.findAllComponents(Award).wrappers.every((awardWrapper) => awardWrapper.isVisible()),
+    ).to.be.true;
+  });
+
+  it('hide award details on click', async () => {
     const awards = [
       createAward({id: 1, funded: true}),
       createAward({id: 2, funded: false}),
@@ -54,8 +74,29 @@ describe('Awards', () => {
     await wrapper.find('[data-test=toggle-awards]').trigger('click');
 
     expect(
-      wrapper.findAllComponents(Award).wrappers.some((awardWrapper) => awardWrapper.isVisible()),
-    ).to.be.false;
+      wrapper.findAllComponents(Award).wrappers.every((awardWrapper) => !awardWrapper.isVisible()),
+    ).to.be.true;
+  });
+
+  it('award details are hidden if they were previously hidden', async () => {
+    const awards = [
+      createAward({id: 1, funded: true}),
+      createAward({id: 2, funded: false}),
+    ];
+
+    const wrapper = shallowMount(Awards, {
+      localVue: getLocalVue(),
+      propsData: {
+        awards: awards,
+        preferences: {
+          show_award_details: false,
+        } as Readonly<Preferences>,
+      },
+    });
+
+    expect(
+      wrapper.findAllComponents(Award).wrappers.every((awardWrapper) => !awardWrapper.isVisible()),
+    ).to.be.true;
   });
 
   it('shows funded awards', () => {
@@ -73,7 +114,7 @@ describe('Awards', () => {
     expect(fundedAwards.text()).to.include(fundedAward.name);
     expect(fundedAwards.text()).to.not.include(notFundedAward.name);
 
-    const playerCube = fundedAwards.find(`[data-test-player-cube=${fundedAward.player_color}]`);
+    const playerCube = fundedAwards.find(`[data-test-player-cube=${fundedAward.playerColor}]`);
     expect(playerCube.exists()).to.be.true;
   });
 

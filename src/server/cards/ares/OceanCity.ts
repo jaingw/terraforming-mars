@@ -6,13 +6,13 @@ import {IProjectCard} from '../IProjectCard';
 import {Tag} from '../../../common/cards/Tag';
 import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
-import {Resources} from '../../../common/Resources';
+import {Resource} from '../../../common/Resource';
 import {Player} from '../../Player';
 
 export class OceanCity extends Card implements IProjectCard {
   constructor() {
     super({
-      cardType: CardType.AUTOMATED,
+      type: CardType.AUTOMATED,
       name: CardName.OCEAN_CITY,
       tags: [Tag.CITY, Tag.BUILDING],
       cost: 18,
@@ -40,6 +40,6 @@ export class OceanCity extends Card implements IProjectCard {
     });
   }
   public override bespokeCanPlay(player: Player): boolean {
-    return player.production.get(Resources.ENERGY) > 0 && player.game.board.getOceanSpaces({upgradedOceans: false}).length > 0;
+    return player.production.get(Resource.ENERGY) > 0 && player.game.board.getOceanSpaces({upgradedOceans: false}).length > 0;
   }
 }

@@ -158,6 +158,15 @@ export class ServeAsset extends Handler {
       }
       return {file: 'build/styles.css'};
 
+      //   天梯
+    case 'tailwindcss.css':
+      if (encodings.has('br')) {
+        return {file: 'build/tailwindcss.css.br', encoding: 'br'};
+      }
+      if (encodings.has('gzip')) {
+        return {file: 'build/tailwindcss.css.gz', encoding: 'gzip'};
+      }
+      return {file: 'build/tailwindcss.css'};
     case 'main.js':
     case 'main.js.map':
       return this.toMainFile(urlPath, encodings);

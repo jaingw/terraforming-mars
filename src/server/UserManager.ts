@@ -1,4 +1,3 @@
-
 import * as http from 'http';
 import {User} from './User';
 import {Database} from './database/Database';
@@ -10,6 +9,11 @@ import {PlayerBlockModel} from '../common/models/PlayerModel';
 import {Context} from './routes/IHandler';
 import {UnexpectedInput} from './routes/UnexpectedInput';
 import * as crypto from 'crypto';
+import {UserRank} from '../common/rank/RankManager';
+import {RankTier} from '../common/rank/RankTier';
+import {DEFAULT_MU, DEFAULT_RANK_VALUE, DEFAULT_SIGMA} from '../common/rank/constants';
+import {Phase} from '../common/Phase';
+
 const colorNames = ['blue', 'red', 'yellow', 'green', 'black', 'purple', 'you', '红色', '绿色', '黄色', '蓝色', '黑色', '紫色'];
 function notFound(req: http.IncomingMessage, res: http.ServerResponse): void {
   if ( ! process.argv.includes('hide-not-found-warnings')) {
@@ -20,86 +24,49 @@ function notFound(req: http.IncomingMessage, res: http.ServerResponse): void {
   res.end();
 }
 
-export function apiGameBack(req: http.IncomingMessage, res: http.ServerResponse): void {
-  if (req.url === undefined) {
-    console.warn('url not defined');
-    notFound(req, res);
-    return;
-  }
-  let body = '';
-  req.on('data', function(data) {
-    body += data.toString();
-  });
-  req.once('end', function() {
-    try {
-      const userReq:any = JSON.parse(body);
-      const gameId = userReq['id'];
-      const userId = userReq['userId'];
-      if (gameId === undefined || gameId === '') {
-        console.warn('didn\'t find game id');
-        notFound(req, res);
-        return;
-      }
 
-      if (userId === undefined || userId === '') {
-        console.warn('didn\'t find user id');
-        notFound(req, res);
-        return;
-      }
-
-      const user = GameLoader.getInstance().userIdMap.get(userId);
-      if (user === undefined || !user.canRollback()) {
-        console.warn('didn\'t find user ');
-        notFound(req, res);
-        return;
-      }
-      const game = GameLoader.getInstance().games.get(gameId);
-
-      if (game === undefined) {
-        console.warn('game is undefined');
-        notFound(req, res);
-        return;
-      }
-      console.log('user:'+ user.name +' rollback game ' + game.id);
-      game.rollback();
-      user.reduceRollbackNum();
-      res.write('success');
-      res.end();
-    } catch (err) {
-      console.warn('error rollback', err);
-      res.writeHead(500);
-      const message = err instanceof Error ? err.message : String(err);
-      res.write('Unable to rollback: ' + message);
-      res.end();
-    }
-  });
-}
-
-export function apiGetMyGames(req: http.IncomingMessage, res: http.ServerResponse): void {
-  const routeRegExp: RegExp = /^\/api\/mygames\?id=([0-9abcdef]+).*?$/i;
-
-  if (req.url === undefined) {
-    console.warn('url not defined');
+export function apiGameBack(userReq:any, req: http.IncomingMessage, res: http.ServerResponse): void {
+  const gameId = userReq['id'];
+  const userId = userReq['userId'];
+  if (gameId === undefined || gameId === '') {
+    console.warn('didn\'t find game id');
     notFound(req, res);
     return;
   }
 
-  if (!routeRegExp.test(req.url)) {
-    console.warn('no match with regexp');
-    notFound(req, res);
-    return;
-  }
-
-  const matches = req.url.match(routeRegExp);
-
-  if (matches === null || matches[1] === undefined) {
+  if (userId === undefined || userId === '') {
     console.warn('didn\'t find user id');
     notFound(req, res);
     return;
   }
 
-  const userId: string = matches[1];
+  const user = GameLoader.getInstance().userIdMap.get(userId);
+  if (user === undefined || !user.canRollback()) {
+    console.warn('didn\'t find user ');
+    notFound(req, res);
+    return;
+  }
+  const game = GameLoader.getInstance().games.get(gameId);
 
+  if (game === undefined) {
+    console.warn('game is undefined');
+    notFound(req, res);
+    return;
+  }
+  console.log('user:'+ user.name +' rollback game ' + game.id);
+  game.rollback();
+  user.reduceRollbackNum();
+  res.write('success');
+  res.end();
+}
+
+export function apiGetMyGames(req: http.IncomingMessage, res: http.ServerResponse, ctx: Context): void {
+  const userId = ctx.url.searchParams.get('id');
+  if (userId === undefined || userId === null) {
+    console.warn('didn\'t find user id');
+    notFound(req, res);
+    return;
+  }
   const user = GameLoader.getInstance().userIdMap.get(userId);
 
   if (user === undefined) {
@@ -144,82 +111,52 @@ export function apiGetMyGames(req: http.IncomingMessage, res: http.ServerRespons
   res.end();
 }
 
-export function login(req: http.IncomingMessage, res: http.ServerResponse): void {
-  let body = '';
-  req.on('data', function(data) {
-    body += data.toString();
-  });
-  req.once('end', function() {
-    try {
-      const userReq = JSON.parse(body);
-      const userName: string = userReq.userName.trim().toLowerCase();
-      let password: string = userReq.password.trim().toLowerCase();
-      if (userName === undefined || userName.length === 0) {
-        throw new UnexpectedInput('UserName must not be empty ');
-      }
-      const user = GameLoader.getInstance().userNameMap.get(userName);
-      if (user === undefined) {
-        throw new UnexpectedInput('User not exists ');
-      }
-      if (password === undefined || password.length <= 2) {
-        throw new UnexpectedInput('Password must not be empty and  be longer than 2');
-      }
-      password = crypto.createHash('md5').update( password ).digest('hex');
-      if (password !== user.password.trim().toLowerCase()) {
-        throw new UnexpectedInput('Password error');
-      }
-      res.setHeader('Content-Type', 'application/json');
-      res.write(JSON.stringify({id: user.id, name: user.name}));
-    } catch (err) {
-      if (err instanceof Error && err.name === 'UnexpectedInput') {
-        console.warn('error login: ' + body + ',' + err.message);
-      } else {
-        console.warn('error login: ' + body + ',', err);
-      }
-      res.writeHead(500);
-      const message = err instanceof Error ? err.message : String(err);
-      res.write('Unable to login: ' + message);
-    }
-    res.end();
-  });
+export function login(userReq:any, _req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
+  const userName: string = userReq.userName.trim().toLowerCase();
+  let password: string = userReq.password.trim().toLowerCase();
+  if (userName === undefined || userName.length === 0) {
+    throw new UnexpectedInput('UserName must not be empty ');
+  }
+  const user = GameLoader.getInstance().userNameMap.get(userName);
+  if (user === undefined) {
+    throw new UnexpectedInput('User not exists ');
+  }
+  if (password === undefined || password.length <= 2) {
+    throw new UnexpectedInput('Password must not be empty and  be longer than 2');
+  }
+  password = crypto.createHash('md5').update( password ).digest('hex');
+  if (password !== user.password.trim().toLowerCase()) {
+    throw new UnexpectedInput('Password error');
+  }
+  res.setHeader('Content-Type', 'application/json');
+  res.write(JSON.stringify({id: user.id, name: user.name}));
+  res.end();
+  return Promise.resolve();
 }
 
-export function register(req: http.IncomingMessage, res: http.ServerResponse): void {
-  let body = '';
-  req.on('data', function(data) {
-    body += data.toString();
-  });
-  req.once('end', function() {
-    try {
-      const userReq = JSON.parse(body);
-      const userId = generateRandomId('');
-      const userName: string = userReq.userName ? userReq.userName.trim().toLowerCase() : '';
-      let password: string = userReq.password ? userReq.password.trim().toLowerCase() : '';
-      if (userName === undefined || userName.length <= 1) {
-        throw new Error('Please enter at least 2 characters for userName');
-      }
-      if (GameLoader.getInstance().userNameMap.get(userName) !== undefined || colorNames.indexOf(userName) > -1) {
-        throw new Error('User name already exists, please use another name');
-      }
-      if (password === undefined || password.length <= 2) {
-        throw new Error('Please enter at least 3 characters for password');
-      }
-      password = crypto.createHash('md5').update( password ).digest('hex');
-      Database.getInstance().saveUser(userId, userName, password, '{}');
-      const user: User = new User(userName, password, userId);
-      user.createtime = getDay();
-      GameLoader.getInstance().userNameMap.set(userName, user);
-      GameLoader.getInstance().userIdMap.set(userId, user);
-      res.setHeader('Content-Type', 'application/json');
-      res.write('success');
-    } catch (err) {
-      console.warn('error register user', err);
-      res.writeHead(500);
-      const message = err instanceof Error ? err.message : String(err);
-      res.write( message);
-    }
-    res.end();
-  });
+export function register(userReq: any, _req: http.IncomingMessage, res: http.ServerResponse): void {
+  const userId = generateRandomId('');
+  const userName: string = userReq.userName ? userReq.userName.trim().toLowerCase() : '';
+  let password: string = userReq.password ? userReq.password.trim().toLowerCase() : '';
+  if (userName === undefined || userName.length <= 1) {
+    throw new Error('Please enter at least 2 characters for userName');
+  }
+  if (GameLoader.getInstance().userNameMap.get(userName) !== undefined || colorNames.indexOf(userName) > -1) {
+    throw new Error('User name already exists, please use another name');
+  }
+  if (password === undefined || password.length <= 2) {
+    throw new Error('Please enter at least 3 characters for password');
+  }
+  password = crypto.createHash('md5').update( password ).digest('hex');
+  Database.getInstance().saveUser(userId, userName, password, '{}');
+  const user: User = new User(userName, password, userId);
+  user.createtime = getDay();
+  GameLoader.getInstance().userNameMap.set(userName, user);
+  GameLoader.getInstance().userIdMap.set(userId, user);
+  res.setHeader('Content-Type', 'application/json');
+  res.write('success');
+  res.end();
+  return;
 }
 
 
@@ -254,153 +191,216 @@ export function isvip(req: http.IncomingMessage, res: http.ServerResponse, ctx: 
   }
 }
 
-export function resign(req: http.IncomingMessage, res: http.ServerResponse): void {
-  let body = '';
-  req.on('data', function(data) {
-    body += data.toString();
-  });
-  req.once('end', function() {
-    try {
-      const userReq = JSON.parse(body);
-      const userId: string = userReq.userId;
-      const playerId: string = userReq.playerId;
+export function resign(userReq:any, req: http.IncomingMessage, res: http.ServerResponse): void {
+  const userId: string = userReq.userId;
+  const playerId: string = userReq.playerId;
 
-      const game = GameLoader.getInstance().playerToGame.get(playerId);
-      if (game === undefined || GameLoader.getInstance().games.get(game.id) === undefined) {
-        notFound(req, res);
-        return;
-      }
-      const player = game.getAllPlayers().find((p) => p.id === playerId);
-      if (player === undefined) {
-        notFound(req, res);
-        return;
-      }
-      const userPlayer = GameLoader.getUserByPlayer(player);
-      const user = GameLoader.getInstance().userIdMap.get(userId);
-      if (user === undefined || !user.isvip()) {
-        notFound(req, res);
-        return;
-      }
-      if (userPlayer !== undefined && userPlayer.id !== userId) {// 已注册并且不等于登录用户  不能体退
-        notFound(req, res);
-        return;
-      }
-      game.exitPlayer(player);
-      res.setHeader('Content-Type', 'application/json');
-      const playerBlockModel : PlayerBlockModel ={
-        block: false,
-        isme: true,
-        showhandcards: user.showhandcards,
-      };
-      res.end(JSON.stringify(Server.getPlayerModel(player, playerBlockModel)));
-    } catch (err) {
-      console.warn('error resign', err);
-      console.warn('error resign:', body);
-      res.writeHead(500);
-      const message = err instanceof Error ? err.message : String(err);
-      res.write('Unable to resign: ' + message);
-      res.end();
-    }
-  });
+  const game = GameLoader.getInstance().playerToGame.get(playerId);
+  if (game === undefined || GameLoader.getInstance().games.get(game.id) === undefined) {
+    notFound(req, res);
+    return;
+  }
+  const player = game.getAllPlayers().find((p) => p.id === playerId);
+  if (player === undefined) {
+    notFound(req, res);
+    return;
+  }
+  const userPlayer = GameLoader.getUserByPlayer(player);
+  const user = GameLoader.getInstance().userIdMap.get(userId);
+  if (user === undefined || !user.isvip()) {
+    notFound(req, res);
+    return;
+  }
+  if (userPlayer !== undefined && userPlayer.id !== userId) {// 已注册并且不等于登录用户  不能体退
+    notFound(req, res);
+    return;
+  }
+  game.exitPlayer(player);
+  res.setHeader('Content-Type', 'application/json');
+  const playerBlockModel : PlayerBlockModel ={
+    block: false,
+    isme: true,
+    showhandcards: user.showhandcards,
+  };
+  res.end(JSON.stringify(Server.getPlayerModel(player, playerBlockModel)));
 }
 
-export function showHand(req: http.IncomingMessage, res: http.ServerResponse): void {
-  let body = '';
-  req.on('data', function(data) {
-    body += data.toString();
-  });
-  req.once('end', function() {
-    try {
-      const userReq:any = JSON.parse(body);
-      const user = GameLoader.getInstance().userIdMap.get(userReq.userId);
-      if (user === undefined) {
-        notFound(req, res);
-        return;
-      }
-      if (userReq.showhandcards ) {
-        user.showhandcards = true;
-      } else {
-        user.showhandcards = false;
-      }
+export function showHand(userReq:any, req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
+  const user = GameLoader.getInstance().userIdMap.get(userReq.userId);
+  if (user === undefined) {
+    notFound(req, res);
+    return Promise.resolve();
+  }
+  if (userReq.showhandcards ) {
+    user.showhandcards = true;
+  } else {
+    user.showhandcards = false;
+  }
 
-      res.setHeader('Content-Type', 'application/json');
-      res.write('success');
-      res.end();
-    } catch (err) {
-      console.warn('error update', err);
-      res.writeHead(500);
-      const message = err instanceof Error ? err.message : String(err);
-      res.write('Unable to update: ' + message);
-      res.end();
-    }
-  });
+  res.setHeader('Content-Type', 'application/json');
+  res.write('success');
+  res.end();
+  return Promise.resolve();
 }
 
-export function sitDown(req: http.IncomingMessage, res: http.ServerResponse): void {
-  let body = '';
-  req.on('data', function(data) {
-    body += data.toString();
+
+//
+export async function sitDown(userReq:any, req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
+  const userme = GameLoader.getInstance().userIdMap.get(userReq.userId);
+  if (userme === undefined) {
+    notFound(req, res);
+    return;
+  }
+  if (userReq.playerId === undefined) {
+    notFound(req, res);
+    return;
+  }
+  const game = await GameLoader.getInstance().getByPlayerId(userReq.playerId);
+  if (game === undefined) {
+    console.warn('sitDown game undefined');
+    notFound(req, res);
+    return;
+  }
+  const player = game.getAllPlayers().find((player) => player.id === userReq.playerId);
+  if (player === undefined || player.userId !== undefined) {
+    console.warn('sitDown player === undefined || player.userId !== undefined');
+    notFound(req, res);
+    return;
+  }
+
+  // 已经属于其他用户
+  const userThat = GameLoader.getInstance().userNameMap.get(player.name);
+  if (userThat !== undefined ) {
+    console.warn('sitDown userThat !== undefined');
+    notFound(req, res);
+    return;
+  }
+
+  let haveSit = false;
+  game.getAllPlayers().forEach( (p) => {
+    if (p !== player && ( p.userId === userme.id || p.name === userme.name)) {
+      // res.setHeader('Content-Type', 'application/json');
+      res.write('不能重复坐下，请使用你自己的游戏地址');
+      res.end();
+      haveSit = true;
+      return;
+    }
   });
-  req.once('end', async function() {
+  if (haveSit ) {
+    return;
+  }
+  player.name = userme.name;
+  player.userId = userme.id;
+  game.log('${0} sit down', (b) => b.player(player));
+  GameLoader.getInstance().add(game);
+  // res.setHeader('Content-Type', 'application/json');
+  res.write('success');
+  res.end();
+}
+
+
+//
+
+// 天梯 用户激活排名的接口
+export function activateRank(userReq: any, _req: http.IncomingMessage, res: http.ServerResponse): void {
+  const userId = userReq.userId;
+  const rankValue = DEFAULT_RANK_VALUE;
+  const mu = DEFAULT_MU;
+  const sigma = DEFAULT_SIGMA;
+  let userRank = GameLoader.getInstance().userRankMap.get(userId);
+  if (userRank === null) {
+    userRank = new UserRank(userId, rankValue, mu, sigma, 0);
+    Database.getInstance().addUserRank(userRank);
+    GameLoader.getInstance().addOrUpdateUserRank(userRank);
+  }
+  res.setHeader('Content-Type', 'application/json');
+  res.write('success');
+  res.end();
+  return;
+}
+
+export function getUserRank(req: http.IncomingMessage, res: http.ServerResponse, ctx: Context): void {
+  let userRank: UserRank | undefined;
+  let userId = ctx.url.searchParams.get('userId');
+  const playerName = ctx.url.searchParams.get('playerName');
+  if (!userId && playerName !== undefined && playerName !== '' && playerName !== null) {
+    // 如果没传userId 就用playerName得到userId
+    const user = GameLoader.getInstance().userNameMap.get(playerName);
+    if (user !==undefined) {
+      userId = user.id;
+    }
+  }
+  if (userId ) {
+    userRank = GameLoader.getInstance().userRankMap.get(userId);
+    if (userRank === undefined ) {
+      userRank = new UserRank(userId, DEFAULT_RANK_VALUE, DEFAULT_MU, DEFAULT_SIGMA, 0);
+      Database.getInstance().addUserRank(userRank);
+      GameLoader.getInstance().addOrUpdateUserRank(userRank);
+    }
+    const data = {userId: userRank.userId, rankValue: userRank.rankValue, mu: userRank.mu, sigma: userRank.sigma, trueskill: userRank.trueskill};
+
+    res.setHeader('Content-Type', 'application/json');
+    res.write(JSON.stringify(data));
+    res.end();
+  } else {
+    console.warn('didn\'t find user id or player name');
+    notFound(req, res);
+    return;
+  }
+}
+
+export function getUserRanks(req: http.IncomingMessage, res: http.ServerResponse, ctx: Context): void {
+  const limit = Math.min(100, Number(ctx.url.searchParams.get('limit')));
+  Database.getInstance().getUserRanks(limit).then( (allUserRanks:Array<UserRank> ) => {
     try {
-      const userReq:any = JSON.parse(body);
-      const userme = GameLoader.getInstance().userIdMap.get(userReq.userId);
-      if (userme === undefined) {
-        notFound(req, res);
-        return;
-      }
-      if (userReq.playerId === undefined) {
-        notFound(req, res);
-        return;
-      }
-      const game = await GameLoader.getInstance().getByPlayerId(userReq.playerId);
-      if (game === undefined) {
-        console.warn('sitDown game undefined');
-        notFound(req, res);
-        return;
-      }
-      const player = game.getAllPlayers().find((player) => player.id === userReq.playerId);
-      if (player === undefined || player.userId !== undefined) {
-        console.warn('sitDown player === undefined || player.userId !== undefined');
-        notFound(req, res);
-        return;
-      }
-
-      // 已经属于其他用户
-      const userThat = GameLoader.getInstance().userNameMap.get(player.name);
-      if (userThat !== undefined ) {
-        console.warn('sitDown userThat !== undefined');
-        notFound(req, res);
-        return;
-      }
-
-      let haveSit = false;
-      game.getAllPlayers().forEach( (p) => {
-        if (p !== player && ( p.userId === userme.id || p.name === userme.name)) {
-          // res.setHeader('Content-Type', 'application/json');
-          res.write('不能重复坐下，请使用你自己的游戏地址');
-          res.end();
-          haveSit = true;
-          return;
+      const resRanks: Array<{userName: String, userRank: UserRank, userTier: RankTier}> = [];
+      allUserRanks.forEach((userRank) => {
+        const user = GameLoader.getInstance().userIdMap.get(userRank.userId);
+        if (user !== undefined) {
+          resRanks.push({userName: user.name, userRank: userRank, userTier: userRank.getTier()});
         }
       });
-      if (haveSit ) {
+      if (resRanks.length === 0) {
+        notFound(req, res);
         return;
       }
-      player.name = userme.name;
-      player.userId = userme.id;
-      game.log('${0} sit down', (b) => b.player(player));
-      GameLoader.getInstance().add(game);
-      // res.setHeader('Content-Type', 'application/json');
-      res.write('success');
+      const data = {allUserRanks: resRanks};
+      res.setHeader('Content-Type', 'application/json');
+      res.write(JSON.stringify(data));
       res.end();
     } catch (err) {
-      console.warn('error update', err);
+      if (err instanceof Error && err.name === 'UnexpectedInput') {
+        console.warn('error ', getUserRanks, ',', limit, ',', err.message);
+      } else {
+        console.warn('error ', getUserRanks, ',', limit, ',', err);
+      }
       res.writeHead(500);
       const message = err instanceof Error ? err.message : String(err);
-      res.write('Unable to update: ' + message);
+      res.write('执行错误 : ' + message);
       res.end();
     }
+  }).catch((err) => {
+    console.error('getUserRanks', err);
   });
 }
 
+// 天梯 由于超时或者所有玩家退出游戏，调用API
+export async function endGameByEvent(userReq: any, req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
+  const userId: string = userReq.userId;
+  const playerId: string = userReq.playerId;
+  const game = await GameLoader.getInstance().getByPlayerId(playerId); // 多个请求时await
+  if (game === undefined || GameLoader.getInstance().games.get(game.id) === undefined) {
+    notFound(req, res);
+    return;
+  }
+  if (game.phase !== Phase.END && game.phase !== Phase.TIMEOUT && game.phase !== Phase.ABANDON) {
+    console.log('endGameByEvent from userId', userId, game.phase);
+    game.checkRankModeEndGame(playerId).then(() => {
+      console.log('endGameByEvent success from', userId);
+    }).catch((err) => {
+      console.error('endGameByEvent', err);
+    });
+  }
+  res.setHeader('Content-Type', 'application/json');
+  res.end();
+}

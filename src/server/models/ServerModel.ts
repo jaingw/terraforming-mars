@@ -22,8 +22,7 @@ import {SelectPlayer} from '../inputs/SelectPlayer';
 import {SelectSpace} from '../inputs/SelectSpace';
 import {SpaceHighlight, SpaceModel} from '../../common/models/SpaceModel';
 import {TileType} from '../../common/TileType';
-import {Resources} from '../../common/Resources';
-import {CardType} from '../../common/cards/CardType';
+import {Resource} from '../../common/Resource';
 import {
   ClaimedMilestoneModel,
   MilestoneScore,
@@ -52,6 +51,8 @@ import {isICorporationCard} from '../cards/corporation/ICorporationCard';
 import {IColony} from '../colonies/IColony';
 import {AresHandler} from '../ares/AresHandler';
 import {StaticGlobalEventProperties} from '../turmoil/globalEvents/GlobalEvent';
+import {AwardScorer} from '../awards/AwardScorer';
+import {Phase} from '../../common/Phase';
 
 export class Server {
   public static getSimpleGameModel(game: Game, userId : string = ''): SimpleGameModel {
@@ -75,10 +76,11 @@ export class Server {
       rollback: user && user.canRollback(),
       rollbackNum: user && user.getRollbackNum(),
       delete: user && user.canDelete(),
-      gameOptions: this.getGameOptionsAsModel(game.gameOptions),
+      gameOptions: game.gameOptions,
       lastSoloGeneration: game.lastSoloGeneration(),
-      heatFor: game.heatFor,
-      breakthrough: game.breakthrough,
+      heatFor: game.gameOptions.heatFor,
+      breakthrough: game.gameOptions.breakthrough,
+      expectedPurgeTimeMs: game.expectedPurgeTimeMs(),
     };
   }
 
@@ -90,7 +92,8 @@ export class Server {
       awards: this.getAwards(game),
       colonies: this.getColonies(game.colonies),
       deckSize: game.projectDeck.drawPile.length,
-      discardedColonies: this.getColonies(game.discardedColonies, /* showTrackPosition */ false),
+      discardedColonies: game.discardedColonies.map((c) => c.name),
+      expectedPurgeTimeMs: game.expectedPurgeTimeMs(),
       gameAge: game.gameAge,
       gameOptions: this.getGameOptionsAsModel(game.gameOptions),
       generation: game.getGeneration(),
@@ -112,6 +115,7 @@ export class Server {
       venusScaleLevel: game.getVenusScaleLevel(),
       step: game.lastSaveId,
       corporationsToDraft: this.getCards(game.getPlayers()[0], game._corporationsToDraft),
+      quitPlayers: game.getQuitPlayers(),
     };
   }
 
@@ -129,8 +133,10 @@ export class Server {
 
       return {
         cardsInHand: (block && !showhandcards ) ? []:this.getCards(player, player.cardsInHand, {showCalculatedCost: true}),
+        ceoCardsInHand: this.getCards(player, player.ceoCardsInHand),
         dealtCorporationCards: block? []:this.getCards(player, player.dealtCorporationCards),
         dealtPreludeCards: block? []:this.getCards(player, player.dealtPreludeCards),
+        dealtCeoCards: this.getCards(player, player.dealtCeoCards),
         dealtProjectCards: block? []:this.getCards(player, player.dealtProjectCards),
         draftedCards: block? []:this.getCards(player, player.draftedCards, {showCalculatedCost: true}),
         game: this.getGameModel(player.game),
@@ -196,7 +202,6 @@ export class Server {
         resources: targetCard.resourceCount,
         name: targetCard.card.name,
         calculatedCost: player.getCardCost(targetCard.card),
-        cardType: CardType.ACTIVE,
         isDisabled: false,
         reserveUnits: Units.EMPTY, // I wonder if this could just be removed.
         isSelfReplicatingRobotsCard: true,
@@ -223,8 +228,8 @@ export class Server {
       }
 
       milestoneModels.push({
-        player_name: claimed === undefined ? '' : claimed.player.name,
-        player_color: claimed === undefined ? '' : claimed.player.color,
+        playerName: claimed === undefined ? '' : claimed.player.name,
+        playerColor: claimed === undefined ? '' : claimed.player.color,
         name: milestone.name,
         scores,
       });
@@ -234,25 +239,23 @@ export class Server {
   }
 
   public static getAwards(game: Game): Array<FundedAwardModel> {
-    const allAwards = game.awards;
     const fundedAwards = game.fundedAwards;
     const awardModels: Array<FundedAwardModel> = [];
 
-    for (const award of allAwards) {
-      const funded = fundedAwards.find(
-        (a) => a.award.name === award.name,
-      );
+    for (const award of game.awards) {
+      const funded = fundedAwards.find((a) => a.award.name === award.name);
+      const scorer = new AwardScorer(game, award);
       let scores: Array<AwardScore> = [];
       if (fundedAwards.length < 3 || funded !== undefined) {
         scores = game.getPlayers().map((player) => ({
           playerColor: player.color,
-          playerScore: award.getScore(player),
+          playerScore: scorer.get(player),
         }));
       }
 
       awardModels.push({
-        player_name: funded === undefined ? '' : funded.player.name,
-        player_color: funded === undefined ? '' : funded.player.color,
+        playerName: funded === undefined ? '' : funded.player.name,
+        playerColor: funded === undefined ? '' : funded.player.color,
         name: award.name,
         scores: scores,
       });
@@ -278,7 +281,6 @@ export class Server {
     return {
       name: card.name,
       resources: card.resourceCount,
-      cardType: CardType.CORPORATION,
       isDisabled: card.isDisabled || false,
       warning: card.warning,
       discount: discount,
@@ -325,6 +327,7 @@ export class Server {
       availableParties: undefined,
       turmoil: undefined,
       globalEventCards: undefined,
+      showReset: player.game.inputsThisRound > 0 && player.game.resettable === true && player.game.phase === Phase.ACTION,
     };
     if (waitingFor instanceof OrOptions) {
       playerInputModel.id = (waitingFor as OrOptions).id;
@@ -379,7 +382,8 @@ export class Server {
       playerInputModel.min = selectEventCard.minCardsToSelect;
       break;
     case PlayerInputType.SELECT_COLONY:
-      playerInputModel.coloniesModel = this.getColonyModel( (waitingFor as SelectColony).colonies);
+      const selectColony = waitingFor as SelectColony;
+      playerInputModel.coloniesModel = this.getColonyModel( selectColony.colonies, selectColony.showTileOnly);
       break;
     case PlayerInputType.SELECT_PAYMENT:
       const sp = waitingFor as SelectPayment;
@@ -475,7 +479,6 @@ export class Server {
         resources: options.showResources ? card.resourceCount : undefined,
         name: card.name,
         calculatedCost: options.showCalculatedCost ? (isIProjectCard(card) && card.cost !== undefined ? player.getCardCost(card) : undefined) : card.cost,
-        cardType: card.cardType,
         isDisabled: isDisabled,
         warning: card.warning,
         reserveUnits: options.reserveUnits ? options.reserveUnits[index] : Units.EMPTY,
@@ -493,7 +496,7 @@ export class Server {
       actionsTakenThisRound: player.actionsTakenThisRound,
       actionsTakenThisGame: player.actionsTakenThisGame,
       actionsThisGeneration: Array.from(player.getActionsThisGeneration()),
-      availableBlueCardActionCount: player.getPlayableActionCards().length,
+      availableBlueCardActionCount: player.getAvailableBlueActionCount(),
       cardCost: player.cardCost,
       cardDiscount: player.colonies.cardDiscount,
       cardsInHandNbr: player.cardsInHand.length,
@@ -545,11 +548,13 @@ export class Server {
 
       exited: player.exited,
       isvip: GameLoader.getUserByPlayer(player)?.isvip() || 0,
+      rankValue: GameLoader.getUserRankByPlayer(player)?.getRankValue() || -1, // 天梯 这个是传入playerInfo的数据
+      rankTier: GameLoader.getUserRankByPlayer(player)?.getTier() || undefined,
     } as any as PublicPlayerModel;
   }
 
   private static getResourceProtections(player: Player) {
-    const protection: Record<Resources, Protection> = {
+    const protection: Record<Resource, Protection> = {
       megacredits: 'off',
       steel: 'off',
       titanium: 'off',
@@ -574,7 +579,7 @@ export class Server {
 
   private static getProductionProtections(player: Player) {
     const defaultProteection = player.cardIsInEffect(CardName.PRIVATE_SECURITY) ? 'on' : 'off';
-    const protection: Record<Resources, Protection> = {
+    const protection: Record<Resource, Protection> = {
       megacredits: defaultProteection,
       steel: defaultProteection,
       titanium: defaultProteection,
@@ -654,6 +659,7 @@ export class Server {
   //   aresExtension: options.aresExtension,
   //   boardName: options.boardName,
   //    bannedCards: options.bannedCards,
+    //     ceoExtension: options.ceoExtension,
   //   coloniesExtension: options.coloniesExtension,
   //   communityCardsOption: options.communityCardsOption,
   //   corporateEra: options.corporateEra,
@@ -682,26 +688,28 @@ export class Server {
   //   venusNextExtension: options.venusNextExtension,
   //   requiresMoonTrackCompletion: options.requiresMoonTrackCompletion,
   //   requiresVenusTrackCompletion: options.requiresVenusTrackCompletion,
+  //    twoCorpsVariant: options.twoCorpsVariant,
   //   undoOption: options.undoOption,
   // };
   }
 
-  private static getColonyModel(colonies: Array<IColony>) : Array<ColonyModel> {
+  private static getColonyModel(colonies: Array<IColony>, showTileOnly: boolean) : Array<ColonyModel> {
     return colonies.map(
       (colony): ColonyModel => ({
         colonies: colony.colonies.map(
           (player) => player.color,
         ),
-        isActive: colony.isActive,
+        isActive: colony.isActive && showTileOnly === false,
         name: colony.name,
         trackPosition: colony.trackPosition,
         visitor:
-                colony.visitor === undefined ?
-                  undefined :
-                  colony.visitor.color,
+          colony.visitor === undefined ?
+            undefined :
+            colony.visitor.color,
       }),
     );
   }
+
   private static getMoonModel(game: Game): MoonModel | undefined {
     return MoonExpansion.ifElseMoon(game, (moonData) => {
       return {

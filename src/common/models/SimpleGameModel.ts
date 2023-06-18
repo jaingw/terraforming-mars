@@ -17,11 +17,13 @@ export type SimpleGameModel = {
     rollback: boolean | undefined;
     rollbackNum: number | undefined;
     delete: boolean | undefined;
+    heatFor: boolean ;
+    breakthrough: boolean ;
+
     spectatorId: SpectatorId | undefined;
     gameOptions: GameOptions;
     lastSoloGeneration: number;
-    heatFor: boolean ;
-    breakthrough: boolean ;
+    expectedPurgeTimeMs: number;
 }
 
 type SimplePlayerModel = {

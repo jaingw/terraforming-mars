@@ -17,7 +17,7 @@ import {PlayerInput} from '../../PlayerInput';
 export class RobinHaulings extends Card implements ICorporationCard {
   constructor() {
     super({
-      cardType: CardType.CORPORATION,
+      type: CardType.CORPORATION,
       name: CardName.ROBIN_HAULINGS,
       tags: [Tag.MARS, Tag.VENUS],
       startingMegaCredits: 39,

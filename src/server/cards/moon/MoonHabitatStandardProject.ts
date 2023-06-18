@@ -4,7 +4,7 @@ import {CardRenderer} from '../render/CardRenderer';
 import {StandardProjectCard} from '../StandardProjectCard';
 import {MoonExpansion} from '../../moon/MoonExpansion';
 import {PlaceMoonHabitatTile} from '../../moon/PlaceMoonHabitatTile';
-import {Resources} from '../../../common/Resources';
+import {Resource} from '../../../common/Resource';
 import {TileType} from '../../../common/TileType';
 import {AltSecondaryTag} from '../../../common/cards/render/AltSecondaryTag';
 
@@ -55,6 +55,6 @@ export class MoonHabitatStandardProject extends StandardProjectCard {
   // TODO(kberg): subclass MoonCard? This is starting to show the problems with just using subclassing.
   actionEssence(player: Player): void {
     player.game.defer(new PlaceMoonHabitatTile(player));
-    player.production.add(Resources.MEGACREDITS, 1, {log: true});
+    player.production.add(Resource.MEGACREDITS, 1, {log: true});
   }
 }

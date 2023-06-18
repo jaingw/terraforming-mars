@@ -16,6 +16,7 @@ import {MultiSet} from 'mnemonist';
 import {SerializedPlayerId} from '../SerializedPlayer';
 import {PlayerId} from '../../common/Types';
 export type NeutralPlayer = 'NEUTRAL';
+export type Delegate = PlayerId | NeutralPlayer;
 
 
 const UNINITIALIZED_POLITICAL_AGENDAS_DATA: PoliticalAgendasData = {
@@ -23,11 +24,11 @@ const UNINITIALIZED_POLITICAL_AGENDAS_DATA: PoliticalAgendasData = {
   agendaStyle: AgendaStyle.CHAIRMAN,
 };
 export class Turmoil {
-  public chairman: undefined | PlayerId | NeutralPlayer = undefined;
+  public chairman: undefined | Delegate = undefined;
   public rulingParty: IParty;
   public dominantParty: IParty;
   public usedFreeDelegateAction = new Set<PlayerId>();
-  public delegateReserve = new MultiSet<PlayerId | NeutralPlayer>();
+  public delegateReserve = new MultiSet<Delegate>();
   public parties = ALL_PARTIES.map((cf) => new cf.Factory());
   public playersInfluenceBonus = new Map<string, number>();
   public readonly globalEventDealer: GlobalEventDealer;
@@ -38,7 +39,7 @@ export class Turmoil {
 
   private constructor(
     rulingPartyName: PartyName,
-    chairman: PlayerId | NeutralPlayer,
+    chairman: Delegate,
     dominantPartyName: PartyName,
     globalEventDealer: GlobalEventDealer) {
     this.rulingParty = this.getPartyByName(rulingPartyName);
@@ -62,7 +63,8 @@ export class Turmoil {
     game.getPlayersInGenerationOrder().forEach((player) => {
       turmoil.delegateReserve.add(player.id, DELEGATES_PER_PLAYER);
     });
-    turmoil.delegateReserve.add('NEUTRAL', DELEGATES_FOR_NEUTRAL_PLAYER);
+    // One Neutral delegate is already Chairman
+    turmoil.delegateReserve.add('NEUTRAL', DELEGATES_FOR_NEUTRAL_PLAYER - 1);
 
     turmoil.politicalAgendasData = PoliticalAgendas.newInstance(agendaStyle, turmoil.parties);
     // Note: this call relies on an instance of Game that will not be fully formed.
@@ -90,7 +92,7 @@ export class Turmoil {
 
   // Use to send a delegate to a specific party
   public sendDelegateToParty(
-    playerId: PlayerId | NeutralPlayer,
+    playerId: Delegate,
     partyName: PartyName,
     game: Game): void {
     const party = this.getPartyByName(partyName);
@@ -114,17 +116,17 @@ export class Turmoil {
   }
 
   // Use to remove a delegate from a specific party
-  public removeDelegateFromParty(playerIp: PlayerId | NeutralPlayer, partyName: PartyName, game: Game): void {
+  public removeDelegateFromParty(playerId: Delegate, partyName: PartyName, game: Game): void {
     const party = this.getPartyByName(partyName);
-    this.delegateReserve.add(playerIp);
-    party.removeDelegate(playerIp, game);
+    this.delegateReserve.add(playerId);
+    party.removeDelegate(playerId, game);
     this.checkDominantParty();
   }
 
   // Use to replace a delegate from a specific party with another delegate with NO DOMINANCE CHANGE
   public replaceDelegateFromParty(
-    outgoingPlayer: PlayerId | NeutralPlayer,
-    incomingPlayer: PlayerId | NeutralPlayer,
+    outgoingPlayer: Delegate,
+    incomingPlayer: Delegate,
     partyName: PartyName,
     game: Game): void {
     const party = this.getPartyByName(partyName);
@@ -232,11 +234,6 @@ export class Turmoil {
     // Cleanup previous party effects
     game.getPlayers().forEach((player) => player.hasTurmoilScienceTagBonus = false);
 
-    // Change the chairman
-    if (this.chairman) {
-      this.delegateReserve.add(this.chairman);
-    }
-
     const newChariman = this.rulingParty.partyLeader || 'NEUTRAL';
 
     // Fill the delegate reserve with everyone except the party leader
@@ -247,7 +244,6 @@ export class Turmoil {
       this.delegateReserve.add(playerId, count);
     });
 
-
     // Clean the party
     this.rulingParty.partyLeader = undefined;
     this.rulingParty.delegates.clear();
@@ -255,23 +251,34 @@ export class Turmoil {
     this.setNewChairman(newChariman, game, /* setAgenda*/ true);
   }
 
-  public setNewChairman(newChairman : PlayerId | NeutralPlayer, game: Game, setAgenda: boolean = true) {
+  public setNewChairman(newChairman : Delegate, game: Game, setAgenda: boolean = true, gainTR: boolean = true) {
+    // Change the chairman
+    if (this.chairman) {
+      // Return the current Chairman to reserve
+      this.delegateReserve.add(this.chairman);
+    }
     this.chairman = newChairman;
+
+    // Set Agenda
     if (setAgenda) {
       PoliticalAgendas.setNextAgenda(this, game);
     }
 
-
-    // Finally, award Chairman TR
+    // Finally, award Chairman benefits
     if (this.chairman !== 'NEUTRAL' && this.chairman !== undefined) {
       const player = game.getPlayerById(this.chairman);
+      let steps = gainTR ? 1 : 0;
       // Tempest Consultancy Hook (gains an additional TR when they become chairman)
-      const steps = player.isCorporation(CardName.TEMPEST_CONSULTANCY) ? 2 : 1;
+      if (player.isCorporation(CardName.TEMPEST_CONSULTANCY)) steps += 1;
 
-      // Raise TR but after resolving the new policy
+      // Raise TR
       game.defer(new SimpleDeferredAction(player, () => {
-        player.increaseTerraformRatingSteps(steps);
-        game.log('${0} is the new chairman and gains ${1} TR', (b) => b.player(player).number(steps));
+        if (steps > 0) {
+          player.increaseTerraformRatingSteps(steps);
+          game.log('${0} is the new chairman and gains ${1} TR', (b) => b.player(player).number(steps));
+        } else {
+          game.log('${0} is the new chairman', (b) => b.player(player));
+        }
         return undefined;
       }));
     } else {
@@ -412,17 +419,17 @@ export class Turmoil {
   }
 
   // Return number of delegates
-  public getAvailableDelegateCount(playerId: PlayerId | NeutralPlayer): number {
+  public getAvailableDelegateCount(playerId: Delegate): number {
     return this.delegateReserve.get(playerId);
   }
 
   // List players present in the reserve
-  public getPresentPlayersInReserve(): Array<PlayerId | NeutralPlayer> {
+  public getPresentPlayersInReserve(): Array<Delegate> {
     return Array.from(new Set(this.delegateReserve));
   }
 
   // Check if player has delegates available
-  public hasDelegatesInReserve(playerId: PlayerId | NeutralPlayer): boolean {
+  public hasDelegatesInReserve(playerId: Delegate): boolean {
     return this.getAvailableDelegateCount(playerId) > 0;
   }
 

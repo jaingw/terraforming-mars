@@ -21,7 +21,7 @@ export class EMDrive extends Card implements IActionCard, IProjectCard {
       cost: 35,
       name: CardName.EM_DRIVE,
       tags: [Tag.JOVIAN, Tag.SCIENCE, Tag.SPACE],
-      cardType: CardType.ACTIVE,
+      type: CardType.ACTIVE,
       victoryPoints: 2,
       requirements: CardRequirements.builder((b) => b.party(PartyName.SCIENTISTS)),
       metadata: {

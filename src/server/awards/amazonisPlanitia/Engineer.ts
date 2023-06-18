@@ -7,7 +7,6 @@ export class Engineer implements IAward {
   public readonly description = 'Most cards that directly alter your own production';
 
   public getScore(player: Player): number {
-    // TODO(kberg): should Engineer include events?
     const score = player.tableau.filter((card) => {
       if (Engineer.productionCards.includes(card.name)) return true;
 
@@ -45,7 +44,6 @@ export class Engineer implements IAward {
     CardName.QUANTUM_COMMUNICATIONS,
     // Promo
     CardName.INTERPLANETARY_TRADE,
-    CardName.MONS_INSURANCE,
     // TODO Breakthrough
     // TODO EROS
 
@@ -53,5 +51,12 @@ export class Engineer implements IAward {
     CardName.DARKSIDE_MINING_SYNDICATE,
     CardName.ROVER_DRIVERS_UNION,
     CardName.LUNA_FIRST_INCORPORATED,
+    // Pathfinders
+    CardName.RARE_EARTH_ELEMENTS,
+    CardName.CASSINI_STATION,
+    CardName.MICROBIOLOGY_PATENTS,
+    CardName.OUMUAMUA_TYPE_OBJECT_SURVEY,
+    CardName.RARE_EARTH_ELEMENTS,
+    CardName.SMALL_OPEN_PIT_MINE,
   ];
 }

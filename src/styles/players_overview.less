@@ -10,7 +10,7 @@
     line-height: 24px;
     height: 26px;
     letter-spacing: 0px;
-    margin-top: 34px;
+    margin-top: 8px;
     left: -17px;
     background: linear-gradient(to right, black, #aaa,#aaa, #aaa);
     color: black;
@@ -143,7 +143,7 @@
                 border-radius: 8px 8px 0px 1px;
                 padding: 8px 8px 0px 8px;
                 .megacredits {
-                    background-image: url(assets/resources/megacredit.png);
+                    background-image: url(./assets/resources/megacredit.png);
                     background-size: 20px 20px;
                     width: 20px;
                     height: 20px;
@@ -158,7 +158,7 @@
         }
         .points-per-tag {
             position: absolute;
-            background: url(/assets/board/mars.png);
+            background: url(./assets/board/mars.png);
             width: 21px;
             height: 21px;
             border-radius: 50%;
@@ -177,17 +177,21 @@
         .points-per-tag--S {
           font-size: 16px;
         }
+        .points-per-tag--XS {
+          font-size: 11px;
+        }
         .player-tags-main {
             display: flex;
-            align-items: center;
-            margin-left: 0;
+            // align-items: center;
+            margin-top: 8px;
         }
         .player-tags-secondary {
             display: flex;
             flex-flow: row;
-            align-items: center;
+            // align-items: center;
             position: relative;
             margin-left: 5px;
+            margin-top: 8px;
         }
         .tag-separator {
             width: 2px;
@@ -264,6 +268,9 @@
                     background: #000;
                     color: #e6e1e1;
                     opacity: 0.3;
+                }
+                .player-action-status-container-rank {
+                    cursor: pointer;
                 }
             }
         }

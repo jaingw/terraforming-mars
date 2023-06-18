@@ -26,7 +26,7 @@ export class Chaos extends Card implements ICorporationCard {
       name: CardName.CHAOS,
       tags: [],
       startingMegaCredits: 42,
-      cardType: CardType.CORPORATION,
+      type: CardType.CORPORATION,
 
       metadata: {
         cardNumber: 'Q21',

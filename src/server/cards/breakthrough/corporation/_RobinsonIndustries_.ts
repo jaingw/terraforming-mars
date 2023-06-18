@@ -1,6 +1,6 @@
 
 import {CardName} from '../../../../common/cards/CardName';
-import {Resources} from '../../../../common/Resources';
+import {Resource} from '../../../../common/Resource';
 import {Player} from '../../../Player';
 import {RobinsonIndustries} from '../../prelude/RobinsonIndustries';
 import {CardRenderer} from '../../render/CardRenderer';
@@ -30,8 +30,8 @@ export class _RobinsonIndustries_ extends RobinsonIndustries {
     };
   }
 
-  public override increaseAndLogProduction(player: Player, resource: Resources) {
-    player.deductResource(Resources.MEGACREDITS, 3);
+  public override increaseAndLogProduction(player: Player, resource: Resource) {
+    player.deductResource(Resource.MEGACREDITS, 3);
     player.production.add(resource, 1, {log: true});
     const number = player.production.get(resource);
     player.addResource(resource, number);

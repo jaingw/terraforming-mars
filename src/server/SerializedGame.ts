@@ -23,6 +23,7 @@ export type SerializedGame = {
     aresData?: AresData;
     awards: Array<IAward>;
     board: SerializedBoard;
+    ceoDeck: SerializedDeck;
     currentSeed: number;
     claimedMilestones: Array<SerializedClaimedMilestone>;
     clonedGamedId?: string;
@@ -31,6 +32,7 @@ export type SerializedGame = {
     corporationDeck: SerializedDeck,
     dealer?: SerializedDealer;
     // _corporationsToDraft: Array<CardName>;
+    createdTimeMs: number;
     deferredActions: Array<DeferredAction>;
     donePlayers: Array<SerializedPlayerId>;
     draftedPlayers: Array<SerializedPlayerId>;
@@ -76,5 +78,6 @@ export type SerializedGame = {
     finishFirstTrading: boolean,
     // unDraftedCards: Map<Object, Object>,
     unitedNationsMissionOneOwner: PlayerId | undefined ;
+    quitPlayers: Array<SerializedPlayerId>;
 }
 

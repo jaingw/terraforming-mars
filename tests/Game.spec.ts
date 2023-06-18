@@ -8,10 +8,10 @@ import * as constants from '../src/common/constants';
 import {Birds} from '../src/server/cards/base/Birds';
 import {WaterImportFromEuropa} from '../src/server/cards/base/WaterImportFromEuropa';
 import {Phase} from '../src/common/Phase';
-import {addCity, addGreenery, addOcean, cast, forceGenerationEnd, maxOutOceans, runAllActions, testGameOptions} from './TestingUtils';
+import {addCity, addGreenery, addOcean, cast, forceGenerationEnd, maxOutOceans, runAllActions, setOxygenLevel, setTemperature, setVenusScaleLevel, testGameOptions} from './TestingUtils';
 import {TestPlayer} from './TestPlayer';
 import {SaturnSystems} from '../src/server/cards/corporation/SaturnSystems';
-import {Resources} from '../src/common/Resources';
+import {Resource} from '../src/common/Resource';
 import {ISpace} from '../src/server/boards/ISpace';
 import {SpaceId} from '../src/common/Types';
 import {ResearchNetwork} from '../src/server/cards/prelude/ResearchNetwork';
@@ -29,6 +29,7 @@ import {TileType} from '../src/common/TileType';
 import {IColony} from '../src/server/colonies/IColony';
 import {IAward} from '../src/server/awards/IAward';
 import {CardName} from '../src/common/cards/CardName';
+import {SelectInitialCards} from '../src/server/inputs/SelectInitialCards';
 
 describe('Game', () => {
   it('should initialize with right defaults', () => {
@@ -75,10 +76,10 @@ describe('Game', () => {
     game.fundAward(player, award);
 
     // Set second player to win Banker award
-    player2.production.add(Resources.MEGACREDITS, 10);
+    player2.production.add(Resource.MEGACREDITS, 10);
 
     // Our testing player will be 2nd Banker in the game
-    player.production.add(Resources.MEGACREDITS, 7);
+    player.production.add(Resource.MEGACREDITS, 7);
 
     // Two other players will share Thermalist award
     award = new Thermalist();
@@ -120,7 +121,7 @@ describe('Game', () => {
     const player2 = TestPlayer.RED.newPlayer();
     const game = Game.newInstance('game-id', [player, player2], player);
 
-    (game as any).temperature = 6;
+    setTemperature(game, 6);
     let initialTR = player.getTerraformRating();
     game.increaseTemperature(player, 2);
 
@@ -128,7 +129,7 @@ describe('Game', () => {
     expect(player.getTerraformRating()).to.eq(initialTR + 1);
 
     initialTR = player.getTerraformRating();
-    (game as any).temperature = 6;
+    setTemperature(game, 6);
 
     // Try 3 steps increase
     game.increaseTemperature(player, 3);
@@ -141,7 +142,7 @@ describe('Game', () => {
     const player2 = TestPlayer.RED.newPlayer();
     const game = Game.newInstance('game-id', [player, player2], player);
 
-    (game as any).oxygenLevel = 13;
+    setOxygenLevel(game, 13);
     const initialTR = player.getTerraformRating();
     game.increaseOxygenLevel(player, 2);
 
@@ -190,10 +191,10 @@ describe('Game', () => {
     const game = Game.newInstance('game-venusterraform', [player, player2], player);
     game.gameOptions.venusNextExtension = true;
     game.gameOptions.requiresVenusTrackCompletion = true;
-    (game as any).temperature = constants.MAX_TEMPERATURE;
-    (game as any).oxygenLevel = constants.MAX_OXYGEN_LEVEL;
-    // (game as any).venusScaleLevel = constants.MAX_VENUS_SCALE;
-    (game as any).venusScaleLevel = 6;
+    setTemperature(game, constants.MAX_TEMPERATURE);
+    setOxygenLevel(game, constants.MAX_OXYGEN_LEVEL);
+    // setVenusScaleLevel(game, constants.MAX_VENUS_SCALE);
+    setVenusScaleLevel(game, 6);
     maxOutOceans(player);
     // Skip final greenery Phase
     player.plants = 0;
@@ -212,9 +213,9 @@ describe('Game', () => {
     const game = Game.newInstance('game-venusterraform', [player, player2], player);
     game.gameOptions.venusNextExtension = true;
     game.gameOptions.requiresVenusTrackCompletion = true;
-    (game as any).temperature = constants.MAX_TEMPERATURE;
-    (game as any).oxygenLevel = constants.MAX_OXYGEN_LEVEL;
-    (game as any).venusScaleLevel = constants.MAX_VENUS_SCALE;
+    setTemperature(game, constants.MAX_TEMPERATURE);
+    setOxygenLevel(game, constants.MAX_OXYGEN_LEVEL);
+    setVenusScaleLevel(game, constants.MAX_VENUS_SCALE);
     maxOutOceans(player);
     // Skip final greenery Phase
     player.plants = 0;
@@ -239,9 +240,9 @@ describe('Game', () => {
     const game = Game.newInstance('game-venusterraform', [player, player2], player);
     game.gameOptions.venusNextExtension = true;
     game.gameOptions.requiresVenusTrackCompletion = true;
-    (game as any).temperature = 2;
-    (game as any).oxygenLevel = 2;
-    (game as any).venusScaleLevel = constants.MAX_VENUS_SCALE;
+    setTemperature(game, 2);
+    setOxygenLevel(game, 2);
+    setVenusScaleLevel(game, constants.MAX_VENUS_SCALE);
     maxOutOceans(player);
     // Skip final greenery Phase
     player.plants = 0;
@@ -272,8 +273,8 @@ describe('Game', () => {
     game.generation = 10;
 
     // Terraform
-    (game as any).temperature = constants.MAX_TEMPERATURE;
-    (game as any).oxygenLevel = constants.MAX_OXYGEN_LEVEL;
+    setTemperature(game, constants.MAX_TEMPERATURE);
+    setOxygenLevel(game, constants.MAX_OXYGEN_LEVEL);
     maxOutOceans(player);
 
     player.plants = 0; // Skip final greenery Phase
@@ -288,11 +289,13 @@ describe('Game', () => {
   it('Solo player should place final greeneries if victory condition met', () => {
     const player = TestPlayer.BLUE.newPlayer();
     const game = Game.newInstance('game-solo2', [player], player);
+    /* Removes SelectInitialCards. The cast verifies that it's popping the right thing. */
+    cast(player.popWaitingFor(), SelectInitialCards);
 
     // Set up end-game conditions
     game.generation = 14;
-    (game as any).temperature = constants.MAX_TEMPERATURE;
-    (game as any).oxygenLevel = constants.MAX_OXYGEN_LEVEL;
+    setTemperature(game, constants.MAX_TEMPERATURE);
+    setOxygenLevel(game, constants.MAX_OXYGEN_LEVEL);
     maxOutOceans(player);
     player.plants = 9;
 
@@ -312,8 +315,8 @@ describe('Game', () => {
 
     // Set up near end-game conditions
     game.generation = 14;
-    (game as any).temperature = constants.MAX_TEMPERATURE - 2;
-    (game as any).oxygenLevel = constants.MAX_OXYGEN_LEVEL;
+    setTemperature(game, constants.MAX_TEMPERATURE - 2);
+    setOxygenLevel(game, constants.MAX_OXYGEN_LEVEL);
     maxOutOceans(player);
     player.plants = 9;
 
@@ -327,6 +330,8 @@ describe('Game', () => {
   it('Solo player should place final greeneries in TR 63 mode if victory condition is met', () => {
     const player = TestPlayer.BLUE.newPlayer();
     const game = Game.newInstance('game-solo2', [player], player, testGameOptions({soloTR: true}));
+    /* Removes SelectInitialCards. The cast verifies that it's popping the right thing. */
+    cast(player.popWaitingFor(), SelectInitialCards);
 
     // Set up end-game conditions
     game.generation = 14;
@@ -367,8 +372,8 @@ describe('Game', () => {
     game.generation = 14;
 
     // Terraform
-    (game as any).temperature = constants.MAX_TEMPERATURE;
-    (game as any).oxygenLevel = constants.MAX_OXYGEN_LEVEL - 2;
+    setTemperature(game, constants.MAX_TEMPERATURE);
+    setOxygenLevel(game, constants.MAX_OXYGEN_LEVEL - 2);
     maxOutOceans(player);
 
     // Must remove waitingFor or playerIsFinishedTakingActions
@@ -416,7 +421,7 @@ describe('Game', () => {
       p.plants = 8;
     });
 
-    game.gotoFinalGreeneryPlacement();
+    game.takeNextFinalGreeneryAction();
 
     expect(player1.getWaitingFor()).is.undefined;
     expect(player2.getWaitingFor()).is.undefined;
@@ -471,7 +476,7 @@ describe('Game', () => {
     player1.plants = 8;
     player4.plants = 8;
 
-    game.gotoFinalGreeneryPlacement();
+    game.takeNextFinalGreeneryAction();
 
     // Even though player 3 is first player, they have no plants. So player 4 goes.
 
@@ -524,7 +529,7 @@ describe('Game', () => {
     const game = Game.newInstance('gto', [player], player);
     const card = new SaturnSystems();
     player.setCorporationForTest(card);
-    expect(game.getCardPlayer(card.name)).to.eq(player);
+    expect(game.getCardPlayerOrThrow(card.name)).to.eq(player);
   });
 
   it('Does not assign player to ocean after placement', () => {
@@ -626,6 +631,49 @@ describe('Game', () => {
     expect(prevAwards).to.not.eq(awards);
   });
 
+  // https://github.com/terraforming-mars/terraforming-mars/issues/5572
+  it('Milestones can be claimed', function() {
+    const player = TestPlayer.BLUE.newPlayer();
+    const player2 = TestPlayer.RED.newPlayer();
+    const game = Game.newInstance('gameid', [player, player2], player, testGameOptions({}));
+    player.popWaitingFor();
+
+    player.setTerraformRating(35); // Can claim Terraformer milestone
+
+    player.megaCredits = 7;
+    // Cannot afford milestone.
+    const actions = cast(player.getActions(), OrOptions);
+
+    expect(actions.options.find((option) => option.title === 'Claim a milestone')).is.undefined;
+
+    player.megaCredits = 8;
+    const actions2 = cast(player.getActions(), OrOptions);
+    const claimMilestoneAction = cast(actions2.options.find((option) => option.title === 'Claim a milestone'), OrOptions);
+    claimMilestoneAction.options[0].cb();
+    runAllActions(game);
+    expect(game.claimedMilestones.some((cm) => cm.milestone.name === 'Terraformer' && cm.player === player)).is.true;
+  });
+
+  // https://github.com/terraforming-mars/terraforming-mars/issues/5572
+  it('Milestones cannot be claimed twice', function() {
+    const player = TestPlayer.BLUE.newPlayer();
+    const player2 = TestPlayer.RED.newPlayer();
+    const game = Game.newInstance('gameid', [player, player2], player, testGameOptions({}));
+    player.popWaitingFor();
+
+    player.setTerraformRating(35); // Can claim Terraformer milestone
+    player.megaCredits = 8;
+    const actions = cast(player.getActions(), OrOptions);
+    const claimMilestoneAction = cast(actions.options.find((option) => option.title === 'Claim a milestone'), OrOptions);
+    claimMilestoneAction.options[0].cb();
+    runAllActions(game);
+    expect(game.claimedMilestones.some((cm) => cm.milestone.name === 'Terraformer' && cm.player === player)).is.true;
+
+    expect(() => claimMilestoneAction.options[0].cb()).to.throw(/Terraformer is already claimed/);
+    const actions2 = cast(player.getActions(), OrOptions);
+    expect(actions2.options.some((option) => option.title === 'Claim a milestone')).is.false;
+  });
+
   // it('specifically-requested corps override expansion corps', () => {
   //   const player = TestPlayers.BLUE.newPlayer();
   //   const player2 = TestPlayers.RED.newPlayer();
@@ -719,6 +767,7 @@ it('specifically-requested preludes override expansion preludes', () => {
   //   game.pathfindersData = undefined;
   //   const serialized = game.serialize();
   //   const serializedKeys = Object.keys(serialized);
+
   //   expect(serializedKeys).not.include('rng');
   //   const gameKeys = Object.keys(game);
   //   expect(serializedKeys.concat('rng', 'discardedColonies').sort())
@@ -748,17 +797,115 @@ it('specifically-requested preludes override expansion preludes', () => {
   it('deserializing a game with awards', () => {
     const player = TestPlayer.BLUE.newPlayer();
     const game = Game.newInstance('gameid', [player], player, testGameOptions({pathfindersExpansion: false}));
+    const scientist = game.awards.find((award) => award.name === 'Scientist')!;
+    game.fundedAwards.push({
+      award: scientist,
+      player: player,
+    });
     const serialized = game.serialize();
+    expect(serialized.fundedAwards).deep.eq([{
+      name: 'Scientist',
+      playerId: 'p-blue-id',
+    }]);
     const deserialized = game.loadFromJSON(serialized);
     expect(deserialized.awards).deep.eq(game.awards);
+    expect(deserialized.fundedAwards).has.length(1);
+    expect(deserialized.fundedAwards[0].award.name).eq('Scientist');
+    expect(deserialized.fundedAwards[0].player.id).eq('p-blue-id');
   });
+
+  // https://github.com/terraforming-mars/terraforming-mars/issues/5572
+  it('dealing with awards accidentally funded twice', () => {
+    const player = TestPlayer.BLUE.newPlayer();
+    const player2 = TestPlayer.RED.newPlayer();
+    const game = Game.newInstance('gameid', [player, player2], player, testGameOptions({pathfindersExpansion: false}));
+    const scientist = game.awards.find((award) => award.name === 'Scientist')!;
+
+    game.fundedAwards.push({
+      award: scientist,
+      player: player,
+    });
+
+    game.fundedAwards.push({
+      award: scientist,
+      player: player,
+    });
+
+    const serialized = game.serialize();
+    // Serializing both of these isn't great, but it's how it works, and demonstrates how the
+    // duplication goes away during deserialization
+    expect(serialized.fundedAwards).deep.eq([{
+      name: 'Scientist',
+      playerId: 'p-blue-id',
+    },
+    {
+      name: 'Scientist',
+      playerId: 'p-blue-id',
+    }]);
+
+    const deserialized = game.loadFromJSON(serialized);
+    expect(deserialized.fundedAwards).has.length(1);
+    expect(deserialized.fundedAwards[0].award.name).eq('Scientist');
+    expect(deserialized.fundedAwards[0].player.id).eq('p-blue-id');
+  });
+
 
   it('deserializing a game with milestones', () => {
     const player = TestPlayer.BLUE.newPlayer();
-    const game = Game.newInstance('gameid', [player], player, testGameOptions({pathfindersExpansion: false}));
+    const player2 = TestPlayer.RED.newPlayer();
+    const game = Game.newInstance('gameid', [player, player2], player, testGameOptions({pathfindersExpansion: false}));
+    const terraformier = game.milestones.find((milestone) => milestone.name === 'Terraformer')!;
+
+    game.claimedMilestones.push({
+      milestone: terraformier,
+      player: player,
+    });
     const serialized = game.serialize();
+    expect(serialized.claimedMilestones).deep.eq([{
+      name: 'Terraformer',
+      playerId: 'p-blue-id',
+    }]);
+
     const deserialized = game.loadFromJSON(serialized);
     expect(deserialized.milestones).deep.eq(game.milestones);
+    expect(deserialized.claimedMilestones).has.length(1);
+    expect(deserialized.claimedMilestones[0].milestone.name).eq('Terraformer');
+    expect(deserialized.claimedMilestones[0].player.id).eq('p-blue-id');
+  });
+
+  // https://github.com/terraforming-mars/terraforming-mars/issues/5572
+  it('dealing with milestones accidentally claimed twice', () => {
+    const player = TestPlayer.BLUE.newPlayer();
+    const player2 = TestPlayer.RED.newPlayer();
+    const game = Game.newInstance('gameid', [player, player2], player, testGameOptions({pathfindersExpansion: false}));
+    const terraformier = game.milestones.find((milestone) => milestone.name === 'Terraformer')!;
+
+    game.claimedMilestones.push({
+      milestone: terraformier,
+      player: player,
+    });
+
+    game.claimedMilestones.push({
+      milestone: terraformier,
+      player: player,
+    });
+
+    const serialized = game.serialize();
+    // Serializing both of these isn't great, but it's how it works, and demonstrates how the
+    // duplication goes away during deserialization
+    expect(serialized.claimedMilestones).deep.eq([{
+      name: 'Terraformer',
+      playerId: 'p-blue-id',
+    },
+    {
+      name: 'Terraformer',
+      playerId: 'p-blue-id',
+    }]);
+
+    const deserialized = game.loadFromJSON(serialized);
+    expect(deserialized.claimedMilestones).has.length(1);
+    expect(deserialized.claimedMilestones[0].milestone.name).eq('Terraformer');
+    expect(deserialized.claimedMilestones[0].player.id).eq('p-blue-id');
   });
 
   it('deserializing a colonies game includes discarded colonies #4522', () => {
@@ -775,4 +922,30 @@ it('specifically-requested preludes override expansion preludes', () => {
     expect(deserialized.colonies.map(toName)).has.members(colonyNames);
     expect(deserialized.discardedColonies.map(toName)).has.members(discardedColonyNames);
   });
+
+  // it('Game should time out if rank mode is chosen and a player is time out', () => {
+  //   const player1 = new TestPlayer(Color.BLUE);
+  //   const player2 = new TestPlayer(Color.GREEN);
+  //   const player3 = new TestPlayer(Color.YELLOW);
+  //   const player4 = new TestPlayer(Color.RED);
+  //   const game = Game.newInstance('gto', [player1, player2, player3, player4], player2);
+  //   game.gameOptions.rankOption = true;
+  //   game.gameOptions.rankTimeLimit = 10;
+  //   game.gameOptions.rankTimePerGeneration = 10;
+  //   game.generation = 5;
+  //   game.incrementFirstPlayer();
+  //   expect(game.generation).eq(1);
+  //   [player1, player2, player3, player4].forEach((p) => {
+  //     p.popWaitingFor();
+  //   });
+  //   player1.process({type: 'or', index: 1, response: {type: 'option'}});
+  //   expect(game.phase).eq(Phase.END);
+  //   // player1.timer.getElapsedTimeInMinutes = () => 50;
+
+  //   expect(game.shouldGoToTimeOutPhase()).eq(true);
+  //   expect(game.phase).eq(Phase.TIMEOUT);
+
+  //   // await game.checkRankModeEndGame(player1.id);
+  //   expect(game.phase).eq(Phase.TIMEOUT);
+  // });
 });

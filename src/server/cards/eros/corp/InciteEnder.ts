@@ -17,7 +17,7 @@ export class InciteEnder extends Card implements ICard, ICorporationCard {
       name: CardName.INCITE_ENDER,
       tags: [Tag.SCIENCE],
       startingMegaCredits: 54,
-      cardType: CardType.CORPORATION,
+      type: CardType.CORPORATION,
 
       metadata: {
         cardNumber: 'Q24',

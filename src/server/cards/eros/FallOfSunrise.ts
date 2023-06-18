@@ -7,14 +7,14 @@ import {CardName} from '../../../common/cards/CardName';
 import {CardType} from '../../../common/cards/CardType';
 import {Tag} from '../../../common/cards/Tag';
 import {MAX_TEMPERATURE, REDS_RULING_POLICY_COST} from '../../../common/constants';
-import {Resources} from '../../../common/Resources';
+import {Resource} from '../../../common/Resource';
 import {PartyName} from '../../../common/turmoil/PartyName';
 
 export class FallOfSunrise extends Card implements IProjectCard {
   constructor() {
     super({
       name: CardName.FALL_OF_SUNRISE,
-      cardType: CardType.EVENT,
+      type: CardType.EVENT,
       tags: [Tag.SPACE],
       cost: 15,
 
@@ -40,7 +40,7 @@ export class FallOfSunrise extends Card implements IProjectCard {
 
   public override bespokePlay(player: Player) {
     player.game.increaseTemperature(player, 1);
-    player.addResource(Resources.PLANTS, 4);
+    player.addResource(Resource.PLANTS, 4);
     return undefined;
   }
 }

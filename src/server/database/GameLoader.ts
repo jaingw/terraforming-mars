@@ -3,10 +3,11 @@ import {Color} from '../../common/Color';
 import {Database} from './Database';
 import {Game, LoadState} from '../Game';
 import {Player} from '../Player';
-import {GameId, PlayerId, SpectatorId} from '../../common/Types';
+import {GameId, ParticipantId} from '../../common/Types';
 import {User} from '../User';
 import {IGameLoader, State} from './IGameLoader';
 import {GameIdLedger, IGameShortData} from './IDatabase';
+import {UserRank} from '../../common/rank/RankManager';
 
 type LoadCallback = (game: Game | undefined) => void;
 
@@ -20,6 +21,9 @@ export class GameLoader implements IGameLoader {
   public readonly userIdMap: Map<string, User> = new Map<string, User>();
   public readonly userNameMap: Map<string, User> = new Map<string, User>();
   public readonly usersToGames: Map<string, Set<string>> = new Map<string, Set<string>>();
+
+  // 天梯，id到`UserRank`的映射表
+  public readonly userRankMap: Map<string, UserRank> = new Map<string, UserRank>();
   // 以前的game没存shortData, 通过allGameIds读取全部数据
   public allGameIds: Array<GameId> = [];
 
@@ -82,6 +86,9 @@ export class GameLoader implements IGameLoader {
       this.playerToGame.set(player.id, game);
       const user = GameLoader.getUserByPlayer(player);
       if (user !== undefined) {
+        if (this.usersToGames.get(user.id) === undefined) {
+          this.usersToGames.set(user.id, new Set());
+        }
         this.usersToGames.get(user.id)?.add(game.id);
       }
     }
@@ -89,14 +96,18 @@ export class GameLoader implements IGameLoader {
 
   // READY是已读取gameid, 可以处理请求， 否则直接返回空
   public getGameById(gameId: string, cb: LoadCallback): void {
-    if (this.state === State.READY && this.games.has(gameId)) {
-      const game: any = this.games.get(gameId);
+    if (this.state === State.READY ) {
+      const game = this.games.get(gameId);
+      if (game === undefined) {
+        cb(undefined);
+        return;
+      }
       if (game.loadState === LoadState.LOADED) {
         cb(game);
         return;
       }
       if (game.loadState === LoadState.HALFLOADED) {
-        game.loadState === LoadState.LOADING;
+        game.loadState = LoadState.LOADING;
         this.loadFullGame(game);
       }
 
@@ -112,7 +123,7 @@ export class GameLoader implements IGameLoader {
     }
   }
 
-  public getByParticipantId(playerId: PlayerId | SpectatorId ): Promise<Game | undefined> {
+  public getByParticipantId(playerId: ParticipantId ): Promise<Game | undefined> {
     return this.getByPlayerId(playerId);
   }
 
@@ -150,6 +161,7 @@ export class GameLoader implements IGameLoader {
   }
 
   private async loadFullGame(game: Game): Promise<void> {
+    console.log('game phase', game.phase); // 天梯 TEST
     const gameId = game.id;
     try {
       console.log(`loadFullGame ${gameId}`);
@@ -248,34 +260,49 @@ export class GameLoader implements IGameLoader {
         $this.userNameMap.set(user.name.trim().toLowerCase(), user);
         $this.usersToGames.set(user.id, new Set());
       });
-    });
 
-    Database.getInstance().getGames().then( (allGames:Array<IGameShortData> ) => {
-      if (allGames.length === 0) {
-        this.onAllGamesLoaded();
+      Database.getInstance().getGames().then( (allGames:Array<IGameShortData> ) => {
+        if (allGames.length === 0) {
+          $this.onAllGamesLoaded();
+          cb();
+          return;
+        }
+        console.log(`loading all games ${allGames.length}`);
+        const player = new Player('test', Color.BLUE, false, 0, 'p000');
+        const player2 = new Player('test2', Color.RED, false, 0, 'p111');
+
+        allGames.forEach((gamedata) => {
+          if (gamedata.shortData) {
+            const gameToRebuild = Game.rebuild(gamedata.gameId, [player, player2], player);
+            Object.assign(gameToRebuild, gamedata.shortData);
+            gameToRebuild.loadState = LoadState.HALFLOADED;
+            $this.onGameLoaded(gameToRebuild);
+          } else {
+            $this.allGameIds.push(gamedata.gameId);
+          }
+        });
+        $this.loadNextGame(cb);
+
+        // FIXME: 嵌套Promise有点怪，但是不这么写测试用例会报错，要求必须加载完所有游戏
+        Database.getInstance().getUserRanks().then( (allUserRanks:Array<UserRank> ) => {
+          if (allUserRanks.length === 0) {
+            return;
+          }
+          console.log(`loading all ranks ${allUserRanks.length}`);
+
+          allUserRanks.forEach((userRank) => {
+            $this.userRankMap.set(userRank.userId, userRank); // TODO: 是否要加一个检查是否是用户的判断？
+          });
+        }).catch((err) => {
+          console.error('error loading all user ranks', err);
+          return;
+        });
+      }).catch((err) => {
+        console.error('error loading all games', err);
+        $this.onAllGamesLoaded();
         cb();
         return;
-      }
-      console.log(`loading all games ${allGames.length}`);
-      const player = new Player('test', Color.BLUE, false, 0, 'p000');
-      const player2 = new Player('test2', Color.RED, false, 0, 'p111');
-
-      allGames.forEach((gamedata) => {
-        if (gamedata.shortData) {
-          const gameToRebuild = Game.newInstance(gamedata.gameId, [player, player2], player);
-          Object.assign(gameToRebuild, gamedata.shortData);
-          gameToRebuild.loadState = LoadState.HALFLOADED;
-          this.onGameLoaded(gameToRebuild);
-        } else {
-          this.allGameIds.push(gamedata.gameId);
-        }
       });
-      this.loadNextGame(cb);
-    }).catch((err) => {
-      console.error('error loading all games', err);
-      this.onAllGamesLoaded();
-      cb();
-      return;
     });
   }
 
@@ -288,7 +315,8 @@ export class GameLoader implements IGameLoader {
     }
     const player = new Player('test', Color.BLUE, false, 0, 'p000');
     const player2 = new Player('test2', Color.RED, false, 0, 'p111');
-    const gameToRebuild = Game.newInstance(game_id, [player, player2], player);
+    const gameToRebuild = Game.rebuild(game_id, [player, player2], player);
+
     console.log(`ready to load game ${game_id}`);
 
     try {
@@ -310,5 +338,20 @@ export class GameLoader implements IGameLoader {
   public async getIds(): Promise<Array<GameIdLedger>> {
     await Promise.resolve();
     return Promise.resolve([]);
+  }
+
+  // 天梯
+  public static getUserRankByPlayer(player: Player): UserRank | undefined {
+    const user = this.getUserByPlayer(player);
+    let userRank = undefined;
+    if (user !== undefined) {
+      userRank = GameLoader.getInstance().userRankMap.get(user.id);
+    }
+    return userRank;
+  }
+
+  // 天梯，新增UserRank到GameLoader
+  public addOrUpdateUserRank(userRank: UserRank): void {
+    this.userRankMap.set(userRank.userId, userRank);
   }
 }

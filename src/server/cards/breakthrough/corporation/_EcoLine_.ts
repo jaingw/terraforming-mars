@@ -8,7 +8,7 @@ import {CardName} from '../../../../common/cards/CardName';
 import {ICardMetadata} from '../../../../common/cards/ICardMetadata';
 import {Size} from '../../../../common/cards/render/Size';
 import {Tag} from '../../../../common/cards/Tag';
-import {Resources} from '../../../../common/Resources';
+import {Resource} from '../../../../common/Resource';
 import {ICorporationCard} from '../../corporation/ICorporationCard';
 import {PlayerInput} from '../../../PlayerInput';
 
@@ -25,7 +25,7 @@ export class _EcoLine_ extends EcoLine {
     if (player.isCorporation(this.name)) {
       for (const tag of card.tags) {
         if (tag === Tag.PLANT) {
-          player.addResource(Resources.MEGACREDITS, 2);
+          player.addResource(Resource.MEGACREDITS, 2);
         }
       }
     }

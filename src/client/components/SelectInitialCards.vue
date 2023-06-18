@@ -8,12 +8,13 @@
     <div v-if="playerCanChooseAridor" class="player_home_colony_cont">
       <div v-i18n>These are the colony tiles Aridor may choose from:</div>
       <div class="discarded-colonies-for-aridor">
-        <div class="player_home_colony small_colony" v-for="colony in playerView.game.discardedColonies" :key="colony.name">
-          <colony :colony="colony"></colony>
+        <div class="player_home_colony small_colony" v-for="colonyName in playerView.game.discardedColonies" :key="colonyName">
+          <colony :colony="getColony(colonyName)"></colony>
         </div>
       </div>
     </div>
     <SelectCard v-if="hasPrelude" :playerView="playerView" :playerinput="preludeCardOption" :onsave="noop" :showtitle="true" v-on:cardschanged="preludesChanged" />
+    <SelectCard v-if="hasCeo" :playerView="playerView" :playerinput="ceoCardOption" :onsave="noop" :showtitle="true" v-on:cardschanged="ceosChanged" />
     <SelectCard :playerView="playerView" :playerinput="projectCardOption" :onsave="noop" :showtitle="true" v-on:cardschanged="cardsChanged" />
     <template v-if="this.selectedCorporations[0]">
       <div><span v-i18n>Starting Megacredits</span> <span v-if="selectedCorporations[1]">(双公司-42M€)</span>: <div class="megacredits">{{getStartingMegacredits()}}</div></div>
@@ -23,7 +24,7 @@
       <label class="label label-error">{{ $t(warning) }}</label>
     </div>
     <!-- :key=warning is a way of validing that the state of the button should change. If the warning changes, or disappears, that's a signal that the button might change. -->
-    <Button :disabled="!valid" v-if="showsave" @click="saveIfConfirmed" type="submit" :title="playerinput.buttonLabel"/>
+    <AppButton :disabled="!valid" v-if="showsave" @click="saveIfConfirmed" type="submit" :title="playerinput.buttonLabel"/>
   </div>
 </template>
 
@@ -32,7 +33,7 @@
 import Vue from 'vue';
 import {WithRefs} from 'vue-typed-refs';
 
-import Button from '@/client/components/common/Button.vue';
+import AppButton from '@/client/components/common/AppButton.vue';
 import {getCard, getCardOrThrow} from '@/client/cards/ClientCardManifest';
 import {CardName} from '@/common/cards/CardName';
 import * as constants from '@/common/constants';
@@ -45,6 +46,9 @@ import {Tag} from '@/common/cards/Tag';
 import {AndOptionsResponse} from '@/common/inputs/InputResponse';
 import {CardType} from '@/common/cards/CardType';
 import Colony from '@/client/components/colonies/Colony.vue';
+import {ColonyName} from '@/common/colonies/ColonyName';
+import {ColonyModel} from '@/common/models/ColonyModel';
+import * as titles from '@/common/inputs/SelectInitialCards';
 import {ClientCard} from '../../common/cards/ClientCard';
 
 type Refs = {
@@ -53,6 +57,8 @@ type Refs = {
 
 type SelectInitialCardsModel = {
   selectedCards: Array<CardName>,
+  // End result will be a single CEO, but the player may select multiple while deciding what to keep.
+  selectedCeos: Array<CardName>,
   // End result will be a single corporation, but the player may select multiple while deciding what to keep.
   selectedCorporations: Array<ClientCard>,
   selectedPreludes: Array<CardName>,
@@ -84,7 +90,7 @@ export default (Vue as WithRefs<Refs>).extend({
     },
   },
   components: {
-    Button,
+    AppButton,
     SelectCard,
     'confirm-dialog': ConfirmDialog,
     Colony,
@@ -92,6 +98,7 @@ export default (Vue as WithRefs<Refs>).extend({
   data(): SelectInitialCardsModel {
     return {
       selectedCards: [],
+      selectedCeos: [],
       selectedCorporations: [] as Array<ClientCard>,
       selectedPreludes: [],
       valid: false,
@@ -214,7 +221,7 @@ export default (Vue as WithRefs<Refs>).extend({
       return starting;
     },
     saveIfConfirmed() {
-      const projectCards = this.selectedCards.filter((name) => getCard(name)?.cardType !== CardType.PRELUDE);
+      const projectCards = this.selectedCards.filter((name) => getCard(name)?.type !== CardType.PRELUDE);
       let showAlert = false;
       if (this.preferences.show_alerts && projectCards.length === 0) showAlert = true;
       if (showAlert) {
@@ -245,18 +252,29 @@ export default (Vue as WithRefs<Refs>).extend({
           cards: this.selectedPreludes,
         });
       }
+      if (this.hasCeo) {
+        result.responses.push({
+          type: 'card',
+          cards: this.selectedCeos,
+        });
+      }
       result.responses.push({
         type: 'card',
         cards: this.selectedCards,
       });
       this.onsave(result);
     },
+
     cardsChanged(cards: Array<CardName>) {
       this.selectedCards = cards;
       this.validate();
     },
+    ceosChanged(cards: Array<CardName>) {
+      this.selectedCeos = cards;
+      this.validate();
+    },
     corporationChanged(cards: Array<CardName>) {
-      const choseCards = getOption(this.playerinput.options, 0).cards?.filter((card) => {
+      const choseCards = getOption(this.playerinput.options, titles.SELECT_CORPORATION_TITLE).cards?.filter((card) => {
         return cards.indexOf(card.name) >= 0;
       });
       const coprs: Array<ClientCard> = [];
@@ -281,6 +299,7 @@ export default (Vue as WithRefs<Refs>).extend({
       this.selectedPreludes = cards;
       this.validate();
     },
+
     calcuateWarning(): boolean {
       // Start with warning being empty.
       this.warning = undefined;
@@ -306,6 +325,16 @@ export default (Vue as WithRefs<Refs>).extend({
           return false;
         }
       }
+      if (this.hasCeo) {
+        if (this.selectedCeos.length < 1) {
+          this.warning = 'Select 1 CEO';
+          return false;
+        }
+        if (this.selectedCeos.length > 1) {
+          this.warning = 'You selected too many CEOs';
+          return false;
+        }
+      }
       if (this.selectedCards.length === 0) {
         this.warning = 'You haven\'t selected any project cards';
         return true;
@@ -318,16 +347,29 @@ export default (Vue as WithRefs<Refs>).extend({
     confirmSelection() {
       this.saveData();
     },
+    // TODO(kberg): Duplicate of LogPanel.getColony
+    getColony(colonyName: ColonyName): ColonyModel {
+      return {
+        colonies: [],
+        isActive: false,
+        name: colonyName,
+        trackPosition: 0,
+        visitor: undefined,
+      };
+    },
   },
   computed: {
     playerCanChooseAridor() {
       return this.playerView.dealtCorporationCards.some((card) => card.name === CardName.ARIDOR);
     },
     hasPrelude() {
-      return this.playerinput.options?.length === 3;
+      return hasOption(this.playerinput.options, titles.SELECT_PRELUDE_TITLE);
+    },
+    hasCeo() {
+      return hasOption(this.playerinput.options, titles.SELECT_CEO_TITLE);
     },
     corpCardOption() {
-      const option = getOption(this.playerinput.options, 0);
+      const option = getOption(this.playerinput.options, titles.SELECT_CORPORATION_TITLE);
       if (getPreferences().experimental_ui) {
         option.min = 1;
         option.max = undefined;
@@ -335,15 +377,21 @@ export default (Vue as WithRefs<Refs>).extend({
       return option;
     },
     preludeCardOption() {
-      const option = getOption(this.playerinput.options, 1);
+      const option = getOption(this.playerinput.options, titles.SELECT_PRELUDE_TITLE);
+      if (getPreferences().experimental_ui) {
+        option.max = undefined;
+      }
+      return option;
+    },
+    ceoCardOption() {
+      const option = getOption(this.playerinput.options, titles.SELECT_CEO_TITLE);
       if (getPreferences().experimental_ui) {
         option.max = undefined;
       }
       return option;
     },
     projectCardOption() {
-      // Compiler won't accept this method using this.hasPrelude, despite documentation saying I can.
-      return getOption(this.playerinput.options, this.playerinput.options?.length === 3 ? 2 : 1);
+      return getOption(this.playerinput.options, titles.SELECT_PROJECTS_TITLE);
     },
   },
   mounted() {
@@ -351,11 +399,19 @@ export default (Vue as WithRefs<Refs>).extend({
   },
 });
 
-function getOption(options: Array<PlayerInputModel> | undefined, idx: number): PlayerInputModel {
-  const option = options?.[idx];
+function getOption(options: Array<PlayerInputModel> | undefined, title: string): PlayerInputModel {
+  let option = options?.find((option) => option.title === title);
+  if (option === undefined && title === titles.SELECT_CORPORATION_TITLE) {
+    option = options?.find((option) => option.title === titles.SELECT_CORPORATION_TITLE2);
+  }
   if (option === undefined) {
     throw new Error('invalid input, missing option');
   }
   return option;
+}
+
+function hasOption(options: Array<PlayerInputModel> | undefined, title: string): boolean {
+  const option = options?.find((option) => option.title === title);
+  return option !== undefined;
 }
 </script>

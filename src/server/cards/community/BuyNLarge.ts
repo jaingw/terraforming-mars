@@ -11,14 +11,14 @@ import {ISpace} from '../../boards/ISpace';
 import {Board} from '../../boards/Board';
 import {SelectSpace} from '../../inputs/SelectSpace';
 import {IProjectCard} from '../../cards/IProjectCard';
-import {Resources} from '../../../common/Resources';
+import {Resource} from '../../../common/Resource';
 import {ICard} from '../../cards/ICard';
 import {CardResource} from '../../../common/CardResource';
 
 export class BuyNLarge extends Card implements ICorporationCard {
   constructor() {
     super({
-      cardType: CardType.CORPORATION,
+      type: CardType.CORPORATION,
       name: CardName.BUY_N_LARGE,
       tags: [Tag.PLANT],
       startingMegaCredits: 35,
@@ -83,7 +83,7 @@ export class BuyNLarge extends Card implements ICorporationCard {
       const delta = Math.floor(this.resourceCount / 6);
       const deducted = delta * 6;
       this.resourceCount -= deducted;
-      player.addResource(Resources.PLANTS, 8*delta, {log: true});
+      player.addResource(Resource.PLANTS, 8*delta, {log: true});
       player.game.log('${0} removed ${1} seeds from ${2} to gain ${3} plants.',
         (b) => b.player(player).number(deducted).card(this).number(8*delta));
     }

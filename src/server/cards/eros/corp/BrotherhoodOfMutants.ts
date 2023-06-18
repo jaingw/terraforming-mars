@@ -22,7 +22,7 @@ export class BrotherhoodOfMutants extends Card implements ICard, ICorporationCar
       name: CardName.BROTHERHOOD_OF_MUTANTS,
       tags: [Tag.WILD],
       startingMegaCredits: 36,
-      cardType: CardType.CORPORATION,
+      type: CardType.CORPORATION,
 
       metadata: {
         cardNumber: 'Q26',

@@ -5,6 +5,7 @@ import {Tag} from '../../src/common/cards/Tag';
 import {deserializeProjectCard, serializePlayedCard} from '../../src/server/cards/CardSerialization';
 import {CardFinder} from '../../src/server/CardFinder';
 import {cast} from '../TestingUtils';
+import {Asimov} from '../../src/server/cards/ceos/Asimov';
 
 describe('CardSerialization', function() {
   let cardFinder = new CardFinder();
@@ -36,5 +37,23 @@ describe('CardSerialization', function() {
     const lobbyHalls = cast(deserialized, LobbyHalls);
     expect(lobbyHalls.cloneTag).eq(Tag.SCIENCE);
     expect(lobbyHalls.tags).deep.eq([Tag.SCIENCE, Tag.BUILDING]);
+  });
+
+  it('CEO cards are serialized and deserialized properly', () => {
+    const card = new Asimov();
+
+    expect(serializePlayedCard(card).isDisabled).is.false;
+
+    card.isDisabled = true;
+    expect(serializePlayedCard(card).isDisabled).is.true;
+
+    const cardFinder = new CardFinder();
+    const serialized = serializePlayedCard(card);
+
+    serialized.isDisabled = false;
+    expect(cast(deserializeProjectCard(serialized, cardFinder), Asimov).isDisabled).is.false;
+
+    serialized.isDisabled = true;
+    expect(cast(deserializeProjectCard(serialized, cardFinder), Asimov).isDisabled).is.true;
   });
 });

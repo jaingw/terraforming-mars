@@ -32,7 +32,7 @@ const VALID_BONUSES: Array<SpaceBonus> = [
 export class Rda extends Card implements ICorporationCard {
   constructor() {
     super({
-      cardType: CardType.CORPORATION,
+      type: CardType.CORPORATION,
       name: CardName.RDA,
       tags: [Tag.BUILDING],
       initialActionText: 'Place a city tile',

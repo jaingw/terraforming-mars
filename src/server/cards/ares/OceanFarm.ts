@@ -12,7 +12,7 @@ import {Player} from '../../Player';
 export class OceanFarm extends Card implements IProjectCard {
   constructor() {
     super({
-      cardType: CardType.AUTOMATED,
+      type: CardType.AUTOMATED,
       name: CardName.OCEAN_FARM,
       tags: [Tag.PLANT, Tag.BUILDING],
       cost: 15,

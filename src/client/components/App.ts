@@ -13,7 +13,7 @@ import {SimpleGameModel} from '@/common/models/SimpleGameModel';
 import Help from '@/client/components/help/Help.vue';
 import CardHTML from '@/client/components/card/Card_HTML.vue';
 
-import {$t} from '@/client/directives/i18n';
+import {$t, setTranslationContext} from '@/client/directives/i18n';
 
 import * as constants from '@/common/constants';
 import * as paths from '@/common/app/paths';
@@ -31,6 +31,7 @@ import {Register} from './Register';
 import {MyGames} from './MyGames';
 import {Donate} from './Donate';
 import {PreferencesManager} from '../utils/PreferencesManager';
+import {Ranks} from './Ranks';
 
 function getDay() {
   return new Date(new Date().getTime()+8*60*60*1000).toISOString().slice(0, 10).replace('T', ' ');
@@ -65,7 +66,7 @@ export const mainAppSettings = {
     settings: raw_settings,
     isServerSideRequestInProgress: false,
     componentsVisibility: {
-      'milestones_list': true,
+      'milestones': true,
       'awards_list': true,
       'tags_concise': false,
       'pinned_player_0': false,
@@ -99,6 +100,7 @@ export const mainAppSettings = {
     'register': Register,
     'my-games': MyGames,
     'donate': Donate,
+    'ranks': Ranks, // 天梯排行榜
     // 这里引入是为了统一编译进去，渲染 card 并在card_HTML.spec.ts中获取html 保存到json中
     'cardHTML': CardHTML,
   },
@@ -127,13 +129,13 @@ export const mainAppSettings = {
     getVisibilityState(targetVar: string): boolean {
       return (this as unknown as MainAppData).componentsVisibility[targetVar] ? true : false;
     },
-    update(path: '/player' | '/spectator'): void {
-      const currentPathname = window.location.pathname;
+    update(path: typeof paths.PLAYER | typeof paths.SPECTATOR): void {
+      const currentPathname = getLastPathSegment();
       const xhr = new XMLHttpRequest();
       const app = this as unknown as MainAppData;
 
       const userId = PreferencesManager.load('userId');
-      let url = '/api' + path + window.location.search.replace('&noredirect', '');
+      let url = 'api/' + path + window.location.search.replace('&noredirect', '');
       if (userId.length > 0) {
         url += '&userId=' + userId;
       }
@@ -155,35 +157,36 @@ export const mainAppSettings = {
             }
 
             const model = xhr.response as ViewModel;
-            if (path === '/player') {
+            if (path === paths.PLAYER) {
               app.playerView = model as PlayerViewModel;
-            } else if (path === '/spectator') {
+              setTranslationContext(app.playerView);
+            } else if (path === paths.SPECTATOR) {
               app.spectator = model as SpectatorModel;
             }
             app.playerkey++;
             if (
-              model.game.phase === 'end' &&
+              (model.game.phase === 'end' || model.game.phase === 'timeout' || model.game.phase === 'abandon') &&
               window.location.search.includes('&noredirect') === false
             ) {
               app.screen = 'the-end';
-              if (currentPathname !== '/the-end') {
+              if (currentPathname !== paths.THE_END) {
                 window.history.replaceState(
                   xhr.response,
                   `${constants.APP_NAME} - Player`,
-                  '/the-end?id=' + model.id,
+                  `${paths.THE_END}?id=${model.id}`,
                 );
               }
             } else {
               if (app.screen !== 'donate') {
-                if (path === '/player') {
+                if (path === paths.PLAYER) {
                   app.screen = 'player-home';
-                } else if (path === '/spectator') {
+                } else if (path === paths.SPECTATOR) {
                   app.screen = 'spectator-home';
                 }
               } else {
-                if (path === '/player') {
+                if (path === paths.PLAYER) {
                   app.oscreen = 'player-home';
-                } else if (path === '/spectator') {
+                } else if (path === paths.SPECTATOR) {
                   app.oscreen = 'spectator-home';
                 }
               }
@@ -191,7 +194,7 @@ export const mainAppSettings = {
                 window.history.replaceState(
                   xhr.response,
                   `${constants.APP_NAME} - Game`,
-                  path + '?id=' + model.id,
+                  `${path}?id=${model.id}`,
                 );
               }
             }
@@ -206,10 +209,10 @@ export const mainAppSettings = {
       xhr.send();
     },
     updatePlayer() {
-      this.update('/player');
+      this.update(paths.PLAYER);
     },
     updateSpectator: function() {
-      this.update('/spectator');
+      this.update(paths.SPECTATOR);
     },
     udpatevip: function(userId : string) {
       const app = (this as any);
@@ -263,18 +266,18 @@ export const mainAppSettings = {
   mounted() {
     // document.title = constants.APP_NAME;
     if (!windowHasHTMLDialogElement()) dialogPolyfill.default.registerDialog(document.getElementById('alert-dialog'));
-    const currentPathname = window.location.pathname;
+    const currentPathname = getLastPathSegment();
     const app = this as unknown as (MainAppData) & (typeof mainAppSettings.methods);
     const userId = PreferencesManager.load('userId');
     if (userId !== '') {
-      if (currentPathname === '/') {// 首页强制更新vip
+      if (currentPathname === '') {// 首页强制更新vip
         PreferencesManager.INSTANCE.set('vipupdate', '');
       }
       app.udpatevip(userId);
     }
-    if (currentPathname === '/player') {
+    if (currentPathname === paths.PLAYER) {
       app.updatePlayer();
-    } else if (currentPathname === '/the-end') {
+    } else if (currentPathname === paths.THE_END) {
       const urlParams = new URLSearchParams(window.location.search);
       const id = urlParams.get('id') || '';
       if (isPlayerId(id)) {
@@ -284,10 +287,10 @@ export const mainAppSettings = {
       } else {
         alert('Bad id URL parameter.');
       }
-    } else if (currentPathname === '/game') {
+    } else if (currentPathname === paths.GAME) {
       app.screen = 'game-home';
       const xhr = new XMLHttpRequest();
-      xhr.open('GET', '/api/game' + window.location.search+'&userId='+ userId );
+      xhr.open('GET', paths.API_GAME + window.location.search+'&userId='+ userId );
       xhr.onerror = function() {
         alert('Error getting game data');
       };
@@ -296,7 +299,7 @@ export const mainAppSettings = {
           window.history.replaceState(
             xhr.response,
             `${constants.APP_NAME} - Game`,
-            '/game?id=' + xhr.response.id,
+            `${paths.GAME}?id=${xhr.response.id}`,
           );
           app.game = xhr.response as SimpleGameModel;
         } else {
@@ -317,14 +320,16 @@ export const mainAppSettings = {
       app.screen = 'help';
     } else if (currentPathname === paths.ADMIN) {
       app.screen = 'admin';
-    } else if (currentPathname === '/login') {
+    } else if (currentPathname === 'login') {
       app.screen = 'login';
-    } else if (currentPathname === '/register') {
+    } else if (currentPathname === 'register') {
       app.screen = 'register';
-    } else if (currentPathname === '/mygames') {
+    } else if (currentPathname === 'mygames') {
       app.screen = 'my-games';
-    } else if (currentPathname === '/donate') {
+    } else if (currentPathname === 'donate') {
       app.screen = 'donate';
+    } else if (currentPathname === 'ranks') {
+      app.screen = 'ranks';
     } else {
       app.screen = 'start-screen';
     }
@@ -334,3 +339,10 @@ export const mainAppSettings = {
     }
   },
 };
+
+// NOTE: this simplistic truncation to the last segment might cause issues if
+// this page starts supporting paths more than one level deep.
+function getLastPathSegment() {
+  // Leave only the last part of /path
+  return window.location.pathname.replace(/.*\//g, '');
+}

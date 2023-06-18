@@ -17,7 +17,7 @@ export class MarsHotSpring extends Card implements IProjectCard {
   constructor() {
     super({
       name: CardName.MARS_HOT_SPRING,
-      cardType: CardType.AUTOMATED,
+      type: CardType.AUTOMATED,
       tags: [Tag.BUILDING],
       cost: 12,
 

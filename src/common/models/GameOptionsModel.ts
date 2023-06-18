@@ -8,6 +8,7 @@ export interface GameOptionsModel_ {
   altVenusBoard: boolean,
   boardName: BoardName,
   bannedCards: Array<CardName>;
+  ceoExtension: boolean,
   coloniesExtension: boolean,
   communityCardsOption: boolean,
   corporateEra: boolean,
@@ -36,7 +37,7 @@ export interface GameOptionsModel_ {
   requiresMoonTrackCompletion: boolean,
   requiresVenusTrackCompletion: boolean,
   turmoilExtension: boolean,
+  twoCorpsVariant: boolean,
   venusNextExtension: boolean,
   undoOption: boolean,
-  twoCorpsVariant: boolean,
 }

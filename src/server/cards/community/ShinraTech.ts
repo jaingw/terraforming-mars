@@ -7,12 +7,12 @@ import {CardName} from '../../../common/cards/CardName';
 import {CardType} from '../../../common/cards/CardType';
 import {CardRenderer} from '../render/CardRenderer';
 import {played} from '../Options';
-import {Resources} from '../../../common/Resources';
+import {Resource} from '../../../common/Resource';
 
 export class ShinraTech extends Card implements ICorporationCard {
   constructor() {
     super({
-      cardType: CardType.CORPORATION,
+      type: CardType.CORPORATION,
       name: CardName.SHINRA_TECH,
       tags: [Tag.POWER],
       startingMegaCredits: 39,
@@ -40,7 +40,7 @@ export class ShinraTech extends Card implements ICorporationCard {
     if (player.isCorporation(this.name)) {
       for (const tag of card.tags) {
         if (tag === Tag.POWER) {
-          player.game.getCardPlayer(this.name)?.production.add(Resources.MEGACREDITS, 2, {log: true});
+          player.production.add(Resource.MEGACREDITS, 2, {log: true});
         }
       }
     }
@@ -52,8 +52,8 @@ export class ShinraTech extends Card implements ICorporationCard {
   }
 
   public override bespokePlay(player: Player) {
-    player.production.add(Resources.ENERGY, 2);
-    player.production.add(Resources.MEGACREDITS, 2);
+    player.production.add(Resource.ENERGY, 2);
+    player.production.add(Resource.MEGACREDITS, 2);
     player.drawCard(1, {tag: Tag.POWER});
     return undefined;
   }

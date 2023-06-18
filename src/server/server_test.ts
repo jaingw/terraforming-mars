@@ -1,8 +1,9 @@
 
 import {generateRandomId} from './server-ids';
 import {serverId} from './server-ids';
+import * as server from './server';
 
-console.log(generateRandomId('') + ' hello '+ serverId);
+console.log(generateRandomId('') + ' hello '+ serverId+' ' + server.server);
 
 /**
  * .env添加测试端口号

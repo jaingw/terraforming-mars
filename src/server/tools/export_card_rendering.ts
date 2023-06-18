@@ -16,7 +16,10 @@ import {Units} from '../../common/Units';
 import {ALL_COLONIES_TILES, getColonyModule} from '../colonies/ColonyManifest';
 import {ALL_MILESTONES} from '../milestones/Milestones';
 import {ALL_AWARDS} from '../awards/Awards';
-import {MilestoneAwardMetadata} from '@/common/ma/MilestoneAwardMetadata';
+import {MilestoneAwardMetadata} from '../../common/ma/MilestoneAwardMetadata';
+import {AwardName} from '../../common/ma/AwardName';
+import {MilestoneName} from '../../common/ma/MilestoneName';
+import {CardType} from '../../common/cards/CardType';
 
 class ProjectCardProcessor {
   public static json: Array<ClientCard> = [];
@@ -25,7 +28,7 @@ class ProjectCardProcessor {
   }
 
   private static processManifest(manifest: ModuleManifest) {
-    for (const cardManifest of [manifest.projectCards, manifest.corporationCards, manifest.preludeCards, manifest.standardActions, manifest.standardProjects]) {
+    for (const cardManifest of [manifest.projectCards, manifest.corporationCards, manifest.preludeCards, manifest.ceoCards, manifest.standardActions, manifest.standardProjects]) {
       ProjectCardProcessor.processDeck(manifest.module, cardManifest);
     }
   }
@@ -37,6 +40,7 @@ class ProjectCardProcessor {
   }
 
   private static processCard(module: GameModule, card: ICard, compatibility: undefined | GameModule | Array<GameModule>) {
+    if (card.type === CardType.PROXY) return;
     let startingMegaCredits = undefined;
     let cardCost = undefined;
     if (isPreludeCard(card)) {
@@ -55,7 +59,7 @@ class ProjectCardProcessor {
       cardDiscount: card.cardDiscount,
       victoryPoints: card.victoryPoints,
       cost: card.cost,
-      cardType: card.cardType,
+      type: card.type,
       requirements: card.requirements,
       metadata: card.metadata,
       warning: card.warning,
@@ -117,7 +121,7 @@ class ColoniesProcessor {
       buildType: metadata.buildType,
       buildQuantity: metadata.buildQuantity,
       buildResource: metadata.buildResource,
-      resourceType: metadata.resourceType,
+      cardResource: metadata.cardResource,
       tradeType: metadata.tradeType,
       tradeQuantity: metadata.tradeQuantity,
       tradeResource: metadata.tradeResource,
@@ -143,7 +147,7 @@ class MAProcessor {
     });
   }
 
-  private static processEntry(metadata: {name: string, description: string}) {
+  private static processEntry(metadata: {name: MilestoneName | AwardName, description: string}) {
     MAProcessor.json.push({
       name: metadata.name,
       description: metadata.description,

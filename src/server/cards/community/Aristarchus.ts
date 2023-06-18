@@ -9,7 +9,7 @@ import {ICorporationCard} from '../corporation/ICorporationCard';
 export class Aristarchus extends Card implements ICorporationCard {
   constructor() {
     super({
-      cardType: CardType.CORPORATION,
+      type: CardType.CORPORATION,
       name: CardName.ARISTARCHUS,
       tags: [Tag.VENUS, Tag.EARTH, Tag.JOVIAN],
       startingMegaCredits: 33,

@@ -15,14 +15,15 @@ export class ApiWaitingFor extends Handler {
   }
 
   private timeToGo(player: Player): boolean {
-    return player.getWaitingFor() !== undefined || player.game.phase === Phase.END;
+    return player.getWaitingFor() !== undefined || (player.game.phase === Phase.END || player.game.phase === Phase.ABANDON || player.game.phase === Phase.TIMEOUT);
   }
 
   // When player is undefined, caller is a spectator.
   private getPlayerWaitingForModel(player: Player, game: Game, gameAge: number, undoCount: number): WaitingForModel {
     if (this.timeToGo(player)) {
+      // 由前端判断是否需要刷新
       return {result: 'GO'};
-    } else if (game.gameAge > gameAge || game.undoCount > undoCount) {
+    } else if (game.gameAge !== gameAge || game.undoCount > undoCount) {
       return {result: 'REFRESH'};
     }
     return {result: 'WAIT'};

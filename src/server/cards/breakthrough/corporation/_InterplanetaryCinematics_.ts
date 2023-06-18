@@ -11,7 +11,7 @@ import {ICorporationCard} from '../../corporation/ICorporationCard';
 export class _InterplanetaryCinematics_ extends Card implements ICorporationCard {
   constructor() {
     super({
-      cardType: CardType.CORPORATION,
+      type: CardType.CORPORATION,
       name: CardName._INTERPLANETARY_CINEMATICS_,
       tags: [Tag.BUILDING],
       startingMegaCredits: 50,
@@ -33,7 +33,7 @@ export class _InterplanetaryCinematics_ extends Card implements ICorporationCard
   }
 
   public onCardPlayed(player: Player, card: IProjectCard) {
-    if (player.isCorporation(this.name) && card.cardType === CardType.EVENT) {
+    if (player.isCorporation(this.name) && card.type === CardType.EVENT) {
       player.megaCredits += 3;
     }
   }

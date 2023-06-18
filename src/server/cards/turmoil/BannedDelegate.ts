@@ -3,6 +3,7 @@ import {Card} from '../Card';
 import {CardName} from '../../../common/cards/CardName';
 import {CardType} from '../../../common/cards/CardType';
 import {Player} from '../../Player';
+import {Delegate} from '../../turmoil/Turmoil';
 import {OrOptions} from '../../inputs/OrOptions';
 import {SelectDelegate} from '../../inputs/SelectDelegate';
 import {IParty} from '../../turmoil/parties/IParty';
@@ -12,12 +13,11 @@ import {NeutralPlayer} from '../../turmoil/Turmoil';
 import {TurmoilUtil} from '../../turmoil/TurmoilUtil';
 import {all} from '../Options';
 import {MultiSet} from 'mnemonist';
-import {PlayerId} from '../../../common/Types';
 
 export class BannedDelegate extends Card implements IProjectCard {
   constructor() {
     super({
-      cardType: CardType.EVENT,
+      type: CardType.EVENT,
       name: CardName.BANNED_DELEGATE,
       cost: 0,
 
@@ -56,7 +56,7 @@ export class BannedDelegate extends Card implements IProjectCard {
         }
         if (players.length > 0) {
           const selectDelegate = new SelectDelegate(players, 'Select player delegate to remove from ' + party.name + ' party', (selectedPlayer: Player | 'NEUTRAL') => {
-            let playerToRemove: PlayerId | NeutralPlayer;
+            let playerToRemove: Delegate;
             if (selectedPlayer === 'NEUTRAL') {
               playerToRemove = 'NEUTRAL';
             } else {

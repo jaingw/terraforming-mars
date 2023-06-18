@@ -14,15 +14,14 @@ import {Card} from '../Card';
 import {CardRenderer} from '../render/CardRenderer';
 import {AltSecondaryTag} from '../../../common/cards/render/AltSecondaryTag';
 import {Size} from '../../../common/cards/render/Size';
-import {isHazardTileType} from '../../../common/TileType';
-import {all} from '../Options';
+import {isHazardTileType, TileType} from '../../../common/TileType';
 import {CardManifest} from '../ModuleManifest';
 
 
 export class Eris extends Card implements ICorporationCard {
   constructor() {
     super({
-      cardType: CardType.CORPORATION,
+      type: CardType.CORPORATION,
       name: CardName.ERIS,
       tags: [Tag.BUILDING],
       initialActionText: 'Draw an Ares card',
@@ -36,7 +35,7 @@ export class Eris extends Card implements ICorporationCard {
           b.megacredits(46).nbsp.cards(1, {secondaryTag: AltSecondaryTag.ARES});
           b.corpBox('action', (ce) => {
             ce.action('Place a new hazard tile adjacent to NO OTHER TILE, OR remove a hazard tile to gain 1 TR.', (eb) => {
-              eb.empty().startAction.plus().hazardTile().slash().minus().hazardTile({all}).colon().tr(1, {size: Size.SMALL});
+              eb.empty().startAction.plus().hazardTile().slash().minus().hazardTile().colon().tr(1, {size: Size.SMALL});
             });
           });
         }),
@@ -70,7 +69,8 @@ export class Eris extends Card implements ICorporationCard {
     if (availableSpaces.length > 0) {
       orOptions.options.push(new SelectOption('Place a hazard tile adjacent to no other tile', 'Select', () => {
         const title = 'Select space next to no other tile for hazard';
-        game.defer(new PlaceHazardTile(player, game, title, availableSpaces));
+        const tileType = Math.floor(Math.random() * 2) === 0 ? TileType.DUST_STORM_MILD : TileType.EROSION_MILD;
+        game.defer(new PlaceHazardTile(player, tileType, availableSpaces, {title}));
         return undefined;
       }));
     }

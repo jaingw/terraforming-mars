@@ -109,7 +109,7 @@ export class GameHandler extends Handler {
 
             draftVariant: gameReq.draftVariant,
             initialDraftVariant: gameReq.initialDraft,
-            _corporationsDraft: gameReq._corporationsDraft,
+            _corporationsDraft: false,
             startingCorporations: gameReq.startingCorporations,
             shuffleMapOption: gameReq.shuffleMapOption,
             randomMA: gameReq.randomMA,
@@ -132,8 +132,12 @@ export class GameHandler extends Handler {
             escapeVelocityPeriod: gameReq.escapeVelocityPeriod,
             escapeVelocityPenalty: gameReq.escapeVelocityPenalty,
             twoCorpsVariant: gameReq.twoCorpsVariant,
-            leadersExtension: gameReq.leadersExtension,
-            customLeaders: gameReq.customLeaders,
+            ceoExtension: gameReq.ceoExtension,
+            customCeos: gameReq.customCeos,
+            startingCeos: gameReq.startingCeos,
+            rankOption: gameReq.rankOption, // 天梯
+            rankTimeLimit: gameReq.rankTimeLimit, // 天梯
+            rankTimePerGeneration: gameReq.rankTimePerGeneration,
           };
           const userId = gameReq.userId;
           let isvip = false;
@@ -167,7 +171,7 @@ export class GameHandler extends Handler {
           }
 
           const seed = Math.random();
-          const game = Game.newInstance(gameId, players, players[firstPlayerIdx], gameOptions, seed, spectatorId, false);
+          const game = Game.newInstance(gameId, players, players[firstPlayerIdx], gameOptions, seed, spectatorId);
           game.loadState = LoadState.LOADED;
           GameLoader.getInstance().add(game);
           ctx.route.writeJson(res, Server.getSimpleGameModel(game));

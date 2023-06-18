@@ -2,7 +2,8 @@
 <html>
     <head>
         <link rel="stylesheet" type="text/css" media="all" href="/styles.css?v=VERSION" />
-        <title>Terraforming Mars</title>
+        <link rel="stylesheet" type="text/css" media="all" href="/tailwindcss.css">
+		<title>Terraforming Mars</title>
         <meta name="viewport" content='width=1260, user-scalable=1' />
         <meta name="description" content="Terraforming Mars Open Source Web Application" />
     </head>
@@ -58,6 +59,7 @@
                 <register v-if="screen === 'register'"></register>
                 <donate v-if="screen === 'donate'"></donate>
                 <users v-if="screen === 'users'"></users>
+                <ranks v-if="screen === 'ranks'"></ranks>
             </div>
         </div>
         <div  style="text-align:center;margin:-35px 0 0 60px;position: relative;"><a href="https://beian.miit.gov.cn" target="_blank">粤ICP备17128934号</a></div>

@@ -10,7 +10,7 @@ export class _Celestic_ extends Celestic {
   constructor() {
     super({
       name: CardName._CELESTIC_,
-      cardType: CardType.CORPORATION,
+      type: CardType.CORPORATION,
       metadata: {
         cardNumber: 'R05',
         description: 'You start with 42 M€. As your first action, draw 2 floater-icon cards.',

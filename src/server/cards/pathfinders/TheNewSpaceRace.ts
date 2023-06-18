@@ -3,10 +3,11 @@ import {CardRenderer} from '../render/CardRenderer';
 import {IProjectCard} from '../IProjectCard';
 import {Player} from '../../Player';
 import {PreludeCard} from '../prelude/PreludeCard';
-import {Resources} from '../../../common/Resources';
+import {Resource} from '../../../common/Resource';
 import {Tag} from '../../../common/cards/Tag';
 import {Game} from '../../Game';
 import {TurmoilUtil} from '../../turmoil/TurmoilUtil';
+import {Phase} from '../../../common/Phase';
 
 export class TheNewSpaceRace extends PreludeCard implements IProjectCard {
   constructor() {
@@ -25,7 +26,7 @@ export class TheNewSpaceRace extends PreludeCard implements IProjectCard {
   }
   public override bespokePlay(player: Player) {
     const game = player.game;
-    player.addResource(Resources.MEGACREDITS, 12);
+    player.addResource(Resource.MEGACREDITS, 12);
     game.overrideFirstPlayer(player);
     TurmoilUtil.ifTurmoil((player.game), (turmoil) => {
       turmoil.chooseRulingParty(player);
@@ -37,6 +38,7 @@ export class TheNewSpaceRace extends PreludeCard implements IProjectCard {
   public static potentiallyChangeFirstPlayer(game: Game) {
     const [cardHolder, card] = game.getCardHolder(CardName.THE_NEW_SPACE_RACE);
     if (cardHolder !== undefined && card !== undefined) {
+      game.phase = Phase.PRELUDES;
       game.log('${0} has ${1}, which is played before any other Prelude and makes them first player.', (b) => b.player(cardHolder).card(card));
       cardHolder.playCard(card);
     }

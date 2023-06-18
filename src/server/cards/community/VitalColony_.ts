@@ -3,7 +3,7 @@ import {PreludeCard} from '../prelude/PreludeCard';
 import {IProjectCard} from '../IProjectCard';
 import {CardName} from '../../../common/cards/CardName';
 import {BuildColony} from '../../deferredActions/BuildColony';
-import {Resources} from '../../../common/Resources';
+import {Resource} from '../../../common/Resource';
 import {CardRenderer} from '../render/CardRenderer';
 
 // 已在pathfinders中添加 这里先改个名
@@ -29,7 +29,7 @@ export class VitalColony_ extends PreludeCard implements IProjectCard {
         player,
         {giveBonusTwice: true}));
 
-    player.addResource(Resources.MEGACREDITS, -5);
+    player.addResource(Resource.MEGACREDITS, -5);
     return undefined;
   }
 }

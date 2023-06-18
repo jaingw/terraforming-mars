@@ -33,7 +33,9 @@ import {IntegratedMicroorganisms} from './IntegratedMicroorganisms';
 import {BuyNLarge} from './BuyNLarge';
 import {Rda} from './Rda';
 import {ArkNova} from './ArkNova';
+import {Thermopoli} from './Thermopoli';
 // import {CityGreenhouse} from './CityGreenhouse';
+import {SpecialDesignProxy} from './SpecialDesignProxy';
 
 export const COMMUNITY_CARD_MANIFEST = new ModuleManifest({
   module: 'community',
@@ -62,6 +64,7 @@ export const COMMUNITY_CARD_MANIFEST = new ModuleManifest({
     [CardName.RDA]: {Factory: Rda}, // XB9
     [CardName.ARK_NOVA]: {Factory: ArkNova}, // XB10
     // [ CardName.CITY_GREENHOUSE]:{Factory: CityGreenhouse}, // 雪宝这公司没人玩，注释了
+    [CardName.THERMOPOLI]: {Factory: Thermopoli}, // XB12
   },
   preludeCards: {
     // 粉丝扩的部分前序跟pf扩重合 先注释
@@ -80,5 +83,8 @@ export const COMMUNITY_CARD_MANIFEST = new ModuleManifest({
     [CardName.EXECUTIVE_ORDER]: {Factory: ExecutiveOrder, compatibility: 'turmoil'},
     [CardName.ACCUMULATED_KNOWLEDGE]: {Factory: AccumulatedKnowledge},
     [CardName.NITRATE_REDUCERS]: {Factory: NitrateReducers, compatibility: 'venus'},
+  },
+  projectCards: {
+    [CardName.SPECIAL_DESIGN_PROXY]: {Factory: SpecialDesignProxy, instantiate: false},
   },
 });

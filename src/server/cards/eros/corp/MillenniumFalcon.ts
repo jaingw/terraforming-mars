@@ -15,7 +15,7 @@ export class MillenniumFalcon extends Card implements ICorporationCard {
     super({
       name: CardName.MILLENNIUM_FALCON,
       startingMegaCredits: 28,
-      cardType: CardType.CORPORATION,
+      type: CardType.CORPORATION,
       initialActionText: 'Place a colony',
 
       metadata: {

@@ -12,6 +12,7 @@ export type GameOptions = {
 
   // Configuration
   undoOption: boolean;
+  rankOption: boolean; // 天梯
   showTimers: boolean;
   fastModeOption: boolean;
   showOtherPlayersVP: boolean;
@@ -33,7 +34,7 @@ export type GameOptions = {
   includeVenusMA: boolean;
   moonExpansion: boolean;
   pathfindersExpansion: boolean;
-  leadersExtension: boolean;
+  ceoExtension: boolean;
 
   // Variants
   draftVariant: boolean;
@@ -49,7 +50,8 @@ export type GameOptions = {
   bannedCards: Array<CardName>;
   customColoniesList: Array<ColonyName>;
   customPreludes: Array<CardName>;
-  customLeaders: Array<CardName>;
+  customCeos: Array<CardName>;
+  startingCeos: number;
   heatFor: boolean; //  七热升温
   breakthrough: boolean;// 界限突破
   doubleCorp: boolean; // 双将
@@ -62,6 +64,9 @@ export type GameOptions = {
   escapeVelocityPeriod?: number;
   escapeVelocityPenalty?: number;
   twoCorpsVariant: boolean;
+  rankTimeLimit?: number; // 天梯 玩家超时限制
+  rankTimePerGeneration?: number; // 天梯 每时代额外加成
+
 }
 
 export const DEFAULT_GAME_OPTIONS: GameOptions = {
@@ -70,16 +75,17 @@ export const DEFAULT_GAME_OPTIONS: GameOptions = {
   aresHazards: true,
   boardName: BoardName.THARSIS,
   bannedCards: [],
+  ceoExtension: false,
   clonedGamedId: undefined,
   coloniesExtension: false,
   communityCardsOption: false,
   erosCardsOption: false,
   corporateEra: true,
   _corporationsDraft: false, // NOT
+  customCeos: [],
   customColoniesList: [],
   customCorporationsList: [],
   customPreludes: [],
-  customLeaders: [],
   draftVariant: false,
   escapeVelocityMode: false, // When true, escape velocity is enabled.
   escapeVelocityThreshold: constants.DEFAULT_ESCAPE_VELOCITY_THRESHOLD, // Time in minutes a player has to complete a game.
@@ -92,7 +98,6 @@ export const DEFAULT_GAME_OPTIONS: GameOptions = {
   moonExpansion: false,
   moonStandardProjectVariant: false,
   pathfindersExpansion: false,
-  leadersExtension: false,
   politicalAgendasExtension: AgendaStyle.STANDARD,
   preludeExtension: false,
   promoCardsOption: false,
@@ -105,6 +110,7 @@ export const DEFAULT_GAME_OPTIONS: GameOptions = {
   shuffleMapOption: false,
   solarPhaseOption: false,
   soloTR: false,
+  startingCeos: 3,
   startingCorporations: 2,
   turmoilExtension: false,
   undoOption: false,
@@ -114,4 +120,7 @@ export const DEFAULT_GAME_OPTIONS: GameOptions = {
   doubleCorp: false,
   initialCorpDraftVariant: true,
   twoCorpsVariant: false,
+  rankOption: false, // 天梯
+  rankTimeLimit: constants.DEFAULT_RANK_TIME_LIMIT, // 天梯
+  rankTimePerGeneration: constants.DEFAULT_RANK_TIME_PER_GENERATION, // 天梯 每时代额外加成
 };

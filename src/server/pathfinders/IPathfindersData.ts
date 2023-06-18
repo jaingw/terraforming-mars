@@ -1,5 +1,6 @@
 import {Tag} from '../../common/cards/Tag';
 import {PlayerId} from '../../common/Types';
+import {PlanetaryTag} from './PathfindersData';
 import {SerializedPathfindersData} from './SerializedPathfindersData';
 
 export interface IPathfindersData {
@@ -8,7 +9,7 @@ export interface IPathfindersData {
   mars: number;
   jovian: number;
   moon: number;
-  vps: Array<{id: PlayerId, tag: Tag, points: number}>;
+  vps: Array<{id: PlayerId, tag: PlanetaryTag, points: number}>;
 }
 
 export namespace IPathfindersData {

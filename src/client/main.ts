@@ -5,6 +5,8 @@ import {mainAppSettings} from '@/client/components/App';
 import {getPreferences} from '@/client/utils/PreferencesManager';
 import i18nPlugin from '@/client/plugins/i18n.plugin';
 
+import '../styles/tailwindcss.css';
+
 declare global {
   interface Window {
     _translations: { [key: string]: string } | undefined;
@@ -15,7 +17,7 @@ async function bootstrap() {
 
   if (lang !== 'en') {
     try {
-      window._translations = await fetch(`/assets/locales/${lang}.json`).then((res) => res.json());
+      window._translations = await fetch(`assets/locales/${lang}.json`).then((res) => res.json());
       // TODO - add a nice loader for this fetch
     } catch (err) {
       console.warn(`Cannot load ${lang} translations. See network for details.`);

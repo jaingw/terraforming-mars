@@ -20,10 +20,16 @@ body {
     margin-bottom: 25px;
 }
 
-.game_end_go_home {
+.game_end_navigation {
     font-size: 30px;
-    text-align: center;
     margin: 40px 0;
+    display: flex;
+    justify-content: center;
+
+    & > div {
+        display: flex;
+        flex-direction: column;
+    }
 
     button {
         margin-right: 10px;
@@ -77,15 +83,20 @@ body {
     }
     .table-moon-road-tile {
         .board-space-tile--road;
-        .resized-tile
+        .resized-tile;
     }
     .table-moon-colony-tile {
         .board-space-tile--colony;
-        .resized-tile
+        .resized-tile;
     }
     .table-moon-mine-tile {
         .board-space-tile--mine;
-        .resized-tile
+        .resized-tile;
+    }
+    .table-planetary-track {
+        .card-planetary-track;
+        .resized-tile;
+        filter: invert(1);
     }
     .table-red-arrow {
         background-image: url(./assets/misc/arrow.png);
@@ -131,7 +142,7 @@ body {
         font-weight: bold;
     }
     .mc-icon {
-        background-image: url(assets/resources/megacredit.png);
+        background-image: url(./assets/resources/megacredit.png);
         width: 26px;
         height: 26px;
         display: inline-block;
@@ -161,6 +172,14 @@ body {
     }
     .column-corporation {
         width: 300px;
+    }
+    .rank-icon {
+        background-image: url(./assets/rank/rank-logo.png);
+        width: 46px;
+        height: 38px;
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-size: auto 100%;
     }
 }
 .game-end-flexrow {

@@ -8,7 +8,7 @@ import {CardRequirements} from '../CardRequirements';
 export class AntiGravityExperiment extends Card implements IProjectCard {
   constructor() {
     super({
-      cardType: CardType.EVENT,
+      type: CardType.EVENT,
       name: CardName.ANTI_GRAVITY_EXPERIMENT,
       tags: [Tag.SCIENCE],
       cost: 12,

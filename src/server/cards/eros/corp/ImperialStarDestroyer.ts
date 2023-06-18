@@ -12,7 +12,7 @@ export class ImperialStarDestroyer extends Card implements ICorporationCard {
       name: CardName.IMPERIAL_STAR_DESTROYER,
       tags: [Tag.SPACE],
       startingMegaCredits: 53,
-      cardType: CardType.CORPORATION,
+      type: CardType.CORPORATION,
       metadata: {
         cardNumber: 'Q031',
         description: 'You start with 53 M€',

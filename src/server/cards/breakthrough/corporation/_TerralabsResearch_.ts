@@ -9,7 +9,7 @@ import {ICorporationCard} from '../../corporation/ICorporationCard';
 export class _TerralabsResearch_ extends Card implements ICorporationCard {
   constructor() {
     super({
-      cardType: CardType.CORPORATION,
+      type: CardType.CORPORATION,
       name: CardName._TERRALABS_RESEARCH_,
       tags: [Tag.SCIENCE, Tag.EARTH],
       startingMegaCredits: 20,

@@ -2,7 +2,7 @@ import {expect} from 'chai';
 import {Pallas} from '../../../src/server/cards/community/Pallas';
 import {Game} from '../../../src/server/Game';
 import {TestPlayer} from '../../TestPlayer';
-import {getTestPlayer, newTestGame} from '../../TestGame';
+import {testGame} from '../../TestGame';
 import {cast, runAllActions} from '../../TestingUtils';
 import {SelectPartyToSendDelegate} from '../../../src/server/inputs/SelectPartyToSendDelegate';
 import {PartyName} from '../../../src/common/turmoil/PartyName';
@@ -21,15 +21,11 @@ describe('Pallas', function() {
 
   beforeEach(function() {
     pallas = new Pallas();
-    game = newTestGame(2, {turmoilExtension: true, coloniesExtension: true});
-    player = getTestPlayer(game, 0);
-    player2 = getTestPlayer(game, 1);
+    [game, player, player2] = testGame(2, {turmoilExtension: true, coloniesExtension: true});
     game.colonies.push(pallas);
     turmoil = TurmoilUtil.getTurmoil(game);
     greens = turmoil.getPartyByName(PartyName.GREENS);
     scientists = turmoil.getPartyByName(PartyName.SCIENTISTS);
-    player.popSelectInitialCards();
-    player2.popSelectInitialCards();
 
     greens.delegates.clear();
     scientists.delegates.clear();

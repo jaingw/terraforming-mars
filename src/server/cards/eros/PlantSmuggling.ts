@@ -13,7 +13,7 @@ export class PlantSmuggling extends Card implements IProjectCard {
       cost: 14,
       tags: [Tag.BUILDING, Tag.PLANT],
       name: CardName.PLANT_SMUGGLING,
-      cardType: CardType.ACTIVE,
+      type: CardType.ACTIVE,
 
       behavior: {
         production: {megacredits: 2},

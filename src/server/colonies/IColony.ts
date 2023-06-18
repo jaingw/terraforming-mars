@@ -24,7 +24,7 @@ export interface IColony {
   endGeneration(game: Game): void;
   increaseTrack(steps?: number): void;
   decreaseTrack(steps?: number): void;
-  isColonyFull(): boolean;
+  isFull(): boolean;
   addColony(player: Player, options?: {giveBonusTwice: boolean}): void;
   removeColony(player: Player): void;
   trade(player: Player, tradeOptions?: TradeOptions, bonusTradeOffset?: number): void;

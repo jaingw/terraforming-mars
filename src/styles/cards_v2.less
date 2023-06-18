@@ -650,6 +650,14 @@
                 font-size: 45px;
                 top: 20px;
             }
+            .card-mars-maths-logo {
+                position: absolute;
+                font-size: 24px;
+                box-shadow: 5px 10px 12px #d58c56;
+                font-family: "Lucida Sans", "Lucida Sans Unicode", "Lucida Grande", Arial;
+                top: 14px;
+                left: 2px;
+            }
             .card-project-workshop-logo {
                 position: absolute;
                 top: 10px;
@@ -1143,6 +1151,12 @@
                 background-size: 125px 90px;
                 margin-top: 10px;
             }
+            .card-aurorai-logo {
+                background-image: url(./assets/pathfinders/corp-logo-aurorai.png);
+                height: 80px;
+                width: 111px;
+                background-size: 111px 80px;
+            }
         }
         .card-content-corporation {
             top: -30px;
@@ -1162,6 +1176,22 @@
             line-height: 20px;
             font-weight: bold;
             text-align: center;
+
+            // Adding scrolling for cards with huge description
+            overflow-x: hidden;
+            &::-webkit-scrollbar-track {
+                background-color: transparent;
+                border-radius: 0 0 32px 0;
+            }
+            &::-webkit-scrollbar {
+                width: 4px;
+                background-color: transparent;
+            }
+            &::-webkit-scrollbar-thumb {
+                background-color: #898989;
+                border-radius: 0 0 32px 0;
+            }
+
             .card-corporation-box {
                 position: absolute;
                 display: flex;
@@ -1408,6 +1438,60 @@
             .card-resource-community {
                 background: linear-gradient(orange, orangered);
             }
+
+            /* CEO Assets */
+            .card-arrow-opg {
+                display: inline-block;
+                background-image: url(./assets/ceos/arrow-opg.png);
+                width: 50px;
+                height: 43px;
+                background-size: 50px 43px;
+                padding-bottom: 22px;
+                background-repeat: no-repeat;
+            }
+            .card-reds-deactivated {
+                display: inline-block;
+                background-image: url(./assets/parties/reds.png);
+                // Increase size by 1.5 _without_ Scale; Scale blows out formatting.
+                width: 75px;
+                height: 54px;
+                background-size: 75px 54px;
+                background-repeat: no-repeat;
+                filter: grayscale(1);
+                // transform: scale(1.5);
+                // margin-right: 10px;
+            }
+            .card-reds {
+                display: inline-block;
+                background-image: url(./assets/parties/reds.png);
+                width: 50px;
+                height: 36px;
+                background-size: 50px 36px;
+                background-repeat: no-repeat;
+            }
+            .card-hazard-tile {
+                background-image: url(./assets/tiles/hazard.png);
+                width: 40px;
+                height: 40px;
+                background-size: 40px;
+                transform: scale(0.9);
+                margin: 5px 2px;
+            }
+            .card-hazard-tile--L {
+                background-image: url(./assets/tiles/hazard.png);
+                width: 48px;
+                height: 48px;
+                background-size: 48px;
+                margin: 5px -4px;
+            }
+            .card-adjacency-bonus {
+                background-image: url(./assets/tiles/adjacency_bonus.png);
+                background-size: 47px 54px;
+                width: 47px;
+                height: 54px;
+                margin: 5px;
+            }
+
             /*special*/
             .card-special {
                 font-size: @font_size_big;
@@ -1417,7 +1501,7 @@
                 top: 3px;
             }
             .card-minus {
-                background-image: url(/assets/misc/minus.png);
+                background-image: url(./assets/misc/minus.png);
                 background-size: 12px;
                 margin: 0;
                 width: 12px;
@@ -1434,7 +1518,7 @@
                 height: 6px;
             }
             .card-plus {
-                background-image: url(/assets/misc/plus.png);
+                background-image: url(./assets/misc/plus.png);
                 background-size: 12px;
                 min-height: 12px;
                 width: 12px;
@@ -1631,7 +1715,7 @@
             }
             // TODO(kberg) This set of tags looks like a duplicate of cards.less.
             .card-tag-wild {
-                background-image: url("../assets/tags/wild.png");
+                background-image: url("./assets/tags/wild.png");
             }
             .card-tag-building {
                 background-image: url("./assets/tags/building.png");
@@ -1677,7 +1761,7 @@
                 border-radius: 0px;
             }
             .card-tag-wild-resource {
-                background-image: url("../assets/resources/wild.png");
+                background-image: url("./assets/resources/wild.png");
                 border-radius: 0px;
             }
             .card-tag-moon {
@@ -1685,6 +1769,9 @@
             }
             .card-tag-mars {
                 background-image: url("./assets/tags/mars.png");
+            }
+            .card-tag-diverse {
+                background: linear-gradient(to bottom right, green, yellow, red);
             }
             .card-community-services {
                 font-size: 42px;
@@ -1798,6 +1885,23 @@
                     border-radius: 2px;
                 }
             }
+            .card-ceo-container {
+                background-color: #2c2c2c;
+                background: linear-gradient(to right bottom, black, #3c3c3c, #969696, #3c3c3c, #3c3c3c, black);
+                color: black;
+                font-size: 12px;
+                padding: 4px 7px 1px;
+                border-radius: 3px;
+                box-shadow: 0 2px 2px 1px rgba(0, 0, 0, 0.8);
+                .card-ceo-icon {
+                    text-transform: uppercase;
+                    background: linear-gradient(to right, rgb(235,118,171), #e64d91);
+                    padding-left: 4px;
+                    padding-right: 4px;
+                    border-radius: 2px;
+                }
+            }
+
             .card-corporation-icon {
                 display: inline-block;
                 background-image: url(./assets/misc/corpCard.png);
@@ -2406,6 +2510,25 @@
                 font-size: 12px;
                 box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6), 0 0 0 2px rgba(0, 0, 0, 0.3);
                 background-color: rgb(235, 118, 171);
+                border-radius: 14px 2px 2px 2px;
+                border-top: 2px solid rgb(221, 221, 221);
+                border-left: 2px solid rgb(221, 221, 221);
+                border-bottom: 2px solid rgb(137, 137, 137);
+                border-right: 2px solid rgb(137, 137, 137);
+            }
+            .ceo-label {
+                position: absolute;
+                text-transform: uppercase;
+                top: 15px;
+                left: 4px;
+                margin: 0px;
+                width: 80px;
+                height: 20px;
+                line-height: 22px;
+                text-align: center;
+                font-size: 12px;
+                box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6), 0 0 0 2px rgba(0, 0, 0, 0.3);
+                background-color: #edbd18;
                 border-radius: 14px 2px 2px 2px;
                 border-top: 2px solid rgb(221, 221, 221);
                 border-left: 2px solid rgb(221, 221, 221);

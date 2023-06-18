@@ -27,7 +27,7 @@ export class WasteIncinerator extends Card implements IProjectCard {
       description: 'Place this tile adjacent to a city tile.',
     }) {
     super({
-      cardType: CardType.ACTIVE,
+      type: CardType.ACTIVE,
       name,
       tags: [Tag.BUILDING],
       cost: 4,

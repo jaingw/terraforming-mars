@@ -5,14 +5,15 @@ import {ITagCount} from '../cards/ITagCount';
 import {PlayerInputModel} from './PlayerInputModel';
 import {TimerModel} from './TimerModel';
 import {GameModel} from './GameModel';
-import {PlayerId, SpectatorId} from '../Types';
+import {PlayerId, ParticipantId} from '../Types';
 import {CardName} from '../cards/CardName';
-import {Resources} from '../Resources';
+import {Resource} from '../Resource';
+import {RankTier} from '../rank/RankTier';
 
 export interface ViewModel {
   game: GameModel;
   players: Array<PublicPlayerModel>;
-  id?: PlayerId | SpectatorId;
+  id?: ParticipantId;
   thisPlayer: PublicPlayerModel | undefined;
   block?: boolean;
 }
@@ -41,8 +42,7 @@ export type PublicPlayerModel = {
   fleetSize: number;
   heat: number;
   heatProduction: number;
-  // TODO(kberg): this is removeable now.
-  id: string; // color
+  id: PlayerId | undefined;
   influence: number;
   isActive: boolean;
   lastCardPlayed?: CardName;
@@ -52,8 +52,8 @@ export type PublicPlayerModel = {
   noTagsCount: number;
   plants: number;
   plantProduction: number;
-  protectedResources: Record<Resources, Protection>;
-  protectedProduction: Record<Resources, Protection>;
+  protectedResources: Record<Resource, Protection>;
+  protectedProduction: Record<Resource, Protection>;
   tableau: Array<CardModel>;
   selfReplicatingRobotsCards: Array<CardModel>;
   steel: number;
@@ -71,6 +71,8 @@ export type PublicPlayerModel = {
   waitingFor: {} | undefined;
   exited: boolean;
   isvip: number;
+  rankValue: number; // 天梯 玩家分数
+  rankTier: RankTier; // 天梯 玩家段位
 }
 
 /** A player's view of the game, including their secret information. */
@@ -79,9 +81,11 @@ export interface PlayerViewModel extends ViewModel {
   dealtCorporationCards: Array<CardModel>;
   dealtPreludeCards: Array<CardModel>;
   dealtProjectCards: Array<CardModel>;
+  dealtCeoCards: Array<CardModel>;
   // draftedCorporations: Array<CardModel>;
   draftedCards: Array<CardModel>;
   id: PlayerId;
+  ceoCardsInHand: Array<CardModel>;
   pickedCorporationCard: Array<CardModel>; // Why Array?
   pickedCorporationCard2: Array<CardModel>; // Why Array?
   preludeCardsInHand: Array<CardModel>;
@@ -90,7 +94,7 @@ export interface PlayerViewModel extends ViewModel {
   canExit?: boolean;
   userName: string;
   isme: boolean;
-  isvip:number ;
+  isvip: number;
   waitingFor: PlayerInputModel | undefined;
   exited?: boolean;
   block: boolean;

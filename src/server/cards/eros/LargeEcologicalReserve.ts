@@ -17,7 +17,7 @@ export class LargeEcologicalReserve extends Card implements IProjectCard {
       cost: 39,
       tags: [Tag.PLANT, Tag.MICROBE, Tag.ANIMAL, Tag.BUILDING],
       name: CardName.LARGE_ECOLOGICAL_RESERVE,
-      cardType: CardType.AUTOMATED,
+      type: CardType.AUTOMATED,
       victoryPoints: 1,
 
       requirements: CardRequirements.builder((b) => b.tag(Tag.PLANT).tag(Tag.ANIMAL).tag(Tag.MICROBE)),

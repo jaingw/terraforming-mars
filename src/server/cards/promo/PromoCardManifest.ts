@@ -43,8 +43,10 @@ import {PharmacyUnion} from './PharmacyUnion';
 import {Philares} from './Philares';
 import {Potatoes} from './Potatoes';
 import {ProjectInspection} from './ProjectInspection';
+import {Psyche} from './16Psyche';
 import {Recyclon} from './Recyclon';
 import {RegoPlastics} from './RegoPlastics';
+import {RobotPollinators} from './RobotPollinators';
 import {SaturnSurfing} from './SaturnSurfing';
 import {SelfReplicatingRobots} from './SelfReplicatingRobots';
 import {SmallAsteroid} from './SmallAsteroid';
@@ -98,6 +100,8 @@ export const PROMO_CARD_MANIFEST = new ModuleManifest({
     [CardName.BACTOVIRAL_RESEARCH]: {Factory: BactoviralResearch},
     [CardName.HARVEST]: {Factory: Harvest},
     [CardName.OUTDOOR_SPORTS]: {Factory: OutdoorSports},
+    [CardName.PSYCHE]: {Factory: Psyche},
+    [CardName.ROBOT_POLLINATORS]: {Factory: RobotPollinators},
   },
   preludeCards: {
     [CardName.NEW_PARTNER]: {Factory: NewPartner},

@@ -3,7 +3,7 @@ import {TileType} from '../../common/TileType';
 import {ICard} from '../cards/ICard';
 import {Player} from '../Player';
 import {Countable, CountableUnits} from './Countable';
-import {intersection} from '../../common/utils/utils';
+import {hasIntersection} from '../../common/utils/utils';
 import {MoonExpansion} from '../moon/MoonExpansion';
 
 /**
@@ -30,7 +30,7 @@ export class Counter {
     this.cardIsUnplayed = !player.cardIsInEffect(card.name);
   }
 
-  public count(countable: Countable): number {
+  public count(countable: Countable, context: 'default' | 'vps' = 'default'): number {
     if (typeof(countable) === 'number') {
       return countable;
     }
@@ -70,7 +70,7 @@ export class Counter {
       if (Array.isArray(tag)) { // Multiple tags
         // These two error cases could be coded up, but they don't have a case just yet, and if they do come
         // up, better for the code to error than silently ignore it.
-        if (this.cardIsUnplayed && intersection(tag, card.tags).length > 0) {
+        if (this.cardIsUnplayed && hasIntersection(tag, card.tags)) {
           throw new Error(`Not supporting the case counting tags ${tag} when played card tags are ${card.tags}`);
         }
         if (countable.others === true) {
@@ -80,7 +80,7 @@ export class Counter {
         sum += player.tags.multipleCount(tag);
       } else { // Single tag
         if (countable.others !== true) { // Just count player's own tags.
-          sum += player.tags.count(tag);
+          sum += player.tags.count(tag, context === 'vps' ? 'raw' : context);
 
           if (this.cardIsUnplayed) { // And include the card itself if it isn't already on the tableau.
             sum += card.tags.filter((t) => t === tag).length;
@@ -94,6 +94,10 @@ export class Counter {
             .forEach((p) => sum += p.tags.count(tag, 'raw'));
         }
       }
+    }
+
+    if (countable.resourcesHere !== undefined) {
+      sum += card.resourceCount;
     }
 
     if (countable.moon !== undefined) {

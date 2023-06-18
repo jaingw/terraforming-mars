@@ -11,7 +11,7 @@ export class InterplanetaryAlliance extends Card implements IProjectCard {
   constructor() {
     super({
       name: CardName.INTERPLANETARY_ALLIANCE,
-      cardType: CardType.AUTOMATED,
+      type: CardType.AUTOMATED,
       tags: [Tag.VENUS, Tag.JOVIAN, Tag.EARTH],
       cost: 5,
       victoryPoints: 1,

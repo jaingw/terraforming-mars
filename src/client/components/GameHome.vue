@@ -1,6 +1,7 @@
 <template>
     <div id="game-home" class="game-home-container">
         <h1><a href="/" v-i18n>Terraforming Mars</a> [game id: <span>{{getGameId()}}</span>]</h1>
+      <h4 v-if="game.gameOptions.rankOption" class="text-yellow-600" v-i18n>This game is <a href="/ranks" class="text-yellow-400">Rank Mode</a>. If all players agree to quit, game will be abandoned. If you run out of time, you will lose the game. Good Luck!</h4>
         <h4 v-i18n>Send players their links below. As game administrator pick your link to use.</h4>
         <div v-if="game !== undefined" style="margin:0px 15px;">Game Age： {{game.gameAge}} ,Last Save Id : {{game.saveId}}
           <span v-if="game.rollback == true">--&gt;
@@ -12,10 +13,14 @@
           <li v-for="(player, index) in (game === undefined ? [] : game.players)" :key="player.color">
             <span class="turn-order">{{getTurnOrder(index)}}</span>
             <span class="player_name" :class="getPlayerCubeColorClass(player.color)"><a :href="'/player?id=' + player.id">{{player.name}}</a></span>
-            <Button title="copy" size="tiny" @click="copyUrl(player.id)"/>
+            <AppButton title="copy" size="tiny" @click="copyUrl(player.id)"/>
             <span v-if="isPlayerUrlCopied(player.id)" class="copied-notice"><span v-i18n>Copied!</span></span>
           </li>
         </ul>
+
+        <div class="spacing-setup"></div>
+
+        <!-- <purge-warning :expectedPurgeTimeMs="game.expectedPurgeTimeMs"></purge-warning> -->
 
         <div class="spacing-setup"></div>
         <div v-if="game !== undefined">
@@ -34,11 +39,12 @@
 import Vue from 'vue';
 import {PreferencesManager} from '../utils/PreferencesManager';
 import {SimpleGameModel} from '@/common/models/SimpleGameModel';
-import Button from '@/client/components/common/Button.vue';
+import AppButton from '@/client/components/common/AppButton.vue';
+// import PurgeWarning from '@/client/components/common/PurgeWarning.vue';
 import {playerColorClass} from '@/common/utils/utils';
 import GameSetupDetail from '@/client/components/GameSetupDetail.vue';
 import {QrCode} from './QrCode';
-import {SpectatorId, PlayerId} from '@/common/Types';
+import {ParticipantId} from '@/common/Types';
 
 // taken from https://stackoverflow.com/a/46215202/83336
 // The solution to copying to the clipboard in this case is
@@ -65,9 +71,10 @@ export default Vue.extend({
     },
   },
   components: {
-    Button,
+    AppButton,
     'game-setup-detail': GameSetupDetail,
     'qrcode': QrCode,
+    // PurgeWarning,
   },
   data() {
     return {
@@ -99,15 +106,17 @@ export default Vue.extend({
     getPlayerCubeColorClass(color: string): string {
       return playerColorClass(color.toLowerCase(), 'bg');
     },
-    getHref(playerId: PlayerId | SpectatorId): string {
+    getHref(playerId: ParticipantId): string {
       if (playerId === this.game.spectatorId) {
-        return `/spectator?id=${playerId}`;
+        return `spectator?id=${playerId}`;
       }
-      return `/player?id=${playerId}`;
+      return `player?id=${playerId}`;
     },
-    copyUrl(playerId: PlayerId | SpectatorId | undefined ): void {
+    copyUrl(playerId: ParticipantId | undefined): void {
       if (playerId === undefined) return;
-      copyToClipboard(window.location.origin + this.getHref(playerId));
+      // Get current location path without game?id=xxxxxxx
+      const path = window.location.href.replace(/game\?id=.*/, '');
+      copyToClipboard(path + this.getHref(playerId));
       this.urlCopiedPlayerId = playerId;
     },
     isPlayerUrlCopied(playerId: string): boolean {

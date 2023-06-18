@@ -37,7 +37,7 @@ export class ApiGameLogs extends Handler {
         ctx.route.badRequest(req, res, 'cannot fetch game-end log');
         return;
       }
-      res.setHeader('Content-Type', 'text/plain');
+      res.setHeader('Content-Type', 'text/plain; charset=utf-8');
       res.end(logs);
     } else {
       const generation = searchParams.get('generation');

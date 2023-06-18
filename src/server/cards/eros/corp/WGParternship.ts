@@ -22,7 +22,7 @@ export class WGParternship extends Card implements ICard, ICorporationCard {
       name: CardName.WG_PARTERNSHIP,
       tags: [Tag.EARTH],
       startingMegaCredits: 48,
-      cardType: CardType.CORPORATION,
+      type: CardType.CORPORATION,
 
       metadata: {
         cardNumber: 'Q22',

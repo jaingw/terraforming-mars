@@ -3,50 +3,52 @@
 import {CardName} from '../../common/cards/CardName';
 import {CardType} from '../../common/cards/CardType';
 import {ITagCount} from '../../common/cards/ITagCount';
-import {Tag} from '../../common/cards/Tag';
+import {ALL_TAGS, Tag} from '../../common/cards/Tag';
 import {ICorporationCard, isICorporationCard} from '../cards/corporation/ICorporationCard';
 import {ICard} from '../cards/ICard';
 import {IProjectCard} from '../cards/IProjectCard';
+import {CeoExtension} from '../CeoExtension';
 import {Player} from '../Player';
 
+export type CountingMode =
+  'raw' | // Count face-up tags literally, including Leavitt Station.
+  'default' | // Like raw, but include the wild tags. Typical when performing an action.
+  'milestone' | // Like raw with special conditions for milestones (Chimera)
+  'award' | // Like raw with special conditions for awards (Chimera)
+  'raw-pf'; // Like raw, but includes Mars Tags when tag is Science (Habitat Marte)
+
+export type DistinctCountMode =
+  'default' | // Count all tags in played cards, and then add in all the wild tags.
+  'milestone' | // Like default with special conditions for milestones (Chimera)
+  'globalEvent'; // Like default, but does not reduce the count size based on max tags in the game. Should be removed.
+
+export type MultipleCountMode =
+  'default' | // Count each tag individually, add wild tags, and (Moon) Earth Embassy.
+  'milestone' | // Like default, including Chimera.
+  'award'; // Like default, including Chimera.
+
 export class Tags {
+  private static COUNTED_TAGS = ALL_TAGS.filter((tag) => tag !== Tag.CLONE && tag !== Tag.EVENT);
+
   private player: Player;
   constructor(player: Player) {
     this.player = player;
   }
 
   // 各种标志的数量
+  // TODO(kberg): Rename to countAllTags
   public getAllTags(): Array<ITagCount> {
-    return [
-      {tag: Tag.BUILDING, count: this.count(Tag.BUILDING, 'raw')},
-      {tag: Tag.CITY, count: this.count(Tag.CITY, 'raw')},
-      {tag: Tag.EARTH, count: this.count(Tag.EARTH, 'raw')},
-      {tag: Tag.POWER, count: this.count(Tag.POWER, 'raw')},
-      {tag: Tag.JOVIAN, count: this.count(Tag.JOVIAN, 'raw')},
-      {tag: Tag.MARS, count: this.count(Tag.MARS, 'raw')},
-      {tag: Tag.MICROBE, count: this.count(Tag.MICROBE, 'raw')},
-      {tag: Tag.MOON, count: this.count(Tag.MOON, 'raw')},
-      {tag: Tag.PLANT, count: this.count(Tag.PLANT, 'raw')},
-      {tag: Tag.SCIENCE, count: this.count(Tag.SCIENCE, 'raw')},
-      {tag: Tag.SPACE, count: this.count(Tag.SPACE, 'raw')},
-      {tag: Tag.VENUS, count: this.count(Tag.VENUS, 'raw')},
-      {tag: Tag.WILD, count: this.count(Tag.WILD, 'raw')},
-      {tag: Tag.ANIMAL, count: this.count(Tag.ANIMAL, 'raw')},
-      {tag: Tag.EVENT, count: this.player.getPlayedEventsCount()},
-    ].filter((tag) => tag.count > 0);
+    const counts = Tags.COUNTED_TAGS.map((tag) => {
+      return {tag, count: this.count(tag, 'raw')};
+    }).filter((tag) => tag.count > 0);
+    counts.push({tag: Tag.EVENT, count: this.player.getPlayedEventsCount()});
+    return counts;
   }
 
   /*
-   * Get the number of tags a player has, depending on certain conditions.
-   *
-   * 'raw': count face-up tags literally, including Leavitt Station.
-   * 'default': Same as raw, but include the wild tags.
-   * 'milestone': Same as raw with special conditions for milestones (Chimera)
-   * 'award': Same as raw with special conditions for awards (Chimera)
-   * 'vps': Same as raw, but include event tags.
-   * 'raw-pf': Same as raw, but includes Mars Tags when tag is Science  (Habitat Marte)
+   * Get the number of tags a player has.
    */
-  public count(tag: Tag, mode: 'default' | 'raw' | 'milestone' | 'award' | 'vps' | 'raw-pf' = 'default') {
+  public count(tag: Tag, mode: CountingMode = 'default') {
     const includeEvents = this.player.isCorporation(CardName.ODYSSEY) || this.player.isCorporation(CardName._INTERPLANETARY_CINEMATICS_);
     const includeTagSubstitutions = (mode === 'default' || mode === 'milestone');
 
@@ -57,6 +59,10 @@ export class Tags {
       tagCount += this.player.scienceTagCount;
     }
 
+    if (tag === Tag.WILD || includeTagSubstitutions) {
+      // CEO Xavier hook
+      tagCount += CeoExtension.getBonusWildTags(this.player);
+    }
 
     if (includeTagSubstitutions) {
       // Earth Embassy hook
@@ -92,7 +98,7 @@ export class Tags {
 
   public cardHasTag(card: ICard, target: Tag): boolean {
     if (target === Tag.EVENT) {
-      if (card.cardType !==CardType.EVENT) {
+      if (card.type !== CardType.EVENT) {
         return false;
       }
       return true;
@@ -112,6 +118,7 @@ export class Tags {
     }
     return false;
   }
+
   public cardTagCount(card: ICard, target: Tag | Array<Tag>): number {
     let count = 0;
     for (const tag of card.tags) {
@@ -135,7 +142,7 @@ export class Tags {
     let tagCount = 0;
 
     this.player.tableau.forEach((card: IProjectCard | ICorporationCard) => {
-      if (!includeEventsTags && card.cardType === CardType.EVENT) return;
+      if (!includeEventsTags && card.type === CardType.EVENT) return;
       if (isICorporationCard(card) && card.isDisabled) return;
       tagCount += card.tags.filter((cardTag) => cardTag === tag).length;
     });
@@ -145,43 +152,45 @@ export class Tags {
 
   /**
    * Return the total number of tags assocaited with these types.
-   * Tag substitutions are included
+   * Tag substitutions are included, and not counted repeatedly.
     */
-  public multipleCount(tags: Array<Tag>, mode: 'default' | 'milestones' | 'awards' = 'default'): number {
+  public multipleCount(tags: Array<Tag>, mode: MultipleCountMode = 'default'): number {
+    const includeEvents = this.player.isCorporation(CardName.ODYSSEY) || this.player.isCorporation(CardName._INTERPLANETARY_CINEMATICS_);
     let tagCount = 0;
     tags.forEach((tag) => {
-      tagCount += this.rawCount(tag, false);
+      tagCount += this.rawCount(tag, includeEvents);
     });
 
     // This is repeated behavior from getTagCount, sigh, OK.
     if (tags.includes(Tag.EARTH) && !tags.includes(Tag.MOON) && this.player.cardIsInEffect(CardName.EARTH_EMBASSY)) {
-      tagCount += this.rawCount(Tag.MOON, false);
+      tagCount += this.rawCount(Tag.MOON, includeEvents);
     }
 
-    if (mode !== 'awards') {
-      tagCount += this.rawCount(Tag.WILD, false);
+    if (mode !== 'award') {
+      tagCount += this.rawCount(Tag.WILD, includeEvents);
       // Chimera has 2 wild tags but should only count as one for milestones.
-      if (this.player.isCorporation(CardName.CHIMERA) && mode === 'milestones') tagCount--;
+      if (this.player.isCorporation(CardName.CHIMERA) && mode === 'milestone') tagCount--;
     } else {
       // Chimera counts as one wild tag for awards
       if (this.player.isCorporation(CardName.CHIMERA)) tagCount++;
     }
 
-
     return tagCount;
   }
 
-  // Counts the number of distinct tags
   /**
+   * Counts the number of distinct tags the player has.
+   *
    * getDistinctTagCount
    * @param {string} mode  计算场景
    * @param {Tags} extraTag 额外加一个标志， 星际贸易加一个钛标
    * @return {number} 标志种类总和，用以多元化里程碑等
    */
-  public distinctCount(mode: 'default' | 'milestone' | 'globalEvent', extraTag?: Tag): number {
-    let wildTagCount = 0;
+  public distinctCount(mode: DistinctCountMode, extraTag?: Tag): number {
     let eventCount: number = 0;
     const uniqueTags = new Set<Tag>();
+    let wildTagCount = 0;
+
     const addTag = (tag: Tag) => {
       if (tag === Tag.WILD) {
         wildTagCount++;
@@ -189,9 +198,6 @@ export class Tags {
         uniqueTags.add(tag);
       }
     };
-    if (extraTag !== undefined) {
-      uniqueTags.add(extraTag);
-    }
 
     for (const card of this.player.corporations) {
       if (!card.isDisabled) {
@@ -199,21 +205,26 @@ export class Tags {
       }
     }
     for (const card of this.player.playedCards) {
-      if (card.cardType !== CardType.EVENT) {
+      if (card.type !== CardType.EVENT) {
         card.tags.forEach(addTag);
       }
     }
 
-    if ((this.player.isCorporation(CardName._INTERPLANETARY_CINEMATICS_) || this.player.isCorporation(CardName.ODYSSEY) ) &&
-       this.player.playedCards.filter((card) => card.cardType === CardType.EVENT).length > 0) {
+    if ((this.player.isCorporation(CardName._INTERPLANETARY_CINEMATICS_) || this.player.isCorporation(CardName.ODYSSEY) ) ) {
       if (this.player.isCorporation(CardName._INTERPLANETARY_CINEMATICS_)) {
         eventCount = 1;
       }
-      this.player.playedCards.filter((card) => card.cardType === CardType.EVENT)
+      this.player.playedCards.filter((card) => card.type === CardType.EVENT)
         .forEach((card) => {
           card.tags.forEach(addTag);
         });
     }
+
+    if (extraTag !== undefined) {
+      uniqueTags.add(extraTag);
+    }
+
+    wildTagCount += CeoExtension.getBonusWildTags(this.player);
 
     // Leavitt Station hook
     if (this.player.scienceTagCount > 0) uniqueTags.add(Tag.SCIENCE);

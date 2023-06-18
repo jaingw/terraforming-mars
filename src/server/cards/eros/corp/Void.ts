@@ -10,7 +10,7 @@ export class Void extends Card implements ICorporationCard {
     super({
       name: CardName.VOID,
       startingMegaCredits: 70,
-      cardType: CardType.CORPORATION,
+      type: CardType.CORPORATION,
 
       metadata: {
         cardNumber: 'Q27',

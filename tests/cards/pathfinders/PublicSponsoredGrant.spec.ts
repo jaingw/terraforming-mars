@@ -2,7 +2,7 @@ import {expect} from 'chai';
 import {PublicSponsoredGrant} from '../../../src/server/cards/pathfinders/PublicSponsoredGrant';
 import {Game} from '../../../src/server/Game';
 import {TestPlayer} from '../../TestPlayer';
-import {getTestPlayer, newTestGame} from '../../TestGame';
+import {testGame} from '../../TestGame';
 import {BiomassCombustors} from '../../../src/server/cards/base/BiomassCombustors';
 import {SearchForLife} from '../../../src/server/cards/base/SearchForLife';
 import {ColonizerTrainingCamp} from '../../../src/server/cards/base/ColonizerTrainingCamp';
@@ -24,10 +24,7 @@ describe('PublicSponsoredGrant', function() {
 
   beforeEach(function() {
     card = new PublicSponsoredGrant();
-    game = newTestGame(3, {turmoilExtension: true});
-    player = getTestPlayer(game, 0);
-    player2 = getTestPlayer(game, 1);
-    player3 = getTestPlayer(game, 2);
+    [game, player, player2, player3] = testGame(3, {turmoilExtension: true});
   });
 
   it('canPlay', function() {

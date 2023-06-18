@@ -8,7 +8,7 @@ import {Tag} from '../../../common/cards/Tag';
 export class RespirationEnhance extends Card implements IProjectCard {
   constructor() {
     super({
-      cardType: CardType.ACTIVE,
+      type: CardType.ACTIVE,
       name: CardName.RESPIRATION_ENHANCE,
       tags: [Tag.SCIENCE, Tag.PLANT],
       cost: 7,

@@ -1,6 +1,6 @@
 
 import Vue from 'vue';
-import Button from './common/Button.vue';
+import AppButton from './common/AppButton.vue';
 import {Message} from '@/common/logs/Message';
 import {PlayerViewModel} from '@/common/models/PlayerModel';
 import {VueModelCheckbox, VueModelRadio} from '@/client/types';
@@ -50,7 +50,7 @@ export const SelectGlobalCard = Vue.component('select-global-card', {
     } as SelectCardModel;
   },
   components: {
-    Button,
+    AppButton,
     GlobalEvent,
   },
   watch: {
@@ -139,8 +139,8 @@ export const SelectGlobalCard = Vue.component('select-global-card', {
         </div></div>
         <div v-if="hasCardWarning()" class="card-warning">{{ $t(warning) }}</div>
         <div v-if="showsave === true" class="nofloat">
-          <Button :disabled="isOptionalToManyCards() && cardsSelected() === 0" type="submit" @click="saveData"  :title="playerinput.buttonLabel" />
-          <Button :disabled="isOptionalToManyCards() && cardsSelected() > 0" v-if="isOptionalToManyCards()" @click="saveData"  type="submit" :title="$t('Skip this action')" />
+          <AppButton :disabled="isOptionalToManyCards() && cardsSelected() === 0" type="submit" @click="saveData"  :title="playerinput.buttonLabel" />
+          <AppButton :disabled="isOptionalToManyCards() && cardsSelected() > 0" v-if="isOptionalToManyCards()" @click="saveData"  type="submit" :title="$t('Skip this action')" />
         </div>
     </div>`,
 });

@@ -1,8 +1,7 @@
 import {expect} from 'chai';
 import {SoilDetoxification} from '../../../src/server/cards/pathfinders/SoilDetoxification';
-import {Game} from '../../../src/server/Game';
 import {TestPlayer} from '../../TestPlayer';
-import {getTestPlayer, newTestGame} from '../../TestGame';
+import {testGame} from '../../TestGame';
 import {EcoLine} from '../../../src/server/cards/corporation/EcoLine';
 import {ConvertPlants} from '../../../src/server/cards/base/standardActions/ConvertPlants';
 import {Unity} from '../../../src/server/turmoil/parties/Unity';
@@ -13,12 +12,10 @@ import {TurmoilUtil} from '../../../src/server/turmoil/TurmoilUtil';
 describe('SoilDetoxification', function() {
   let card: SoilDetoxification;
   let player: TestPlayer;
-  let game: Game;
 
   beforeEach(function() {
     card = new SoilDetoxification();
-    game = newTestGame(1, {turmoilExtension: true});
-    player = getTestPlayer(game, 0);
+    [, player] = testGame(1, {turmoilExtension: true});
   });
 
   it('canPlay', function() {

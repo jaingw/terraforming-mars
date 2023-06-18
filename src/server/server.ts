@@ -23,7 +23,6 @@ process.on('uncaughtException', (err: any) => {
 
 const route = new Route();
 
-
 function requestHandler(req: http.IncomingMessage, res: http.ServerResponse): void {
   try {
     processRequest(req, res, route);
@@ -79,7 +78,7 @@ function createServer(): http.Server | https.Server {
 // prometheus.collectDefaultMetrics();
 registerBehaviorExecutor(new Executor());
 
-const server = createServer();
+export const server = createServer();
 
 // await timeAsync(Database.getInstance().initialize())
 //     .then((v) => {
@@ -95,7 +94,7 @@ GameLoader.getInstance().start(() => {
 
   if (!process.env.SERVER_ID) {
     console.log(`The secret serverId for this server is \x1b[1m${serverId}\x1b[0m.`);
-    console.log(`Adminsitrative routes can be found at admin?id=${serverId}`);
+    console.log(`Administrative routes can be found at admin?id=${serverId}`);
   }
   console.log('Server is ready.');
 });

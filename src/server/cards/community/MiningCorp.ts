@@ -5,13 +5,13 @@ import {ICorporationCard} from '../corporation/ICorporationCard';
 import {CardName} from '../../../common/cards/CardName';
 import {CardType} from '../../../common/cards/CardType';
 import {CardRenderer} from '../render/CardRenderer';
-import {Resources} from '../../../common/Resources';
+import {Resource} from '../../../common/Resource';
 import {Size} from '../../../common/cards/render/Size';
 import {digit} from '../../cards/Options';
 export class MiningCorp extends Card implements ICorporationCard {
   constructor() {
     super({
-      cardType: CardType.CORPORATION,
+      type: CardType.CORPORATION,
       name: CardName.MINING_CORP,
       tags: [Tag.BUILDING],
       startingMegaCredits: 35,
@@ -33,9 +33,9 @@ export class MiningCorp extends Card implements ICorporationCard {
   }
 
   public override bespokePlay(player: Player) {
-    player.addResource(Resources.STEEL, 10);
-    // player.production.add(Resources.ENERGY, 1);
-    // player.production.add(Resources.STEEL, 1);
+    player.addResource(Resource.STEEL, 10);
+    // player.production.add(Resource.ENERGY, 1);
+    // player.production.add(Resource.STEEL, 1);
     player.drawCard(2, {tag: Tag.BUILDING});
     player.increaseSteelValue();
     return undefined;

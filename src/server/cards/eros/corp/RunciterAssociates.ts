@@ -17,7 +17,7 @@ export class RunciterAssociates extends Card implements ICard, ICorporationCard 
       // tags: [Tag.BUILDING],
       tags: [],
       startingMegaCredits: 35,
-      cardType: CardType.CORPORATION,
+      type: CardType.CORPORATION,
 
       metadata: {
         cardNumber: 'Q33',

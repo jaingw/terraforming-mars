@@ -13,7 +13,7 @@ export class MartianFencing extends Card implements IProjectCard {
   constructor() {
     super({
       name: CardName.MARTIAN_FENCING,
-      cardType: CardType.EVENT,
+      type: CardType.EVENT,
       tags: [],
       cost: 0,
 

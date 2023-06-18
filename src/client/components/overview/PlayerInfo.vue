@@ -5,19 +5,15 @@ import PlayerResources from '@/client/components/overview/PlayerResources.vue';
 import PlayerTags from '@/client/components/overview/PlayerTags.vue';
 import PlayerStatus from '@/client/components/overview/PlayerStatus.vue';
 import {playerColorClass} from '@/common/utils/utils';
-import {mainAppSettings} from '@/client/components/App';
+import {vueRoot} from '@/client/components/vueRoot';
 import {range} from '@/common/utils/utils';
-import {PlayerMixin} from '@/client/mixins/PlayerMixin';
-import Button from '@/client/components/common/Button.vue';
+import AppButton from '@/client/components/common/AppButton.vue';
 import {CardType} from '@/common/cards/CardType';
-import {CardName} from '@/common/cards/CardName';
+import {getCard} from '@/client/cards/ClientCardManifest';
+import {Phase} from '@/common/Phase';
+import {CardName} from '../../../common/cards/CardName';
 
-const isPinned = (root: any, playerIndex: number): boolean => {
-  return (root as any).getVisibilityState('pinned_player_' + playerIndex);
-};
-const showPlayerData = (root: any, playerIndex: number) => {
-  (root as any).setVisibilityState('pinned_player_' + playerIndex, true);
-};
+
 export default Vue.extend({
   name: 'PlayerInfo',
   props: {
@@ -48,39 +44,55 @@ export default Vue.extend({
     },
   },
   components: {
-    Button,
+    AppButton,
     PlayerResources,
     PlayerTags,
     'player-status': PlayerStatus,
   },
-  mixins: [PlayerMixin],
   computed: {
     tooltipCss(): string {
       return 'tooltip tooltip-' + (this.isTopBar ? 'bottom' : 'top');
     },
+    Phase(): typeof Phase {
+      return Phase;
+    },
+    finalRankTimeLimit(): string {
+      return (Number(this.playerView?.game.gameOptions.rankTimeLimit) + Number(this.playerView?.game.gameOptions.rankTimePerGeneration) * Math.max(Number(this.playerView?.game.generation) - 1, 0)).toString();
+    },
+    playerId(): string {
+      return this.playerView?.id || '';
+    },
   },
   methods: {
+    isPinned(playerIndex: number): boolean {
+      return vueRoot(this).getVisibilityState('pinned_player_' + playerIndex);
+    },
+    pin(playerIndex: number) {
+      return vueRoot(this).setVisibilityState('pinned_player_' + playerIndex, true);
+    },
+    unpin(playerIndex: number) {
+      return vueRoot(this).setVisibilityState('pinned_player_' + playerIndex, false);
+    },
     pinPlayer() {
       let hiddenPlayersIndexes: Array<Number> = [];
-      const playerPinned = isPinned(this.$root, this.playerIndex);
+      const playerPinned = this.isPinned(this.playerIndex);
 
       // if player is already pinned, add to hidden players (toggle)
       hiddenPlayersIndexes = range(this.playerView.players.length - 1);
       if (!playerPinned) {
-        showPlayerData(this.$root, this.playerIndex);
+        this.pin(this.playerIndex);
         hiddenPlayersIndexes = hiddenPlayersIndexes.filter(
           (index) => index !== this.playerIndex,
         );
       }
       for (let i = 0; i < hiddenPlayersIndexes.length; i++) {
         if (hiddenPlayersIndexes.includes(i)) {
-          // TODO find a better way to share methods with this.$root for type safety
-          (this.$root as unknown as typeof mainAppSettings.methods).setVisibilityState('pinned_player_' + i, false);
+          this.unpin(i);
         }
       }
     },
     buttonLabel(): string {
-      return isPinned(this.$root, this.playerIndex) ? 'hide' : 'show';
+      return this.isPinned(this.playerIndex) ? 'hide' : 'show';
     },
     togglePlayerDetails() {
       // for the player viewing this page => scroll to cards UI
@@ -112,9 +124,16 @@ export default Vue.extend({
     availableBlueActionCount(): number {
       return this.player.availableBlueCardActionCount;
     },
+    getCorporationName(): string[] {
+      const cards = this.player.tableau;
+      const corporationCards = cards
+        .filter((card) => getCard(card.name)?.type === CardType.CORPORATION)
+        .map((card) => card.name);
+      return corporationCards.length === 0 ? [''] : corporationCards;
+    },
     corporationCardName(): CardName | undefined {
       const card = this.player.tableau[0];
-      if (card?.cardType !== CardType.CORPORATION) return undefined;
+      if (getCard(card.name)?.type !== CardType.CORPORATION) return undefined;
       return card.name;
     },
   },
@@ -127,10 +146,17 @@ export default Vue.extend({
         <div class="player-status">
           <div class="player-info-details">
             <div class="player-info-name"  @click="togglePlayerDetails">{{ player.name }} <em title="vip" v-if="player.isvip" :class="'icon_vip'+player.isvip" /></div>
-            <div class="icon-first-player" v-if="firstForGen && playerView.players.length > 1" v-i18n>1st</div>
-            <div class="player-info-corp" @click="togglePlayerDetails" v-if="corporationCardName() !== undefined" :title="$t(corporationCardName())"><span v-i18n>{{ corporationCardName() }}</span></div>
+            <span @click="togglePlayerDetails"   v-i18n>
+              <div class="player-info-corp" :title="$t(corporationCardName())">
+                {{ corporationCardName() }}
+              </div>
+            </span>
           </div>
-          <player-status :timer="player.timer" :showTimers="playerView.game.gameOptions.showTimers" :firstForGen="firstForGen" v-trim-whitespace :actionLabel="actionLabel" />
+          <div>
+            <div class="icon-first-player" v-if="firstForGen && playerView.players.length > 1" v-i18n>1st</div>
+            <player-status :timer="player.timer" :showTimer="playerView.game.gameOptions.showTimers" :liveTimer="playerView.game.phase !== Phase.END" :firstForGen="firstForGen" v-trim-whitespace :actionLabel="actionLabel"
+              :rankTier="player.rankTier" :playerId="playerId" :rank-mode="playerView.game.gameOptions.rankOption" :finalRankTimeLimit="finalRankTimeLimit"/>
+          </div>
         </div>
           <PlayerResources :player="player" v-trim-whitespace />
           <div class="player-played-cards">
@@ -142,7 +168,7 @@ export default Vue.extend({
                 <div class="played-cards-count">{{numberOfPlayedCards()}}</div>
               </div>
             </div>
-            <Button class="played-cards-button" size="tiny" @click="togglePlayerDetails" :title="buttonLabel()" />
+            <AppButton class="played-cards-button" size="tiny" @click="togglePlayerDetails" :title="buttonLabel()" />
           </div>
           <div class="tag-display player-board-blue-action-counter" :class="tooltipCss" :data-tooltip="$t('The number of available actions on active cards')">
             <div class="tag-count tag-action-card">

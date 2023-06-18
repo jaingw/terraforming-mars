@@ -14,7 +14,7 @@ export class Viron extends Card implements ICard, ICorporationCard {
       name: CardName.VIRON,
       tags: [Tag.MICROBE],
       startingMegaCredits: 48,
-      cardType: CardType.CORPORATION,
+      type: CardType.CORPORATION,
 
       metadata: {
         cardNumber: 'R12',
@@ -32,6 +32,7 @@ export class Viron extends Card implements ICard, ICorporationCard {
     });
   }
 
+  // This matches Viron.getActionCards.
   private getActionCards(player: Player): Array<IActionCard & ICard> {
     const result: Array<IActionCard & ICard> = [];
 
@@ -40,10 +41,13 @@ export class Viron extends Card implements ICard, ICorporationCard {
       if (playedCard === this) {
         continue;
       }
-      if (isIHasCheckLoops(playedCard) && playedCard.getCheckLoops() >= 2) continue;
-      if (isIActionCard(playedCard) &&
-          player.getActionsThisGeneration().has(playedCard.name) &&
-          playedCard.canAct(player)) {
+      if (!isIActionCard(playedCard)) {
+        continue;
+      }
+      if (isIHasCheckLoops(playedCard) && playedCard.getCheckLoops() >= 2) {
+        continue;
+      }
+      if (player.getActionsThisGeneration().has(playedCard.name) && playedCard.canAct(player)) {
         result.push(playedCard);
       }
     }

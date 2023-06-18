@@ -43,4 +43,5 @@ export interface PlayerInputModel {
     availableParties: Array<PartyName> | undefined;
     turmoil?: TurmoilModel;
     globalEventCards?:Array<StaticGlobalEventProperties>;
+    showReset: boolean;
 }

@@ -11,7 +11,7 @@ import {ICorporationCard} from '../corporation/ICorporationCard';
 export class LabourUnion extends Card implements ICorporationCard {
   constructor() {
     super({
-      cardType: CardType.CORPORATION,
+      type: CardType.CORPORATION,
       name: CardName.LABOUR_UNION,
       tags: [Tag.BUILDING],
       startingMegaCredits: 55,

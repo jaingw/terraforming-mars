@@ -10,7 +10,7 @@ export class VenusUniversity extends Card implements IProjectCard {
   constructor() {
     super({
       name: CardName.VENUS_UNIVERSITY,
-      cardType: CardType.ACTIVE,
+      type: CardType.ACTIVE,
       tags: [Tag.VENUS, Tag.SCIENCE],
       cost: 10,
 

@@ -3,14 +3,14 @@ import {digit} from '../../Options';
 import {Card} from '../../Card';
 import {CardName} from '../../../../common/cards/CardName';
 import {CardType} from '../../../../common/cards/CardType';
-import {Resources} from '../../../../common/Resources';
+import {Resource} from '../../../../common/Resource';
 import {ICorporationCard} from '../../corporation/ICorporationCard';
 import {CardRenderer} from '../../render/CardRenderer';
 
 export class _Polyphemos_ extends Card implements ICorporationCard {
   constructor() {
     super({
-      cardType: CardType.CORPORATION,
+      type: CardType.CORPORATION,
       name: CardName._POLYPHEMOS_,
       tags: [],
       startingMegaCredits: 50,
@@ -33,7 +33,7 @@ export class _Polyphemos_ extends Card implements ICorporationCard {
 
 
   public override bespokePlay(player: Player) {
-    player.production.add(Resources.MEGACREDITS, 5);
+    player.production.add(Resource.MEGACREDITS, 5);
     player.titanium += 5;
     return undefined;
   }

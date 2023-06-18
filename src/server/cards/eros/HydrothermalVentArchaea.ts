@@ -1,5 +1,4 @@
 import {IProjectCard} from '../IProjectCard';
-import {VictoryPoints} from '../ICard';
 import {CardRenderer} from '../render/CardRenderer';
 import {CardRequirements} from '../CardRequirements';
 import {Card} from '../Card';
@@ -11,12 +10,12 @@ import {CardResource} from '../../../common/CardResource';
 export class HydrothermalVentArchaea extends Card implements IProjectCard {
   constructor() {
     super({
-      cardType: CardType.ACTIVE,
+      type: CardType.ACTIVE,
       name: CardName.HYDROTHERMAL_VENT_ARCHAEA,
       tags: [Tag.MICROBE],
       cost: 8,
       resourceType: CardResource.MICROBE,
-      victoryPoints: VictoryPoints.resource(1, 2),
+      victoryPoints: {resourcesHere: {}, per: 2},
       requirements: CardRequirements.builder((b) => b.oceans(3)),
       metadata: {
         cardNumber: 'Q12',

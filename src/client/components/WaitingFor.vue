@@ -1,8 +1,11 @@
 <template>
   <div v-if="playerView.block">{{ $t('Please Login with right user') }} <a href="login" class="player_name  player_bg_color_blue">{{ $t('Login') }}</a></div>
-  <div v-else-if="waitingfor === undefined">{{ $t('Not your turn to take any actions') }}</div>
   <div v-else-if="playerView.undoing">{{ $t('Undoing, Please refresh or wait seconds') }}</div>
+  <div v-else-if="waitingfor === undefined">{{ $t('Not your turn to take any actions') }}</div>
   <div v-else class="wf-root">
+    <template v-if="false && waitingfor !== undefined && waitingfor.showReset && playerView.players.length === 1">
+      <div @click="reset">Reset This Action <span class="reset" >(experimental)</span></div>
+    </template>
     <player-input-factory :players="players"
                           :playerView="playerView"
                           :playerinput="waitingfor"
@@ -15,7 +18,7 @@
 <script lang="ts">
 
 import Vue from 'vue';
-import {MainAppData, mainAppSettings} from '@/client/components/App';
+import {vueRoot} from '@/client/components/vueRoot';
 import {PlayerInputModel} from '@/common/models/PlayerInputModel';
 import {PlayerViewModel, PublicPlayerModel} from '@/common/models/PlayerModel';
 import {getPreferences, PreferencesManager} from '@/client/utils/PreferencesManager';
@@ -28,6 +31,7 @@ import * as paths from '@/common/app/paths';
 import * as HTTPResponseCode from '@/client/utils/HTTPResponseCode';
 import {isPlayerId} from '@/common/Types';
 import {InputResponse} from '@/common/inputs/InputResponse';
+import {Phase} from '../../common/Phase';
 
 let ui_update_timeout_id: number | undefined;
 let documentTitleTimer: number | undefined;
@@ -64,10 +68,11 @@ export default Vue.extend({
       }
       document.title = next + ' ' + this.$t(constants.APP_NAME);
     },
+    // TODO(kberg): use loadPlayerViewResponse.
     onsave(out: InputResponse) {
       const xhr = new XMLHttpRequest();
-      const root = this.$root as unknown as MainAppData;
-      const showAlert = (this.$root as unknown as typeof mainAppSettings.methods).showAlert;
+      const root = vueRoot(this);
+      const showAlert = root.showAlert;
 
       if (root.isServerSideRequestInProgress) {
         console.warn('Server request in progress');
@@ -88,7 +93,7 @@ export default Vue.extend({
           root.playerView = xhr.response;
           root.playerkey++;
           root.screen = 'player-home';
-          if (root?.playerView?.game.phase === 'end' && window.location.pathname !== '/the-end') {
+          if ((root?.playerView?.game.phase === Phase.END || root.playerView?.game.phase === Phase.TIMEOUT || root.playerView?.game.phase === Phase.ABANDON) && window.location.pathname !== '/' + paths.THE_END) {
             (window).location = (window).location; // eslint-disable-line no-self-assign
           }
         } else if (xhr.status === HTTPResponseCode.BAD_REQUEST && xhr.responseType === 'json') {
@@ -104,9 +109,52 @@ export default Vue.extend({
         root.isServerSideRequestInProgress = false;
       };
     },
+    reset() {
+      const xhr = new XMLHttpRequest();
+      const root = vueRoot(this);
+      if (root.isServerSideRequestInProgress) {
+        console.warn('Server request in progress');
+        return;
+      }
+
+      root.isServerSideRequestInProgress = true;
+
+      const userId = PreferencesManager.load('userId');
+      let url = paths.RESET + '?id=' + this.playerView.id;
+      if (userId.length > 0) {
+        url += '&userId=' + userId;
+      }
+      xhr.open('GET', url);
+      xhr.responseType = 'json';
+      xhr.onload = () => {
+        this.loadPlayerViewResponse(xhr);
+      };
+      xhr.send();
+      xhr.onerror = function() {
+        root.isServerSideRequestInProgress = false;
+      };
+    },
+    loadPlayerViewResponse(xhr: XMLHttpRequest) {
+      const root = vueRoot(this);
+      const showAlert = vueRoot(this).showAlert;
+      if (xhr.status === 200) {
+        root.screen = 'empty';
+        root.playerView = xhr.response;
+        root.playerkey++;
+        root.screen = 'player-home';
+        if ((root?.playerView?.game.phase === Phase.END || root.playerView?.game.phase === Phase.TIMEOUT || root.playerView?.game.phase === Phase.ABANDON) && window.location.pathname !== '/' + paths.THE_END) {
+          (window).location = (window).location; // eslint-disable-line no-self-assign
+        }
+      } else if (xhr.status === 400 && xhr.responseType === 'json') {
+        showAlert(xhr.response.message);
+      } else {
+        showAlert('Unexpected response from server. Please try again.');
+      }
+      root.isServerSideRequestInProgress = false;
+    },
+
     waitForUpdate: function(faster:boolean = false) {
-      const root = this.$root as unknown as typeof mainAppSettings.methods;
-      const rootdata = this.$root as unknown as typeof mainAppSettings.data;
+      const root = vueRoot(this);
       clearInterval(ui_update_timeout_id);
       let failednum = 0;
       let allnum = 0;
@@ -123,7 +171,7 @@ export default Vue.extend({
           if (xhr.status === HTTPResponseCode.OK) {
             allnum ++;
             failednum = 0;
-            if (rootdata.playerView?.game.phase === 'end') {
+            if (root.playerView?.game.phase === 'end') {
               clearInterval(ui_update_timeout_id);
               return;
             }
@@ -136,7 +184,7 @@ export default Vue.extend({
                 Notification.requestPermission();
               } else if (Notification.permission === 'granted') {
                 const notificationOptions = {
-                  icon: '/favicon.ico',
+                  icon: 'favicon.ico',
                   body: 'It\'s your turn!',
                 };
                 const notificationTitle = constants.APP_NAME;
@@ -156,10 +204,11 @@ export default Vue.extend({
                   });
                 }
               }
-
-              const soundsEnabled = getPreferences().enable_sounds;
-              if (soundsEnabled) SoundManager.playActivePlayerSound();
-
+              if (!this.playerView.undoing ) {
+                //  自己撤回时，也会进到这里，就不用放音了
+                const soundsEnabled = getPreferences().enable_sounds;
+                if (soundsEnabled) SoundManager.playActivePlayerSound();
+              }
               // We don't need to wait anymore - it's our turn
               return;
             } else if (result.result === 'REFRESH') {

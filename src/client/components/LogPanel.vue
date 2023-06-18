@@ -21,7 +21,7 @@
           <div class='debugid'>(debugid {{step}})</div>
         </div>
         <div class="card-panel" v-if="cardNames.length + globalEventNames.length + colonyNames.length > 0">
-          <Button size="big" type="close" :disableOnServerBusy="false" @click="hideMe" align="right"/>
+          <AppButton size="big" type="close" :disableOnServerBusy="false" @click="hideMe" align="right"/>
           <div id="log_panel_card" class="cardbox" v-for="cardName in cardNames.elements" :key="cardName">
             <Card :card="{name: cardName, resources: getResourcesOnCard(cardName)}"/>
           </div>
@@ -57,10 +57,10 @@ import {GlobalEventName} from '@/common/turmoil/globalEvents/GlobalEventName';
 import GlobalEvent from '@/client/components/turmoil/GlobalEvent.vue';
 import {getGlobalEventModel} from '@/client/turmoil/ClientGlobalEventManifest';
 import {GlobalEventModel} from '@/common/models/TurmoilModel';
-import Button from '@/client/components/common/Button.vue';
+import AppButton from '@/client/components/common/AppButton.vue';
 import {Log} from '@/common/logs/Log';
 import {getCard} from '@/client/cards/ClientCardManifest';
-import {PlayerId, SpectatorId} from '@/common/Types';
+import {ParticipantId} from '@/common/Types';
 import {ColonyName} from '@/common/colonies/ColonyName';
 import Colony from '@/client/components/colonies/Colony.vue';
 import {ColonyModel} from '@/common/models/ColonyModel';
@@ -73,7 +73,7 @@ const cardTypeToCss: Record<CardType, string | undefined> = {
   active: 'background-color-active',
   automated: 'background-color-automated',
   prelude: 'background-color-prelude',
-  leader: 'background-color-leader',
+  ceo: 'background-color-ceo',
   standard_project: 'background-color-standard-project',
   standard_action: 'background-color-standard-project',
   proxy: undefined,
@@ -122,7 +122,7 @@ export default Vue.extend({
   name: 'log-panel',
   props: {
     id: {
-      type: String as () => PlayerId | SpectatorId,
+      type: String as () => ParticipantId,
     },
     generation: {
       type: Number,
@@ -152,7 +152,7 @@ export default Vue.extend({
     };
   },
   components: {
-    Button,
+    AppButton,
     Card,
     GlobalEvent,
     Colony,
@@ -182,7 +182,7 @@ export default Vue.extend({
       switch (data.type) {
       case LogMessageDataType.PLAYER:
         for (const player of this.players) {
-          if (data.value === player.color || data.value === player.id) {
+          if (data.value === player.color) {
             return '<span class="log-player player_bg_color_'+player.color+'">'+player.name+'</span>';
           }
         }
@@ -192,7 +192,7 @@ export default Vue.extend({
         const cardName = data.value as CardName;
         const card = getCard(cardName);
         if (card !== undefined) {
-          return this.cardToHtml(card.cardType, cardName);
+          return this.cardToHtml(card.type, cardName);
         } else {
           console.log(`Cannot render ${cardName}`);
         }

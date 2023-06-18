@@ -7,7 +7,7 @@ import {Size} from '../../../../common/cards/render/Size';
 import {ICorporationCard} from '../../corporation/ICorporationCard';
 import {UnitedNationsMarsInitiative} from '../../corporation/UnitedNationsMarsInitiative';
 import {Phase} from '../../../../common/Phase';
-import {Resources} from '../../../../common/Resources';
+import {Resource} from '../../../../common/Resource';
 
 const ACTION_COST = 5;
 export class _UnitedNationsMarsInitiative_ extends UnitedNationsMarsInitiative implements IActionCard, ICorporationCard {
@@ -54,7 +54,7 @@ export class _UnitedNationsMarsInitiative_ extends UnitedNationsMarsInitiative i
       return;
     }
     if (game.phase === Phase.ACTION || game.phase === Phase.PRELUDES) {
-      cardOwner.addResource(Resources.MEGACREDITS, steps * 2, {log: true});
+      cardOwner.addResource(Resource.MEGACREDITS, steps * 2, {log: true});
     }
   }
 }

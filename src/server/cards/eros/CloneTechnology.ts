@@ -8,12 +8,12 @@ import {played} from '../Options';
 import {CardName} from '../../../common/cards/CardName';
 import {CardType} from '../../../common/cards/CardType';
 import {Tag} from '../../../common/cards/Tag';
-import {Resources} from '../../../common/Resources';
+import {Resource} from '../../../common/Resource';
 
 export class CloneTechnology extends Card implements IProjectCard {
   constructor() {
     super({
-      cardType: CardType.AUTOMATED,
+      type: CardType.AUTOMATED,
       name: CardName.CLONE_TECHNOLOGY,
       tags: [Tag.SCIENCE, Tag.MICROBE],
       cost: 13,
@@ -217,11 +217,11 @@ export class CloneTechnology extends Card implements IProjectCard {
         throw new Error('not enough heat production');
       }
 
-      player.production.add(Resources.ENERGY, result.energyProduction);
-      player.production.add(Resources.MEGACREDITS, result.megaCreditProduction);
-      player.production.add(Resources.PLANTS, result.plantProduction);
-      player.production.add(Resources.HEAT, result.heatProduction);
-      player.addResource(Resources.PLANTS, result.plantResource);
+      player.production.add(Resource.ENERGY, result.energyProduction);
+      player.production.add(Resource.MEGACREDITS, result.megaCreditProduction);
+      player.production.add(Resource.PLANTS, result.plantProduction);
+      player.production.add(Resource.HEAT, result.heatProduction);
+      player.addResource(Resource.PLANTS, result.plantResource);
 
       player.game.log('${0} copied ${1} production and plant resource with ${2}', (b) =>
         b.player(player).cardName(result.name).card(this));

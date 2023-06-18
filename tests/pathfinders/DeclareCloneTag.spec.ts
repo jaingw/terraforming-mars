@@ -5,7 +5,7 @@ import {Tag} from '../../src/common/cards/Tag';
 import {OrOptions} from '../../src/server/inputs/OrOptions';
 import {SelectOption} from '../../src/server/inputs/SelectOption';
 import {TestPlayer} from '../TestPlayer';
-import {getTestPlayer, newTestGame} from '../TestGame';
+import {testGame} from '../TestGame';
 import {cast, runAllActions} from '../TestingUtils';
 import {Game} from '../../src/server/Game';
 import {CrewTraining} from '../../src/server/cards/pathfinders/CrewTraining';
@@ -18,16 +18,15 @@ describe('DeclareCloneTag', function() {
   let tag: Tag;
 
   beforeEach(function() {
-    game = newTestGame(1);
+    [game, player] = testGame(1, {pathfindersExpansion: true});
     card = new LobbyHalls();
-    player = getTestPlayer(game, 0);
   });
 
   it('sanity', function() {
     const action = new DeclareCloneTag(player, card, (t) => tag = t);
 
     const options = cast(action.execute(), OrOptions);
-    const orOptions = options.options as Array<SelectOption>;
+    const orOptions = cast(options.options, Array<SelectOption>);
 
     expect(orOptions).has.length(3);
     expect(card.cloneTag).eq(Tag.CLONE);
@@ -37,28 +36,39 @@ describe('DeclareCloneTag', function() {
     expect(tag).eq(Tag.EARTH);
 
     orOptions[1].cb();
-    expect(card.cloneTag).eq(Tag.JOVIAN);
-    expect(tag).eq(Tag.JOVIAN);
-
-    orOptions[2].cb();
     expect(card.cloneTag).eq(Tag.MARS);
     expect(tag).eq(Tag.MARS);
+
+    orOptions[2].cb();
+    expect(card.cloneTag).eq(Tag.JOVIAN);
+    expect(tag).eq(Tag.JOVIAN);
   });
 
   it('clone tag with expansions', function() {
-    const game = newTestGame(1, {venusNextExtension: true, moonExpansion: true});
-    player = getTestPlayer(game, 0);
+    const [, player] = testGame(1, {venusNextExtension: true, moonExpansion: true, pathfindersExpansion: true});
 
     const action = new DeclareCloneTag(player, card, (t) => tag = t);
 
     const options = action.execute();
-    const orOptions = options.options as Array<SelectOption>;
+    const orOptions = cast(options.options, Array<SelectOption>);
 
     expect(orOptions).has.length(5);
 
-    orOptions[3].cb();
+    orOptions[0].cb();
     expect(card.cloneTag).eq(Tag.VENUS);
     expect(tag).eq(Tag.VENUS);
+
+    orOptions[1].cb();
+    expect(card.cloneTag).eq(Tag.EARTH);
+    expect(tag).eq(Tag.EARTH);
+
+    orOptions[2].cb();
+    expect(card.cloneTag).eq(Tag.MARS);
+    expect(tag).eq(Tag.MARS);
+
+    orOptions[3].cb();
+    expect(card.cloneTag).eq(Tag.JOVIAN);
+    expect(tag).eq(Tag.JOVIAN);
 
     orOptions[4].cb();
     expect(card.cloneTag).eq(Tag.MOON);

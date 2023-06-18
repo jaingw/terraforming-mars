@@ -1,10 +1,9 @@
 <script lang="ts">
 import Vue from 'vue';
-import Button from '@/client/components/common/Button.vue';
+import AppButton from '@/client/components/common/AppButton.vue';
 import {LoadGameFormModel} from '@/common/models/LoadGameFormModel';
 import {SimpleGameModel} from '@/common/models/SimpleGameModel';
-import {MainAppData} from '@/client/components/App';
-
+import {vueRoot} from '@/client/components/vueRoot';
 import * as constants from '@/common/constants';
 import * as paths from '@/common/app/paths';
 import * as HTTPResponseCode from '@/client/utils/HTTPResponseCode';
@@ -12,7 +11,7 @@ import * as HTTPResponseCode from '@/client/utils/HTTPResponseCode';
 export default Vue.extend({
   name: 'LoadGameForm',
   components: {
-    Button,
+    AppButton,
   },
   data() {
     return {
@@ -34,12 +33,12 @@ export default Vue.extend({
         if (xhr.status === HTTPResponseCode.OK) {
           const response = xhr.response as SimpleGameModel;
           if (response.players.length === 1) {
-            window.location.href = '/player?id=' + response.players[0].id;
+            window.location.href = 'player?id=' + response.players[0].id;
             return;
           } else {
-            window.history.replaceState(response, `${constants.APP_NAME} - Game`, '/game?id=' + response.id);
-            (this.$root.$data as unknown as MainAppData).game = response;
-            (this.$root.$data as unknown as MainAppData).screen = 'game-home';
+            window.history.replaceState(response, `${constants.APP_NAME} - Game`, 'game?id=' + response.id);
+            vueRoot(this).game = response;
+            vueRoot(this).screen = 'game-home';
           }
         } else {
           alert('Unexpected server response');
@@ -66,7 +65,7 @@ export default Vue.extend({
                   <input class="form-input form-inline load-game-id" :placeholder="'Game Id'" v-model="gameId" /><br/>
                   <label for="rollbackCount">Number of saves to delete before loading:</label><br/>
                   <input class="form-input form-inline load-game-id" value="0" v-model="rollbackCount" /><br/>
-                  <Button title="Load Game" size="big" type="success" @click="loadGame" />
+                  <AppButton title="Load Game" size="big" type="success" @click="loadGame" />
               </div>
           </div>
       </div>

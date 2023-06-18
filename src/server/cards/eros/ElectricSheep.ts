@@ -1,6 +1,6 @@
 import {IProjectCard} from '../IProjectCard';
 import {Player} from '../../Player';
-import {IActionCard, VictoryPoints} from '../ICard';
+import {IActionCard} from '../ICard';
 import {DecreaseAnyProduction} from '../../deferredActions/DecreaseAnyProduction';
 import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
@@ -9,18 +9,18 @@ import {all} from '../Options';
 import {CardName} from '../../../common/cards/CardName';
 import {CardType} from '../../../common/cards/CardType';
 import {Tag} from '../../../common/cards/Tag';
-import {Resources} from '../../../common/Resources';
+import {Resource} from '../../../common/Resource';
 import {CardResource} from '../../../common/CardResource';
 
 export class ElectricSheep extends Card implements IActionCard, IProjectCard {
   constructor() {
     super({
-      cardType: CardType.ACTIVE,
+      type: CardType.ACTIVE,
       name: CardName.ELECTRIC_SHEEP,
       tags: [Tag.POWER, Tag.ANIMAL],
       cost: 10,
       resourceType: CardResource.ANIMAL,
-      victoryPoints: VictoryPoints.resource(1, 1),
+      victoryPoints: {resourcesHere: {}},
 
       requirements: CardRequirements.builder((b) => b.tag(Tag.POWER, 4)),
       metadata: {
@@ -55,7 +55,7 @@ export class ElectricSheep extends Card implements IActionCard, IProjectCard {
   }
 
   public override bespokePlay(player: Player) {
-    player.game.defer(new DecreaseAnyProduction(player, Resources.ENERGY, {count: 1}));
+    player.game.defer(new DecreaseAnyProduction(player, Resource.ENERGY, {count: 1}));
     return undefined;
   }
 }

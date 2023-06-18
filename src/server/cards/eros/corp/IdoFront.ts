@@ -5,7 +5,7 @@ import {CardRenderer} from '../../render/CardRenderer';
 import {CardName} from '../../../../common/cards/CardName';
 import {CardType} from '../../../../common/cards/CardType';
 import {Tag} from '../../../../common/cards/Tag';
-import {Resources} from '../../../../common/Resources';
+import {Resource} from '../../../../common/Resource';
 import {ICorporationCard} from '../../corporation/ICorporationCard';
 import {SerializedCard} from '../../../SerializedCard';
 
@@ -17,7 +17,7 @@ export class IdoFront extends Card implements ICorporationCard {
       name: CardName.IDO_FRONT,
       tags: [],
       startingMegaCredits: 32,
-      cardType: CardType.CORPORATION,
+      type: CardType.CORPORATION,
 
       metadata: {
         cardNumber: 'Q23',
@@ -42,14 +42,14 @@ export class IdoFront extends Card implements ICorporationCard {
       if (this.allTags.has(tag)) {
         count +=1;
       }
-      if ( card.cardType !== CardType.EVENT ) {
+      if ( card.type !== CardType.EVENT ) {
         this.allTags.add(tag);
       }
     }
 
     const wildCount = player.tags.count(Tag.WILD);
     if (card.tags.length >= count) {
-      player.addResource(Resources.MEGACREDITS, 2*Math.min(card.tags.length, count+wildCount));
+      player.addResource(Resource.MEGACREDITS, 2*Math.min(card.tags.length, count+wildCount));
     }
     return undefined;
   }

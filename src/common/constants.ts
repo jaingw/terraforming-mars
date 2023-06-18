@@ -30,7 +30,7 @@ export const TITANIUM_TRADE_COST = 3;
 
 // Turmoil
 export const DELEGATES_PER_PLAYER = 7;
-export const DELEGATES_FOR_NEUTRAL_PLAYER = 13;
+export const DELEGATES_FOR_NEUTRAL_PLAYER = 14;
 export const REDS_RULING_POLICY_COST = 3;
 export const POLITICAL_AGENDAS_MAX_ACTION_USES = 3;
 
@@ -55,6 +55,9 @@ export const BONUS_SECONDS_PER_ACTION = 2;
 export const DEFAULT_ESCAPE_VELOCITY_THRESHOLD = 30;
 export const DEFAULT_ESCAPE_VELOCITY_PERIOD = 2;
 export const DEFAULT_ESCAPE_VELOCITY_PENALTY = 1;
+
+// Leaders/CEOs
+export const ASIMOV_AWARD_BONUS = 2;
 
 export const LANGUAGES2 = {
   en: 'English',
@@ -85,3 +88,7 @@ export const LANGUAGES = [
 export const APP_NAME = 'Terraforming Mars';
 export const DISCORD_INVITE = 'https://discord.gg/afeyggbN6Y';
 export const PRELUDE_CARDS_DEALT_PER_PLAYER = 4;
+
+// Rank Mode
+export const DEFAULT_RANK_TIME_LIMIT = 20;
+export const DEFAULT_RANK_TIME_PER_GENERATION = 15;

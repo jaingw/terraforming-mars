@@ -6,7 +6,7 @@ import {Card} from '../Card';
 import {CardName} from '../../../common/cards/CardName';
 import {CardType} from '../../../common/cards/CardType';
 import {CardRenderer} from '../render/CardRenderer';
-import {Resources} from '../../../common/Resources';
+import {Resource} from '../../../common/Resource';
 import {TurmoilUtil} from '../../turmoil/TurmoilUtil';
 
 export class SeptemTribus extends Card implements IActionCard, ICorporationCard {
@@ -15,7 +15,7 @@ export class SeptemTribus extends Card implements IActionCard, ICorporationCard 
       name: CardName.SEPTEM_TRIBUS,
       tags: [Tag.WILD],
       startingMegaCredits: 36,
-      cardType: CardType.CORPORATION,
+      type: CardType.CORPORATION,
 
       metadata: {
         cardNumber: 'R15',
@@ -40,7 +40,7 @@ export class SeptemTribus extends Card implements IActionCard, ICorporationCard 
   public action(player: Player) {
     const turmoil = TurmoilUtil.getTurmoil(player.game);
     const partiesWithPresence = turmoil.parties.filter((party) => party.delegates.has(player.id));
-    player.addResource(Resources.MEGACREDITS, partiesWithPresence.length * 2, {log: true});
+    player.addResource(Resource.MEGACREDITS, partiesWithPresence.length * 2, {log: true});
 
     return undefined;
   }

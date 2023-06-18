@@ -1,4 +1,4 @@
-import {IActionCard, VictoryPoints} from '../ICard';
+import {IActionCard} from '../ICard';
 import {IProjectCard} from '../IProjectCard';
 import {Player} from '../../Player';
 import {CardRequirements} from '../CardRequirements';
@@ -7,18 +7,18 @@ import {Card} from '../Card';
 import {CardName} from '../../../common/cards/CardName';
 import {CardType} from '../../../common/cards/CardType';
 import {Tag} from '../../../common/cards/Tag';
-import {Resources} from '../../../common/Resources';
+import {Resource} from '../../../common/Resource';
 import {CardResource} from '../../../common/CardResource';
 
 export class Cow extends Card implements IActionCard, IProjectCard {
   constructor() {
     super({
-      cardType: CardType.ACTIVE,
+      type: CardType.ACTIVE,
       name: CardName.COW,
       tags: [Tag.ANIMAL],
       cost: 6,
       resourceType: CardResource.ANIMAL,
-      victoryPoints: VictoryPoints.resource(1, 2),
+      victoryPoints: {resourcesHere: {}, per: 2},
 
       requirements: CardRequirements.builder((b) => b.oxygen(5)),
       metadata: {
@@ -27,7 +27,7 @@ export class Cow extends Card implements IActionCard, IProjectCard {
           b.action('Spend 1 plant to add 1 Animal to this card and gain 5 M€.', (eb) => {
             eb.plants(1).startAction.megacredits(5).nbsp.animals(1);
           }).br;
-          b.vpText('1 VP for each 2 Animals on this card.');
+          b.vpText('1 VP for per 2 Animals on this card.');
         }),
         description: 'Requires 5% oxygen.',
       },
@@ -36,12 +36,12 @@ export class Cow extends Card implements IActionCard, IProjectCard {
   public override resourceCount = 0;
 
   public canAct(player: Player): boolean {
-    return player.getResource(Resources.PLANTS) >= 1;
+    return player.getResource(Resource.PLANTS) >= 1;
   }
   public action(player: Player) {
     player.addResourceTo(this, 1);
-    player.addResource(Resources.PLANTS, -1);
-    player.addResource(Resources.MEGACREDITS, 5);
+    player.addResource(Resource.PLANTS, -1);
+    player.addResource(Resource.MEGACREDITS, 5);
     return undefined;
   }
 }

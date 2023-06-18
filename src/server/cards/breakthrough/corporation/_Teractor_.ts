@@ -11,7 +11,7 @@ import {ICorporationCard} from '../../corporation/ICorporationCard';
 export class _Teractor_ extends Card implements ICorporationCard {
   constructor() {
     super({
-      cardType: CardType.CORPORATION,
+      type: CardType.CORPORATION,
       name: CardName._TERACTOR_,
       tags: [Tag.EARTH],
       startingMegaCredits: 55,

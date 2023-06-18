@@ -80,6 +80,10 @@ export default Vue.extend({
       if (player.exited) {
         return ActionLabel.RESIGNED;
       }
+      // 天梯 TODO: 异常结束游戏的`ActionLabel`等价于体退的状态？
+      if (this.playerView.game.phase === Phase.TIMEOUT || this.playerView.game.phase === Phase.ABANDON) {
+        return ActionLabel.RESIGNED;
+      }
       if (this.playerView.game.phase === Phase.DRAFTING) {
         if (player.waitingFor !== undefined) {
           return ActionLabel.DRAFTING;
@@ -137,8 +141,8 @@ export default Vue.extend({
 <template>
         <div class="players-overview" v-if="hasPlayers()">
             <div class="other_player" v-if="thisPlayer === undefined || players.length > 1">
-                <div v-for="(otherPlayer, index) in getPlayersInOrder()" :key="otherPlayer.id">
-                    <other-player v-if="thisPlayer === undefined || otherPlayer.id !== thisPlayer.id" :player="otherPlayer" :playerIndex="index"/>
+                <div v-for="(otherPlayer, index) in getPlayersInOrder()" :key="otherPlayer.color">
+                    <other-player v-if="thisPlayer === undefined || otherPlayer.color !== thisPlayer.color" :player="otherPlayer" :playerIndex="index"/>
                 </div>
             </div>
             <template v-for="(p, index) in getPlayersInOrder()" >
@@ -148,7 +152,7 @@ export default Vue.extend({
               </div>
               <player-info
                 :player="p"
-                :key="p.id"
+              :key="p.color"
                 :playerView="playerView"
                 :firstForGen="getIsFirstForGen(p)"
                 :actionLabel="getActionLabel(p)"
@@ -162,7 +166,7 @@ export default Vue.extend({
             <player-info
               v-if="thisPlayer !== undefined"
               :player="thisPlayer"
-              :key="thisPlayer.id"
+              :key="thisPlayer.color"
               :playerView="playerView"
               :firstForGen="getIsFirstForGen(thisPlayer)"
               :actionLabel="getActionLabel(thisPlayer)"

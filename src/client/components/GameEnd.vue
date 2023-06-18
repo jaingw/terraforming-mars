@@ -1,13 +1,14 @@
 <template>
   <div id="game-end" class="game_end_cont">
-      <h1  v-i18n>{{ constants.APP_NAME }} - Game finished!</h1>
-      <div class="game_end">
+<!--    <h1  v-i18n>{{ constants.APP_NAME }} - {{this.getPhase()}}<span v-if="game.phase='abandon'">Abandon!</span><span v-else-if="game.phase='timeout'">Time Out!</span><span v-else>Game finished!</span></h1>-->
+    <h1  v-i18n>{{ constants.APP_NAME }} - {{this.getPhase()}}</h1>
+    <div class="game_end">
           <div v-if="isSoloGame()">
               <div v-if="game.isSoloModeWin">
                   <div class="game_end_success">
                       <h2 v-i18n>You win!</h2>
                       <div class="game_end_solo_img">
-                          <img src="/assets/solo_win.png" />
+                          <img src="assets/solo_win.png" />
                       </div>
                       <div class="game_end_notice">
                         <span v-i18n>But it isn't the reason to stop making Mars better.</span>
@@ -35,21 +36,40 @@
                   </div>
               </div>
           </div>
-          <div class="game_end_go_home">
-              <a href="/">
-                  <Button size="big" type="back" />
-                  <span  v-i18n>Go to main page</span>
+          <div v-if="!game.gameOptions.rankOption"  class="game_end_navigation">
+            <div>
+              <a href="new-game">
+                  <AppButton size="big" type="back" />
+                  <span v-i18n>Create New Game</span>
               </a>
+
+              <a href=".">
+                  <AppButton size="big" type="back" />
+                  <span v-i18n>Go to main page</span>
+              </a>
+            </div>
           </div>
-          <div v-if="!isSoloGame() || game.isSoloModeWin" class="game-end-winer-announcement">
+        <div v-else class="game_end_navigation">
+          <a href="/ranks">
+            <AppButton size="big" type="back" />
+            <span v-i18n>Go to Ranking</span>
+          </a>
+        </div>
+          <div v-if="(!isSoloGame() || game.isSoloModeWin) && game.phase==='end'" class="game-end-winer-announcement">
               <span v-for="p in getWinners()" :key="p.color"><span :class="'log-player ' + getEndGamePlayerRowColorClass(p.color)">{{ p.name }}</span></span> <span v-i18n>won!</span>
           </div>
+        <div v-if="game.phase==='timeout'" class="game-end-winer-announcement">
+          <span v-for="p in getTimeOutPlayer()" :key="p.color"><span :class="'log-player ' + getEndGamePlayerRowColorClass(p.color)">{{ p.name }}</span></span> <span class="text-red-500" v-i18n>time out!</span>
+        </div>
           <div class="game_end_victory_points">
+            <h2 v-if="game.phase==='timeout'" class="text-yellow-600"><span v-i18n>Time out player lost 2 Stars, other player got 1 star.</span></h2>
+            <h2 v-else-if="game.phase==='abandon'" class="text-yellow-600"><span v-i18n>All player abandoned the game. Tiers didn't change.</span></h2>
               <h2><span v-i18n>Victory points breakdown after</span> {{game.generation}} <span v-i18n>generations</span></h2>
               <table class="table game_end_table">
                   <thead>
                       <tr v-i18n>
                           <th><div class="card-delegate"></div></th>
+                          <th v-if="game.gameOptions.rankOption"><div class="rank-icon tooltip tooltip-top" :data-tooltip="$t('Rank Mode')"></div></th>
                           <th><div class="tr"></div></th>
                           <th><div class="m-and-a tooltip tooltip-top" :data-tooltip="$t('Milestones points')">M</div></th>
                           <th><div class="m-and-a tooltip tooltip-top" :data-tooltip="$t('Awards points')">A</div></th>
@@ -58,6 +78,7 @@
                           <th v-if="game.moon !== undefined"><div class="table-moon-road-tile"></div></th>
                           <th v-if="game.moon !== undefined"><div class="table-moon-colony-tile"></div></th>
                           <th v-if="game.moon !== undefined"><div class="table-moon-mine-tile"></div></th>
+                          <th v-if="game.pathfinders !== undefined"><div class="table-planetary-track"></div></th>
                           <th><div class="vp">VP</div></th>
                           <th v-if="game.gameOptions.escapeVelocityMode" class="clock-icon tooltip tooltip-top" :data-tooltip="$t('Escape Velocity penalty')">&#x23F3;</th>
                           <th class="game-end-total"><div class="game-end-total-column">Total</div></th>
@@ -69,10 +90,12 @@
                   <tbody>
                       <tr v-for="p in getSortedPlayers()" :key="p.color" :class="getEndGamePlayerRowColorClass(p.color)">
                           <td>
-                            <a :href="'/player?id='+p.id+'&noredirect'">{{ p.name }}</a>
-                                  <div class="column-corporation">{{ p.corporationCard === undefined ? "" : p.corporationCard.name }}</div>
-                                  <div class="column-corporation" v-if="p.corporationCard2 !== undefined">{{ p.corporationCard2.name }}</div>
+                            <a :href="'player?id='+p.id+'&noredirect'">{{ p.name }}</a>
+                            <div class="column-corporation">
+                              <div v-for="(corporationName, index) in getCorporationName(p)" :key="index" v-i18n>{{ corporationName }}</div>
+                            </div>
                           </td>
+                          <td v-if="game.gameOptions.rankOption"><RankTier :rank-tier="p.rankTier" :show-number="true"/></td>
                           <td>{{ p.victoryPointsBreakdown.terraformRating }}</td>
                           <td>{{ p.victoryPointsBreakdown.milestones }}</td>
                           <td>{{ p.victoryPointsBreakdown.awards }}</td>
@@ -81,6 +104,7 @@
                           <td v-if="game.moon !== undefined">{{ p.victoryPointsBreakdown.moonRoads }}</td>
                           <td v-if="game.moon !== undefined">{{ p.victoryPointsBreakdown.moonHabitats }}</td>
                           <td v-if="game.moon !== undefined">{{ p.victoryPointsBreakdown.moonMines }}</td>
+                          <td v-if="game.pathfinders !== undefined"> {{ p.victoryPointsBreakdown.planetaryTracks}}</td>
                           <td>{{ p.victoryPointsBreakdown.victoryPoints }}</td>
                           <td v-if="game.gameOptions.escapeVelocityMode">{{ p.victoryPointsBreakdown.escapeVelocity }}</td>
                           <td class="game-end-total">{{ p.victoryPointsBreakdown.total }}</td>
@@ -88,7 +112,8 @@
                             <div>{{ p.megaCredits }}</div>
                           </td>
                           <td>
-                            <div v-if="game.gameOptions.showTimers" class="game-end-timer">{{ getTimer(p) }}</div>
+                            <div v-if="game.gameOptions.showTimers && !game.gameOptions.rankOption" class="game-end-timer">{{ getTimer(p) }}</div>
+                            <div v-if="game.gameOptions.showTimers && game.gameOptions.rankOption" :class="[checkTimeOut(p), 'game-end-timer']">{{ getCountDownTimer(p) }}</div>
                           </td>
                           <td><div class="game-end-timer">{{ p.actionsTakenThisGame }}</div></td>
                       </tr>
@@ -100,7 +125,7 @@
               <div class="game-end-flexrow">
                   <div v-for="p in getSortedPlayers()" :key="p.color" class="game-end-column">
                       <div class="game-end-winer-scorebreak-player-title">
-                          <div :class="'game-end-player ' + getEndGamePlayerRowColorClass(p.color)"><a :href="'/player?id='+p.id+'&noredirect'">{{p.name}}</a></div>
+                          <div :class="'game-end-player ' + getEndGamePlayerRowColorClass(p.color)"><a :href="'player?id='+p.id+'&noredirect'">{{p.name}}</a></div>
                       </div>
                       <div v-for="v in p.victoryPointsBreakdown.detailsCards" :key="v.cardName">
                         <div class="game-end-column-row">
@@ -174,13 +199,15 @@ import Board from '@/client/components/Board.vue';
 import MoonBoard from '@/client/components/moon/MoonBoard.vue';
 import PlanetaryTracks from '@/client/components/pathfinders/PlanetaryTracks.vue';
 import LogPanel from '@/client/components/LogPanel.vue';
-import Button from '@/client/components/common/Button.vue';
+import AppButton from '@/client/components/common/AppButton.vue';
 import VictoryPointChart from '@/client/components/gameend/VictoryPointChart.vue';
 import {playerColorClass} from '@/common/utils/utils';
 import {Timer} from '@/common/Timer';
 import {SpectatorModel} from '@/common/models/SpectatorModel';
 import {Color} from '@/common/Color';
 import {CardType} from '@/common/cards/CardType';
+import {getCard} from '../cards/ClientCardManifest';
+import RankTier from '@/client/components/RankTier.vue';
 
 function getViewModel(playerView: ViewModel | undefined, spectator: ViewModel | undefined): ViewModel {
   if (playerView !== undefined) return playerView;
@@ -220,6 +247,9 @@ export default Vue.extend({
       }
       return `${paths.API_GAME_LOGS}?id=${id}&full=true`;
     },
+    finalRankTimeLimit(): number {
+      return Number(this.game.gameOptions.rankTimeLimit) + Number(this.game.gameOptions.rankTimePerGeneration) * Math.max((Number(this.game.generation) - 1), 0);
+    },
   },
   data() {
     return {
@@ -227,9 +257,10 @@ export default Vue.extend({
     };
   },
   components: {
+    RankTier,
     'board': Board,
     'log-panel': LogPanel,
-    Button,
+    AppButton,
     MoonBoard,
     PlanetaryTracks,
     VictoryPointChart,
@@ -240,6 +271,16 @@ export default Vue.extend({
     },
     getTimer(p: PublicPlayerModel): string {
       return Timer.toString(p.timer);
+    },
+    checkTimeOut(p: PublicPlayerModel): string {
+      console.log('玩家是否超时：', p.name, Timer.getMinutes(p.timer, this.finalRankTimeLimit));
+      if (Timer.getMinutes(p.timer, this.finalRankTimeLimit) <= 0 && this.game.phase === 'timeout') { // 剩余时间小于5分钟，显示红色时间
+        return 'text-red-500';
+      }
+      return '';
+    },
+    getCountDownTimer(p: PublicPlayerModel): string {
+      return Timer.toString(p.timer, this.finalRankTimeLimit);
     },
     getSortedPlayers(): Array<PublicPlayerModel> {
       const copy = [...this.viewModel.players];
@@ -264,12 +305,22 @@ export default Vue.extend({
       }
       return winners;
     },
+    getPhase() {
+      console.log('phase: ', this.game.phase);
+      return this.game.phase;
+    },
+    getTimeOutPlayer() {
+      return this.players.filter((p) => this.checkTimeOut(p) === 'text-red-500');
+    },
     isSoloGame(): boolean {
       return this.players.length === 1;
     },
-    getCorporationName(p: PublicPlayerModel): string {
-      const firstCard = p.tableau[0];
-      return firstCard.cardType === CardType.CORPORATION ? firstCard.name : '';
+    getCorporationName(p: PublicPlayerModel): string[] {
+      const cards = p.tableau;
+      const corporationCards = cards
+        .filter((card) => getCard(card.name)?.type === CardType.CORPORATION)
+        .map((card) => card.name);
+      return corporationCards.length === 0 ? [''] : corporationCards;
     },
   },
 });

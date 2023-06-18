@@ -27,7 +27,7 @@ import {Player} from './Player';
 import {PlayerId, GameId, SpectatorId} from '../common/Types';
 import {PlayerInput} from './PlayerInput';
 import {CardResource} from '../common/CardResource';
-import {Resources} from '../common/Resources';
+import {Resource} from '../common/Resource';
 import {DeferredAction, Priority, SimpleDeferredAction} from './deferredActions/DeferredAction';
 import {DeferredActionsQueue} from './deferredActions/DeferredActionsQueue';
 import {SelectPaymentDeferred} from './deferredActions/SelectPaymentDeferred';
@@ -65,18 +65,20 @@ import {GrantVenusAltTrackBonusDeferred} from './venusNext/GrantVenusAltTrackBon
 import {PathfindersExpansion} from './pathfinders/PathfindersExpansion';
 import {PathfindersData} from './pathfinders/PathfindersData';
 import {AddResourcesToCard} from './deferredActions/AddResourcesToCard';
-import {isProduction} from './utils/server';
 import {IShortData} from './database/IDatabase';
 import {ColonyDeserializer} from './colonies/ColonyDeserializer';
 import {DEFAULT_GAME_OPTIONS, GameOptions} from './GameOptions';
 import {TheNewSpaceRace} from './cards/pathfinders/TheNewSpaceRace';
 import {IPathfindersData} from './pathfinders/IPathfindersData';
-import {CorporationDeck, PreludeDeck, ProjectDeck} from './cards/Deck';
+import {CorporationDeck, PreludeDeck, ProjectDeck, CeoDeck} from './cards/Deck';
 import {Logger} from './logs/Logger';
 import {SerializedPlayer, SerializedPlayerId} from './SerializedPlayer';
+import {addDays, dayStringToDays} from './database/utils';
+import {ALL_TAGS, Tag} from '../common/cards/Tag';
 import {CardManifest} from './cards/ModuleManifest';
 import {ColoniesHandler} from './colonies/ColoniesHandler';
 import {Dealer} from './Dealer';
+import {getNewSkills, UserRank} from '../common/rank/RankManager';
 
 export enum LoadState {
   HALFLOADED = 'halfloaded',
@@ -100,18 +102,21 @@ export class Game implements Logger {
   public rng: SeededRandom;
   public spectatorId: SpectatorId | undefined;
   public deferredActions: DeferredActionsQueue = new DeferredActionsQueue();
+  public createdTime: Date = new Date(0);
+  // 前端需要根据gameAge 和 undoCount 来判断是否刷新, undoCount 用于获取其他玩家撤回的刷新
   public gameAge: number = 0; // Each log event increases it
   public gameLog: Array<LogMessage> = [];
-  public undoCount: number = 0; // Each undo increases it
+  public undoCount: number = 0; // Each undo increases it， 不入库，所以不会大于1
+  public inputsThisRound = 0;
+  public resettable: boolean = false; // 显示reset按钮 ， 用不上的属性
 
   public generation: number = 1;
   public phase: Phase = Phase.RESEARCH;
   public projectDeck: ProjectDeck;
   public preludeDeck: PreludeDeck;
+  public ceoDeck: CeoDeck;
   public corporationDeck: CorporationDeck;
   public board: Board;
-  public heatFor: boolean = false;
-  public breakthrough: boolean = false;
   public createtime :string = getDate();
   public updatetime :string = getDate();
   private firstExited : boolean = false;// 本时代起始玩家体退 跳过世界政府，时代结束不替换起始玩家
@@ -167,6 +172,11 @@ export class Game implements Logger {
   // Syndicate Pirate Raids
   public syndicatePirateRaider?: string;
 
+  public readonly tags: ReadonlyArray<Tag>;
+  // Rank Mode
+  public quitPlayers: Set<Player> = new Set<Player>;// 天梯 玩家申请退出游戏 所有人均同意则废弃游戏
+  public endGameInProgress: boolean = false; // 锁 避免同时多次访问`endGame`
+
   private constructor(
     public id: GameId,
     private players: Array<Player>,
@@ -176,7 +186,8 @@ export class Game implements Logger {
     board: Board,
     projectDeck: ProjectDeck,
     corporationDeck: CorporationDeck,
-    preludeDeck: PreludeDeck) {
+    preludeDeck: PreludeDeck,
+    ceoDeck: CeoDeck) {
     const playerIds = players.map((p) => p.id);
     if (playerIds.includes(first.id) === false) {
       throw new Error('Cannot find first player ' + first.id + ' in ' + playerIds);
@@ -194,15 +205,46 @@ export class Game implements Logger {
     this.projectDeck = projectDeck;
     this.corporationDeck = corporationDeck;
     this.preludeDeck = preludeDeck;
+    this.ceoDeck = ceoDeck;
     this.board = board;
 
     this.players.forEach((player) => {
       player.game = this;
       if (player.isCorporation(CardName.MONS_INSURANCE)) this.monsInsuranceOwner = player;
     });
+
+    this.tags = ALL_TAGS.filter((tag) => {
+      if (tag === Tag.VENUS) return gameOptions.venusNextExtension;
+      if (tag === Tag.MOON) return gameOptions.moonExpansion;
+      if (tag === Tag.MARS) return gameOptions.pathfindersExpansion;
+      if (tag === Tag.CLONE) return gameOptions.pathfindersExpansion;
+      return true;
+    });
     this.activePlayer = first;
-    this.heatFor = gameOptions.heatFor || false;
-    this.breakthrough = gameOptions.breakthrough || false;
+  }
+
+  // 从数据库加载 ，跳过初始化环节
+  public static rebuild(id: GameId,
+    players: Array<Player>,
+    firstPlayer: Player,
+    gameOptions: GameOptions = {...DEFAULT_GAME_OPTIONS},
+    seed = 0): Game {
+    if (gameOptions.clonedGamedId !== undefined) {
+      throw new Error('Cloning should not come through this execution path.');
+    }
+    if (gameOptions._corporationsDraft === true) {
+      throw new Error('No new games may be created with corporation draft.');
+    }
+    const rng = new SeededRandom(seed);
+    const board = GameSetup.newBoard(gameOptions, rng);
+
+    const projectDeck = new ProjectDeck([], [], rng);
+
+    const corporationDeck = new CorporationDeck([], [], rng);
+    const preludeDeck = new PreludeDeck([], [], rng);
+    const ceoDeck = new CeoDeck([], [], rng);
+    const game: Game = new Game(id, players, firstPlayer, gameOptions, rng, board, projectDeck, corporationDeck, preludeDeck, ceoDeck);
+    return game;
   }
 
   public static newInstance(id: GameId,
@@ -211,11 +253,13 @@ export class Game implements Logger {
     gameOptions: GameOptions = {...DEFAULT_GAME_OPTIONS},
     seed = 0,
     spectatorId: SpectatorId | undefined = undefined,
-    rebuild: boolean = true): Game {
+  ): Game {
     if (gameOptions.clonedGamedId !== undefined) {
       throw new Error('Cloning should not come through this execution path.');
     }
-
+    if (gameOptions._corporationsDraft === true) {
+      throw new Error('No new games may be created with corporation draft.');
+    }
     const rng = new SeededRandom(seed);
     const board = GameSetup.newBoard(gameOptions, rng);
     const gameCards = new GameCards(gameOptions);
@@ -265,7 +309,10 @@ export class Game implements Logger {
     const preludeDeck = new PreludeDeck(gameCards.getPreludeCards(), [], rng);
     preludeDeck.shuffle(gameOptions.customPreludes);
 
-    const game: Game = new Game(id, players, firstPlayer, gameOptions, rng, board, projectDeck, corporationDeck, preludeDeck);
+    const ceoDeck = new CeoDeck(gameCards.getCeoCards(), [], rng);
+    ceoDeck.shuffle(gameOptions.customCeos);
+
+    const game: Game = new Game(id, players, firstPlayer, gameOptions, rng, board, projectDeck, corporationDeck, preludeDeck, ceoDeck);
 
     gameOptions._corporationsDraft = false;
     // Single player game player starts with 14TR
@@ -279,6 +326,8 @@ export class Game implements Logger {
       players[0].terraformRatingAtGenerationStart = 14;
     }
     game.spectatorId = spectatorId;
+    // This evaluation of created time doesn't match what's stored in the database, but that's fine.
+    game.createdTime = new Date();
     // Initialize Ares data
     if (gameOptions.aresExtension) {
       game.aresData = AresSetup.initialData(gameOptions.aresHazards, players);
@@ -332,7 +381,7 @@ export class Game implements Logger {
     // Give them their corporation cards, other cards, starting production,
     // handicaps.
     for (const player of game.getPlayersInGenerationOrder()) {
-      player.heatForTemperature = game.heatFor ? 7 : 8;
+      player.heatForTemperature = gameOptions.heatFor ? 7 : 8;
       player.setTerraformRating(player.getTerraformRating() + player.handicap);
       if (!gameOptions.corporateEra) {
         player.production.override({
@@ -347,29 +396,35 @@ export class Game implements Logger {
 
       if (!player.beginner ||
         // Bypass beginner choice if any extension is choosen
+        gameOptions.ceoExtension ||
         gameOptions.preludeExtension ||
         gameOptions.venusNextExtension ||
         gameOptions.coloniesExtension ||
         gameOptions.turmoilExtension ||
-        gameOptions.initialDraftVariant) {
+        gameOptions.initialDraftVariant ||
+        gameOptions.ceoExtension) {
         if (gameOptions._corporationsDraft === false) {
           for (let i = 0; i < gameOptions.startingCorporations; i++) {
             player.dealtCorporationCards.push(corporationDeck.draw(game));
           }
         }
         if (gameOptions.initialDraftVariant === false) {
+          // 发牌
           for (let i = 0; i < 10; i++) {
             player.dealtProjectCards.push(projectDeck.draw(game));
           }
         }
         if (gameOptions.preludeExtension) {
           for (let i = 0; i < constants.PRELUDE_CARDS_DEALT_PER_PLAYER; i++) {
-            // 双公司的情况下 ， 不允许再加公司
-            let prelude = preludeDeck.draw(game);
-            if (gameOptions.doubleCorp && prelude.name === CardName.MERGER) {
-              prelude = preludeDeck.draw(game);
-            }
+            const prelude = preludeDeck.draw(game);
             player.dealtPreludeCards.push(prelude);
+          }
+        }
+        if (gameOptions.ceoExtension) {
+          const max = Math.min(gameOptions.startingCeos, Math.floor(ceoDeck.drawPile.length / players.length));
+          for (let i = 0; i < max; i++) {
+            const ceoCard = ceoDeck.draw(game);
+            player.dealtCeoCards.push(ceoCard);
           }
         }
       } else {
@@ -388,6 +443,19 @@ export class Game implements Logger {
 
     game.log('Generation ${0}', (b) => b.forNewGeneration().number(game.generation));
 
+    // 天梯
+    if (game.isRankMode() && game.gameOptions.rankTimeLimit !== undefined && game.gameOptions.rankTimePerGeneration !== undefined) {
+      game.generation === 1 ?
+        game.log('This game is Rank Mode. You will have ${0} minutes at beginning!', (b) => b.number(game.gameOptions.rankTimeLimit || 0)) :
+        game.log('You get extra ${0} minutes this generation.', (b) => b.number(game.gameOptions.rankTimePerGeneration || 0));
+    }
+
+    // 设置phase并提前保存，此时还没有派发轮抽手牌，避免重启之后手牌变化
+    if (game.gameOptions.initialDraftVariant) {
+      game.phase = Phase.INITIALDRAFTING;
+    }
+    Database.getInstance().saveGame(game);
+
     // Do we draft corporations or do we start the game?
     // NOT  goto else
     if (gameOptions._corporationsDraft) {
@@ -397,13 +465,9 @@ export class Game implements Logger {
       }
       // First player should be the last player
       const playerStartingCorporationsDraft = game.getPlayerBefore(firstPlayer);
-      playerStartingCorporationsDraft.runDraftCorporationPhase(playerStartingCorporationsDraft.name, game._corporationsToDraft);
+      playerStartingCorporationsDraft._runDraftCorporationPhase(playerStartingCorporationsDraft.name, game._corporationsToDraft);
     } else {
       game.gotoInitialPhase();
-    }
-
-    if (!rebuild) {
-      Database.getInstance().saveGame(game);
     }
     return game;
   }
@@ -464,9 +528,10 @@ export class Game implements Logger {
       }),
       board: this.board.serialize(),
       claimedMilestones: serializeClaimedMilestones(this.claimedMilestones),
-      clonedGamedId: this.clonedGamedId,
+      ceoDeck: this.ceoDeck.serialize(),
       colonies: this.colonies.map((colony) => colony.serialize()),
       corporationDeck: this.corporationDeck.serialize(),
+      createdTimeMs: this.createdTime.getTime(),
       currentSeed: this.rng.current,
       deferredActions: [],
       donePlayers: Array.from(this.donePlayers).map((p) => p.serializeId()),
@@ -506,14 +571,15 @@ export class Game implements Logger {
       // corporationsToDraft: this._corporationsToDraft.map((c) => c.name),
       createtime: this.createtime,
       updatetime: this.updatetime,
-      breakthrough: this.breakthrough,
+      breakthrough: this.gameOptions.breakthrough,
       cardDrew: this.cardDrew,
-      heatFor: this.heatFor,
+      heatFor: this.gameOptions.heatFor,
       loadState: this.loadState,
       firstExited: this.firstExited,
       finishFirstTrading: this.finishFirstTrading,
       // unDraftedCards: this.unDraftedCards,
       unitedNationsMissionOneOwner: this.unitedNationsMissionOneOwner,
+      quitPlayers: Array.from(this.quitPlayers).map((p) => p.serializeId()),
     };
     if (this.aresData !== undefined) {
       result.aresData = this.aresData;
@@ -637,6 +703,9 @@ export class Game implements Logger {
     this.log('${0} funded ${1} award',
       (b) => b.player(player).award(award));
 
+    if (this.hasBeenFunded(award)) {
+      throw new Error(award.name + ' cannot is already funded.');
+    }
     this.fundedAwards.push({
       award: award,
       player: player,
@@ -670,7 +739,7 @@ export class Game implements Logger {
       if (this.gameOptions.doubleCorp) {
         const game = this;
         const chooseFirstCorp = function() {
-          for (const somePlayer of game.getPlayers()) {
+          for (const somePlayer of game.getPlayersInGenerationOrder()) {
             if (somePlayer.corporations[0] === undefined) {
               if (somePlayer.pickedCorporationCard === undefined || somePlayer.pickedCorporationCard2 === undefined) {
                 throw new Error(`pickedCorporationCard is not defined for ${somePlayer.id}`);
@@ -752,7 +821,7 @@ export class Game implements Logger {
     }
   }
 
-  private pickCorporationCard(player: Player): PlayerInput {
+  private selectInitialCards(player: Player): PlayerInput {
     return new SelectInitialCards(player, this.gameOptions.doubleCorp, (corporationCard: ICorporationCard, corporationCard2: ICorporationCard | undefined) => {
       if (corporationCard.cardCost !== undefined) {
         player.cardCost = corporationCard.cardCost;
@@ -792,7 +861,8 @@ export class Game implements Logger {
         }
       });
 
-      this.playerHasPickedCorporationCard(player, corporationCard, corporationCard2); return undefined;
+      this.playerHasPickedCorporationCard(player, corporationCard, corporationCard2);
+      return undefined;
     });
   }
 
@@ -844,19 +914,18 @@ export class Game implements Logger {
 
   /**
    * 两种方式调用 1、非初始轮抽，开局发完牌调用该方法；2、初始轮抽完，调用该方法
-   * 初始轮抽选完牌后会将initialDraftVariant置为false并保存， 重载时可以直接调用该方法选择买牌
+   * 初始轮抽选完牌后会将 phase 置为Phase.RESEARCH 并保存， 重新load时可以直接调用该方法选择买牌
    */
   private gotoInitialResearchPhase(): void {
     this.phase = Phase.RESEARCH;
 
-
     for (const player of this.players) {
       if (player.pickedCorporationCard === undefined && player.dealtCorporationCards.length > 0) {
-        player.setWaitingFor(this.pickCorporationCard(player));
+        player.setWaitingFor(this.selectInitialCards(player));
       }
     }
     if (this.players.length === 1 && this.gameOptions.coloniesExtension) {
-      this.players[0].production.add(Resources.MEGACREDITS, -2);
+      this.players[0].production.add(Resource.MEGACREDITS, -2);
       this.defer(new RemoveColonyFromGame(this.players[0]));
     }
   }
@@ -905,7 +974,7 @@ export class Game implements Logger {
     if (this.gameIsOver()) {
       this.log('Final greenery placement', (b) => b.forNewGeneration());
       // chaos生产之后会需要选择资源，先选完再执行放树
-      this.deferredActions.runAll(() => this.gotoFinalGreeneryPlacement());
+      this.deferredActions.runAll(() => this.takeNextFinalGreeneryAction());
       return;
     } else {
       this.players.forEach((player) => {
@@ -1099,19 +1168,19 @@ export class Game implements Logger {
   }
 
   // Function use to manage corporation draft way  NOT
-  public playerIsFinishedWithDraftingCorporationPhase(player: Player, cards : Array<ICorporationCard>): void {
+  public _playerIsFinishedWithDraftingCorporationPhase(player: Player, cards : Array<ICorporationCard>): void {
     const nextPlayer = this._corporationsDraftDirection === 'after' ? this.getPlayerAfter(player) : this.getPlayerBefore(player);
     const passTo = this._corporationsDraftDirection === 'after' ? this.getPlayerAfter(nextPlayer) : this.getPlayerBefore(nextPlayer);
 
     // If more than 1 card are to be passed to the next player, that means we're still drafting
     if (cards.length > 1) {
       if ((this.draftRound + 1) % this.players.length === 0) {
-        nextPlayer.runDraftCorporationPhase(nextPlayer.name, cards);
+        nextPlayer._runDraftCorporationPhase(nextPlayer.name, cards);
       } else if (this.draftRound % this.players.length === 0) {
-        player.runDraftCorporationPhase(nextPlayer.name, cards);
+        player._runDraftCorporationPhase(nextPlayer.name, cards);
         this._corporationsDraftDirection = this._corporationsDraftDirection === 'after' ? 'before' : 'after';
       } else {
-        nextPlayer.runDraftCorporationPhase(passTo.name, cards);
+        nextPlayer._runDraftCorporationPhase(passTo.name, cards);
       }
       this.draftRound++;
       return;
@@ -1123,7 +1192,7 @@ export class Game implements Logger {
     this.players.forEach((player) => {
       player.dealtCorporationCards = player.draftedCorporations;
     });
-    // Reset value to guarantee no impact on eventual futur drafts (projects or preludes)
+    // Reset value to guarantee no impact on eventual future drafts (projects or preludes)
     this.initialDraftIteration = 1;
     this.draftRound = 1;
     this.gotoInitialPhase();
@@ -1175,13 +1244,15 @@ export class Game implements Logger {
       return;
     }
 
+    this.inputsThisRound = 0;
+
+    // This next section can be done more simply.
     if (this.allPlayersHavePassed()) {
       this.gotoProductionPhase();
       return;
     }
 
     const nextPlayer = this.getPlayerAfter(this.activePlayer);
-
     if (!this.hasPassedThisActionPhase(nextPlayer)) {
       this.startActionsForPlayer(nextPlayer);
     } else {
@@ -1192,8 +1263,22 @@ export class Game implements Logger {
   }
 
   private async gotoEndGame(): Promise<void> {
-    this.phase = Phase.END;
-    await this.save();
+    // 储存终局计分到数据库 暂时不替换为`getSortedPlayers`因为目前不能获得玩家顺位
+    const scores: Array<Score> = [];
+    const players = this.getAllPlayers();
+
+    const timeOutPlayer = this.checkTimeOutPlayer(); // 判断是否有玩家超时
+    const allPlayerQuit = this.quitPlayers.size === players.length;
+
+
+    // 存入数据库的最终Phase
+    this.phase = this.shouldGoToTimeOutPhase() ?
+      Phase.TIMEOUT :
+      this.isRankMode() && allPlayerQuit ?
+        Phase.ABANDON :
+        Phase.END;
+    // this.phase = Phase.END;
+    if (this.phase === Phase.END) await this.save(); // 只有正常结束的才会保留，超时放弃的这种的直接清除了
 
     // Log id or cloned game id
     if (this.clonedGamedId !== undefined && this.clonedGamedId.startsWith('#')) {
@@ -1204,11 +1289,14 @@ export class Game implements Logger {
       this.log('This game id was ${0}', (b) => b.rawString(id));
     }
 
-    Database.getInstance().cleanGame(this.id).catch((err) => {
-      console.error(err);
-    });
-    const scores: Array<Score> = [];
-    const players = this.getAllPlayers();
+    if (this.phase === Phase.END) {
+      Database.getInstance().cleanGame(this.id).catch((err) => {
+        console.error(err);
+      });
+    } else { // 异常结束的，数据库里没必要保留吧
+      Database.getInstance().cleanGameAllSaves(this.id);
+    }
+
     players.forEach((player) => {
       const corporation = player.corporations.map((c) => c.name).join('|');
       const vpb = player.getVictoryPoints();
@@ -1218,7 +1306,61 @@ export class Game implements Logger {
     if (this.players.length > 1) {
       Database.getInstance().saveGameResults(this.id, players.length, this.generation, this.gameOptions, scores);
     }
+
+    const sortedPlayers = this.getSortedPlayers(); // 玩家排名，包含体退玩家，尽管目前排名模式不能体退
+    // 天梯 更新段位和排名
+    if (this.isRankMode() && this.players.length > 1) {
+      let userRanks: Array<UserRank> = [];
+      const rankedPlayers: Array<Player> = [];
+      // const timeOutPlayer = this.checkTimeOutPlayer();
+      let timeOutUserRank: UserRank | undefined = undefined; // 超时玩家的UserRank
+      sortedPlayers.forEach((player) => {
+        const userRank = player.getUserRank();
+        if (userRank !== undefined) {
+          userRanks.push(userRank);
+          rankedPlayers.push(player);
+          if (player === timeOutPlayer) timeOutUserRank = userRank;
+        }
+      });
+
+      if (this.phase === Phase.ABANDON) {
+        // 玩家放弃游戏，无事发生
+        console.log('all players quit the game');
+      } else {
+        // 超时或者正常结束，都会更新段位和排名
+        // 如果成功获取更新后的UserRank：1. 写回UserRankMap 2. 将更新值传入数据库
+        userRanks= getNewSkills(userRanks, timeOutUserRank);
+        for (let i = 0; i < userRanks.length; i ++ ) {
+          rankedPlayers[i].addOrUpdateUserRank(userRanks[i]);
+          Database.getInstance().updateUserRank(userRanks[i]);
+        }
+      }
+    }
+
+    // 天梯 存储历史数据和段位变化情况
+    // 1. 获取天梯排名的历史数据，用于显示变化以及在未来赛季重置时获取备份 @param position是玩家名次，写入数据库时+1
+    // 2. TODO: 在用户信息界面可以提供一定信息，例如近期胜率等等...
+    sortedPlayers.forEach((player, position) => {
+      const newUserRank = player.getUserRank();
+      if (player.userId === undefined) return; // table `user_game_results` pk: user_id + game_id
+      const playerIndex = players.indexOf(player);
+      Database.getInstance().saveUserGameResult(player.userId, this.id, this.phase, scores[playerIndex], players.length, this.generation, this.createtime, position+1, this.isRankMode(), newUserRank);
+    });
+
     return;
+  }
+
+  // 天梯 获取按照终局排名的玩家列表，包含所有玩家
+  public getSortedPlayers() {
+    const players = this.getAllPlayers();
+    players.sort(function(a:Player, b:Player) {
+      if (a.getVictoryPoints().total < b.getVictoryPoints().total) return -1;
+      if (a.getVictoryPoints().total > b.getVictoryPoints().total) return 1;
+      if (a.megaCredits < b.megaCredits) return -1;
+      if (a.megaCredits > b.megaCredits) return 1;
+      return 0;
+    });
+    return players.reverse();
   }
 
   // Part of final greenery placement.
@@ -1232,14 +1374,15 @@ export class Game implements Logger {
   public playerIsDoneWithGame(player: Player): void {
     this.donePlayers.add(player);
     // Go back in to find someone else to play final greeneries.
-    this.gotoFinalGreeneryPlacement();
+    this.takeNextFinalGreeneryAction();
   }
 
-  // Well, this isn't just "go to the final greenery placement". It finds the next player
-  // who might be able to place a final greenery.
-  // Rename to takeNextFinalGreeneryAction?
-
-  public /* for testing */ gotoFinalGreeneryPlacement(): void {
+  /**
+   * Find the next player who might be able to place a final greenery and ask them.
+   *
+   * If nobody can add a greenery, end the game.
+   */
+  public /* for testing */ takeNextFinalGreeneryAction(): void {
     for (const player of this.getPlayersInGenerationOrder()) {
       if (this.donePlayers.has(player)) {
         continue;
@@ -1248,6 +1391,7 @@ export class Game implements Logger {
       // You many not place greeneries in solo mode unless you have already won the game
       // (e.g. completed global parameters, reached TR63.)
       if (this.isSoloMode() && !this.isSoloModeWin()) {
+        this.log('Final greenery phase is skipped since you did not complete the win condition.', (b) => b.forNewGeneration());
         continue;
       }
 
@@ -1262,7 +1406,9 @@ export class Game implements Logger {
       }
     }
     this.updateVPbyGeneration();
-    this.gotoEndGame();
+    this.gotoEndGame().catch((error) => {
+      console.error('gotoEndGame failed:', error);
+    });
   }
 
   private startActionsForPlayer(player: Player) {
@@ -1390,10 +1536,10 @@ export class Game implements Logger {
 
       // BONUS FOR HEAT PRODUCTION AT -20 and -24
       if (this.temperature < -24 && this.temperature + steps * 2 >= -24) {
-        player.production.add(Resources.HEAT, 1, {log: true});
+        player.production.add(Resource.HEAT, 1, {log: true});
       }
       if (this.temperature < -20 && this.temperature + steps * 2 >= -20) {
-        player.production.add(Resources.HEAT, 1, {log: true});
+        player.production.add(Resource.HEAT, 1, {log: true});
       }
       // 群友扩hook,热泉微生物hook
       const foundCard = player.playedCards.find((card) => card.name === CardName.HYDROTHERMAL_VENT_ARCHAEA);
@@ -1428,14 +1574,6 @@ export class Game implements Logger {
 
   public getPassedPlayers():Array<Color> {
     return Array.from(this.passedPlayers).map((x) => x.color);
-  }
-
-  public getPlayer(name: string): Player {
-    const player = this.players.find((player) => player.name === name);
-    if (player === undefined) {
-      throw new Error('Player not found');
-    }
-    return player;
   }
 
   public getCitiesOffMarsCount(player?: Player): number {
@@ -1538,7 +1676,7 @@ export class Game implements Logger {
       TurmoilHandler.resolveTilePlacementBonuses(player, space.spaceType);
 
       if (arcadianCommunityBonus) {
-        this.defer(new GainResources(player, Resources.MEGACREDITS, {count: 3}));
+        this.defer(new GainResources(player, Resource.MEGACREDITS, {count: 3}));
       }
     } else {
       space.player = undefined;
@@ -1577,16 +1715,16 @@ export class Game implements Logger {
       player.drawCard(count);
       break;
     case SpaceBonus.PLANT:
-      player.addResource(Resources.PLANTS, count, {log: true});
+      player.addResource(Resource.PLANTS, count, {log: true});
       break;
     case SpaceBonus.STEEL:
-      player.addResource(Resources.STEEL, count, {log: true});
+      player.addResource(Resource.STEEL, count, {log: true});
       break;
     case SpaceBonus.TITANIUM:
-      player.addResource(Resources.TITANIUM, count, {log: true});
+      player.addResource(Resource.TITANIUM, count, {log: true});
       break;
     case SpaceBonus.HEAT:
-      player.addResource(Resources.HEAT, count, {log: true});
+      player.addResource(Resource.HEAT, count, {log: true});
       break;
     case SpaceBonus.OCEAN:
       // ignore
@@ -1601,7 +1739,7 @@ export class Game implements Logger {
       this.defer(new AddResourcesToCard(player, CardResource.DATA, {count: count}));
       break;
     case SpaceBonus.ENERGY_PRODUCTION:
-      player.production.add(Resources.ENERGY, count, {log: true});
+      player.production.add(Resource.ENERGY, count, {log: true});
       break;
     case SpaceBonus.SCIENCE:
       this.defer(new AddResourcesToCard(player, CardResource.SCIENCE, {count: count}));
@@ -1616,14 +1754,13 @@ export class Game implements Logger {
       }
       break;
     case SpaceBonus.ENERGY:
-      player.addResource(Resources.ENERGY, count, {log: true});
+      player.addResource(Resource.ENERGY, count, {log: true});
+      break;
+    case SpaceBonus.ASTEROID:
+      this.defer(new AddResourcesToCard(player, CardResource.ASTEROID, {count: count}));
       break;
     default:
-      // TODO(kberg): Remove the isProduction condition after 2022-01-01.
-      // I tried this once and broke the server, so I'm wrapping it in isProduction for now.
-      if (!isProduction()) {
-        throw new Error('Unhandled space bonus ' + spaceBonus + '. Report this exact error, please.');
-      }
+      throw new Error('Unhandled space bonus ' + spaceBonus + '. Report this exact error, please.');
     }
   }
 
@@ -1739,16 +1876,29 @@ export class Game implements Logger {
     return this.getPlayersInGenerationOrder().concat(this.exitedPlayers);
   }
 
-  public getCardPlayer(name: CardName): Player {
+  /**
+   * Returns the Player holding this card, or throws.
+   */
+  public getCardPlayerOrThrow(name: CardName): Player {
+    const player = this.getCardPlayerOrUndefined(name);
+    if (player === undefined) {
+      throw new Error(`No player has played ${name}`);
+    }
+    return player;
+  }
+
+  /**
+   * Returns the Player holding this card, or throws.
+   */
+  public getCardPlayerOrUndefined(name: CardName): Player | undefined {
     for (const player of this.players) {
-      // Check cards player has played
       for (const card of player.tableau) {
         if (card.name === name) {
           return player;
         }
       }
     }
-    throw new Error(`No player has played ${name}`);
+    return undefined;
   }
 
   // Returns the player holding a card in hand. Return undefined when nobody has that card in hand.
@@ -1769,7 +1919,7 @@ export class Game implements Logger {
   }
 
   public getCardsInHandByType(player: Player, cardType: CardType) {
-    return player.cardsInHand.filter((card) => card.cardType === cardType);
+    return player.cardsInHand.filter((card) => card.type === cardType);
   }
 
   public log(message: string, f?: (builder: LogBuilder) => void, options?: {reservedFor?: Player}) {
@@ -1778,16 +1928,14 @@ export class Game implements Logger {
       return;
     }
     const builder = new LogBuilder(message);
-    if (f) {
-      f(builder);
-    }
+    f?.(builder);
     const logMessage = builder.build();
     logMessage.playerId = options?.reservedFor?.id;
     this.gameLog.push(logMessage);
     this.gameAge++;
   }
 
-  public someoneCanHaveProductionReduced(resource: Resources, minQuantity: number = 1): boolean {
+  public someoneCanHaveProductionReduced(resource: Resource, minQuantity: number = 1): boolean {
     // in soloMode you don't have to decrease resources
     if (this.isSoloMode()) return true;
     return this.getPlayers().some((p) => {
@@ -1828,6 +1976,14 @@ export class Game implements Logger {
       throw new Error('Couldn\'t find space when card cost is ' + cost);
     }
     return space;
+  }
+
+  public expectedPurgeTimeMs(): number {
+    if (this.createdTime.getTime() === 0) {
+      return 0;
+    }
+    const days = dayStringToDays(process.env.MAX_GAME_DAYS, 10);
+    return addDays(this.createdTime, days).getTime();
   }
 
   // Function used to rebuild each objects
@@ -1880,6 +2036,7 @@ export class Game implements Logger {
       this.projectDeck = ProjectDeck.deserialize(d.projectDeck, this.rng);
       this.corporationDeck = CorporationDeck.deserialize(d.corporationDeck, this.rng);
       this.preludeDeck = PreludeDeck.deserialize(d.preludeDeck, this.rng);
+      this.ceoDeck = CeoDeck.deserialize(d.ceoDeck || {drawPile: [], discardPile: []}, this.rng);
     }
 
     // Rebuild every player objects
@@ -1898,6 +2055,9 @@ export class Game implements Logger {
     });
 
     this.board = GameSetup.deserializeBoard(this.getAllPlayers(), this.gameOptions, d);
+    this.resettable = true;
+    this.spectatorId = d.spectatorId;
+    this.createdTime = new Date(d.createdTimeMs);
 
     this.milestones = [];
     this.awards = [];
@@ -2030,11 +2190,8 @@ export class Game implements Logger {
 
 
     // Still in Draft or Research of generation 1
-    // TODO 如果已经选好牌了 可以不回到重新选牌
     if (this.generation === 1 && this.players.some((p) => p.corporations.length === 0 )) {
       if (this.phase === Phase.INITIALDRAFTING) {
-        this.draftRound = 1;
-        this.initialDraftIteration = 1;
         this.runDraftRound(true);
       } else {
         this.gotoInitialResearchPhase();
@@ -2052,6 +2209,19 @@ export class Game implements Logger {
       // We should be in ACTION phase, let's prompt the active player for actions
       this.activePlayer.takeAction(/* saveBeforeTakingAction */ false);
     }
+
+    // Rebuild quit players set
+    if (d.quitPlayers === undefined) {
+      d.quitPlayers = [];
+    }
+    this.quitPlayers = new Set<Player>();
+    d.quitPlayers.forEach((element: SerializedPlayerId) => {
+      const player = this.players.find((player) => player.id === element.id);
+      if (player) {
+        this.quitPlayers.add(player);
+      }
+    });
+
     this.loadState = LoadState.LOADED;
     return o;
   }
@@ -2155,5 +2325,64 @@ export class Game implements Logger {
       metadata: metadata,
     };
     console.warn('Illegal state: ' + description, JSON.stringify(gameMetadata, null, ' '));
+  }
+
+  public isRankMode(): boolean {
+    return this.gameOptions.rankOption;
+  }
+
+  // 判断是否有玩家超时,返回超时的玩家 （是否可能出现多个？）
+  public checkTimeOutPlayer(): Player | undefined {
+    if (this.isRankMode() && this.gameOptions.rankTimeLimit !== undefined && this.gameOptions.rankTimePerGeneration !== undefined) {
+      // 超时时间 = 基础时限 + 每时代的时间增量 * (当前时代数 - 1)
+      const timeLimit = Number(this.gameOptions.rankTimeLimit) + Number(this.gameOptions.rankTimePerGeneration) * Math.max(Number(this.generation) - 1, 0);
+      for (const player of this.getAllPlayers()) {
+        if (player.timer.getElapsedTimeInMinutes() >= timeLimit) return player;
+      }
+    }
+    return undefined;
+  }
+
+  // 天梯 排名模式中强行结束游戏
+  // 1. 判断是否游戏超时，如果超时的话，会直接结束游戏，并将超时玩家设为唯一败方
+  // 2. 判断是否所有玩家都放弃游戏，是的话游戏作废，所有人分数不变
+  public async checkRankModeEndGame(playerId: string) {
+    if (!this.isRankMode()) return;
+    const playerLength = this.getAllPlayers().length;
+
+    this.quitPlayers.add(this.getPlayerById(playerId as PlayerId));
+    console.log('是否有玩家超时：', this.shouldGoToTimeOutPhase());
+
+    if (this.phase === Phase.END || this.phase === Phase.ABANDON || this.phase === Phase.TIMEOUT) {
+      return;
+    } else if (this.quitPlayers.size === playerLength) {
+      await this.gotoRankModeEndGame();
+    } else if (this.shouldGoToTimeOutPhase()) {
+      this.checkTimeOutPlayer()?.timer.stop(); // 结束计数器
+      await this.gotoRankModeEndGame();
+    }
+  }
+
+  public shouldGoToTimeOutPhase() {
+    // FIXME: 游戏在初始选卡时的计时器和选完卡打牌时的好像不一样，先多加几个条件确保不会在初始选卡时超时
+    return this.isRankMode() && ((this.phase !== Phase.RESEARCH && this.phase !== Phase.INITIALDRAFTING) || this.generation !== 1) && this.checkTimeOutPlayer() !== undefined;
+  }
+
+  private async gotoRankModeEndGame() {
+    try {
+      this.endGameInProgress = true; // 在异步函数之前设置为true
+      this.updateVPbyGeneration();
+      console.log('await gotoEndGame');
+      await this.gotoEndGame();
+    } catch (error) {
+      console.error('gotoEndGame failed:', error);
+      this.endGameInProgress = false;
+    } finally {
+      // this.endGameInProgress = false; // 如果成功了，不需要解锁
+    }
+  }
+
+  public getQuitPlayers():Array<Color> {
+    return Array.from(this.quitPlayers).map((x) => x.color);
   }
 }

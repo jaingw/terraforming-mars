@@ -3,17 +3,18 @@ import {PartyName} from '../../../common/turmoil/PartyName';
 import {SpaceType} from '../../../common/boards/SpaceType';
 import {Phase} from '../../../common/Phase';
 import {PolicyId} from '../Policy';
-import {Resources} from '../../../common/Resources';
+import {Resource} from '../../../common/Resource';
 import {ISpace} from '../../boards/ISpace';
 import {GREENS_POLICY_1} from './Greens';
 import {PoliticalAgendas} from '../PoliticalAgendas';
 import {TurmoilUtil} from '../TurmoilUtil';
+import {CardName} from '../../../common/cards/CardName';
 
 export class PartyHooks {
   static applyMarsFirstRulingPolicy(player: Player, spaceType: SpaceType) {
     if (this.shouldApplyPolicy(player, PartyName.MARS, 'mfp01') &&
         spaceType !== SpaceType.COLONY) {
-      player.addResource(Resources.STEEL, 1);
+      player.addResource(Resource.STEEL, 1);
     }
   }
 
@@ -37,6 +38,9 @@ export class PartyHooks {
       if (policyId === undefined) {
         policyId = rulingParty.policies[0].id;
       }
+
+      // Hook for CEO Zan's effect (Skip all Reds Policy effects)
+      if (partyName === PartyName.REDS && player.cardIsInEffect(CardName.ZAN)) return false;
 
       const currentPolicyId: PolicyId = PoliticalAgendas.currentAgenda(turmoil).policyId;
 

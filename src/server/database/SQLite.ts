@@ -1,7 +1,7 @@
 import {GameIdLedger, IDatabase, IGameShortData} from './IDatabase';
 import {Game, Score} from '../Game';
 import {GameOptions} from '../GameOptions';
-import {GameId, PlayerId, SpectatorId} from '../../common/Types';
+import {GameId, ParticipantId} from '../../common/Types';
 import {SerializedGame} from '../SerializedGame';
 
 import sqlite3 = require('sqlite3');
@@ -9,6 +9,9 @@ import {RunResult} from 'sqlite3';
 import {User} from '../User';
 import {Timer} from '../../common/Timer';
 import {MultiMap} from 'mnemonist';
+import {UserRank} from '../../common/rank/RankManager';
+// import {Rating} from 'ts-trueskill';
+
 const path = require('path');
 const fs = require('fs');
 const dbFolder = path.resolve(process.cwd(), './db');
@@ -34,6 +37,11 @@ export class SQLite implements IDatabase {
     await this.asyncRun('CREATE TABLE IF NOT EXISTS participants(game_id varchar, participant varchar, PRIMARY KEY (game_id, participant))');
     await this.asyncRun('CREATE TABLE IF NOT EXISTS \'users\'(\'id\'  varchar NOT NULL,\'name\'  varchar NOT NULL,\'password\'  varchar NOT NULL,\'prop\' varchar,\'createtime\'  timestamp DEFAULT (datetime(CURRENT_TIMESTAMP,\'localtime\')),PRIMARY KEY (\'id\'))');
     await this.asyncRun('CREATE TABLE IF NOT EXISTS game_results(game_id varchar not null, seed_game_id varchar, players integer, generations integer, game_options text, scores text,createtime timestamp default (datetime(CURRENT_TIMESTAMP,\'localtime\')), PRIMARY KEY (game_id))');
+
+    // 天梯 新增`user_rank`表记录用户的排名
+    await this.asyncRun('CREATE TABLE IF NOT EXISTS user_rank (id varchar not null, rank_value integer default 0, mu double, sigma double, trueskill double default 1, PRIMARY KEY (id))');
+    // 天梯 玩家数据表，用于保存段位的历史记录，和未来的数据分析 TODO: 将这两张表在PG中也加上
+    await this.asyncRun('CREATE TABLE IF NOT EXISTS user_game_results (user_id varchar not null, game_id varchar not null, players integer, generations integer, createtime timestamp default (datetime(CURRENT_TIMESTAMP,\'localtime\')), corporation text, position integer, player_score integer, rank_value integer, mu double, sigma double, trueskill double, is_rank integer, phase text, PRIMARY KEY (user_id, game_id))');
   }
 
   public async getPlayerCount(gameId: GameId): Promise<number> {
@@ -66,19 +74,19 @@ export class SQLite implements IDatabase {
   // TODO(kberg): Remove repetition between this and getGameVersion.
   // this is basically getGameVersion with save ID 0.
   // This method has more content, so that has to be reconciled.
-  public async loadCloneableGame(game_id: GameId): Promise<SerializedGame> {
+  public async loadCloneableGame(gameId: GameId): Promise<SerializedGame> {
     const sql = 'SELECT game_id, game FROM games WHERE game_id = ? AND save_id = 0';
-    const row: { game_id: GameId, game: any } = await this.asyncGet(sql, [game_id]);
+    const row: { game_id: GameId, game: any } = await this.asyncGet(sql, [gameId]);
     if (row === undefined || row.game_id === undefined || row.game === undefined) {
-      throw new Error(`Game ${game_id} not found`);
+      throw new Error(`Game ${gameId} not found`);
     }
 
     const json = JSON.parse(row.game);
     return json;
   }
 
-  saveGameResults(game_id: string, players: number, generations: number, gameOptions: GameOptions, scores: Array<Score>): void {
-    this.db.run('INSERT INTO game_results (game_id, seed_game_id, players, generations, game_options, scores) VALUES($1, $2, $3, $4, $5, $6)', [game_id, gameOptions.clonedGamedId, players, generations, JSON.stringify(gameOptions), JSON.stringify(scores)], (err) => {
+  saveGameResults(gameId: string, players: number, generations: number, gameOptions: GameOptions, scores: Array<Score>): void {
+    this.db.run('INSERT INTO game_results (game_id, seed_game_id, players, generations, game_options, scores) VALUES($1, $2, $3, $4, $5, $6)', [gameId, gameOptions.clonedGamedId, players, generations, JSON.stringify(gameOptions), JSON.stringify(scores)], (err) => {
       if (err) {
         console.error('SQlite:saveGameResults', err.message);
         throw err;
@@ -86,28 +94,28 @@ export class SQLite implements IDatabase {
     });
   }
 
-  public async getGame(game_id: GameId): Promise<SerializedGame> {
+  public async getGame(gameId: GameId): Promise<SerializedGame> {
     // Retrieve last save from database
-    const row: { game: any; } = await this.asyncGet('SELECT game game FROM games WHERE game_id = ? ORDER BY save_id DESC LIMIT 1', [game_id]);
+    const row: { game: any; } = await this.asyncGet('SELECT game game FROM games WHERE game_id = ? ORDER BY save_id DESC LIMIT 1', [gameId]);
     if (row === undefined) {
-      throw new Error(`bad game id ${game_id}`);
+      throw new Error(`bad game id ${gameId}`);
     }
     return JSON.parse(row.game);
   }
 
   // TODO(kberg): throw an error if two game ids exist.
-  public async getGameId(id: PlayerId | SpectatorId): Promise<GameId> {
+  public async getGameId(participantId: ParticipantId): Promise<GameId> {
     // Default sql is for player id;
     let sql = 'SELECT game_id from games, json_each(games.game, \'$.players\') e where json_extract(e.value, \'$.id\') = ?';
-    if (id.charAt(0) === 's') {
+    if (participantId.charAt(0) === 's') {
       sql = 'SELECT game_id from games where json_extract(games.game, \'$.spectatorId\') = ?';
-    } else if (id.charAt(0) !== 'p') {
-      throw new Error(`id ${id} is neither a player id or spectator id`);
+    } else if (participantId.charAt(0) !== 'p') {
+      throw new Error(`id ${participantId} is neither a player id or spectator id`);
     }
 
-    const row: { game_id: any; } = await this.asyncGet(sql, [id]);
+    const row: { game_id: any; } = await this.asyncGet(sql, [participantId]);
     if (row === undefined) {
-      throw new Error(`No game id found for participant id ${id}`);
+      throw new Error(`No game id found for participant id ${participantId}`);
     }
     return row.game_id;
   }
@@ -117,35 +125,35 @@ export class SQLite implements IDatabase {
     return rows.map((row) => row.save_id);
   }
 
-  public async getGameVersion(game_id: GameId, save_id: number): Promise<SerializedGame> {
+  public async getGameVersion(gameId: GameId, saveId: number): Promise<SerializedGame> {
     const row: { game: any; } = await this.asyncGet(
       'SELECT game FROM games WHERE game_id = ? and save_id = ?',
-      [game_id, save_id]);
+      [gameId, saveId]);
     if (row === undefined) {
-      throw new Error(`bad game id ${game_id}`);
+      throw new Error(`bad game id ${gameId}`);
     }
     return JSON.parse(row.game);
   }
 
-  async getMaxSaveId(game_id: GameId): Promise<number> {
-    const row: { save_id: any; } = await this.asyncGet('SELECT MAX(save_id) AS save_id FROM games WHERE game_id = ?', [game_id]);
+  async getMaxSaveId(gameId: GameId): Promise<number> {
+    const row: { save_id: any; } = await this.asyncGet('SELECT MAX(save_id) AS save_id FROM games WHERE game_id = ?', [gameId]);
     if (row === undefined) {
-      throw new Error(`bad game id ${game_id}`);
+      throw new Error(`bad game id ${gameId}`);
     }
     return row.save_id;
   }
 
-  async cleanGame(game_id: GameId): Promise<void> {
+  async cleanGame(gameId: GameId): Promise<void> {
     try {
-      const save_id = await this.getMaxSaveId(game_id);
+      const saveId = await this.getMaxSaveId(gameId);
       // Purges isn't used yet
-      // await this.asyncRun('INSERT into purges (game_id, last_save_id) values (?, ?)', [game_id, save_id]);
+      // await this.asyncRun('INSERT into purges (game_id, last_save_id) values (?, ?)', [gameId, save_id]);
       // DELETE all saves except initial and last one
-      await this.asyncRun('DELETE FROM games WHERE game_id = ? AND save_id < ? AND save_id > 0', [game_id, save_id]);
-      await this.asyncRun('UPDATE games SET status = \'finished\' WHERE game_id = ?', [game_id]);
+      await this.asyncRun('DELETE FROM games WHERE game_id = ? AND save_id < ? AND save_id > 0', [gameId, saveId]);
+      await this.asyncRun('UPDATE games SET status = \'finished\' WHERE game_id = ?', [gameId]);
       await this.purgeUnfinishedGames();
     } catch (err) {
-      console.error(`SQLite: cleanGame for ${game_id} ` + err);
+      console.error(`SQLite: cleanGame for ${gameId} ` + err);
     }
   }
 
@@ -195,6 +203,7 @@ export class SQLite implements IDatabase {
           game.updatetime = row.createtime;
           game.gameLog = gamelog;
           game.log('${0} undo turn', (b) => b.playerId(playId));
+          game.undoCount ++;
           // 会员回退时 以当前时间开始计时， 避免计时算到上一个人头上
           if (playId === 'manager') {
             Timer.newInstance().stop();
@@ -216,7 +225,7 @@ export class SQLite implements IDatabase {
     // when the database operation was an insert. (We should figure out why multiple saves occur and
     // try to stop them. But that's for another day.)
     // if (game.lastSaveId === 0) {
-    //   const participantIds: Array<PlayerId | SpectatorId> = game.getPlayers().map((p) => p.id);
+    //   const participantIds: Array<ParticipantId> = game.getPlayers().map((p) => p.id);
     //   if (game.spectatorId) participantIds.push(game.spectatorId);
     //   try {
     //     await this.storeParticipants({gameId: game.id, participantIds: participantIds});
@@ -226,13 +235,13 @@ export class SQLite implements IDatabase {
     // }
   }
 
-  deleteGameNbrSaves(game_id: GameId, rollbackCount: number): Promise<void> {
+  deleteGameNbrSaves(gameId: GameId, rollbackCount: number): Promise<void> {
     if (rollbackCount <= 0) {
-      console.error(`invalid rollback count for ${game_id}: ${rollbackCount}`);
+      console.error(`invalid rollback count for ${gameId}: ${rollbackCount}`);
       // Should this be an error?
       return Promise.resolve();
     }
-    return this.runQuietly('DELETE FROM games WHERE rowid IN (SELECT rowid FROM games WHERE game_id = ? ORDER BY save_id DESC LIMIT ?)', [game_id, rollbackCount]);
+    return this.runQuietly('DELETE FROM games WHERE rowid IN (SELECT rowid FROM games WHERE game_id = ? ORDER BY save_id DESC LIMIT ?)', [gameId, rollbackCount]);
   }
 
   public stats(): Promise<{[key: string]: string | number}> {
@@ -282,14 +291,14 @@ export class SQLite implements IDatabase {
     // Sequence of '(?, ?)' pairs.
     const placeholders = entry.participantIds.map(() => '(?, ?)').join(', ');
     // Sequence of [game_id, id] pairs.
-    const values: Array<GameId | PlayerId | SpectatorId> = entry.participantIds.map((participant) => [entry.gameId, participant]).flat();
+    const values: Array<GameId | ParticipantId> = entry.participantIds.map((participant) => [entry.gameId, participant]).flat();
 
     await this.asyncRun('INSERT INTO participants (game_id, participant) VALUES ' + placeholders, values);
   }
 
   public async getParticipants(): Promise<Array<GameIdLedger>> {
     const rows = await this.asyncAll('SELECT game_id, participant FROM participants');
-    const multimap = new MultiMap<GameId, PlayerId | SpectatorId>();
+    const multimap = new MultiMap<GameId, ParticipantId>();
     rows.forEach((row) => multimap.set(row.game_id, row.participant));
     const result: Array<GameIdLedger> = [];
     multimap.forEachAssociation((participantIds, gameId) => {
@@ -355,5 +364,48 @@ export class SQLite implements IDatabase {
         throw err;
       }
     }
+  }
+
+  addUserRank(userRank: UserRank): void {
+    console.log('db:addUserRank', userRank);
+    this.db.run('INSERT INTO user_rank(id, rank_value, mu, sigma, trueskill) VALUES(?, ?, ?, ?, ?)', [userRank.userId, userRank.rankValue, userRank.mu, userRank.sigma, userRank.trueskill], function(err: { message: any; }) {
+      if (err) {
+        return console.error(err);
+      }
+    });
+  }
+
+  // 天梯，返回所有UserRank
+  public async getUserRanks(limit:number | undefined = 0): Promise<Array<UserRank>> {
+    const concatLimit: string = limit === 0 ? '' : ' limit ' + limit.toString();
+    const sql: string = 'SELECT id, rank_value, mu, sigma, trueskill FROM user_rank   order by rank_value desc,trueskill desc' + concatLimit;
+    const allUserRanks : Array<UserRank> = [];
+    const rows = await this.asyncAll(sql);
+    rows.forEach((row) => {
+      const userRank = new UserRank(row.id, row.rank_value, row.mu, row.sigma, row.trueskill);
+      allUserRanks.push(userRank);
+    });
+    return allUserRanks;
+  }
+
+  public async updateUserRank(userRank:UserRank): Promise<void> {
+    await this.asyncRun('UPDATE user_rank SET rank_value = ?, mu = ?, sigma = ? , trueskill = ? WHERE id = ?', [userRank.rankValue, userRank.mu, userRank.sigma, userRank.trueskill, userRank.userId]);
+  }
+
+  // @param position: 这局游戏第几名
+  saveUserGameResult(user_id: string, game_id: string, phase: string, score: Score, players: number, generations: number, create_time: string, position: number, is_rank: boolean, user_rank: UserRank | undefined): void {
+    const sql: string = user_rank !== undefined ?
+      'INSERT INTO user_game_results (user_id, game_id, players, generations, createtime, corporation, position, player_score, rank_value, mu, sigma, trueskill, is_rank, phase) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)' :
+      'INSERT INTO user_game_results (user_id, game_id, players, generations, createtime, corporation, position, player_score, is_rank, phase) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    const params: any = user_rank !== undefined ?
+      [user_id, game_id, players, generations, create_time, score.corporation, position, score.playerScore, user_rank.rankValue, user_rank.mu, user_rank.sigma, user_rank.trueskill, is_rank, phase] :
+      [user_id, game_id, players, generations, create_time, score.corporation, position, score.playerScore, is_rank, phase];
+
+    this.db.run(sql, params, (err) => {
+      if (err) {
+        console.error('SQlite:saveUserGameResult', err.message);
+        throw err;
+      }
+    });
   }
 }

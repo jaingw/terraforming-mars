@@ -1,28 +1,25 @@
 import {expect} from 'chai';
 import {SimpleDeferredAction} from '../../src/server/deferredActions/DeferredAction';
 import {DeferredActionsQueue} from '../../src/server/deferredActions/DeferredActionsQueue';
-import {TestPlayer} from '../TestPlayer';
 import {SelectOption} from '../../src/server/inputs/SelectOption';
-import {setCustomGameOptions} from '../TestingUtils';
-import {Game} from '../../src/server/Game';
+import {testGame} from '../TestGame';
 
 describe('DeferredActionsQueue', () => {
   it('runs actions for player', () => {
-    const redPlayer = TestPlayer.RED.newPlayer();
-    const bluePlayer = TestPlayer.BLUE.newPlayer();
-    Game.newInstance('gid', [redPlayer], redPlayer, setCustomGameOptions({}));
+    const [, player, otherPlayer] = testGame(2);
+
     const queue = new DeferredActionsQueue();
     const expectedInput = new SelectOption('foo', 'bar', () => undefined);
-    queue.push(new SimpleDeferredAction(redPlayer, () => expectedInput));
-    queue.push(new SimpleDeferredAction(bluePlayer, () => undefined));
+    queue.push(new SimpleDeferredAction(player, () => expectedInput));
+    queue.push(new SimpleDeferredAction(otherPlayer, () => undefined));
     let finished = false;
     expect(queue.length).eq(2);
-    queue.runAllFor(redPlayer, () => {
+    queue.runAllFor(player, () => {
       finished = true;
     });
-    expect(redPlayer.getWaitingFor()).eq(expectedInput);
-    redPlayer.process({type: 'option'});
-    expect(redPlayer.getWaitingFor()).eq(undefined);
+    expect(player.getWaitingFor()).eq(expectedInput);
+    player.process({type: 'option'});
+    expect(player.getWaitingFor()).eq(undefined);
     expect(finished).eq(true);
     expect(queue.length).eq(1);
   });

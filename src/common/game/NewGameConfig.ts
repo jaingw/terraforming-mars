@@ -27,7 +27,6 @@ export interface NewGameConfig {
   board: BoardNameType;
   seed: number;
   initialDraft: boolean;
-  _corporationsDraft: boolean; // NOT
   randomFirstPlayer: boolean;
 
   // boardName: BoardName;
@@ -35,6 +34,7 @@ export interface NewGameConfig {
 
   // Configuration
   undoOption: boolean;
+  rankOption: boolean; // 天梯
   showTimers: boolean;
   fastModeOption: boolean;
   showOtherPlayersVP: boolean;
@@ -56,7 +56,7 @@ export interface NewGameConfig {
   includeVenusMA: boolean;
   moonExpansion: boolean;
   pathfindersExpansion: boolean;
-  leadersExtension: boolean;
+  ceoExtension: boolean;
 
   // jaing
   userId: string;
@@ -85,6 +85,9 @@ export interface NewGameConfig {
   escapeVelocityThreshold: number | undefined;
   escapeVelocityPeriod: number | undefined;
   escapeVelocityPenalty: number | undefined;
-  twoCorpsVariant: boolean,
-  customLeaders: Array<CardName>;
+  twoCorpsVariant: boolean;
+  customCeos: Array<CardName>;
+  startingCeos: number;
+  rankTimeLimit: number | undefined,
+  rankTimePerGeneration: number | undefined;
 }

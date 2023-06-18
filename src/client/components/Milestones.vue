@@ -3,9 +3,9 @@
         <div class="milestones">
             <div class="ma-title">
                 <a class="ma-clickable" href="#" v-on:click.prevent="toggleList()" v-i18n>Milestones</a>
-                <span v-for="milestone in milestones_list.filter((m) => m.player_name)" :key="milestone.name" class="milestone-award-inline paid" :title="milestone.player_name">
+                <span v-for="milestone in milestones.filter((m) => m.playerName)" :key="milestone.name" class="milestone-award-inline paid" :title="milestone.playerName">
                     <span v-i18n>{{ milestone.name }}</span>
-                    <span class="ma-player-cube"><i :class="'board-cube board-cube--'+milestone.player_color" /></span>
+                    <span class="ma-player-cube"><i :class="'board-cube board-cube--'+milestone.playerColor" /></span>
                 </span>
                 <span v-if="isLearnerModeOn()">
                     <span v-for="(spotPrice, index) in getAvailableMilestoneSpots()" :key="index" class="milestone-award-inline unpaid">
@@ -14,12 +14,12 @@
                 </span>
             </div>
             <span @click="toggleDescription" :title="$t('press to show or hide the description')" data-test="toggle-description">
-              <div v-show="showMilestones">
+              <div v-show="showMilestoneDetails">
                   <Milestone
-                    v-for="milestone in milestones_list"
+                    v-for="milestone in milestones"
                     :key="milestone.name"
                     :milestone="milestone"
-                    :show_scores="show_scores"
+                    :showScores="showScores"
                     :showDescription="showDescription"
                   ></Milestone>
               </div>
@@ -31,25 +31,29 @@
 <script lang="ts">
 
 import Vue from 'vue';
-import {MILESTONE_COST, MAX_MILESTONES} from '@/common/constants';
+import {MAX_MILESTONES, MILESTONE_COST} from '@/common/constants';
 import Milestone from '@/client/components/Milestone.vue';
 import {ClaimedMilestoneModel} from '@/common/models/ClaimedMilestoneModel';
-import {getPreferences} from '@/client/utils/PreferencesManager';
+import {Preferences, PreferencesManager} from '@/client/utils/PreferencesManager';
 
 export default Vue.extend({
   name: 'Milestones',
   props: {
-    milestones_list: {
+    milestones: {
       type: Array as () => Array<ClaimedMilestoneModel>,
     },
-    show_scores: {
+    showScores: {
       type: Boolean,
       default: true,
+    },
+    preferences: {
+      type: Object as () => Readonly<Preferences>,
+      default: () => PreferencesManager.INSTANCE.values(),
     },
   },
   data() {
     return {
-      showMilestones: this.milestones_list.filter((milestone) => milestone.player_name).length === MAX_MILESTONES ? false : true,
+      showMilestoneDetails: (this.milestones.filter((milestone) => milestone.playerName).length === MAX_MILESTONES ? false : this.preferences?.show_milestone_details),
       showDescription: false,
     };
   },
@@ -61,14 +65,15 @@ export default Vue.extend({
       this.showDescription = !this.showDescription;
     },
     toggleList() {
-      this.showMilestones = !this.showMilestones;
+      this.showMilestoneDetails = !this.showMilestoneDetails;
+      PreferencesManager.INSTANCE.set('show_milestone_details', this.showMilestoneDetails);
     },
     getAvailableMilestoneSpots(): Array<number> {
-      const count = this.milestones_list.filter((milestone) => milestone.player_name).length;
+      const count = this.milestones.filter((milestone) => milestone.playerName).length;
       return Array(MAX_MILESTONES - count).fill(MILESTONE_COST);
     },
     isLearnerModeOn(): boolean {
-      return getPreferences().learner_mode;
+      return this.preferences.learner_mode;
     },
   },
 });

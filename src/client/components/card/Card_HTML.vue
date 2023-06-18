@@ -45,7 +45,7 @@ export default Vue.extend({
   },
   methods: {
     getCardType(): CardType {
-      return this.cardInstance.cardType;
+      return this.cardInstance.type;
     },
     getCardMetadata(): ICardMetadata {
       return this.cardInstance.metadata;

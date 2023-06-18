@@ -7,13 +7,13 @@ import {played} from '../../Options';
 import {CardName} from '../../../../common/cards/CardName';
 import {CardType} from '../../../../common/cards/CardType';
 import {Tag} from '../../../../common/cards/Tag';
-import {Resources} from '../../../../common/Resources';
+import {Resource} from '../../../../common/Resource';
 import {ICorporationCard} from '../../corporation/ICorporationCard';
 
 export class _Thorgate_ extends Card implements ICorporationCard {
   constructor() {
     super({
-      cardType: CardType.CORPORATION,
+      type: CardType.CORPORATION,
       name: CardName._THORGATE_,
       tags: [Tag.POWER, Tag.SCIENCE],
       startingMegaCredits: 44,
@@ -45,7 +45,7 @@ export class _Thorgate_ extends Card implements ICorporationCard {
   }
   /* Start with 2 energy prod and 1 extra science tag */
   public override bespokePlay(player: Player) {
-    player.production.add(Resources.ENERGY, 2);
+    player.production.add(Resource.ENERGY, 2);
     return undefined;
   }
 }

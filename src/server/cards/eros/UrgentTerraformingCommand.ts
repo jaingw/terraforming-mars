@@ -7,13 +7,13 @@ import {CardName} from '../../../common/cards/CardName';
 import {CardType} from '../../../common/cards/CardType';
 import {Size} from '../../../common/cards/render/Size';
 import {Tag} from '../../../common/cards/Tag';
-import {Resources} from '../../../common/Resources';
+import {Resource} from '../../../common/Resource';
 
 export class UrgentTerraformingCommand extends Card implements IProjectCard {
   constructor() {
     super({
       name: CardName.URGENT_TERRAFORMING_COMMAND,
-      cardType: CardType.EVENT,
+      type: CardType.EVENT,
       tags: [Tag.EARTH],
       cost: 10,
       requirements: CardRequirements.builder((b) => b.tr(25)),
@@ -32,8 +32,8 @@ export class UrgentTerraformingCommand extends Card implements IProjectCard {
     return player.getTerraformRating() >= 25;
   }
   public override bespokePlay(player: Player) {
-    player.addResource(Resources.PLANTS, player.production.get(Resources.PLANTS));
-    player.addResource(Resources.HEAT, player.production.get(Resources.HEAT));
+    player.addResource(Resource.PLANTS, player.production.get(Resource.PLANTS));
+    player.addResource(Resource.HEAT, player.production.get(Resource.HEAT));
     return undefined;
   }
 }

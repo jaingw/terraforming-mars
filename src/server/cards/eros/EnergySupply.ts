@@ -5,13 +5,13 @@ import {Card} from '../Card';
 import {CardName} from '../../../common/cards/CardName';
 import {CardType} from '../../../common/cards/CardType';
 import {Tag} from '../../../common/cards/Tag';
-import {Resources} from '../../../common/Resources';
+import {Resource} from '../../../common/Resource';
 
 export class EnergySupply extends Card implements IProjectCard {
   constructor() {
     super({
       name: CardName.ENERGY_SUPPLY,
-      cardType: CardType.EVENT,
+      type: CardType.EVENT,
       tags: [Tag.POWER],
       cost: 3,
 
@@ -23,7 +23,7 @@ export class EnergySupply extends Card implements IProjectCard {
     });
   }
   public override bespokePlay(player: Player) {
-    player.addResource(Resources.ENERGY, 3);
+    player.addResource(Resource.ENERGY, 3);
     return undefined;
   }
 }

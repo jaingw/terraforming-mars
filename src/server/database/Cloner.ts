@@ -1,5 +1,5 @@
 import {Game} from '../Game';
-import {GameId, isPlayerId} from '../../common/Types';
+import {GameId, isPlayerId, PlayerId} from '../../common/Types';
 import {GameSetup} from '../GameSetup';
 import {Player} from '../Player';
 import {SerializedGame} from '../SerializedGame';
@@ -12,18 +12,18 @@ export class Cloner {
     players: Array<Player>,
     firstPlayerIndex: number,
     serialized: SerializedGame): Game {
-    const sourceGameId: GameId = serialized.id;
-    const oldPlayerIds: Array<string> = serialized.players.map((player) => player.id);
-    const newPlayerIds: Array<string> = players.map((player) => player.id);
-    if (oldPlayerIds.length !== newPlayerIds.length) {
-      throw new Error(`Failing to clone from a ${oldPlayerIds.length} game ${sourceGameId} to a ${newPlayerIds.length} game.`);
+    const serializedGameId: GameId = serialized.id;
+    const serializedPlayerIds: Array<PlayerId> = serialized.players.map((player) => player.id);
+    const playerIds: Array<PlayerId> = players.map((player) => player.id);
+    if (serializedPlayerIds.length !== playerIds.length) {
+      throw new Error(`Failing to clone from a ${serializedPlayerIds.length} game ${serializedGameId} to a ${playerIds.length} game.`);
     }
-    Cloner.replacestrings(serialized, oldPlayerIds, newPlayerIds);
-    if (oldPlayerIds.length === 1) {
+    Cloner.replacestrings(serialized, serializedPlayerIds, playerIds);
+    if (serializedPlayerIds.length === 1) {
       // The neutral player has a different ID in different games, and yet, it isn't serialized. So it gets a special case.
       Cloner.replacestrings(
         serialized,
-        [GameSetup.neutralPlayerFor(sourceGameId).id],
+        [GameSetup.neutralPlayerFor(serializedGameId).id],
         [GameSetup.neutralPlayerFor(newGameId).id]);
     }
     serialized.id = newGameId;
@@ -32,11 +32,11 @@ export class Cloner {
       this.updatePlayer(players[idx], serialized.players[idx]);
     }
     serialized.first = serialized.players[firstPlayerIndex];
-    serialized.clonedGamedId = '#' + sourceGameId;
-
+    serialized.clonedGamedId = '#' + serializedGameId;
+    serialized.createdTimeMs = new Date().getTime();
     const player = new Player('test', Color.BLUE, false, 0, 'p000');
     const player2 = new Player('test2', Color.RED, false, 0, 'p111');
-    const gameToRebuild = Game.newInstance('gtest', [player, player2], player);
+    const gameToRebuild = Game.rebuild('gtest', [player, player2], player);
     const game = gameToRebuild.loadFromJSON(serialized);
     return game;
   }

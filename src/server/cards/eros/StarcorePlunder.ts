@@ -6,12 +6,12 @@ import {Card} from '../Card';
 import {CardName} from '../../../common/cards/CardName';
 import {CardType} from '../../../common/cards/CardType';
 import {Tag} from '../../../common/cards/Tag';
-import {Resources} from '../../../common/Resources';
+import {Resource} from '../../../common/Resource';
 
 export class StarcorePlunder extends Card implements IProjectCard {
   constructor() {
     super({
-      cardType: CardType.AUTOMATED,
+      type: CardType.AUTOMATED,
       name: CardName.STARCORE_PLUNDER,
       tags: [Tag.PLANT, Tag.POWER, Tag.SPACE, Tag.BUILDING],
       cost: 60,
@@ -36,12 +36,12 @@ export class StarcorePlunder extends Card implements IProjectCard {
   }
 
   public override bespokePlay(player: Player) {
-    player.production.add(Resources.MEGACREDITS, 3);
-    player.production.add(Resources.STEEL, 3);
-    player.production.add(Resources.TITANIUM, 3);
-    player.production.add(Resources.PLANTS, 3);
-    player.production.add(Resources.ENERGY, 3);
-    player.production.add(Resources.HEAT, 3);
+    player.production.add(Resource.MEGACREDITS, 3);
+    player.production.add(Resource.STEEL, 3);
+    player.production.add(Resource.TITANIUM, 3);
+    player.production.add(Resource.PLANTS, 3);
+    player.production.add(Resource.ENERGY, 3);
+    player.production.add(Resource.HEAT, 3);
     // player.game.starCoreGen= player.game.generation;
     return undefined;
   }
@@ -57,12 +57,12 @@ export class StarcorePlunder extends Card implements IProjectCard {
   // }
 
   public destory(player: Player) {
-    player.production.add(Resources.MEGACREDITS, -Math.min(player.production.get(Resources.MEGACREDITS), 2));
-    player.production.add(Resources.STEEL, -Math.min(player.production.get(Resources.STEEL), 2));
-    player.production.add(Resources.TITANIUM, -Math.min(player.production.get(Resources.TITANIUM), 2));
-    player.production.add(Resources.PLANTS, -Math.min(player.production.get(Resources.PLANTS), 2));
-    player.production.add(Resources.ENERGY, -Math.min(player.production.get(Resources.ENERGY), 2));
-    player.production.add(Resources.HEAT, -Math.min(player.production.get(Resources.HEAT), 2));
+    player.production.add(Resource.MEGACREDITS, -Math.min(player.production.get(Resource.MEGACREDITS), 2));
+    player.production.add(Resource.STEEL, -Math.min(player.production.get(Resource.STEEL), 2));
+    player.production.add(Resource.TITANIUM, -Math.min(player.production.get(Resource.TITANIUM), 2));
+    player.production.add(Resource.PLANTS, -Math.min(player.production.get(Resource.PLANTS), 2));
+    player.production.add(Resource.ENERGY, -Math.min(player.production.get(Resource.ENERGY), 2));
+    player.production.add(Resource.HEAT, -Math.min(player.production.get(Resource.HEAT), 2));
     player. game.log('${0}\'s all production decreased by 2', (b) =>
       b.player(player),
     );

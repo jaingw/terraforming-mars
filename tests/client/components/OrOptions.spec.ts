@@ -43,9 +43,9 @@ describe('OrOptions', function() {
     });
     const inputs = component.findAll('input');
     await inputs.at(0).setChecked();
-    const buttons = component.findAllComponents({name: 'Button'});
+    const buttons = component.findAllComponents({name: 'AppButton'});
     await buttons.at(0).findAllComponents({
-      name: 'button',
+      name: 'AppButton',
     }).at(0).trigger('click');
     expect(savedData).to.deep.eq({type: 'or', index: 1, response: {type: 'option'}});
   });
@@ -79,9 +79,10 @@ describe('OrOptions', function() {
     });
     const inputs = component.findAll('input');
     await inputs.at(1).setChecked();
-    const buttons = component.findAllComponents({name: 'Button'});
+
+    const buttons = component.findAllComponents({name: 'AppButton'});
     await buttons.at(0).findAllComponents({
-      name: 'button',
+      name: 'AppButton',
     }).at(0).trigger('click');
     expect(savedData).to.deep.eq({type: 'or', index: 1, response: {type: 'option'}});
   });

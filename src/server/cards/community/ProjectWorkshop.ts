@@ -23,7 +23,7 @@ export class ProjectWorkshop extends Card implements ICorporationCard {
       name: CardName.PROJECT_WORKSHOP,
       tags: [Tag.EARTH],
       startingMegaCredits: 39,
-      cardType: CardType.CORPORATION,
+      type: CardType.CORPORATION,
 
       behavior: {
         stock: {steel: 1, titanium: 1},
@@ -93,7 +93,7 @@ export class ProjectWorkshop extends Card implements ICorporationCard {
           ([card]) => {
             this.convertCardPointsToTR(player, card);
             player.discardPlayedCard(card);
-            activeCards[0].resourceCount = 0;
+            card.resourceCount = 0;
             player.drawCard(2);
             return undefined;
           },

@@ -1,7 +1,7 @@
 import {IProjectCard} from '../IProjectCard';
 import {CardType} from '../../../common/cards/CardType';
 import {Player} from '../../Player';
-import {Resources} from '../../../common/Resources';
+import {Resource} from '../../../common/Resource';
 import {CardName} from '../../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
 import {Card} from '../Card';
@@ -10,7 +10,7 @@ export class FleetRecycling extends Card implements IProjectCard {
   constructor() {
     super({
       name: CardName.FLEET_RECYCLING,
-      cardType: CardType.EVENT,
+      type: CardType.EVENT,
       tags: [],
       cost: 10,
 
@@ -31,8 +31,8 @@ export class FleetRecycling extends Card implements IProjectCard {
 
   public override bespokePlay(player: Player) {
     player.colonies.decreaseFleetSize();
-    player.addResource(Resources.STEEL, 4);
-    player.addResource(Resources.TITANIUM, 4);
+    player.addResource(Resource.STEEL, 4);
+    player.addResource(Resource.TITANIUM, 4);
     return undefined;
   }
 }

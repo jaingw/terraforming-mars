@@ -9,14 +9,15 @@
               <div class="start-screen-title-top">TERRAFORMING</div>
               <div class="start-screen-title-bottom">MARS</div>
           </div>
-          <a class="start-screen-link start-screen-link--new-game" href="/new-game" v-i18n>New game</a>
+    <a class="start-screen-link start-screen-link--new-game" href="new-game" v-i18n>New game</a>
           <a class="start-screen-link start-screen-link--how-to-play" href="/mygames" v-if="userName" v-i18n>My Games</a>
           <a class="start-screen-link start-screen-link--how-to-play" href="/login" v-else v-i18n>Login</a>
           <a class="start-screen-link start-screen-link--cards-list" href="/donate" v-i18n>Donate</a>
           <!-- <a class="start-screen-link start-screen-link--cards-list" href="https://docs.qq.com/doc/DQU5vYmtJeGRQaVpN"  target="_blank" v-i18n>Help Translation</a> -->
           <a class="start-screen-link start-screen-link--board-game" href="/help"  target="_blank"  v-i18n>Help</a>
           <a class="start-screen-link start-screen-link--about" href="cards"  target="_blank"  v-i18n>Cards list</a>
-          <a class="start-screen-link start-screen-link--changelog" href="https://boardgamegeek.com/boardgame/167791/terraforming-mars"  target="_blank"  v-i18n>Board game</a>
+        <a class="start-screen-link start-screen-link--changelog" href="/ranks"  target="_blank"  v-i18n>Tier Ranking</a>
+        <!--          <a class="start-screen-link start-screen-link&#45;&#45;changelog" href="https://boardgamegeek.com/boardgame/167791/terraforming-mars"  target="_blank"  v-i18n>Board game</a>-->
 
           <div class="start-screen-header  start-screen-link--languages">
             <language-switcher />

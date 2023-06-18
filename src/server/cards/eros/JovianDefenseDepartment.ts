@@ -6,18 +6,17 @@ import {CardResource} from '../../../common/CardResource';
 import {CardName} from '../../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
 import {Card} from '../Card';
-import {VictoryPoints} from '../ICard';
 import {played} from '../Options';
 
 export class JovianDefenseDepartment extends Card implements IProjectCard {
   constructor() {
     super({
       name: CardName.JOVIAN_DEFENSE_DEPARTMENT,
-      cardType: CardType.ACTIVE,
+      type: CardType.ACTIVE,
       tags: [Tag.JOVIAN],
       cost: 14,
       resourceType: CardResource.ASTEROID,
-      victoryPoints: VictoryPoints.resource(1, 1),
+      victoryPoints: {resourcesHere: {}},
 
       metadata: {
         cardNumber: 'Q57',

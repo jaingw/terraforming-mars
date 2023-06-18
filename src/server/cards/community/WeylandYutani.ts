@@ -8,12 +8,12 @@ import {CardType} from '../../../common/cards/CardType';
 import {CardRenderer} from '../render/CardRenderer';
 import {Size} from '../../../common/cards/render/Size';
 import {all, played} from '../Options';
-import {Resources} from '../../../common/Resources';
+import {Resource} from '../../../common/Resource';
 
 export class WeylandYutani extends Card implements ICorporationCard {
   constructor() {
     super({
-      cardType: CardType.CORPORATION,
+      type: CardType.CORPORATION,
       name: CardName.WEYLAND_YUTANI,
       tags: [Tag.SCIENCE],
       startingMegaCredits: 42,
@@ -48,7 +48,7 @@ export class WeylandYutani extends Card implements ICorporationCard {
   private _onCardPlayed(player: Player, card: IProjectCard | ICorporationCard) {
     for (const tag of card.tags) {
       if (tag === Tag.SCIENCE) {
-        player.game.getCardPlayer(this.name)?.addResource(Resources.MEGACREDITS, 2, {log: true});
+        player.game.getCardPlayerOrThrow(this.name)?.addResource(Resource.MEGACREDITS, 2, {log: true});
       }
     }
   }

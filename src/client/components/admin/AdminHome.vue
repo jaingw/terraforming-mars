@@ -22,8 +22,8 @@ export default Vue.extend({
         paths.API_GAMES,
         paths.API_METRICS,
         paths.LOAD,
-        '/users',
-        '/exec',
+        'users',
+        'exec',
       ],
     };
   },

@@ -10,7 +10,7 @@ import {Tag} from '../../../common/cards/Tag';
 export class StarCoreMining extends Card implements IProjectCard {
   constructor() {
     super({
-      cardType: CardType.ACTIVE,
+      type: CardType.ACTIVE,
       name: CardName.STARCORE_MINING,
       tags: [Tag.PLANT, Tag.POWER, Tag.SPACE, Tag.BUILDING],
       cost: 32,

@@ -15,7 +15,7 @@ import {played} from '../../cards/Options';
 export class IntegratedMicroorganisms extends Card implements ICorporationCard {
   constructor() {
     super({
-      cardType: CardType.CORPORATION,
+      type: CardType.CORPORATION,
       name: CardName.INTEGRATED_MICROORGANISMS,
       tags: [Tag.MICROBE],
       startingMegaCredits: 40,

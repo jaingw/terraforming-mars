@@ -1,4 +1,5 @@
 import {MiningCard} from './base/MiningCard';
+import {isCeoCard} from './ceos/ICeoCard';
 import {IProjectCard} from './IProjectCard';
 import {isICloneTagCard} from './pathfinders/ICloneTagCard';
 import {SelfReplicatingRobots} from './promo/SelfReplicatingRobots';
@@ -30,6 +31,12 @@ export function serializePlayedCard(c: ICard): SerializedCard {
 
   if (isICloneTagCard(c)) {
     result.cloneTag = c.cloneTag;
+  }
+  if (isCeoCard(c)) {
+    result.isDisabled = c.isDisabled;
+    if (c.opgActionIsActive !== undefined) {
+      result.opgActionIsActive = c.opgActionIsActive;
+    }
   }
 
   if (card.allTags !== undefined) {
@@ -80,6 +87,12 @@ export function deserializeProjectCard(element: SerializedCard, cardFinder: Card
   }
   if (card instanceof AntiGravityExperiment && element.isDisabled !== undefined) {
     card.isDisabled = element.isDisabled;
+  }
+  if (isCeoCard(card)) {
+    card.isDisabled = element.isDisabled;
+    if (element.opgActionIsActive !== undefined) {
+      card.opgActionIsActive = element.opgActionIsActive;
+    }
   }
   return card;
 }

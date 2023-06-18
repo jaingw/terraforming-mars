@@ -9,7 +9,7 @@ import {CardRenderer} from '../../render/CardRenderer';
 export class _Inventrix_ extends Card implements ICorporationCard {
   constructor() {
     super({
-      cardType: CardType.CORPORATION,
+      type: CardType.CORPORATION,
       name: CardName._INVENTRIX_,
       tags: [Tag.SCIENCE, Tag.SCIENCE],
       initialActionText: 'Draw 3 cards',

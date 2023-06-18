@@ -11,7 +11,7 @@ import {ICard} from '../../cards/ICard';
 export class Protogen extends Card implements ICorporationCard {
   constructor() {
     super({
-      cardType: CardType.CORPORATION,
+      type: CardType.CORPORATION,
       name: CardName.PROTOGEN,
       tags: [Tag.MICROBE],
       startingMegaCredits: 47,

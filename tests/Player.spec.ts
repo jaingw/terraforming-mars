@@ -6,7 +6,7 @@ import {IoMiningIndustries} from '../src/server/cards/base/IoMiningIndustries';
 import {PowerSupplyConsortium} from '../src/server/cards/base/PowerSupplyConsortium';
 import {SaturnSystems} from '../src/server/cards/corporation/SaturnSystems';
 import {SelectOption} from '../src/server/inputs/SelectOption';
-import {Resources} from '../src/common/Resources';
+import {Resource} from '../src/common/Resource';
 import {SerializedPlayer} from '../src/server/SerializedPlayer';
 import {SerializedTimer} from '../src/common/SerializedTimer';
 import {Player} from '../src/server/Player';
@@ -47,8 +47,8 @@ describe('Player', function() {
     const player2 = new Player('red', Color.RED, false, 0, 'p-red');
     const player3 = new Player('yellow', Color.YELLOW, false, 0, 'p-yellow');
     Game.newInstance('gameid', [player, player2, player3], player);
-    player2.production.add(Resources.ENERGY, 2);
-    player3.production.add(Resources.ENERGY, 2);
+    player2.production.add(Resource.ENERGY, 2);
+    player3.production.add(Resource.ENERGY, 2);
     player.playedCards.push(new LunarBeam());
     player.playedCards.push(new LunarBeam());
     card.play(player);
@@ -66,8 +66,8 @@ describe('Player', function() {
 
     player.playedCards.push(new LunarBeam());
     player.playedCards.push(new LunarBeam());
-    player.production.add(Resources.ENERGY, 1);
-    player2.production.add(Resources.ENERGY, 1);
+    player.production.add(Resource.ENERGY, 1);
+    player2.production.add(Resource.ENERGY, 1);
 
     const action = card.play(player);
     expect(action).is.undefined;
@@ -84,7 +84,7 @@ describe('Player', function() {
     const player = new Player('blue', Color.BLUE, false, 0, 'p-blue');
     const redPlayer = new Player('red', Color.RED, false, 0, 'p-red');
 
-    player.production.add(Resources.HEAT, 2);
+    player.production.add(Resource.HEAT, 2);
     Game.newInstance('gameid', [player, redPlayer], player);
     player.defer(card.play(player));
     runAllActions(player.game);
@@ -231,10 +231,12 @@ describe('Player', function() {
       actionsThisGeneration: [],
       pendingInitialActions: [],
       dealtCorporationCards: [],
+      dealtCeoCards: [CardName.KAREN],
       dealtProjectCards: [],
       dealtPreludeCards: [],
       cardsInHand: [],
       preludeCardsInHand: [],
+      ceoCardsInHand: [],
       playedCards: [], // TODO(kberg): these are SerializedCard.
       draftedCards: [],
       cardCost: 3,
@@ -529,12 +531,12 @@ describe('Player', function() {
       heat: 0,
     });
 
-    player.production.add(Resources.MEGACREDITS, 20);
-    player.production.add(Resources.STEEL, 19);
-    player.production.add(Resources.TITANIUM, 18);
-    player.production.add(Resources.PLANTS, 17);
-    player.production.add(Resources.ENERGY, 16);
-    player.production.add(Resources.HEAT, 15);
+    player.production.add(Resource.MEGACREDITS, 20);
+    player.production.add(Resource.STEEL, 19);
+    player.production.add(Resource.TITANIUM, 18);
+    player.production.add(Resource.PLANTS, 17);
+    player.production.add(Resource.ENERGY, 16);
+    player.production.add(Resource.HEAT, 15);
 
     player.production.adjust(Units.of({megacredits: -10}));
     expect(asProductionUnits(player)).deep.eq({
@@ -633,13 +635,13 @@ describe('Player', function() {
     const player2 = new Player('red', Color.RED, false, 0, 'p-red');
     const game = Game.newInstance('gameid', [player1, player2], player1);
     player1.megaCredits = 0;
-    player1.production.add(Resources.MEGACREDITS, -5);
+    player1.production.add(Resource.MEGACREDITS, -5);
     player2.megaCredits = 3;
     player2.corporations[0] = new MonsInsurance();
     game.monsInsuranceOwner = player2;
-    player1.addResource(Resources.MEGACREDITS, -3, {from: player2, log: false});
+    player1.addResource(Resource.MEGACREDITS, -3, {from: player2, log: false});
     expect(player2.megaCredits).eq(3);
-    player1.production.add(Resources.MEGACREDITS, -3, {from: player2, log: false});
+    player1.production.add(Resource.MEGACREDITS, -3, {from: player2, log: false});
     expect(player2.megaCredits).eq(3);
   });
 
@@ -686,19 +688,19 @@ describe('Player', function() {
     Game.newInstance('gameid', [player], player);
     player.megaCredits = 10;
     // adds any positive amount
-    player.addResource(Resources.MEGACREDITS, 12);
+    player.addResource(Resource.MEGACREDITS, 12);
     expect(player.megaCredits).eq(22);
     // removes more than we have
-    player.addResource(Resources.MEGACREDITS, -23);
+    player.addResource(Resource.MEGACREDITS, -23);
     expect(player.megaCredits).eq(0);
     // adds any positive amount
-    player.addResource(Resources.MEGACREDITS, 5);
+    player.addResource(Resource.MEGACREDITS, 5);
     expect(player.megaCredits).eq(5);
     // removes less than we have
-    player.addResource(Resources.MEGACREDITS, -4);
+    player.addResource(Resource.MEGACREDITS, -4);
     expect(player.megaCredits).eq(1);
     // makes no change
-    player.addResource(Resources.MEGACREDITS, 0);
+    player.addResource(Resource.MEGACREDITS, 0);
     expect(player.megaCredits).eq(1);
   });
 
@@ -709,10 +711,10 @@ describe('Player', function() {
     const log = game.gameLog;
     log.length = 0; // Empty it out.
 
-    player.addResource(Resources.MEGACREDITS, 12, {log: false});
+    player.addResource(Resource.MEGACREDITS, 12, {log: false});
     expect(log.length).eq(0);
 
-    player.addResource(Resources.MEGACREDITS, 12, {log: true});
+    player.addResource(Resource.MEGACREDITS, 12, {log: true});
     const logEntry = log[0];
     expect(formatLogMessage(logEntry)).eq('blue\'s megacredits amount increased by 12');
   });
@@ -723,7 +725,7 @@ describe('Player', function() {
     const game = Game.newInstance('gameid', [player, player2], player);
 
     player.megaCredits = 5;
-    player.addResource(Resources.MEGACREDITS, -5, {log: true, from: player2});
+    player.addResource(Resource.MEGACREDITS, -5, {log: true, from: player2});
 
     const log = game.gameLog;
     const logEntry = log[log.length - 1];
@@ -734,7 +736,7 @@ describe('Player', function() {
     const player = new Player('blue', Color.BLUE, false, 0, 'p-blue');
     const game = Game.newInstance('gameid', [player], player);
 
-    player.addResource(Resources.MEGACREDITS, 12, {log: true, from: GlobalEventName.ASTEROID_MINING});
+    player.addResource(Resource.MEGACREDITS, 12, {log: true, from: GlobalEventName.ASTEROID_MINING});
 
     const log = game.gameLog;
     const logEntry = log[log.length - 1];
@@ -751,7 +753,7 @@ describe('Player', function() {
     console.warn = (message?: any, ...optionalParams: any[]) => {
       consoleLog.push([message, optionalParams]);
     };
-    player.addResource(Resources.MEGACREDITS, -12);
+    player.addResource(Resource.MEGACREDITS, -12);
     console.warn = warn;
 
     expect(consoleLog.length).eq(1);

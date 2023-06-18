@@ -19,7 +19,7 @@ export class JovianExpedition extends Card implements IProjectCard {
       cost: 20,
       tags: [Tag.JOVIAN, Tag.SPACE],
       name: CardName.JOVIAN_EXPEDITION,
-      cardType: CardType.AUTOMATED,
+      type: CardType.AUTOMATED,
       victoryPoints: 1,
 
       requirements: CardRequirements.builder((b) => b.colonies()),
@@ -65,7 +65,7 @@ export class JovianExpedition extends Card implements IProjectCard {
 
   private checkActivation(colony: IColony, game: Game): void {
     if (colony.isActive) return;
-    if (colony.metadata.resourceType === undefined) return;
+    if (colony.metadata.cardResource === undefined) return;
     for (const player of game.getPlayers()) {
       for (const card of player.tableau) {
         const active = ColoniesHandler.maybeActivateColony(colony, card);

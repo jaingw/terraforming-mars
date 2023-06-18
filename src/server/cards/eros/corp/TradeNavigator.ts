@@ -12,7 +12,7 @@ export class TradeNavigator extends Card implements ICard, ICorporationCard {
       name: CardName.TRADE_NAVIGATOR,
       tags: [],
       startingMegaCredits: 42,
-      cardType: CardType.CORPORATION,
+      type: CardType.CORPORATION,
 
       metadata: {
         cardNumber: 'Q25',

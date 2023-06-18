@@ -3,12 +3,13 @@
 import Vue from 'vue';
 
 import StackedCards from '@/client/components/StackedCards.vue';
-import {PlayerMixin} from '@/client/mixins/PlayerMixin';
 import {PublicPlayerModel} from '@/common/models/PlayerModel';
-import {mainAppSettings} from '@/client/components/App';
+import {vueRoot} from '@/client/components/vueRoot';
 import Card from '@/client/components/card/Card.vue';
-import Button from '@/client/components/common/Button.vue';
+import AppButton from '@/client/components/common/AppButton.vue';
 import {CardType} from '@/common/cards/CardType';
+import {getCardsByType, isCardActivated} from '@/client/utils/CardUtils';
+import {sortActiveCards} from '@/client/utils/ActiveCardsSortingOrder';
 
 export default Vue.extend({
   name: 'OtherPlayer',
@@ -21,18 +22,16 @@ export default Vue.extend({
     },
   },
   components: {
-    Button,
+    AppButton,
     'stacked-cards': StackedCards,
     Card,
   },
   methods: {
-    ...PlayerMixin.methods,
     hideMe() {
-      // TODO find a better way to share methods with this.$root for type safety
-      (this.$root as unknown as typeof mainAppSettings.methods).setVisibilityState('pinned_player_' + this.playerIndex, false);
+      vueRoot(this).setVisibilityState('pinned_player_' + this.playerIndex, false);
     },
     isVisible() {
-      return (this.$root as unknown as typeof mainAppSettings.methods).getVisibilityState(
+      return vueRoot(this).getVisibilityState(
         'pinned_player_' + this.playerIndex,
       );
     },
@@ -41,16 +40,28 @@ export default Vue.extend({
     CardType(): typeof CardType {
       return CardType;
     },
+    getCardsByType(): typeof getCardsByType {
+      return getCardsByType;
+    },
+    isCardActivated(): typeof isCardActivated {
+      return isCardActivated;
+    },
+    sortActiveCards(): typeof sortActiveCards {
+      return sortActiveCards;
+    },
   },
 });
 </script>
 <template>
   <div v-show="isVisible()" class="other_player_cont menu">
-      <Button size="big" type="close" @click="hideMe" :disableOnServerBusy="false" align="right" />
+      <AppButton size="big" type="close" @click="hideMe" :disableOnServerBusy="false" align="right" />
       <div v-if="player.tableau.length > 0" class="player_home_block">
           <span class="player_name" :class="'player_bg_color_' + player.color"> {{ player.name }} played cards </span>
           <div>
               <div v-for="card in getCardsByType(player.tableau, [CardType.CORPORATION])" :key="card.name" class="cardbox">
+                  <Card :card="card" :actionUsed="isCardActivated(card, player)"/>
+              </div>
+              <div v-for="card in getCardsByType(player.tableau, [CardType.CEO])" :key="card.name" class="cardbox">
                   <Card :card="card" :actionUsed="isCardActivated(card, player)"/>
               </div>
 

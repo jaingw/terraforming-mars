@@ -29,14 +29,14 @@ describe('Timer', function() {
     // So run a start/stop pair.
     timer.start();
     timer.stop();
-    expect(Timer.toString(timer.serialize(), clock)).eq('00:00');
+    expect(Timer.toString(timer.serialize(), 0, clock)).eq('00:00');
 
     timer.start();
-    expect(Timer.toString(timer.serialize(), clock)).eq('00:00');
+    expect(Timer.toString(timer.serialize(), 0, clock)).eq('00:00');
     clock.millis += 1000;
-    expect(Timer.toString(timer.serialize(), clock)).eq('00:01');
+    expect(Timer.toString(timer.serialize(), 0, clock)).eq('00:01');
     timer.stop();
-    expect(Timer.toString(timer.serialize(), clock)).eq('00:01');
+    expect(Timer.toString(timer.serialize(), 0, clock)).eq('00:01');
   });
 
   it('shows 1:00:01 after 3601 sec', function() {
@@ -50,8 +50,8 @@ describe('Timer', function() {
 
     timer.start();
     clock.millis += 3601 * 1000;
-    expect(Timer.toString(timer.serialize(), clock)).eq('1:00:01');
+    expect(Timer.toString(timer.serialize(), 0, clock)).eq('1:00:01');
     timer.stop();
-    expect(Timer.toString(timer.serialize(), clock)).eq('1:00:01');
+    expect(Timer.toString(timer.serialize(), 0, clock)).eq('1:00:01');
   });
 });
