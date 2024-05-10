@@ -1,7 +1,7 @@
-import {Board} from '../../src/server/boards/Board';
+import {MarsBoard} from '../../src/server/boards/MarsBoard';
 import {BoardBuilder} from '../../src/server/boards/BoardBuilder';
 
-export class EmptyBoard extends Board {
+export class EmptyBoard extends MarsBoard {
   public static newInstance() {
     const builder = new BoardBuilder(false, false);
 
@@ -24,6 +24,6 @@ export class EmptyBoard extends Board {
     // y=8
     builder.land().land().land().land().land();
 
-    return new EmptyBoard(builder.build());
+    return new EmptyBoard(builder.build(), undefined, []);
   }
 }

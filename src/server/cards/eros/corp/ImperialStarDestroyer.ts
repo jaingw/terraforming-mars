@@ -1,18 +1,15 @@
 import {CardRenderer} from '../../render/CardRenderer';
-import {Card} from '../../Card';
 import {CardName} from '../../../../common/cards/CardName';
-import {CardType} from '../../../../common/cards/CardType';
-import {ICorporationCard} from '../../corporation/ICorporationCard';
-import {Player} from '../../../Player';
+import {IPlayer} from '../../../IPlayer';
 import {Tag} from '../../../../common/cards/Tag';
+import {CorporationCard} from '../../corporation/CorporationCard';
 
-export class ImperialStarDestroyer extends Card implements ICorporationCard {
+export class ImperialStarDestroyer extends CorporationCard {
   constructor() {
     super({
       name: CardName.IMPERIAL_STAR_DESTROYER,
       tags: [Tag.SPACE],
       startingMegaCredits: 53,
-      type: CardType.CORPORATION,
       metadata: {
         cardNumber: 'Q031',
         description: 'You start with 53 M€',
@@ -30,7 +27,7 @@ export class ImperialStarDestroyer extends Card implements ICorporationCard {
   }
 
 
-  public override bespokePlay(player: Player) {
+  public override bespokePlay(player: IPlayer) {
     player.colonies.increaseFleetSize();
     return undefined;
   }

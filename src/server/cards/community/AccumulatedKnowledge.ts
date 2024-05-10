@@ -1,4 +1,4 @@
-import {Player} from '../../Player';
+import {IPlayer} from '../../IPlayer';
 import {PreludeCard} from '../prelude/PreludeCard';
 import {IProjectCard} from '../IProjectCard';
 import {OrOptions} from '../../inputs/OrOptions';
@@ -26,18 +26,18 @@ export class AccumulatedKnowledge extends PreludeCard implements IProjectCard {
     });
   }
 
-  public override bespokePlay(player: Player) {
+  public override bespokePlay(player: IPlayer) {
     const game = player.game;
     player.drawCard(4);
 
     game.defer(new SimpleDeferredAction(player, () => new OrOptions(
-      new SelectCard('Discard a card to draw a card', 'Discard', player.cardsInHand, (foundCards: Array<IProjectCard>) => {
+      new SelectCard('Discard a card to draw a card', 'Discard', player.cardsInHand).andThen( (foundCards: Array<IProjectCard>) => {
         player.cardsInHand.splice(player.cardsInHand.indexOf(foundCards[0]), 1);
         game.projectDeck.discard(foundCards[0]);
-        player.cardsInHand.push(game.projectDeck.draw(game));
+        player.cardsInHand.push(game.projectDeck.drawOrThrow(game));
         return undefined;
       }),
-      new SelectOption('Do nothing', 'Confirm', () => {
+      new SelectOption('Do nothing', 'Confirm' ).andThen( () => {
         return undefined;
       }),
     )));

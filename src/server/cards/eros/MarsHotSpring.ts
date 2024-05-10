@@ -1,17 +1,16 @@
 import {IProjectCard} from '../IProjectCard';
-import {Player} from '../../Player';
-import {Game} from '../../Game';
+import {IPlayer} from '../../IPlayer';
 import {SelectSpace} from '../../inputs/SelectSpace';
 import {TileType} from '../../../common/TileType';
-import {ISpace} from '../../boards/ISpace';
+import {Space} from '../../boards/Space';
 import {Board} from '../../boards/Board';
-import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
 import {Card} from '../Card';
 import {digit} from '../Options';
 import {CardName} from '../../../common/cards/CardName';
 import {CardType} from '../../../common/cards/CardType';
 import {Tag} from '../../../common/cards/Tag';
+import {IGame} from '../../IGame';
 
 export class MarsHotSpring extends Card implements IProjectCard {
   constructor() {
@@ -25,7 +24,7 @@ export class MarsHotSpring extends Card implements IProjectCard {
         production: {heat: 2, megacredits: 2},
       },
 
-      requirements: CardRequirements.builder((b) => b.oceans(3)),
+      requirements: {oceans: 3},
       metadata: {
         cardNumber: 'Q06',
         renderData: CardRenderer.builder((b) => {
@@ -36,21 +35,21 @@ export class MarsHotSpring extends Card implements IProjectCard {
       },
     });
   }
-  public override bespokeCanPlay(player: Player): boolean {
+  public override bespokeCanPlay(player: IPlayer): boolean {
     const canPlaceTile = this.getAvailableSpaces(player, player.game).length > 0;
     return canPlaceTile;
   }
-  public override bespokePlay(player: Player) {
+  public override bespokePlay(player: IPlayer) {
     const availableSpaces = this.getAvailableSpaces(player, player.game);
     if (availableSpaces.length < 1) return undefined;
 
-    return new SelectSpace('Select space for tile', availableSpaces, (foundSpace: ISpace) => {
+    return new SelectSpace('Select space for tile', availableSpaces ).andThen((foundSpace: Space) => {
       player.game.addTile(player, foundSpace, {tileType: TileType.HOT_SPRING});
       return undefined;
     });
   }
 
-  private getAvailableSpaces(player: Player, game: Game): Array<ISpace> {
+  private getAvailableSpaces(player: IPlayer, game: IGame): Array<Space> {
     return game.board.getAvailableSpacesOnLand(player)
       .filter(
         (space) => game.board.getAdjacentSpaces(space).filter(

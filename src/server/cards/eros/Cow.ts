@@ -1,7 +1,6 @@
 import {IActionCard} from '../ICard';
 import {IProjectCard} from '../IProjectCard';
-import {Player} from '../../Player';
-import {CardRequirements} from '../CardRequirements';
+import {IPlayer} from '../../IPlayer';
 import {CardRenderer} from '../render/CardRenderer';
 import {Card} from '../Card';
 import {CardName} from '../../../common/cards/CardName';
@@ -20,7 +19,7 @@ export class Cow extends Card implements IActionCard, IProjectCard {
       resourceType: CardResource.ANIMAL,
       victoryPoints: {resourcesHere: {}, per: 2},
 
-      requirements: CardRequirements.builder((b) => b.oxygen(5)),
+      requirements: {oxygen: 5},
       metadata: {
         cardNumber: 'Q15',
         renderData: CardRenderer.builder((b) => {
@@ -35,13 +34,13 @@ export class Cow extends Card implements IActionCard, IProjectCard {
   }
   public override resourceCount = 0;
 
-  public canAct(player: Player): boolean {
-    return player.getResource(Resource.PLANTS) >= 1;
+  public canAct(player: IPlayer): boolean {
+    return player.stock.get(Resource.PLANTS) >= 1;
   }
-  public action(player: Player) {
+  public action(player: IPlayer) {
     player.addResourceTo(this, 1);
-    player.addResource(Resource.PLANTS, -1);
-    player.addResource(Resource.MEGACREDITS, 5);
+    player.stock.add(Resource.PLANTS, -1);
+    player.stock.add(Resource.MEGACREDITS, 5);
     return undefined;
   }
 }

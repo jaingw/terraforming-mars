@@ -1,9 +1,11 @@
-import * as http from 'http';
+import * as responses from './responses';
 import {Handler} from './Handler';
 import {Context} from './IHandler';
 import {GameLoader} from '../database/GameLoader';
 import {State} from '../database/IGameLoader';
 import * as UserUtil from '../UserUtil';
+import {Request} from '../Request';
+import {Response} from '../Response';
 
 export class ApiGames extends Handler {
   public static readonly INSTANCE = new ApiGames();
@@ -11,17 +13,17 @@ export class ApiGames extends Handler {
     super({validateServerId: true});
   }
 
-  public override get(req: http.IncomingMessage, res: http.ServerResponse, ctx: Context): Promise<void> {
+  public override get(req: Request, res: Response, ctx: Context): Promise<void> {
     const userId = ctx.url.searchParams.get('userId');
     if (userId === undefined || userId !== UserUtil.myId) {
       console.warn('Not me');
-      ctx.route.notFound(req, res, 'Not me');
+      responses.notFound(req, res, 'Not me');
       return Promise.resolve();
     }
 
     if (GameLoader.getInstance().state !== State.READY ) {
       console.warn('loading');
-      ctx.route.notFound(req, res, 'loading');
+      responses.notFound(req, res, 'loading');
       return Promise.resolve();
     }
     const answer: Array<any> = [];
@@ -50,7 +52,7 @@ export class ApiGames extends Handler {
     answer.sort((a: any, b: any) => {
       return a.updatetime > b.updatetime ? -1 : (a.updatetime === b.updatetime ? 0 : 1);
     });
-    ctx.route.writeJson(res, answer);
+    responses.writeJson(res, answer);
     return Promise.resolve();
   }
 }

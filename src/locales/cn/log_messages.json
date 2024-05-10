@@ -59,6 +59,7 @@
     "${0} sold ${1} patents": "${0}卖了${1}张项目卡",
     "${0}'s ${1} amount ${2} by ${3} by ${4}":"${0}'s ${1} amount ${2} by ${3} by ${4}",
     "${0}'s ${1} production ${2} by ${3} by ${4}":"${0}'s ${1} production ${2} by ${3} by ${4}",
+    "Drew and discarded ${0} to place a ${1}":"摸取并弃置 ${0} 来放置 ${1}",
     "${0}'s ${1} production increased by ${2}":"${0}的${1}产量提升了${2}",
     "${0} placed ${1} tile on row ${2} position ${3}":"${0} placed ${1} tile on row ${2} position ${3}",
     "${0} spent 1 ${1} to gain 7 M€":"${0}花费1${1}获得7M€",

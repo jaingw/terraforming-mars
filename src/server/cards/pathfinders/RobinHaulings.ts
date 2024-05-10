@@ -1,9 +1,7 @@
-import {Card} from '../Card';
-import {ICorporationCard} from '../corporation/ICorporationCard';
+import {CorporationCard} from '../corporation/CorporationCard';
 import {Tag} from '../../../common/cards/Tag';
-import {Player} from '../../Player';
+import {IPlayer} from '../../IPlayer';
 import {CardName} from '../../../common/cards/CardName';
-import {CardType} from '../../../common/cards/CardType';
 import {CardRenderer} from '../render/CardRenderer';
 import {CardResource} from '../../../common/CardResource';
 import {AddResourcesToCard} from '../../deferredActions/AddResourcesToCard';
@@ -14,10 +12,9 @@ import {OrOptions} from '../../inputs/OrOptions';
 import {SelectOption} from '../../inputs/SelectOption';
 import {PlayerInput} from '../../PlayerInput';
 
-export class RobinHaulings extends Card implements ICorporationCard {
+export class RobinHaulings extends CorporationCard {
   constructor() {
     super({
-      type: CardType.CORPORATION,
       name: CardName.ROBIN_HAULINGS,
       tags: [Tag.MARS, Tag.VENUS],
       startingMegaCredits: 39,
@@ -44,38 +41,36 @@ export class RobinHaulings extends Card implements ICorporationCard {
     });
   }
 
-  public onCardPlayed(player: Player, card: IProjectCard) :PlayerInput | undefined {
+  public onCardPlayed(player: IPlayer, card: IProjectCard) {
     if (player.isCorporation(CardName.ROBIN_HAULINGS) && card.tags.includes(Tag.VENUS)) {
       player.game.defer(new AddResourcesToCard(player, CardResource.FLOATER));
     }
     return undefined;
   }
 
-  public onCorpCardPlayed(player: Player, card:ICorporationCard):PlayerInput | undefined {
+  public onCorpCardPlayed(player: IPlayer, card:CorporationCard):PlayerInput | undefined {
     return this.onCardPlayed(player, card as unknown as IProjectCard);
   }
 
-  private canRaiseVenus(player: Player) {
-    return player.game.getVenusScaleLevel() < MAX_VENUS_SCALE && player.canAfford(0, {tr: {venus: 1}});
+  private canRaiseVenus(player: IPlayer) {
+    return player.game.getVenusScaleLevel() < MAX_VENUS_SCALE && player.canAfford({cost: 0, tr: {venus: 1}});
   }
 
-  private canRaiseOxygen(player: Player) {
-    return player.game.getOxygenLevel() < MAX_OXYGEN_LEVEL && player.canAfford(0, {tr: {oxygen: 1}});
+  private canRaiseOxygen(player: IPlayer) {
+    return player.game.getOxygenLevel() < MAX_OXYGEN_LEVEL && player.canAfford({cost: 0, tr: {oxygen: 1}});
   }
 
-  public canAct(player: Player) {
+  public canAct(player: IPlayer) {
     if (this.resourceCount < 3) return false;
     return this.canRaiseVenus(player) || this.canRaiseOxygen(player);
   }
 
-  public action(player: Player) {
+  public action(player: IPlayer) {
     const options = new OrOptions();
     if (this.canRaiseVenus(player)) {
       options.options.push(
-        new SelectOption(
-          'Spend 3 floaters to raise Venus 1 step',
-          'OK',
-          () => {
+        new SelectOption('Spend 3 floaters to raise Venus 1 step')
+          .andThen(() => {
             player.game.increaseVenusScaleLevel(player, 1);
             this.resourceCount -= 3;
             return undefined;
@@ -83,10 +78,8 @@ export class RobinHaulings extends Card implements ICorporationCard {
     }
     if (this.canRaiseOxygen(player)) {
       options.options.push(
-        new SelectOption(
-          'Spend 3 floaters to raise oxygen 1 step',
-          'OK',
-          () => {
+        new SelectOption('Spend 3 floaters to raise oxygen 1 step')
+          .andThen(() => {
             player.game.increaseOxygenLevel(player, 1);
             this.resourceCount -= 3;
             return undefined;

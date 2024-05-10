@@ -1,15 +1,12 @@
 import {CardName} from '../../../../common/cards/CardName';
-import {CardType} from '../../../../common/cards/CardType';
 import {Tag} from '../../../../common/cards/Tag';
-import {Player} from '../../../Player';
-import {Card} from '../../Card';
-import {ICorporationCard} from '../../corporation/ICorporationCard';
+import {IPlayer} from '../../../IPlayer';
+import {CorporationCard} from '../../corporation/CorporationCard';
 import {CardRenderer} from '../../render/CardRenderer';
 
-export class _Inventrix_ extends Card implements ICorporationCard {
+export class _Inventrix_ extends CorporationCard {
   constructor() {
     super({
-      type: CardType.CORPORATION,
       name: CardName._INVENTRIX_,
       tags: [Tag.SCIENCE, Tag.SCIENCE],
       initialActionText: 'Draw 3 cards',
@@ -31,12 +28,12 @@ export class _Inventrix_ extends Card implements ICorporationCard {
     });
   }
 
-  public initialAction(player: Player) {
+  public initialAction(player: IPlayer) {
     player.drawCard(3);
     return undefined;
   }
 
-  public getRequirementBonus(_player: Player): number {
+  public getRequirementBonus(_player: IPlayer): number {
     return 3;
   }
 }

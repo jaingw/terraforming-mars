@@ -1,19 +1,17 @@
-import * as http from 'http';
-import * as EventEmitter from 'events';
 import {expect} from 'chai';
 import {PlayerInput} from '../../src/server/routes/PlayerInput';
-import {MockResponse} from './HttpMocks';
+import {MockRequest, MockResponse} from './HttpMocks';
 import {RouteTestScaffolding} from './RouteTestScaffolding';
 
 describe('PlayerInput', function() {
   let scaffolding: RouteTestScaffolding;
-  let req: EventEmitter;
+  let req: MockRequest;
   let res: MockResponse;
 
   beforeEach(() => {
-    req = new EventEmitter();
+    req = new MockRequest();
     res = new MockResponse();
-    scaffolding = new RouteTestScaffolding(req as http.IncomingMessage);
+    scaffolding = new RouteTestScaffolding(req);
   });
 
   it('fails when id not provided', async () => {
@@ -76,6 +74,6 @@ describe('PlayerInput', function() {
   //   scaffolding.post(PlayerInput.INSTANCE, res);
   //   scaffolding.req.emit('data', '}{');
   //   scaffolding.req.emit('end');
-  //   expect(res.content).eq('{"message":"Unexpected token } in JSON at position 0"}');
+  //  expect(res.content).eq('{"message":"Unexpected token } in JSON at position 0"}');
   // });
 });

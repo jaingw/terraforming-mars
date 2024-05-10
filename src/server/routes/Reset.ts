@@ -1,11 +1,13 @@
-import * as http from 'http';
+import * as responses from './responses';
 import {Server} from '../models/ServerModel';
 import {Handler} from './Handler';
 import {Context} from './IHandler';
-import {Player} from '../Player';
+import {IPlayer} from '../IPlayer';
 import {isPlayerId} from '../../common/Types';
 import {GameLoader} from '../database/GameLoader';
-import {Game} from '../Game';
+import {Request} from '../Request';
+import {Response} from '../Response';
+import {IGame} from '../IGame';
 
 /**
  * Reloads the game from the last action.
@@ -23,23 +25,23 @@ export class Reset extends Handler {
     super();
   }
 
-  public override async get(req: http.IncomingMessage, res: http.ServerResponse, ctx: Context): Promise<void> {
+  public override async get(req: Request, res: Response, ctx: Context): Promise<void> {
     const userId = ctx.url.searchParams.get('userId');
     const playerId = ctx.url.searchParams.get('id');
     if (playerId === null) {
-      ctx.route.badRequest(req, res, 'missing id parameter');
+      responses.badRequest(req, res, 'missing id parameter');
       return;
     }
 
     if (!isPlayerId(playerId)) {
-      ctx.route.badRequest(req, res, 'invalid player id');
+      responses.badRequest(req, res, 'invalid player id');
       return;
     }
 
     // This is the exact same code as in `ApiPlayer`. I bet it's not the only place.
     const game = await GameLoader.getInstance().getByPlayerId(playerId);
     if (game === undefined) {
-      ctx.route.notFound(req, res);
+      responses.notFound(req, res);
       return;
     }
 
@@ -48,30 +50,30 @@ export class Reset extends Handler {
       throw new Error('Reset is only available for solo games at the moment.');
     }
 
-    let player: Player | undefined;
+    let player: IPlayer | undefined;
     try {
       player = game.getPlayerById(playerId);
       const userPlayer = GameLoader.getUserByPlayer(player);
       if (userPlayer !== undefined && userPlayer.id !== userId) {// 已注册并且不等于登录用户  不能体退
-        ctx.route.badRequest(req, res, 'user not found');
+        responses.badRequest(req, res, 'user not found');
         return;
       }
 
       const player2 = player;
       return new Promise((resolve) => {
-        GameLoader.getInstance().getGameById(player2.game.id, (game: Game | undefined) => {
+        GameLoader.getInstance().getGameById(player2.game.id, (game: IGame | undefined) => {
           if (game !== undefined) {
             const reloadedPlayer = game.getPlayerById(player2.id);
             game.inputsThisRound = 0;
             const playerBlockModel = Server.getPlayerBlock(player2, userId);
-            ctx.route.writeJson(res, Server.getPlayerModel(reloadedPlayer, playerBlockModel));
+            responses.writeJson(res, Server.getPlayerModel(reloadedPlayer, playerBlockModel));
             resolve();
             return;
           }
 
           if (game === undefined) {
             console.warn('game not found ' + player2.game.id);
-            ctx.route.notFound(req, res, 'game not found');
+            responses.notFound(req, res, 'game not found');
             resolve();
             return;
           }
@@ -80,6 +82,6 @@ export class Reset extends Handler {
     } catch (err) {
       console.error(err);
     }
-    ctx.route.badRequest(req, res, 'Could not reset');
+    responses.badRequest(req, res, 'Could not reset');
   }
 }

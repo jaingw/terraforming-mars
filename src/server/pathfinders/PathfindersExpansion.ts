@@ -1,8 +1,7 @@
 import {AddResourcesToCard} from '../deferredActions/AddResourcesToCard';
 import {CardName} from '../../common/cards/CardName';
-import {CardType} from '../../common/cards/CardType';
-import {Game} from '../Game';
-import {GameOptions} from '../GameOptions';
+import {IGame} from '../IGame';
+import {GameOptions} from '../game/GameOptions';
 import {GrantResourceDeferred} from './GrantResourceDeferred';
 import {ICard} from '../cards/ICard';
 import {PathfindersData, PlanetaryTag, isPlanetaryTag} from './PathfindersData';
@@ -12,7 +11,7 @@ import {PlaceMoonMineTile} from '../moon/PlaceMoonMineTile';
 import {PlaceMoonRoadTile} from '../moon/PlaceMoonRoadTile';
 import {PlaceOceanTile} from '../deferredActions/PlaceOceanTile';
 import {PlanetaryTracks} from '../../common/pathfinders/PlanetaryTracks';
-import {Player} from '../Player';
+import {IPlayer} from '../IPlayer';
 import {Resource} from '../../common/Resource';
 import {CardResource} from '../../common/CardResource';
 import {Reward} from '../../common/pathfinders/Reward';
@@ -22,6 +21,7 @@ import {Tag} from '../../common/cards/Tag';
 import {VictoryPointsBreakdown} from '../game/VictoryPointsBreakdown';
 import {TurmoilUtil} from '../turmoil/TurmoilUtil';
 import {GlobalEventName} from '../../common/turmoil/globalEvents/GlobalEventName';
+import {Priority} from '../deferredActions/Priority';
 
 export const TRACKS = PlanetaryTracks.initialize();
 
@@ -40,7 +40,7 @@ export class PathfindersExpansion {
     };
   }
 
-  public static onCardPlayed(player: Player, card: ICard) {
+  public static onCardPlayed(player: IPlayer, card: ICard) {
     if (player.game.gameOptions.pathfindersExpansion === false) {
       return;
     }
@@ -50,30 +50,18 @@ export class PathfindersExpansion {
         PathfindersExpansion.raiseTrack(tag, player);
       }
     });
-
-    // Communication Center hook
-    if (card.type === CardType.EVENT) {
-      for (const p of player.game.getPlayers()) {
-        for (const c of p.playedCards) {
-          if (c.name === CardName.COMMUNICATION_CENTER) {
-            p.addResourceTo(c, {qty: 1, log: true});
-            return;
-          }
-        }
-      }
-    }
   }
 
-  public static raiseTrack(tag: PlanetaryTag, player: Player, steps: number = 1): void {
+  public static raiseTrack(tag: PlanetaryTag, player: IPlayer, steps: number = 1): void {
     PathfindersExpansion.raiseTrackEssense(tag, player, undefined, player.game, steps, true);
   }
 
-  public static raiseTrackForGlobalEvent(tag: PlanetaryTag, name: GlobalEventName, game: Game, steps: number = 1, gainRewards: boolean = true): void {
+  public static raiseTrackForGlobalEvent(tag: PlanetaryTag, name: GlobalEventName, game: IGame, steps: number = 1, gainRewards: boolean = true): void {
     PathfindersExpansion.raiseTrackEssense(tag, undefined, name, game, steps, gainRewards);
   }
 
   // from 和 name 二选一
-  private static raiseTrackEssense(tag: PlanetaryTag, from: Player | undefined, name: GlobalEventName | undefined, game: Game, steps: number = 1, gainRewards: boolean = true): void {
+  private static raiseTrackEssense(tag: PlanetaryTag, from: IPlayer | undefined, name: GlobalEventName | undefined, game: IGame, steps: number = 1, gainRewards: boolean = true): void {
     const data = game.pathfindersData;
     if (data === undefined) {
       return;
@@ -147,7 +135,7 @@ export class PathfindersExpansion {
    * @param player the player gaining the reward (which may not be the same as the player who triggers the reward)
    * @param tag the tag associated with the reward (used for logging VP rewards.)
    */
-  public static grant(reward: Reward, player: Player, tag: PlanetaryTag): void {
+  public static grant(reward: Reward, player: IPlayer, tag: PlanetaryTag): void {
     const game = player.game;
 
     switch (reward) {
@@ -160,10 +148,10 @@ export class PathfindersExpansion {
       game.log('${0} has the most ${1} tags and earns 2VP', (b) => b.player(player).string(tag));
       break;
     case '3mc':
-      player.addResource(Resource.MEGACREDITS, 3, {log: true});
+      player.stock.add(Resource.MEGACREDITS, 3, {log: true});
       break;
     case '6mc':
-      player.addResource(Resource.MEGACREDITS, 6, {log: true});
+      player.stock.add(Resource.MEGACREDITS, 6, {log: true});
       break;
     case 'any_resource':
       game.defer(new GrantResourceDeferred(player, false));
@@ -177,14 +165,14 @@ export class PathfindersExpansion {
     case 'delegate':
       TurmoilUtil.ifTurmoilElse(game,
         (turmoil) => {
-          if (turmoil.hasDelegatesInReserve(player.id)) {
+          if (turmoil.hasDelegatesInReserve(player)) {
             game.defer(new SendDelegateToArea(player));
           }
         },
-        () => player.addResource(Resource.MEGACREDITS, 3, {log: true}));
+        () => player.stock.add(Resource.MEGACREDITS, 3, {log: true}));
       break;
     case 'energy':
-      player.addResource(Resource.ENERGY, 1, {log: true});
+      player.stock.add(Resource.ENERGY, 1, {log: true});
       break;
     case 'energy_production':
       player.production.add(Resource.ENERGY, 1, {log: true});
@@ -196,7 +184,7 @@ export class PathfindersExpansion {
       game.defer(new PlaceGreeneryTile(player));
       break;
     case 'heat':
-      player.addResource(Resource.HEAT, 1, {log: true});
+      player.stock.add(Resource.HEAT, 1, {log: true});
       break;
     case 'heat_production':
       player.production.add(Resource.HEAT, 1, {log: true});
@@ -211,7 +199,7 @@ export class PathfindersExpansion {
       game.defer(new PlaceOceanTile(player));
       break;
     case 'plant':
-      player.addResource(Resource.PLANTS, 1, {log: true});
+      player.stock.add(Resource.PLANTS, 1, {log: true});
       break;
     case 'plant_production':
       player.production.add(Resource.PLANTS, 1, {log: true});
@@ -220,13 +208,13 @@ export class PathfindersExpansion {
       game.defer(new SelectResourcesDeferred(player, 1, 'Gain 1 resource for your Planetary track bonus.'));
       break;
     case 'steel':
-      player.addResource(Resource.STEEL, 1, {log: true});
+      player.stock.add(Resource.STEEL, 1, {log: true});
       break;
     case 'steel_production':
       player.production.add(Resource.STEEL, 1, {log: true});
       break;
     case 'titanium':
-      player.addResource(Resource.TITANIUM, 1, {log: true});
+      player.stock.add(Resource.TITANIUM, 1, {log: true});
       break;
     case 'titanium_production':
       player.production.add(Resource.TITANIUM, 1, {log: true});
@@ -246,7 +234,7 @@ export class PathfindersExpansion {
     }
   }
 
-  private static playersWithMostTags(tag: Tag, players: Array<Player>, activePlayer: Player | undefined): Array<Player> {
+  private static playersWithMostTags(tag: Tag, players: Array<IPlayer>, activePlayer: IPlayer | undefined): Array<IPlayer> {
     const counts = players.map((player) => {
       // Wild tags only apply to a player taking an action.
       const includeWildTags = player.id === activePlayer?.id;
@@ -259,7 +247,7 @@ export class PathfindersExpansion {
     return result;
   }
 
-  public static calculateVictoryPoints(player: Player, victoryPointsBreakdown: VictoryPointsBreakdown) {
+  public static calculateVictoryPoints(player: IPlayer, victoryPointsBreakdown: VictoryPointsBreakdown) {
     const data = player.game.pathfindersData;
     if (data === undefined) {
       return;
@@ -267,5 +255,14 @@ export class PathfindersExpansion {
     data.vps
       .filter((vp) => vp.id === player.id)
       .forEach((vp) => victoryPointsBreakdown.setVictoryPoints('planetary tracks', vp.points, vp.tag));
+  }
+
+  public static addToSolBank(player: IPlayer) {
+    const solBank = player.getCorporation(CardName.SOLBANK);
+    if (solBank !== undefined) {
+      player.defer(
+        () => player.addResourceTo(solBank, {qty: 1, log: true}),
+        Priority.GAIN_RESOURCE_OR_PRODUCTION);
+    }
   }
 }

@@ -1,19 +1,17 @@
 import {Tag} from '../../../common/cards/Tag';
-import {Player} from '../../Player';
+import {IPlayer} from '../../IPlayer';
 import {IProjectCard} from '../IProjectCard';
-import {Card} from '../Card';
 import {ICorporationCard} from '../corporation/ICorporationCard';
 import {CardName} from '../../../common/cards/CardName';
-import {CardType} from '../../../common/cards/CardType';
 import {CardRenderer} from '../render/CardRenderer';
 import {Size} from '../../../common/cards/render/Size';
 import {all, played} from '../Options';
 import {Resource} from '../../../common/Resource';
+import {CorporationCard} from '../corporation/CorporationCard';
 
-export class WeylandYutani extends Card implements ICorporationCard {
+export class WeylandYutani extends CorporationCard {
   constructor() {
     super({
-      type: CardType.CORPORATION,
       name: CardName.WEYLAND_YUTANI,
       tags: [Tag.SCIENCE],
       startingMegaCredits: 42,
@@ -36,19 +34,19 @@ export class WeylandYutani extends Card implements ICorporationCard {
   }
 
 
-  public onCardPlayed(player: Player, card: IProjectCard) {
+  public onCardPlayed(player: IPlayer, card: IProjectCard) {
     return this._onCardPlayed(player, card);
   }
 
-  public onCorpCardPlayed(player: Player, card: ICorporationCard) {
+  public onCorpCardPlayed(player: IPlayer, card: ICorporationCard) {
     this._onCardPlayed(player, card);
     return undefined;
   }
 
-  private _onCardPlayed(player: Player, card: IProjectCard | ICorporationCard) {
+  private _onCardPlayed(player: IPlayer, card: IProjectCard | ICorporationCard) {
     for (const tag of card.tags) {
       if (tag === Tag.SCIENCE) {
-        player.game.getCardPlayerOrThrow(this.name)?.addResource(Resource.MEGACREDITS, 2, {log: true});
+        player.game.getCardPlayerOrThrow(this.name)?.stock.add(Resource.MEGACREDITS, 2, {log: true});
       }
     }
   }

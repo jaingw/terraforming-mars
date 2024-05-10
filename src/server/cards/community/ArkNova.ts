@@ -1,21 +1,19 @@
-import {Card} from '../Card';
 import {ICorporationCard} from '../corporation/ICorporationCard';
 import {CardName} from '../../../common/cards/CardName';
-import {CardType} from '../../../common/cards/CardType';
 import {CardRenderer} from '../render/CardRenderer';
 import {digit, played} from '../Options';
 import {CardResource} from '../../../common/CardResource';
-import {Player} from '../../Player';
+import {IPlayer} from '../../IPlayer';
 import {IProjectCard} from '../IProjectCard';
 import {Tag} from '../../../common/cards/Tag';
 import {Size} from '../../../common/cards/render/Size';
 import {ICard} from '../../cards/ICard';
 import {Resource} from '../../../common/Resource';
+import {CorporationCard} from '../corporation/CorporationCard';
 
-export class ArkNova extends Card implements ICorporationCard {
+export class ArkNova extends CorporationCard {
   constructor() {
     super({
-      type: CardType.CORPORATION,
       name: CardName.ARK_NOVA,
       tags: [Tag.BUILDING, Tag.CITY],
       startingMegaCredits: 42,
@@ -40,7 +38,7 @@ export class ArkNova extends Card implements ICorporationCard {
   public override resourceCount = 2;
 
 
-  public onCardPlayed(player: Player, card: IProjectCard) {
+  public onCardPlayed(player: IPlayer, card: IProjectCard) {
     if (player.isCorporation(this.name)) {
       for (const tag of card.tags) {
         if (tag === Tag.BUILDING || tag === Tag.CITY) {
@@ -50,19 +48,19 @@ export class ArkNova extends Card implements ICorporationCard {
     }
   }
 
-  public onCorpCardPlayed(player: Player, card: ICorporationCard) {
+  public onCorpCardPlayed(player: IPlayer, card: ICorporationCard) {
     this.onCardPlayed(player, card as unknown as IProjectCard);
     return undefined;
   }
 
-  public onResourceAdded(player: Player, playedCard: ICard) {
+  public onResourceAdded(player: IPlayer, playedCard: ICard) {
     const resourceNum = 3;
     if (playedCard.name !== this.name) return;
     if (this.resourceCount >= resourceNum) {
       const delta = Math.floor(this.resourceCount / resourceNum);
       const deducted = delta * resourceNum;
       this.resourceCount -= deducted;
-      player.addResource(Resource.STEEL, delta, {log: true});
+      player.stock.add(Resource.STEEL, delta, {log: true});
       player.drawCard(delta);
       player.game.log('${0} removed ${1} animals from ${2} to gain ${3} steels and ${4} cards.',
         (b) => b.player(player).number(deducted).card(this).number(delta).number(delta));

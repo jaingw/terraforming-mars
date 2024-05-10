@@ -1,7 +1,7 @@
 import {CardModel} from './CardModel';
 import {Color} from '../Color';
 import {IVictoryPointsBreakdown} from '../game/IVictoryPointsBreakdown';
-import {ITagCount} from '../cards/ITagCount';
+import {TagCount} from '../cards/TagCount';
 import {PlayerInputModel} from './PlayerInputModel';
 import {TimerModel} from './TimerModel';
 import {GameModel} from './GameModel';
@@ -16,6 +16,7 @@ export interface ViewModel {
   id?: ParticipantId;
   thisPlayer: PublicPlayerModel | undefined;
   block?: boolean;
+  runId: string;
 }
 
 // 'off': Resources (or production) are unprotected.
@@ -37,8 +38,10 @@ export type PublicPlayerModel = {
   color: Color;
   corporationCard: CardModel | undefined;
   corporationCard2: CardModel | undefined;
+  corruption: number,
   energy: number;
   energyProduction: number;
+  excavations: number,
   fleetSize: number;
   heat: number;
   heatProduction: number;
@@ -59,7 +62,7 @@ export type PublicPlayerModel = {
   steel: number;
   steelProduction: number;
   steelValue: number;
-  tags: Array<ITagCount>;
+  tags: Array<TagCount>;
   terraformRating: number;
   timer: TimerModel;
   titanium: number;
@@ -67,7 +70,7 @@ export type PublicPlayerModel = {
   titaniumValue: number;
   tradesThisGeneration: number;
   victoryPointsBreakdown: IVictoryPointsBreakdown;
-  victoryPointsByGeneration: Array<number>
+  victoryPointsByGeneration: Array<number>;
   waitingFor: {} | undefined;
   exited: boolean;
   isvip: number;

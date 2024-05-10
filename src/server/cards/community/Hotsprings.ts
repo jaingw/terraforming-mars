@@ -1,16 +1,13 @@
-import {Player} from '../../Player';
+import {IPlayer} from '../../IPlayer';
 import {CardRenderer} from '../render/CardRenderer';
-import {Card} from '../Card';
 import {CardName} from '../../../common/cards/CardName';
-import {CardType} from '../../../common/cards/CardType';
 import {Tag} from '../../../common/cards/Tag';
 import {Resource} from '../../../common/Resource';
-import {ICorporationCard} from '../corporation/ICorporationCard';
+import {CorporationCard} from '../corporation/CorporationCard';
 
-export class Hotsprings extends Card implements ICorporationCard {
+export class Hotsprings extends CorporationCard {
   constructor() {
     super({
-      type: CardType.CORPORATION,
       name: CardName.HOTSPRINGS,
       tags: [Tag.BUILDING],
       startingMegaCredits: 45,
@@ -32,16 +29,16 @@ export class Hotsprings extends Card implements ICorporationCard {
     });
   }
 
-  public override bespokePlay(player: Player) {
-    player.addResource(Resource.HEAT, 5);
+  public override bespokePlay(player: IPlayer) {
+    player.stock.add(Resource.HEAT, 5);
     return undefined;
   }
 
-  public canAct(player: Player): boolean {
+  public canAct(player: IPlayer): boolean {
     return player.heatProductionStepsIncreasedThisGeneration > 0;
   }
 
-  public action(player: Player) {
+  public action(player: IPlayer) {
     if (player.heatProductionStepsIncreasedThisGeneration === 1) {
       player.production.add(Resource.MEGACREDITS, 1);
     } else if (player.heatProductionStepsIncreasedThisGeneration > 1) {

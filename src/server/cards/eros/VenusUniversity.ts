@@ -2,7 +2,6 @@ import {IProjectCard} from '../IProjectCard';
 import {CardName} from '../../../common/cards/CardName';
 import {CardType} from '../../../common/cards/CardType';
 import {Tag} from '../../../common/cards/Tag';
-import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
 import {Card} from '../Card';
 
@@ -15,7 +14,7 @@ export class VenusUniversity extends Card implements IProjectCard {
       cost: 10,
 
       victoryPoints: 1,
-      requirements: CardRequirements.builder((b) => b.venus(8)),
+      requirements: {venus: 8},
       metadata: {
         cardNumber: 'Q50',
         renderData: CardRenderer.builder((b) => {

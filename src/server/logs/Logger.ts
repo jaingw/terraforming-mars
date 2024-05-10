@@ -1,7 +1,7 @@
-import {LogBuilder} from './LogBuilder';
-import {Player} from '../Player';
+import {LogMessageBuilder} from './LogMessageBuilder';
+import {IPlayer} from '../IPlayer';
 
 export interface Logger {
-  log(message: string, f?: (builder: LogBuilder) => void, options?: {reservedFor?: Player}): void;
+  log(message: string, f?: (builder: LogMessageBuilder) => void, options?: {reservedFor?: IPlayer}): void;
   cardDrew : boolean ;
 }

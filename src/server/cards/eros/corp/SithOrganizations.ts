@@ -1,20 +1,16 @@
 import {CardRenderer} from '../../render/CardRenderer';
-import {Card} from '../../Card';
-import {ICard} from '../../ICard';
-import {Player} from '../../../Player';
+import {IPlayer} from '../../../IPlayer';
 import {CardName} from '../../../../common/cards/CardName';
-import {CardType} from '../../../../common/cards/CardType';
 import {Size} from '../../../../common/cards/render/Size';
 import {Tag} from '../../../../common/cards/Tag';
-import {ICorporationCard} from '../../corporation/ICorporationCard';
+import {CorporationCard} from '../../corporation/CorporationCard';
 
-export class SithOrganizations extends Card implements ICard, ICorporationCard {
+export class SithOrganizations extends CorporationCard {
   constructor() {
     super({
       name: CardName.SITH_ORGANIZATIONS,
       tags: [Tag.VENUS, Tag.JOVIAN],
       startingMegaCredits: 41,
-      type: CardType.CORPORATION,
 
       metadata: {
         cardNumber: 'Q32',
@@ -35,7 +31,7 @@ export class SithOrganizations extends Card implements ICard, ICorporationCard {
   }
 
 
-  public initialAction(player: Player) {
+  public initialAction(player: IPlayer) {
     const game = player.game;
     if (game.turmoil !== undefined) {
       const turmoil = game.turmoil;
@@ -47,14 +43,14 @@ export class SithOrganizations extends Card implements ICard, ICorporationCard {
         const neutral = party.delegates.get('NEUTRAL');
         for (let i=0; i<neutral; i++) {
           turmoil.removeDelegateFromParty('NEUTRAL', party.name, game);
-          turmoil.delegateReserve.add(player.id);
-          turmoil.sendDelegateToParty(player.id, party.name, game);
+          turmoil.delegateReserve.add(player);
+          turmoil.sendDelegateToParty(player, party.name, game);
         }
       });
-      turmoil.chairman = player.id;
-      const index = turmoil.delegateReserve.get(player.id);
+      turmoil.chairman = player;
+      const index = turmoil.delegateReserve.get(player);
       if (index > 0) {
-        turmoil.delegateReserve.remove(player.id);
+        turmoil.delegateReserve.remove(player);
       }
       game.log('All Neutral delegates count as ${0}', (b) => b.player(player));
       return undefined;

@@ -1,10 +1,9 @@
-import {Player} from '../../../Player';
+import {IPlayer} from '../../../IPlayer';
 import {CardRenderer} from '../../render/CardRenderer';
 import {CardName} from '../../../../common/cards/CardName';
 import {Size} from '../../../../common/cards/render/Size';
 import {Pristar} from '../../../cards/turmoil/Pristar';
 import {digit} from '../../../cards/Options';
-import {SimpleDeferredAction} from '../../../deferredActions/DeferredAction';
 import {CardRenderDynamicVictoryPoints} from '../../render/CardRenderDynamicVictoryPoints';
 import {CardResource} from '../../../../common/CardResource';
 // import {SelectCard} from '../../../inputs/SelectCard';
@@ -14,10 +13,10 @@ export class _Pristar_ extends Pristar {
   public override get name() {
     return CardName._PRISTAR_;
   }
-  public initialAction(player: Player) {
-    player.game.defer(new SimpleDeferredAction(player, () => player.drawCardKeepSome(10, {keepMax: 10, logDrawnCard: true, paying: true})));
-
-    // return player.drawCardKeepSome(10, {keepMax: 10, paying: true});
+  public initialAction(player: IPlayer) {
+    // player.game.defer(new SimpleDeferredAction(player, () => player.drawCardKeepSome(10, {keepMax: 10, logDrawnCard: true, paying: true})));
+    // TODO  jiang
+    player.drawCardKeepSome(10, {keepMax: 10, paying: true});
     player.pass();
     player.game.log('${0} passed', (b) => b.player(player));
     return undefined;

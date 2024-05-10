@@ -1,5 +1,5 @@
 import {IProjectCard} from '../IProjectCard';
-import {Player} from '../../Player';
+import {IPlayer} from '../../IPlayer';
 import {CardRenderer} from '../render/CardRenderer';
 import {Card} from '../Card';
 import {all} from '../Options';
@@ -27,7 +27,7 @@ export class SolarCosmicRays extends Card implements IProjectCard {
       },
     });
   }
-  public override bespokePlay(player: Player) {
+  public override bespokePlay(player: IPlayer) {
     player.production.add(Resource.ENERGY, 1);
     let alllEnergyProd = 0;
     for (const otherPlayer of player.game.getPlayers().filter((p) => p.id !== player.id)) {

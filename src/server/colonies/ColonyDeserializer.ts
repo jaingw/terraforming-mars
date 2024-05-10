@@ -1,12 +1,12 @@
 import {ColonyName} from '../../common/colonies/ColonyName';
-import {Player} from '../Player';
+import {IPlayer} from '../IPlayer';
 import {SerializedColony} from '../SerializedColony';
 import {SerializedPlayerId} from '../SerializedPlayer';
 import {ALL_COLONIES_TILES, COMMUNITY_COLONIES_TILES_REMOVED} from './ColonyManifest';
 import {IColony} from './IColony';
 
 export class ColonyDeserializer {
-  public static deserialize(serialized: SerializedColony | ColonyName, players:Array<Player>): IColony | undefined {
+  public static deserialize(serialized: SerializedColony | ColonyName, players:Array<IPlayer>): IColony | undefined {
     const name = typeof(serialized) === 'string' ? serialized : serialized.name;
     const colonyTiles = ALL_COLONIES_TILES.concat(COMMUNITY_COLONIES_TILES_REMOVED);
     const factory = colonyTiles.find((cf) => cf.colonyName === name);
@@ -34,7 +34,7 @@ export class ColonyDeserializer {
     return colony;
   }
 
-  public static deserializeAndFilter(serialized: Array<SerializedColony | ColonyName>, players:Array<Player>): Array<IColony> {
+  public static deserializeAndFilter(serialized: Array<SerializedColony | ColonyName>, players:Array<IPlayer>): Array<IColony> {
     const colonies: Array<IColony | undefined> = serialized.map((c) => this.deserialize(c, players)).filter((c) => c !== undefined);
     // as Array<Colony> is safe because filter removes the undefined colonies
     return colonies as Array<IColony>;

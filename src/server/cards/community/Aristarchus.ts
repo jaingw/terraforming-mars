@@ -1,15 +1,12 @@
-import {Player} from '../../Player';
+import {IPlayer} from '../../IPlayer';
 import {CardRenderer} from '../render/CardRenderer';
-import {Card} from '../Card';
 import {CardName} from '../../../common/cards/CardName';
-import {CardType} from '../../../common/cards/CardType';
 import {Tag} from '../../../common/cards/Tag';
-import {ICorporationCard} from '../corporation/ICorporationCard';
+import {CorporationCard} from '../corporation/CorporationCard';
 
-export class Aristarchus extends Card implements ICorporationCard {
+export class Aristarchus extends CorporationCard {
   constructor() {
     super({
-      type: CardType.CORPORATION,
       name: CardName.ARISTARCHUS,
       tags: [Tag.VENUS, Tag.EARTH, Tag.JOVIAN],
       startingMegaCredits: 33,
@@ -32,11 +29,11 @@ export class Aristarchus extends Card implements ICorporationCard {
   }
 
 
-  public canAct(player: Player): boolean {
+  public canAct(player: IPlayer): boolean {
     return player.megaCredits === 0;
   }
 
-  public action(player: Player) {
+  public action(player: IPlayer) {
     player.megaCredits += 10;
     return undefined;
   }

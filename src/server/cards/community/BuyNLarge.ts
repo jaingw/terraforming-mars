@@ -1,24 +1,22 @@
-import {Player} from '../../Player';
-import {CardType} from '../../../common/cards/CardType';
+import {IPlayer} from '../../IPlayer';
 import {CardName} from '../../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
-import {Card} from '../Card';
 import {Tag} from '../../../common/cards/Tag';
 // import {Size} from '../../../common/cards/render/Size';
 import {played, digit} from '../Options';
 import {ICorporationCard} from '../corporation/ICorporationCard';
-import {ISpace} from '../../boards/ISpace';
+import {Space} from '../../boards/Space';
 import {Board} from '../../boards/Board';
 import {SelectSpace} from '../../inputs/SelectSpace';
 import {IProjectCard} from '../../cards/IProjectCard';
 import {Resource} from '../../../common/Resource';
 import {ICard} from '../../cards/ICard';
 import {CardResource} from '../../../common/CardResource';
+import {CorporationCard} from '../corporation/CorporationCard';
 
-export class BuyNLarge extends Card implements ICorporationCard {
+export class BuyNLarge extends CorporationCard {
   constructor() {
     super({
-      type: CardType.CORPORATION,
       name: CardName.BUY_N_LARGE,
       tags: [Tag.PLANT],
       startingMegaCredits: 35,
@@ -42,18 +40,18 @@ export class BuyNLarge extends Card implements ICorporationCard {
 
   public override resourceCount = 1;
 
-  public initialAction(player: Player) {
+  public initialAction(player: IPlayer) {
     return new SelectSpace('Select space for greenery tile',
-      player.game.board.getAvailableSpacesForGreenery(player), (space: ISpace) => {
-        player.game.addGreenery(player, space);
+      player.game.board.getAvailableSpacesForGreenery(player) ).andThen((space: Space) => {
+      player.game.addGreenery(player, space);
 
-        player.game.log('${0} placed a Greenery tile', (b) => b.player(player));
+      player.game.log('${0} placed a Greenery tile', (b) => b.player(player));
 
-        return undefined;
-      });
+      return undefined;
+    });
   }
 
-  public onCardPlayed(player: Player, card: IProjectCard) {
+  public onCardPlayed(player: IPlayer, card: IProjectCard) {
     if (player.isCorporation(this.name)) {
       for (const tag of card.tags) {
         if (tag === Tag.ANIMAL || tag === Tag.PLANT || tag === Tag.MICROBE) {
@@ -63,12 +61,12 @@ export class BuyNLarge extends Card implements ICorporationCard {
     }
   }
 
-  public onCorpCardPlayed(player: Player, card:ICorporationCard) {
+  public onCorpCardPlayed(player: IPlayer, card:ICorporationCard) {
     this.onCardPlayed(player, card as unknown as IProjectCard);
     return undefined;
   }
 
-  public onTilePlaced(cardOwner: Player, activePlayer: Player, space: ISpace) {
+  public onTilePlaced(cardOwner: IPlayer, activePlayer: IPlayer, space: Space) {
     if (cardOwner.id !== activePlayer.id) {
       return;
     }
@@ -77,13 +75,13 @@ export class BuyNLarge extends Card implements ICorporationCard {
     }
   }
 
-  public onResourceAdded(player: Player, playedCard: ICard) {
+  public onResourceAdded(player: IPlayer, playedCard: ICard) {
     if (playedCard.name !== this.name) return;
     if (this.resourceCount >= 6) {
       const delta = Math.floor(this.resourceCount / 6);
       const deducted = delta * 6;
       this.resourceCount -= deducted;
-      player.addResource(Resource.PLANTS, 8*delta, {log: true});
+      player.stock.add(Resource.PLANTS, 8*delta, {log: true});
       player.game.log('${0} removed ${1} seeds from ${2} to gain ${3} plants.',
         (b) => b.player(player).number(deducted).card(this).number(8*delta));
     }

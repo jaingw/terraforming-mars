@@ -2,7 +2,7 @@ import {IProjectCard} from '../IProjectCard';
 import {Tag} from '../../../common/cards/Tag';
 import {Card} from '../Card';
 import {CardType} from '../../../common/cards/CardType';
-import {Player} from '../../Player';
+import {IPlayer} from '../../IPlayer';
 import {SpaceName} from '../../SpaceName';
 import {CardName} from '../../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
@@ -28,18 +28,18 @@ export class Trantor extends Card implements IProjectCard {
     });
   }
 
-  public override bespokePlay(player: Player) {
+  public override bespokePlay(player: IPlayer) {
     player.production.add(Resource.MEGACREDITS, 2);
-    const space = player.game.board.getSpace(SpaceName.TRANTOR);
-    player.game.addCityTile(player, space);
+    const space = player.game.board.getSpaceOrThrow(SpaceName.TRANTOR);
+    player.game.addCity(player, space);
     return undefined;
   }
 
-  public override getVictoryPoints(player: Player) {
+  public override getVictoryPoints(player: IPlayer) {
     const game = player.game;
-    const trantorCount = game.getCitiesOffMarsCount(player);
+    const trantorCount = game.board.getCitiesOffMars(player);
     return game.getPlayers().some((p) => {
-      game.getCitiesOffMarsCount(p) > trantorCount;
+      game.board.getCitiesOffMars(p) > trantorCount;
     }) ? 0 : 3;
   }
 }

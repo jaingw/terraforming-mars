@@ -22,7 +22,8 @@
 
   "You start with 30 M€, 5 steel and 1 steel production.":"起始获得30M€,5个钢铁资源,提升钢铁产能1级",
   "Effect: Each time you get any steel or titanium as a placement bonus on the map, increase your steel production 1 step.":"效果:每当你因放置一个版块而获得钢铁资源或钛合金资源时,提升你的钢铁产能1级",
-
+  "Effect: Each time you place a tile on an area with a steel or titanium placement bonus, increase your steel production 1 step": "效果：每当你因放置一个板块而获得钢铁资源或钛资源时，提升你的钢铁产量1级。",
+  
   "You start with 40 M€. As your first action in the game, place a city tile.":"起始获得40 M€。作为你的第一个行动,放置一个城市版块",
   "Effect: When any city tile is placed ON MARS, increase your M€ production 1 step. When you place a city tile, gain 3 M€.":"效果:每当一个城市版块放置到火星上,提升你的M€产能1级。每当你放置一个城市版块,获得3 M€",
 

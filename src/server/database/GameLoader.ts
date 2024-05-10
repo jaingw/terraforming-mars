@@ -1,5 +1,6 @@
 
 import {Color} from '../../common/Color';
+// import * as prometheus from 'prom-client';
 import {Database} from './Database';
 import {Game, LoadState} from '../Game';
 import {Player} from '../Player';
@@ -8,16 +9,39 @@ import {User} from '../User';
 import {IGameLoader, State} from './IGameLoader';
 import {GameIdLedger, IGameShortData} from './IDatabase';
 import {UserRank} from '../../common/rank/RankManager';
+import {IGame} from '../IGame';
+// import {Cache} from './Cache';
+// import {timeAsync} from '../utils/timer';
+import {CacheConfig} from './CacheConfig';
+import {Clock} from '../../common/Timer';
+import {IPlayer} from '../IPlayer';
+import {durationToMilliseconds} from '../utils/durations';
 
-type LoadCallback = (game: Game | undefined) => void;
+type LoadCallback = (game: IGame | undefined) => void;
 
+// const metrics = {
+//   initialize: new prometheus.Gauge({
+//     name: 'gameloader_initialize',
+//     help: 'Time to load all games',
+//     registers: [prometheus.register],
+//   }),
+//   evictions: new prometheus.Counter({
+//     name: 'gameloader_evictions',
+//     help: 'Game evictions count',
+//     registers: [prometheus.register],
+//   }),
+// };
 
+/**
+ * Loads games from javascript memory or database
+ * Loads games from database sequentially as needed
+ */
 export class GameLoader implements IGameLoader {
   public state: State = State.WAITING;
-  public readonly games = new Map<string, Game>();
+  public readonly games = new Map<string, IGame>();
   private readonly pendingGame = new Map<string, Array<LoadCallback>>();
   private readonly pendingPlayer = new Map<string, Array<LoadCallback>>();
-  public readonly playerToGame = new Map<string, Game>();
+  public readonly playerToGame = new Map<string, IGame>();
   public readonly userIdMap: Map<string, User> = new Map<string, User>();
   public readonly userNameMap: Map<string, User> = new Map<string, User>();
   public readonly usersToGames: Map<string, Set<string>> = new Map<string, Set<string>>();
@@ -29,16 +53,32 @@ export class GameLoader implements IGameLoader {
 
   private static instance?: GameLoader;
 
-  private constructor() { }
+  // private cache: Cache;
+  // private readonly config: CacheConfig;
+  // private readonly clock: Clock;
+  private purgedGames: Array<GameId>;
 
   public reset(): void {
     GameLoader.instance = undefined;
-    GameLoader.getInstance().start(() => {});
+    GameLoader.getInstance().start(() => {
+    });
+  }
+
+  private constructor(_config: CacheConfig, _clock: Clock) {
+    // this.config = config;
+    // this.clock = clock;
+    // this.cache = new Cache(config, clock);
+    this.purgedGames = [];
+    // timeAsync(this.cache.load())
+    //   .then((v) => {
+    //     metrics.initialize.set(v.duration);
+    //   });
   }
 
   public static getInstance(): GameLoader {
     if (GameLoader.instance === undefined) {
-      GameLoader.instance = new GameLoader();
+      const config = parseConfigString(process.env.GAME_CACHE ?? '');
+      GameLoader.instance = new GameLoader(config, new Clock());
       const userNameMap = GameLoader.instance.userNameMap;
       // 统一转换成小写，以忽略大小写限制
       const getfunc = userNameMap.get;
@@ -56,7 +96,7 @@ export class GameLoader implements IGameLoader {
     return GameLoader.instance;
   }
 
-  public static getUserByPlayer(player: Player): User | undefined {
+  public static getUserByPlayer(player: IPlayer): User | undefined {
     let user = undefined;
     if (player.userId !== undefined) {
       user = GameLoader.getInstance().userIdMap.get(player.userId);
@@ -80,7 +120,7 @@ export class GameLoader implements IGameLoader {
     }
   }
 
-  public add(game: Game): void {
+  public add(game: IGame): void {
     this.games.set(game.id, game);
     for (const player of game.getAllPlayers()) {
       this.playerToGame.set(player.id, game);
@@ -123,11 +163,11 @@ export class GameLoader implements IGameLoader {
     }
   }
 
-  public getByParticipantId(playerId: ParticipantId ): Promise<Game | undefined> {
+  public getByParticipantId(playerId: ParticipantId ): Promise<IGame | undefined> {
     return this.getByPlayerId(playerId);
   }
 
-  public getByPlayerId(playerId: string): Promise<Game | undefined> {
+  public getByPlayerId(playerId: string): Promise<IGame | undefined> {
     return new Promise((resolve) => {
       if (this.state === State.READY && this.playerToGame.has(playerId)) {
         const game: any = this.playerToGame.get(playerId);
@@ -160,7 +200,7 @@ export class GameLoader implements IGameLoader {
     });
   }
 
-  private async loadFullGame(game: Game): Promise<void> {
+  private async loadFullGame(game: IGame): Promise<void> {
     console.log('game phase', game.phase); // 天梯 TEST
     const gameId = game.id;
     try {
@@ -170,7 +210,7 @@ export class GameLoader implements IGameLoader {
         console.error(`unable to load  game ${gameId}`);
         this.onGameLoaded(game, true);
       } else {
-        game.loadFromJSON(serializedGame);
+        game.loadFromJSON(serializedGame, true);
         this.onGameLoaded(game);
       }
     } catch (err) {
@@ -180,7 +220,7 @@ export class GameLoader implements IGameLoader {
     }
   }
 
-  private onGameLoaded(game: Game, err: boolean = false): void {
+  private onGameLoaded(game: IGame, err: boolean = false): void {
     const gameId = game.id;
     console.log(`load game ${gameId}`);
     if (err) {
@@ -206,25 +246,66 @@ export class GameLoader implements IGameLoader {
         }
       }
     }
-
-
-    const pendingGames = this.pendingGame.get(gameId);
-    if (pendingGames !== undefined) {
-      for (const pendingGame of pendingGames) {
-        pendingGame(err ? undefined : game);
-      }
-      this.pendingGame.delete(gameId);
-    }
-    for (const player of game.getAllPlayers()) {
-      const pendingPlayers = this.pendingPlayer.get(player.id);
-      if (pendingPlayers !== undefined) {
-        for (const pendingPlayer of pendingPlayers) {
-          pendingPlayer(err ? undefined : this.playerToGame.get(player.id));
-        }
-        this.pendingPlayer.delete(player.id);
-      }
-    }
   }
+
+  // public async getIds(): Promise<Array<GameIdLedger>> {
+  //   const d = await this.cache.getGames();
+  //   const map = new MultiMap<GameId, ParticipantId>();
+  //   d.participantIds.forEach((gameId, participantId) => map.set(gameId, participantId));
+  //   const arry: Array<[GameId, Array<PlayerId | SpectatorId>]> = Array.from(map.associations());
+  //   return arry.map(([gameId, participantIds]) => ({gameId, participantIds}));
+  // }
+
+  // public async isCached(gameId: GameId): Promise<boolean> {
+  //   const d = await this.cache.getGames();
+  //   return d.games.get(gameId) !== undefined;
+  // }
+
+  // public async getGame(id: GameId | PlayerId | SpectatorId, forceLoad: boolean = false): Promise<IGame | undefined> {
+  //   const d = await this.cache.getGames();
+  //   const gameId = isGameId(id) ? id : d.participantIds.get(id);
+  //   if (gameId === undefined) return undefined;
+
+  //   // 1. Check the cache as long as forceLoad isn't true.
+  //   if (forceLoad === false && d.games.get(gameId) !== undefined) return d.games.get(gameId);
+
+  //   // 2. The game isn't cached. If it's in the database, there will still be an entry
+  //   // for it in the cache.
+  //   if (d.games.has(gameId)) {
+  //     try {
+  //       const serializedGame = await Database.getInstance().getGame(gameId);
+  //       if (serializedGame === undefined) {
+  //         console.error(`GameLoader:loadGame: game ${gameId} not found`);
+  //         return undefined;
+  //       }
+  //       const game = Game.deserialize(serializedGame);
+  //       await this.add(game);
+  //       console.log(`GameLoader loaded game ${gameId} into memory from database`);
+  //       return game;
+  //     } catch (e) {
+  //       console.error('GameLoader:loadGame', e);
+  //       return undefined;
+  //     }
+  //   }
+
+
+  //   const pendingGames = this.pendingGame.get(gameId);
+  //   if (pendingGames !== undefined) {
+  //     for (const pendingGame of pendingGames) {
+  //       pendingGame(err ? undefined : game);
+  //     }
+  //     this.pendingGame.delete(gameId);
+  //   }
+  //   for (const player of game.getAllPlayers()) {
+  //     const pendingPlayers = this.pendingPlayer.get(player.id);
+  //     if (pendingPlayers !== undefined) {
+  //       for (const pendingPlayer of pendingPlayers) {
+  //         pendingPlayer(err ? undefined : this.playerToGame.get(player.id));
+  //       }
+  //       this.pendingPlayer.delete(player.id);
+  //     }
+  //   }
+  // }
 
   private onAllGamesLoaded(): void {
     this.state = State.READY;
@@ -247,9 +328,9 @@ export class GameLoader implements IGameLoader {
     this.pendingPlayer.clear();
   }
 
-  private loadAllGames(cb = () => { }): void {
-    Database.getInstance().initialize();
+  private async loadAllGames(cb = () => { }): Promise<void> {
     this.state = State.LOADING;
+    await Database.getInstance().initialize();
     const $this = this;
     Database.getInstance().getUsers(function(err, allUser) {
       if (err) {
@@ -340,8 +421,36 @@ export class GameLoader implements IGameLoader {
     return Promise.resolve([]);
   }
 
+  public completeGame(_game: IGame) {
+    // const database = Database.getInstance();
+    // await database.saveGame(game);
+    try {
+      // this.mark(game.id);
+      // await database.markFinished(game.id);
+      // await this.maintenance();
+    } catch (err) {
+      console.error(err);
+    }
+    return Promise.resolve();
+  }
+
+  public saveGame(game: IGame): Promise<void> {
+    if (this.purgedGames.includes(game.id)) {
+      throw new Error('This game no longer exists');
+    }
+    return Database.getInstance().saveGame(game);
+  }
+
+
+  public async maintenance() {
+    const database = Database.getInstance();
+    const purgedGames = await database.purgeUnfinishedGames();
+    this.purgedGames.push(...purgedGames);
+    await database.compressCompletedGames();
+  }
+
   // 天梯
-  public static getUserRankByPlayer(player: Player): UserRank | undefined {
+  public static getUserRankByPlayer(player: IPlayer): UserRank | undefined {
     const user = this.getUserByPlayer(player);
     let userRank = undefined;
     if (user !== undefined) {
@@ -354,4 +463,24 @@ export class GameLoader implements IGameLoader {
   public addOrUpdateUserRank(userRank: UserRank): void {
     this.userRankMap.set(userRank.userId, userRank);
   }
+}
+
+
+function parseConfigString(stringValue: string): CacheConfig {
+  const options: CacheConfig = {
+    sweep: 'manual', // default is manual
+    evictMillis: durationToMilliseconds('15m'),
+    sleepMillis: durationToMilliseconds('5m'),
+  };
+  const parsed = Object.fromEntries((stringValue ?? '').split(';').map((s) => s.split('=', 2)));
+  if (parsed.sweep === 'auto' || parsed.sweep === 'manual') {
+    options.sweep = parsed.sweep;
+  } else if (parsed.sweep !== undefined) {
+    throw new Error('invalid sweep option from GAME_CACHE: ' + parsed.sweep);
+  }
+  const evictMillis = durationToMilliseconds(parsed.eviction_age);
+  if (!isNaN(evictMillis)) options.evictMillis = evictMillis;
+  const sleepMillis = durationToMilliseconds(parsed.sweep_freq);
+  if (isNaN(sleepMillis)) options.sleepMillis = sleepMillis;
+  return options;
 }

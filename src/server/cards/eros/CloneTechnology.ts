@@ -1,5 +1,5 @@
 import {IProjectCard} from '../IProjectCard';
-import {Player} from '../../Player';
+import {IPlayer} from '../../IPlayer';
 import {SelectCard} from '../../inputs/SelectCard';
 import {ICard} from '../ICard';
 import {CardRenderer} from '../render/CardRenderer';
@@ -28,7 +28,7 @@ export class CloneTechnology extends Card implements IProjectCard {
     });
   }
 
-  public override bespokeCanPlay(player: Player): boolean {
+  public override bespokeCanPlay(player: IPlayer): boolean {
     return this.getAvailableCards(player).length > 0;
   }
 
@@ -77,7 +77,7 @@ export class CloneTechnology extends Card implements IProjectCard {
 
   ];
 
-  private getAvailableCards(player: Player): Array<ICard> {
+  private getAvailableCards(player: IPlayer): Array<ICard> {
     const availableCards: Array<ICard> = player.playedCards.filter((card) => {
       if (card.name === CardName.MOSS) {
         const hasViralEnhancers = player.playedCards.find((card) => card.name === CardName.VIRAL_ENHANCERS);
@@ -132,14 +132,14 @@ export class CloneTechnology extends Card implements IProjectCard {
     return availableCards;
   }
 
-  public override bespokePlay(player: Player) {
+  public override bespokePlay(player: IPlayer) {
     const availableCards = this.getAvailableCards(player);
 
     if (availableCards.length === 0) {
       return undefined;
     }
 
-    return new SelectCard('Select plant card to copy', 'Copy', availableCards, (selectedCards: Array<ICard>) => {
+    return new SelectCard('Select plant card to copy', 'Copy', availableCards ).andThen((selectedCards: Array<ICard>) => {
       const foundCard: ICard = selectedCards[0];
 
       class Updater {
@@ -164,7 +164,7 @@ export class CloneTechnology extends Card implements IProjectCard {
         new Updater(CardName.GRASS, 0, 0, 1, 0, 3),
         new Updater(CardName.HEATHER, 0, 0, 1, 0, 1),
         new Updater(CardName.BUSHES, 0, 0, 2, 0, 2),
-        new Updater(CardName.GREENHOUSES, 0, 0, 0, 0, player.game.getCitiesCount()),
+        new Updater(CardName.GREENHOUSES, 0, 0, 0, 0, player.game.board.getCities(player).length),
         new Updater(CardName.FARMING, 0, 2, 2, 0, 2),
         new Updater(CardName.LICHEN, 0, 0, 0, 0, 0),
         new Updater(CardName.TUNDRA_FARMING, 0, 2, 1, 0, 1),
@@ -221,7 +221,7 @@ export class CloneTechnology extends Card implements IProjectCard {
       player.production.add(Resource.MEGACREDITS, result.megaCreditProduction);
       player.production.add(Resource.PLANTS, result.plantProduction);
       player.production.add(Resource.HEAT, result.heatProduction);
-      player.addResource(Resource.PLANTS, result.plantResource);
+      player.stock.add(Resource.PLANTS, result.plantResource);
 
       player.game.log('${0} copied ${1} production and plant resource with ${2}', (b) =>
         b.player(player).cardName(result.name).card(this));

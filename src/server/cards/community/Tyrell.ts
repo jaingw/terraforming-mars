@@ -1,22 +1,19 @@
-import {ICorporationCard} from '../corporation/ICorporationCard';
-import {Player} from '../../Player';
+import {IPlayer} from '../../IPlayer';
 import {ICard, isIActionCard} from '../ICard';
 import {SelectCard} from '../../inputs/SelectCard';
-import {Card} from '../Card';
 import {CardName} from '../../../common/cards/CardName';
-import {CardType} from '../../../common/cards/CardType';
 import {CardRenderer} from '../render/CardRenderer';
 import {all} from '../Options';
 import {DiscardCards} from '../../deferredActions/DiscardCards';
 import {Tag} from '../../../common/cards/Tag';
+import {CorporationCard} from '../corporation/CorporationCard';
 
-export class Tyrell extends Card implements ICard, ICorporationCard {
+export class Tyrell extends CorporationCard {
   constructor() {
     super({
       name: CardName.TYRELL,
       tags: [Tag.SCIENCE],
       startingMegaCredits: 50,
-      type: CardType.CORPORATION,
 
       metadata: {
         cardNumber: 'XB03',
@@ -41,7 +38,7 @@ export class Tyrell extends Card implements ICard, ICorporationCard {
     return this.checkLoops;
   }
 
-  private getActionCards(cardOwner: Player):Array<ICard> {
+  private getActionCards(cardOwner: IPlayer):Array<ICard> {
     const result: Array<ICard> = [];
     this.checkLoops++;
 
@@ -59,20 +56,17 @@ export class Tyrell extends Card implements ICard, ICorporationCard {
     return result;
   }
 
-  public canAct(player: Player): boolean {
+  public canAct(player: IPlayer): boolean {
     return this.getActionCards(player).length > 0 && player.cardsInHand.length >= 1;
   }
 
-  public action(player: Player) {
+  public action(player: IPlayer) {
     if (this.getActionCards(player).length === 0 ) {
       return undefined;
     }
     player.game.defer(new DiscardCards(player));
-    return new SelectCard(
-      'Perform again an action from a card',
-      'Take action',
-      this.getActionCards(player),
-      (foundCards: Array<ICard>) => {
+    return new SelectCard('Perform again an action from a card', 'Take action', this.getActionCards(player))
+      .andThen((foundCards: Array<ICard>) => {
         const foundCard = foundCards[0];
         if (isIActionCard(foundCard)) {
           player.game.log('${0} copy ${1} action with ${2}', (b) => b.player(player).card(foundCard).card(this));
@@ -80,6 +74,6 @@ export class Tyrell extends Card implements ICard, ICorporationCard {
         }
         return undefined;
       },
-    );
+      );
   }
 }

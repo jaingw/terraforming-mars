@@ -1,4 +1,4 @@
-import {Player} from '../../../Player';
+import {IPlayer} from '../../../IPlayer';
 import {IProjectCard} from '../../IProjectCard';
 import {Arklight} from '../../colonies/Arklight';
 import {CardRenderer} from '../../render/CardRenderer';
@@ -34,7 +34,7 @@ export class _Arklight_ extends Arklight {
   }
 
 
-  public override onCardPlayed(player: Player, card: IProjectCard): void {
+  public override onCardPlayed(player: IPlayer, card: IProjectCard): void {
     if (player.isCorporation(CardName._ARKLIGHT_)) {
       const count = card.tags.filter((cardTag) => cardTag === Tag.ANIMAL || cardTag === Tag.PLANT).length;
       if (count > 0 ) {

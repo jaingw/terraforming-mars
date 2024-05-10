@@ -1,28 +1,24 @@
-import {Player} from '../../../Player';
+import {IPlayer} from '../../../IPlayer';
 import {CardRenderer} from '../../render/CardRenderer';
 import {OrOptions} from '../../../inputs/OrOptions';
 import {SelectOption} from '../../../inputs/SelectOption';
 import {LogHelper} from '../../../LogHelper';
 import {PlaceOceanTile} from '../../../deferredActions/PlaceOceanTile';
 import {PartyHooks} from '../../../turmoil/parties/PartyHooks';
-import {Card} from '../../Card';
-import {ICard} from '../../ICard';
 import {CardName} from '../../../../common/cards/CardName';
-import {CardType} from '../../../../common/cards/CardType';
 import {Size} from '../../../../common/cards/render/Size';
 import {Tag} from '../../../../common/cards/Tag';
 import {REDS_RULING_POLICY_COST, MAX_VENUS_SCALE, MAX_TEMPERATURE, MAX_OXYGEN_LEVEL, MAX_OCEAN_TILES} from '../../../../common/constants';
 import {PartyName} from '../../../../common/turmoil/PartyName';
-import {ICorporationCard} from '../../corporation/ICorporationCard';
 import {SelectPaymentDeferred} from '../../../deferredActions/SelectPaymentDeferred';
+import {CorporationCard} from '../../corporation/CorporationCard';
 
-export class WGParternship extends Card implements ICard, ICorporationCard {
+export class WGParternship extends CorporationCard {
   constructor() {
     super({
       name: CardName.WG_PARTERNSHIP,
       tags: [Tag.EARTH],
       startingMegaCredits: 48,
-      type: CardType.CORPORATION,
 
       metadata: {
         cardNumber: 'Q22',
@@ -48,9 +44,9 @@ export class WGParternship extends Card implements ICard, ICorporationCard {
 
   public static oceanCost = 5;
 
-  public canAct(player: Player): boolean {
+  public canAct(player: IPlayer): boolean {
     const game = player.game;
-    const shouldApplyRed = PartyHooks.shouldApplyPolicy(player, PartyName.REDS);
+    const shouldApplyRed = PartyHooks.shouldApplyPolicy(player, PartyName.REDS, 'rp01');
 
     if (shouldApplyRed && !player.canAfford( REDS_RULING_POLICY_COST)) {
       return false;
@@ -61,37 +57,38 @@ export class WGParternship extends Card implements ICard, ICorporationCard {
     if ( game.getTemperature() !== MAX_TEMPERATURE || game.getOxygenLevel() !== MAX_OXYGEN_LEVEL ) {
       return true;
     }
-    if (game.board.getOceanCount() === MAX_OCEAN_TILES || !player.canAfford(WGParternship.oceanCost) ||
+    if (game.board.getOceanSpaces().length === MAX_OCEAN_TILES || !player.canAfford(WGParternship.oceanCost) ||
             shouldApplyRed && !player.canAfford(WGParternship.oceanCost+REDS_RULING_POLICY_COST) ) {
       return false;
     }
     return true;
   }
 
-  public action(player: Player) {
+  public action(player: IPlayer) {
     const game = player.game;
     const action: OrOptions = new OrOptions();
     action.title = 'Select Your first action';
-    const increaseTemp = new SelectOption('Raise temperature 1 step', 'Raise temperature', () => {
+    const increaseTemp = new SelectOption('Raise temperature 1 step', 'Raise temperature').andThen(() => {
       game.increaseTemperature(player, 1);
       game.log('${0} increased temperature ${1} step', (b) => b.player(player).number(1));
       return undefined;
     });
-    const increaseOxygen = new SelectOption('Raise oxygen 1 step', 'Raise oxygen', () => {
+    const increaseOxygen = new SelectOption('Raise oxygen 1 step', 'Raise oxygen').andThen(() => {
       game.log('${0} increased oxygen ${1} step', (b) => b.player(player).number(1));
       player.game.increaseOxygenLevel(player, 1);
       return undefined;
     });
-    const increaseVenus = new SelectOption('Raise venus 1 step', 'Raise venus', () => {
+    const increaseVenus = new SelectOption('Raise venus 1 step', 'Raise venus').andThen( () => {
       game.increaseVenusScaleLevel(player, 1);
       LogHelper.logVenusIncrease( player, 1);
       return undefined;
     });
 
-    const addOcean = new SelectOption(`Spend ${WGParternship.oceanCost}M€ to place an ocean`, 'Place ocean', () => {
-      player.game.defer(new SelectPaymentDeferred(player, WGParternship.oceanCost, {title: 'Select how to pay for action', afterPay: () => {
-        player.game.defer(new PlaceOceanTile(player));
-      }}));
+    const addOcean = new SelectOption(`Spend ${WGParternship.oceanCost}M€ to place an ocean`, 'Place ocean').andThen(() => {
+      player.game.defer(new SelectPaymentDeferred(player, WGParternship.oceanCost, {title: 'Select how to pay for action'})
+        .andThen(() => {
+          player.game.defer(new PlaceOceanTile(player));
+        }));
       game.log('${0} place an ocean', (b) => b.player(player));
       return undefined;
     });
@@ -105,9 +102,9 @@ export class WGParternship extends Card implements ICard, ICorporationCard {
     if (game.gameOptions.venusNextExtension && game.getVenusScaleLevel() !== MAX_VENUS_SCALE) {
       action.options.push(increaseVenus);
     }
-    const shouldApplyRed = PartyHooks.shouldApplyPolicy(player, PartyName.REDS);
+    const shouldApplyRed = PartyHooks.shouldApplyPolicy(player, PartyName.REDS, 'rp01');
     const canAfford = player.canAfford(WGParternship.oceanCost) || shouldApplyRed && player.canAfford(WGParternship.oceanCost+REDS_RULING_POLICY_COST);
-    if (game.board.getOceanCount() < MAX_OCEAN_TILES && canAfford) {
+    if (game.board.getOceanSpaces().length < MAX_OCEAN_TILES && canAfford) {
       action.options.push(addOcean);
     }
     return action;

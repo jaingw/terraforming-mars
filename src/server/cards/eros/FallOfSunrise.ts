@@ -1,5 +1,5 @@
 import {IProjectCard} from '../IProjectCard';
-import {Player} from '../../Player';
+import {IPlayer} from '../../IPlayer';
 import {PartyHooks} from '../../turmoil/parties/PartyHooks';
 import {CardRenderer} from '../render/CardRenderer';
 import {Card} from '../Card';
@@ -29,18 +29,18 @@ export class FallOfSunrise extends Card implements IProjectCard {
     });
   }
 
-  public override bespokeCanPlay(player: Player): boolean {
+  public override bespokeCanPlay(player: IPlayer): boolean {
     const temperatureStep = player.game.getTemperature() < MAX_TEMPERATURE ? 1 : 0;
-    if (PartyHooks.shouldApplyPolicy(player, PartyName.REDS)) {
-      return player.canAfford(player.getCardCost(this) + REDS_RULING_POLICY_COST * temperatureStep, {titanium: true});
+    if (PartyHooks.shouldApplyPolicy(player, PartyName.REDS, 'rp01')) {
+      return player.canAfford({cost: player.getCardCost(this) + REDS_RULING_POLICY_COST * temperatureStep, titanium: true});
     }
 
     return true;
   }
 
-  public override bespokePlay(player: Player) {
+  public override bespokePlay(player: IPlayer) {
     player.game.increaseTemperature(player, 1);
-    player.addResource(Resource.PLANTS, 4);
+    player.stock.add(Resource.PLANTS, 4);
     return undefined;
   }
 }

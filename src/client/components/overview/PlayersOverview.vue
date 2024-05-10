@@ -1,3 +1,40 @@
+<template>
+        <div class="players-overview" v-if="hasPlayers()">
+            <overview-settings />
+            <div class="other_player" v-if="thisPlayer === undefined || players.length > 1">
+                <div v-for="(otherPlayer, index) in getPlayersInOrder()" :key="otherPlayer.color">
+                    <other-player v-if="thisPlayer === undefined || otherPlayer.color !== thisPlayer.color" :player="otherPlayer" :playerIndex="index"/>
+                </div>
+            </div>
+            <template v-for="(p, index) in getPlayersInOrder()" >
+              <div v-if="p.corporationCard2"  class="player-info-top" :key="index" >
+                <div v-if="p.corporationCard !== undefined" :title="p.corporationCard.name"  class="player-corp-left"  :class="getClasses(p)" >{{p.corporationCard.name }}</div>
+                <div :title="p.corporationCard2.name" class="player-corp-right" :class="getClasses(p)" >{{p.corporationCard2.name }}</div>
+              </div>
+              <player-info
+                :player="p"
+              :key="p.color"
+                :playerView="playerView"
+                :firstForGen="getIsFirstForGen(p)"
+                :actionLabel="getActionLabel(p)"
+                :playerIndex="index"/>
+            </template>
+            <div v-if="playerView.players.length > 1 && thisPlayer !== undefined" class="player-divider" />
+            <div v-if="thisPlayer !== undefined && thisPlayer.corporationCard2" class="player-info-top" >
+              <div v-if="thisPlayer.corporationCard !== undefined" :title="thisPlayer.corporationCard.name"  class="player-corp-left" :class="getClasses(thisPlayer)" >{{thisPlayer.corporationCard.name }}</div>
+              <div :title="thisPlayer.corporationCard2.name" class="player-corp-right" :class="getClasses(thisPlayer)" >{{thisPlayer.corporationCard2.name }}</div>
+            </div>
+            <player-info
+              v-if="thisPlayer !== undefined"
+              :player="thisPlayer"
+              :key="thisPlayer.color"
+              :playerView="playerView"
+              :firstForGen="getIsFirstForGen(thisPlayer)"
+              :actionLabel="getActionLabel(thisPlayer)"
+              :playerIndex="-1"/>
+        </div>
+</template>
+
 <script lang="ts">
 import Vue from 'vue';
 import PlayerInfo from '@/client/components/overview/PlayerInfo.vue';
@@ -57,7 +94,7 @@ export default Vue.extend({
         return players;
       }
 
-      let result: Array<PublicPlayerModel> = [];
+      let result = [];
       let currentPlayerOffset = 0;
       const currentPlayerIndex = playerIndex(
         this.thisPlayer.color,
@@ -137,39 +174,3 @@ export default Vue.extend({
   },
 });
 </script>
-
-<template>
-        <div class="players-overview" v-if="hasPlayers()">
-            <div class="other_player" v-if="thisPlayer === undefined || players.length > 1">
-                <div v-for="(otherPlayer, index) in getPlayersInOrder()" :key="otherPlayer.color">
-                    <other-player v-if="thisPlayer === undefined || otherPlayer.color !== thisPlayer.color" :player="otherPlayer" :playerIndex="index"/>
-                </div>
-            </div>
-            <template v-for="(p, index) in getPlayersInOrder()" >
-              <div v-if="p.corporationCard2"  class="player-info-top" :key="index" >
-                <div v-if="p.corporationCard !== undefined" :title="p.corporationCard.name"  class="player-corp-left"  :class="getClasses(p)" >{{p.corporationCard.name }}</div>
-                <div :title="p.corporationCard2.name" class="player-corp-right" :class="getClasses(p)" >{{p.corporationCard2.name }}</div>
-              </div>
-              <player-info
-                :player="p"
-              :key="p.color"
-                :playerView="playerView"
-                :firstForGen="getIsFirstForGen(p)"
-                :actionLabel="getActionLabel(p)"
-                :playerIndex="index"/>
-            </template>
-            <div v-if="playerView.players.length > 1 && thisPlayer !== undefined" class="player-divider" />
-            <div v-if="thisPlayer !== undefined && thisPlayer.corporationCard2" class="player-info-top" >
-                <div v-if="thisPlayer.corporationCard !== undefined" :title="thisPlayer.corporationCard.name"  class="player-corp-left" :class="getClasses(thisPlayer)" >{{thisPlayer.corporationCard.name }}</div>
-                <div :title="thisPlayer.corporationCard2.name" class="player-corp-right" :class="getClasses(thisPlayer)" >{{thisPlayer.corporationCard2.name }}</div>
-            </div>
-            <player-info
-              v-if="thisPlayer !== undefined"
-              :player="thisPlayer"
-              :key="thisPlayer.color"
-              :playerView="playerView"
-              :firstForGen="getIsFirstForGen(thisPlayer)"
-              :actionLabel="getActionLabel(thisPlayer)"
-              :playerIndex="-1"/>
-        </div>
-</template>

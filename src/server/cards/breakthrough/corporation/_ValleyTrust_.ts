@@ -1,20 +1,18 @@
 
-import {Player} from '../../../Player';
+import {IPlayer} from '../../../IPlayer';
 import {IProjectCard} from '../../IProjectCard';
-import {Game} from '../../../Game';
 import {SelectCard} from '../../../inputs/SelectCard';
-import {Card} from '../../Card';
 import {CardRenderer} from '../../render/CardRenderer';
 import {played} from '../../Options';
 import {CardName} from '../../../../common/cards/CardName';
-import {CardType} from '../../../../common/cards/CardType';
 import {Tag} from '../../../../common/cards/Tag';
-import {ICorporationCard} from '../../corporation/ICorporationCard';
+import {CorporationCard} from '../../corporation/CorporationCard';
+import {IGame} from '../../../IGame';
+import {IPreludeCard} from '../../prelude/IPreludeCard';
 
-export class _ValleyTrust_ extends Card implements ICorporationCard {
+export class _ValleyTrust_ extends CorporationCard {
   constructor() {
     super({
-      type: CardType.CORPORATION,
       name: CardName._VALLEY_TRUST_,
       tags: [Tag.EARTH, Tag.SCIENCE],
       startingMegaCredits: 37,
@@ -37,26 +35,27 @@ export class _ValleyTrust_ extends Card implements ICorporationCard {
     });
   }
 
-  public override getCardDiscount(player: Player, card: IProjectCard) {
+  public override getCardDiscount(player: IPlayer, card: IProjectCard) {
     // TODO(chosta) -> improve once the discounts property is given a go
     return player.tags.cardTagCount(card, Tag.SCIENCE) * 2;
   }
 
-  public initialAction(player: Player) {
-    const game:Game = player.game;
+  public initialAction(player: IPlayer) {
+    const game:IGame = player.game;
     if (game.gameOptions.preludeExtension) {
-      const cardsDrawn: Array<IProjectCard> = [
+      const cardsDrawn: Array<IPreludeCard > = [
         game.preludeDeck.draw(game),
         game.preludeDeck.draw(game),
         game.preludeDeck.draw(game),
         game.preludeDeck.draw(game),
-      ];
-      return new SelectCard('Choose prelude card to play', 'Play', cardsDrawn, (foundCards: Array<IProjectCard>) => {
+      ].filter((x) => x !== undefined) as Array<IPreludeCard>;
+      return new SelectCard('Choose prelude card to play', 'Play', cardsDrawn ).andThen((foundCards: Array<IProjectCard>) => {
         if (foundCards[0].canPlay === undefined || foundCards[0].canPlay(player)) {
-          return player.playCard(foundCards[0]);
+          player.playCard(foundCards[0]);
         } else {
           throw new Error('You cannot pay for this card');
         }
+        return undefined;
       });
     } else {
       console.warn('Prelude extension isn\'t selected.');

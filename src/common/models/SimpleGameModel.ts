@@ -2,7 +2,7 @@
 import {Color} from '../Color';
 import {GameId, PlayerId, SpectatorId} from '../Types';
 import {Phase} from '../Phase';
-import {GameOptions} from '../../server/GameOptions';
+import {GameOptions} from '../../server/game/GameOptions';
 
 export type SimpleGameModel = {
     activePlayer: Color;

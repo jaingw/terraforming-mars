@@ -1,7 +1,6 @@
 import {IProjectCard} from './../IProjectCard';
-import {Player} from '../../Player';
+import {IPlayer} from '../../IPlayer';
 import {IActionCard} from './../ICard';
-import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
 import {DrawCards} from '../../deferredActions/DrawCards';
 import {Card} from '../Card';
@@ -19,7 +18,7 @@ export class Ansible extends Card implements IActionCard, IProjectCard {
       cost: 18,
       victoryPoints: 2,
 
-      requirements: CardRequirements.builder((b) => b.tag(Tag.SCIENCE, 6)),
+      requirements: {tag: Tag.SCIENCE, count: 6},
       metadata: {
         cardNumber: 'Q14',
         renderData: CardRenderer.builder((b) => {
@@ -33,15 +32,15 @@ export class Ansible extends Card implements IActionCard, IProjectCard {
     });
   }
 
-  public override bespokeCanPlay(player: Player): boolean {
+  public override bespokeCanPlay(player: IPlayer): boolean {
     return player.tags.count(Tag.SCIENCE) >= 6;
   }
 
-  public canAct(_player: Player): boolean {
+  public canAct(_player: IPlayer): boolean {
     return true;
   }
 
-  public action(player: Player) {
+  public action(player: IPlayer) {
     const game = player.game;
     // game.defer(new DiscardCards(player));
     game.defer(DrawCards.keepAll(player, 3));

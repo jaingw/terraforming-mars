@@ -3,9 +3,9 @@
   <div v-else-if="playerView.undoing">{{ $t('Undoing, Please refresh or wait seconds') }}</div>
   <div v-else-if="waitingfor === undefined">{{ $t('Not your turn to take any actions') }}</div>
   <div v-else class="wf-root">
-    <template v-if="false && waitingfor !== undefined && waitingfor.showReset && playerView.players.length === 1">
+    <!-- <template v-if="waitingfor !== undefined && waitingfor.showReset && playerView.players.length === 1">
       <div @click="reset">Reset This Action <span class="reset" >(experimental)</span></div>
-    </template>
+    </template> -->
     <player-input-factory :players="players"
                           :playerView="playerView"
                           :playerinput="waitingfor"
@@ -27,11 +27,12 @@ import {WaitingForModel} from '@/common/models/WaitingForModel';
 
 import * as constants from '@/common/constants';
 import * as raw_settings from '@/genfiles/settings.json';
-import * as paths from '@/common/app/paths';
-import * as HTTPResponseCode from '@/client/utils/HTTPResponseCode';
+import {paths} from '@/common/app/paths';
+import {statusCode} from '@/common/http/statusCode';
 import {isPlayerId} from '@/common/Types';
 import {InputResponse} from '@/common/inputs/InputResponse';
 import {Phase} from '../../common/Phase';
+import {INVALID_RUN_ID} from '@/common/app/AppErrorId';
 
 let ui_update_timeout_id: number | undefined;
 let documentTitleTimer: number | undefined;
@@ -88,7 +89,7 @@ export default Vue.extend({
       xhr.open('POST', url);
       xhr.responseType = 'json';
       xhr.onload = () => {
-        if (xhr.status === HTTPResponseCode.OK) {
+        if (xhr.status === statusCode.ok) {
           root.screen = 'empty';
           root.playerView = xhr.response;
           root.playerkey++;
@@ -96,16 +97,23 @@ export default Vue.extend({
           if ((root?.playerView?.game.phase === Phase.END || root.playerView?.game.phase === Phase.TIMEOUT || root.playerView?.game.phase === Phase.ABANDON) && window.location.pathname !== '/' + paths.THE_END) {
             (window).location = (window).location; // eslint-disable-line no-self-assign
           }
-        } else if (xhr.status === HTTPResponseCode.BAD_REQUEST && xhr.responseType === 'json') {
-          showAlert(xhr.response.message);
+        } else if (xhr.status === statusCode.badRequest && xhr.responseType === 'json') {
+          if (xhr.response.id === INVALID_RUN_ID) {
+            showAlert(xhr.response.message, () => {
+              setTimeout(() => window.location.reload(), 100);
+            });
+          } else {
+            showAlert(xhr.response.message);
+          }
         } else {
           showAlert('Unexpected response from server. Please try again.');
         }
         root.isServerSideRequestInProgress = false;
       };
-      const senddata ={'id': this.waitingfor?.id, 'input': out};
+      const senddata ={'id': (this.waitingfor as any)?.id, 'runId': this.playerView.runId, 'input': out};
       xhr.send(JSON.stringify(senddata));
       xhr.onerror = function() {
+        // todo(kberg): Report error to caller
         root.isServerSideRequestInProgress = false;
       };
     },
@@ -131,6 +139,7 @@ export default Vue.extend({
       };
       xhr.send();
       xhr.onerror = function() {
+        // todo(kberg): Report error to caller
         root.isServerSideRequestInProgress = false;
       };
     },
@@ -145,7 +154,7 @@ export default Vue.extend({
         if ((root?.playerView?.game.phase === Phase.END || root.playerView?.game.phase === Phase.TIMEOUT || root.playerView?.game.phase === Phase.ABANDON) && window.location.pathname !== '/' + paths.THE_END) {
           (window).location = (window).location; // eslint-disable-line no-self-assign
         }
-      } else if (xhr.status === 400 && xhr.responseType === 'json') {
+      } else if (xhr.status === statusCode.badRequest && xhr.responseType === 'json') {
         showAlert(xhr.response.message);
       } else {
         showAlert('Unexpected response from server. Please try again.');
@@ -168,7 +177,7 @@ export default Vue.extend({
           }
         };
         xhr.onload = () => {
-          if (xhr.status === HTTPResponseCode.OK) {
+          if (xhr.status === statusCode.ok) {
             allnum ++;
             failednum = 0;
             if (root.playerView?.game.phase === 'end') {
@@ -237,8 +246,10 @@ export default Vue.extend({
       };
       if (faster) {
         askForUpdate();
+        ui_update_timeout_id = (setInterval(askForUpdate, 1000) as any);
+      } else {
+        ui_update_timeout_id = (setInterval(askForUpdate, this.waitingForTimeout) as any);
       }
-      ui_update_timeout_id = (setInterval(askForUpdate, this.waitingForTimeout) as any);
     },
   },
   mounted() {

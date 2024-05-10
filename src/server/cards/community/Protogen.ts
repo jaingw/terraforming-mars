@@ -1,17 +1,14 @@
-import {Card} from '../Card';
-import {ICorporationCard} from '../corporation/ICorporationCard';
 import {Tag} from '../../../common/cards/Tag';
-import {Player} from '../../Player';
+import {IPlayer} from '../../IPlayer';
 import {CardName} from '../../../common/cards/CardName';
-import {CardType} from '../../../common/cards/CardType';
 import {CardRenderer} from '../render/CardRenderer';
 import {CardResource} from '../../../common/CardResource';
 import {ICard} from '../../cards/ICard';
+import {CorporationCard} from '../corporation/CorporationCard';
 
-export class Protogen extends Card implements ICorporationCard {
+export class Protogen extends CorporationCard {
   constructor() {
     super({
-      type: CardType.CORPORATION,
       name: CardName.PROTOGEN,
       tags: [Tag.MICROBE],
       startingMegaCredits: 47,
@@ -34,11 +31,11 @@ export class Protogen extends Card implements ICorporationCard {
   }
 
 
-  public initialAction(player: Player) {
+  public initialAction(player: IPlayer) {
     player.drawCard(1, {tag: Tag.MICROBE});
     return undefined;
   }
-  public onResourceAdded(player: Player, card: ICard) {
+  public onResourceAdded(player: IPlayer, card: ICard) {
     if (card.resourceType === CardResource.MICROBE) {
       player.heat += 2;
     }

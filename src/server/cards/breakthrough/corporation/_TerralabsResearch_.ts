@@ -1,15 +1,12 @@
-import {Player} from '../../../Player';
+import {IPlayer} from '../../../IPlayer';
 import {CardRenderer} from '../../render/CardRenderer';
-import {Card} from '../../Card';
 import {CardName} from '../../../../common/cards/CardName';
-import {CardType} from '../../../../common/cards/CardType';
 import {Tag} from '../../../../common/cards/Tag';
-import {ICorporationCard} from '../../corporation/ICorporationCard';
+import {CorporationCard} from '../../corporation/CorporationCard';
 
-export class _TerralabsResearch_ extends Card implements ICorporationCard {
+export class _TerralabsResearch_ extends CorporationCard {
   constructor() {
     super({
-      type: CardType.CORPORATION,
       name: CardName._TERRALABS_RESEARCH_,
       tags: [Tag.SCIENCE, Tag.EARTH],
       startingMegaCredits: 20,
@@ -30,7 +27,7 @@ export class _TerralabsResearch_ extends Card implements ICorporationCard {
     });
   }
 
-  public override bespokePlay(player: Player) {
+  public override bespokePlay(player: IPlayer) {
     player.decreaseTerraformRating();
     return undefined;
   }

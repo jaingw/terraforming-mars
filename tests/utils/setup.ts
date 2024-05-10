@@ -4,12 +4,14 @@ import {SerializedGame} from '../../src/server/SerializedGame';
 import {GameLoader} from '../../src/server/database/GameLoader';
 import {registerBehaviorExecutor} from '../../src/server/behavior/BehaviorExecutor';
 import {Executor} from '../../src/server/behavior/Executor';
+import {initializeGlobalEventDealer} from '../../src/server/turmoil/globalEvents/GlobalEventDealer';
 import {UserRank} from '../../src/common/rank/RankManager';
+import {ALL_MODULE_MANIFESTS} from '../../src/server/cards/AllManifests';
 
 registerBehaviorExecutor(new Executor());
 
 const FAKE_DATABASE: IDatabase = {
-  cleanGame: () => Promise.resolve(),
+  markFinished: () => Promise.resolve(),
   deleteGameNbrSaves: () => Promise.resolve(),
   getPlayerCount: () => Promise.resolve(0),
   getGame: () => Promise.resolve({} as SerializedGame),
@@ -21,14 +23,15 @@ const FAKE_DATABASE: IDatabase = {
   restoreGame: () => Promise.reject(new Error('game not found')),
   saveGameResults: () => {},
   saveGame: () => Promise.resolve(),
-  purgeUnfinishedGames: () => Promise.resolve(),
+  purgeUnfinishedGames: () => Promise.resolve([]),
+  compressCompletedGames: () => Promise.resolve(),
   stats: () => Promise.resolve({}),
+  cleanGame: () => Promise.resolve(),
   cleanGameAllSaves: () => {},
   cleanGameSave: () => {},
   saveUser: () => {},
   getUsers: () => {},
   refresh: () => {},
-  loadCloneableGame: () => Promise.resolve({} as SerializedGame),
   storeParticipants: () => Promise.resolve(),
   getParticipants: () => Promise.resolve([]),
 
@@ -57,3 +60,4 @@ export function setTestGameLoader(gameLoader: GameLoader) {
   gameLoaderUnderTest = gameLoader;
 }
 GameLoader.getInstance = () => gameLoaderUnderTest;
+initializeGlobalEventDealer(ALL_MODULE_MANIFESTS);

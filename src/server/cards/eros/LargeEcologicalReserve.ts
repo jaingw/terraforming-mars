@@ -1,6 +1,5 @@
 import {IProjectCard} from '../IProjectCard';
-import {Player} from '../../Player';
-import {CardRequirements} from '../CardRequirements';
+import {IPlayer} from '../../IPlayer';
 import {PartyHooks} from '../../turmoil/parties/PartyHooks';
 import {PlaceGreeneryTile} from '../../deferredActions/PlaceGreeneryTile';
 import {CardRenderer} from '../render/CardRenderer';
@@ -20,7 +19,7 @@ export class LargeEcologicalReserve extends Card implements IProjectCard {
       type: CardType.AUTOMATED,
       victoryPoints: 1,
 
-      requirements: CardRequirements.builder((b) => b.tag(Tag.PLANT).tag(Tag.ANIMAL).tag(Tag.MICROBE)),
+      requirements: [{tag: Tag.PLANT}, {tag: Tag.ANIMAL}, {tag: Tag.MICROBE}],
       metadata: {
         description: 'Requires a Plant tag, a Microbe tag, and an Animal tag. Place 2 greenery tiles and raise oxygen 2 steps',
         cardNumber: 'Q02',
@@ -31,18 +30,18 @@ export class LargeEcologicalReserve extends Card implements IProjectCard {
     });
   }
 
-  public override bespokeCanPlay(player: Player): boolean {
+  public override bespokeCanPlay(player: IPlayer): boolean {
     const canPlaceTile = player.game.board.getAvailableSpacesOnLand(player).length > 0;
     const oxygenMaxed = player.game.getOxygenLevel() === MAX_OXYGEN_LEVEL;
     const oxygenIncreased = Math.min(MAX_OXYGEN_LEVEL-player.game.getOxygenLevel(), 2);
 
-    if (PartyHooks.shouldApplyPolicy(player, PartyName.REDS) && !oxygenMaxed) {
-      return player.canAfford(player.getCardCost(this) + oxygenIncreased*REDS_RULING_POLICY_COST, {steel: true, microbes: true}) && canPlaceTile && player.tags.playerHas([Tag.PLANT, Tag.ANIMAL, Tag.MICROBE]);
+    if (PartyHooks.shouldApplyPolicy(player, PartyName.REDS, 'rp01') && !oxygenMaxed) {
+      return player.canAfford({cost: player.getCardCost(this) + oxygenIncreased*REDS_RULING_POLICY_COST, steel: true, microbes: true}) && canPlaceTile && player.tags.playerHas([Tag.PLANT, Tag.ANIMAL, Tag.MICROBE]);
     }
 
     return canPlaceTile && player.tags.playerHas([Tag.PLANT, Tag.ANIMAL, Tag.MICROBE]);
   }
-  public override bespokePlay(player: Player) {
+  public override bespokePlay(player: IPlayer) {
     player.game.defer(new PlaceGreeneryTile(player ));
     if (player.game.board.getAvailableSpacesOnLand(player).length > 0) {
       player.game.defer(new PlaceGreeneryTile(player ));

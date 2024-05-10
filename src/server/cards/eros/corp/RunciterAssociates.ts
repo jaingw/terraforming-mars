@@ -1,23 +1,19 @@
 import {CardRenderer} from '../../render/CardRenderer';
-import {Card} from '../../Card';
-import {ICard} from '../../ICard';
 import {CardName} from '../../../../common/cards/CardName';
-import {CardType} from '../../../../common/cards/CardType';
-import {ICorporationCard} from '../../corporation/ICorporationCard';
-import {Player} from '../../../Player';
+import {IPlayer} from '../../../IPlayer';
 import {Tag} from '../../../../common/cards/Tag';
 import {Size} from '../../../../common/cards/render/Size';
 import {IProjectCard} from '../../../cards/IProjectCard';
 import {SelectCard} from '../../../inputs/SelectCard';
+import {CorporationCard} from '../../corporation/CorporationCard';
 
-export class RunciterAssociates extends Card implements ICard, ICorporationCard {
+export class RunciterAssociates extends CorporationCard {
   constructor() {
     super({
       name: CardName.RUNCITER_ASSOCIATES,
       // tags: [Tag.BUILDING],
       tags: [],
       startingMegaCredits: 35,
-      type: CardType.CORPORATION,
 
       metadata: {
         cardNumber: 'Q33',
@@ -37,32 +33,31 @@ export class RunciterAssociates extends Card implements ICard, ICorporationCard 
   }
 
 
-  public canAct(player: Player): boolean {
+  public canAct(player: IPlayer): boolean {
     return player.cardsInHand.length >= 1;
   }
 
-  public action(player: Player) {
+  public action(player: IPlayer) {
     return new SelectCard(
       'select one card to discard',
       'Discard',
       player.cardsInHand,
-      (foundCards: Array<IProjectCard>) => {
-        for (const card of foundCards) {
-          player.cardsInHand.splice(player.cardsInHand.indexOf(card), 1);
-          player.game.projectDeck.discard(card);
-          player.game.log('${0} discard ${1}.', (b) => {
-            b.player(player).card(card);
-          });
-          card.tags.filter((tag) => tag !== Tag.EVENT && tag !== Tag.WILD).forEach((tag) => {
-            player.drawCard(1, {tag: tag});
-          },
-          );
-          player.game.cardDrew = true;
-        }
-
-        return undefined;
-      },
       {min: 1, max: 1},
-    );
+    ).andThen((foundCards: Array<IProjectCard>) => {
+      for (const card of foundCards) {
+        player.cardsInHand.splice(player.cardsInHand.indexOf(card), 1);
+        player.game.projectDeck.discard(card);
+        player.game.log('${0} discard ${1}.', (b) => {
+          b.player(player).card(card);
+        });
+        card.tags.filter((tag) => tag !== Tag.EVENT && tag !== Tag.WILD).forEach((tag) => {
+          player.drawCard(1, {tag: tag});
+        },
+        );
+        player.game.cardDrew = true;
+      }
+
+      return undefined;
+    });
   }
 }

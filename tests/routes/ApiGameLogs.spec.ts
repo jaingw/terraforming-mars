@@ -91,7 +91,7 @@ describe('ApiGameLogs', function() {
     GameLoader.getInstance().add(game);
     await scaffolding.get(ApiGameLogs.INSTANCE, res);
     const messages = JSON.parse(res.content);
-    expect(messages.length).eq(0);
+    expect(messages).is.empty;
   });
 
   // [{idx: 0, color: 'Yellow'}, {idx: 1, color: 'Orange'}, {idx: 2, color: 'Blue'}].forEach((entry) => {

@@ -1,7 +1,6 @@
-import {Card} from '../Card';
-import {ICorporationCard} from '../corporation/ICorporationCard';
+import {CorporationCard} from '../corporation/CorporationCard';
 import {Tag} from '../../../common/cards/Tag';
-import {Player} from '../../Player';
+import {IPlayer} from '../../IPlayer';
 import {Resource} from '../../../common/Resource';
 import {CardName} from '../../../common/cards/CardName';
 import {CardType} from '../../../common/cards/CardType';
@@ -9,10 +8,9 @@ import {CardRenderer} from '../render/CardRenderer';
 import {IProjectCard} from '../IProjectCard';
 import {played} from '../Options';
 
-export class MartianInsuranceGroup extends Card implements ICorporationCard {
+export class MartianInsuranceGroup extends CorporationCard {
   constructor() {
     super({
-      type: CardType.CORPORATION,
       name: CardName.MARTIAN_INSURANCE_GROUP,
       tags: [Tag.MARS],
       startingMegaCredits: 42,
@@ -37,7 +35,7 @@ export class MartianInsuranceGroup extends Card implements ICorporationCard {
     });
   }
 
-  public onCardPlayed(player: Player, card: IProjectCard): void {
+  public onCardPlayed(player: IPlayer, card: IProjectCard): void {
     if (player.isCorporation(this.name) && card.type === CardType.EVENT) {
       player.production.add(Resource.MEGACREDITS, 1, {log: true});
     }

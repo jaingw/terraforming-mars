@@ -1,9 +1,11 @@
-import * as http from 'http';
+import * as responses from './responses';
 import {Handler} from './Handler';
 import {Context} from './IHandler';
 import {GameLogs} from './GameLogs';
 import {isPlayerId, isSpectatorId} from '../../common/Types';
 import {GameLoader} from '../database/GameLoader';
+import {Request} from '../Request';
+import {Response} from '../Response';
 
 export class ApiGameLogs extends Handler {
   public static readonly INSTANCE = new ApiGameLogs();
@@ -11,22 +13,22 @@ export class ApiGameLogs extends Handler {
     super();
   }
 
-  public override async get(req: http.IncomingMessage, res: http.ServerResponse, ctx: Context): Promise<void> {
+  public override async get(req: Request, res: Response, ctx: Context): Promise<void> {
     const searchParams = ctx.url.searchParams;
     const id = searchParams.get('id');
     if (!id) {
-      ctx.route.badRequest(req, res, 'missing id parameter');
+      responses.badRequest(req, res, 'missing id parameter');
       return Promise.resolve();
     }
     if (!isPlayerId(id) && !isSpectatorId(id)) {
-      ctx.route.badRequest(req, res, 'invalid player id');
+      responses.badRequest(req, res, 'invalid player id');
       return Promise.resolve();
     }
 
     const game = await GameLoader.getInstance().getByPlayerId(id);
 
     if (game === undefined) {
-      ctx.route.notFound(req, res, 'game not found');
+      responses.notFound(req, res, 'game not found');
       return;
     }
     if (searchParams.get('full') !== null) {
@@ -34,7 +36,7 @@ export class ApiGameLogs extends Handler {
       try {
         logs = this.gameLogs.getLogsForGameEnd(game).join('\n');
       } catch (e) {
-        ctx.route.badRequest(req, res, 'cannot fetch game-end log');
+        responses.badRequest(req, res, 'cannot fetch game-end log');
         return;
       }
       res.setHeader('Content-Type', 'text/plain; charset=utf-8');
@@ -42,7 +44,7 @@ export class ApiGameLogs extends Handler {
     } else {
       const generation = searchParams.get('generation');
       const logs = this.gameLogs.getLogsForGameView(id, game, generation);
-      ctx.route.writeJson(res, logs);
+      responses.writeJson(res, logs);
     }
     return Promise.resolve();
   }

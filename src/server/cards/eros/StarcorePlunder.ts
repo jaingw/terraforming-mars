@@ -1,5 +1,5 @@
 import {IProjectCard} from '../IProjectCard';
-import {Player} from '../../Player';
+import {IPlayer} from '../../IPlayer';
 import {CardRenderer} from '../render/CardRenderer';
 import {digit} from '../Options';
 import {Card} from '../Card';
@@ -28,14 +28,14 @@ export class StarcorePlunder extends Card implements IProjectCard {
     });
   }
 
-  public override bespokeCanPlay(player: Player): boolean {
+  public override bespokeCanPlay(player: IPlayer): boolean {
     if (player.game.generation <3 ) {
       return false;
     }
     return true;
   }
 
-  public override bespokePlay(player: Player) {
+  public override bespokePlay(player: IPlayer) {
     player.production.add(Resource.MEGACREDITS, 3);
     player.production.add(Resource.STEEL, 3);
     player.production.add(Resource.TITANIUM, 3);
@@ -56,7 +56,7 @@ export class StarcorePlunder extends Card implements IProjectCard {
   //   this.starCoreGen = 0;
   // }
 
-  public destory(player: Player) {
+  public destory(player: IPlayer) {
     player.production.add(Resource.MEGACREDITS, -Math.min(player.production.get(Resource.MEGACREDITS), 2));
     player.production.add(Resource.STEEL, -Math.min(player.production.get(Resource.STEEL), 2));
     player.production.add(Resource.TITANIUM, -Math.min(player.production.get(Resource.TITANIUM), 2));

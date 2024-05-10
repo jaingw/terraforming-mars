@@ -9,8 +9,8 @@
 <script lang="ts">
 
 import Vue from 'vue';
-import {GameOptions} from '@/server/GameOptions';
 import {Reward} from '@/common/pathfinders/Reward';
+import {GameOptions} from '@/server/game/GameOptions';
 
 export default Vue.extend({
   name: 'PlanetaryTrackReward',
@@ -65,12 +65,11 @@ export default Vue.extend({
       case 'titanium_production':
         return 'resource_icon resource_icon--titanium';
       case 'tr':
-        return 'tag-tr tag-size-big';
+        return 'tag-tr tag-size-big tag-type-main';
       case 'venus_scale':
         return 'venus-scale';
-      default:
-        return '';
       }
+      return '';
     },
     outerClass(): string {
       switch (this.reward) {

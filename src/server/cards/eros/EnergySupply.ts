@@ -1,5 +1,5 @@
 import {IProjectCard} from '../IProjectCard';
-import {Player} from '../../Player';
+import {IPlayer} from '../../IPlayer';
 import {CardRenderer} from '../render/CardRenderer';
 import {Card} from '../Card';
 import {CardName} from '../../../common/cards/CardName';
@@ -22,8 +22,8 @@ export class EnergySupply extends Card implements IProjectCard {
       },
     });
   }
-  public override bespokePlay(player: Player) {
-    player.addResource(Resource.ENERGY, 3);
+  public override bespokePlay(player: IPlayer) {
+    player.stock.add(Resource.ENERGY, 3);
     return undefined;
   }
 }

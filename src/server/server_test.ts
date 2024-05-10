@@ -1,6 +1,6 @@
 
-import {generateRandomId} from './server-ids';
-import {serverId} from './server-ids';
+import {generateRandomId} from './utils/server-ids';
+import {serverId} from './utils/server-ids';
 import * as server from './server';
 
 console.log(generateRandomId('') + ' hello '+ serverId+' ' + server.server);

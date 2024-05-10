@@ -1,14 +1,12 @@
 import {SpaceBonus} from '../../common/boards/SpaceBonus';
-import {Board} from './Board';
 import {BoardBuilder} from './BoardBuilder';
 import {SpaceName} from '../SpaceName';
-import {Player} from '../Player';
-import {SerializedBoard} from './SerializedBoard';
-import {Random} from '../Random';
-import {ISpace} from './ISpace';
-import {GameOptions} from '../GameOptions';
+import {Random} from '../../common/utils/Random';
+import {Space} from './Space';
+import {GameOptions} from '../game/GameOptions';
+import {MarsBoard} from './MarsBoard';
 
-export class TerraCimmeriaBoard extends Board {
+export class TerraCimmeriaBoard extends MarsBoard {
   public static newInstance(gameOptions: GameOptions, rng: Random): TerraCimmeriaBoard {
     const builder = new BoardBuilder(gameOptions.venusNextExtension, gameOptions.pathfindersExpansion);
 
@@ -39,27 +37,23 @@ export class TerraCimmeriaBoard extends Board {
     builder.ocean(PLANT, PLANT).ocean(PLANT, PLANT).ocean(PLANT, PLANT).land(PLANT).ocean(PLANT, PLANT);
 
     if (gameOptions.shuffleMapOption) {
-      builder.shuffle(rng);
+      builder.shuffle(rng,
+        SpaceName.ALBOR_THOLUS_TERRACIMMERIA,
+        SpaceName.APOLLINARIS_MONS,
+        SpaceName.HADRIACUS_MONS,
+        SpaceName.TYRRHENUS_MONS);
     }
 
     const spaces = builder.build();
     return new TerraCimmeriaBoard(spaces);
   }
 
-  public static deserialize(board: SerializedBoard, players: Array<Player>): TerraCimmeriaBoard {
-    return new TerraCimmeriaBoard(Board.deserializeSpaces(board.spaces, players));
-  }
-
-  public override getNonReservedLandSpaces(): Array<ISpace> {
-    return super.getNonReservedLandSpaces();
-  }
-
-  public override getVolcanicSpaceIds(): Array<string> {
-    return [
+  public constructor(spaces: ReadonlyArray<Space>) {
+    super(spaces, undefined, [
       SpaceName.ALBOR_THOLUS_TERRACIMMERIA,
       SpaceName.APOLLINARIS_MONS,
       SpaceName.HADRIACUS_MONS,
       SpaceName.TYRRHENUS_MONS,
-    ];
+    ]);
   }
 }

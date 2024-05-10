@@ -1,7 +1,7 @@
 import {IProjectCard} from '../IProjectCard';
 import {Tag} from '../../../common/cards/Tag';
 import {CardType} from '../../../common/cards/CardType';
-import {Player} from '../../Player';
+import {IPlayer} from '../../IPlayer';
 import {CardResource} from '../../../common/CardResource';
 import {CardName} from '../../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
@@ -30,7 +30,7 @@ export class JovianDefenseDepartment extends Card implements IProjectCard {
     });
   }
   public override resourceCount: number = 0;
-  public onCardPlayed(player: Player, card: IProjectCard): void {
+  public onCardPlayed(player: IPlayer, card: IProjectCard): void {
     player.addResourceTo(this, player.tags.cardTagCount(card, Tag.JOVIAN));
   }
 }

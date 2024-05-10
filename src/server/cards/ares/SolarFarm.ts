@@ -1,8 +1,7 @@
 import {Card} from '../Card';
 import {CardName} from '../../../common/cards/CardName';
 import {SelectSpace} from '../../inputs/SelectSpace';
-import {ISpace} from '../../boards/ISpace';
-import {Player} from '../../Player';
+import {CanAffordOptions, IPlayer} from '../../IPlayer';
 import {Resource} from '../../../common/Resource';
 import {SpaceBonus} from '../../../common/boards/SpaceBonus';
 import {TileType} from '../../../common/TileType';
@@ -10,6 +9,7 @@ import {CardType} from '../../../common/cards/CardType';
 import {IProjectCard} from '../IProjectCard';
 import {Tag} from '../../../common/cards/Tag';
 import {CardRenderer} from '../render/CardRenderer';
+import {message} from '../../logs/MessageBuilder';
 
 export class SolarFarm extends Card implements IProjectCard {
   constructor() {
@@ -30,11 +30,11 @@ export class SolarFarm extends Card implements IProjectCard {
     });
   }
 
-  public override bespokeCanPlay(player: Player): boolean {
-    return player.game.board.getAvailableSpacesOnLand(player).length > 0;
+  public override bespokeCanPlay(player: IPlayer, canAffordOptions: CanAffordOptions): boolean {
+    return player.game.board.getAvailableSpacesOnLand(player, canAffordOptions).length > 0;
   }
 
-  public produce(player: Player) {
+  public produce(player: IPlayer) {
     const space = player.game.board.getSpaceByTileCard(this.name);
     if (space === undefined) {
       throw new Error('Solar Farm space not found');
@@ -43,11 +43,9 @@ export class SolarFarm extends Card implements IProjectCard {
     player.production.add(Resource.ENERGY, plantsOnSpace, {log: true});
   }
 
-  public override bespokePlay(player: Player) {
-    return new SelectSpace(
-      'Select space for Solar Farm tile',
-      player.game.board.getAvailableSpacesOnLand(player),
-      (space: ISpace) => {
+  public override bespokePlay(player: IPlayer) {
+    return new SelectSpace(message('Select space for ${0} tile', (b) => b.card(this)), player.game.board.getAvailableSpacesOnLand(player))
+      .andThen((space) => {
         player.game.addTile(player, space, {
           tileType: TileType.SOLAR_FARM,
           card: this.name,
@@ -55,7 +53,6 @@ export class SolarFarm extends Card implements IProjectCard {
         this.produce(player);
         space.adjacency = {bonus: [SpaceBonus.ENERGY, SpaceBonus.ENERGY]};
         return undefined;
-      },
-    );
+      });
   }
 }

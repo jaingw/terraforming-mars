@@ -1,5 +1,5 @@
 import {IProjectCard} from '../IProjectCard';
-import {Player} from '../../Player';
+import {IPlayer} from '../../IPlayer';
 import {Card} from '../Card';
 import {CardRenderer} from '../render/CardRenderer';
 import {played} from '../Options';
@@ -27,7 +27,7 @@ export class CommunityWorker extends Card implements IProjectCard {
     });
   }
 
-  public onCardPlayed(player: Player, card: IProjectCard) {
+  public onCardPlayed(player: IPlayer, card: IProjectCard) {
     if (card.type !== CardType.EVENT && card.tags.filter((x)=> x!==Tag.WILD).length === 0) {
       player.megaCredits += 4;
     }

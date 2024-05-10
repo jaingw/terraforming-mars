@@ -1,9 +1,7 @@
 import {Tag} from '../../../common/cards/Tag';
-import {Player} from '../../Player';
-import {Card} from '../Card';
+import {IPlayer} from '../../IPlayer';
 import {ICorporationCard} from '../corporation/ICorporationCard';
 import {CardName} from '../../../common/cards/CardName';
-import {CardType} from '../../../common/cards/CardType';
 import {CardRenderer} from '../render/CardRenderer';
 import {IProjectCard} from '../../cards/IProjectCard';
 import {SimpleDeferredAction} from '../../deferredActions/DeferredAction';
@@ -11,11 +9,11 @@ import {OrOptions} from '../../inputs/OrOptions';
 import {SelectCard} from '../../inputs/SelectCard';
 import {SelectOption} from '../../inputs/SelectOption';
 import {played} from '../../cards/Options';
+import {CorporationCard} from '../corporation/CorporationCard';
 
-export class IntegratedMicroorganisms extends Card implements ICorporationCard {
+export class IntegratedMicroorganisms extends CorporationCard {
   constructor() {
     super({
-      type: CardType.CORPORATION,
       name: CardName.INTEGRATED_MICROORGANISMS,
       tags: [Tag.MICROBE],
       startingMegaCredits: 40,
@@ -37,21 +35,21 @@ export class IntegratedMicroorganisms extends Card implements ICorporationCard {
     });
   }
 
-  public override bespokePlay(player: Player) {
+  public override bespokePlay(player: IPlayer) {
     this.effectResolve(player, this as IProjectCard);
     return undefined;
   }
 
-  public initialAction(player: Player) {
+  public initialAction(player: IPlayer) {
     player.drawCard(1, {tag: Tag.MICROBE});
     return undefined;
   }
 
-  public onCorpCardPlayed(player: Player, card:ICorporationCard) {
+  public onCorpCardPlayed(player: IPlayer, card:ICorporationCard) {
     this.onCardPlayed(player, card as unknown as IProjectCard);
     return undefined;
   }
-  private effectResolve(player: Player, card: IProjectCard) {
+  private effectResolve(player: IPlayer, card: IProjectCard) {
     const microbeTags = player.tags.cardTagCount(card, Tag.MICROBE);
     for (let i = 0; i < microbeTags; i++) {
       player.game.defer(new SimpleDeferredAction(
@@ -62,7 +60,7 @@ export class IntegratedMicroorganisms extends Card implements ICorporationCard {
             return undefined;
           }
           return new OrOptions(
-            new SelectCard('Select a card to discard', 'Discard', player.cardsInHand, (foundCards: Array<IProjectCard>) => {
+            new SelectCard('Select a card to discard', 'Discard', player.cardsInHand).andThen( (foundCards: Array<IProjectCard>) => {
               player.cardsInHand.splice(player.cardsInHand.indexOf(foundCards[0]), 1);
               player.game.projectDeck.discard(foundCards[0]);
               player.game.log('${0} is using their ${1} effect to draw 2 cards by discarding a card.', (b) => b.player(player).card(this));
@@ -70,7 +68,7 @@ export class IntegratedMicroorganisms extends Card implements ICorporationCard {
               player.drawCard(2);
               return undefined;
             }),
-            new SelectOption('Do nothing', 'Confirm', () => {
+            new SelectOption('Do nothing', 'Confirm').andThen( () => {
               return undefined;
             }),
           );
@@ -79,7 +77,7 @@ export class IntegratedMicroorganisms extends Card implements ICorporationCard {
     }
     return undefined;
   }
-  public onCardPlayed(player: Player, card: IProjectCard) {
+  public onCardPlayed(player: IPlayer, card: IProjectCard) {
     if (player.isCorporation(this.name)) {
       this.effectResolve(player, card);
     }

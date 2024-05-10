@@ -5,9 +5,8 @@ import {TileType} from '../../../common/TileType';
 import {CardType} from '../../../common/cards/CardType';
 import {IProjectCard} from '../IProjectCard';
 import {Tag} from '../../../common/cards/Tag';
-import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
-import {Player} from '../../Player';
+import {IPlayer} from '../../IPlayer';
 
 export class OceanFarm extends Card implements IProjectCard {
   constructor() {
@@ -22,12 +21,11 @@ export class OceanFarm extends Card implements IProjectCard {
         tile: {
           type: TileType.OCEAN_FARM,
           on: 'upgradeable-ocean',
-          title: 'Select space for Ocean Farm',
           adjacencyBonus: {bonus: [SpaceBonus.PLANT]},
         },
       },
 
-      requirements: CardRequirements.builder((b) => b.oceans(4)),
+      requirements: {oceans: 4},
       metadata: {
         cardNumber: 'A21',
         renderData: CardRenderer.builder((b) => {
@@ -40,7 +38,7 @@ export class OceanFarm extends Card implements IProjectCard {
       },
     });
   }
-  public override bespokeCanPlay(player: Player): boolean {
+  public override bespokeCanPlay(player: IPlayer): boolean {
     return player.game.board.getOceanSpaces({upgradedOceans: false}).length > 0;
   }
 }

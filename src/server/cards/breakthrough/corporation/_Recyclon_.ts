@@ -1,4 +1,4 @@
-import {Player} from '../../../Player';
+import {IPlayer} from '../../../IPlayer';
 import {CardRenderer} from '../../render/CardRenderer';
 import {Recyclon} from '../../promo/Recyclon';
 import {played, digit} from '../../Options';
@@ -30,7 +30,7 @@ export class _Recyclon_ extends Recyclon {
 
   public override resourceCount: number = 0;
 
-  public initialAction(player: Player) {
+  public initialAction(player: IPlayer) {
     if (player.isCorporation(this.name)) {
       player.addResourceTo(this, 2);
     }

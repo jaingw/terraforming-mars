@@ -1,13 +1,10 @@
-import {Card} from '../Card';
-import {ICorporationCard} from '../corporation/ICorporationCard';
 import {Tag} from '../../../common/cards/Tag';
-import {Player} from '../../Player';
+import {IPlayer} from '../../IPlayer';
 import {SelectSpace} from '../../inputs/SelectSpace';
 import {SpaceType} from '../../../common/boards/SpaceType';
-import {ISpace} from '../../boards/ISpace';
+import {Space} from '../../boards/Space';
 import {CardName} from '../../../common/cards/CardName';
-import {Priority, SimpleDeferredAction} from '../../deferredActions/DeferredAction';
-import {CardType} from '../../../common/cards/CardType';
+import {SimpleDeferredAction} from '../../deferredActions/DeferredAction';
 import {CardRenderer} from '../render/CardRenderer';
 import {Size} from '../../../common/cards/render/Size';
 import {SpaceBonus} from '../../../common/boards/SpaceBonus';
@@ -15,6 +12,8 @@ import {BoardType} from '../../boards/BoardType';
 import {OrOptions} from '../../inputs/OrOptions';
 import {SelectOption} from '../../inputs/SelectOption';
 import {Phase} from '../../../common/Phase';
+import {CorporationCard} from '../corporation/CorporationCard';
+import {Priority} from '../../deferredActions/Priority';
 
 const VALID_BONUSES: Array<SpaceBonus> = [
   SpaceBonus.TITANIUM,
@@ -29,10 +28,9 @@ const VALID_BONUSES: Array<SpaceBonus> = [
   SpaceBonus.SCIENCE,
 ];
 
-export class Rda extends Card implements ICorporationCard {
+export class Rda extends CorporationCard {
   constructor() {
     super({
-      type: CardType.CORPORATION,
       name: CardName.RDA,
       tags: [Tag.BUILDING],
       initialActionText: 'Place a city tile',
@@ -54,16 +52,16 @@ export class Rda extends Card implements ICorporationCard {
     });
   }
 
-  public initialAction(player: Player) {
-    return new SelectSpace('Select space on mars for city tile', player.game.board.getAvailableSpacesForCity(player), (space: ISpace) => {
-      player.game.addCityTile(player, space);
+  public initialAction(player: IPlayer) {
+    return new SelectSpace('Select space on mars for city tile', player.game.board.getAvailableSpacesForCity(player) ).andThen((space: Space) => {
+      player.game.addCity(player, space);
       player.game.log('${0} placed a City tile', (b) => b.player(player));
       return undefined;
     });
   }
 
 
-  public onTilePlaced(cardOwner: Player, activePlayer: Player, space: ISpace, boardType: BoardType) {
+  public onTilePlaced(cardOwner: IPlayer, activePlayer: IPlayer, space: Space, boardType: BoardType) {
     if (boardType !== BoardType.MARS || space.spaceType === SpaceType.COLONY) return;
     if (cardOwner.id !== activePlayer.id || cardOwner.game.phase === Phase.SOLAR) {
       return;
@@ -84,10 +82,10 @@ export class Rda extends Card implements ICorporationCard {
       options.options.push(new SelectOption(
         SpaceBonus.toString(bonus),
         'Select',
-        () => {
-          activePlayer.game.grantSpaceBonus(activePlayer, bonus, 1);
-          return undefined;
-        },
+      ).andThen(() => {
+        activePlayer.game.grantSpaceBonus(activePlayer, bonus, 1);
+        return undefined;
+      },
       ));
     });
     if (options.options.length === 1) {

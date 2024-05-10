@@ -10,7 +10,6 @@ import {GameId} from '../Types';
 export type BoardNameType = BoardName | RandomBoardOption;
 
 export interface NewPlayerModel {
-  index: number;
   name: string;
   color: Color;
   beginner: boolean;
@@ -45,6 +44,7 @@ export interface NewGameConfig {
   // coloniesExtension: boolean;
   // preludeExtension: boolean;
   // turmoilExtension: boolean;
+  prelude2Expansion: boolean;
   promoCardsOption: boolean;
   communityCardsOption: boolean;
   erosCardsOption: boolean;
@@ -75,6 +75,7 @@ export interface NewGameConfig {
   soloTR: boolean; // Solo victory by getting TR 63 by game end
   customCorporationsList: Array<CardName>;
   bannedCards: Array<CardName>;
+  includedCards: Array<CardName>;
   customColoniesList: Array<ColonyName>;
   customPreludes: Array<CardName>;
   requiresMoonTrackCompletion: boolean; // Moon must be completed to end the game
@@ -83,6 +84,7 @@ export interface NewGameConfig {
   altVenusBoard: boolean;
   escapeVelocityMode: boolean;
   escapeVelocityThreshold: number | undefined;
+  escapeVelocityBonusSeconds: number | undefined;
   escapeVelocityPeriod: number | undefined;
   escapeVelocityPenalty: number | undefined;
   twoCorpsVariant: boolean;
@@ -90,4 +92,6 @@ export interface NewGameConfig {
   startingCeos: number;
   rankTimeLimit: number | undefined,
   rankTimePerGeneration: number | undefined;
+  starWarsExpansion: boolean,
+  underworldExpansion: boolean,
 }

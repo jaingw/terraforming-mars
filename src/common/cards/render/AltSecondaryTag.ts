@@ -2,12 +2,14 @@
 export enum AltSecondaryTag {
   // 'req' => used for Cutting Edge Technology's discount on cards with requirements
   REQ = 'req',
+  REQNOT = 'reqnot',
   // 'oxygen' => used for Greenery tile that increases oxygen on placement
   OXYGEN = 'oxygen',
   // 'turmoil' => used in Political Uprising community prelude
   TURMOIL = 'turmoil',
   FLOATER = 'floater',
   BLUE = 'blue',
+  NO_TAGS = 'no_tags',
   ARES = 'ares',
   MOON_MINING_RATE = 'moon-mine',
   MOON_HABITAT_RATE = 'moon-colony',

@@ -1,12 +1,12 @@
 
-import {Player} from '../Player';
+import {IPlayer} from '../IPlayer';
 import {IMilestone} from './IMilestone';
 import {SerializedPlayerId} from '../SerializedPlayer';
 import {MilestoneName} from '../../common/ma/MilestoneName';
 
 export type ClaimedMilestone = {
   milestone: IMilestone;
-  player: Player;
+  player: IPlayer;
 }
 
 // export interface SerializedClaimedMilestone {
@@ -26,7 +26,7 @@ export function serializeClaimedMilestones(claimedMilestones: Array<ClaimedMiles
 
 export function deserializeClaimedMilestones(
   claimedMilestones: Array<SerializedClaimedMilestone>,
-  players: Array<Player>,
+  players: Array<IPlayer>,
   milestones: Array<IMilestone>): Array<ClaimedMilestone> {
   return claimedMilestones.map((element: SerializedClaimedMilestone) => {
     if (element.milestone.name === 'Tactitian' as MilestoneName) {

@@ -1,5 +1,5 @@
 import {IProjectCard} from '../IProjectCard';
-import {Player} from '../../Player';
+import {IPlayer} from '../../IPlayer';
 import {Card} from '../Card';
 import {CardType} from '../../../common/cards/CardType';
 import {CardName} from '../../../common/cards/CardName';
@@ -35,35 +35,35 @@ export class Cryptocurrency extends Card implements IProjectCard, IActionCard {
   }
 
 
-  public canAct(player: Player) {
+  public canAct(player: IPlayer) {
     return player.energy > 0 || this.resourceCount > 0;
   }
 
-  public action(player: Player) {
+  public action(player: IPlayer) {
     const firstOption = new SelectOption(
       'Spend 1 energy to add 1 data to this card.',
-      'Spend energy',
-      () => {
-        player.deductResource(Resource.ENERGY, 1);
+      'Spend energy')
+      .andThen(() => {
+        player.stock.deduct(Resource.ENERGY, 1);
         player.addResourceTo(this, {qty: 1, log: true});
         return undefined;
       });
 
     const secondOption = new SelectOption(
       'Remove all data from this card to gain 3M€ per data removed.',
-      'Spend data',
-      () => {
-        player.addResource(Resource.MEGACREDITS, 3 * this.resourceCount, {log: true});
+      'Spend data')
+      .andThen(() => {
+        player.stock.add(Resource.MEGACREDITS, 3 * this.resourceCount, {log: true});
         this.resourceCount = 0; // Should this use addResourceTo?
         return undefined;
       });
 
     if (this.resourceCount === 0) {
-      firstOption.cb();
+      firstOption.cb(undefined);
       return undefined;
     }
     if (player.energy === 0) {
-      secondOption.cb();
+      secondOption.cb(undefined);
       return undefined;
     }
     return new OrOptions(firstOption, secondOption);

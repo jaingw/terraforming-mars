@@ -1,4 +1,4 @@
-import {Player} from '../../Player';
+import {IPlayer} from '../../IPlayer';
 import {PreludeCard} from '../prelude/PreludeCard';
 import {IProjectCard} from '../IProjectCard';
 import {CardName} from '../../../common/cards/CardName';
@@ -23,13 +23,13 @@ export class VitalColony_ extends PreludeCard implements IProjectCard {
     });
   }
 
-  public override bespokePlay(player: Player) {
+  public override bespokePlay(player: IPlayer) {
     player.game.defer(
       new BuildColony(
         player,
         {giveBonusTwice: true}));
 
-    player.addResource(Resource.MEGACREDITS, -5);
+    player.stock.add(Resource.MEGACREDITS, -5);
     return undefined;
   }
 }

@@ -1,19 +1,17 @@
-import {Player} from '../../../Player';
+import {IPlayer} from '../../../IPlayer';
 import {CardRenderer} from '../../render/CardRenderer';
-import {Game} from '../../../Game';
 import {SelectAmount} from '../../../inputs/SelectAmount';
 import {AndOptions} from '../../../inputs/AndOptions';
 import {SimpleDeferredAction} from '../../../deferredActions/DeferredAction';
-import {Card} from '../../Card';
 import {played} from '../../Options';
 import {CardName} from '../../../../common/cards/CardName';
-import {CardType} from '../../../../common/cards/CardType';
-import {ITagCount} from '../../../../common/cards/ITagCount';
 import {Size} from '../../../../common/cards/render/Size';
 import {Tag} from '../../../../common/cards/Tag';
-import {ICorporationCard} from '../../corporation/ICorporationCard';
+import {CorporationCard} from '../../corporation/CorporationCard';
+import {IGame} from '../../../IGame';
+import {TagCount} from '../../../../common/cards/TagCount';
 
-export class Chaos extends Card implements ICorporationCard {
+export class Chaos extends CorporationCard {
   public _tags :[] = [];
   public override set tags(tags:[]) {
     this._tags = tags;
@@ -26,7 +24,6 @@ export class Chaos extends Card implements ICorporationCard {
       name: CardName.CHAOS,
       tags: [],
       startingMegaCredits: 42,
-      type: CardType.CORPORATION,
 
       metadata: {
         cardNumber: 'Q21',
@@ -51,9 +48,9 @@ export class Chaos extends Card implements ICorporationCard {
   }
 
 
-  public onProductionPhase(player: Player) {
+  public onProductionPhase(player: IPlayer) {
     let bonus: number = 0;
-    let playerTags : ITagCount[] = player.tags.getAllTags();
+    let playerTags : Array<TagCount> = player.tags.countAllTags();
     const game = player.game;
     if (game.isSoloMode() || game.getPlayers().length ===1 ) {
       bonus = player.tags.distinctCount('globalEvent');
@@ -80,45 +77,45 @@ export class Chaos extends Card implements ICorporationCard {
     return undefined;
   }
 
-  private selectResources(player: Player, game: Game, resourceCount: number) {
+  private selectResources(player: IPlayer, game: IGame, resourceCount: number) {
     let megacreditsAmount: number = 0;
     let steelAmount: number = 0;
     let titaniumAmount: number = 0;
     let plantsAmount: number = 0;
     let energyAmount: number = 0;
     let heatAmount: number = 0;
-    const selectMegacredit = new SelectAmount('Megacredits', 'Select', (amount: number) => {
+    const selectMegacredit = new SelectAmount('Megacredits', 'Select', 0, resourceCount).andThen((amount: number) => {
       megacreditsAmount = amount;
       return undefined;
-    }, 0, resourceCount);
-    const selectSteel = new SelectAmount('Steel', 'Select', (amount: number) => {
+    });
+    const selectSteel = new SelectAmount('Steel', 'Select', 0, resourceCount).andThen((amount: number) => {
       steelAmount = amount;
       return undefined;
-    }, 0, resourceCount);
-    const selectTitanium = new SelectAmount('Titanium', 'Select', (amount: number) => {
+    });
+    const selectTitanium = new SelectAmount('Titanium', 'Select', 0, resourceCount).andThen((amount: number) => {
       titaniumAmount = amount;
       return undefined;
-    }, 0, resourceCount);
-    const selectPlants = new SelectAmount('Plants', 'Select', (amount: number) => {
+    });
+    const selectPlants = new SelectAmount('Plants', 'Select', 0, resourceCount).andThen((amount: number) => {
       plantsAmount = amount;
       return undefined;
-    }, 0, resourceCount);
-    const selectEnergy = new SelectAmount('Energy', 'Select', (amount: number) => {
+    });
+    const selectEnergy = new SelectAmount('Energy', 'Select', 0, resourceCount).andThen((amount: number) => {
       energyAmount = amount;
       return undefined;
-    }, 0, resourceCount);
-    const selectHeat = new SelectAmount('Heat', 'Select', (amount: number) => {
+    });
+    const selectHeat = new SelectAmount('Heat', 'Select', 0, resourceCount ).andThen((amount: number) => {
       heatAmount = amount;
       return undefined;
-    }, 0, resourceCount);
-    const selectResources = new AndOptions(
-      () => {
+    });
+    const selectResources = new AndOptions(selectMegacredit, selectSteel, selectTitanium, selectPlants, selectEnergy, selectHeat)
+      .andThen( () => {
         const selectedResources = megacreditsAmount +
-                  steelAmount +
-                  titaniumAmount +
-                  plantsAmount +
-                  energyAmount +
-                  heatAmount;
+                steelAmount +
+                titaniumAmount +
+                plantsAmount +
+                energyAmount +
+                heatAmount;
         if ( selectedResources > resourceCount || selectedResources < resourceCount) {
           throw new Error('Need to select ' + resourceCount + ' resource(s)');
         }
@@ -129,7 +126,7 @@ export class Chaos extends Card implements ICorporationCard {
         player.energy += energyAmount;
         player.heat += heatAmount;
         return undefined;
-      }, selectMegacredit, selectSteel, selectTitanium, selectPlants, selectEnergy, selectHeat);
+      });
     selectResources.title = 'Chaos effect: select ' + resourceCount + ' resource(s)';
     game.defer(new SimpleDeferredAction(
       player,

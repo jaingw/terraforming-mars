@@ -1,6 +1,6 @@
 import {IProjectCard} from '../IProjectCard';
 import {CardType} from '../../../common/cards/CardType';
-import {Player} from '../../Player';
+import {IPlayer} from '../../IPlayer';
 import {Resource} from '../../../common/Resource';
 import {CardName} from '../../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
@@ -29,10 +29,10 @@ export class FleetRecycling extends Card implements IProjectCard {
     return true;
   }
 
-  public override bespokePlay(player: Player) {
+  public override bespokePlay(player: IPlayer) {
     player.colonies.decreaseFleetSize();
-    player.addResource(Resource.STEEL, 4);
-    player.addResource(Resource.TITANIUM, 4);
+    player.stock.add(Resource.STEEL, 4);
+    player.stock.add(Resource.TITANIUM, 4);
     return undefined;
   }
 }

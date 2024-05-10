@@ -1,8 +1,7 @@
 import {IProjectCard} from '../IProjectCard';
-import {Player} from '../../Player';
+import {IPlayer} from '../../IPlayer';
 import {IActionCard} from '../ICard';
 import {DecreaseAnyProduction} from '../../deferredActions/DecreaseAnyProduction';
-import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
 import {Card} from '../Card';
 import {all} from '../Options';
@@ -22,7 +21,7 @@ export class ElectricSheep extends Card implements IActionCard, IProjectCard {
       resourceType: CardResource.ANIMAL,
       victoryPoints: {resourcesHere: {}},
 
-      requirements: CardRequirements.builder((b) => b.tag(Tag.POWER, 4)),
+      requirements: {tag: Tag.POWER, count: 4},
       metadata: {
         cardNumber: 'Q13',
         renderData: CardRenderer.builder((b) => {
@@ -45,16 +44,16 @@ export class ElectricSheep extends Card implements IActionCard, IProjectCard {
     return true;
   }
 
-  public override bespokeCanPlay(player: Player): boolean {
+  public override bespokeCanPlay(player: IPlayer): boolean {
     return player.tags.count(Tag.POWER) >= 4;
   }
 
-  public action(player: Player) {
+  public action(player: IPlayer) {
     player.addResourceTo(this);
     return undefined;
   }
 
-  public override bespokePlay(player: Player) {
+  public override bespokePlay(player: IPlayer) {
     player.game.defer(new DecreaseAnyProduction(player, Resource.ENERGY, {count: 1}));
     return undefined;
   }

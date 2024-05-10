@@ -19,19 +19,19 @@ describe('UndergroundCity', function() {
 
   it('Can not play', function() {
     player.production.add(Resource.ENERGY, 1);
-    expect(player.simpleCanPlay(card)).is.not.true;
+    expect(card.canPlay(player)).is.not.true;
   });
 
   it('Should play', function() {
     player.production.add(Resource.ENERGY, 2);
-    expect(player.simpleCanPlay(card)).is.true;
+    expect(card.canPlay(player)).is.true;
 
     expect(card.play(player)).is.undefined;
     runAllActions(player.game);
     const action = cast(player.popWaitingFor(), SelectSpace);
 
-    action.cb(action.availableSpaces[0]);
-    expect(game.getCitiesCount()).to.eq(1);
+    action.cb(action.spaces[0]);
+    expect(game.board.getCities()).has.length(1);
     expect(player.production.energy).to.eq(0);
     expect(player.production.steel).to.eq(2);
   });

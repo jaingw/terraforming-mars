@@ -1,6 +1,5 @@
-import {Player} from '../../../Player';
+import {IPlayer} from '../../../IPlayer';
 import {IProjectCard} from '../../IProjectCard';
-import {Card} from '../../Card';
 import {CardRenderer} from '../../render/CardRenderer';
 import {CardName} from '../../../../common/cards/CardName';
 import {CardType} from '../../../../common/cards/CardType';
@@ -8,8 +7,9 @@ import {Tag} from '../../../../common/cards/Tag';
 import {Resource} from '../../../../common/Resource';
 import {ICorporationCard} from '../../corporation/ICorporationCard';
 import {SerializedCard} from '../../../SerializedCard';
+import {CorporationCard} from '../../corporation/CorporationCard';
 
-export class IdoFront extends Card implements ICorporationCard {
+export class IdoFront extends CorporationCard {
   public allTags = new Set<Tag>();
 
   constructor() {
@@ -17,7 +17,6 @@ export class IdoFront extends Card implements ICorporationCard {
       name: CardName.IDO_FRONT,
       tags: [],
       startingMegaCredits: 32,
-      type: CardType.CORPORATION,
 
       metadata: {
         cardNumber: 'Q23',
@@ -35,7 +34,7 @@ export class IdoFront extends Card implements ICorporationCard {
     });
   }
 
-  public onCardPlayed(player: Player, card: IProjectCard) {
+  public onCardPlayed(player: IPlayer, card: IProjectCard) {
     if (card.tags.filter((tag) => tag !== Tag.WILD ).length === 0 || !player.isCorporation(this.name)) return undefined;
     let count = 0;
     for (const tag of card.tags.filter((tag) => tag !== Tag.WILD )) {
@@ -49,12 +48,12 @@ export class IdoFront extends Card implements ICorporationCard {
 
     const wildCount = player.tags.count(Tag.WILD);
     if (card.tags.length >= count) {
-      player.addResource(Resource.MEGACREDITS, 2*Math.min(card.tags.length, count+wildCount));
+      player.stock.add(Resource.MEGACREDITS, 2*Math.min(card.tags.length, count+wildCount));
     }
     return undefined;
   }
 
-  public onCorpCardPlayed(player: Player, card:ICorporationCard) {
+  public onCorpCardPlayed(player: IPlayer, card:ICorporationCard) {
     return this.onCardPlayed(player, card as unknown as IProjectCard);
   }
 

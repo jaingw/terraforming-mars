@@ -1,9 +1,11 @@
-import * as http from 'http';
+import * as responses from './responses';
 import {Handler} from './Handler';
 import {Context} from './IHandler';
 import {Server} from '../models/ServerModel';
 import {GameLoader} from '../database/GameLoader';
-import {Game} from '../Game';
+import {Request} from '../Request';
+import {Response} from '../Response';
+import {IGame} from '../IGame';
 
 export class ApiGame extends Handler {
   public static readonly INSTANCE = new ApiGame();
@@ -11,10 +13,10 @@ export class ApiGame extends Handler {
     super();
   }
 
-  public override get(req: http.IncomingMessage, res: http.ServerResponse, ctx: Context): Promise<void> {
+  public override get(req: Request, res: Response, ctx: Context): Promise<void> {
     if (req.url === undefined) {
       console.warn('url not defined');
-      ctx.route.notFound(req, res, 'url not defined');
+      responses.notFound(req, res, 'url not defined');
       return Promise.resolve();
     }
 
@@ -22,20 +24,20 @@ export class ApiGame extends Handler {
     const userId = ctx.url.searchParams.get('userId') || '';
 
     if (!gameId) {
-      ctx.route.badRequest(req, res, 'missing id parameter');
+      responses.badRequest(req, res, 'missing id parameter');
       return Promise.resolve();
     }
     return new Promise((resolve) => {
-      GameLoader.getInstance().getGameById(gameId, (game: Game | undefined) => {
+      GameLoader.getInstance().getGameById(gameId, (game: IGame | undefined) => {
         if (game === undefined) {
           console.warn('game not found ' + gameId);
-          ctx.route.notFound(req, res, 'game not found');
+          responses.notFound(req, res, 'game not found');
           resolve();
           return;
         }
 
         const model = Server.getSimpleGameModel(game, userId);
-        ctx.route.writeJson(res, model);
+        responses.writeJson(res, model);
         resolve();
       });
     });

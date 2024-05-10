@@ -1,6 +1,6 @@
 import {IProjectCard} from '../IProjectCard';
 import {Card} from '../Card';
-import {Player} from '../../Player';
+import {IPlayer} from '../../IPlayer';
 import {CardRenderer} from '../render/CardRenderer';
 import {played} from '../Options';
 import {CardName} from '../../../common/cards/CardName';
@@ -31,7 +31,7 @@ export class StarCoreMining extends Card implements IProjectCard {
       },
     });
   }
-  public onCardPlayed(player: Player, card: IProjectCard) {
+  public onCardPlayed(player: IPlayer, card: IProjectCard) {
     const plantCount = card.tags.filter((tag) => tag === Tag.PLANT).length;
     plantCount !== 0 ? player.plants += plantCount : 0;
     const energyCount = card.tags.filter((tag) => tag === Tag.POWER).length;

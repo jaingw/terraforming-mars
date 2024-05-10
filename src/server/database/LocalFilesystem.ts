@@ -1,10 +1,11 @@
 import {GameIdLedger, IDatabase, IGameShortData} from './IDatabase';
-import {Game, Score} from '../Game';
-import {GameOptions} from '../GameOptions';
+import {IGame, Score} from '../IGame';
+import {GameOptions} from '../game/GameOptions';
 import {GameId} from '../../common/Types';
 import {SerializedGame} from '../SerializedGame';
 import {Dirent} from 'fs';
 import {UserRank} from '../../common/rank/RankManager';
+import {User} from '../User';
 
 const path = require('path');
 const fs = require('fs');
@@ -113,16 +114,21 @@ export class LocalFilesystem implements IDatabase {
     // Not implemented
   }
 
-  cleanGame(_gameId: GameId): Promise<void> {
+  markFinished(_gameId: GameId): Promise<void> {
     // Not implemented here.
     return Promise.resolve();
   }
 
-  purgeUnfinishedGames(): Promise<void> {
+  purgeUnfinishedGames(): Promise<Array<GameId>> {
+    // Not implemented.
+    return Promise.resolve([]);
+  }
+
+  compressCompletedGames(): Promise<unknown> {
     // Not implemented.
     return Promise.resolve();
   }
-  async restoreGame(game_id: GameId, save_id: number, _game: Game, _playId: string): Promise<void> {
+  async restoreGame(game_id: GameId, save_id: number, _game: IGame, _playId: string): Promise<void> {
     await fs.copyFile(this.historyFilename(game_id, save_id), this.filename(game_id));
     // return this.getGame(game_id);
     return Promise.resolve();
@@ -143,15 +149,19 @@ export class LocalFilesystem implements IDatabase {
   saveUser(_id: string, _name: string, _password: string, _prop: string): void {
     throw new Error('Method not implemented.');
   }
-  getUsers(_cb: (err: any, allUsers: import('../User').User[]) => void): void {
+  getUsers(_cb: (err: any, allUsers: User[]) => void): void {
     throw new Error('Method not implemented.');
   }
   refresh(): void {
     throw new Error('Method not implemented.');
   }
-  saveGame(_game: Game ): Promise<void> {
+  saveGame(_game: IGame ): Promise<void> {
     throw new Error('Method not implemented.');
   }
+  cleanGame(_gameId: GameId): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
   cleanGameAllSaves(_game_id: string): void {
     throw new Error('Method not implemented.');
   }

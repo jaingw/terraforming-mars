@@ -78,9 +78,6 @@ module.exports = {
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
     },
-    fallback: {
-      util: false,
-    },
   },
   module: {
     rules: [
@@ -110,6 +107,7 @@ module.exports = {
 
   output: {
     path: __dirname + '/build',
+    hashFunction: 'xxhash64',
   },
   stats: {
     warnings: true,

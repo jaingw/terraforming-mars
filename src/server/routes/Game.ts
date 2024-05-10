@@ -1,28 +1,64 @@
-import * as http from 'http';
+import * as responses from './responses';
 import {Handler} from './Handler';
 import {Context} from './IHandler';
 import {BoardName} from '../../common/boards/BoardName';
 import {RandomBoardOption} from '../../common/boards/RandomBoardOption';
 import {GameLoader} from '../database/GameLoader';
 import {Game, LoadState} from '../Game';
-import {GameOptions} from '../GameOptions';
+import {GameOptions} from '../game/GameOptions';
 import {Player} from '../Player';
 import {Server} from '../models/ServerModel';
 import {ServeAsset} from './ServeAsset';
 import {RandomMAOptionType} from '../../common/ma/RandomMAOptionType';
 import {AgendaStyle} from '../../common/turmoil/Types';
 import {NewGameConfig} from '../../common/game/NewGameConfig';
-import {GameId, PlayerId, SpectatorId} from '../../common/Types';
-import {generateRandomId} from '../server-ids';
+import {safeCast, isGameId, isSpectatorId, isPlayerId} from '../../common/Types';
+import {generateRandomId} from '../utils/server-ids';
+import {Request} from '../Request';
+import {Response} from '../Response';
+import {QuotaConfig, QuotaHandler} from '../server/QuotaHandler';
+import {durationToMilliseconds} from '../utils/durations';
+
+function get(): QuotaConfig {
+  const defaultQuota = {limit: 1, perMs: 1}; // Effectively, no limit.
+  const val = process.env.GAME_QUOTA;
+  try {
+    if (val !== undefined) {
+      const struct = JSON.parse(val);
+      let {limit, per} = struct;
+      if (limit === undefined) {
+        throw new Error('limit is absent');
+      }
+      limit = Number.parseInt(limit);
+      if (isNaN(limit)) {
+        throw new Error('limit is invalid');
+      }
+      if (per === undefined) {
+        throw new Error('per is absent');
+      }
+      const perMs = durationToMilliseconds(per);
+      if (isNaN(perMs)) {
+        throw new Error('perMillis is invalid');
+      }
+      return {limit, perMs};
+    }
+    return defaultQuota;
+  } catch (e) {
+    console.warn('While initialzing quota:', (e instanceof Error ? e.message : e));
+    return defaultQuota;
+  }
+}
 
 // Oh, this could be called Game, but that would introduce all kinds of issues.
-
 // Calling get() feeds the game to the player (I think, and calling put creates a game.)
 // So, that should be fixed, you know.
 export class GameHandler extends Handler {
   public static readonly INSTANCE = new GameHandler();
-  private constructor() {
+  private quotaHandler;
+
+  private constructor(quotaConfig: QuotaConfig = get()) {
     super();
+    this.quotaHandler = new QuotaHandler(quotaConfig);
   }
 
   public static boardOptions(board: RandomBoardOption | BoardName): Array<BoardName> {
@@ -38,31 +74,44 @@ export class GameHandler extends Handler {
     }
     return [board];
   }
-  public override get(req: http.IncomingMessage, res: http.ServerResponse, ctx: Context): Promise<void> {
+  public override get(req: Request, res: Response, ctx: Context): Promise<void> {
     req.url = '/build/assets/index_ca.html';
     return ServeAsset.INSTANCE.get(req, res, ctx);
   }
 
   // TODO(kberg): much of this code can be moved outside of handler, and that
   // would be better.
-  public override put(req: http.IncomingMessage, res: http.ServerResponse, ctx: Context): Promise<void> {
+  public override put(req: Request, res: Response, ctx: Context): Promise<void> {
     return new Promise((resolve) => {
+      if (this.quotaHandler.measure(ctx) === false) {
+        responses.quotaExceeded(req, res);
+        resolve();
+        return;
+      }
+
       let body = '';
       req.on('data', function(data) {
         body += data.toString();
       });
       req.once('end', () => {
         try {
-          const gameReq: NewGameConfig = JSON.parse(body);
-          const gameId = generateRandomId('g') as GameId;
-          const spectatorId = generateRandomId('s') as SpectatorId;
+          const gameReq = JSON.parse(body) as NewGameConfig;
+          const gameId = safeCast(generateRandomId('g'), isGameId);
+          const spectatorId = safeCast(generateRandomId('s'), isSpectatorId);
+          const names = gameReq.players.map((obj: any) => {
+            return obj.name;
+          });
+          if (names.length !== new Set(names).size) {
+            responses.internalServerError(req, res, '名称不能相同');
+            return;
+          }
           const players = gameReq.players.map((obj: any) => {
             const player = new Player(
               obj.name,
               obj.color,
               obj.beginner,
               Number(obj.handicap), // For some reason handicap is coming up a string.
-              generateRandomId('p') as PlayerId,
+              safeCast(generateRandomId('p'), isPlayerId),
             );
             const user = GameLoader.getUserByPlayer(player);
             if (user !== undefined) {
@@ -94,6 +143,7 @@ export class GameHandler extends Handler {
             venusNextExtension: gameReq.venusNext,
             coloniesExtension: gameReq.colonies,
             preludeExtension: gameReq.prelude,
+            prelude2Expansion: gameReq.prelude2Expansion,
             turmoilExtension: gameReq.turmoil,
             aresExtension: gameReq.aresExtension,
             aresHazards: true, // Not a runtime option.
@@ -109,7 +159,6 @@ export class GameHandler extends Handler {
 
             draftVariant: gameReq.draftVariant,
             initialDraftVariant: gameReq.initialDraft,
-            _corporationsDraft: false,
             startingCorporations: gameReq.startingCorporations,
             shuffleMapOption: gameReq.shuffleMapOption,
             randomMA: gameReq.randomMA,
@@ -117,6 +166,7 @@ export class GameHandler extends Handler {
             soloTR: gameReq.soloTR,
             customCorporationsList: gameReq.customCorporationsList,
             bannedCards: gameReq.bannedCards || [],
+            includedCards: gameReq.includedCards,
             customColoniesList: gameReq.customColoniesList,
             heatFor: gameReq.heatFor,
             breakthrough: gameReq.breakthrough,
@@ -129,6 +179,7 @@ export class GameHandler extends Handler {
             altVenusBoard: gameReq.altVenusBoard,
             escapeVelocityMode: gameReq.escapeVelocityMode,
             escapeVelocityThreshold: gameReq.escapeVelocityThreshold,
+            escapeVelocityBonusSeconds: gameReq.escapeVelocityBonusSeconds,
             escapeVelocityPeriod: gameReq.escapeVelocityPeriod,
             escapeVelocityPenalty: gameReq.escapeVelocityPenalty,
             twoCorpsVariant: gameReq.twoCorpsVariant,
@@ -138,6 +189,8 @@ export class GameHandler extends Handler {
             rankOption: gameReq.rankOption, // 天梯
             rankTimeLimit: gameReq.rankTimeLimit, // 天梯
             rankTimePerGeneration: gameReq.rankTimePerGeneration,
+            starWarsExpansion: gameReq.starWarsExpansion,
+            underworldExpansion: gameReq.underworldExpansion,
           };
           const userId = gameReq.userId;
           let isvip = false;
@@ -174,13 +227,14 @@ export class GameHandler extends Handler {
           const game = Game.newInstance(gameId, players, players[firstPlayerIdx], gameOptions, seed, spectatorId);
           game.loadState = LoadState.LOADED;
           GameLoader.getInstance().add(game);
-          ctx.route.writeJson(res, Server.getSimpleGameModel(game));
+          responses.writeJson(res, Server.getSimpleGameModel(game));
         } catch (error) {
           console.warn(error);
-          ctx.route.internalServerError(req, res, error);
+          responses.internalServerError(req, res, error);
         }
         resolve();
       });
     });
   }
 }
+

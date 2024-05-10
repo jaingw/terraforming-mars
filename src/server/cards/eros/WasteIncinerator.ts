@@ -1,9 +1,9 @@
 import {IProjectCard} from '../IProjectCard';
 import {Card} from '../Card';
-import {Player} from '../../Player';
+import {IPlayer} from '../../IPlayer';
 import {TileType} from '../../../common/TileType';
 import {SelectSpace} from '../../inputs/SelectSpace';
-import {ISpace} from '../../boards/ISpace';
+import {Space} from '../../boards/Space';
 import {Board} from '../../boards/Board';
 import {CardRenderer} from '../render/CardRenderer';
 import {CardName} from '../../../common/cards/CardName';
@@ -37,15 +37,15 @@ export class WasteIncinerator extends Card implements IProjectCard {
     });
   }
 
-  private getAvailableSpaces(player: Player): Array<ISpace> {
+  private getAvailableSpaces(player: IPlayer): Array<Space> {
     return player.game.board.getAvailableSpacesOnLand(player)
       .filter((space) => player.game.board.getAdjacentSpaces(space).some((adjacentSpace) => Board.isCitySpace(adjacentSpace)));
   }
-  public override bespokeCanPlay(player: Player): boolean {
+  public override bespokeCanPlay(player: IPlayer): boolean {
     return this.getAvailableSpaces(player).length > 0;
   }
-  public override bespokePlay(player: Player) {
-    return new SelectSpace('Select space adjacent to a city tile', this.getAvailableSpaces(player), (foundSpace: ISpace) => {
+  public override bespokePlay(player: IPlayer) {
+    return new SelectSpace('Select space adjacent to a city tile', this.getAvailableSpaces(player)).andThen((foundSpace: Space) => {
       player.game.addTile(player, foundSpace, {tileType: TileType.WASTE_INCINERATOR});
       foundSpace.adjacency = this.adjacencyBonus;
       return undefined;

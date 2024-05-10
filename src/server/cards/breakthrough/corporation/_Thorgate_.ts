@@ -1,19 +1,16 @@
 
-import {Player} from '../../../Player';
+import {IPlayer} from '../../../IPlayer';
 import {IProjectCard} from '../../IProjectCard';
 import {CardRenderer} from '../../render/CardRenderer';
-import {Card} from '../../Card';
 import {played} from '../../Options';
 import {CardName} from '../../../../common/cards/CardName';
-import {CardType} from '../../../../common/cards/CardType';
 import {Tag} from '../../../../common/cards/Tag';
 import {Resource} from '../../../../common/Resource';
-import {ICorporationCard} from '../../corporation/ICorporationCard';
+import {CorporationCard} from '../../corporation/CorporationCard';
 
-export class _Thorgate_ extends Card implements ICorporationCard {
+export class _Thorgate_ extends CorporationCard {
   constructor() {
     super({
-      type: CardType.CORPORATION,
       name: CardName._THORGATE_,
       tags: [Tag.POWER, Tag.SCIENCE],
       startingMegaCredits: 44,
@@ -37,14 +34,14 @@ export class _Thorgate_ extends Card implements ICorporationCard {
   }
 
 
-  public override getCardDiscount(_player: Player, card: IProjectCard) {
+  public override getCardDiscount(_player: IPlayer, card: IProjectCard) {
     if (card.tags.includes(Tag.POWER)) {
       return 3;
     }
     return 0;
   }
   /* Start with 2 energy prod and 1 extra science tag */
-  public override bespokePlay(player: Player) {
+  public override bespokePlay(player: IPlayer) {
     player.production.add(Resource.ENERGY, 2);
     return undefined;
   }

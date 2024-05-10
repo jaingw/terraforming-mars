@@ -8,10 +8,10 @@
 <script lang="ts">
 
 import Vue from 'vue';
-import {GameOptions} from '@/server/GameOptions';
 import {PlanetaryTrackSpace} from '@/common/pathfinders/PlanetaryTrack';
 import PlanetaryTrackReward from './PlanetaryTrackReward.vue';
 import {Reward} from '@/common/pathfinders/Reward';
+import {GameOptions} from '@/server/game/GameOptions';
 
 export default Vue.extend({
   name: 'PlanetaryTrackRewards',

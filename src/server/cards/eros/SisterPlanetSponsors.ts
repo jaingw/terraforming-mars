@@ -1,7 +1,6 @@
 import {IProjectCard} from '../IProjectCard';
-import {Player} from '../../Player';
+import {IPlayer} from '../../IPlayer';
 import {CardRenderer} from '../render/CardRenderer';
-import {CardRequirements} from '../CardRequirements';
 import {Card} from '../Card';
 import {all} from '../Options';
 import {CardName} from '../../../common/cards/CardName';
@@ -18,7 +17,7 @@ export class SisterPlanetSponsors extends Card implements IProjectCard {
       cost: 12,
       victoryPoints: 1,
 
-      requirements: CardRequirements.builder((b) => b.tag(Tag.VENUS).tag(Tag.EARTH)),
+      requirements: [{tag: Tag.VENUS}, {tag: Tag.EARTH}],
       metadata: {
         cardNumber: 'Q05',
         renderData: CardRenderer.builder((b) => {
@@ -28,10 +27,10 @@ export class SisterPlanetSponsors extends Card implements IProjectCard {
       },
     });
   }
-  public override bespokeCanPlay(player: Player): boolean {
+  public override bespokeCanPlay(player: IPlayer): boolean {
     return player.tags.playerHas([Tag.VENUS, Tag.EARTH]);
   }
-  public override bespokePlay(player: Player) {
+  public override bespokePlay(player: IPlayer) {
     player.production.add(Resource.MEGACREDITS, 3);
     for (const everyPlayer of player.game.getPlayers()) {
       everyPlayer.production.add(Resource.MEGACREDITS, 1);

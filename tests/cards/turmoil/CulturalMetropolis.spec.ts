@@ -5,7 +5,7 @@ import {Game} from '../../../src/server/Game';
 import {Resource} from '../../../src/common/Resource';
 import {PartyName} from '../../../src/common/turmoil/PartyName';
 import {Turmoil} from '../../../src/server/turmoil/Turmoil';
-import {cast, testGameOptions} from '../../TestingUtils';
+import {cast} from '../../TestingUtils';
 import {TestPlayer} from '../../TestPlayer';
 import {TileType} from '../../../src/common/TileType';
 
@@ -21,13 +21,13 @@ describe('Cultural Metropolis', function() {
     player = TestPlayer.BLUE.newPlayer();
     player2 = TestPlayer.RED.newPlayer();
 
-    game = Game.newInstance('gameid', [player, player2], player, testGameOptions({turmoilExtension: true}));
+    game = Game.newInstance('gameid', [player, player2], player, {turmoilExtension: true});
     turmoil = game.turmoil!;
   });
 
   it('Can not play without energy production', function() {
-    turmoil.sendDelegateToParty(player.id, PartyName.UNITY, game);
-    turmoil.sendDelegateToParty(player.id, PartyName.UNITY, game);
+    turmoil.sendDelegateToParty(player, PartyName.UNITY, game);
+    turmoil.sendDelegateToParty(player, PartyName.UNITY, game);
     expect(card.canPlay(player)).is.not.true;
   });
 
@@ -39,23 +39,23 @@ describe('Cultural Metropolis', function() {
 
   it('Can not play without 2 delegates available', function() {
     player.production.add(Resource.ENERGY, 1);
-    turmoil.sendDelegateToParty(player.id, PartyName.UNITY, game);
-    turmoil.sendDelegateToParty(player.id, PartyName.UNITY, game);
-    while (turmoil.getAvailableDelegateCount(player.id) > 2) {
-      turmoil.sendDelegateToParty(player.id, PartyName.REDS, game);
+    turmoil.sendDelegateToParty(player, PartyName.UNITY, game);
+    turmoil.sendDelegateToParty(player, PartyName.UNITY, game);
+    while (turmoil.getAvailableDelegateCount(player) > 2) {
+      turmoil.sendDelegateToParty(player, PartyName.REDS, game);
     }
-    expect(turmoil.getAvailableDelegateCount(player.id)).to.equal(2);
+    expect(turmoil.getAvailableDelegateCount(player)).to.equal(2);
     expect(card.canPlay(player)).is.true;
-    turmoil.sendDelegateToParty(player.id, PartyName.REDS, game);
+    turmoil.sendDelegateToParty(player, PartyName.REDS, game);
     expect(card.canPlay(player)).is.not.true;
   });
 
   it('Can not play without an available city space', () => {
     player.production.add(Resource.ENERGY, 1);
-    turmoil.sendDelegateToParty(player.id, PartyName.UNITY, game);
-    turmoil.sendDelegateToParty(player.id, PartyName.UNITY, game);
+    turmoil.sendDelegateToParty(player, PartyName.UNITY, game);
+    turmoil.sendDelegateToParty(player, PartyName.UNITY, game);
 
-    const availableCitySpaces = game.board.getAvailableSpacesForCity(player);
+    const availableCitySpaces = [...game.board.getAvailableSpacesForCity(player)];
     const savedSpace = availableCitySpaces.pop()!;
     for (const space of availableCitySpaces) {
       game.simpleAddTile(player, space, {tileType: TileType.GREENERY});
@@ -73,11 +73,11 @@ describe('Cultural Metropolis', function() {
     const startingUnityDelegateCount = unity.delegates.size;
 
     player.production.add(Resource.ENERGY, 1);
-    turmoil.sendDelegateToParty(player.id, PartyName.UNITY, game);
-    turmoil.sendDelegateToParty(player.id, PartyName.UNITY, game);
+    turmoil.sendDelegateToParty(player, PartyName.UNITY, game);
+    turmoil.sendDelegateToParty(player, PartyName.UNITY, game);
 
     expect(unity.delegates.size).eq(startingUnityDelegateCount + 2);
-    expect(turmoil.getAvailableDelegateCount(player.id)).to.equal(5);
+    expect(turmoil.getAvailableDelegateCount(player)).to.equal(5);
     expect(card.canPlay(player)).is.true;
 
     card.play(player);

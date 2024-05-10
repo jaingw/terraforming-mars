@@ -1,16 +1,14 @@
-import {CardName} from '../../common/cards/CardName';
 import {GlobalEventName} from '../../common/turmoil/globalEvents/GlobalEventName';
 import {LawSuit} from '../cards/promo/LawSuit';
-import {Manutech} from '../cards/venusNext/Manutech';
-import {Player} from '../Player';
+import {IPlayer} from '../IPlayer';
 import {Resource} from '../../common/Resource';
 import {Units} from '../../common/Units';
 
 export class Production {
   private units: Units;
-  private player: Player;
+  private player: IPlayer;
 
-  constructor(player: Player, units: Units = Units.EMPTY) {
+  constructor(player: IPlayer, units: Units = Units.EMPTY) {
     this.player = player;
     this.units = Units.of(units);
   }
@@ -48,7 +46,7 @@ export class Production {
   public add(
     resource: Resource,
     amount : number,
-    options? : { log: boolean, from? : Player | GlobalEventName, stealing?: boolean},
+    options? : { log: boolean, from? : IPlayer | GlobalEventName, stealing?: boolean},
   ) {
     const adj = resource === Resource.MEGACREDITS ? -5 : 0;
     const delta = (amount >= 0) ? amount : Math.max(amount, -(this.units[resource] - adj));
@@ -62,18 +60,18 @@ export class Production {
       this.player.logUnitDelta(resource, amount, 'production', options.from, options.stealing);
     }
 
-    if (options?.from instanceof Player) {
-      LawSuit.resourceHook(this.player, resource, delta, options.from);
+    const from = options?.from;
+    if (typeof(from) === 'object') {
+      LawSuit.resourceHook(this.player, resource, delta, from);
     }
 
     // Mons Insurance hook
-    if (options?.from !== undefined && delta < 0 && (options.from instanceof Player && options.from.id !== this.player.id)) {
+    if (options?.from !== undefined && delta < 0 && (typeof(from) === 'object' && from.id !== this.player.id)) {
       this.player.resolveInsurance();
     }
 
-    // Manutech hook
-    if (this.player.isCorporation(CardName.MANUTECH)) {
-      Manutech.onProductionGain(this.player, resource, amount);
+    for (const card of this.player.tableau) {
+      card.onProductionGain?.(this.player, resource, amount);
     }
   }
 
@@ -86,7 +84,7 @@ export class Production {
       this.units.heat + units.heat >= 0;
   }
 
-  public adjust(units: Units, options?: {log: boolean, from?: Player}) {
+  public adjust(units: Units, options?: {log: boolean, from?: IPlayer}) {
     if (units.megacredits !== undefined) {
       this.add(Resource.MEGACREDITS, units.megacredits, options);
     }

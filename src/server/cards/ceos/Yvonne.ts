@@ -1,10 +1,8 @@
 import {CardName} from '../../../common/cards/CardName';
-import {Player} from '../../Player';
+import {IPlayer} from '../../IPlayer';
 import {PlayerInput} from '../../PlayerInput';
 import {CardRenderer} from '../render/CardRenderer';
 import {CeoCard} from './CeoCard';
-
-import {SimpleDeferredAction} from '../../deferredActions/DeferredAction';
 import {Size} from '../../../common/cards/render/Size';
 
 export class Yvonne extends CeoCard {
@@ -22,19 +20,19 @@ export class Yvonne extends CeoCard {
   }
 
 
-  public override canAct(player: Player): boolean {
+  public override canAct(player: IPlayer): boolean {
     if (!super.canAct(player)) {
       return false;
     }
     return player.game.gameOptions.coloniesExtension === true;
   }
 
-  public action(player: Player): PlayerInput | undefined {
+  public action(player: IPlayer): PlayerInput | undefined {
     this.isDisabled = true;
     player.game.colonies.forEach((colony) => {
       colony.colonies.filter((owner) => owner === player).forEach((owner) => {
-        player.game.defer(new SimpleDeferredAction(player, () => colony.giveColonyBonus(owner)));
-        player.game.defer(new SimpleDeferredAction(player, () => colony.giveColonyBonus(owner)));
+        player.defer(() => colony.giveColonyBonus(owner));
+        player.defer(() => colony.giveColonyBonus(owner));
       });
     });
     return undefined;

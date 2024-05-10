@@ -75,8 +75,8 @@
     </template>
     <template v-else-if="title === CardName.SPLICE || title === CardName._SPLICE_">
       <div class="card-splice-logo"><div>SPLI<span style="color:red">C</span>E</div>
-      <div STYLE="height:3px;background:red;margin-top:-3px;"></div>
-      <div STYLE="font-size:10px;line-height:18px;">TACTICAL GENOMICS</div>
+      <div style="height:3px;background:red;margin-top:-3px;"></div>
+      <div style="font-size:10px;line-height:18px;">TACTICAL GENOMICS</div>
       </div>
     </template>
     <template v-else-if="title === CardName.STORMCRAFT_INCORPORATED || title === CardName._STORMCRAFT_INCORPORATED_">
@@ -230,11 +230,44 @@
     <template v-else-if="title ===  CardName.THERMOPOLI">
       <div class="card-junk-ventures-logo">THERMOPOLI</div>
     </template>
+    <template v-else-if="title === CardName.ELITETECH">
+      <div class="card-elitetech-logo">🌸ELITETECH🌸</div>
+    </template>
+    <template v-else-if="title === CardName.SOLARPLANT">
+      <div class="card-protogen-logo">🌸SOLARPLANT🌸</div>
+    </template>
+    <template v-else-if="title === CardName.POLITICALREFORM">
+      <div class="card-protogen-logo">🌸POLITICALREFORM🌸</div>
+    </template>
     <template v-else-if="title === CardName.MARS_MATHS">
       <div class="card-mars-maths-logo" style="font-family: Century Gothic, CenturyGothic, AppleGothic, sans-serif">
         <span style="color: rgb(0, 0, 0);">MARS</span>
         <span style="color: rgb(208, 96, 3);box-shadow: -6px -6px #d58c56;">MATHS</span>
       </div>
+    </template>
+    <template v-else-if="title === CardName.TYCHO_MAGNETICS">
+      <div class="card-tycho-magnetics-logo">
+        <div>TYCHO</div>
+        <div>MAGNETICS</div>
+      </div>
+    </template>
+    <template v-else-if="title === CardName.NIRGAL_ENTERPRISES">
+      <div class="card-nirgal-enterprises-logo">
+        <div>NIRGAL</div>
+        <div>ENTERPRISES</div>
+      </div>
+    </template>
+    <template v-else-if="title === CardName.ECOTEC">
+      <div class="card-ecotec-logo"></div>
+    </template>
+    <template v-else-if="title === CardName.PALLADIN_SHIPPING">
+      <div class="card-palladin-shipping-logo"></div>
+    </template>
+    <template v-else-if="title === CardName.SAGITTA_FRONTIER_SERVICES">
+      <div class="card-sagitta-logo">Sagitta</div>
+    </template>
+    <template v-else-if="title === CardName.KUIPER_COOPERATIVE">
+      <div class="card-kuiper-logo">Kuiper<br/>Cooperative</div>
     </template>
     <template v-else>
       <div :class="logoClass">{{capsTitle}}</div>
@@ -274,6 +307,7 @@ const imageOnlyLogos: Map<CardName, string> = new Map([
   [CardName.HABITAT_MARTE, 'card-habitat-marte-logo'],
   [CardName.ODYSSEY, 'card-odyssey-logo'],
   [CardName.AURORAI, 'card-aurorai-logo'],
+  [CardName.SPIRE, 'card-spire-logo'],
 ]);
 
 const imageLogosWithNames: Map<CardName, string> = new Map([

@@ -1,7 +1,7 @@
-import {Player} from '../../../Player';
+import {IPlayer} from '../../../IPlayer';
 import {CardRenderer} from '../../render/CardRenderer';
 import {ArcadianCommunities} from '../../promo/ArcadianCommunities';
-import {ISpace} from '../../../boards/ISpace';
+import {Space} from '../../../boards/Space';
 import {digit} from '../../Options';
 import {CardName} from '../../../../common/cards/CardName';
 import {ICardMetadata} from '../../../../common/cards/ICardMetadata';
@@ -12,7 +12,7 @@ export class _ArcadianCommunities_ extends ArcadianCommunities {
   public override get name() {
     return CardName._ARCADIAN_COMMUNITIES_;
   }
-  public onTilePlaced(cardOwner: Player, activePlayer: Player, space: ISpace, boardType: BoardType) {
+  public onTilePlaced(cardOwner: IPlayer, activePlayer: IPlayer, space: Space, boardType: BoardType) {
     if ( cardOwner.id !== activePlayer.id || boardType === BoardType.MOON ) {
       return;
     }

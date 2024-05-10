@@ -1,5 +1,5 @@
 import {PlayerId, SpectatorId} from '../../common/Types';
-import {Game} from '../Game';
+import {IGame} from '../IGame';
 export enum State {
   /**
    * No id has been requested
@@ -19,7 +19,7 @@ export enum State {
  * Loads games from database sequentially as needed
  */
 export interface IGameLoader {
-  add(game: Game): void;
+  add(game: IGame): void;
   // getLoadedGameIds(): Array<string>;
   /**
    * Gets a game from javascript memory or pulls from database if needed.
@@ -27,6 +27,15 @@ export interface IGameLoader {
    * @param {boolean} bypassCache always pull from database
    */
   // getByGameId(gameId: GameId, bypassCache: boolean): Promise<Game | undefined>;
-  getByParticipantId(playerId: PlayerId | SpectatorId): Promise<Game | undefined>;
+  getByParticipantId(playerId: PlayerId | SpectatorId): Promise<IGame | undefined>;
   // restoreGameAt(gameId: GameId, saveId: number): Promise<Game>;
+
+  /**
+   * Saves a game (but takes into account that the game might have already been purged.)
+   *
+   * Do not call IDatabase.saveGame directly in a running system.
+   */
+  saveGame(game: IGame): Promise<void>;
+  completeGame(game: IGame): Promise<void>;
+  maintenance(): Promise<void>;
 }

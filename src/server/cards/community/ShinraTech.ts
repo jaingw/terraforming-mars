@@ -1,18 +1,16 @@
 import {Tag} from '../../../common/cards/Tag';
-import {Player} from '../../Player';
+import {IPlayer} from '../../IPlayer';
 import {IProjectCard} from '../IProjectCard';
-import {Card} from '../Card';
 import {ICorporationCard} from '../corporation/ICorporationCard';
 import {CardName} from '../../../common/cards/CardName';
-import {CardType} from '../../../common/cards/CardType';
 import {CardRenderer} from '../render/CardRenderer';
 import {played} from '../Options';
 import {Resource} from '../../../common/Resource';
+import {CorporationCard} from '../corporation/CorporationCard';
 
-export class ShinraTech extends Card implements ICorporationCard {
+export class ShinraTech extends CorporationCard {
   constructor() {
     super({
-      type: CardType.CORPORATION,
       name: CardName.SHINRA_TECH,
       tags: [Tag.POWER],
       startingMegaCredits: 39,
@@ -33,10 +31,10 @@ export class ShinraTech extends Card implements ICorporationCard {
     });
   }
 
-  public onCardPlayed(player: Player, card: IProjectCard) {
+  public onCardPlayed(player: IPlayer, card: IProjectCard) {
     return this._onCardPlayed(player, card);
   }
-  private _onCardPlayed(player: Player, card: IProjectCard | ICorporationCard) {
+  private _onCardPlayed(player: IPlayer, card: IProjectCard | ICorporationCard) {
     if (player.isCorporation(this.name)) {
       for (const tag of card.tags) {
         if (tag === Tag.POWER) {
@@ -46,12 +44,12 @@ export class ShinraTech extends Card implements ICorporationCard {
     }
   }
 
-  public onCorpCardPlayed(player: Player, card:ICorporationCard) {
+  public onCorpCardPlayed(player: IPlayer, card:ICorporationCard) {
     this.onCardPlayed(player, card as unknown as IProjectCard);
     return undefined;
   }
 
-  public override bespokePlay(player: Player) {
+  public override bespokePlay(player: IPlayer) {
     player.production.add(Resource.ENERGY, 2);
     player.production.add(Resource.MEGACREDITS, 2);
     player.drawCard(1, {tag: Tag.POWER});

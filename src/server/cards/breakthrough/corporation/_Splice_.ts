@@ -1,10 +1,10 @@
-import {Player} from '../../../Player';
 import {Splice} from '../../promo/Splice';
 import {CardRenderer} from '../../render/CardRenderer';
 import {played, all} from '../../Options';
 import {CardName} from '../../../../common/cards/CardName';
 import {Size} from '../../../../common/cards/render/Size';
 import {Tag} from '../../../../common/cards/Tag';
+import {IPlayer} from '../../../IPlayer';
 
 export class _Splice_ extends Splice {
   public override get name() {
@@ -14,7 +14,7 @@ export class _Splice_ extends Splice {
   public override get initialActionText() {
     return 'Draw 2 cards with a microbe tag';
   }
-  public initialAction(player: Player ) {
+  public initialAction(player: IPlayer ) {
     player.drawCard(2, {tag: Tag.MICROBE});
     return undefined;
   }

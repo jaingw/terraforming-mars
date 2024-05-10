@@ -1,5 +1,5 @@
 import {PartyName} from '../../../common/turmoil/PartyName';
-import {Game} from '../../Game';
+import {IGame} from '../../IGame';
 import {Bonus} from '../Bonus';
 import {Policy} from '../Policy';
 import {Delegate} from '../Turmoil';
@@ -12,25 +12,22 @@ import {Reds} from './Reds';
 import {Greens} from './Greens';
 export interface IParty {
     name: PartyName;
-    description: string; // TODO(kberg): fetch description from agenda.
     delegates: MultiSet<Delegate>;
     partyLeader: undefined | Delegate;
-    sendDelegate: (playerId: Delegate, game: Game) => void;
-    removeDelegate: (playerId: Delegate, game: Game) => void;
-    bonuses: Array<Bonus>;
-    policies: Array<Policy>;
+    sendDelegate(playerId: Delegate, game: IGame): void;
+    removeDelegate(playerId: Delegate, game: IGame): void;
+    bonuses: ReadonlyArray<Bonus>;
+    policies: ReadonlyArray<Policy>;
 }
 
-interface IPartyFactory {
-    partyName: PartyName;
-    Factory: new () => IParty
-}
+export type PartyFactory = new() => IParty;
 
-export const ALL_PARTIES: Array<IPartyFactory> = [
-  {partyName: PartyName.MARS, Factory: MarsFirst},
-  {partyName: PartyName.SCIENTISTS, Factory: Scientists},
-  {partyName: PartyName.UNITY, Factory: Unity},
-  {partyName: PartyName.GREENS, Factory: Greens},
-  {partyName: PartyName.REDS, Factory: Reds},
-  {partyName: PartyName.KELVINISTS, Factory: Kelvinists},
-];
+export const ALL_PARTIES: Record<PartyName, PartyFactory> = {
+  [PartyName.MARS]: MarsFirst,
+  [PartyName.SCIENTISTS]: Scientists,
+  [PartyName.UNITY]: Unity,
+  [PartyName.GREENS]: Greens,
+  [PartyName.REDS]: Reds,
+  [PartyName.KELVINISTS]: Kelvinists,
+};
+

@@ -1,18 +1,14 @@
 import {CardRenderer} from '../../render/CardRenderer';
-import {Card} from '../../Card';
-import {ICard} from '../../ICard';
 import {all} from '../../Options';
 import {CardName} from '../../../../common/cards/CardName';
-import {CardType} from '../../../../common/cards/CardType';
-import {ICorporationCard} from '../../corporation/ICorporationCard';
+import {CorporationCard} from '../../corporation/CorporationCard';
 
-export class TradeNavigator extends Card implements ICard, ICorporationCard {
+export class TradeNavigator extends CorporationCard {
   constructor() {
     super({
       name: CardName.TRADE_NAVIGATOR,
       tags: [],
       startingMegaCredits: 42,
-      type: CardType.CORPORATION,
 
       metadata: {
         cardNumber: 'Q25',

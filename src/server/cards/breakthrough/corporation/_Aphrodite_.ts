@@ -1,5 +1,5 @@
 
-import {Player} from '../../../Player';
+import {IPlayer} from '../../../IPlayer';
 import {CardRenderer} from '../../render/CardRenderer';
 import {Aphrodite} from '../../venusNext/Aphrodite';
 import {all} from '../../Options';
@@ -14,12 +14,12 @@ export class _Aphrodite_ extends Aphrodite {
     return 40;
   }
 
-  public initialAction(player: Player) {
+  public initialAction(player: IPlayer) {
     player.game.increaseVenusScaleLevel(player, 2);
     return undefined;
   }
 
-  public override play(_player: Player) {
+  public override play(_player: IPlayer) {
     return undefined;
   }
 

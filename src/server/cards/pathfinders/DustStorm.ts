@@ -1,5 +1,5 @@
 import {IProjectCard} from '../IProjectCard';
-import {Player} from '../../Player';
+import {IPlayer} from '../../IPlayer';
 import {Card} from '../Card';
 import {CardType} from '../../../common/cards/CardType';
 import {CardName} from '../../../common/cards/CardName';
@@ -32,8 +32,15 @@ export class DustStorm extends Card implements IProjectCard {
     });
   }
 
-  public override bespokePlay(player: Player) {
-    player.game.getPlayers().forEach((p) => p.deductResource(Resource.ENERGY, p.energy, {log: true}));
+  public override bespokePlay(player: IPlayer) {
+    player.game.getPlayers().forEach((target) => {
+      target.maybeBlockAttack(player, (proceed) => {
+        if (proceed) {
+          target.stock.deduct(Resource.ENERGY, target.energy, {log: true});
+        }
+        return undefined;
+      });
+    });
     return undefined;
   }
 }

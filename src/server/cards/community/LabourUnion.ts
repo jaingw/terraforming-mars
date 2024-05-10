@@ -1,17 +1,14 @@
 import {CardRenderer} from '../render/CardRenderer';
-import {Card} from '../Card';
-import {Player} from '../../Player';
+import {IPlayer} from '../../IPlayer';
 import {DiscardCards} from '../../deferredActions/DiscardCards';
 import {CardName} from '../../../common/cards/CardName';
-import {CardType} from '../../../common/cards/CardType';
 import {Size} from '../../../common/cards/render/Size';
 import {Tag} from '../../../common/cards/Tag';
-import {ICorporationCard} from '../corporation/ICorporationCard';
+import {CorporationCard} from '../corporation/CorporationCard';
 
-export class LabourUnion extends Card implements ICorporationCard {
+export class LabourUnion extends CorporationCard {
   constructor() {
     super({
-      type: CardType.CORPORATION,
       name: CardName.LABOUR_UNION,
       tags: [Tag.BUILDING],
       startingMegaCredits: 55,
@@ -38,7 +35,7 @@ export class LabourUnion extends Card implements ICorporationCard {
   }
 
 
-  public onProductionPhase(player: Player) {
+  public onProductionPhase(player: IPlayer) {
     if (player.cardsInHand.length > 8) {
       const cardsToDiscard: number = player.cardsInHand.length - 8;
       player.game.defer(new DiscardCards(player, cardsToDiscard));

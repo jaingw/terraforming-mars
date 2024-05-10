@@ -1,6 +1,5 @@
 import {IProjectCard} from '../IProjectCard';
 import {CardRenderer} from '../render/CardRenderer';
-import {CardRequirements} from '../CardRequirements';
 import {Card} from '../Card';
 import {CardName} from '../../../common/cards/CardName';
 import {CardType} from '../../../common/cards/CardType';
@@ -16,7 +15,7 @@ export class HydrothermalVentArchaea extends Card implements IProjectCard {
       cost: 8,
       resourceType: CardResource.MICROBE,
       victoryPoints: {resourcesHere: {}, per: 2},
-      requirements: CardRequirements.builder((b) => b.oceans(3)),
+      requirements: {oceans: 3},
       metadata: {
         cardNumber: 'Q12',
         renderData: CardRenderer.builder((b) => {

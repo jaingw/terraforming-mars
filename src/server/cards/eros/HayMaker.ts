@@ -7,12 +7,12 @@ import {Tag} from '../../../common/cards/Tag';
 import {Resource} from '../../../common/Resource';
 import {SelectSpace} from '../../inputs/SelectSpace';
 import {Board} from '../../boards/Board';
-import {ISpace} from '../../boards/ISpace';
+import {Space} from '../../boards/Space';
 import {LogHelper} from '../../LogHelper';
 import {TileType} from '../../../common/TileType';
 import {SimpleDeferredAction} from '../../deferredActions/DeferredAction';
 import {digit} from '../../cards/Options';
-import {Player} from '../../Player';
+import {IPlayer} from '../../IPlayer';
 
 export class HayMaker extends Card implements IProjectCard {
   constructor() {
@@ -33,11 +33,11 @@ export class HayMaker extends Card implements IProjectCard {
     });
   }
 
-  public override canPlay(player: Player): boolean {
-    return player.game.getGreeneriesCount(player) >= 1;
+  public override canPlay(player: IPlayer): boolean {
+    return player.game.board.getGreeneries(player).length >= 1;
   }
 
-  private removeGreenery(player: Player) {
+  private removeGreenery(player: IPlayer) {
     const removableSpaces = player.game.board.spaces.filter((space) => {
       if (!Board.isGreenerySpace(space)) return false;
       if (space.player !== player) return false;
@@ -46,18 +46,18 @@ export class HayMaker extends Card implements IProjectCard {
 
     return new SelectSpace(
       'select your greenery to remove',
-      removableSpaces,
-      (space: ISpace) => {
+      removableSpaces)
+      .andThen((space: Space) => {
         player.game.removeTile(space.id);
         LogHelper.logBoardTileAction(player, space, 'greenery tile', 'destroy');
         player.game.simpleAddTile(player, space, {tileType: TileType.MARTIAN_NATURE_WONDERS});
         return undefined;
       },
-    );
+      );
   }
-  public override bespokePlay(player: Player) {
+  public override bespokePlay(player: IPlayer) {
     player.game.defer(new SimpleDeferredAction(player, () => this.removeGreenery(player)));
-    player.addResource(Resource.HEAT, 12);
+    player.stock.add(Resource.HEAT, 12);
     return undefined;
   }
 }

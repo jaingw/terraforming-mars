@@ -5,13 +5,18 @@
         "experimentalDecorators": true,
         "allowJs": true,
         "composite": true,
-        "downlevelIteration":true
+        "downlevelIteration":true,
         // "target": "es2017"
+        // "declaration": true,// 控制是否在build目录生成.d.ts
+    },
+    "vueCompilerOptions": {
+        "target": 2.7
     },
     "extends": "../tsconfig.json",
     "include": [
         "**/*.ts",
-        "**/genfiles/*.json",
+        "**/*.vue",
+        "**/genfiles/*.json", 
         "**/genfiles/translations.json",
     ],
 }

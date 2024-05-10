@@ -23,6 +23,7 @@ export interface CreateGameModel {
   players: Array<NewPlayerModel>;
   corporateEra: boolean;
   prelude: boolean;
+  prelude2Expansion: boolean;
   draftVariant: boolean;
   initialDraft: boolean;
   randomMA: RandomMAOptionType;
@@ -32,10 +33,12 @@ export interface CreateGameModel {
   colonies: boolean;
   turmoil: boolean;
   bannedCards: Array<CardName>;
+  includedCards: Array<CardName>;
   customColonies: Array<ColonyName>;
   customCorporations: Array<CardName>;
   customPreludes: Array<CardName>;
   showBannedCards: boolean;
+  showIncludedCards: boolean;
   showCorporationList: boolean;
   showColoniesList: boolean;
   showPreludesList: boolean;
@@ -66,10 +69,13 @@ export interface CreateGameModel {
   seededGame: boolean;
   escapeVelocityMode: boolean;
   escapeVelocityThreshold: number;
+  escapeVelocityBonusSeconds: number;
   escapeVelocityPeriod: number;
   escapeVelocityPenalty: number;
   twoCorpsVariant: boolean;
   ceoExtension: boolean;
   customCeos: Array<CardName>;
   startingCeos: number;
+  starWarsExpansion: boolean,
+  underworldExpansion: boolean,
 }

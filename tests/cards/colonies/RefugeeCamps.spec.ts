@@ -4,6 +4,7 @@ import {Resource} from '../../../src/common/Resource';
 import {TestPlayer} from '../../TestPlayer';
 import {testGame} from '../../TestGame';
 import {runAllActions} from '../../TestingUtils';
+import {cast} from '../../TestingUtils';
 
 describe('RefugeeCamps', function() {
   let card: RefugeeCamps;
@@ -11,13 +12,11 @@ describe('RefugeeCamps', function() {
 
   beforeEach(function() {
     card = new RefugeeCamps();
-    [/* skipped */, player] = testGame(1);
+    [/* game */, player] = testGame(1);
   });
 
   it('Should play', function() {
-    const action = card.play(player);
-    expect(action).is.undefined;
-
+    cast(card.play(player), undefined);
     player.addResourceTo(card, 5);
     expect(card.getVictoryPoints(player)).to.eq(5);
   });

@@ -72,7 +72,7 @@
 
         <div v-if="playerView.players.length > 1" class="player_home_block--milestones-and-awards">
           <Milestones :milestones="game.milestones" />
-          <Awards :awards="game.awards" show-scores/>
+          <Awards :awards="game.awards" show-scores />
         </div>
       </div>
 
@@ -91,7 +91,7 @@
       <div class="player_home_block player_home_block--actions nofloat">
         <a name="actions" class="player_home_anchor"></a>
         <dynamic-title title="Actions" :color="thisPlayer.color"/>
-                    <label v-if="!playerView.isme && !playerView.block && userId" class="form-switch" style="display: inline-block;">
+                    <label v-if="!playerView.isme && !playerView.block && userId"  style="display: inline-block;margin-bottom: 6px;">
                         <button id="sitdown" class="played-cards-button btn btn-tiny"  v-on:click="sitDown()"><span v-i18n>Sit down</span></button>
                     </label>
         <waiting-for v-if="game.phase !== 'end'" :players="playerView.players" :playerView="playerView" :settings="settings" :waitingfor="playerView.waitingFor"></waiting-for>
@@ -140,13 +140,13 @@
           <div class="text-overview" v-i18n>[ toggle cards filters ]</div>
         </div>
         <div v-for="card in getCardsByType(thisPlayer.tableau, [CardType.CORPORATION])" :key="card.name" class="cardbox">
-            <Card :card="card" :actionUsed="isCardActivated(card, thisPlayer)"/>
+            <Card :card="card" :actionUsed="isCardActivated(card, thisPlayer)" :cubeColor="thisPlayer.color"/>
         </div>
         <div v-for="card in getCardsByType(thisPlayer.tableau, [CardType.CEO])" :key="card.name" class="cardbox">
-            <Card :card="card" :actionUsed="isCardActivated(card, thisPlayer)"/>
+            <Card :card="card" :actionUsed="isCardActivated(card, thisPlayer)" :cubeColor="thisPlayer.color"/>
         </div>
         <div v-show="isVisible('ACTIVE')" v-for="card in sortActiveCards(getCardsByType(thisPlayer.tableau, [CardType.ACTIVE]))" :key="card.name" class="cardbox">
-            <Card :card="card" :actionUsed="isCardActivated(card, thisPlayer)"/>
+            <Card :card="card" :actionUsed="isCardActivated(card, thisPlayer)" :cubeColor="thisPlayer.color"/>
         </div>
 
         <stacked-cards v-show="isVisible('AUTOMATED')" :cards="getCardsByType(thisPlayer.tableau, [CardType.AUTOMATED, CardType.PRELUDE])" ></stacked-cards>
@@ -167,37 +167,6 @@
     </div>
 
     <div class="player_home_block player_home_block--setup nofloat"  v-if="thisPlayer.tableau.length === 0">
-      <template v-if="isCorporationDraftingPhase()">
-        <div>
-          <dynamic-title title="Corporations To Draft" :color="thisPlayer.color"/>
-          <div v-for="card in game.corporationsToDraft" :key="card.name" class="cardbox">
-            <Card :card="card"/>
-          </div>
-        </div>
-        <br/>
-        <br/>
-        <div>
-          <dynamic-title title="Your Picked Corporations" :color="thisPlayer.color"/>
-              <!-- Ender: dealtCorporationCards会报错，我先注释掉了，本身也没有执行 -->
-              <div v-for="card in playerView.dealtCorporationCards" :key="card.name" class="cardbox">
-<!--              <div v-for="card in playerView.draftedCorporations" :key="card.name" class="cardbox">-->
-            <Card :card="card"/>
-          </div>
-        </div>
-        <div>
-          <dynamic-title title="Your cards" :color="thisPlayer.color" v-if="isCorporationDraftingPhase()"/>
-          <div v-for="card in playerView.dealtPreludeCards" :key="card.name" class="cardbox">
-            <Card :card="card"/>
-          </div>
-          <div v-for="card in playerView.dealtCeoCards" :key="card.name" class="cardbox">
-            <Card :card="card"/>
-          </div>
-          <div v-for="card in playerView.dealtProjectCards" :key="card.name" class="cardbox">
-            <Card :card="card"/>
-          </div>
-        </div>
-      </template>
-
       <template v-if="isInitialDraftingPhase()">
         <div v-for="card in playerView.dealtCorporationCards" :key="card.name" class="cardbox">
           <Card :card="card"/>
@@ -443,29 +412,24 @@ export default Vue.extend({
   },
   methods: {
     navigatePage(event: KeyboardEvent) {
-      const inputSource = event.target as Element;
+      const ids: Partial<Record<string, string>> = {
+        [KeyboardNavigation.GAMEBOARD]: 'shortkey-board',
+        [KeyboardNavigation.PLAYERSOVERVIEW]: 'shortkey-playersoverview',
+        [KeyboardNavigation.HAND]: 'shortkey-hand',
+        [KeyboardNavigation.COLONIES]: 'shortkey-colonies',
+      };
+      if (event.shiftKey || event.ctrlKey || event.metaKey || event.altKey) {
+        return;
+      }
+      const inputSource = event.target as Node;
       if (inputSource.nodeName.toLowerCase() !== 'input') {
-        let id: string | undefined = undefined;
-        switch (event.code) {
-        case KeyboardNavigation.GAMEBOARD:
-          id = 'shortkey-board';
-          break;
-        case KeyboardNavigation.PLAYERSOVERVIEW:
-          id = 'shortkey-playersoverview';
-          break;
-        case KeyboardNavigation.HAND:
-          id = 'shortkey-hand';
-          break;
-        case KeyboardNavigation.COLONIES:
-          id = 'shortkey-colonies';
-          break;
-        default:
-          return;
-        }
-        const el = document.getElementById(id);
-        if (el) {
-          event.preventDefault();
-          el.scrollIntoView({block: 'center', inline: 'center', behavior: 'auto'});
+        const id = ids[event.code];
+        if (id) {
+          const el = document.getElementById(id);
+          if (el) {
+            event.preventDefault();
+            el.scrollIntoView({block: 'center', inline: 'center', behavior: 'auto'});
+          }
         }
       }
     },
@@ -494,7 +458,7 @@ export default Vue.extend({
       return classes.join(' ');
     },
     getFleetsCountRange(player: PublicPlayerModel): Array<number> {
-      const fleetsRange: Array<number> = [];
+      const fleetsRange = [];
       for (let i = 0; i < player.fleetSize - player.tradesThisGeneration; i++) {
         fleetsRange.push(i);
       }
@@ -555,9 +519,6 @@ export default Vue.extend({
     },
     isInitialDraftingPhase(): boolean {
       return (this.game.phase === Phase.INITIALDRAFTING) && this.game.gameOptions.initialDraftVariant;
-    },
-    isCorporationDraftingPhase(): boolean { // false forever
-      return (this.game.phase === Phase.CORPORATIONDRAFTING) && this.game.gameOptions.initialCorpDraftVariant;
     },
     getToggleLabel(hideType: string): string {
       if (hideType === 'HAND') {

@@ -1,21 +1,22 @@
-import * as http from 'http';
 import {User} from './User';
 import {Database} from './database/Database';
 import {getDate, getDay} from './UserUtil';
 import {GameLoader} from './database/GameLoader';
-import {generateRandomId} from './server-ids';
 import {Server} from './models/ServerModel';
 import {PlayerBlockModel} from '../common/models/PlayerModel';
 import {Context} from './routes/IHandler';
-import {UnexpectedInput} from './routes/UnexpectedInput';
 import * as crypto from 'crypto';
 import {UserRank} from '../common/rank/RankManager';
 import {RankTier} from '../common/rank/RankTier';
 import {DEFAULT_MU, DEFAULT_RANK_VALUE, DEFAULT_SIGMA} from '../common/rank/constants';
+import {generateRandomId} from './utils/server-ids';
+import {Request} from './Request';
+import {Response} from './Response';
+import {UnexpectedInput} from './inputs/UnexpectedInput';
 import {Phase} from '../common/Phase';
 
 const colorNames = ['blue', 'red', 'yellow', 'green', 'black', 'purple', 'you', '红色', '绿色', '黄色', '蓝色', '黑色', '紫色'];
-function notFound(req: http.IncomingMessage, res: http.ServerResponse): void {
+function notFound(req: Request, res: Response): void {
   if ( ! process.argv.includes('hide-not-found-warnings')) {
     console.warn('Not found', req.method, req.url);
   }
@@ -25,7 +26,7 @@ function notFound(req: http.IncomingMessage, res: http.ServerResponse): void {
 }
 
 
-export function apiGameBack(userReq:any, req: http.IncomingMessage, res: http.ServerResponse): void {
+export function apiGameBack(userReq:any, req: Request, res: Response): void {
   const gameId = userReq['id'];
   const userId = userReq['userId'];
   if (gameId === undefined || gameId === '') {
@@ -60,7 +61,7 @@ export function apiGameBack(userReq:any, req: http.IncomingMessage, res: http.Se
   res.end();
 }
 
-export function apiGetMyGames(req: http.IncomingMessage, res: http.ServerResponse, ctx: Context): void {
+export function apiGetMyGames(req: Request, res: Response, ctx: Context): void {
   const userId = ctx.url.searchParams.get('id');
   if (userId === undefined || userId === null) {
     console.warn('didn\'t find user id');
@@ -111,7 +112,7 @@ export function apiGetMyGames(req: http.IncomingMessage, res: http.ServerRespons
   res.end();
 }
 
-export function login(userReq:any, _req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
+export function login(userReq:any, _req: Request, res: Response): Promise<void> {
   const userName: string = userReq.userName.trim().toLowerCase();
   let password: string = userReq.password.trim().toLowerCase();
   if (userName === undefined || userName.length === 0) {
@@ -134,8 +135,8 @@ export function login(userReq:any, _req: http.IncomingMessage, res: http.ServerR
   return Promise.resolve();
 }
 
-export function register(userReq: any, _req: http.IncomingMessage, res: http.ServerResponse): void {
-  const userId = generateRandomId('');
+export function register(userReq: any, _req: Request, res: Response): void {
+  const userId = generateRandomId('u');
   const userName: string = userReq.userName ? userReq.userName.trim().toLowerCase() : '';
   let password: string = userReq.password ? userReq.password.trim().toLowerCase() : '';
   if (userName === undefined || userName.length <= 1) {
@@ -160,7 +161,7 @@ export function register(userReq: any, _req: http.IncomingMessage, res: http.Ser
 }
 
 
-export function isvip(req: http.IncomingMessage, res: http.ServerResponse, ctx: Context): void {
+export function isvip(req: Request, res: Response, ctx: Context): void {
   const userId = ctx.url.searchParams.get('userId');
   if (userId === undefined || userId === '' || userId === null) {
     console.warn('didn\'t find user id');
@@ -191,7 +192,7 @@ export function isvip(req: http.IncomingMessage, res: http.ServerResponse, ctx: 
   }
 }
 
-export function resign(userReq:any, req: http.IncomingMessage, res: http.ServerResponse): void {
+export function resign(userReq:any, req: Request, res: Response): void {
   const userId: string = userReq.userId;
   const playerId: string = userReq.playerId;
 
@@ -225,7 +226,7 @@ export function resign(userReq:any, req: http.IncomingMessage, res: http.ServerR
   res.end(JSON.stringify(Server.getPlayerModel(player, playerBlockModel)));
 }
 
-export function showHand(userReq:any, req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
+export function showHand(userReq:any, req: Request, res: Response): Promise<void> {
   const user = GameLoader.getInstance().userIdMap.get(userReq.userId);
   if (user === undefined) {
     notFound(req, res);
@@ -245,7 +246,7 @@ export function showHand(userReq:any, req: http.IncomingMessage, res: http.Serve
 
 
 //
-export async function sitDown(userReq:any, req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
+export async function sitDown(userReq:any, req: Request, res: Response): Promise<void> {
   const userme = GameLoader.getInstance().userIdMap.get(userReq.userId);
   if (userme === undefined) {
     notFound(req, res);
@@ -263,7 +264,7 @@ export async function sitDown(userReq:any, req: http.IncomingMessage, res: http.
   }
   const player = game.getAllPlayers().find((player) => player.id === userReq.playerId);
   if (player === undefined || player.userId !== undefined) {
-    console.warn('sitDown player === undefined || player.userId !== undefined');
+    console.warn(`sitDown ${player === undefined} || ${player?.userId}`);
     notFound(req, res);
     return;
   }
@@ -302,7 +303,7 @@ export async function sitDown(userReq:any, req: http.IncomingMessage, res: http.
 //
 
 // 天梯 用户激活排名的接口
-export function activateRank(userReq: any, _req: http.IncomingMessage, res: http.ServerResponse): void {
+export function activateRank(userReq: any, _req: Request, res: Response): void {
   const userId = userReq.userId;
   const rankValue = DEFAULT_RANK_VALUE;
   const mu = DEFAULT_MU;
@@ -319,7 +320,7 @@ export function activateRank(userReq: any, _req: http.IncomingMessage, res: http
   return;
 }
 
-export function getUserRank(req: http.IncomingMessage, res: http.ServerResponse, ctx: Context): void {
+export function getUserRank(req: Request, res: Response, ctx: Context): void {
   let userRank: UserRank | undefined;
   let userId = ctx.url.searchParams.get('userId');
   const playerName = ctx.url.searchParams.get('playerName');
@@ -349,7 +350,7 @@ export function getUserRank(req: http.IncomingMessage, res: http.ServerResponse,
   }
 }
 
-export function getUserRanks(req: http.IncomingMessage, res: http.ServerResponse, ctx: Context): void {
+export function getUserRanks(req: Request, res: Response, ctx: Context): void {
   const limit = Math.min(100, Number(ctx.url.searchParams.get('limit')));
   Database.getInstance().getUserRanks(limit).then( (allUserRanks:Array<UserRank> ) => {
     try {
@@ -385,7 +386,7 @@ export function getUserRanks(req: http.IncomingMessage, res: http.ServerResponse
 }
 
 // 天梯 由于超时或者所有玩家退出游戏，调用API
-export async function endGameByEvent(userReq: any, req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
+export async function endGameByEvent(userReq: any, req: Request, res: Response): Promise<void> {
   const userId: string = userReq.userId;
   const playerId: string = userReq.playerId;
   const game = await GameLoader.getInstance().getByPlayerId(playerId); // 多个请求时await

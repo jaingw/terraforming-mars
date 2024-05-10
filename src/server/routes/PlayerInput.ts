@@ -1,10 +1,16 @@
-import * as http from 'http';
 import {GameLoader} from '../database/GameLoader';
-import {Player} from '../Player';
+import * as responses from './responses';
+import {IPlayer} from '../IPlayer';
 import {Server} from '../models/ServerModel';
 import {Handler} from './Handler';
 import {Context} from './IHandler';
 import {isPlayerId} from '../../common/Types';
+import {Request} from '../Request';
+import {Response} from '../Response';
+import {runId} from '../utils/server-ids';
+import {AppError} from '../server/AppError';
+import {statusCode} from '../../common/http/statusCode';
+import {InputError} from '../inputs/InputError';
 
 export class PlayerInput extends Handler {
   public static readonly INSTANCE = new PlayerInput();
@@ -12,38 +18,42 @@ export class PlayerInput extends Handler {
     super();
   }
 
-  public override async post(req: http.IncomingMessage, res: http.ServerResponse, ctx: Context): Promise<void> {
+  public override async post(req: Request, res: Response, ctx: Context): Promise<void> {
     const playerId = ctx.url.searchParams.get('id');
     const userId = ctx.url.searchParams.get('userId');
     if (playerId === null || playerId === undefined) {
-      ctx.route.badRequest(req, res, 'missing id parameter');
+      responses.badRequest(req, res, 'missing id parameter');
       return;
     }
 
     if (!isPlayerId(playerId)) {
-      ctx.route.badRequest(req, res, 'invalid player id');
+      responses.badRequest(req, res, 'invalid player id');
       return;
     }
 
+    ctx.ipTracker.addParticipant(playerId, ctx.ip);
+
     const game = await GameLoader.getInstance().getByParticipantId(playerId);
     if (game === undefined) {
-      ctx.route.notFound(req, res);
+      responses.notFound(req, res);
       return;
     }
     const player = game.getAllPlayers().find((p) => p.id === playerId);
     if (player === undefined) {
-      ctx.route.notFound(req, res);
+      responses.notFound(req, res);
       return;
     }
     const user = GameLoader.getUserByPlayer(player);
     if (user !== undefined && user.id !== userId) {
-      ctx.route.notFound(req, res);
+      responses.notFound(req, res);
       return;
     }
-    this.processInput(req, res, ctx, player, userId);
+    return this.processInput(req, res, ctx, player, userId);
   }
 
-  private processInput(req: http.IncomingMessage, res: http.ServerResponse, ctx: Context, player: Player, userId: string | null): Promise<void> {
+  private processInput(req: Request, res: Response, _ctx: Context, player: IPlayer, userId: string | null): Promise<void> {
+    // TODO(kberg): Find a better place for this optimization.
+    player.tableau.forEach((card) => card.warnings.clear());
     return new Promise((resolve) => {
       let body = '';
       req.on('data', (data) => {
@@ -52,13 +62,17 @@ export class PlayerInput extends Handler {
       req.once('end', () => {
         try {
           const entity = JSON.parse(body);
+          validateRunId(entity);
           player.process(entity);
           const playerBlockModel = Server.getPlayerBlock(player, userId);
-          ctx.route.writeJson(res, Server.getPlayerModel(player, playerBlockModel));
+          responses.writeJson(res, Server.getPlayerModel(player, playerBlockModel));
           resolve();
         } catch (e) {
-          // TODO(kberg): use standard Route API, though that changes the output.
-          res.writeHead(400, {
+          if (!(e instanceof AppError || e instanceof InputError)) {
+            console.warn('Error processing input from player', e);
+          }
+          // TODO(kberg): use responses.ts, though that changes the output.
+          res.writeHead(statusCode.badRequest, {
             'Content-Type': 'application/json',
           });
           if (e instanceof Error && e.name === 'UnexpectedInput') {
@@ -66,8 +80,9 @@ export class PlayerInput extends Handler {
           } else {
             console.warn('Error processing input from player.'+player.id+': ' + body + ',', e);
           }
+          const id = e instanceof AppError ? e.id : undefined;
           const message = e instanceof Error ? e.message : String(e);
-          res.write(JSON.stringify({message}));
+          res.write(JSON.stringify({id: id, message: message}));
           res.end();
           resolve();
         }
@@ -75,5 +90,13 @@ export class PlayerInput extends Handler {
     });
   }
 }
-
+function validateRunId(entity: any) {
+  if (entity.runId !== undefined && runId !== undefined) {
+    if (entity.runId !== runId) {
+      throw new AppError('#invalid-run-id', 'The server has restarted. Click OK to refresh this page.');
+    }
+  }
+  // Clearing this out to be compatible with the input response processors.
+  delete entity.runId;
+}
 

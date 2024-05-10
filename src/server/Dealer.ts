@@ -1,14 +1,14 @@
 import {ICorporationCard} from './cards/corporation/ICorporationCard';
 import {IProjectCard} from './cards/IProjectCard';
 import {SerializedDealer} from './SerializedDealer';
-import {CardFinder} from './CardFinder';
 import {GameCards} from './GameCards';
 import {CardName} from '../common/cards/CardName';
 import {LogHelper} from './LogHelper';
 import {serializedCardName} from './cards/CardSerialization';
-import {Random, UnseededRandom} from './Random';
 import {Logger} from './logs/Logger';
 import {IPreludeCard} from './cards/prelude/IPreludeCard';
+import {cardsFromJSON, corporationCardsFromJSON} from './createCard';
+import {Random, UnseededRandom} from '../common/utils/Random';
 
 const INCOMPATIBLE_PRELUDES = [CardName.BY_ELECTION, CardName.THE_NEW_SPACE_RACE] as const;
 
@@ -118,12 +118,11 @@ export class Dealer {
   public static deserialize(d: SerializedDealer): Dealer {
     // TODO(kberg): serializing the randomizer would help when using a seeded game that reshuffles.
     const dealer = new Dealer(UnseededRandom.INSTANCE);
-    const cardFinder = new CardFinder();
 
-    dealer.corporationCards = cardFinder.corporationCardsFromJSON(d.corporationCards.map((x) => x.name));
-    dealer.deck = cardFinder.cardsFromJSON(d.deck.map((x) => x.name));
-    dealer.discarded = cardFinder.cardsFromJSON(d.discarded.map((x) => x.name));
-    dealer.preludeDeck = cardFinder.preludesFromJSON(d.preludeDeck.map((x) => x.name));
+    dealer.corporationCards = corporationCardsFromJSON(d.corporationCards.map((x) => x.name));
+    dealer.deck = cardsFromJSON(d.deck.map((x) => x.name));
+    dealer.discarded = cardsFromJSON(d.discarded.map((x) => x.name));
+    dealer.preludeDeck = cardsFromJSON(d.preludeDeck.map((x) => x.name)) as Array<IPreludeCard>;
     return dealer;
   }
 

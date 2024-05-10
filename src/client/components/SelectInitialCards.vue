@@ -16,7 +16,7 @@
     <SelectCard v-if="hasPrelude" :playerView="playerView" :playerinput="preludeCardOption" :onsave="noop" :showtitle="true" v-on:cardschanged="preludesChanged" />
     <SelectCard v-if="hasCeo" :playerView="playerView" :playerinput="ceoCardOption" :onsave="noop" :showtitle="true" v-on:cardschanged="ceosChanged" />
     <SelectCard :playerView="playerView" :playerinput="projectCardOption" :onsave="noop" :showtitle="true" v-on:cardschanged="cardsChanged" />
-    <template v-if="this.selectedCorporations[0]">
+    <template v-if="selectedCorporations[0]">
       <div><span v-i18n>Starting Megacredits</span> <span v-if="selectedCorporations[1]">(双公司-42M€)</span>: <div class="megacredits">{{getStartingMegacredits()}}</div></div>
       <div v-if="hasPrelude"><span v-i18n>After Preludes:</span> <div class="megacredits">{{getStartingMegacredits() + getAfterPreludes()}}</div></div>
     </template>
@@ -37,7 +37,7 @@ import AppButton from '@/client/components/common/AppButton.vue';
 import {getCard, getCardOrThrow} from '@/client/cards/ClientCardManifest';
 import {CardName} from '@/common/cards/CardName';
 import * as constants from '@/common/constants';
-import {PlayerInputModel} from '@/common/models/PlayerInputModel';
+import {PlayerInputModel, SelectCardModel, SelectInitialCardsModel} from '@/common/models/PlayerInputModel';
 import {PlayerViewModel} from '@/common/models/PlayerModel';
 import SelectCard from '@/client/components/SelectCard.vue';
 import ConfirmDialog from '@/client/components/common/ConfirmDialog.vue';
@@ -50,12 +50,13 @@ import {ColonyName} from '@/common/colonies/ColonyName';
 import {ColonyModel} from '@/common/models/ColonyModel';
 import * as titles from '@/common/inputs/SelectInitialCards';
 import {ClientCard} from '../../common/cards/ClientCard';
+import {sum} from '@/common/utils/utils';
 
 type Refs = {
   confirmation: InstanceType<typeof ConfirmDialog>,
 }
 
-type SelectInitialCardsModel = {
+type DataModel = {
   selectedCards: Array<CardName>,
   // End result will be a single CEO, but the player may select multiple while deciding what to keep.
   selectedCeos: Array<CardName>,
@@ -73,7 +74,7 @@ export default (Vue as WithRefs<Refs>).extend({
       type: Object as () => PlayerViewModel,
     },
     playerinput: {
-      type: Object as () => PlayerInputModel,
+      type: Object as () => SelectInitialCardsModel,
     },
     onsave: {
       type: Function as unknown as () => (out: AndOptionsResponse) => void,
@@ -95,7 +96,7 @@ export default (Vue as WithRefs<Refs>).extend({
     'confirm-dialog': ConfirmDialog,
     Colony,
   },
-  data(): SelectInitialCardsModel {
+  data(): DataModel {
     return {
       selectedCards: [],
       selectedCeos: [],
@@ -110,92 +111,91 @@ export default (Vue as WithRefs<Refs>).extend({
       throw new Error('should not be called');
     },
     getAfterPreludes() {
-      let result = 0;
-      for (const prelude of this.selectedPreludes) {
+      return sum(this.selectedPreludes.map((prelude) => {
         const card = getCardOrThrow(prelude);
-        result += card.startingMegaCredits ?? 0;
+        let result = card.startingMegaCredits ?? 0;
         if (this.selectedCorporations[0]) {
-          result += this.getAfterPreludesCorp(card, this.selectedCorporations[0]);
+          result += this.extra(card, this.selectedCorporations[0]);
         }
         if (this.selectedCorporations[1]) {
-          result += this.getAfterPreludesCorp(card, this.selectedCorporations[1]);
+          result += this.extra(card, this.selectedCorporations[1]);
         }
-      }
-      return result;
+        return result;
+      }));
     },
-    getAfterPreludesCorp: function(card:ClientCard, corp:ClientCard ) {
-      let result = 0;
+    extra: function(card:ClientCard, corp:ClientCard ) {
       const prelude = card.name;
       switch (corp.name) {
       // For each step you increase the production of a resource ... you also gain that resource.
       case CardName.MANUTECH:
-        result += card.productionBox?.megacredits ?? 0;
-        break;
+        return card.productionBox?.megacredits ?? 0;
 
-        // When you place a city tile, gain 3 M€.
+      // When you place a city tile, gain 3 M€.
       case CardName.THARSIS_REPUBLIC:
         switch (prelude) {
         case CardName.SELF_SUFFICIENT_SETTLEMENT:
         case CardName.EARLY_SETTLEMENT:
         case CardName.STRATEGIC_BASE_PLANNING:
-          result += 3;
-          break;
+          return 3;
         }
-        break;
+        return 0;
 
-        // When ANY microbe tag is played ... lose 4 M€ or as much as possible.
+      // When ANY microbe tag is played ... lose 4 M€ or as much as possible.
       case CardName.PHARMACY_UNION:
         const tags = card.tags.filter((tag) => tag === Tag.MICROBE).length;
-        result -= (4 * tags);
-        break;
+        return (-4 * tags);
 
-        // when a microbe tag is played, incl. this, THAT PLAYER gains 2 M€,
+      // when a microbe tag is played, incl. this, THAT PLAYER gains 2 M€,
       case CardName.SPLICE:
         const microbeTags = card.tags.filter((tag) => tag === Tag.MICROBE).length;
-        result += (2 * microbeTags);
-        break;
+        return (2 * microbeTags);
 
-        // Whenever Venus is terraformed 1 step, you gain 2 M€
+      // Whenever Venus is terraformed 1 step, you gain 2 M€
       case CardName.APHRODITE:
         switch (prelude) {
         case CardName.VENUS_FIRST:
-        case CardName.VENUS_FIRST_PATHFINDERS:
-          result += 4;
-          break;
+          return 4;
         case CardName.HYDROGEN_BOMBARDMENT:
-          result += 2;
-          break;
+          return 2;
         }
-        break;
+        return 0;
 
-        // When any player raises any Moon Rate, gain 1M€ per step.
+      // When any player raises any Moon Rate, gain 1M€ per step.
       case CardName.LUNA_FIRST_INCORPORATED:
         switch (prelude) {
         case CardName.FIRST_LUNAR_SETTLEMENT:
         case CardName.CORE_MINE:
         case CardName.BASIC_INFRASTRUCTURE:
-          result += 1;
-          break;
+          return 1;
         case CardName.MINING_COMPLEX:
-          result += 2;
-          break;
+          return 2;
         }
-        break;
+        return 0;
 
-        // When you place an ocean tile, gain 4MC
+      // When you place an ocean tile, gain 4MC
       case CardName.POLARIS:
         switch (prelude) {
         case CardName.AQUIFER_TURBINES:
         case CardName.POLAR_INDUSTRIES:
-          result += 4;
-          break;
+          return 4;
         case CardName.GREAT_AQUIFER:
-          result += 8;
-          break;
+          return 8;
         }
-        break;
+        return 0;
+
+      // Gain 2 MC for each project card in hand.
+      case CardName.HEAD_START:
+        return this.selectedCards.length * 2;
+
+      // Gain 4MC for playing a card with no tags.
+      // Gain 1MC for playing a card with 1 tag.
+      case CardName.SAGITTA_FRONTIER_SERVICES:
+        const count = card.tags.filter((tag) => tag !== Tag.WILD).length;
+        return count === 0 ? 4 : count === 1 ? 1 : 0;
+
+      default:
+        return 0;
       }
-      return result;
     },
     getStartingMegacredits() {
       if (this.selectedCorporations.length === 0 || this.selectedCorporations[0] === undefined) {
@@ -231,6 +231,7 @@ export default (Vue as WithRefs<Refs>).extend({
       }
     },
     saveData() {
+      // SelectInitialCards should have its own response type.
       const result: AndOptionsResponse = {
         type: 'and',
         responses: [],
@@ -372,21 +373,21 @@ export default (Vue as WithRefs<Refs>).extend({
       const option = getOption(this.playerinput.options, titles.SELECT_CORPORATION_TITLE);
       if (getPreferences().experimental_ui) {
         option.min = 1;
-        option.max = undefined;
+        option.max = option.cards.length;
       }
       return option;
     },
     preludeCardOption() {
       const option = getOption(this.playerinput.options, titles.SELECT_PRELUDE_TITLE);
       if (getPreferences().experimental_ui) {
-        option.max = undefined;
+        option.max = option.cards.length;
       }
       return option;
     },
     ceoCardOption() {
       const option = getOption(this.playerinput.options, titles.SELECT_CEO_TITLE);
       if (getPreferences().experimental_ui) {
-        option.max = undefined;
+        option.max = option.cards.length;
       }
       return option;
     },
@@ -399,19 +400,22 @@ export default (Vue as WithRefs<Refs>).extend({
   },
 });
 
-function getOption(options: Array<PlayerInputModel> | undefined, title: string): PlayerInputModel {
-  let option = options?.find((option) => option.title === title);
+function getOption(options: Array<PlayerInputModel>, title: string): SelectCardModel {
+  let option = options.find((option) => option.title === title);
   if (option === undefined && title === titles.SELECT_CORPORATION_TITLE) {
     option = options?.find((option) => option.title === titles.SELECT_CORPORATION_TITLE2);
   }
   if (option === undefined) {
     throw new Error('invalid input, missing option');
   }
+  if (option.type !== 'card') {
+    throw new Error('invalid input, Not a SelectCard option');
+  }
   return option;
 }
 
-function hasOption(options: Array<PlayerInputModel> | undefined, title: string): boolean {
-  const option = options?.find((option) => option.title === title);
+function hasOption(options: Array<PlayerInputModel>, title: string): boolean {
+  const option = options.find((option) => option.title === title);
   return option !== undefined;
 }
 </script>

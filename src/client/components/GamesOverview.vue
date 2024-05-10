@@ -16,10 +16,10 @@
 import Vue from 'vue';
 import {PreferencesManager} from '../utils/PreferencesManager';
 import * as constants from '@/common/constants';
-import * as HTTPResponseCode from '@/client/utils/HTTPResponseCode';
 import GameOverview from '@/client/components/admin/GameOverview.vue';
 import {SimpleGameModel} from '@/common/models/SimpleGameModel';
 import {GameId} from '@/common/Types';
+import {statusCode} from '@/common/http/statusCode';
 
 type FetchStatus = {
   id: GameId;
@@ -55,7 +55,7 @@ export default Vue.extend({
         alert('Error getting games data');
       };
       xhr.onload = () => {
-        if (xhr.status === HTTPResponseCode.OK) {
+        if (xhr.status === statusCode.ok) {
           const result = xhr.response;
           if (result instanceof Array) {
             (vueApp as any).entries = result;
@@ -85,7 +85,7 @@ export default Vue.extend({
         this.getGame(idx + 1);
       };
       xhr.onload = () => {
-        if (xhr.status === HTTPResponseCode.OK) {
+        if (xhr.status === statusCode.ok) {
           const result = xhr.response;
           if (result instanceof Object) {
             const game = result as SimpleGameModel;

@@ -4,10 +4,9 @@ import {TileType} from '../../../common/TileType';
 import {CardType} from '../../../common/cards/CardType';
 import {IProjectCard} from '../IProjectCard';
 import {Tag} from '../../../common/cards/Tag';
-import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
 import {Resource} from '../../../common/Resource';
-import {Player} from '../../Player';
+import {IPlayer} from '../../IPlayer';
 
 export class OceanCity extends Card implements IProjectCard {
   constructor() {
@@ -22,11 +21,10 @@ export class OceanCity extends Card implements IProjectCard {
         tile: {
           type: TileType.OCEAN_CITY,
           on: 'upgradeable-ocean',
-          title: 'Select space for Ocean City',
         },
       },
 
-      requirements: CardRequirements.builder((b) => b.oceans(6)),
+      requirements: {oceans: 6},
       metadata: {
         cardNumber: 'A20',
         renderData: CardRenderer.builder((b) => {
@@ -39,7 +37,7 @@ export class OceanCity extends Card implements IProjectCard {
       },
     });
   }
-  public override bespokeCanPlay(player: Player): boolean {
+  public override bespokeCanPlay(player: IPlayer): boolean {
     return player.production.get(Resource.ENERGY) > 0 && player.game.board.getOceanSpaces({upgradedOceans: false}).length > 0;
   }
 }

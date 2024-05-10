@@ -1,16 +1,13 @@
 import {CardRenderer} from '../../render/CardRenderer';
-import {Card} from '../../Card';
-import {CardType} from '../../../../common/cards/CardType';
-import {ICorporationCard} from '../../corporation/ICorporationCard';
-import {Player} from '../../../Player';
+import {IPlayer} from '../../../IPlayer';
 import {Tag} from '../../../../common/cards/Tag';
 import {IProjectCard} from './../../IProjectCard';
 import {CardName} from '../../../../common/cards/CardName';
+import {CorporationCard} from '../../corporation/CorporationCard';
 
-export class Prism extends Card implements ICorporationCard {
+export class Prism extends CorporationCard {
   constructor() {
     super({
-      type: CardType.CORPORATION,
       name: CardName.PRISM,
       tags: [Tag.WILD],
       startingMegaCredits: 33,
@@ -31,12 +28,12 @@ export class Prism extends Card implements ICorporationCard {
     });
   }
 
-  public override bespokePlay(player: Player) {
+  public override bespokePlay(player: IPlayer) {
     player.addResourceTo(this, 1);
     return undefined;
   }
 
-  public override getCardDiscount(player: Player, card: IProjectCard) {
+  public override getCardDiscount(player: IPlayer, card: IProjectCard) {
     let cardDiscount = 0;
     if (player.isCorporation(CardName.PRISM)) {
       let wildNum = player.tags.count(Tag.WILD, 'raw');

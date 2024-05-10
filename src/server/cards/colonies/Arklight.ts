@@ -1,23 +1,22 @@
-import {ICorporationCard} from '../corporation/ICorporationCard';
-import {Player} from '../../Player';
+import {CorporationCard} from '../corporation/CorporationCard';
+import {IPlayer} from '../../IPlayer';
 import {Tag} from '../../../common/cards/Tag';
 import {CardResource} from '../../../common/CardResource';
 import {IProjectCard} from '../IProjectCard';
-import {CardType} from '../../../common/cards/CardType';
 import {CardName} from '../../../common/cards/CardName';
-import {Card, StaticCardProperties} from '../Card';
+import {StaticCardProperties} from '../Card';
 import {CardRenderer} from '../render/CardRenderer';
 import {played} from '../Options';
 import {PlayerInput} from '../../PlayerInput';
+import {ICorporationCard} from '../corporation/ICorporationCard';
 
-export class Arklight extends Card implements ICorporationCard {
+export class Arklight extends CorporationCard {
   constructor(properties?: StaticCardProperties) {
     super(Object.assign({
       name: CardName.ARKLIGHT,
       tags: [Tag.ANIMAL],
       startingMegaCredits: 45,
       resourceType: CardResource.ANIMAL,
-      type: CardType.CORPORATION,
       victoryPoints: {resourcesHere: {}, per: 2},
 
       behavior: {
@@ -41,12 +40,12 @@ export class Arklight extends Card implements ICorporationCard {
     }, properties));
   }
 
-  public onCardPlayed(player: Player, card: IProjectCard): void {
+  public onCardPlayed(player: IPlayer, card: IProjectCard): void {
     if (player.isCorporation(CardName.ARKLIGHT)) {
       player.addResourceTo(this, {qty: card.tags.filter((cardTag) => cardTag === Tag.ANIMAL || cardTag === Tag.PLANT).length, log: true});
     }
   }
-  public onCorpCardPlayed(player: Player, card:ICorporationCard) :PlayerInput | undefined {
+  public onCorpCardPlayed(player: IPlayer, card:ICorporationCard) :PlayerInput | undefined {
     this.onCardPlayed(player, card as unknown as IProjectCard);
     return undefined;
   }

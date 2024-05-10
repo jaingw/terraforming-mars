@@ -1,12 +1,11 @@
 import {IProjectCard} from '../IProjectCard';
-import {Player} from '../../Player';
+import {IPlayer} from '../../IPlayer';
 import {Card} from '../Card';
 import {CardType} from '../../../common/cards/CardType';
 import {CardName} from '../../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
 import {AddResourcesToCard} from '../../deferredActions/AddResourcesToCard';
 import {CardResource} from '../../../common/CardResource';
-import {CardRequirements} from '../CardRequirements';
 import {Tag} from '../../../common/cards/Tag';
 import {digit, played} from '../Options';
 import {Resource} from '../../../common/Resource';
@@ -19,7 +18,7 @@ export class OumuamuaTypeObjectSurvey extends Card implements IProjectCard {
       name: CardName.OUMUAMUA_TYPE_OBJECT_SURVEY,
       cost: 20,
       tags: [Tag.SPACE, Tag.SCIENCE],
-      requirements: CardRequirements.builder((b) => b.tag(Tag.SPACE, 1).tag(Tag.SCIENCE, 1)),
+      requirements: [{tag: Tag.SPACE}, {tag: Tag.SCIENCE}],
 
       metadata: {
         cardNumber: 'Pf53',
@@ -37,12 +36,12 @@ export class OumuamuaTypeObjectSurvey extends Card implements IProjectCard {
     });
   }
 
-  private keep(player: Player, card: IProjectCard) {
+  private keep(player: IPlayer, card: IProjectCard) {
     player.cardsInHand.push(card);
     player.game.log('${0} kept ${1}', (b) => b.player(player).card(card));
   }
 
-  private processCard(player: Player, card: IProjectCard): boolean {
+  private processCard(player: IPlayer, card: IProjectCard): boolean {
     const tags = card.tags;
     if (player.tags.cardHasTag(card, Tag.SCIENCE) || player.tags.cardHasTag(card, Tag.MICROBE)) {
       player.playCard(card, undefined);
@@ -57,13 +56,17 @@ export class OumuamuaTypeObjectSurvey extends Card implements IProjectCard {
     }
   }
 
-  public override bespokePlay(player: Player) {
+  public override bespokeCanPlay(player: IPlayer): boolean {
+    return player.game.projectDeck.canDraw(2);
+  }
+
+  public override bespokePlay(player: IPlayer) {
     const game = player.game;
     // TODO(kberg): Make sure this action occurs after the card play, in case the played card has data.
     game.defer(new AddResourcesToCard(player, CardResource.DATA, {count: 2}));
-    const cards = [game.projectDeck.draw(player.game), game.projectDeck.draw(player.game)];
+    const cards = game.projectDeck.drawNOrThrow(game, 2);
 
-    player.game.log('${0} revealed ${1} and ${2}', (b) => b.player(player).card(cards[0]).card(cards[1]));
+    player.game.log('${0} revealed ${1} and ${2}', (b) => b.player(player).card(cards[0], {tags: true}).card(cards[1], {tags: true}));
     if (this.processCard(player, cards[0])) {
       this.keep(player, cards[1]);
     } else {

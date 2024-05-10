@@ -1,19 +1,16 @@
 
-import {Player} from '../../../Player';
+import {IPlayer} from '../../../IPlayer';
 import {CardRenderer} from '../../render/CardRenderer';
-import {multiplier, all} from '../../Options';
-import {Card} from '../../Card';
+import {all} from '../../Options';
 import {CardName} from '../../../../common/cards/CardName';
-import {CardType} from '../../../../common/cards/CardType';
 import {Size} from '../../../../common/cards/render/Size';
 import {Tag} from '../../../../common/cards/Tag';
 import {Resource} from '../../../../common/Resource';
-import {ICorporationCard} from '../../corporation/ICorporationCard';
+import {CorporationCard} from '../../corporation/CorporationCard';
 
-export class _Helion_ extends Card implements ICorporationCard {
+export class _Helion_ extends CorporationCard {
   constructor() {
     super({
-      type: CardType.CORPORATION,
       name: CardName._HELION_,
       tags: [Tag.SPACE],
       startingMegaCredits: 48,
@@ -25,7 +22,7 @@ export class _Helion_ extends Card implements ICorporationCard {
           b.corpBox('effect', (ce) => {
             ce.effect(undefined, (eb) => {
               ce.vSpace(Size.LARGE);
-              eb.text('x').heat(1).startEffect.megacredits(0, {multiplier});
+              eb.text('x').heat(1).startEffect.megacredits(0, {text: 'x'});
             });
             ce.effect('You may use heat as M€. You may not use M€ as heat. Any player increase Temperature, that player gain 1 heat.', (eb) => {
               eb.temperature(1, {all}).startEffect.heat(1, {all}).asterix();
@@ -36,7 +33,7 @@ export class _Helion_ extends Card implements ICorporationCard {
     });
   }
 
-  public override bespokePlay(player: Player) {
+  public override bespokePlay(player: IPlayer) {
     player.canUseHeatAsMegaCredits = true;
     player.production.add(Resource.HEAT, 3);
     return undefined;

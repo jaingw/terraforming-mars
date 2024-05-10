@@ -1,23 +1,20 @@
-import {Player} from '../../Player';
+import {IPlayer} from '../../IPlayer';
 import {OrOptions} from '../../inputs/OrOptions';
 import {SelectColony} from '../../inputs/SelectColony';
 import {SelectOption} from '../../inputs/SelectOption';
 import {SimpleDeferredAction} from '../../deferredActions/DeferredAction';
-import {Card} from '../Card';
 import {CardRenderer} from '../render/CardRenderer';
 import {CardName} from '../../../common/cards/CardName';
-import {CardType} from '../../../common/cards/CardType';
 import {Size} from '../../../common/cards/render/Size';
 import {Tag} from '../../../common/cards/Tag';
 import {MAX_COLONY_TRACK_POSITION} from '../../../common/constants';
-import {ICorporationCard} from '../corporation/ICorporationCard';
 import {IColony} from '../../colonies/IColony';
 import {CardResource} from '../../../common/CardResource';
+import {CorporationCard} from '../corporation/CorporationCard';
 
-export class ColonialOne extends Card implements ICorporationCard {
+export class ColonialOne extends CorporationCard {
   constructor() {
     super({
-      type: CardType.CORPORATION,
       name: CardName.COLONIAL_ONE,
       tags: [Tag.SPACE],
       startingMegaCredits: 35,
@@ -45,7 +42,7 @@ export class ColonialOne extends Card implements ICorporationCard {
 
   public override resourceCount: number = 0;
 
-  public override bespokePlay(player: Player) {
+  public override bespokePlay(player: IPlayer) {
     player.colonies.increaseFleetSize();
     this.resourceCount = 3;
     return undefined;
@@ -55,7 +52,7 @@ export class ColonialOne extends Card implements ICorporationCard {
     return true;
   }
 
-  public action(player: Player) {
+  public action(player: IPlayer) {
     const game = player.game;
     if (game.gameOptions.coloniesExtension === false) return undefined;
 
@@ -63,13 +60,13 @@ export class ColonialOne extends Card implements ICorporationCard {
     const activeColonies = game.colonies.filter((colony) => colony.isActive);
     const openColonies = activeColonies.filter((colony) => colony.visitor === undefined);
 
-    const moveColonyTrack = new SelectOption('Increase or decrease a colony tile track', 'Select colony', () => {
+    const moveColonyTrack = new SelectOption('Increase or decrease a colony tile track', 'Select colony').andThen(() => {
       game.defer(new SimpleDeferredAction(
         player,
-        () => new SelectColony('Select colony tile to increase or decrease track', 'Select', activeColonies, (colony: IColony) => {
+        () => new SelectColony('Select colony tile to increase or decrease track', 'Select', activeColonies).andThen((colony: IColony) => {
           if (activeColonies.includes(colony)) {
             game.defer(new SimpleDeferredAction(player, () => new OrOptions(
-              new SelectOption('Increase track for ' + colony.name, 'Increase', () => {
+              new SelectOption('Increase track for ' + colony.name, 'Increase').andThen(() => {
                 if (colony.trackPosition < MAX_COLONY_TRACK_POSITION) {
                   colony.increaseTrack();
                   game.log('${0} increased ${1} colony track 1 step', (b) => b.player(player).colony(colony));
@@ -77,7 +74,7 @@ export class ColonialOne extends Card implements ICorporationCard {
 
                 return undefined;
               }),
-              new SelectOption('Decrease track for ' + colony.name, 'Decrease', () => {
+              new SelectOption('Decrease track for ' + colony.name, 'Decrease' ).andThen(() => {
                 if (colony.trackPosition > 0) {
                   colony.decreaseTrack();
                   game.log('${0} decreased ${1} colony track 1 step', (b) => b.player(player).colony(colony));
@@ -94,10 +91,10 @@ export class ColonialOne extends Card implements ICorporationCard {
       return undefined;
     });
 
-    const spendResource = new SelectOption('Spend 1 fighter resource on this card to trade for free', 'Spend resource', () => {
+    const spendResource = new SelectOption('Spend 1 fighter resource on this card to trade for free', 'Spend resource').andThen( () => {
       game.defer(new SimpleDeferredAction(
         player,
-        () => new SelectColony('Select colony to trade with for free', 'Select', openColonies, (colony: IColony) => {
+        () => new SelectColony('Select colony to trade with for free', 'Select', openColonies).andThen( (colony: IColony) => {
           if (openColonies.includes(colony)) {
             this.resourceCount--;
             game.log('${0} traded with ${1}', (b) => b.player(player).colony(colony));

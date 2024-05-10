@@ -1,11 +1,10 @@
 import {IProjectCard} from '../IProjectCard';
-import {Player} from '../../Player';
+import {IPlayer} from '../../IPlayer';
 import {CardRenderer} from '../render/CardRenderer';
 import {Card} from '../Card';
 import {CardName} from '../../../common/cards/CardName';
 import {CardType} from '../../../common/cards/CardType';
 import {Tag} from '../../../common/cards/Tag';
-import {CardRequirements} from '../CardRequirements';
 
 export class PlantSmuggling extends Card implements IProjectCard {
   constructor() {
@@ -19,7 +18,7 @@ export class PlantSmuggling extends Card implements IProjectCard {
         production: {megacredits: 2},
       },
       victoryPoints: 1,
-      requirements: CardRequirements.builder((b) => b.colonies()),
+      requirements: {colonies: 1},
       metadata: {
         cardNumber: 'Q52',
         renderData: CardRenderer.builder((b) => {
@@ -33,7 +32,7 @@ export class PlantSmuggling extends Card implements IProjectCard {
   }
 
 
-  public override canPlay(player: Player): boolean {
+  public override canPlay(player: IPlayer): boolean {
     let coloniesCount: number = 0;
     player.game.colonies.forEach((colony) => {
       coloniesCount += colony.colonies.filter((owner) => owner === player).length;

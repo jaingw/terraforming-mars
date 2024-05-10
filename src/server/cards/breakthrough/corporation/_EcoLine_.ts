@@ -1,5 +1,5 @@
 
-import {Player} from '../../../Player';
+import {IPlayer} from '../../../IPlayer';
 import {IProjectCard} from '../../IProjectCard';
 import {EcoLine} from '../../corporation/EcoLine';
 import {CardRenderer} from '../../render/CardRenderer';
@@ -21,17 +21,17 @@ export class _EcoLine_ extends EcoLine {
     return 38;
   }
 
-  public onCardPlayed(player: Player, card: IProjectCard) {
+  public onCardPlayed(player: IPlayer, card: IProjectCard) {
     if (player.isCorporation(this.name)) {
       for (const tag of card.tags) {
         if (tag === Tag.PLANT) {
-          player.addResource(Resource.MEGACREDITS, 2);
+          player.stock.add(Resource.MEGACREDITS, 2);
         }
       }
     }
   }
 
-  public onCorpCardPlayed(player: Player, card: ICorporationCard) :PlayerInput | undefined {
+  public onCorpCardPlayed(player: IPlayer, card: ICorporationCard) :PlayerInput | undefined {
     this.onCardPlayed(player, card as unknown as IProjectCard);
     return undefined;
   }

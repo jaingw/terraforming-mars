@@ -36,7 +36,7 @@ describe('SortableCards', () => {
     expect(cards.at(1).props().card.name).to.eq(CardName.CARTEL);
     const draggers = sortable.findAll('div.cardbox'); // findAllComponents ref:cardbox 不知道为什么找不到值
     await draggers.at(1).trigger('dragstart');
-    const droppers = sortable.findAll('div.droppers');
+    const droppers = sortable.findAll('div.drop-target');
     await droppers.at(0).trigger('dragover');
     await draggers.at(1).trigger('dragend');
     cards = sortable.findAllComponents({
@@ -79,7 +79,7 @@ describe('SortableCards', () => {
     expect(cards.at(2).props().card.name).to.eq(CardName.BIRDS);
     const draggers = sortable.findAll('div.cardbox'); // findAllComponents ref:cardbox 不知道为什么找不到值
     await draggers.at(0).trigger('dragstart');
-    const droppers = sortable.findAll('div.droppers');
+    const droppers = sortable.findAll('div.drop-target');
     await droppers.at(2).trigger('dragover');
     await draggers.at(0).trigger('dragend');
     cards = sortable.findAllComponents({

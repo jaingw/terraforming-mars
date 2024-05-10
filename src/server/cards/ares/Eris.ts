@@ -1,27 +1,25 @@
-import {ICorporationCard} from '../corporation/ICorporationCard';
-import {Player} from '../../Player';
+import {IPlayer} from '../../IPlayer';
 import {Tag} from '../../../common/cards/Tag';
-import {Game} from '../../Game';
 import {CardName} from '../../../common/cards/CardName';
-import {CardType} from '../../../common/cards/CardType';
 import {ARES_CARD_MANIFEST} from './AresCardManifest';
 import {PlaceHazardTile} from '../../deferredActions/PlaceHazardTile';
-import {ISpace} from '../../boards/ISpace';
+import {Space} from '../../boards/Space';
 import {SelectOption} from '../../inputs/SelectOption';
 import {OrOptions} from '../../inputs/OrOptions';
 import {SelectSpace} from '../../inputs/SelectSpace';
-import {Card} from '../Card';
 import {CardRenderer} from '../render/CardRenderer';
 import {AltSecondaryTag} from '../../../common/cards/render/AltSecondaryTag';
 import {Size} from '../../../common/cards/render/Size';
-import {isHazardTileType, TileType} from '../../../common/TileType';
+import {TileType} from '../../../common/TileType';
 import {CardManifest} from '../ModuleManifest';
+import {CorporationCard} from '../corporation/CorporationCard';
+import {IGame} from '../../IGame';
+import {isHazardTileType} from '../../../common/AresTileType';
 
 
-export class Eris extends Card implements ICorporationCard {
+export class Eris extends CorporationCard {
   constructor() {
     super({
-      type: CardType.CORPORATION,
       name: CardName.ERIS,
       tags: [Tag.BUILDING],
       initialActionText: 'Draw an Ares card',
@@ -43,7 +41,7 @@ export class Eris extends Card implements ICorporationCard {
     });
   }
 
-  public initialAction(player: Player) {
+  public initialAction(player: IPlayer) {
     if (player.game.gameOptions.aresExtension) {
       this.drawAresCard(player);
     }
@@ -51,7 +49,7 @@ export class Eris extends Card implements ICorporationCard {
     return undefined;
   }
 
-  public canAct(player: Player): boolean {
+  public canAct(player: IPlayer): boolean {
     const game = player.game;
     const availableSpaces = this.getAvailableSpaces(player, game);
     const hazardSpaces = this.getAllUnprotectedHazardSpaces(game);
@@ -60,32 +58,33 @@ export class Eris extends Card implements ICorporationCard {
     return true;
   }
 
-  public action(player: Player) {
+  public action(player: IPlayer) {
     const game = player.game;
     const orOptions = new OrOptions();
     const availableSpaces = this.getAvailableSpaces(player, game);
     const hazardSpaces = this.getAllUnprotectedHazardSpaces(game);
 
     if (availableSpaces.length > 0) {
-      orOptions.options.push(new SelectOption('Place a hazard tile adjacent to no other tile', 'Select', () => {
-        const title = 'Select space next to no other tile for hazard';
-        const tileType = Math.floor(Math.random() * 2) === 0 ? TileType.DUST_STORM_MILD : TileType.EROSION_MILD;
-        game.defer(new PlaceHazardTile(player, tileType, availableSpaces, {title}));
-        return undefined;
-      }));
+      orOptions.options.push(new SelectOption('Place a hazard tile adjacent to no other tile', 'Select' )
+        .andThen(() => {
+          const title = 'Select space next to no other tile for hazard';
+          const tileType = Math.floor(Math.random() * 2) === 0 ? TileType.DUST_STORM_MILD : TileType.EROSION_MILD;
+          game.defer(new PlaceHazardTile(player, tileType, availableSpaces, {title}));
+          return undefined;
+        }));
     }
 
     if (hazardSpaces.length > 0) {
-      orOptions.options.push(new SelectOption('Remove a hazard tile to gain 1 TR', 'Select', () => {
+      orOptions.options.push(new SelectOption('Remove a hazard tile to gain 1 TR', 'Select' ).andThen( () => {
         return new SelectSpace(
           'Select hazard tile to remove',
-          this.getAllUnprotectedHazardSpaces(game),
-          (space: ISpace) => {
+          this.getAllUnprotectedHazardSpaces(game))
+          .andThen((space: Space) => {
             space.tile = undefined;
             player.increaseTerraformRating();
             return undefined;
           },
-        );
+          );
       }));
     }
 
@@ -93,7 +92,7 @@ export class Eris extends Card implements ICorporationCard {
     return orOptions;
   }
 
-  private drawAresCard(player: Player) {
+  private drawAresCard(player: IPlayer) {
     player.drawCard(1, {
       include: (card) => CardManifest.values(ARES_CARD_MANIFEST.projectCards).find( (x) => card instanceof x.Factory ) !== undefined,
     });
@@ -101,7 +100,7 @@ export class Eris extends Card implements ICorporationCard {
     return undefined;
   }
 
-  private getAvailableSpaces(player: Player, game: Game): Array<ISpace> {
+  private getAvailableSpaces(player: IPlayer, game: IGame): Array<Space> {
     return game.board.getAvailableSpacesOnLand(player)
       .filter(((space) => space.tile === undefined))
       .filter((space) => {
@@ -110,7 +109,7 @@ export class Eris extends Card implements ICorporationCard {
       });
   }
 
-  private getAllUnprotectedHazardSpaces(game: Game): Array<ISpace> {
+  private getAllUnprotectedHazardSpaces(game: IGame): Array<Space> {
     return game.board.spaces.filter(
       (space) => space.tile && isHazardTileType(space.tile.tileType) && space.tile.protectedHazard === false,
     );

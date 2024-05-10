@@ -1,5 +1,5 @@
 import {IProjectCard} from '../IProjectCard';
-import {Player} from '../../Player';
+import {IPlayer} from '../../IPlayer';
 import {CardRenderer} from '../render/CardRenderer';
 import {Card} from '../Card';
 import {CardName} from '../../../common/cards/CardName';
@@ -7,10 +7,9 @@ import {CardType} from '../../../common/cards/CardType';
 import {Tag} from '../../../common/cards/Tag';
 import {PlayerInput} from '../../PlayerInput';
 import {SelectSpace} from '../../inputs/SelectSpace';
-import {ISpace} from '../../boards/ISpace';
-import {DrawCards} from '../../deferredActions/DrawCards';
-import {SimpleDeferredAction} from '../..//deferredActions/DeferredAction';
+import {Space} from '../../boards/Space';
 import {Resource} from '../../../common/Resource';
+import {ChooseCards} from '../../deferredActions/ChooseCards';
 
 export class BorderCheckpoint extends Card implements IProjectCard {
   constructor() {
@@ -48,7 +47,7 @@ export class BorderCheckpoint extends Card implements IProjectCard {
     return false;
   }
 
-  private getAvailableSpaces(player: Player): Array<ISpace> {
+  private getAvailableSpaces(player: IPlayer): Array<Space> {
     return player.game.board.getAvailableSpacesOnLand(player)
       .filter((space) =>
         space.tile === undefined &&
@@ -62,27 +61,27 @@ export class BorderCheckpoint extends Card implements IProjectCard {
   }
 
 
-  public override canPlay(player: Player): boolean {
+  public override canPlay(player: IPlayer): boolean {
     return player.production.get(Resource.ENERGY) >= 1 && this.getAvailableSpaces(player).length > 0;
   }
 
-  public override bespokePlay(player: Player): PlayerInput {
-    return new SelectSpace('Select place on the border', this.getAvailableSpaces(player), (foundSpace: ISpace) => {
-      player.game.addCityTile(player, foundSpace);
+  public override bespokePlay(player: IPlayer): PlayerInput {
+    return new SelectSpace('Select place on the border', this.getAvailableSpaces(player) ).andThen((foundSpace: Space) => {
+      player.game.addCity(player, foundSpace);
       return undefined;
     });
   }
 
 
-  public canAct(player: Player): boolean {
+  public canAct(player: IPlayer): boolean {
     return player.game.projectDeck.discardPile.length >= 1;
   }
 
 
-  public action(player: Player) {
+  public action(player: IPlayer) {
     const cardIndex = this.getRandomNum(0, Math.min(4, player.game.projectDeck.discardPile.length));
     const cards: Array<IProjectCard> = player.game.projectDeck.discardPile.splice(cardIndex, 1);
-    player.game.defer(new SimpleDeferredAction(player, () => DrawCards.choose(player, cards, {keepMax: 1})));
+    player.game.defer(new ChooseCards(player, cards, {keepMax: 1}));
     player.game.cardDrew = true;
     return undefined;
   }

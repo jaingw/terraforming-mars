@@ -136,10 +136,10 @@ import {MoonModel} from '@/common/models/MoonModel';
 import PreferencesIcon from '@/client/components/PreferencesIcon.vue';
 import {mainAppSettings} from '@/client/components/App';
 import {PlayerViewModel} from '@/common/models/PlayerModel';
-import {GameOptions} from '../../server/GameOptions';
 import LanguageIcon from '@/client/components/LanguageIcon.vue';
 import {Timer} from '@/common/Timer';
 import {Phase} from '@/common/Phase';
+import {GameOptions} from '../../server/game/GameOptions';
 
 let ui_timeout_id : number;
 export default Vue.extend({

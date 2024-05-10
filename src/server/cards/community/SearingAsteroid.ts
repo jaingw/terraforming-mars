@@ -7,7 +7,7 @@
 // import {ICorporationCard} from '../corporation/ICorporationCard';
 // import {ResourceType} from '../../../common/ResourceType';
 //
-// export class SearingAsteroid extends Card implements ICorporationCard {
+// export class SearingAsteroid extends CorporationCard{
 //   constructor() {
 //     super({
 //       type: CardType.CORPORATION,

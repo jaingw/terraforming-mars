@@ -1,6 +1,6 @@
 
 import {IActionCard} from '../../ICard';
-import {Player} from '../../../Player';
+import {IPlayer} from '../../../IPlayer';
 import {CardRenderer} from '../../render/CardRenderer';
 import {CardName} from '../../../../common/cards/CardName';
 import {Size} from '../../../../common/cards/render/Size';
@@ -15,11 +15,11 @@ export class _UnitedNationsMarsInitiative_ extends UnitedNationsMarsInitiative i
     return CardName._UNITED_NATIONS_MARS_INITIATIVE_;
   }
 
-  public override canAct(player: Player): boolean {
-    return player.hasIncreasedTerraformRatingThisGeneration && player.canAfford(ACTION_COST, {tr: {tr: 1}});
+  public override canAct(player: IPlayer): boolean {
+    return player.hasIncreasedTerraformRatingThisGeneration && player.canAfford({cost: ACTION_COST, tr: {tr: 1}});
   }
 
-  public override action(player: Player) {
+  public override action(player: IPlayer) {
     player.megaCredits -= 5;
     player.increaseTerraformRating();
     return undefined;
@@ -48,13 +48,13 @@ export class _UnitedNationsMarsInitiative_ extends UnitedNationsMarsInitiative i
     };
   }
 
-  public onIncreaseTerraformRating(player: Player, cardOwner: Player, steps: number) {
+  public onIncreaseTerraformRating(player: IPlayer, cardOwner: IPlayer, steps: number) {
     const game = player.game;
     if (player !== cardOwner) {
       return;
     }
     if (game.phase === Phase.ACTION || game.phase === Phase.PRELUDES) {
-      cardOwner.addResource(Resource.MEGACREDITS, steps * 2, {log: true});
+      cardOwner.stock.add(Resource.MEGACREDITS, steps * 2, {log: true});
     }
   }
 }

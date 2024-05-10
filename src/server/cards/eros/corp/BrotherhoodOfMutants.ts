@@ -1,7 +1,5 @@
 import {CardRenderer} from '../../render/CardRenderer';
-import {Card} from '../../Card';
-import {ICard} from '../../ICard';
-import {Player} from '../../../Player';
+import {IPlayer} from '../../../IPlayer';
 import {SimpleDeferredAction} from '../../../deferredActions/DeferredAction';
 import {OrOptions} from '../../../inputs/OrOptions';
 import {SelectOption} from '../../../inputs/SelectOption';
@@ -9,20 +7,18 @@ import {SelectAmount} from '../../../inputs/SelectAmount';
 import {AndOptions} from '../../../inputs/AndOptions';
 import {all} from '../../Options';
 import {CardName} from '../../../../common/cards/CardName';
-import {CardType} from '../../../../common/cards/CardType';
 import {Size} from '../../../../common/cards/render/Size';
 import {Tag} from '../../../../common/cards/Tag';
-import {ICorporationCard} from '../../corporation/ICorporationCard';
 import {SerializedCard} from '../../../SerializedCard';
+import {CorporationCard} from '../../corporation/CorporationCard';
 
-export class BrotherhoodOfMutants extends Card implements ICard, ICorporationCard {
+export class BrotherhoodOfMutants extends CorporationCard {
   public isUsed: boolean = false;
   constructor() {
     super({
       name: CardName.BROTHERHOOD_OF_MUTANTS,
       tags: [Tag.WILD],
       startingMegaCredits: 36,
-      type: CardType.CORPORATION,
 
       metadata: {
         cardNumber: 'Q26',
@@ -44,18 +40,18 @@ export class BrotherhoodOfMutants extends Card implements ICard, ICorporationCar
     });
   }
 
-  public action(player: Player) {
+  public action(player: IPlayer) {
     if (player.game.turmoil) {
       const bonus = player.game.turmoil.getPlayerInfluence(player);
       player.game.defer(new SimpleDeferredAction(
         player,
         () => {
           return new OrOptions(
-            new SelectOption('Draw cards equal to your influences', 'Draw cards', () => {
+            new SelectOption('Draw cards equal to your influences', 'Draw cards' ).andThen(() => {
               player.drawCard(bonus);
               return undefined;
             }),
-            new SelectOption('Select resources equal to your influences', 'Select resource', () => {
+            new SelectOption('Select resources equal to your influences', 'Select resource' ).andThen(() => {
               player.game.defer(
                 new SimpleDeferredAction(player, () => {
                   return this.selectResources(player, bonus);
@@ -74,7 +70,7 @@ export class BrotherhoodOfMutants extends Card implements ICard, ICorporationCar
     return true;
   }
 
-  private selectResources(philaresPlayer: Player, resourceCount: number): AndOptions {
+  private selectResources(philaresPlayer: IPlayer, resourceCount: number): AndOptions {
     let megacreditsAmount: number = 0;
     let steelAmount: number = 0;
     let titaniumAmount: number = 0;
@@ -82,39 +78,40 @@ export class BrotherhoodOfMutants extends Card implements ICard, ICorporationCar
     let energyAmount: number = 0;
     let heatAmount: number = 0;
 
-    const selectMegacredit = new SelectAmount('Megacredits', 'Select', (amount: number) => {
+    const selectMegacredit = new SelectAmount('Megacredits', 'Select', 0, resourceCount ).andThen((amount: number) => {
       megacreditsAmount = amount;
       return undefined;
-    }, 0, resourceCount);
-    const selectSteel = new SelectAmount('Steel', 'Select', (amount: number) => {
+    });
+    const selectSteel = new SelectAmount('Steel', 'Select', 0, resourceCount ).andThen((amount: number) => {
       steelAmount = amount;
       return undefined;
-    }, 0, resourceCount);
-    const selectTitanium = new SelectAmount('Titanium', 'Select', (amount: number) => {
+    });
+    const selectTitanium = new SelectAmount('Titanium', 'Select', 0, resourceCount).andThen((amount: number) => {
       titaniumAmount = amount;
       return undefined;
-    }, 0, resourceCount);
-    const selectPlants = new SelectAmount('Plants', 'Select', (amount: number) => {
+    });
+    const selectPlants = new SelectAmount('Plants', 'Select', 0, resourceCount).andThen((amount: number) => {
       plantsAmount = amount;
       return undefined;
-    }, 0, resourceCount);
-    const selectEnergy = new SelectAmount('Energy', 'Select', (amount: number) => {
+    });
+    const selectEnergy = new SelectAmount('Energy', 'Select', 0, resourceCount ).andThen((amount: number) => {
       energyAmount = amount;
       return undefined;
-    }, 0, resourceCount);
-    const selectHeat = new SelectAmount('Heat', 'Select', (amount: number) => {
+    });
+    const selectHeat = new SelectAmount('Heat', 'Select', 0, resourceCount).andThen((amount: number) => {
       heatAmount = amount;
       return undefined;
-    }, 0, resourceCount);
+    });
 
     const selectResources = new AndOptions(
-      () => {
+      selectMegacredit, selectSteel, selectTitanium, selectPlants, selectEnergy, selectHeat)
+      .andThen(() => {
         const selectedResources = megacreditsAmount +
-                steelAmount +
-                titaniumAmount +
-                plantsAmount +
-                energyAmount +
-                heatAmount;
+                  steelAmount +
+                  titaniumAmount +
+                  plantsAmount +
+                  energyAmount +
+                  heatAmount;
         if ( selectedResources > resourceCount || selectedResources < resourceCount) {
           throw new Error('Need to select ' + resourceCount + ' resource(s)');
         }
@@ -125,7 +122,8 @@ export class BrotherhoodOfMutants extends Card implements ICard, ICorporationCar
         philaresPlayer.energy += energyAmount;
         philaresPlayer.heat += heatAmount;
         return undefined;
-      }, selectMegacredit, selectSteel, selectTitanium, selectPlants, selectEnergy, selectHeat);
+      },
+      );
     selectResources.title = 'Philares effect: select ' + resourceCount + ' resource(s)';
 
     return selectResources;

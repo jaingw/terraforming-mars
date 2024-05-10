@@ -1,4 +1,4 @@
-import {Player} from '../../../Player';
+import {IPlayer} from '../../../IPlayer';
 import {CardRenderer} from '../../render/CardRenderer';
 import {MorningStarInc} from '../../venusNext/MorningStarInc';
 import {played} from '../../Options';
@@ -22,7 +22,7 @@ export class _MorningStarInc_ extends MorningStarInc {
     if (this.isUsed !== true) return true;
     return false;
   }
-  public action(player: Player) {
+  public action(player: IPlayer) {
     player.production.add(Resource.MEGACREDITS, player.tags.count(Tag.VENUS));
     this.isUsed = true;
     return undefined;

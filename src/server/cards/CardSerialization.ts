@@ -1,54 +1,63 @@
-import {MiningCard} from './base/MiningCard';
+import {newCorporationCard, newProjectCard} from '../createCard';
 import {isCeoCard} from './ceos/ICeoCard';
 import {IProjectCard} from './IProjectCard';
 import {isICloneTagCard} from './pathfinders/ICloneTagCard';
 import {SelfReplicatingRobots} from './promo/SelfReplicatingRobots';
 import {SerializedCard} from '../SerializedCard';
-import {CardFinder} from '../CardFinder';
+import {CardType} from '../../common/cards/CardType';
 import {ICard} from './ICard';
 import {ICorporationCard} from './corporation/ICorporationCard';
 import {AntiGravityExperiment} from './eros/AntiGravityExperiment';
 
-export function serializePlayedCard(c: ICard): SerializedCard {
-  const result: SerializedCard = {
-    name: c.name,
+export function serializePlayedCard(card: ICard): SerializedCard {
+  const serialized: SerializedCard = {
+    name: card.name,
   };
-  const card: any = c;
-  if (c.resourceCount !== undefined) {
-    result.resourceCount = c.resourceCount;
+  const anyc: any = card;
+  if (card.type === CardType.PROXY) {
+    return serialized;
   }
-  if (c instanceof SelfReplicatingRobots) {
-    (result as any).targetCards = c.targetCards.map((t) => {
+  if (anyc.bonusResource !== undefined) {
+    serialized.bonusResource = anyc.bonusResource;
+  }
+  if (card.resourceCount !== undefined) {
+    serialized.resourceCount = card.resourceCount;
+  }
+  if (card.generationUsed !== undefined) {
+    serialized.generationUsed = card.generationUsed;
+  }
+  if (card instanceof SelfReplicatingRobots) {
+    serialized.targetCards = card.targetCards.map((t) => {
       return {
         card: {name: t.card.name},
         resourceCount: t.resourceCount,
       };
     });
   }
-  if (card.bonusResource !== undefined) {
-    result.bonusResource = card.bonusResource;
-  }
 
-  if (isICloneTagCard(c)) {
-    result.cloneTag = c.cloneTag;
+  if (isICloneTagCard(card)) {
+    serialized.cloneTag = card.cloneTag;
   }
-  if (isCeoCard(c)) {
-    result.isDisabled = c.isDisabled;
-    if (c.opgActionIsActive !== undefined) {
-      result.opgActionIsActive = c.opgActionIsActive;
+  if (isCeoCard(card)) {
+    serialized.isDisabled = card.isDisabled;
+    if (card.opgActionIsActive !== undefined) {
+      serialized.opgActionIsActive = card.opgActionIsActive;
     }
   }
 
-  if (card.allTags !== undefined) {
-    result.allTags = Array.from(card.allTags);
+  if (anyc.allTags !== undefined) {
+    serialized.allTags = Array.from(anyc.allTags);
   }
   if (card.isDisabled !== undefined) {
-    result.isDisabled = card.isDisabled;
+    serialized.isDisabled = card.isDisabled;
   }
   if (card.isUsed !== undefined) {
-    result.isUsed = card.isUsed;
+    serialized.isUsed = card.isUsed;
   }
-  return result;
+  if (card.data !== undefined) {
+    serialized.data = card.data;
+  }
+  return serialized;
 }
 
 export function serializedCardName(c: ICard): SerializedCard {
@@ -57,13 +66,19 @@ export function serializedCardName(c: ICard): SerializedCard {
   };
 }
 
-export function deserializeProjectCard(element: SerializedCard, cardFinder: CardFinder): IProjectCard {
-  const card = cardFinder.getProjectCardByName(element.name);
+export function deserializeProjectCard(element: SerializedCard): IProjectCard {
+  const card = newProjectCard(element.name);
   if (card === undefined) {
     throw new Error(`Card ${element.name} not found`);
   }
   if (element.resourceCount !== undefined) {
     card.resourceCount = element.resourceCount;
+  }
+  if (card.hasOwnProperty('data')) {
+    card.data = element.data;
+  }
+  if (element.generationUsed !== undefined) {
+    card.generationUsed = element.generationUsed;
   }
   if (isICloneTagCard(card) && element.cloneTag !== undefined) {
     card.cloneTag = element.cloneTag;
@@ -71,7 +86,7 @@ export function deserializeProjectCard(element: SerializedCard, cardFinder: Card
   if (card instanceof SelfReplicatingRobots && (element as SelfReplicatingRobots).targetCards !== undefined) {
     card.targetCards = [];
     (element as SelfReplicatingRobots).targetCards.forEach((targetCard) => {
-      const foundTargetCard = cardFinder.getProjectCardByName(targetCard.card.name);
+      const foundTargetCard = newProjectCard(targetCard.card.name);
       if (foundTargetCard !== undefined) {
         card.targetCards.push({
           card: foundTargetCard,
@@ -82,8 +97,10 @@ export function deserializeProjectCard(element: SerializedCard, cardFinder: Card
       }
     });
   }
-  if (card instanceof MiningCard && element.bonusResource !== undefined) {
-    card.bonusResource = Array.isArray(element.bonusResource) ? element.bonusResource : [element.bonusResource];
+  if (!(card instanceof SelfReplicatingRobots)) {
+    if (element.bonusResource !== undefined) {
+      card.bonusResource = Array.isArray(element.bonusResource) ? element.bonusResource : [element.bonusResource];
+    }
   }
   if (card instanceof AntiGravityExperiment && element.isDisabled !== undefined) {
     card.isDisabled = element.isDisabled;
@@ -97,8 +114,8 @@ export function deserializeProjectCard(element: SerializedCard, cardFinder: Card
   return card;
 }
 
-export function deserializeCorpCard(element: SerializedCard, cardFinder: CardFinder):ICorporationCard | undefined {
-  const corpCard = cardFinder.getCorporationCardByName(element.name);
+export function deserializeCorpCard(element: SerializedCard):ICorporationCard | undefined {
+  const corpCard = newCorporationCard(element.name);
   const corpJson : any = element;
   if (corpCard !== undefined) {
     if (element.resourceCount !== undefined) {

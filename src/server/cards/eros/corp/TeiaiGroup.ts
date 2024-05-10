@@ -1,23 +1,20 @@
 import {CardRenderer} from '../../render/CardRenderer';
-import {Card} from '../../Card';
-import {ICard} from '../../ICard';
 import {CardName} from '../../../../common/cards/CardName';
-import {CardType} from '../../../../common/cards/CardType';
-import {ICorporationCard} from '../../corporation/ICorporationCard';
-import {Player} from '../../../Player';
+import {IPlayer} from '../../../IPlayer';
 import {Tag} from '../../../../common/cards/Tag';
 import {SelectAmount} from '../../../inputs/SelectAmount';
 import {DiscardCards} from '../../../deferredActions/DiscardCards';
 import {DrawCards} from '../../../deferredActions/DrawCards';
 import {Size} from '../../../../common/cards/render/Size';
+import {Priority} from '../../../deferredActions/Priority';
+import {CorporationCard} from '../../corporation/CorporationCard';
 
-export class TeiaiGroup extends Card implements ICard, ICorporationCard {
+export class TeiaiGroup extends CorporationCard {
   constructor() {
     super({
       name: CardName.TEIAI_GROUP,
       tags: [Tag.BUILDING],
       startingMegaCredits: 47,
-      type: CardType.CORPORATION,
 
       metadata: {
         cardNumber: 'Q028',
@@ -44,7 +41,7 @@ export class TeiaiGroup extends Card implements ICard, ICorporationCard {
     return true;
   }
 
-  public action(player: Player) {
+  public action(player: IPlayer) {
     if (player.cardsInHand.length === 0) {
       player.drawCard(2);
     } else {
@@ -53,14 +50,13 @@ export class TeiaiGroup extends Card implements ICard, ICorporationCard {
       return new SelectAmount(
         'Select number of cards to discard',
         'Discard cards',
-        (amount: number) => {
-          player.game.defer(new DiscardCards(player, amount));
-          player.game.defer(DrawCards.keepAll(player, amount-1));
-          return undefined;
-        },
         1,
         max,
-      );
+      ).andThen((amount: number) => {
+        player.game.defer(DrawCards.keepAll(player, amount-1));
+        player.game.defer(new DiscardCards(player, amount), Priority.SUPERPOWER);
+        return undefined;
+      });
     }
     return undefined;
   }

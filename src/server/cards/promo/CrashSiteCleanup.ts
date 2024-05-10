@@ -1,4 +1,4 @@
-import {Player} from '../../Player';
+import {IPlayer} from '../../IPlayer';
 import {IProjectCard} from '../IProjectCard';
 import {Card} from '../Card';
 import {CardType} from '../../../common/cards/CardType';
@@ -6,7 +6,6 @@ import {CardName} from '../../../common/cards/CardName';
 import {SelectOption} from '../../inputs/SelectOption';
 import {OrOptions} from '../../inputs/OrOptions';
 import {Resource} from '../../../common/Resource';
-import {CardRequirements} from '../CardRequirements';
 import {CardRenderer} from '../render/CardRenderer';
 
 export class CrashSiteCleanup extends Card implements IProjectCard {
@@ -15,7 +14,7 @@ export class CrashSiteCleanup extends Card implements IProjectCard {
       type: CardType.EVENT,
       name: CardName.CRASH_SITE_CLEANUP,
       cost: 4,
-      requirements: CardRequirements.builder((b) => b.plantsRemoved()),
+      requirements: {plantsRemoved: true},
       victoryPoints: 1,
 
       metadata: {
@@ -28,29 +27,27 @@ export class CrashSiteCleanup extends Card implements IProjectCard {
     });
   }
 
-  public override bespokePlay(player: Player) {
+  public override bespokePlay(player: IPlayer) {
     const gainTitanium = new SelectOption(
       'Gain 1 titanium',
-      'Gain titanium',
-      () => {
-        player.addResource(Resource.TITANIUM, 1, {log: true});
+      'Gain titanium')
+      .andThen(() => {
+        player.stock.add(Resource.TITANIUM, 1, {log: true});
         return undefined;
-      },
-    );
+      });
 
     const gain2Steel = new SelectOption(
       'Gain 2 steel',
-      'Gain steel',
-      () => {
-        player.addResource(Resource.STEEL, 2, {log: true});
+      'Gain steel')
+      .andThen(() => {
+        player.stock.add(Resource.STEEL, 2, {log: true});
         return undefined;
-      },
-    );
+      });
 
     return new OrOptions(gainTitanium, gain2Steel);
   }
 
-  public static resourceHook(player: Player, resource: Resource, amount: number, from: Player) {
+  public static resourceHook(player: IPlayer, resource: Resource, amount: number, from: IPlayer) {
     if (from === player || amount >= 0) {
       return;
     }

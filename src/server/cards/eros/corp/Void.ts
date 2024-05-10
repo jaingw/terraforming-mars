@@ -1,16 +1,13 @@
 import {CardName} from '../../../../common/cards/CardName';
-import {CardType} from '../../../../common/cards/CardType';
 import {Size} from '../../../../common/cards/render/Size';
-import {Card} from '../../Card';
-import {ICorporationCard} from '../../corporation/ICorporationCard';
+import {CorporationCard} from '../../corporation/CorporationCard';
 import {CardRenderer} from '../../render/CardRenderer';
 
-export class Void extends Card implements ICorporationCard {
+export class Void extends CorporationCard {
   constructor() {
     super({
       name: CardName.VOID,
       startingMegaCredits: 70,
-      type: CardType.CORPORATION,
 
       metadata: {
         cardNumber: 'Q27',

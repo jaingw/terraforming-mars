@@ -1,12 +1,14 @@
-import * as http from 'http';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as responses from './responses';
 
 import {Context} from './IHandler';
 import {BufferCache} from './BufferCache';
 import {ContentType} from './ContentType';
 import {Handler} from './Handler';
 import {isProduction} from '../utils/server';
+import {Request} from '../Request';
+import {Response} from '../Response';
 
 type Encoding = 'gzip' | 'br';
 
@@ -55,9 +57,9 @@ export class ServeAsset extends Handler {
     // });
   }
 
-  public override async get(req: http.IncomingMessage, res: http.ServerResponse, ctx: Context): Promise<void> {
+  public override async get(req: Request, res: Response, _ctx: Context): Promise<void> {
     if (req.url === undefined) {
-      ctx.route.internalServerError(req, res, new Error('no url on request'));
+      responses.internalServerError(req, res, new Error('no url on request'));
       return;
     }
 
@@ -69,7 +71,7 @@ export class ServeAsset extends Handler {
     const toFile: {file?: string, encoding?: Encoding } = this.toFile(path, supportedEncodings);
 
     if (toFile.file === undefined) {
-      return ctx.route.notFound(req, res);
+      return responses.notFound(req, res);
     }
 
     const file = toFile.file;
@@ -78,7 +80,7 @@ export class ServeAsset extends Handler {
     const buffer = this.cacheAssets ? this.cache.get(file) : undefined;
     if (buffer !== undefined) {
       if (req.headers['if-none-match'] === buffer.hash) {
-        ctx.route.notModified(res);
+        responses.notModified(res);
         return;
       }
       res.setHeader('Cache-Control', 'must-revalidate');
@@ -111,7 +113,7 @@ export class ServeAsset extends Handler {
       }
     } catch (err) {
       console.log(err);
-      ctx.route.internalServerError(req, res, 'Cannot serve ' + path);
+      responses.internalServerError(req, res, 'Cannot serve ' + path);
     }
   }
 
@@ -145,6 +147,8 @@ export class ServeAsset extends Handler {
     switch (urlPath) {
     case 'build/assets/index_ca.html':
     case 'assets/Prototype.ttf':
+    case 'assets/Prototype-ru.ttf':
+    case 'assets/Prototype-pl.ttf':
     case 'assets/futureforces.ttf':
     case 'assets/BattleStar.ttf':
       return {file: urlPath};
@@ -192,7 +196,7 @@ export class ServeAsset extends Handler {
     return {};
   }
 
-  private supportedEncodings(req: http.IncomingMessage): Set<Encoding> {
+  private supportedEncodings(req: Request): Set<Encoding> {
     const result = new Set<Encoding>();
     for (const header of String(req.headers['accept-encoding']).split(', ')) {
       if (header === 'br' || header === 'gzip') {

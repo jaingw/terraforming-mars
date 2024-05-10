@@ -1,7 +1,6 @@
 import {IProjectCard} from '../IProjectCard';
-import {Player} from '../../Player';
+import {IPlayer} from '../../IPlayer';
 import {CardRenderer} from '../render/CardRenderer';
-import {CardRequirements} from '../CardRequirements';
 import {Card} from '../Card';
 import {CardName} from '../../../common/cards/CardName';
 import {CardType} from '../../../common/cards/CardType';
@@ -16,8 +15,7 @@ export class UrgentTerraformingCommand extends Card implements IProjectCard {
       type: CardType.EVENT,
       tags: [Tag.EARTH],
       cost: 10,
-      requirements: CardRequirements.builder((b) => b.tr(25)),
-
+      requirements: {tr: 25},
       metadata: {
         cardNumber: 'Q16',
         renderData: CardRenderer.builder((b) => {
@@ -28,12 +26,12 @@ export class UrgentTerraformingCommand extends Card implements IProjectCard {
       },
     });
   }
-  public override bespokeCanPlay(player: Player): boolean {
+  public override bespokeCanPlay(player: IPlayer): boolean {
     return player.getTerraformRating() >= 25;
   }
-  public override bespokePlay(player: Player) {
-    player.addResource(Resource.PLANTS, player.production.get(Resource.PLANTS));
-    player.addResource(Resource.HEAT, player.production.get(Resource.HEAT));
+  public override bespokePlay(player: IPlayer) {
+    player.stock.add(Resource.PLANTS, player.production.get(Resource.PLANTS));
+    player.stock.add(Resource.HEAT, player.production.get(Resource.HEAT));
     return undefined;
   }
 }

@@ -1,17 +1,14 @@
 import {Tag} from '../../../common/cards/Tag';
-import {Player} from '../../Player';
-import {Card} from '../Card';
-import {ICorporationCard} from '../corporation/ICorporationCard';
+import {IPlayer} from '../../IPlayer';
 import {CardName} from '../../../common/cards/CardName';
-import {CardType} from '../../../common/cards/CardType';
 import {CardRenderer} from '../render/CardRenderer';
 import {Resource} from '../../../common/Resource';
 import {Size} from '../../../common/cards/render/Size';
 import {digit} from '../../cards/Options';
-export class MiningCorp extends Card implements ICorporationCard {
+import {CorporationCard} from '../corporation/CorporationCard';
+export class MiningCorp extends CorporationCard {
   constructor() {
     super({
-      type: CardType.CORPORATION,
       name: CardName.MINING_CORP,
       tags: [Tag.BUILDING],
       startingMegaCredits: 35,
@@ -32,8 +29,8 @@ export class MiningCorp extends Card implements ICorporationCard {
     });
   }
 
-  public override bespokePlay(player: Player) {
-    player.addResource(Resource.STEEL, 10);
+  public override bespokePlay(player: IPlayer) {
+    player.stock.add(Resource.STEEL, 10);
     // player.production.add(Resource.ENERGY, 1);
     // player.production.add(Resource.STEEL, 1);
     player.drawCard(2, {tag: Tag.BUILDING});

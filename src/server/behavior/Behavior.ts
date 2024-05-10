@@ -13,6 +13,7 @@ import {Countable, CountableUnits} from './Countable';
 import {PlacementType} from '../boards/PlacementType';
 import {AdjacencyBonus} from '../ares/AdjacencyBonus';
 import {Units} from '../../common/Units';
+import {NoAttributes} from './NoAttributes';
 
 type ValueOf<Obj> = Obj[keyof Obj];
 type OneOnly<Obj, Key extends keyof Obj> = { [key in Exclude<keyof Obj, Key>]: null } & Pick<Obj, Key>;
@@ -20,23 +21,38 @@ type OneOfByKey<Obj> = { [key in keyof Obj]: OneOnly<Obj, key> };
 export type OneOfType<Obj> = ValueOf<OneOfByKey<Obj>>;
 
 
-export interface Spend extends Units {
+export type Spend = Units & {
   /** units or a number of resources from the card. */
   resourcesHere: number,
+
+  /** 1 resource of a type from any card. */
+  resourceFromAnyCard: {
+    type: CardResource,
+  },
+
+  /** corruption from your personal supply. */
+  corruption: number,
 }
 
 /** A set of steps that an action can perform in any specific order. */
-export interface Behavior {
+export type Behavior = {
   /** Select one of these actions */
   or?: OrBehavior;
 
-  /** Spend these resources before taking the action. */
+  /**
+   * Spend one of resources before taking the action.
+   *
+   * This is specifically designed to spend only one resource type.
+   */
   spend?: Partial<OneOfType<Spend>>;
 
   /** Gain or lose production */
   production?: Partial<CountableUnits>;
   /** Gain or lose stock */
   stock?: Partial<CountableUnits>;
+
+  /** Gain n standard resources */
+  standardResource?: number | {count: number, same?: boolean};
 
   /** Add resources to this card itself */
   addResources?: Countable;
@@ -53,7 +69,7 @@ export interface Behavior {
 
   /** Gain units of TR */
   // TODO(kberg) permit losing TR for TerralabsResearch
-  tr?: number;
+  tr?: Countable;
 
   /** Raise certain global parameters. */
   global?: {
@@ -132,10 +148,17 @@ export interface Behavior {
     /** Places a road tile and also raises the logistics rate */
     roadTile?: PlaceMoonTile,
     /** Places a special tile on the Moon. */
-    tile?: PlaceMoonTile & {type: TileType, title?: string},
+    tile?: PlaceMoonTile & {type: TileType},
     habitatRate?: number,
     miningRate?: number,
     logisticsRate?: number,
+  },
+
+  underworld?: {
+    identify?: Countable,
+    excavate?: number | {count: Countable, ignorePlacementRestrictions?: boolean},
+    corruption?: Countable,
+    markThisGeneration?: NoAttributes,
   },
 }
 
@@ -170,6 +193,12 @@ export interface AddResource {
    * resources without realizing it. In other words, a true value is a break from the standard rules.
    */
   mustHaveCard?: boolean,
+
+  /** When > 0, only cards with at least `min` resources count. */
+  min?: number,
+
+  /** When true, include self-replicating robots cards. */
+  robotCards?: true,
 
   /** If true, if only one card matches, apply immediately without asking. */
   // WARNING: I don't think this is actually used.

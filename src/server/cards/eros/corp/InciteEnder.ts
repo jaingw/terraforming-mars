@@ -1,23 +1,19 @@
 import {CardRenderer} from '../../render/CardRenderer';
-import {Card} from '../../Card';
-import {ICard} from '../../ICard';
-import {Player} from '../../../Player';
+import {IPlayer} from '../../../IPlayer';
 import {SendDelegateToArea} from '../../../deferredActions/SendDelegateToArea';
 import {IGlobalEvent} from '../../../turmoil/globalEvents/IGlobalEvent';
 import {SimpleDeferredAction} from '../../../deferredActions/DeferredAction';
-import {SelectGlobalCard} from '../../../inputs/SelectGlobalCard';
 import {CardName} from '../../../../common/cards/CardName';
-import {CardType} from '../../../../common/cards/CardType';
 import {Tag} from '../../../../common/cards/Tag';
-import {ICorporationCard} from '../../corporation/ICorporationCard';
+import {SelectGlobalEvent} from '../../../inputs/SelectGlobalEvent';
+import {CorporationCard} from '../../corporation/CorporationCard';
 
-export class InciteEnder extends Card implements ICard, ICorporationCard {
+export class InciteEnder extends CorporationCard {
   constructor() {
     super({
       name: CardName.INCITE_ENDER,
       tags: [Tag.SCIENCE],
       startingMegaCredits: 54,
-      type: CardType.CORPORATION,
 
       metadata: {
         cardNumber: 'Q24',
@@ -40,7 +36,7 @@ export class InciteEnder extends Card implements ICard, ICorporationCard {
   }
 
 
-  public initialAction(player: Player) {
+  public initialAction(player: IPlayer) {
     if (player.game.turmoil) {
       const title = 'Incite first action - Select where to send two delegates';
       player.game.defer(new SendDelegateToArea(player, title, {count: 2}));
@@ -52,7 +48,7 @@ export class InciteEnder extends Card implements ICard, ICorporationCard {
     return true;
   }
 
-  public action(player: Player) {
+  public action(player: IPlayer) {
     if (!player.game.turmoil) {
       return undefined;
     }
@@ -85,14 +81,13 @@ export class InciteEnder extends Card implements ICard, ICorporationCard {
     };
     player.game.defer(new SimpleDeferredAction(
       player,
-      () => new SelectGlobalCard(
+      () => new SelectGlobalEvent(
+        cards,
         'Select card(s) to discard',
         'Discard',
-        cards,
-        cb,
         3,
         0,
-      ),
+      ).andThen(cb),
     ));
     return undefined;
   }

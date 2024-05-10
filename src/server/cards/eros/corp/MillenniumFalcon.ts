@@ -1,21 +1,19 @@
 import {CardRenderer} from '../../render/CardRenderer';
-import {Card} from '../../Card';
 import {CardName} from '../../../../common/cards/CardName';
-import {CardType} from '../../../../common/cards/CardType';
-import {ICorporationCard} from '../../corporation/ICorporationCard';
-import {Player} from '../../../Player';
+import {IPlayer} from '../../../IPlayer';
 import {BuildColony} from '../../../deferredActions/BuildColony';
 import {all} from '../../Options';
 import {SelectColony} from '../../../inputs/SelectColony';
 import {IColony} from '../../../colonies/IColony';
 import {SimpleDeferredAction} from '../../../deferredActions/DeferredAction';
 import {ColonyName} from '../../../../common/colonies/ColonyName';
-export class MillenniumFalcon extends Card implements ICorporationCard {
+import {CorporationCard} from '../../corporation/CorporationCard';
+
+export class MillenniumFalcon extends CorporationCard {
   constructor() {
     super({
       name: CardName.MILLENNIUM_FALCON,
       startingMegaCredits: 28,
-      type: CardType.CORPORATION,
       initialActionText: 'Place a colony',
 
       metadata: {
@@ -34,7 +32,7 @@ export class MillenniumFalcon extends Card implements ICorporationCard {
     });
   }
 
-  public canAct(player: Player) {
+  public canAct(player: IPlayer) {
     return player.game.colonies.filter((colony) =>
       colony.colonies.includes(player) &&
       colony.isActive && colony.name !== ColonyName.TITANIA).length > 0 &&
@@ -44,20 +42,20 @@ export class MillenniumFalcon extends Card implements ICorporationCard {
       colony.isActive && colony.name !== ColonyName.TITANIA).length > 0;
   }
 
-  private moveColony(player: Player) {
+  private moveColony(player: IPlayer) {
     const openColonies = player.game.colonies.filter((colony) =>
       colony.colonies.includes(player) &&
           colony.isActive && colony.name !== ColonyName.TITANIA); // 不能是分殖民地
     if (openColonies.length === 0) {
       return undefined;
     }
-    return new SelectColony('Select colony to move', 'Move', openColonies, (colony: IColony) => {
+    return new SelectColony('Select colony to move', 'Move', openColonies ).andThen((colony: IColony) => {
       colony.removeColony(player);
       return undefined;
     });
   }
 
-  public action(player: Player) {
+  public action(player: IPlayer) {
     const openColonies = player.game.colonies.filter((colony) =>
       !colony.colonies.includes(player) && colony.colonies.length < 3 &&
         colony.isActive && colony.name !== ColonyName.TITANIA);
@@ -66,7 +64,7 @@ export class MillenniumFalcon extends Card implements ICorporationCard {
     return undefined;
   }
 
-  public initialAction(player: Player) {
+  public initialAction(player: IPlayer) {
     if (player.game.gameOptions.coloniesExtension) {
       player.game.defer(new BuildColony(player, {title: 'first action - Select where to build colony'}));
       return undefined;

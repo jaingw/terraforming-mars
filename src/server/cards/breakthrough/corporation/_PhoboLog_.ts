@@ -1,4 +1,4 @@
-import {Player} from '../../../Player';
+import {IPlayer} from '../../../IPlayer';
 import {PhoboLog} from '../../corporation/PhoboLog';
 import {CardRenderer} from '../../render/CardRenderer';
 import {digit} from '../../Options';
@@ -10,7 +10,7 @@ export class _PhoboLog_ extends PhoboLog {
   public override get name() {
     return CardName._PHOBOLOG_;
   }
-  public initialAction(player: Player) {
+  public initialAction(player: IPlayer) {
     player.drawCard(2, {tag: Tag.SPACE});
     return undefined;
   }
