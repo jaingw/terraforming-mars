@@ -49,6 +49,8 @@ import {JovianDefenseDepartment} from '../../cards/eros/JovianDefenseDepartment'
 import {Trantor} from '../../cards/eros/Trantor';
 import {CardName} from '../../../common/cards/CardName';
 import {ModuleManifest} from '../ModuleManifest';
+import {SpaceMonsterPark} from './SpaceMonsterPark';
+import { EnergyStation } from './EnergyStation';
 
 
 export const EROS_CARD_MANIFEST = new ModuleManifest({
@@ -90,6 +92,8 @@ export const EROS_CARD_MANIFEST = new ModuleManifest({
     [CardName.MARTIAN_FENCING]: {Factory: MartianFencing}, // Q56
     [CardName.JOVIAN_DEFENSE_DEPARTMENT]: {Factory: JovianDefenseDepartment}, // Q57
     [CardName.TRANTOR]: {Factory: Trantor}, // Q58
+    [CardName.SPACE_MONSTER_PARK]: {Factory: SpaceMonsterPark}, // Q59,
+    [CardName.ENERGY_STATION]: {Factory: EnergyStation}, // Q60,
 
   },
   corporationCards: {

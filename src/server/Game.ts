@@ -1833,6 +1833,8 @@ export class Game implements IGame, Logger {
     this.addTile(player, space, {
       tileType: TileType.OCEAN,
     });
+    // TODO: 在这里判断一下奖励
+    // TODO: 将世界政府的受益人变成对应玩家
     if (this.phase !== Phase.SOLAR && this.phase !== Phase.INTERGENERATION) {
       TurmoilHandler.onGlobalParameterIncrease(player, GlobalParameter.OCEANS);
       player.increaseTerraformRating();

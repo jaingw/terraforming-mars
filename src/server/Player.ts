@@ -677,6 +677,7 @@ export class Player implements IPlayer {
       action.options.push(
         new SelectOption('Increase temperature', 'Increase').andThen(() => {
           game.increaseTemperature(this, 1);
+          // TODO: 加一个前序的 hook
           game.log('${0} acted as World Government and increased temperature', (b) => b.player(this));
           return undefined;
         }),

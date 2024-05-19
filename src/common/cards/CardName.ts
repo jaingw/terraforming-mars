@@ -687,6 +687,8 @@ export enum CardName {
     SITH_ORGANIZATIONS = 'Sith Organizations',
     RUNCITER_ASSOCIATES = 'Runciter Associates',
     JOVIAN_DEFENSE_DEPARTMENT = 'Jovian Defense Department',
+    SPACE_MONSTER_PARK = 'Space Monster Park',
+    ENERGY_STATION = 'EnergyStation',
 
     // The Moon.
     MARE_NECTARIS_MINE = 'Mare Nectaris Mine',
