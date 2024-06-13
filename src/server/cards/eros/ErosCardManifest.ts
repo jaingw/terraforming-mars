@@ -50,7 +50,7 @@ import {Trantor} from '../../cards/eros/Trantor';
 import {CardName} from '../../../common/cards/CardName';
 import {ModuleManifest} from '../ModuleManifest';
 import {SpaceMonsterPark} from './SpaceMonsterPark';
-import { EnergyStation } from './EnergyStation';
+import {EnergyStation} from './EnergyStation';
 
 
 export const EROS_CARD_MANIFEST = new ModuleManifest({

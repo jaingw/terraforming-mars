@@ -55,12 +55,12 @@ export class SpaceMonsterPark extends Card implements IProjectCard {
           return undefined;
         }
         const options = new OrOptions(
-          new SelectOption('Remove a science resource from this card to draw a card', 'Remove resource').andThen(() => {
+          new SelectOption('Remove 2 floater resources from this card to draw a card', 'Remove resource').andThen(() => {
             player.removeResourceFrom(this, 2);
             player.drawCard();
             return undefined;
           }),
-          new SelectOption('Add a science resource to this card', 'Add resource').andThen(() => {
+          new SelectOption('Add a floater resource to this card', 'Add resource').andThen(() => {
             player.addResourceTo(this, 1);
             return undefined;
           }),

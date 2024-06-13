@@ -60,14 +60,14 @@ export class EnergyStation extends Card implements IProjectCard {
     if (availableMC >= 2 && player.production.energy >= 1) {
       return new OrOptions(
         new SelectOption('Spend 2X Heat to gain X Plant', 'Spend Heat').andThen(() => {
-          return this.getEnergyOption(player, availableMC);
+          return this.getHeatOption(player, availableMC);
         }),
         new SelectOption('Decrease energy production 1 step to gain 8 M€', 'Decrease energy').andThen(() => {
           return this.getMegacreditsOption(player);
         }),
       );
     } else if (availableMC >= 2) {
-      return this.getEnergyOption(player, availableMC);
+      return this.getHeatOption(player, availableMC);
     } else if (player.production.energy >= 1) {
       return this.getMegacreditsOption(player);
     }
