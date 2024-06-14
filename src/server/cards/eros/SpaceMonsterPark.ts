@@ -33,7 +33,7 @@ export class SpaceMonsterPark extends Card implements IProjectCard {
           b.minus().floaters(1).plus().cards(1);
           b.production((pb) => {
             pb.minus().titanium(1);
-          }).nbsp.city();
+          });
         }),
         description: 'When you play a science tag, including this, either add a science resource to this card, or remove a science resource from this card to draw a card.',
       },
