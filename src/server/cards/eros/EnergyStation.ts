@@ -8,13 +8,14 @@ import {Resource} from '../../../common/Resource';
 import {SelectOption} from '../../inputs/SelectOption';
 import {OrOptions} from '../../inputs/OrOptions';
 import {SelectAmount} from '../../inputs/SelectAmount';
-import {SelectPaymentDeferred} from '../../deferredActions/SelectPaymentDeferred';
+
 import {CardRenderer} from '../render/CardRenderer';
 import { all } from '../Options';
 import {GainResources} from '../../deferredActions/GainResources';
 import {Priority} from '../../deferredActions/Priority';
+import { IActionCard } from '../ICard';
 
-export class EnergyStation extends Card implements IProjectCard {
+export class EnergyStation extends Card implements IActionCard, IProjectCard {
   constructor() {
     super({
       type: CardType.ACTIVE,
@@ -27,7 +28,7 @@ export class EnergyStation extends Card implements IProjectCard {
         renderData: CardRenderer.builder((b) => {
           b.effect('When another player is removed a plant, gain 2 Heat.', (eb) => {
             eb.startEffect.plants(1, {all}).colon().heat(2);
-          });
+          }).br;
           // b.plants(1, {all}).colon().heat(2).br;
           b.action('Spend X Plant to gain 2X Heat.', (eb) => {
             eb.text('x').plants(1).startAction.text('2x').heat(1);
@@ -41,6 +42,12 @@ export class EnergyStation extends Card implements IProjectCard {
     });
   }
 
+  public override bespokePlay(player: IPlayer) {
+    // 标记这张牌的所有者
+    player.game.energyStationOwner = player;
+    return undefined;
+  }
+
   public canAct(player: IPlayer): boolean {
     return player.plants >= 1 || player.heat >= 2;
   }
@@ -49,8 +56,9 @@ export class EnergyStation extends Card implements IProjectCard {
     return new SelectAmount(
       'Select amount of plants to gain', 'Gain plants', 1, Math.floor(availableHeat / 2))
       .andThen((amount) => {
-        player.game.defer(new SelectPaymentDeferred(player, amount * 2))
-          .andThen(() => player.stock.add(Resource.PLANTS, amount, {log: true}));
+        player.stock.deduct(Resource.HEAT, 2 * amount);
+        player.game.log('${0} spent ${1} heat', (b) => b.player(player).number(2 * amount));
+        player.stock.add(Resource.PLANTS, amount, {log: true});
         return undefined;
       });
   }
@@ -59,8 +67,12 @@ export class EnergyStation extends Card implements IProjectCard {
     return new SelectAmount(
       'Select amount of plant to spend', 'Gain heat', 1, availablePlants)
       .andThen((amount) => {
-        player.game.defer(new SelectPaymentDeferred(player, amount))
-          .andThen(() => player.stock.add(Resource.HEAT, 2 * amount, {log: true}));
+        player.stock.deduct(Resource.PLANTS, amount);
+        player.game.log('${0} spent ${1} plants', (b) => b.player(player).number(amount));
+        player.stock.add(Resource.HEAT, 2 * amount, {log: true});
+
+        // player.game.defer(new SelectPaymentDeferred(player, amount))
+        //   .andThen(() => player.stock.add(Resource.HEAT, 2 * amount, {log: true}));
         return undefined;
       });
   }
@@ -71,10 +83,10 @@ export class EnergyStation extends Card implements IProjectCard {
     if (availableHeat >= 2 && availablePlants >= 1) {
       return new OrOptions(
         new SelectOption('Spend 2X Heat to gain X Plant', 'Spend Heat').andThen(() => {
-          return this.getHeatOption(player, availableHeat);
+          return this.getPlantsOption(player, availableHeat);
         }),
         new SelectOption('Spend X Plants to gain 2X Heat', 'Spend Plant').andThen(() => {
-          return this.getPlantsOption(player, availablePlants);
+          return this.getHeatOption(player, availablePlants);
         }),
       );
     } else if (availableHeat >= 2) {
@@ -89,6 +101,10 @@ export class EnergyStation extends Card implements IProjectCard {
     if (from === player || amount >= 0) {
       return;
     }
+    const owner = player.game.energyStationOwner;
+
+    console.log('aaa');
+    if (!owner) return;
     if (resource === Resource.PLANTS && amount < 0) {
       // player.game.someoneHasRemovedOtherPlayersPlants = true;
       // FIMXE: 有个 api
@@ -96,10 +112,11 @@ export class EnergyStation extends Card implements IProjectCard {
 
       const heatAmount = 2 * Math.abs(amount);
 
+      // owner.heat += heatAmount;
       player.game.defer(
-        new GainResources(player, Resource.HEAT, {count: heatAmount}).andThen(() => from.game.log(
-          '${0} gained 2 ${1} from ${2}',
-          (b) => b.player(player).string(Resource.HEAT).cardName(this.name as CardName))),
+        new GainResources(owner, Resource.HEAT, {count: heatAmount}).andThen(() => from.game.log(
+          '${0} gained ${1} ${2} from ${3}',
+          (b) => b.player(owner).number(heatAmount).string(Resource.HEAT).cardName(this.name as CardName))),
         player.id !== from.id ? Priority.OPPONENT_TRIGGER : undefined);
     }
   }

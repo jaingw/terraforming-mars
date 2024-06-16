@@ -49,6 +49,7 @@ export function cardsToModel(
       resources: options.showResources ? card.resourceCount : undefined,
       name: card.name,
       calculatedCost: options.showCalculatedCost ? (isIProjectCard(card) && card.cost !== undefined ? player.getCardCost(card) : undefined) : card.cost,
+      lastPay: card.lastPay, // For LunaChain
       warning: warning,
       bonusResource: isIProjectCard(card) ? card.bonusResource : undefined,
       discount: discount,

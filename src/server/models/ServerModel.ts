@@ -263,6 +263,7 @@ export class Server {
       name: card.name,
       resources: card.resourceCount,
       isDisabled: card.isDisabled || false,
+      lastPay: card.lastPay, // For LunaChain
       warnings: Array.from(card.warnings),
       discount: discount,
       data: card.data,

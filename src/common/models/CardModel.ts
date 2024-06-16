@@ -14,6 +14,7 @@ export interface CardModel {
     isSelfReplicatingRobotsCard?: boolean,
     discount?: Array<CardDiscount>,
     isDisabled?: boolean; // Used with Pharmacy Union
+    lastPay?: number; // For LunaChain
     warning?: string | Message;
     warnings?: ReadonlyArray<Warning>;
     reserveUnits?: Readonly<Units>; // Written for The Moon, but useful in other contexts.

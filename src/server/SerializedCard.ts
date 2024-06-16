@@ -12,6 +12,7 @@ export type SerializedCard = {
   allTags?: Array<Tag>; // For Aridor   IdoFront
   isDisabled?: boolean; // For Pharmacy Union and CEO Cards.
   isUsed?: boolean; // For BrotherhoodOfMutants
+  lastPay?: number; // For LunaChain
 
   // for project card
   bonusResource?: OneOrArray<Resource>; // For Robotic Workforce / Mining Area / Mining Rights / Specialized Settlement

@@ -30,7 +30,7 @@ export class SpaceMonsterPark extends Card implements IProjectCard {
         renderData: CardRenderer.builder((b) => {
           b.titanium(1, {played}).slash().earth(1, {played}).slash().venus(1, {played}).colon().floaters(1).br;
           b.or().br;
-          b.minus().floaters(1).plus().cards(1);
+          b.minus().floaters(2).plus().cards(1);
           b.production((pb) => {
             pb.minus().titanium(1);
           });

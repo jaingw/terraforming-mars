@@ -17,6 +17,7 @@
           </template>
         </div>
       <CardExpansion :expansion="getCardExpansion()" :isCorporation="isCorporationCard()"/>
+      <CardCustomizedContent v-if="isLunaChainCard" :amount="getLunaChainPay()" />
       <CardResourceCounter v-if="hasResourceType" :amount="getResourceAmount()" :type="resourceType" />
       <CardExtraContent :card="card" />
       <slot/>
@@ -30,6 +31,8 @@ import Vue from 'vue';
 import {CardModel} from '@/common/models/CardModel';
 import CardTitle from './CardTitle.vue';
 import CardResourceCounter from './CardResourceCounter.vue';
+import CardCustomizedContent from './CardCustomizedContent.vue';
+
 import CardCost from './CardCost.vue';
 import CardExtraContent from './CardExtraContent.vue';
 import CardExpansion from './CardExpansion.vue';
@@ -60,6 +63,7 @@ export default Vue.extend({
     CardTitle,
     CardHelp,
     CardResourceCounter,
+    CardCustomizedContent,
     CardCost,
     CardExtraContent,
     CardExpansion,
@@ -169,10 +173,19 @@ export default Vue.extend({
     isStandardProject() : boolean {
       return this.getCardType() === CardType.STANDARD_PROJECT || this.getCardType() === CardType.STANDARD_ACTION;
     },
+    getLunaChainPay(): number | undefined {
+      console.log('luna chain', this.isLunaChainCard, this.card, this.isCorporationCard() ? this.card.lastPay : undefined);
+      return this.isCorporationCard() ? this.card.lastPay : undefined;
+    },
   },
   computed: {
     hasResourceType(): boolean {
       return this.card.isSelfReplicatingRobotsCard === true || this.cardInstance.resourceType !== undefined || this.robotCard !== undefined;
+    },
+    isLunaChainCard(): boolean {
+      console.log('luna chain', this.cardInstance.name === 'Luna Chain');
+
+      return this.cardInstance.name === 'Luna Chain';
     },
     resourceType(): CardResource {
       if (this.robotCard !== undefined || this.card.isSelfReplicatingRobotsCard === true) return CardResource.RESOURCE_CUBE;

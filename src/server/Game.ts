@@ -171,6 +171,9 @@ export class Game implements IGame, Logger {
   public cardDrew: boolean = false;
   // 星际领航者的殖民判定
   public finishFirstTrading: boolean = false;
+    // Energy Station 判定
+    public energyStationOwner?: IPlayer;
+
   // Syndicate Pirate Raids
   public syndicatePirateRaider?: PlayerId;
   // Gagarin Mobile Base
@@ -418,7 +421,7 @@ export class Game implements IGame, Logger {
         player.dealtCorporationCards.push(...corporationDeck.drawN(game, gameOptions.startingCorporations));
         if (gameOptions.initialDraftVariant === false) {
           // 发牌
-          player.dealtProjectCards.push(...projectDeck.drawN(game, 10));
+          player.dealtProjectCards.push(...projectDeck.drawN(game, 4));
         }
         if (gameOptions.preludeExtension) {
           player.dealtPreludeCards.push(...preludeDeck.drawN(game, constants.PRELUDE_CARDS_DEALT_PER_PLAYER));
@@ -543,6 +546,7 @@ export class Game implements IGame, Logger {
         return {name: m.name} as IMilestone;
       }),
       monsInsuranceOwner: this.monsInsuranceOwner?.serializeId(),
+      energyStationOwner: this.energyStationOwner?.serializeId(),
       moonData: MoonData.serialize(this.moonData),
       oxygenLevel: this.oxygenLevel,
       passedPlayers: Array.from(this.passedPlayers).map((p) => p.serializeId()),
@@ -2290,6 +2294,10 @@ export class Game implements IGame, Logger {
       }
       if (this.monsInsuranceOwner !== undefined && this.monsInsuranceOwner === player) {
         this.monsInsuranceOwner = undefined;
+      }
+
+      if (this.energyStationOwner !== undefined && this.energyStationOwner === player) {
+        this.energyStationOwner = undefined;
       }
       player.exited = true;
       player.setWaitingFor(undefined, undefined);

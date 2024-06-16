@@ -18,6 +18,9 @@ describe('SpaceMonsterPark', function() {
     [game, player] = testGame(2);
   });
 
+  it('Cannot play when have no titanium production', function() {
+    expect(card.canPlay(player)).to.eq(false);
+  });
   it('Should play', function() {
     player.playedCards.push(card);
     card.play(player);
