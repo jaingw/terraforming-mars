@@ -171,8 +171,8 @@ export class Game implements IGame, Logger {
   public cardDrew: boolean = false;
   // 星际领航者的殖民判定
   public finishFirstTrading: boolean = false;
-    // Energy Station 判定
-    public energyStationOwner?: IPlayer;
+  // Energy Station 判定
+  public energyStationOwner?: IPlayer;
 
   // Syndicate Pirate Raids
   public syndicatePirateRaider?: PlayerId;

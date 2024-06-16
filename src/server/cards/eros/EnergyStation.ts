@@ -10,10 +10,10 @@ import {OrOptions} from '../../inputs/OrOptions';
 import {SelectAmount} from '../../inputs/SelectAmount';
 
 import {CardRenderer} from '../render/CardRenderer';
-import { all } from '../Options';
+import {all} from '../Options';
 import {GainResources} from '../../deferredActions/GainResources';
 import {Priority} from '../../deferredActions/Priority';
-import { IActionCard } from '../ICard';
+import {IActionCard} from '../ICard';
 
 export class EnergyStation extends Card implements IActionCard, IProjectCard {
   constructor() {

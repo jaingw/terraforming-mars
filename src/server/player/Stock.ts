@@ -7,7 +7,7 @@ import {Units} from '../../common/Units';
 import {CrashSiteCleanup} from '../cards/promo/CrashSiteCleanup';
 import {CardName} from '../../common/cards/CardName';
 import {Phase} from '../../common/Phase';
-import { EnergyStation } from '../cards/eros/EnergyStation';
+import {EnergyStation} from '../cards/eros/EnergyStation';
 
 export class Stock {
   private units: Units;
@@ -136,7 +136,7 @@ export class Stock {
     if (isIPlayer(from)) {
       LawSuit.resourceHook(this.player, resource, delta, from);
       CrashSiteCleanup.resourceHook(this.player, resource, delta, from);
-      
+
       if (resource === Resource.PLANTS && options?.from !== undefined && delta < 0 && (isIPlayer(from) && from.id !== this.player.id)) {
         EnergyStation.resourceHook(this.player, resource, delta, from);
       }

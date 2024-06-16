@@ -83,7 +83,7 @@ import {UnderworldExpansion} from './underworld/UnderworldExpansion';
 import {Counter} from './behavior/Counter';
 import {TRSource} from '../common/cards/TRSource';
 import {UnexpectedInput} from './inputs/UnexpectedInput';
-import { LunaChain } from './cards/eros/corp/LunaChain';
+import {LunaChain} from './cards/eros/corp/LunaChain';
 
 const THROW_WAITING_FOR = Boolean(process.env.THROW_WAITING_FOR);
 
@@ -978,7 +978,6 @@ export class Player implements IPlayer {
   }
 
   public playCard(selectedCard: IProjectCard, payment?: Payment, cardAction: CardAction = 'add'): void {
-
     ColoniesHandler.onCardPlayed(this.game, selectedCard);
 
     if (selectedCard.type !== CardType.PROXY) {
@@ -999,7 +998,7 @@ export class Player implements IPlayer {
         const lunaChain = this.getCorporation(CardName.LUNA_CHAIN) as LunaChain;
         console.log('连月的逻辑', payment.megaCredits, lunaChain.lastPay);
         if (payment.megaCredits === lunaChain.lastPay) {
-      this.stock.add(Resource.MEGACREDITS, 3, {log: true});
+          this.stock.add(Resource.MEGACREDITS, 3, {log: true});
         } else {
           lunaChain.lastPay = payment.megaCredits;
         }

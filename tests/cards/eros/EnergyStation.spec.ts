@@ -5,7 +5,7 @@ import {Game} from '../../../src/server/Game';
 import {OrOptions} from '../../../src/server/inputs/OrOptions';
 import {TestPlayer} from '../../TestPlayer';
 import {testGame} from '../../TestGame';
-import { EnergyStation } from '../../../src/server/cards/eros/EnergyStation';
+import {EnergyStation} from '../../../src/server/cards/eros/EnergyStation';
 import {Resource} from '../../../src/common/Resource';
 import {SelectAmount} from '../../../src/server/inputs/SelectAmount';
 import {runAllActions} from '../../TestingUtils';
