@@ -665,6 +665,7 @@ export enum CardName {
     STARCORE_PLUNDER = 'Starcore Plunter',
     JOVIAN_EXPEDITION = 'Jovian Expedition',
     WG_PARTERNSHIP = 'WG Parternship',
+    WG_PARTNERSHIP = 'WG Partnership',
     COMMUNITY_WORKER = 'Community Worker',
     INCITE_ENDER = 'Incite Ender',
     TRADE_NAVIGATOR = 'Trade Navigator',
