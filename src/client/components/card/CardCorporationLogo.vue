@@ -153,7 +153,7 @@
       <div class="card-labour-union-logo">Labour Union</div>
     </template>
     <template v-else-if="title === CardName.CHAOS">
-      <span class="card-chaos-logo">CHAOS</span><div class="naming-award naming-award-chaos"></div>
+      <span class="card-chaos-logo">CHAOS</span>
     </template>
     <template v-else-if="title === CardName.IDO_FRONT">
       <span class="card-idfront-logo">Id Front <span style="font-size:20px;display:inline-block;">&#x25CF;</span> 前线基地</span>
@@ -162,13 +162,13 @@
       <span class="card-wgparternship-logo">WG Parternship</span>
     </template>
     <template v-else-if="title === CardName.INCITE_ENDER">
-      <div class="card-incite-ender-logo"></div><div class="naming-award naming-award-incite"></div>
+      <div class="card-incite-ender-logo"></div>
     </template>
     <template v-else-if="title === CardName.TRADE_NAVIGATOR">
-      <div class="card-trade-navigator-logo"></div><div class="naming-award naming-award-trade-navigator"></div>
+      <div class="card-trade-navigator-logo"></div>
     </template>
     <template v-else-if="title === CardName.BROTHERHOOD_OF_MUTANTS">
-      <div class="card-mutant-logo"></div><div class="naming-award naming-award-brotherhood"></div>
+      <div class="card-mutant-logo"></div>
     </template>
     <template v-else-if="title === CardName.TEIAI_GROUP">
       <div class="card-teiai-group-logo"></div>

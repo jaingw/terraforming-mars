@@ -173,9 +173,8 @@ export default Vue.extend({
     isStandardProject() : boolean {
       return this.getCardType() === CardType.STANDARD_PROJECT || this.getCardType() === CardType.STANDARD_ACTION;
     },
-    getLunaChainPay(): number | undefined {
-      console.log('luna chain', this.isLunaChainCard, this.card, this.isCorporationCard() ? this.card.lastPay : undefined);
-      return this.isCorporationCard() ? this.card.lastPay : undefined;
+    getLunaChainPay(): number {
+      return this.isCorporationCard() ? this.card.lastPay ? this.card.lastPay : -1 : -1;
     },
   },
   computed: {
@@ -183,8 +182,6 @@ export default Vue.extend({
       return this.card.isSelfReplicatingRobotsCard === true || this.cardInstance.resourceType !== undefined || this.robotCard !== undefined;
     },
     isLunaChainCard(): boolean {
-      console.log('luna chain', this.cardInstance.name === 'Luna Chain');
-
       return this.cardInstance.name === 'Luna Chain';
     },
     resourceType(): CardResource {

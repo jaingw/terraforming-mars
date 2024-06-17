@@ -8,13 +8,13 @@ export class WGPartnership extends PreludeCard {
   constructor() {
     super({
       name: CardName.WG_PARTNERSHIP,
-      tags: [Tag.SPACE],
+      tags: [Tag.EARTH],
       // startingMegacredits: -0,
 
       metadata: {
         cardNumber: 'Q101',
         renderData: CardRenderer.builder((b) => {
-          b.startEffect.temperature(1).slash().oxygen(1).slash().venus(1).slash().oceans(1, {size: Size.SMALL}).asterix();
+          b.temperature(1, {size: Size.SMALL}).slash().oxygen(1).slash().venus(1, {size: Size.SMALL}).slash().oceans(1, {size: Size.SMALL}).asterix();
         }),
         description: 'You gain the bonus of world government.',
       },

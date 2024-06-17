@@ -3,7 +3,8 @@
       <div v-if="lifeFound()" class="little-green-men" />
       <div v-if="isMiningTileOnSteel()" class="mined-metal mined-steel" />
       <div v-if="isMiningTileOnTitanium()" class="mined-metal mined-titanium" />
-      <div v-if="awardCards(card)" :class="awardClass(card)" />
+      <!-- <div v-if="awardCards(card)" :class="awardClass(card)" /> -->
+      <CardAwardPlayer :name="card.name" />
       <div v-if="isRulingPolicy(card)" class="card-extra-ruling-policy" >
         <div class="dominant-party-name">
           <div :class="'party-name party-name--'+partyNameToCss(card)" v-i18n>{{ card.data }}</div>
@@ -27,6 +28,7 @@ import {KELVINISTS_POLICY_1} from '@/server/turmoil/parties/Kelvinists';
 import {REDS_POLICY_1} from '@/server/turmoil/parties/Reds';
 import {GREENS_POLICY_1} from '@/server/turmoil/parties/Greens';
 import Agendas from '@/client/components/turmoil/Agendas.vue';
+import CardAwardPlayer from '@/client/components/card/CardAwardPlayer.vue';
 
 
 export default Vue.extend({
@@ -39,6 +41,7 @@ export default Vue.extend({
   },
   components: {
     'agendas': Agendas,
+    'CardAwardPlayer': CardAwardPlayer,
   },
   methods: {
     isMiningTileOnSteel() {

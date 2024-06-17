@@ -678,7 +678,6 @@ export class Player implements IPlayer {
       action.options.push(
         new SelectOption('Increase temperature', 'Increase').andThen(() => {
           game.increaseTemperature(this, 1);
-          // TODO: 加一个前序的 hook
           game.log('${0} acted as World Government and increased temperature', (b) => b.player(this));
           return undefined;
         }),
@@ -996,7 +995,7 @@ export class Player implements IPlayer {
       // 获取支付费用,作为一个全局变量储存起来,也需要序列化
       if (this.isCorporation(CardName.LUNA_CHAIN)) {
         const lunaChain = this.getCorporation(CardName.LUNA_CHAIN) as LunaChain;
-        console.log('连月的逻辑', payment.megaCredits, lunaChain.lastPay);
+        // console.log('连月的逻辑', payment.megaCredits, lunaChain.lastPay);
         if (payment.megaCredits === lunaChain.lastPay) {
           this.stock.add(Resource.MEGACREDITS, 3, {log: true});
         } else {
