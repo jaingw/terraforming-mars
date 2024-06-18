@@ -59,7 +59,7 @@ export class GameCards {
       [gameOptions.aresExtension, ARES_CARD_MANIFEST],
       [gameOptions.promoCardsOption, PROMO_CARD_MANIFEST],
       [gameOptions.communityCardsOption, COMMUNITY_CARD_MANIFEST],
-      [true, EROS_CARD_MANIFEST],
+      [gameOptions.erosCardsOption, EROS_CARD_MANIFEST],
       [gameOptions.moonExpansion, MOON_CARD_MANIFEST],
       [gameOptions.pathfindersExpansion, PATHFINDERS_CARD_MANIFEST],
       [gameOptions.ceoExtension, CEO_CARD_MANIFEST],
