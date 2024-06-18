@@ -18,9 +18,13 @@ const awardMapping: Map<CardName, IAward> = new Map<CardName, IAward>([
   [CardName.STARCORE_MINING, {name: '钝钝'}],
   [CardName.EM_DRIVE, {name: 'ddxy'}],
   [CardName.INCITE_ENDER, {name: 'Ender', top: 6, left: 80}],
-  [CardName.CHAOS, {name: '天使', top: 6, left: -36}],
+  [CardName.CHAOS, {name: '天使', top: 6, left: -26}],
   [CardName.TRADE_NAVIGATOR, {name: '霞', top: 68, left: 123}],
   [CardName.BROTHERHOOD_OF_MUTANTS, {name: 'ddxy', top: 68, left: 123}],
+  [CardName.SPACE_MONSTER_PARK, {name: '半仙', top: 257, left: 59}],
+  [CardName.ENERGY_STATION, {name: '霞', top: 62, left: 151}],
+  [CardName.LUNA_CHAIN, {name: '明月', top: 68, left: 123}],
+  [CardName.WG_PARTNERSHIP, {name: '囧囧', top: 223, left: 61}],
 ]);
 
 

@@ -35,7 +35,7 @@ export class SpaceMonsterPark extends Card implements IProjectCard {
             pb.minus().titanium(1);
           });
         }),
-        description: 'When you play a science tag, including this, either add a science resource to this card, or remove a science resource from this card to draw a card.',
+        description: 'Decrease your titanium production 1 step. When you play a Space/Earth/Venus tag, including these, either add a floater resource to this card, or remove 2 floater resource from this card to draw a card.',
       },
     });
   }
