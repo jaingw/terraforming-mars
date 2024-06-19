@@ -28,7 +28,7 @@ export class SpaceMonsterPark extends Card implements IProjectCard {
       metadata: {
         cardNumber: 'Q59',
         renderData: CardRenderer.builder((b) => {
-          b.titanium(1, {played}).slash().earth(1, {played}).slash().venus(1, {played}).colon().floaters(1).br;
+          b.space({played}).slash().earth(1, {played}).slash().venus(1, {played}).colon().floaters(1).br;
           b.or().br;
           b.minus().floaters(2).plus().cards(1);
           b.production((pb) => {
