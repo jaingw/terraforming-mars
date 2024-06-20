@@ -6,6 +6,7 @@ import {SerializedCard} from '../../../SerializedCard';
 
 export class LunaChain extends CorporationCard {
   public lastPay?: number = -1;
+  public triggerCount?: number = 0;
   constructor() {
     super({
       name: CardName.LUNA_CHAIN,
@@ -39,9 +40,11 @@ export class LunaChain extends CorporationCard {
 
   public serialize(serialized: SerializedCard) {
     serialized.lastPay = this.lastPay;
+    serialized.triggerCount = this.triggerCount;
   }
 
   public deserialize(serialized: SerializedCard) {
     this.lastPay = serialized.lastPay;
+    this.triggerCount = serialized.triggerCount;
   }
 }

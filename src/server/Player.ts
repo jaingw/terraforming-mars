@@ -998,6 +998,9 @@ export class Player implements IPlayer {
         // console.log('连月的逻辑', payment.megaCredits, lunaChain.lastPay);
         if (payment.megaCredits === lunaChain.lastPay) {
           this.stock.add(Resource.MEGACREDITS, 3, {log: true});
+          if (lunaChain.triggerCount !== undefined) lunaChain.triggerCount ++;
+          // NOTE: debug
+          this.game.log('${0} triggered Luna Chain ${1} times in this game', (b) => b.player(this).number(lunaChain.triggerCount || 0));
         } else {
           lunaChain.lastPay = payment.megaCredits;
         }
