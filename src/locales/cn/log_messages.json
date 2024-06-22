@@ -33,6 +33,8 @@
     "${0}'s ${1} amount ${2} by ${3} by Global Event":"${0} 的 ${1} 资源被全球事件${2}了${3}",
     "${0} used Turmoil Scientists draw action":"${0}使用了科学家党的抽卡行动",
     "${0} gained ${1} ${2}":"${0}获得了${1} ${2}",
+    "${0} triggered Luna Chain ${1} times in this game": "${0} 触发了连月 ${1} 次",
+    "${0} now need to pay ${1} to trigger this effect": "${0} 下张牌需要支付 ${1} 以触发连月技能",
     "titanium":"钛",
     "influence":"影响力",
     "heat":"热能",
@@ -76,7 +78,7 @@
     "${0} removed ${1} ${2} from ${3} to ${4}":"${0} removed ${1} ${2} from ${3} to ${4}",
     "${0} gained ${1} TR":"${0}获得${1}改造度",
     "${0} card(s) were discarded":"${0}张卡被丢弃",
-    
+
     "${0} ${1} ${2} on row ${3} position ${4}": "${0} ${1} ${2} 在第 ${3} 排的第 ${4} 个位置上",
     "placed":"放置",
     "greenery tile":"绿化版块",
