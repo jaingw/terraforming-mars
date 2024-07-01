@@ -54,6 +54,12 @@ export function serializePlayedCard(card: ICard): SerializedCard {
   if (card.isUsed !== undefined) {
     serialized.isUsed = card.isUsed;
   }
+  if (card.lastPay !== undefined) {
+    serialized.lastPay = card.lastPay;
+  }
+  if (card.triggerCount !== undefined) {
+    serialized.triggerCount = card.triggerCount;
+  }
   if (card.data !== undefined) {
     serialized.data = card.data;
   }

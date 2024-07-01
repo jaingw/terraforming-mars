@@ -83,6 +83,7 @@ import {UnderworldExpansion} from './underworld/UnderworldExpansion';
 import {Counter} from './behavior/Counter';
 import {TRSource} from '../common/cards/TRSource';
 import {UnexpectedInput} from './inputs/UnexpectedInput';
+import {LunaChain} from './cards/eros/corp/LunaChain';
 
 const THROW_WAITING_FOR = Boolean(process.env.THROW_WAITING_FOR);
 
@@ -976,10 +977,6 @@ export class Player implements IPlayer {
   }
 
   public playCard(selectedCard: IProjectCard, payment?: Payment, cardAction: CardAction = 'add'): void {
-    if (payment !== undefined) {
-      this.pay(payment);
-    }
-
     ColoniesHandler.onCardPlayed(this.game, selectedCard);
 
     if (selectedCard.type !== CardType.PROXY) {
@@ -991,6 +988,25 @@ export class Player implements IPlayer {
     const action = selectedCard.play(this);
     this.defer(action, Priority.DEFAULT);
 
+    if (payment !== undefined) {
+      this.pay(payment);
+
+      // 连月的逻辑
+      // 获取支付费用,作为一个全局变量储存起来,也需要序列化
+      if (this.isCorporation(CardName.LUNA_CHAIN)) {
+        const lunaChain = this.getCorporation(CardName.LUNA_CHAIN) as LunaChain;
+        // console.log('连月的逻辑', payment.megaCredits, lunaChain.lastPay);
+        if (payment.megaCredits === lunaChain.lastPay) {
+          this.stock.add(Resource.MEGACREDITS, 3, {log: true});
+          if (lunaChain.triggerCount !== undefined) lunaChain.triggerCount ++;
+          // NOTE: debug
+          this.game.log('${0} triggered Luna Chain ${1} times in this game', (b) => b.player(this).number(lunaChain.triggerCount || 0));
+        } else {
+          lunaChain.lastPay = payment.megaCredits;
+        }
+        this.game.log('${0} now need to pay ${1} to trigger this effect', (b) => b.player(this).number(payment.megaCredits));
+      }
+    }
     // This could probably include 'nothing' but for now this will work.
     if (cardAction !== 'discard') {
       // Remove card from hand

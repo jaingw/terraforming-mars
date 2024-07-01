@@ -49,6 +49,10 @@ import {JovianDefenseDepartment} from '../../cards/eros/JovianDefenseDepartment'
 import {Trantor} from '../../cards/eros/Trantor';
 import {CardName} from '../../../common/cards/CardName';
 import {ModuleManifest} from '../ModuleManifest';
+import {SpaceMonsterPark} from './SpaceMonsterPark';
+import {EnergyStation} from './EnergyStation';
+import {LunaChain} from './corp/LunaChain';
+import {WGPartnership} from './WGPartnership';
 
 
 export const EROS_CARD_MANIFEST = new ModuleManifest({
@@ -90,6 +94,8 @@ export const EROS_CARD_MANIFEST = new ModuleManifest({
     [CardName.MARTIAN_FENCING]: {Factory: MartianFencing}, // Q56
     [CardName.JOVIAN_DEFENSE_DEPARTMENT]: {Factory: JovianDefenseDepartment}, // Q57
     [CardName.TRANTOR]: {Factory: Trantor}, // Q58
+    [CardName.SPACE_MONSTER_PARK]: {Factory: SpaceMonsterPark}, // Q59,
+    [CardName.ENERGY_STATION]: {Factory: EnergyStation}, // Q60,
 
   },
   corporationCards: {
@@ -107,9 +113,13 @@ export const EROS_CARD_MANIFEST = new ModuleManifest({
     [CardName.IMPERIAL_STAR_DESTROYER]: {Factory: ImperialStarDestroyer, compatibility: ['colonies']}, // Q31
     // [ CardName.SITH_ORGANIZATIONS]:{Factory: SithOrganizations, compatibility: ['turmoil']}, // Q32 没什么人玩，评价也不咋样
     [CardName.RUNCITER_ASSOCIATES]: {Factory: RunciterAssociates}, // Q33
+    [CardName.LUNA_CHAIN]: {Factory: LunaChain}, // Q34
+
 
   },
   preludeCards: {
+    [CardName.WG_PARTNERSHIP]: {Factory: WGPartnership}, // Q101
+
   },
 
 });

@@ -146,6 +146,8 @@ export interface ICard {
   tilesBuilt: ReadonlyArray<TileType>;
   isDisabled?: boolean; // For Pharmacy Union and CEO cards.
   isUsed?: boolean; // For BrotherhoodOfMutants
+  lastPay?: number; // For LunaChain
+  triggerCount?: number; // For cards that trigger on a certain number of events.
   /**
    * Extra data that the game will serialize and deserialize along with the card.
    *

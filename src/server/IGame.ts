@@ -84,6 +84,8 @@ export interface IGame extends Logger {
   // Card-specific data
   // Mons Insurance promo corp
   monsInsuranceOwner?: IPlayer; // Not serialized
+  energyStationOwner?: IPlayer; // Not serialized
+  wgPartnershipOwner?: IPlayer; // Not serialized
   // Crash Site promo project
   someoneHasRemovedOtherPlayersPlants: boolean;
   // United Nations Mission One community corp

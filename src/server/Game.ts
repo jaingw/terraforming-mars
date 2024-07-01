@@ -171,6 +171,11 @@ export class Game implements IGame, Logger {
   public cardDrew: boolean = false;
   // 星际领航者的殖民判定
   public finishFirstTrading: boolean = false;
+  // Energy Station 判定
+  public energyStationOwner?: IPlayer;
+  // WG Partnership 判断
+  public wgPartnershipOwner?: IPlayer;
+
   // Syndicate Pirate Raids
   public syndicatePirateRaider?: PlayerId;
   // Gagarin Mobile Base
@@ -227,6 +232,8 @@ export class Game implements IGame, Logger {
     this.players.forEach((player) => {
       player.game = this;
       if (player.isCorporation(CardName.MONS_INSURANCE)) this.monsInsuranceOwner = player;
+      if (player.playedCards.filter((card) => card.name === CardName.ENERGY_STATION).length > 0) this.energyStationOwner = player;
+      if (player.playedCards.filter((card) => card.name === CardName.WG_PARTNERSHIP).length > 0) this.wgPartnershipOwner = player;
     });
 
     this.tags = ALL_TAGS.filter((tag) => {
@@ -422,6 +429,7 @@ export class Game implements IGame, Logger {
         }
         if (gameOptions.preludeExtension) {
           player.dealtPreludeCards.push(...preludeDeck.drawN(game, constants.PRELUDE_CARDS_DEALT_PER_PLAYER));
+          // player.dealtPreludeCards.push(...preludeDeck.drawN(game, 36));
         }
         if (gameOptions.ceoExtension) {
           const max = Math.min(gameOptions.startingCeos, Math.floor(ceoDeck.drawPile.length / players.length));
@@ -543,6 +551,8 @@ export class Game implements IGame, Logger {
         return {name: m.name} as IMilestone;
       }),
       monsInsuranceOwner: this.monsInsuranceOwner?.serializeId(),
+      energyStationOwner: this.energyStationOwner?.serializeId(),
+      wgPartnershipOwner: this.wgPartnershipOwner?.serializeId(),
       moonData: MoonData.serialize(this.moonData),
       oxygenLevel: this.oxygenLevel,
       passedPlayers: Array.from(this.passedPlayers).map((p) => p.serializeId()),
@@ -1442,6 +1452,13 @@ export class Game implements IGame, Logger {
       TurmoilHandler.onGlobalParameterIncrease(player, GlobalParameter.OXYGEN, steps);
       player.increaseTerraformRating(steps);
     }
+
+    // wg hook
+    if (this.phase === Phase.SOLAR && this.wgPartnershipOwner) {
+      TurmoilHandler.onGlobalParameterIncrease(this.wgPartnershipOwner, GlobalParameter.OXYGEN, steps);
+      player.increaseTerraformRating(steps);
+    }
+
     if (this.oxygenLevel < constants.OXYGEN_LEVEL_FOR_TEMPERATURE_BONUS &&
       this.oxygenLevel + steps >= constants.OXYGEN_LEVEL_FOR_TEMPERATURE_BONUS) {
       this.increaseTemperature(player, 1);
@@ -1471,8 +1488,7 @@ export class Game implements IGame, Logger {
 
     // Literal typing makes |increments| a const
     const steps = Math.min(increments, (constants.MAX_VENUS_SCALE - this.venusScaleLevel) / 2);
-
-    if (this.phase !== Phase.SOLAR) {
+    const execute = (player: IPlayer) => {
       if (this.venusScaleLevel < constants.VENUS_LEVEL_FOR_CARD_BONUS &&
         this.venusScaleLevel + steps * 2 >= constants.VENUS_LEVEL_FOR_CARD_BONUS) {
         player.drawCard();
@@ -1499,6 +1515,15 @@ export class Game implements IGame, Logger {
       }
       TurmoilHandler.onGlobalParameterIncrease(player, GlobalParameter.VENUS, steps);
       player.increaseTerraformRating(steps);
+    };
+
+    if (this.phase !== Phase.SOLAR) {
+      execute(player);
+    }
+
+    // wg hook
+    if (this.phase === Phase.SOLAR && this.wgPartnershipOwner) {
+      execute(this.wgPartnershipOwner);
     }
 
     // Check for Aphrodite corporation
@@ -1531,8 +1556,7 @@ export class Game implements IGame, Logger {
 
     // Literal typing makes |increments| a const
     const steps = Math.min(increments, (constants.MAX_TEMPERATURE - this.temperature) / 2);
-
-    if (this.phase !== Phase.SOLAR) {
+    const execute = (player: IPlayer) => {
       // 热公司突破：任何人升温得1热。
       const helion = this.players.find((player) => player.isCorporation(CardName._HELION_));
       if (helion !== undefined) {
@@ -1556,6 +1580,15 @@ export class Game implements IGame, Logger {
       player.playedCards.forEach((card) => card.onGlobalParameterIncrease?.(player, GlobalParameter.TEMPERATURE, steps));
       TurmoilHandler.onGlobalParameterIncrease(player, GlobalParameter.TEMPERATURE, steps);
       player.increaseTerraformRating(steps);
+    };
+
+    if (this.phase !== Phase.SOLAR) {
+      execute(player);
+    }
+
+    // wg hook
+    if (this.phase === Phase.SOLAR && this.wgPartnershipOwner) {
+      execute(this.wgPartnershipOwner);
     }
 
     // BONUS FOR OCEAN TILE AT 0
@@ -1628,14 +1661,23 @@ export class Game implements IGame, Logger {
     this.simpleAddTile(player, space, tile);
 
     // Part 5. Collect the bonuses
-    if (this.phase !== Phase.SOLAR) {
+    const execute = (player: IPlayer) => {
       this.grantPlacementBonuses(player, space, coveringExistingTile);
 
       AresHandler.ifAres(this, (aresData) => {
         AresHandler.maybeIncrementMilestones(aresData, player, space);
       });
+    };
+    if (this.phase !== Phase.SOLAR) {
+      execute(player);
     } else {
       space.player = undefined;
+    }
+
+    console.log(this.wgPartnershipOwner?.name, this.players[0].name);
+    // wg hook
+    if (this.phase === Phase.SOLAR && this.wgPartnershipOwner) {
+      execute(this.wgPartnershipOwner);
     }
 
     this.players.forEach((p) => {
@@ -1833,9 +1875,17 @@ export class Game implements IGame, Logger {
     this.addTile(player, space, {
       tileType: TileType.OCEAN,
     });
+    // TODO: 在这里判断一下奖励
+    // TODO: 将世界政府的受益人变成对应玩家
     if (this.phase !== Phase.SOLAR && this.phase !== Phase.INTERGENERATION) {
       TurmoilHandler.onGlobalParameterIncrease(player, GlobalParameter.OCEANS);
       player.increaseTerraformRating();
+    }
+
+    // wg hook
+    if (this.phase === Phase.SOLAR && this.wgPartnershipOwner) {
+      TurmoilHandler.onGlobalParameterIncrease(this.wgPartnershipOwner, GlobalParameter.OCEANS);
+      this.wgPartnershipOwner.increaseTerraformRating();
     }
     AresHandler.ifAres(this, (aresData) => {
       AresHandler.onOceanPlaced(aresData, player);
@@ -2166,6 +2216,12 @@ export class Game implements IGame, Logger {
     if (d.monsInsuranceOwner !== undefined) {
       this.monsInsuranceOwner = this.players.find((player) => player.id === d.monsInsuranceOwner?.id);
     }
+    if (d.energyStationOwner !== undefined) {
+      this.energyStationOwner = this.players.find((player) => player.id === d.energyStationOwner?.id);
+    }
+    if (d.wgPartnershipOwner !== undefined) {
+      this.wgPartnershipOwner = this.players.find((player) => player.id === d.wgPartnershipOwner?.id);
+    }
 
     // Reinit undrafted cards map
     this.unDraftedCards = new Map<Player, IProjectCard[]>();
@@ -2288,6 +2344,14 @@ export class Game implements IGame, Logger {
       }
       if (this.monsInsuranceOwner !== undefined && this.monsInsuranceOwner === player) {
         this.monsInsuranceOwner = undefined;
+      }
+
+      if (this.energyStationOwner !== undefined && this.energyStationOwner === player) {
+        this.energyStationOwner = undefined;
+      }
+
+      if (this.wgPartnershipOwner !== undefined && this.wgPartnershipOwner === player) {
+        this.wgPartnershipOwner = undefined;
       }
       player.exited = true;
       player.setWaitingFor(undefined, undefined);

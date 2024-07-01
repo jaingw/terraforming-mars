@@ -665,6 +665,7 @@ export enum CardName {
     STARCORE_PLUNDER = 'Starcore Plunter',
     JOVIAN_EXPEDITION = 'Jovian Expedition',
     WG_PARTERNSHIP = 'WG Parternship',
+    WG_PARTNERSHIP = 'WG Partnership',
     COMMUNITY_WORKER = 'Community Worker',
     INCITE_ENDER = 'Incite Ender',
     TRADE_NAVIGATOR = 'Trade Navigator',
@@ -687,6 +688,9 @@ export enum CardName {
     SITH_ORGANIZATIONS = 'Sith Organizations',
     RUNCITER_ASSOCIATES = 'Runciter Associates',
     JOVIAN_DEFENSE_DEPARTMENT = 'Jovian Defense Department',
+    SPACE_MONSTER_PARK = 'Space Monster Park',
+    ENERGY_STATION = 'Energy Station',
+    LUNA_CHAIN = 'Luna Chain',
 
     // The Moon.
     MARE_NECTARIS_MINE = 'Mare Nectaris Mine',

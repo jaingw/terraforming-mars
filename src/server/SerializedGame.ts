@@ -51,6 +51,8 @@ export type SerializedGame = {
     lastSaveId: number;
     milestones: Array<IMilestone>;
     monsInsuranceOwner: SerializedPlayerId | undefined;
+    energyStationOwner: SerializedPlayerId | undefined;
+    wgPartnershipOwner: SerializedPlayerId | undefined;
     moonData: SerializedMoonData | undefined;
     nomadSpace: SpaceId | undefined;
     pathfindersData: SerializedPathfindersData | undefined;
