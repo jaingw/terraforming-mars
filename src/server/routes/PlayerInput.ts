@@ -1,5 +1,5 @@
 import {GameLoader} from '../database/GameLoader';
-import * as responses from './responses';
+import * as responses from '../server/responses';
 import {IPlayer} from '../IPlayer';
 import {Server} from '../models/ServerModel';
 import {Handler} from './Handler';
@@ -11,6 +11,7 @@ import {runId} from '../utils/server-ids';
 import {AppError} from '../server/AppError';
 import {statusCode} from '../../common/http/statusCode';
 import {InputError} from '../inputs/InputError';
+import {UnexpectedInput} from '../inputs/UnexpectedInput';
 
 export class PlayerInput extends Handler {
   public static readonly INSTANCE = new PlayerInput();
@@ -44,7 +45,7 @@ export class PlayerInput extends Handler {
       return;
     }
     const user = GameLoader.getUserByPlayer(player);
-    if (user !== undefined && user.id !== userId) {
+    if (user !== undefined && !user.checkToken(userId)) {
       responses.notFound(req, res);
       return;
     }
@@ -67,15 +68,12 @@ export class PlayerInput extends Handler {
           const playerBlockModel = Server.getPlayerBlock(player, userId);
           responses.writeJson(res, Server.getPlayerModel(player, playerBlockModel));
           resolve();
-        } catch (e) {
-          if (!(e instanceof AppError || e instanceof InputError)) {
-            console.warn('Error processing input from player', e);
-          }
+        } catch (e :any ) {
           // TODO(kberg): use responses.ts, though that changes the output.
           res.writeHead(statusCode.badRequest, {
             'Content-Type': 'application/json',
           });
-          if (e instanceof Error && e.name === 'UnexpectedInput') {
+          if ( e instanceof UnexpectedInput || (e as Error).name === 'UnexpectedInput' || e instanceof AppError || e instanceof InputError) {
             console.warn('Error processing input from player.'+player.id+': ' + body + ',' + e.message);
           } else {
             console.warn('Error processing input from player.'+player.id+': ' + body + ',', e);

@@ -150,7 +150,7 @@
   "Spend 2 titanium. Place a mine tile on The Moon and raise the mining rate 1 step. Increase your steel, titanium, and heat production 1 step each. Increase your energy production 2 steps.": "",
 
   "Lunar Mine Urbanization": "",
-  "Requires you have 1 mine tile. Increase your M€ production 1 step. Replace one of your mine tiles with this special tile. Raise the habitat rate 1 step. This tile counts both as a habitat and a mine tile.": "",
+  "Requires you have 1 mine tile. Increase your M€ production 1 step. Remove 1 of your mine tiles (does not affect the mining rate.) Place this special tile there, regardless of placement rules. Gain placement bonuses as usual.  Raise the habitat rate 1 step. This tile counts both as a habitat and a mine tile.": "",
 
   "Lunar Observation Post": "",
   "Action: Add 1 data resource to ANY card": "",
@@ -193,7 +193,7 @@
   "Effect: When you pay for a Lunar standard project, you spend 4M€ less.": "",
   "Requires 1 mine on The Moon.": "",
 
-  "New Colony Planning Initiaitives": "",
+  "New Colony Planning Initiatives": "",
   "Requires the habitat rate to be 2 or higher. Raise the habitat rate 1 step.": "",
 
   "Off-World City Living": "",
@@ -224,7 +224,7 @@
   "1 VP per 3 microbes here.": "",
   "Action: Spend 1 steel to add 2 microbes here.": "",
 
-  "Sinus Iridium Road Network": "",
+  "Sinus Irdium Road Network": "",
   "Decrease your energy production 1 step and increase your M€ production 3 steps. Spend 1 steel. Place a road tile on The Moon and raise the Logistics Rate 1 step.": "",
 
   "Small Duty Rovers": "",
@@ -245,7 +245,7 @@
   "Action: Spend X steel to gain 3X M€ (max 3 steel).": "",
 
   "Subterranean Habitats": "",
-  "Effect: When you build a habitat on The Moon, you spend 1 titanium less.": "",
+  "Effect: When you build a habitat on THE MOON, you spend 1 titanium less.": "",
   "Spend 2 steel. Raise the habitat rate 1 step.": "",
 
   "Syndicate Pirate Raids": "",

@@ -54,7 +54,7 @@ export class TeiaiGroup extends CorporationCard {
         max,
       ).andThen((amount: number) => {
         player.game.defer(DrawCards.keepAll(player, amount-1));
-        player.game.defer(new DiscardCards(player, amount), Priority.SUPERPOWER);
+        player.game.defer(new DiscardCards(player, amount, amount), Priority.SUPERPOWER);
         return undefined;
       });
     }

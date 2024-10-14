@@ -114,12 +114,13 @@ export const EROS_CARD_MANIFEST = new ModuleManifest({
     // [ CardName.SITH_ORGANIZATIONS]:{Factory: SithOrganizations, compatibility: ['turmoil']}, // Q32 没什么人玩，评价也不咋样
     [CardName.RUNCITER_ASSOCIATES]: {Factory: RunciterAssociates}, // Q33
     [CardName.LUNA_CHAIN]: {Factory: LunaChain}, // Q34
+    // [CardName.EGLOGUE]: {Factory: Eglogue}, // Q35
 
 
   },
   preludeCards: {
     [CardName.WG_PARTNERSHIP]: {Factory: WGPartnership}, // Q101
 
-  },
+  }, 
 
 });

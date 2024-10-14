@@ -23,7 +23,7 @@ export class _MiningGuild_ extends MiningGuild {
             eb.steel(1).slash().titanium(1).startEffect.production((pb) => pb.steel(1));
           });
           ce.effect('Each time you get steel/titanium as placement bonus, increase 1 steel prod.You can use 4 steel to trade or pay for city standard project.', (eb) => {
-            eb.steel(4, {digit}).startAction.trade().city({size: Size.SMALL}).openBrackets.steel(1).closeBrackets;
+            eb.steel(4, {digit}).startAction.trade().city({size: Size.SMALL}).super((b) => b.steel(1));
           });
         });
       }),

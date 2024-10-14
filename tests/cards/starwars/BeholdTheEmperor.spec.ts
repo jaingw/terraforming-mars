@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 import {BeholdTheEmperor} from '../../../src/server/cards/starwars/BeholdTheEmperor';
-import {Game} from '../../../src/server/Game';
+import {IGame} from '../../../src/server/IGame';
 import {TestPlayer} from '../../TestPlayer';
 import {testGame} from '../../TestGame';
 import {Turmoil} from '../../../src/server/turmoil/Turmoil';
@@ -12,7 +12,7 @@ describe('BeholdTheEmperor', () => {
   let card: BeholdTheEmperor;
   let player: TestPlayer;
   let player2: TestPlayer;
-  let game: Game;
+  let game: IGame;
   let turmoil: Turmoil;
 
   beforeEach(() => {
@@ -76,6 +76,9 @@ describe('BeholdTheEmperor', () => {
     // Using greaterThan to ameliorate the global events.
     expect(kelvinists.delegates.size).greaterThanOrEqual(0);
     expect(reds.delegates.size).greaterThanOrEqual(6);
-    expect(greens.delegates.size).greaterThanOrEqual(0);
+    expect(greens.delegates.size).greaterThanOrEqual(1);
+
+    expect(turmoil.delegateReserve.get(player)).to.equal(5);
+    expect(turmoil.delegateReserve.get(player2)).to.equal(2);
   });
 });

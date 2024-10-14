@@ -7,7 +7,6 @@ import {SerializedCard} from '../SerializedCard';
 import {CardType} from '../../common/cards/CardType';
 import {ICard} from './ICard';
 import {ICorporationCard} from './corporation/ICorporationCard';
-import {AntiGravityExperiment} from './eros/AntiGravityExperiment';
 
 export function serializePlayedCard(card: ICard): SerializedCard {
   const serialized: SerializedCard = {
@@ -29,7 +28,7 @@ export function serializePlayedCard(card: ICard): SerializedCard {
   if (card instanceof SelfReplicatingRobots) {
     serialized.targetCards = card.targetCards.map((t) => {
       return {
-        card: {name: t.card.name},
+        card: {name: t.name},
         resourceCount: t.resourceCount,
       };
     });
@@ -89,15 +88,13 @@ export function deserializeProjectCard(element: SerializedCard): IProjectCard {
   if (isICloneTagCard(card) && element.cloneTag !== undefined) {
     card.cloneTag = element.cloneTag;
   }
-  if (card instanceof SelfReplicatingRobots && (element as SelfReplicatingRobots).targetCards !== undefined) {
+  if (card instanceof SelfReplicatingRobots && element.targetCards !== undefined) {
     card.targetCards = [];
-    (element as SelfReplicatingRobots).targetCards.forEach((targetCard) => {
+    element.targetCards.forEach((targetCard) => {
       const foundTargetCard = newProjectCard(targetCard.card.name);
       if (foundTargetCard !== undefined) {
-        card.targetCards.push({
-          card: foundTargetCard,
-          resourceCount: targetCard.resourceCount,
-        });
+        foundTargetCard.resourceCount = targetCard.resourceCount;
+        card.targetCards.push(foundTargetCard);
       } else {
         console.warn('did not find card for SelfReplicatingRobots', targetCard);
       }
@@ -107,9 +104,6 @@ export function deserializeProjectCard(element: SerializedCard): IProjectCard {
     if (element.bonusResource !== undefined) {
       card.bonusResource = Array.isArray(element.bonusResource) ? element.bonusResource : [element.bonusResource];
     }
-  }
-  if (card instanceof AntiGravityExperiment && element.isDisabled !== undefined) {
-    card.isDisabled = element.isDisabled;
   }
   if (isCeoCard(card)) {
     card.isDisabled = element.isDisabled;

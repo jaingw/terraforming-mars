@@ -79,7 +79,7 @@ export interface IGame extends Logger {
   aresData: AresData | undefined;
   moonData: MoonData | undefined;
   pathfindersData: PathfindersData | undefined;
-  underworldData: UnderworldData | undefined;
+  underworldData: UnderworldData;
 
   // Card-specific data
   // Mons Insurance promo corp
@@ -172,7 +172,7 @@ export interface IGame extends Logger {
    *
    * This includes bonuses on the map, from oceans, Ares tiles, Turmoil, Colonies, etc.
    */
-  grantPlacementBonuses(player: IPlayer, space: Space, coveringExistingTile: boolean): void
+  grantPlacementBonuses(player: IPlayer, space: Space, coveringExistingTile: boolean, occupyBefore: boolean ): void
 
   /**
    * Gives all the bonuses from a space on the map.
@@ -206,6 +206,7 @@ export interface IGame extends Logger {
   loadFromJSONHalf(d: SerializedGame): IGame;
   rollback() : void;
   delete() : void;
+  isRankMode(): boolean ;
   exitPlayer(player : IPlayer) : void;
   checkTimeOutPlayer(): IPlayer | undefined ;
   checkRankModeEndGame(playerId: string) : Promise<void>;
@@ -214,6 +215,7 @@ export interface IGame extends Logger {
   getSpaceByOffset(direction: -1 | 1, toPlace: TileType, cardCount?: 1 | 2): Space;
   expectedPurgeTimeMs(): number;
   logIllegalState(description: string, metadata: {}): void;
+  shouldGoToTimeOutPhase() : boolean;
 }
 
 export function isIGame(object: any): object is IGame {

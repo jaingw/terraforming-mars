@@ -16,6 +16,7 @@ import {CardName} from '../src/common/cards/CardName';
 import {GlobalParameter} from '../src/common/GlobalParameter';
 import {cast, doWait, getSendADelegateOption, runAllActions} from './TestingUtils';
 import {SelfReplicatingRobots} from '../src/server/cards/promo/SelfReplicatingRobots';
+import {IProjectCard} from '../src/server/cards/IProjectCard';
 import {Pets} from '../src/server/cards/base/Pets';
 import {TestPlayer} from './TestPlayer';
 import {SelectParty} from '../src/server/inputs/SelectParty';
@@ -34,6 +35,8 @@ import {Donation} from '../src/server/cards/prelude/Donation';
 import {Loan} from '../src/server/cards/prelude/Loan';
 import {IPreludeCard} from '../src/server/cards/prelude/IPreludeCard';
 import {OrOptions} from '../src/server/inputs/OrOptions';
+import {Payment} from '../src/common/inputs/Payment';
+import {PhysicsComplex} from '../src/server/cards/base/PhysicsComplex';
 
 describe('Player', function() {
   it('should initialize with right defaults', function() {
@@ -227,10 +230,10 @@ describe('Player', function() {
       heatProductionStepsIncreasedThisGeneration: 0,
       titaniumValue: 13,
       steelValue: 14,
-      canUseCorruptionAsMegacredits: false,
+      canUseCorruptionAsMegacredits: true,
       canUseHeatAsMegaCredits: false,
       canUseTitaniumAsMegacredits: false,
-      canUsePlantsAsMegaCredits: false,
+      canUsePlantsAsMegacredits: false,
       actionsTakenThisRound: 15,
       actionsTakenThisGame: 30,
       actionsThisGeneration: [],
@@ -284,14 +287,30 @@ describe('Player', function() {
 
     expect(newPlayer.color).eq(Color.PURPLE);
     expect(newPlayer.colonies.tradesThisGeneration).eq(100);
+    expect(newPlayer.canUseCorruptionAsMegacredits).eq(true);
   });
   it('pulls self replicating robots target cards', function() {
     const player = new Player('blue', Color.BLUE, false, 0, 'p-blue');
     expect(player.getSelfReplicatingRobotsTargetCards()).is.empty;
     const srr = new SelfReplicatingRobots();
     player.playedCards.push(srr);
-    srr.targetCards.push({card: new LunarBeam(), resourceCount: 0});
+    srr.targetCards.push(new LunarBeam());
     expect(player.getSelfReplicatingRobotsTargetCards().length).eq(1);
+  });
+  it('removes tags from card played from self replicating robots', () => {
+    const player = TestPlayer.BLUE.newPlayer();
+    Game.newInstance('gameid', [player], player);
+    const srr = new SelfReplicatingRobots();
+    player.stock.megacredits = 10;
+    player.playedCards.push(srr);
+    const physicsComplex = new PhysicsComplex();
+    player.cardsInHand.push(physicsComplex);
+    const action = cast(srr.action(player), OrOptions);
+    action.options[0].cb([cast(action.options[0], SelectCard<IProjectCard>).cards[0]]);
+    expect(srr.targetCards[0].resourceCount).to.eq(2);
+    player.playCard(physicsComplex, Payment.of({'megaCredits': 10}));
+    expect(player.playedCards).to.contain(physicsComplex);
+    expect(physicsComplex.resourceCount).to.eq(0);
   });
 
   it('addResourceTo', () => {

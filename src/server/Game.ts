@@ -22,7 +22,7 @@ import {ALL_MILESTONES} from './milestones/Milestones';
 import {ALL_AWARDS} from './awards/Awards';
 import {PartyHooks} from './turmoil/parties/PartyHooks';
 import {Phase} from '../common/Phase';
-import {IPlayer} from './IPlayer';
+import {IPlayer, isIPlayer} from './IPlayer';
 import {Player} from './Player';
 import {PlayerId, GameId, SpectatorId, SpaceId} from '../common/Types';
 import {PlayerInput} from './PlayerInput';
@@ -85,6 +85,7 @@ import {getNewSkills, UserRank} from '../common/rank/RankManager';
 import {SpaceType} from '../common/boards/SpaceType';
 import {SendDelegateToArea} from './deferredActions/SendDelegateToArea';
 import {InputError} from './inputs/InputError';
+import {BuildColony} from './deferredActions/BuildColony';
 
 export enum LoadState {
   HALFLOADED = 'halfloaded',
@@ -310,14 +311,13 @@ export class Game implements IGame, Logger {
           corporationCards.splice(index, 1, new cardFactory.Factory() );
         }
       });
-      customCorporationCards.forEach((cardName ) => {
+      customCorporationCards.forEach((cardName,index ) => {
         const cardFactory = breakCards.find((cardFactory) => cardFactory.cardName_ori === cardName);
         if (cardFactory !== undefined) {
-          customCorporationCards.push(new cardFactory.Factory().name);
+          customCorporationCards.splice(index, 1, new cardFactory.Factory().name);
         }
       });
     }
-
     // customCorporationCards洗牌之后会在最上面
     const corporationDeck = new CorporationDeck(corporationCards, [], rng);
     corporationDeck.shuffle(customCorporationCards);
@@ -331,12 +331,13 @@ export class Game implements IGame, Logger {
 
     const game: Game = new Game(id, players, firstPlayer, gameOptions, rng, board, projectDeck, corporationDeck, preludeDeck, ceoDeck);
 
-    // Single player game player starts with 14TR
     if (players.length === 1) {
       gameOptions.draftVariant = false;
       gameOptions.initialDraftVariant = false;
+      gameOptions.preludeDraftVariant = false;
       gameOptions.randomMA = RandomMAOptionType.NONE;
 
+      // Single player game player starts with 14TR
       players[0].setTerraformRating(14);
     }
     game.spectatorId = spectatorId;
@@ -381,7 +382,7 @@ export class Game implements IGame, Logger {
     }
 
     if (gameOptions.moonExpansion) {
-      game.moonData = MoonExpansion.initialize();
+      game.moonData = MoonExpansion.initialize(gameOptions, rng);
     }
 
     if (gameOptions.pathfindersExpansion) {
@@ -417,11 +418,14 @@ export class Game implements IGame, Logger {
         // Bypass beginner choice if any extension is choosen
         gameOptions.ceoExtension ||
         gameOptions.preludeExtension ||
+        gameOptions.prelude2Expansion ||
         gameOptions.venusNextExtension ||
         gameOptions.coloniesExtension ||
         gameOptions.turmoilExtension ||
         gameOptions.initialDraftVariant ||
-        gameOptions.ceoExtension) {
+        gameOptions.preludeDraftVariant ||
+        gameOptions.underworldExpansion ||
+        gameOptions.moonExpansion) {
         player.dealtCorporationCards.push(...corporationDeck.drawN(game, gameOptions.startingCorporations));
         if (gameOptions.initialDraftVariant === false) {
           // 发牌
@@ -852,7 +856,7 @@ export class Game implements IGame, Logger {
       player.megaCredits = startingMegaCredits;
 
       // Check for negative M€
-      if (startingMegaCredits <= 0) {
+      if (startingMegaCredits < 0) {
         player.cardsInHand = [];
         player.preludeCardsInHand = [];
         throw new InputError('Too many cards selected');
@@ -863,7 +867,11 @@ export class Game implements IGame, Logger {
           this.projectDeck.discard(card);
         }
       });
-
+      player.dealtCorporationCards.forEach((card) => {
+        if (card.name !== corporationCard.name && card.name !== corporationCard2?.name) {
+          this.corporationDeck.discard(card);
+        }
+      });
       this.playerHasPickedCorporationCard(player, corporationCard, corporationCard2);
       return undefined;
     });
@@ -1188,6 +1196,8 @@ export class Game implements IGame, Logger {
       this.draftRound = 1;
       this.runDraftRound(true);
     } else if (this.initialDraftIteration === 2 && this.gameOptions.preludeExtension) {
+      // jiang 远程版本    } else if (this.initialDraftIteration === 2 && this.gameOptions.preludeExtension && this.gameOptions.preludeDraftVariant) {
+
       this.initialDraftIteration++;
       this.draftRound = 1;
       this.runDraftRound(true);
@@ -1214,7 +1224,7 @@ export class Game implements IGame, Logger {
 
   private giveDraftCardsTo(player: IPlayer): IPlayer {
     // Special-case for the initial draft direction on second iteration
-    if (this.initialDraftIteration === 2 && this.generation === 1) {
+    if (this.generation === 1 && (this.initialDraftIteration === 2 || this.initialDraftIteration === 4)) {
       return this.getPlayerAfter(player);
     }
 
@@ -1450,13 +1460,13 @@ export class Game implements IGame, Logger {
 
     if (this.phase !== Phase.SOLAR) {
       TurmoilHandler.onGlobalParameterIncrease(player, GlobalParameter.OXYGEN, steps);
-      player.increaseTerraformRating(steps);
+      player.increaseTerraformRating(steps,{log:true});
     }
 
     // wg hook
     if (this.phase === Phase.SOLAR && this.wgPartnershipOwner) {
       TurmoilHandler.onGlobalParameterIncrease(this.wgPartnershipOwner, GlobalParameter.OXYGEN, steps);
-      player.increaseTerraformRating(steps);
+      this.wgPartnershipOwner.increaseTerraformRating(steps,{log:true});
     }
 
     if (this.oxygenLevel < constants.OXYGEN_LEVEL_FOR_TEMPERATURE_BONUS &&
@@ -1680,6 +1690,8 @@ export class Game implements IGame, Logger {
       execute(this.wgPartnershipOwner);
     }
 
+    
+
     this.players.forEach((p) => {
       p.tableau.forEach((playedCard) => {
         playedCard.onTilePlaced?.(p, player, space, BoardType.MARS);
@@ -1697,7 +1709,14 @@ export class Game implements IGame, Logger {
     }
   }
 
-  public grantPlacementBonuses(player: IPlayer, space: Space, coveringExistingTile: boolean) {
+  // occupyBefore 是否被玩家标记占领,影响拉屎公司的奖励
+  public grantPlacementBonuses(player: IPlayer, space: Space, coveringExistingTile: boolean, arcadianCommunityBonus: boolean = false) {
+    console.log('grantPlacementBonuses:'+ JSON.stringify(space, (_key, value) => {
+      if (isIPlayer(value)) {
+        return {id: value.id};
+      }
+      return value;
+    }) +' coveringExistingTile:' + coveringExistingTile);
     if (!coveringExistingTile) {
       this.grantSpaceBonuses(player, space);
     }
@@ -1715,7 +1734,6 @@ export class Game implements IGame, Logger {
 
       TurmoilHandler.resolveTilePlacementBonuses(player, space.spaceType);
 
-      const arcadianCommunityBonus = space.player === player && (player.isCorporation(CardName.ARCADIAN_COMMUNITIES) || player.isCorporation(CardName._ARCADIAN_COMMUNITIES_));
       if (arcadianCommunityBonus) {
         this.defer(new GainResources(player, Resource.MEGACREDITS, {count: 3}));
       }
@@ -1782,11 +1800,11 @@ export class Game implements IGame, Logger {
       break;
     case SpaceBonus.TEMPERATURE:
       if (this.getTemperature() < constants.MAX_TEMPERATURE) {
-        player.defer(() => this.increaseTemperature(player, 1));
         this.defer(new SelectPaymentDeferred(
           player,
           constants.VASTITAS_BOREALIS_BONUS_TEMPERATURE_COST,
-          {title: 'Select how to pay for placement bonus temperature'}));
+          {title: 'Select how to pay for placement bonus temperature'}))
+          .andThen(() => this.increaseTemperature(player, 1));
       }
       break;
     case SpaceBonus.ENERGY:
@@ -1797,6 +1815,13 @@ export class Game implements IGame, Logger {
       break;
     case SpaceBonus.DELEGATE:
       TurmoilUtil.ifTurmoil(this, () => this.defer(new SendDelegateToArea(player)));
+      break;
+    case SpaceBonus.COLONY:
+      this.defer(new SelectPaymentDeferred(
+        player,
+        constants.VASTITAS_BOREALIS_BONUS_TEMPERATURE_COST,
+        {title: 'Select how to pay for placement bonus temperature'}))
+        .andThen(() => this.defer(new BuildColony(player)));
       break;
     default:
       throw new Error('Unhandled space bonus ' + spaceBonus + '. Report this exact error, please.');
@@ -1845,6 +1870,10 @@ export class Game implements IGame, Logger {
         },
       ));
       return undefined;
+    }
+
+    if (player.isCorporation(CardName.PROWLER) && this.oxygenLevel >= constants.MAX_OXYGEN_LEVEL){
+      player.increaseTerraformRating(1);
     }
 
     if (shouldRaiseOxygen) this.increaseOxygenLevel(player, 1);

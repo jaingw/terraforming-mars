@@ -15,10 +15,10 @@ export class MiningCorp extends CorporationCard {
 
       metadata: {
         cardNumber: 'XB04',
-        description: 'You start with 35 M€ and 10 steel. Draw 2 building cards.',
+        description: 'You start with 35 M€ and 7 steel. Draw 2 building cards.',
         renderData: CardRenderer.builder((b) => {
           b.br.br;
-          b.megacredits(35).steel(10, {digit}).cards(2, {secondaryTag: Tag.BUILDING, digit});
+          b.megacredits(35).steel(7, {digit}).cards(2, {secondaryTag: Tag.BUILDING, digit});
           b.corpBox('effect', (ce) => {
             ce.effect('Your steel resources are worth 1 M€ extra.', (eb) => {
               eb.steel(1).startEffect.plus(Size.SMALL).megacredits(1);
@@ -30,7 +30,7 @@ export class MiningCorp extends CorporationCard {
   }
 
   public override bespokePlay(player: IPlayer) {
-    player.stock.add(Resource.STEEL, 10);
+    player.stock.add(Resource.STEEL, 7);
     // player.production.add(Resource.ENERGY, 1);
     // player.production.add(Resource.STEEL, 1);
     player.drawCard(2, {tag: Tag.BUILDING});

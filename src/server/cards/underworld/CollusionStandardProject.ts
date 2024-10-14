@@ -9,6 +9,7 @@ import {PartyName} from '../../../common/turmoil/PartyName';
 import {SelectAmount} from '../../inputs/SelectAmount';
 import {all} from '../Options';
 import {TurmoilUtil} from '../../turmoil/TurmoilUtil';
+import {UnexpectedInput} from '../../inputs/UnexpectedInput';
 
 export class CollusionStandardProject extends StandardProjectCard {
   constructor(properties = {
@@ -79,10 +80,10 @@ export class CollusionStandardProject extends StandardProjectCard {
         const party = turmoil.getPartyByName(data.partyName);
         const available = party.delegates.get('NEUTRAL');
         if (available < data.amount) {
-          throw new Error(`${data.partyName} does not have ${data.amount} neutral delegates.`);
+          throw new UnexpectedInput(`${data.partyName} does not have ${data.amount} neutral delegates.`);
         }
         if (turmoil.getAvailableDelegateCount(player) < data.amount) {
-          throw new Error(`Player does not have ${data.amount} delegates in reserve`);
+          throw new UnexpectedInput(`Player does not have ${data.amount} delegates in reserve`);
         }
         for (let i = 0; i < data.amount; i++) {
           turmoil.replaceDelegateFromParty('NEUTRAL', player, data.partyName, game);

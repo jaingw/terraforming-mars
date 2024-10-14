@@ -17,6 +17,9 @@ export interface NewPlayerModel {
   first: boolean;
 }
 
+/**
+ * Like GameOptions, but the data structure sent from the new game page.
+ */
 export interface NewGameConfig {
   players: Array<NewPlayerModel>;
   prelude: boolean;
@@ -24,8 +27,7 @@ export interface NewGameConfig {
   colonies: boolean;
   turmoil: boolean;
   board: BoardNameType;
-  seed: number;
-  initialDraft: boolean;
+  seed: string|undefined;
   randomFirstPlayer: boolean;
 
   // boardName: BoardName;
@@ -67,7 +69,8 @@ export interface NewGameConfig {
 
   // Variants
   draftVariant: boolean;
-  // initialDraftVariant: boolean;
+  initialDraft: boolean; // initialDraftVariant: boolean;
+  preludeDraftVariant: boolean;
   startingCorporations: number;
   shuffleMapOption: boolean;
   randomMA: RandomMAOptionType;
@@ -87,7 +90,7 @@ export interface NewGameConfig {
   escapeVelocityBonusSeconds: number | undefined;
   escapeVelocityPeriod: number | undefined;
   escapeVelocityPenalty: number | undefined;
-  twoCorpsVariant: boolean;
+  // twoCorpsVariant: boolean;
   customCeos: Array<CardName>;
   startingCeos: number;
   rankTimeLimit: number | undefined,

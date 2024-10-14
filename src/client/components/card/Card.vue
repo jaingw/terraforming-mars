@@ -1,6 +1,6 @@
 <template>
   <div :class="getCardClasses(card)">
-      <div class="card-content-wrapper" v-i18n @mouseover="hovering = true" @mouseleave="hovering = false">
+      <div class="card-content-wrapper"  @mouseover="hovering = true" @mouseleave="hovering = false">
           <div v-if="!isStandardProject()" class="card-cost-and-tags">
               <CardCost :amount="getCost()" :newCost="getReducedCost()" />
               <div v-if="showPlayerCube" :class="playerCubeClass"></div>
@@ -174,7 +174,7 @@ export default Vue.extend({
       return this.getCardType() === CardType.STANDARD_PROJECT || this.getCardType() === CardType.STANDARD_ACTION;
     },
     getLunaChainPay(): number {
-      return this.isCorporationCard() ? this.card.lastPay ? this.card.lastPay : -1 : -1;
+      return this.isCorporationCard() && this.card.data?.lastPay >=0 ? this.card.data.lastPay  : -1;
     },
   },
   computed: {

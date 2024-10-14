@@ -63,10 +63,12 @@ export class Playwrights extends CorporationCard {
         ([card]) => {
           const selectedCard: IProjectCard = card;
 
+          let ownPlayer:IPlayer;
           players.forEach((p) => {
             const cardIndex = p.playedCards.findIndex((c) => c.name === selectedCard.name);
             if (cardIndex !== -1) {
               p.playedCards.splice(cardIndex, 1);
+              ownPlayer = p;
             }
           });
 
@@ -75,6 +77,9 @@ export class Playwrights extends CorporationCard {
             .andThen(() => {
               player.playCard(selectedCard, undefined, 'nothing'); // Play the card but don't add it to played cards
               player.removedFromPlayCards.push(selectedCard); // Remove card from the game , in case Conscription/Indentured Workers invalid
+              if(player !== ownPlayer){
+                ownPlayer?.removedFromPlayCards.push(selectedCard);
+              }
               if (selectedCard.name === CardName.SPECIAL_DESIGN) {
                 player.playedCards.push(new SpecialDesignProxy());
               } else if (selectedCard.name === CardName.LAW_SUIT) {

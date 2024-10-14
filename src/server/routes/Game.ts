@@ -1,4 +1,4 @@
-import * as responses from './responses';
+import * as responses from '../server/responses';
 import {Handler} from './Handler';
 import {Context} from './IHandler';
 import {BoardName} from '../../common/boards/BoardName';
@@ -18,6 +18,7 @@ import {Request} from '../Request';
 import {Response} from '../Response';
 import {QuotaConfig, QuotaHandler} from '../server/QuotaHandler';
 import {durationToMilliseconds} from '../utils/durations';
+import * as crypto from 'crypto';
 
 function get(): QuotaConfig {
   const defaultQuota = {limit: 1, perMs: 1}; // Effectively, no limit.
@@ -131,66 +132,65 @@ export class GameHandler extends Handler {
           gameReq.board = boards[Math.floor(Math.random() * boards.length)];
 
           let gameOptions : GameOptions = {
-            boardName: gameReq.board,
-            clonedGamedId: gameReq.clonedGamedId,
-
-            undoOption: gameReq.undoOption,
-            showTimers: gameReq.showTimers,
-            fastModeOption: gameReq.fastModeOption,
-            showOtherPlayersVP: gameReq.showOtherPlayersVP,
-
-            corporateEra: gameReq.corporateEra,
-            venusNextExtension: gameReq.venusNext,
-            coloniesExtension: gameReq.colonies,
-            preludeExtension: gameReq.prelude,
-            prelude2Expansion: gameReq.prelude2Expansion,
-            turmoilExtension: gameReq.turmoil,
+            altVenusBoard: gameReq.altVenusBoard,
             aresExtension: gameReq.aresExtension,
             aresHazards: true, // Not a runtime option.
-            politicalAgendasExtension: gameReq.politicalAgendasExtension,
+            bannedCards: gameReq.bannedCards || [],
+            boardName: gameReq.board,
+            ceoExtension: gameReq.ceoExtension,
+            clonedGamedId: gameReq.clonedGamedId,
+            coloniesExtension: gameReq.colonies,
+            communityCardsOption: gameReq.communityCardsOption,
+            corporateEra: gameReq.corporateEra,
+            customCeos: gameReq.customCeos,
+            customColoniesList: gameReq.customColoniesList,
+            customCorporationsList: gameReq.customCorporationsList,
+            customPreludes: gameReq.customPreludes,
+            draftVariant: gameReq.draftVariant,
+            escapeVelocityBonusSeconds: gameReq.escapeVelocityBonusSeconds,
+            escapeVelocityMode: gameReq.escapeVelocityMode,
+            escapeVelocityPenalty: gameReq.escapeVelocityPenalty,
+            escapeVelocityPeriod: gameReq.escapeVelocityPeriod,
+            escapeVelocityThreshold: gameReq.escapeVelocityThreshold,
+            fastModeOption: gameReq.fastModeOption,
+            includedCards: gameReq.includedCards,
+            includeFanMA: gameReq.includeFanMA,
+            includeVenusMA: gameReq.includeVenusMA,
+            initialDraftVariant: gameReq.initialDraft,
             moonExpansion: gameReq.moonExpansion,
+            moonStandardProjectVariant: gameReq.moonStandardProjectVariant,
             pathfindersExpansion: gameReq.pathfindersExpansion,
+            politicalAgendasExtension: gameReq.politicalAgendasExtension,
+            prelude2Expansion: gameReq.prelude2Expansion,
+            preludeDraftVariant: gameReq.preludeDraftVariant,
+            preludeExtension: gameReq.prelude,
             promoCardsOption: gameReq.promoCardsOption,
             erosCardsOption: gameReq.erosCardsOption,
-            communityCardsOption: gameReq.communityCardsOption,
-            solarPhaseOption: gameReq.solarPhaseOption,
-            removeNegativeGlobalEventsOption: gameReq.removeNegativeGlobalEventsOption,
-            includeVenusMA: gameReq.includeVenusMA,
-
-            draftVariant: gameReq.draftVariant,
-            initialDraftVariant: gameReq.initialDraft,
-            startingCorporations: gameReq.startingCorporations,
-            shuffleMapOption: gameReq.shuffleMapOption,
             randomMA: gameReq.randomMA,
-            includeFanMA: gameReq.includeFanMA,
+            removeNegativeGlobalEventsOption: gameReq.removeNegativeGlobalEventsOption,
+            requiresMoonTrackCompletion: gameReq.requiresMoonTrackCompletion,
+            requiresVenusTrackCompletion: gameReq.requiresVenusTrackCompletion,
+            showOtherPlayersVP: gameReq.showOtherPlayersVP,
+            showTimers: gameReq.showTimers,
+            shuffleMapOption: gameReq.shuffleMapOption,
+            solarPhaseOption: gameReq.solarPhaseOption,
             soloTR: gameReq.soloTR,
-            customCorporationsList: gameReq.customCorporationsList,
-            bannedCards: gameReq.bannedCards || [],
-            includedCards: gameReq.includedCards,
-            customColoniesList: gameReq.customColoniesList,
             heatFor: gameReq.heatFor,
             breakthrough: gameReq.breakthrough,
             doubleCorp: gameReq.doubleCorp,
-            customPreludes: gameReq.customPreludes,
-            requiresVenusTrackCompletion: gameReq.requiresVenusTrackCompletion,
-            requiresMoonTrackCompletion: gameReq.requiresMoonTrackCompletion,
-            moonStandardProjectVariant: gameReq.moonStandardProjectVariant,
             initialCorpDraftVariant: gameReq.initialCorpDraftVariant,
-            altVenusBoard: gameReq.altVenusBoard,
-            escapeVelocityMode: gameReq.escapeVelocityMode,
-            escapeVelocityThreshold: gameReq.escapeVelocityThreshold,
-            escapeVelocityBonusSeconds: gameReq.escapeVelocityBonusSeconds,
-            escapeVelocityPeriod: gameReq.escapeVelocityPeriod,
-            escapeVelocityPenalty: gameReq.escapeVelocityPenalty,
-            twoCorpsVariant: gameReq.twoCorpsVariant,
-            ceoExtension: gameReq.ceoExtension,
-            customCeos: gameReq.customCeos,
             startingCeos: gameReq.startingCeos,
             rankOption: gameReq.rankOption, // 天梯
             rankTimeLimit: gameReq.rankTimeLimit, // 天梯
             rankTimePerGeneration: gameReq.rankTimePerGeneration,
+            startingCorporations: gameReq.startingCorporations,
             starWarsExpansion: gameReq.starWarsExpansion,
+            turmoilExtension: gameReq.turmoil,
+            // twoCorpsVariant: gameReq.twoCorpsVariant,
             underworldExpansion: gameReq.underworldExpansion,
+            undoOption: gameReq.undoOption,
+            venusNextExtension: gameReq.venusNext,
+            seed: gameReq.seed,
           };
           const userId = gameReq.userId;
           let isvip = false;
@@ -219,11 +219,16 @@ export class GameHandler extends Handler {
               bannedCards: [],
               customColoniesList: [],
               customPreludes: [],
+              // seed: undefined,
             };
             gameOptions = Object.assign(gameOptions, vipOptions);
           }
 
-          const seed = Math.random();
+          let seed = Math.random();
+          if (players.length === 1 && gameOptions.seed !== undefined && gameOptions.seed.length > 0) {
+            const md5str = crypto.createHash('md5').update( gameOptions.seed ).digest('hex').substring(0, 8);
+            seed = (parseInt(md5str, 16) & 0X1FFFFFFFF) * 1.0 / 0X100000000;
+          }
           const game = Game.newInstance(gameId, players, players[firstPlayerIdx], gameOptions, seed, spectatorId);
           game.loadState = LoadState.LOADED;
           GameLoader.getInstance().add(game);

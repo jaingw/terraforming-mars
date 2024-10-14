@@ -25,8 +25,8 @@ export class FleetRecycling extends Card implements IProjectCard {
     });
   }
 
-  public override canPlay(): boolean {
-    return true;
+  public override canPlay(player: IPlayer): boolean {
+    return player.colonies.getFleetSize() > 0;
   }
 
   public override bespokePlay(player: IPlayer) {

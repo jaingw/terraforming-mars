@@ -72,16 +72,22 @@ export function translateText(englishText: string): string {
   if (translatedText === undefined) {
     const isTextInBrackets = englishText.startsWith('(') && englishText.endsWith(')');
     let temp = englishText;
+    // 去掉括号匹配
     if (isTextInBrackets) {
-      const translationAttempt = translations[englishText.slice(1, -1)];
+      temp = englishText.slice(1, -1);
+      const translationAttempt = translations[temp];
       if (translationAttempt) {
         translatedText = `(${translationAttempt})`;
       }
-      temp = englishText.slice(1, -1);
     }
+    // 去掉.匹配
     if (translatedText === undefined && temp.endsWith('.') ) {
       const stripedText = temp.slice(0, -1);
       translatedText = translateText(stripedText);
+    }
+    // 转小写匹配
+    if (translatedText === undefined && temp.length > 10 && temp !== temp.toLocaleLowerCase() ) {
+      translatedText = translateText(temp.toLocaleLowerCase());
     }
   }
   if (translatedText === undefined && englishText && englishText.replace(/#..\d+/g, '').length > 3 ) {// 测试环境打印

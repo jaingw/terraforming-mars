@@ -185,9 +185,7 @@
             <input type="checkbox" name="ceo" id="underworld-checkbox" v-model="underworldExpansion">
             <label for="underworld-checkbox" class="expansion-button">
               <div class="create-game-expansion-icon expansion-icon-underworld"></div>
-              <span v-i18n>Underworld (β)</span><span> 🆕</span>&nbsp;<a
-                href="https://github.com/terraforming-mars/terraforming-mars/wiki/Underworld" class="tooltip"
-                target="_blank">&#9432;</a>
+              <span v-i18n>Underworld</span><span> 🆕</span>&nbsp;<a href="https://github.com/terraforming-mars/terraforming-mars/wiki/Underworld" class="tooltip" target="_blank">&#9432;</a>
             </label>
           </div>
 
@@ -231,7 +229,7 @@
 
             <input type="checkbox" v-model="solarPhaseOption" id="WGT-checkbox">
             <label for="WGT-checkbox">
-              <span v-i18n>World Government Terraforming</span>&nbsp;
+              <span v-i18n>World Government Terraforming</span>&nbsp;<a href="https://github.com/terraforming-mars/terraforming-mars/wiki/Variants#world-government-terraforming" class="tooltip" target="_blank">&#9432;</a>
             </label>
 
             <template v-if="playersCount === 1">
@@ -294,8 +292,15 @@
               <span v-i18n>Randomize board tiles</span>&nbsp;
             </label>
 
-            <div v-if="seededGame">
-              <input type="text" name="clonedGamedId" v-model="clonedGameId" />
+            <template v-if="playersCount === 1">
+              <input type="checkbox" v-model="seededGame" id="seeded-checkbox">
+              <label for="seeded-checkbox" >
+                  <span v-i18n>Set Game Seed</span>
+              </label>
+            </template>
+
+            <div v-if="seededGame ">
+              <input type="text" name="seed" v-model="seed" />
             </div>
 
             <div class="create-game-subsection-label" v-i18n>Filter</div>
@@ -317,11 +322,12 @@
               <span v-i18n>Exclude some cards</span>
             </label>
 
+            <!--
             <input type="checkbox" v-model="showIncludedCards" id="includedCards-checkbox">
             <label for="includedCards-checkbox">
               <span v-i18n>Include some cards</span>
             </label>
-
+            -->
             <template v-if="colonies">
               <input type="checkbox" v-model="showColoniesList" id="customColonies-checkbox" v-if="isvip">
               <label for="customColonies-checkbox" :class="{ forbidden: !isvip }">
@@ -356,6 +362,14 @@
                   <span v-i18n>Initial Draft variant</span>&nbsp;
                 </label>
               </div>
+              <!--
+              <div v-if="initialDraft && prelude">
+              <input type="checkbox" name="preludeDraft" v-model="preludeDraftVariant" id="preludeDraft-checkbox">
+              <label for="preludeDraft-checkbox">
+                  <span v-i18n>Prelude Draft variant</span>&nbsp;<a href="https://github.com/terraforming-mars/terraforming-mars/wiki/Variants#initial-draft" class="tooltip" target="_blank">&#9432;</a>
+              </label>
+              </div>
+              -->
             </div>
 
             <!-- 天梯选项 -->
@@ -500,7 +514,7 @@
         v-bind:corporateEra="corporateEra" v-bind:prelude="prelude" v-bind:prelude2="prelude2Expansion"
         v-bind:venusNext="venusNext" v-bind:colonies="colonies" v-bind:turmoil="turmoil"
         v-bind:promoCardsOption="promoCardsOption" v-bind:erosCardsOption="erosCardsOption"
-        v-bind:communityCardsOption="communityCardsOption" v-bind:moonExpansion="moonExpansion"
+        v-bind:communityCardsOption="communityCardsOption"  v-bind:aresExtension="aresExtension" v-bind:moonExpansion="moonExpansion"
         v-bind:pathfindersExpansion="pathfindersExpansion"></CorporationsFilter>
     </div>
 
@@ -513,7 +527,7 @@
     <div class="create-game--block" v-if="showPreludesList">
       <PreludesFilter ref="preludesFilter" v-on:prelude-list-changed="updateCustomPreludes"
         v-bind:promoCardsOption="promoCardsOption" v-bind:communityCardsOption="communityCardsOption"
-        v-bind:moonExpansion="moonExpansion" v-bind:pathfindersExpansion="pathfindersExpansion"></PreludesFilter>
+        v-bind:moonExpansion="moonExpansion" v-bind:pathfindersExpansion="pathfindersExpansion" v-bind:prelude2Expansion="prelude2Expansion"></PreludesFilter>
     </div>
 
     <div class="create-game--block" v-if="showBannedCards">
@@ -667,7 +681,7 @@ export default (Vue as WithRefs<Refs>).extend({
       ],
       corporateEra: true,
       prelude: true,
-      prelude2Expansion: false,
+      prelude2Expansion: true,
       draftVariant: true,
       initialDraft: false,
       initialCorpDraftVariant: true,
@@ -696,13 +710,14 @@ export default (Vue as WithRefs<Refs>).extend({
         RandomBoardOption.OFFICIAL,
         BoardName.UTOPIA_PLANITIA,
         BoardName.VASTITAS_BOREALIS_NOVUS,
+        BoardName.TERRA_CIMMERIA_NOVUS,
         BoardName.ARABIA_TERRA,
         BoardName.AMAZONIS,
         BoardName.TERRA_CIMMERIA,
         BoardName.VASTITAS_BOREALIS,
         RandomBoardOption.ALL,
       ],
-      seed: Math.random(),
+      seed: '',
       seededGame: false,
       solarPhaseOption: true,
       shuffleMapOption: false,
@@ -739,12 +754,13 @@ export default (Vue as WithRefs<Refs>).extend({
       escapeVelocityBonusSeconds: constants.DEFAULT_ESCAPE_VELOCITY_BONUS_SECONDS,
       escapeVelocityPeriod: constants.DEFAULT_ESCAPE_VELOCITY_PERIOD,
       escapeVelocityPenalty: constants.DEFAULT_ESCAPE_VELOCITY_PENALTY,
-      twoCorpsVariant: false,
+      // twoCorpsVariant: false,
       ceoExtension: false,
       customCeos: [],
       startingCeos: 3,
       starWarsExpansion: false,
       underworldExpansion: false,
+      preludeDraftVariant: undefined,
     };
   },
   components: {
@@ -778,6 +794,16 @@ export default (Vue as WithRefs<Refs>).extend({
         this.politicalAgendasExtension = AgendaStyle.STANDARD;
       }
     },
+    initialDraft(value: boolean) {
+      if (value === true && this.preludeDraftVariant === undefined) {
+        this.preludeDraftVariant = true;
+      }
+    },
+    prelude(value: boolean) {
+      if (value === true && this.preludeDraftVariant === undefined) {
+        this.preludeDraftVariant = true;
+      }
+    },
     playersCount(value: number) {
       if (value === 1) {
         this.corporateEra = true;
@@ -795,7 +821,6 @@ export default (Vue as WithRefs<Refs>).extend({
   methods: {
     async downloadSettings() {
       const serializedData = await this.serializeSettings();
-
       if (serializedData) {
         const a = document.createElement('a');
         const blob = new Blob([serializedData], {type: 'application/json'});
@@ -820,6 +845,9 @@ export default (Vue as WithRefs<Refs>).extend({
             if (typeof readerResults === 'string') {
               const results = JSON.parse(readerResults);
 
+              // load不允许加载seed
+              results.seed = '';
+              results.seededGame = false;
               const players = results['players'];
               const validationErrors = validatePlayers(players);
               if (validationErrors.length > 0) {
@@ -895,7 +923,7 @@ export default (Vue as WithRefs<Refs>).extend({
                     if (component.showBannedCards) refs.cardsFilter.selectedCardNames = bannedCards;
                     if (component.showIncludedCards) refs.cardsFilter2.selectedCardNames = includedCards;
                   }
-                  if (!component.seededGame) component.seed = Math.random();
+                  // if (!component.seededGame) component.seed = Math.random();
                   // set to alter after any watched properties
                   component.solarPhaseOption = Boolean(capturedSolarPhaseOption);
                 } catch (e) {
@@ -1060,6 +1088,7 @@ export default (Vue as WithRefs<Refs>).extend({
         [BoardName.VASTITAS_BOREALIS]: 'vastitas-borealis',
         [BoardName.AMAZONIS]: 'amazonis-planatia',
         [BoardName.TERRA_CIMMERIA]: 'terra-cimmeria',
+        [BoardName.TERRA_CIMMERIA_NOVUS]: 'terra-cimmeria-novus',
         [RandomBoardOption.OFFICIAL]: '',
         [RandomBoardOption.ALL]: '',
       };
@@ -1073,7 +1102,7 @@ export default (Vue as WithRefs<Refs>).extend({
         players = players.map((a) => ({sort: Math.random(), value: a}))
           .sort((a, b) => a.sort - b.sort)
           .map((a) => a.value);
-        this.firstIndex = Math.floor(this.seed * this.playersCount) + 1;
+        this.firstIndex = Math.floor(Math.random() * this.playersCount) + 1;
       }
 
       // Auto assign an available color if there are duplicates
@@ -1169,7 +1198,7 @@ export default (Vue as WithRefs<Refs>).extend({
       const escapeVelocityBonusSeconds = this.escapeVelocityBonusSeconds ? this.escapeVelocityBonusSeconds : undefined;
       const escapeVelocityPeriod = this.escapeVelocityMode ? this.escapeVelocityPeriod : undefined;
       const escapeVelocityPenalty = this.escapeVelocityMode ? this.escapeVelocityPenalty : undefined;
-      const twoCorpsVariant = this.twoCorpsVariant;
+      // const twoCorpsVariant = this.twoCorpsVariant;
       const ceoExtension = this.ceoExtension;
       const customCeos = this.customCeos;
       const startingCeos = this.startingCeos;
@@ -1201,17 +1230,17 @@ export default (Vue as WithRefs<Refs>).extend({
       if (this.showCorporationList && customCorporations.length > 0) {
         let neededCorpsCount = players.length * startingCorporations;
         if (REVISED_COUNT_ALGORITHM) {
-          if (this.twoCorpsVariant) {
-            // Add an additional 4 for the Merger prelude
-            // Everyone-Merger needs an additional 4 corps per player
-            //  NB: This will not cover the case when no custom corp list is set!
-            //  It _can_ come about if  the number of corps included in all expansions is still not enough.
-            neededCorpsCount = players.length * startingCorporations + players.length * 4;
-          } else {
-            neededCorpsCount = players.length * startingCorporations;
-            // Merger Prelude alone needs 4 additional preludes
-            if (this.prelude && this.promoCardsOption) neededCorpsCount += 4;
-          }
+          // if (this.twoCorpsVariant) {
+          // Add an additional 4 for the Merger prelude
+          // Everyone-Merger needs an additional 4 corps per player
+          //  NB: This will not cover the case when no custom corp list is set!
+          //  It _can_ come about if  the number of corps included in all expansions is still not enough.
+          // neededCorpsCount = players.length * startingCorporations + players.length * 4;
+          // } else {
+          neededCorpsCount = players.length * startingCorporations;
+          // Merger Prelude alone needs 4 additional preludes
+          if (this.prelude && this.promoCardsOption) neededCorpsCount += 4;
+          // }
         }
         if (customCorporations.length < neededCorpsCount) {
           window.alert(translateTextWithParams('Must select at least ${0} corporations', [neededCorpsCount.toString()]));
@@ -1276,7 +1305,7 @@ export default (Vue as WithRefs<Refs>).extend({
         bannedCards,
         includedCards,
         board,
-        seed,
+        'seed': this.seededGame ? seed : undefined,
         solarPhaseOption,
         promoCardsOption,
         communityCardsOption,
@@ -1302,6 +1331,7 @@ export default (Vue as WithRefs<Refs>).extend({
         clonedGamedId,
         initialDraft,
         initialCorpDraftVariant,
+        'preludeDraftVariant': this.preludeDraftVariant ?? false,
         randomMA,
         shuffleMapOption,
         'userId': PreferencesManager.load('userId'),
@@ -1316,7 +1346,7 @@ export default (Vue as WithRefs<Refs>).extend({
         escapeVelocityBonusSeconds,
         escapeVelocityPeriod,
         escapeVelocityPenalty,
-        twoCorpsVariant,
+        // twoCorpsVariant,
         ceoExtension,
         customCeos,
         startingCeos,
@@ -1356,13 +1386,21 @@ export default (Vue as WithRefs<Refs>).extend({
         }
       }
 
+      if (this.seededGame && (this.seed === undefined || this.seed.length < 6)) {
+        alert('请输入至少6位随机种子');
+        return;
+      }
+
       const root = (this.$root as unknown) as typeof mainAppSettings.data;
       root.isServerSideRequestInProgress = true;
       PreferencesManager.INSTANCE.set('lastcreated', nowtime.toString());
 
       const dataToSend = await this.serializeSettings();
 
-      if (dataToSend === undefined) return;
+      if (dataToSend === undefined) {
+        root.isServerSideRequestInProgress = false;
+        return;
+      }
       const onSuccess = (json: any) => {
         root.isServerSideRequestInProgress = false;
         if (json.players.length === 1) {
@@ -1386,6 +1424,7 @@ export default (Vue as WithRefs<Refs>).extend({
           }
         })
         .catch((error: Error) => {
+          root.isServerSideRequestInProgress = false;
           alert(error.message);
         });
     },

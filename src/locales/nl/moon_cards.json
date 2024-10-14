@@ -154,7 +154,7 @@
     "Spend 2 titanium. Place a mine tile on The Moon and raise the mining rate 1 step. Increase your steel, titanium, and heat production 1 step each. Increase your energy production 2 steps.": "Betaal 2 titanium. Plaats een mijntegel op de maan en verhoog mijnwaarde met 1. Verhoog je staal-, titanium- en warmteproductie elk met 1. Verhoog je energieproductie met 2.",
 
     "Lunar Mine Urbanization": "Maanmijn verstedelijking",
-    "Requires you have 1 mine tile. Increase your M€ production 1 step. Replace one of your mine tiles with this special tile. Raise the habitat rate 1 step. This tile counts both as a habitat and a mine tile.": "Vereist 1 eigen mijntegel. Verhoog je M€-productie met 1. Vervang een van je mijntegels door deze speciale tegel. Verhoog de habitatwaarde met 1. Deze tegel telt zowel als habitattegel als mijntegel.",
+    "Requires you have 1 mine tile. Increase your M€ production 1 step. Remove 1 of your mine tiles (does not affect the mining rate.) Place this special tile there, regardless of placement rules. Gain placement bonuses as usual.  Raise the habitat rate 1 step. This tile counts both as a habitat and a mine tile.": "Vereist 1 eigen mijntegel. Verhoog je M€-productie met 1. Vervang een van je mijntegels door deze speciale tegel. Verhoog de habitatwaarde met 1. Deze tegel telt zowel als habitattegel als mijntegel.",
 
     "Lunar Observation Post": "Maan-observatiepost",
     "Action: Add 1 data resource to ANY card": "ACTIE: Voeg 1 data-grondstof toe aan een willekeurige kaart.",
@@ -202,7 +202,7 @@
     "Mooncrate Convoys To Mars": "Maankrater konvooien naar Mars",
     "Requires that Mars First are ruling or that you have 2 delegates there. Raise the logistic rate 1 step. All players may sell their steel resources for 3M€ each.": "Vereist dat Mars First regeert of dat je daar 2+ afgevaardigden hebt. Verhoog de logistiekwaarde met 1. Alle spelers kunnen hun staalgrondstoffen verkopen voor 3 M€ per stuk.",
 
-    "New Colony Planning Initiaitives": "Nieuwe initiatieven voor kolonieplanning",
+    "New Colony Planning Initiatives": "Nieuwe initiatieven voor kolonieplanning",
     "Requires the habitat rate to be 2 or higher. Raise the habitat rate 1 step.": "Vereist een habitatclassificatie van 2 of hoger. Verhoog de habitatwaarde met 1.",
 
     "Off-World City Living": "Buitenaards stadsleven",
@@ -234,7 +234,7 @@
     "1 VP per 3 microbes here.": "1 OP voor elke 3 microben op deze kaart.",
     "Action: Spend 1 steel to add 2 microbes here.": "Actie: Betaal 1 staal om 2 microben aan deze kaart toe te voegen.",
 
-    "Sinus Iridium Road Network": "Sinus Iridium wegennet",
+    "Sinus Irdium Road Network": "Sinus Iridium wegennet",
     "Decrease your energy production 1 step and increase your M€ production 3 steps. Spend 1 steel. Place a road tile on The Moon and raise the Logistics Rate 1 step.": "Verminder je energieproductie met 1 en verhoog je M€-productie met 3. Betaal 1 staal. Plaats een wegtegel op de maan en verhoog de logistiekwaarde met 1.",
 
     "Small Duty Rovers": "Lichte vracht Rovers",
@@ -255,7 +255,7 @@
     "Action: Spend X steel to gain 3X M€ (max 3 steel).": "ACTIE: Betaal X staal om 3X M€ te krijgen (max. 3 staal).",
 
     "Subterranean Habitats": "Ondergrondse leefgebieden",
-    "Effect: When you build a habitat on The Moon, you spend 1 titanium less.": "EFFECT: Als je een habitat op de maan bouwt, betaal je 1 titanium minder.",
+    "Effect: When you build a habitat on THE MOON, you spend 1 titanium less.": "EFFECT: Als je een habitat op DE MAAN bouwt, betaal je 1 titanium minder.",
     "Spend 2 steel. Raise the habitat rate 1 step.": "Betaal 2 staal. Verhoog het aantal kolonies met 1.",
 
     "Syndicate Pirate Raids": "Syndicaat Piraataanvalen",

@@ -17,7 +17,7 @@ import {ICard} from './cards/ICard';
 import {isCompatibleWith} from './cards/ICardFactory';
 import {GameOptions} from './game/GameOptions';
 import {ICorporationCard} from './cards/corporation/ICorporationCard';
-import {IProjectCard} from './cards/IProjectCard';
+import {isIProjectCard, IProjectCard} from './cards/IProjectCard';
 import {IStandardProjectCard} from './cards/IStandardProjectCard';
 import {newCard} from './createCard';
 import {IPreludeCard} from './cards/prelude/IPreludeCard';
@@ -80,7 +80,12 @@ export class GameCards {
   }
 
   public getProjectCards() {
-    return this.getCards<IProjectCard>('projectCards');
+    const cards = this.getCards<IProjectCard>('projectCards');
+    const cardsWithIncludedCards = this.addCustomCards(
+      cards,
+      this.gameOptions.includedCards,
+    );
+    return cardsWithIncludedCards.filter(isIProjectCard);
   }
   public getStandardProjects() {
     return this.getCards<IStandardProjectCard>('standardProjects');
@@ -88,7 +93,8 @@ export class GameCards {
   public getCorporationCards(): Array<ICorporationCard> {
     const cards = this.getCards<ICorporationCard>('corporationCards')
       .filter((card) => card.name !== CardName.BEGINNER_CORPORATION);
-    return this.addCustomCards(cards, this.gameOptions.customCorporationsList);
+    // return this.addCustomCards(cards, this.gameOptions.customCorporationsList);
+    return  cards;
   }
   public getPreludeCards() {
     let preludes = this.getCards<IPreludeCard>('preludeCards');
@@ -100,11 +106,11 @@ export class GameCards {
     }
     preludes = this.addCustomCards(preludes, this.gameOptions.customPreludes);
 
-    if (this.gameOptions.twoCorpsVariant) {
-      // As each player who doesn't have Merger is dealt Merger in SelectInitialCards.ts,
-      // remove it from the deck to avoid possible conflicts (e.g. Valley Trust / New Partner)
-      preludes = preludes.filter((c) => c.name !== CardName.MERGER);
-    }
+    // if (this.gameOptions.twoCorpsVariant) {
+    // As each player who doesn't have Merger is dealt Merger in SelectInitialCards.ts,
+    // remove it from the deck to avoid possible conflicts (e.g. Valley Trust / New Partner)
+    // preludes = preludes.filter((c) => c.name !== CardName.MERGER);
+    // }
     return preludes;
   }
 
@@ -122,8 +128,9 @@ export class GameCards {
         if (card === undefined) {
           // TODO(kberg): throw an error.
           console.warn(`Unknown card: ${cardName}`);
+        } else {
+          cards.push(<T> card);
         }
-        cards.push(<T> card);
       }
     }
     return cards;
@@ -138,7 +145,6 @@ export class GameCards {
     }
 
     cards = this.filterBannedCards(cards);
-    cards = this.addCustomCards(cards, this.gameOptions.includedCards);
     cards = this.filterReplacedCards(cards);
     return cards;
   }

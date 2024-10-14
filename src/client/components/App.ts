@@ -217,36 +217,37 @@ export const mainAppSettings = {
     udpatevip: function(userId : string) {
       const app = (this as any);
       const vip = PreferencesManager.load('vip');
-      // let vipupdate = PreferencesManager.load("vipupdate");
-      // 每天更新一次vip
-      // if(vipupdate < getDay()){
-      const xhr = new XMLHttpRequest();
-      xhr.open('GET', '/api/isvip?userId='+ userId );
-      xhr.onerror = function() {
-        alert('Error getting game data');
-      };
-      xhr.onload = () => {
-        if (xhr.status === 200) {
-          const resp = xhr.response;
-          if (resp === 'success') {
-            app.isvip = true;
-            PreferencesManager.INSTANCE.set('vip', true);
-          } else {
+
+      const onSucces = (response: any) => {
+        if (!response.ok) {
+          response.text().then((msg: string) =>{
+            if (response.status === 404) {
+              PreferencesManager.loginOut();
+            }
             app.isvip = false;
             PreferencesManager.INSTANCE.set('vip', false);
-            app.showdonate();// 根据用户id获取到vip到期，调用赞助页面方法
-          }
+            alert(msg);
+          });
         } else {
-          if (xhr.status === 404) {
-            PreferencesManager.loginOut();
-          }
-          app.isvip = false;
-          PreferencesManager.INSTANCE.set('vip', false);
+          response.json().then((data: { id: string; isvip: boolean; }) => {
+            app.isvip = data.isvip;
+            PreferencesManager.INSTANCE.set('vip', data.isvip);
+            PreferencesManager.INSTANCE.set('userId', data.id);
+            if (!data.isvip) {
+              app.showdonate(); // 根据用户id获取到vip到期，调用赞助页面方法
+            }
+          });
         }
         PreferencesManager.INSTANCE.set('vipupdate', getDay());
       };
-      xhr.send();
-      // }
+
+      fetch('/api/isvip?userId='+ userId, {'method': 'GET', 'headers': {'Content-Type': 'application/json'}})
+        .then(onSucces)
+        .catch((e) => {
+          console.warn('error', e);
+          alert('Unexpected server response');
+        });
+
       if (vip && vip === 'true') {
         app.isvip = true;
       }

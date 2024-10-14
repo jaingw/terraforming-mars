@@ -63,7 +63,7 @@ export class HiredRaiders extends Card implements IProjectCard {
         }));
       }
 
-      if (target.megaCredits > 0) {
+      if (target.megaCredits > 0 && !target.isCorporation(CardName.MIRRORCOAT)) {
         const amountStolen = Math.min(3, target.megaCredits);
         const optionTitle = message('Steal ${0} M€ from ${1}', (b) => b.number(amountStolen).player(target));
 

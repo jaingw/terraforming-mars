@@ -24,7 +24,7 @@ export class InciteEnder extends CorporationCard {
           b.corpBox('action', (ce) => {
             ce.vSpace();
             ce.action('Look at the top 3 cards of global events deck and discard any of them.', (eb) => {
-              eb.empty().startAction.text('3').globalCards(1).asterix();
+              eb.empty().startAction.text('3').globalEvent().asterix();
             });
             ce.effect('Get 1 influence per leader of the Non-dominant party.', (eb) => {
               eb.startEffect.plus().influence({amount: 1}).slash().partyLeaders().empty().asterix();

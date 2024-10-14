@@ -7,6 +7,7 @@ import {SpaceName} from '../../SpaceName';
 import {CardName} from '../../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
 import {Resource} from '../../../common/Resource';
+import {CardRenderDynamicVictoryPoints} from '../render/CardRenderDynamicVictoryPoints';
 
 export class Trantor extends Card implements IProjectCard {
   constructor() {
@@ -15,7 +16,7 @@ export class Trantor extends Card implements IProjectCard {
       name: CardName.TRANTOR,
       tags: [Tag.SPACE, Tag.CITY],
       cost: 10,
-      victoryPoints: 3,
+      victoryPoints: 'special',
 
       metadata: {
         cardNumber: 'Q58',
@@ -24,6 +25,7 @@ export class Trantor extends Card implements IProjectCard {
           b.city().asterix();
         }),
         description: 'Increase your M€ production 2 steps. Place a city tile IN SPACE, outside and separate from the planet. At the end of the game, if you have most cities not on Mars, gain 3 VPs.',
+        victoryPoints: CardRenderDynamicVictoryPoints.trantor(),
       },
     });
   }

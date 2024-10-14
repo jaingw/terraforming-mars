@@ -1,9 +1,7 @@
 import {AndOptions} from './AndOptions';
 import {ICorporationCard} from '../cards/corporation/ICorporationCard';
-import {IProjectCard} from '../cards/IProjectCard';
 import {IPlayer} from '../IPlayer';
 import {SelectCard} from './SelectCard';
-import {Merger} from '../cards/promo/Merger';
 import {ICeoCard} from '../cards/ceos/ICeoCard';
 import * as titles from '../../common/inputs/SelectInitialCards';
 import {SelectInitialCardsModel} from '../../common/models/PlayerInputModel';
@@ -30,14 +28,14 @@ export class SelectInitialCards extends AndOptions {
     );
 
     // Give each player Merger in this variant
-    if (player.game.gameOptions.twoCorpsVariant) {
-      player.dealtPreludeCards.push(new Merger());
-    }
+    // if (player.game.gameOptions.twoCorpsVariant) {
+    //   player.dealtPreludeCards.push(new Merger());
+    // }
 
     if (player.game.gameOptions.preludeExtension) {
       this.options.push(
         new SelectCard(titles.SELECT_PRELUDE_TITLE, undefined, player.dealtPreludeCards, {min: 2, max: 2})
-          .andThen( (preludeCards: Array<IProjectCard>) => {
+          .andThen((preludeCards) => {
             if (preludeCards.length !== 2) {
               throw new InputError('Only select 2 preludes');
             }
@@ -76,19 +74,20 @@ export class SelectInitialCards extends AndOptions {
     });
   }
 
-  private completed(corporation: ICorporationCard, corporation2: ICorporationCard | undefined) {
+  private completed(_corporation: ICorporationCard, _corporation2: ICorporationCard | undefined) {
+    //  Game.ts 的 selectInitialCards中已包含下面逻辑,先校验金额再执行, 新增部分迁移出去
     const player = this.player;
     // discard all unpurchased cards
-    player.dealtProjectCards.forEach((card) => {
-      if (player.cardsInHand.includes(card) === false) {
-        player.game.projectDeck.discard(card);
-      }
+    player.dealtProjectCards.forEach((_card) => {
+      // if (player.cardsInHand.includes(card) === false) {
+      //   player.game.projectDeck.discard(card);
+      // }
     });
-    player.dealtCorporationCards.forEach((card) => {
-      if (card.name !== corporation.name && card.name !== corporation2?.name) {
-        player.game.corporationDeck.discard(card);
-      }
-    });
+    // player.dealtCorporationCards.forEach((card) => {
+    //   if (card.name !== corporation.name && card.name !== corporation2?.name) {
+    //     player.game.corporationDeck.discard(card);
+    //   }
+    // });
   }
 
   public override toModel(player: IPlayer): SelectInitialCardsModel {

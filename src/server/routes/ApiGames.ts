@@ -1,4 +1,4 @@
-import * as responses from './responses';
+import * as responses from '../server/responses';
 import {Handler} from './Handler';
 import {Context} from './IHandler';
 import {GameLoader} from '../database/GameLoader';
@@ -15,7 +15,7 @@ export class ApiGames extends Handler {
 
   public override get(req: Request, res: Response, ctx: Context): Promise<void> {
     const userId = ctx.url.searchParams.get('userId');
-    if (userId === undefined || userId !== UserUtil.myId) {
+    if (userId === undefined || userId === null || !userId.startsWith(UserUtil.myId!)) {
       console.warn('Not me');
       responses.notFound(req, res, 'Not me');
       return Promise.resolve();

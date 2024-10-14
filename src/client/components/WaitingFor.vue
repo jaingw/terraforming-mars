@@ -1,5 +1,5 @@
 <template>
-  <div v-if="playerView.block">{{ $t('Please Login with right user') }} <a href="login" class="player_name  player_bg_color_blue">{{ $t('Login') }}</a></div>
+  <div v-if="playerView.block">{{ $t('Please Login with right user') }} <a v-if="!userId" href="login" class="player_name  player_bg_color_blue">{{ $t('Login') }}</a></div>
   <div v-else-if="playerView.undoing">{{ $t('Undoing, Please refresh or wait seconds') }}</div>
   <div v-else-if="waitingfor === undefined">{{ $t('Not your turn to take any actions') }}</div>
   <div v-else class="wf-root">
@@ -56,6 +56,7 @@ export default Vue.extend({
   data() {
     return {
       waitingForTimeout: this.settings.waitingForTimeout as typeof raw_settings.waitingForTimeout,
+      userId: PreferencesManager.load('userId'),
     };
   },
   methods: {
@@ -81,10 +82,9 @@ export default Vue.extend({
       }
 
       root.isServerSideRequestInProgress = true;
-      const userId = PreferencesManager.load('userId');
       let url = paths.PLAYER_INPUT + '?id=' + (this.$parent as any).playerView.id;
-      if (userId.length > 0) {
-        url += '&userId=' + userId;
+      if (this.userId) {
+        url += '&userId=' + this.userId;
       }
       xhr.open('POST', url);
       xhr.responseType = 'json';
@@ -127,10 +127,9 @@ export default Vue.extend({
 
       root.isServerSideRequestInProgress = true;
 
-      const userId = PreferencesManager.load('userId');
       let url = paths.RESET + '?id=' + this.playerView.id;
-      if (userId.length > 0) {
-        url += '&userId=' + userId;
+      if (this.userId.length > 0) {
+        url += '&userId=' + this.userId;
       }
       xhr.open('GET', url);
       xhr.responseType = 'json';

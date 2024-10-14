@@ -22,7 +22,10 @@ export class ChoosePoliticalAgenda extends DeferredAction {
   public execute(): PlayerInput {
     const players = this.player.game.getPlayers();
     const bonuses: Array<SelectOption> = this.party.bonuses.map((bonus) => {
-      const description = bonus.description + ' (' + players.map((player) => player.name + ': ' + bonus.getScore(player)).join(' / ') + ')';
+      const description = message(
+        bonus.description + ' (${0})',
+        (b) => b.rawString(players.map((player) => player.name + ': ' + bonus.getScore(player)).join(' / ')),
+      );
 
       return new SelectOption(description).andThen(() => {
         this.bonusCb(bonus.id);
@@ -31,7 +34,6 @@ export class ChoosePoliticalAgenda extends DeferredAction {
     });
 
     const orBonuses = new OrOptions(...bonuses);
-    // TODO(replace)
     orBonuses.title = message('Select a ${0} bonus', (b) => b.party(this.party));
 
     const policies = this.party.policies.map((policy) => {

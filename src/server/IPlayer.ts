@@ -12,7 +12,6 @@ import {Resource} from '../common/Resource';
 import {CardResource} from '../common/CardResource';
 import {SelectCard} from './inputs/SelectCard';
 import {Priority} from './deferredActions/Priority';
-import {RobotCard} from './cards/promo/SelfReplicatingRobots';
 import {SerializedPlayer, SerializedPlayerId} from './SerializedPlayer';
 import {Timer} from '../common/Timer';
 import {AllOptions, DrawOptions} from './deferredActions/DrawCards';
@@ -41,6 +40,8 @@ export type CanAffordOptions = Partial<PaymentOptions> & {
   reserveUnits?: Units,
   tr?: TRSource,
 }
+
+export type DraftType = 'initial' | 'prelude' | 'standard';
 
 /**
  * Behavior when playing a card:
@@ -110,7 +111,6 @@ export interface IPlayer {
   ceoCardsInHand: Array<IProjectCard>;
   playedCards: Array<IProjectCard>;
   draftedCards: Array<IProjectCard | ICorporationCard>;
-  draftedCorporations: Array<ICorporationCard>;
   cardCost: number;
   needsToDraft?: boolean;
 
@@ -171,7 +171,7 @@ export interface IPlayer {
   getTitaniumValue(): number;
   increaseTitaniumValue(): void;
   decreaseTitaniumValue(): void;
-  getSelfReplicatingRobotsTargetCards(): Array<RobotCard>;
+  getSelfReplicatingRobotsTargetCards(): Array<IProjectCard>;
   getSteelValue(): number;
   increaseSteelValue(): void;
   decreaseSteelValue(): void;
@@ -270,12 +270,11 @@ export interface IPlayer {
   runProductionPhase(): void;
   finishProductionPhase(): void;
   worldGovernmentTerraforming(): void;
-  dealForDraft(quantity: number, cards: Array<IProjectCard>): void;
 
   /**
    * Ask the player to draft from a set of cards.
    *
-   * @param initialDraft when true, this is part of the first generation draft.
+   * @param type the type of draft being asked for.
    * @param passTo  The player _this_ player passes remaining cards to.
    * @param passedCards The cards received from the draw, or from the prior player. If empty, it's the first
    *   step in the draft, and this function will deal cards.

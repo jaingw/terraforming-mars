@@ -2,7 +2,7 @@ import {expect} from 'chai';
 import {TestPlayer} from '../TestPlayer';
 import {testGame} from '../TestGame';
 import {UnderworldExpansion} from '../../src/server/underworld/UnderworldExpansion';
-import {Game} from '../../src/server/Game';
+import {IGame} from '../../src/server/IGame';
 import {UnderworldData} from '../../src/server/underworld/UnderworldData';
 import {cast, fakeCard, forceGenerationEnd, formatMessage, runAllActions} from '../TestingUtils';
 import {Units} from '../../src/common/Units';
@@ -22,7 +22,7 @@ import {PrivateMilitaryContractor} from '../../src/server/cards/underworld/Priva
 describe('UnderworldExpansion', function() {
   let player1: TestPlayer;
   let player2: TestPlayer;
-  let game: Game;
+  let game: IGame;
   let underworldData: UnderworldData;
   let dataCard1: IProjectCard;
   let dataCard2: IProjectCard;
@@ -107,7 +107,7 @@ describe('UnderworldExpansion', function() {
     expect(serializedSpaces[2]).does.not.haveOwnPropertyDescriptor('excavator');
     expect(serializedSpaces[3]).does.not.haveOwnPropertyDescriptor('excavator');
 
-    const game2 = game.loadFromJSON(serialized);
+    const game2 = game.loadFromJSON(serialized, true);
     const deserializedSpaces = game2.board.spaces.filter((space) => spaceIds.includes(space.id));
     expect(deserializedSpaces[0].undergroundResources).eq('data3');
     expect(deserializedSpaces[1].undergroundResources).eq('corruption2');

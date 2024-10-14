@@ -1,11 +1,11 @@
 import {expect} from 'chai';
 import {TestPlayer} from './TestPlayer';
-import {Game} from '../src/server/Game';
 import {Timer} from '../src/common/Timer';
 import {FakeClock} from './common/FakeClock';
 import {getTestPlayer, testGame} from './TestGame';
+import {IGame} from '../src/server/IGame';
 
-let game: Game;
+let game: IGame;
 let player: TestPlayer;
 let clock: FakeClock;
 let timer: Timer;

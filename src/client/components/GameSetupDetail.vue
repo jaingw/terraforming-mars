@@ -53,7 +53,8 @@
               <div v-if="gameOptions.initialCorpDraftVariant" class="game-config generic" v-i18n>Corporation</div>
               <div v-if="gameOptions.initialDraftVariant" class="game-config generic" v-i18n>Initial</div>
               <div v-if="gameOptions.draftVariant" class="game-config generic" v-i18n>Research phase</div>
-              <div v-if="!gameOptions.initialDraftVariant && !gameOptions.draftVariant && !gameOptions.initialCorpDraftVariant" class="game-config generic" v-i18n>Off</div>
+              <div v-if="!gameOptions.initialDraftVariant && !gameOptions.draftVariant && !gameOptions.initialCorpDraftVariant && !gameOptions.preludeDraftVariant" class="game-config generic" v-i18n>Off</div>
+              <div v-if="gameOptions.preludeDraftVariant">Prelude</div>
             </li>
 
             <li v-if="gameOptions.escapeVelocityMode">
@@ -103,6 +104,7 @@ const boardColorClass: Record<BoardName, string> = {
   [BoardName.ELYSIUM]: 'game-config board-elysium map',
   [BoardName.UTOPIA_PLANITIA]: 'game-config board-utopia-planitia map',
   [BoardName.VASTITAS_BOREALIS_NOVUS]: 'game-config board-vastitas_borealis_novus map',
+  [BoardName.TERRA_CIMMERIA_NOVUS]: 'game-config board-terra_cimmeria_novus map',
   [BoardName.AMAZONIS]: 'game-config board-amazonis map',
   [BoardName.ARABIA_TERRA]: 'game-config board-arabia_terra map',
   [BoardName.VASTITAS_BOREALIS]: 'game-config board-vastitas_borealis map',

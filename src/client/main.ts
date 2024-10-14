@@ -18,6 +18,15 @@ async function bootstrap() {
   if (lang !== 'en') {
     try {
       window._translations = await fetch(`assets/locales/${lang}.json`).then((res) => res.json());
+      for(const key in window._translations){
+        if(key.length > 10){// 由于部分文案由大写更换成了小写,这里做个兼容
+          window._translations[key.toLocaleLowerCase()] = window._translations[key];
+          if(key.endsWith('.')){
+            window._translations[key.slice(0, -1)] = window._translations[key];
+            window._translations[key.slice(0, -1).toLocaleLowerCase()] = window._translations[key];
+          }
+        }
+      }
       // TODO - add a nice loader for this fetch
     } catch (err) {
       console.warn(`Cannot load ${lang} translations. See network for details.`);

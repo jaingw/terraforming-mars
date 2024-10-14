@@ -8,29 +8,32 @@ import {IPlayer} from '../../IPlayer';
 import {Policy} from '../../turmoil/Policy';
 import {KELVINISTS_POLICY_1} from '../../turmoil/parties/Kelvinists';
 import {SCIENTISTS_POLICY_1} from '../../turmoil/parties/Scientists';
+import {ICard} from '../ICard';
 
 /**
  * 实现额外的政策
+ * Turmoil 蓝
  * PartyHooks  铁 绿 红
- * TurmoilHandler  科 热
+ * TurmoilHandler partyAction 科 热  PoliticalReform.canAct
  */
-export class PoliticalReform extends CorporationCard {
+export class PoliticalReform extends CorporationCard implements ICard {
   public data:PartyName | undefined = undefined;
 
   constructor() {
     super({
       name: CardName.POLITICALREFORM,
       tags: [Tag.SPACE],
-      startingMegaCredits: 49,
+      startingMegaCredits: 52,
 
 
       metadata: {
         cardNumber: 'XB15',
-        description: 'You start with 49 M€..',
+        description: 'You start with 52 M€.',
         renderData: CardRenderer.builder((b) => {
-          b.br.br;
+          b.megacredits(52);
           b.corpBox('effect', (ce) => {
-            ce.text('At the end of the solar phase,the party with most your delegates,regarded as your another ruling party,its policy will be active for you during the coming action phase. ', Size.SMALL);
+            ce.vSpace(Size.SMALL);
+            ce.text('效果:  每时代派送的第一个议员到一个非执政党时, 你获得该政党的政策效果直至时代结束', Size.SMALL);
           });
         }),
       },

@@ -79,7 +79,7 @@ import {MoonRoadStandardProject} from './MoonRoadStandardProject';
 import {MoonRoadStandardProjectVariant2} from './MoonStandardProjectVariants';
 import {MoonTether} from './MoonTether';
 import {NanotechIndustries} from './NanotechIndustries';
-import {NewColonyPlanningInitiaitives} from './NewColonyPlanningInitiaitives';
+import {NewColonyPlanningInitiatives} from './NewColonyPlanningInitiatives';
 import {OffWorldCityLiving} from './OffWorldCityLiving';
 import {PreliminaryDarkside} from './PreliminaryDarkside';
 import {OrbitalPowerGrid} from './OrbitalPowerGrid';
@@ -89,7 +89,7 @@ import {RevoltingColonists} from './RevoltingColonists';
 import {RoadPiracy} from './RoadPiracy';
 import {RoverDriversUnion} from './RoverDriversUnion';
 import {RustEatingBacteria} from './RustEatingBacteria';
-import {SinusIridiumRoadNetwork} from './SinusIridiumRoadNetwork';
+import {SinusIrdiumRoadNetwork} from './SinusIrdiumRoadNetwork';
 import {SmallDutyRovers} from './SmallDutyRovers';
 import {SolarPanelFoundry} from './SolarPanelFoundry';
 import {SphereHabitats} from './SphereHabitats';
@@ -124,7 +124,7 @@ export const MOON_CARD_MANIFEST = new ModuleManifest({
     [CardName.THE_WOMB]: {Factory: TheWomb},
     [CardName.TYCHO_ROAD_NETWORK]: {Factory: TychoRoadNetwork},
     [CardName.ARISTARCHUS_ROAD_NETWORK]: {Factory: AristarchusRoadNetwork},
-    [CardName.SINUS_IRIDIUM_ROAD_NETWORK]: {Factory: SinusIridiumRoadNetwork},
+    [CardName.SINUS_IRDIUM_ROAD_NETWORK]: {Factory: SinusIrdiumRoadNetwork},
     [CardName.MOMENTUM_VIRUM_HABITAT]: {Factory: MomentumViriumHabitat},
     [CardName.LUNA_TRADE_STATION]: {Factory: LunaTradeStation},
     [CardName.LUNA_MINING_HUB]: {Factory: LunaMiningHub},
@@ -144,7 +144,7 @@ export const MOON_CARD_MANIFEST = new ModuleManifest({
     [CardName.STEEL_MARKET_MONOPOLISTS]: {Factory: SteelMarketMonopolists},
     [CardName.TITANIUM_MARKET_MONOPOLISTS]: {Factory: TitaniumMarketMonopolists},
     [CardName.LUNA_STAGING_STATION]: {Factory: LunaStagingStation},
-    [CardName.NEW_COLONY_PLANNING_INITIAITIVES]: {Factory: NewColonyPlanningInitiaitives},
+    [CardName.NEW_COLONY_PLANNING_INITIAITIVES]: {Factory: NewColonyPlanningInitiatives},
     [CardName.AI_CONTROLLED_MINE_NETWORK]: {Factory: AIControlledMineNetwork},
     [CardName.DARKSIDE_METEOR_BOMBARDMENT]: {Factory: DarksideMeteorBombardment},
     [CardName.UNDERGROUND_DETONATORS]: {Factory: UndergroundDetonators},

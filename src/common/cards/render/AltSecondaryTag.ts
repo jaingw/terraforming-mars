@@ -9,6 +9,7 @@ export enum AltSecondaryTag {
   TURMOIL = 'turmoil',
   FLOATER = 'floater',
   BLUE = 'blue',
+  GREEN = 'green',
   NO_TAGS = 'no_tags',
   ARES = 'ares',
   MOON_MINING_RATE = 'moon-mine',

@@ -1,6 +1,5 @@
 import {expect} from 'chai';
 import {PartyName} from '../../src/common/turmoil/PartyName';
-import {Game} from '../../src/server/Game';
 import {IGame} from '../../src/server/IGame';
 import {MarsFirst} from '../../src/server/turmoil/parties/MarsFirst';
 import {Phase} from '../../src/common/Phase';
@@ -43,7 +42,7 @@ import {TurmoilUtil} from '../../src/server/turmoil/TurmoilUtil';
 describe('Turmoil', function() {
   let player: TestPlayer;
   let player2: TestPlayer;
-  let game: Game;
+  let game: IGame;
   let turmoil: Turmoil;
 
   beforeEach(function() {

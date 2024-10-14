@@ -33,6 +33,8 @@ export class StealResources extends DeferredAction {
       candidates = candidates.filter((p) => !p.alloysAreProtected());
     }
 
+    candidates = candidates.filter((p) => !p.isCorporation(CardName.MIRRORCOAT));  
+    
     if (candidates.length === 0) {
       return undefined;
     }

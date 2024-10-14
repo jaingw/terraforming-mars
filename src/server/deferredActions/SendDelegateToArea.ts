@@ -69,7 +69,7 @@ export class SendDelegateToArea extends DeferredAction {
           }
         }
         if (this.player.isCorporation(CardName.THERMOPOLI)) {
-          this.player.stock.add(Resource.HEAT, numDelegateToSend * 2, {log: true});
+          this.player.stock.add(Resource.HEAT, numDelegateToSend * 1, {log: true});
         }
 
         if (this.options?.freeStandardAction === true) {

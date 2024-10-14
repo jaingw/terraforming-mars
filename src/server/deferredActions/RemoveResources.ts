@@ -29,6 +29,11 @@ export class RemoveResources extends DeferredAction<number> {
       }
     }
 
+    if(this.target.isCorporation(CardName.MIRRORCOAT)){
+      this.cb(0);
+      return undefined;
+    }
+
     let qtyLost = Math.min(this.target.stock.get(this.resource), this.count);
 
     // Botanical Experience hook.

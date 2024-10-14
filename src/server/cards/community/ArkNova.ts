@@ -15,17 +15,17 @@ export class ArkNova extends CorporationCard {
   constructor() {
     super({
       name: CardName.ARK_NOVA,
-      tags: [Tag.BUILDING, Tag.CITY],
-      startingMegaCredits: 42,
+      tags: [Tag.BUILDING, Tag.CITY, Tag.ANIMAL],
+      startingMegaCredits: 49,
       resourceType: CardResource.ANIMAL,
-      victoryPoints: {tag: Tag.BUILDING, per: 3},
+      victoryPoints: {tag: Tag.BUILDING, per: 4},
 
       metadata: {
         cardNumber: 'XB10',
-        description: 'You start with 42 M€.',
+        description: 'You start with 49 M€.',
         renderData: CardRenderer.builder((b) => {
           b.br;
-          b.megacredits(42).nbsp.building(1, {played}).slash().cityTag(1, {played}).colon().animals(1).br;
+          b.megacredits(49).nbsp.building(1, {played}).slash().cityTag(1, {played}).colon().animals(1).br;
           b.text('(Action: When you play a card with a building or city tag, add 1 animal on this card.)', Size.SMALL, false, false).br;
           b.effect('When you have 3 animals, automatically convert to 1 steel and draw 1 card.', (eb) => {
             eb.text('3').animals(1).asterix().startAction.steel(1, {digit}).cards(1);

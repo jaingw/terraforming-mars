@@ -1,6 +1,6 @@
 <template>
         <div class="players-overview" v-if="hasPlayers()">
-            <overview-settings />
+            <!-- <overview-settings /> -->
             <div class="other_player" v-if="thisPlayer === undefined || players.length > 1">
                 <div v-for="(otherPlayer, index) in getPlayersInOrder()" :key="otherPlayer.color">
                     <other-player v-if="thisPlayer === undefined || otherPlayer.color !== thisPlayer.color" :player="otherPlayer" :playerIndex="index"/>
@@ -39,6 +39,7 @@
 import Vue from 'vue';
 import PlayerInfo from '@/client/components/overview/PlayerInfo.vue';
 import OtherPlayer from '@/client/components/OtherPlayer.vue';
+// import OverviewSettings from '@/client/components/overview/OverviewSettings.vue';
 import {ViewModel, PublicPlayerModel} from '@/common/models/PlayerModel';
 import {ActionLabel} from '@/client/components/overview/ActionLabel';
 import {Phase} from '@/common/Phase';
@@ -77,6 +78,7 @@ export default Vue.extend({
   components: {
     'player-info': PlayerInfo,
     'other-player': OtherPlayer,
+    // 'overview-settings': OverviewSettings,
   },
   data() {
     return {};

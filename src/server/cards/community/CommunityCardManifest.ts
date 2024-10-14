@@ -41,6 +41,10 @@ import {Thermopoli} from './Thermopoli';
 import {EliteTech} from './EliteTech';
 import {SolarPlant} from './SolarPlant';
 import {PoliticalReform} from './PoliticalReform';
+import { StarlinkDrifter } from './StarlinkDrifter';
+import { Prowler } from './Prowler';
+import { MirrorCoat } from './MirrorCoat';
+import { GreenRing } from './GreenRing';
 
 export const COMMUNITY_CARD_MANIFEST = new ModuleManifest({
   module: 'community',
@@ -72,6 +76,10 @@ export const COMMUNITY_CARD_MANIFEST = new ModuleManifest({
     [CardName.ELITETECH]: {Factory: EliteTech}, // XB13
     [CardName.SOLARPLANT]: {Factory: SolarPlant}, // XB14
     [CardName.POLITICALREFORM]: {Factory: PoliticalReform}, // XB15
+    [CardName.STARLINKDRIFTER]: {Factory: StarlinkDrifter}, // XB16
+    [CardName.PROWLER]: {Factory: Prowler}, // XB17
+    [CardName.MIRRORCOAT]: {Factory: MirrorCoat}, // XB18
+    [CardName.GREENRING]: {Factory: GreenRing}, // XB19
   },
   preludeCards: {
     // 粉丝扩的部分前序跟pf扩重合 先注释

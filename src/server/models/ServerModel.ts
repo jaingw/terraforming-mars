@@ -166,7 +166,7 @@ export class Server {
     const user = GameLoader.getUserByPlayer(player);
     if (user !== undefined ) {
       showhandcards = user.showhandcards;
-      if (user.id !== userId) {
+      if ( !user.checkToken(userId)) {
         block = true;
       } else {
         isme = true;
@@ -183,8 +183,8 @@ export class Server {
     return player.getSelfReplicatingRobotsTargetCards().map((targetCard) => {
       const model: CardModel = {
         resources: targetCard.resourceCount,
-        name: targetCard.card.name,
-        calculatedCost: player.getCardCost(targetCard.card),
+        name: targetCard.name,
+        calculatedCost: player.getCardCost(targetCard),
         isSelfReplicatingRobotsCard: true,
       };
       return model;
@@ -349,13 +349,14 @@ export class Server {
   }
 
   private static getResourceProtections(player: IPlayer) {
+    const defaultProteection = player.isCorporation(CardName.MIRRORCOAT) ? 'on' : 'off';
     const protection: Record<Resource, Protection> = {
-      megacredits: 'off',
-      steel: 'off',
-      titanium: 'off',
-      plants: 'off',
-      energy: 'off',
-      heat: 'off',
+      megacredits: defaultProteection,
+      steel: defaultProteection,
+      titanium: defaultProteection,
+      plants: defaultProteection,
+      energy: defaultProteection,
+      heat: defaultProteection,
     };
 
     if (player.alloysAreProtected()) {
@@ -373,7 +374,7 @@ export class Server {
   }
 
   private static getProductionProtections(player: IPlayer) {
-    const defaultProteection = player.cardIsInEffect(CardName.PRIVATE_SECURITY) ? 'on' : 'off';
+    const defaultProteection = player.cardIsInEffect(CardName.PRIVATE_SECURITY) || player.isCorporation(CardName.MIRRORCOAT) ? 'on' : 'off';
     const protection: Record<Resource, Protection> = {
       megacredits: defaultProteection,
       steel: defaultProteection,

@@ -51,13 +51,13 @@ export enum TileType {
   WETLANDS, // 36
   RED_CITY, // 37
   MARTIAN_NATURE_WONDERS, // 38
-    CRASHLANDING, // 39
+  CRASHLANDING, // 39
 
-    MARS_NOMADS, // 40
-    REY_SKYWALKER, // 41
+  MARS_NOMADS, // 40
+  REY_SKYWALKER, // 41
 
-    // Underworld
-    MAN_MADE_VOLCANO, // 42
+  // Underworld
+  MAN_MADE_VOLCANO, // 42
 
   // EROS 新增版块放这里，避免影响历史数据
   WASTE_INCINERATOR = 50,

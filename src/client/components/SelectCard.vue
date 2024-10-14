@@ -17,7 +17,7 @@
         <div v-if="hasCardWarning()" class="card-warning">{{ $t(warning) }}</div>
         <warnings-component :warnings="warnings"></warnings-component>
         <div v-if="showsave === true" class="nofloat">
-        <AppButton :disabled="playerinput.min !== undefined && playerinput.min > 0 && cardsSelected() === 0" type="submit" @click="saveData" :title="buttonLabel()" />
+        <AppButton :disabled="disabled()" type="submit" @click="saveData" :title="buttonLabel()" />
             <AppButton :disabled="isOptionalToManyCards && cardsSelected() > 0" v-if="isOptionalToManyCards" @click="saveData" type="submit" :title="$t('Skip this action')" />
         </div>
     </div>
@@ -40,6 +40,7 @@ import {SelectCardModel} from '@/common/models/PlayerInputModel';
 import {sortActiveCards} from '@/client/utils/ActiveCardsSortingOrder';
 import {SelectCardResponse} from '@/common/inputs/InputResponse';
 import {Warning} from '@/common/cards/Warning';
+import {vueRoot} from './vueRoot';
 
 type Owner = {
   name: string;
@@ -141,6 +142,10 @@ export default Vue.extend({
       return Array.isArray(this.$data.cards) ? this.$data.cards.map((card) => card.name) : [this.$data.cards.name];
     },
     saveData() {
+      if (this.disabled()) {
+        vueRoot(this).showAlert('Not enough cards selected');
+        return;
+      }
       this.onsave({type: 'card', cards: this.getData()});
     },
     getCardBoxClass(card: CardModel): string {
@@ -169,6 +174,9 @@ export default Vue.extend({
     },
     robotCard(card: CardModel): CardModel | undefined {
       return this.playerView.thisPlayer.selfReplicatingRobotsCards?.find((r) => r.name === card.name);
+    },
+    disabled() {
+      return this.playerinput.min !== undefined && this.playerinput.min > this.cardsSelected();
     },
   },
   computed: {

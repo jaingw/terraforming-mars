@@ -11,6 +11,7 @@ export class _Inventrix_ extends CorporationCard {
       tags: [Tag.SCIENCE, Tag.SCIENCE],
       initialActionText: 'Draw 3 cards',
       startingMegaCredits: 45,
+      globalParameterRequirementBonus: {steps: 3},
 
       metadata: {
         cardNumber: 'R43',
@@ -31,9 +32,5 @@ export class _Inventrix_ extends CorporationCard {
   public initialAction(player: IPlayer) {
     player.drawCard(3);
     return undefined;
-  }
-
-  public getRequirementBonus(_player: IPlayer): number {
-    return 3;
   }
 }

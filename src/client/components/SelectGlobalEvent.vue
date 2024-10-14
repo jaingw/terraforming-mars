@@ -23,7 +23,7 @@ import {SelectGlobalEventResponse} from '@/common/inputs/InputResponse';
 import {GlobalEventName} from '@/common/turmoil/globalEvents/GlobalEventName';
 
 type DataModel = {
-  selected: Array<GlobalEventName> | undefined;
+  selected: Array<GlobalEventName> | undefined ;
 };
 
 export default Vue.extend({
@@ -49,7 +49,7 @@ export default Vue.extend({
   },
   data(): DataModel {
     return {
-      selected: undefined,
+      selected: [],
     };
   },
   components: {
@@ -65,7 +65,7 @@ export default Vue.extend({
           this.selected = [];
         }
       }
-      this.onsave({type: 'globalEvent', globalEventNames: this.selected});
+      this.onsave({type: 'globalEvent', globalEventNames: Array.isArray(this.selected) ? this.selected : [this.selected]});
     },
   },
 });

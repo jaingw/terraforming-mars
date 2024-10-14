@@ -21,13 +21,13 @@ export class EnergyStation extends Card implements IActionCard, IProjectCard {
       type: CardType.ACTIVE,
       name: CardName.ENERGY_STATION,
       tags: [Tag.SPACE],
-      cost: 14,
+      cost: 12,
 
       metadata: {
         cardNumber: 'Q60',
         renderData: CardRenderer.builder((b) => {
-          b.effect('When another player is removed a plant, gain 2 Heat.', (eb) => {
-            eb.startEffect.plants(1, {all}).colon().heat(2);
+          b.effect('When another player is removed a plant, gain 1 Heat.', (eb) => {
+            eb.startEffect.plants(1, {all}).colon().heat(1);
           }).br;
           // b.plants(1, {all}).colon().heat(2).br;
           b.action('Spend X Plant to gain 2X Heat.', (eb) => {
@@ -110,9 +110,8 @@ export class EnergyStation extends Card implements IActionCard, IProjectCard {
       // FIMXE: 有个 api
       // player.heat += 2 * Math.abs(amount);
 
-      const heatAmount = 2 * Math.abs(amount);
+      const heatAmount =  Math.abs(amount);
 
-      // owner.heat += heatAmount;
       player.game.defer(
         new GainResources(owner, Resource.HEAT, {count: heatAmount}).andThen(() => from.game.log(
           '${0} gained ${1} ${2} from ${3}',

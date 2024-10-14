@@ -1,5 +1,4 @@
 import {expect} from 'chai';
-
 import {LobbyHalls} from '../../src/server/cards/pathfinders/LobbyHalls';
 import {Tag} from '../../src/common/cards/Tag';
 import {deserializeProjectCard, serializePlayedCard} from '../../src/server/cards/CardSerialization';

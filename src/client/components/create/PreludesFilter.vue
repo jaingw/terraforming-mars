@@ -62,6 +62,9 @@ export default Vue.extend({
     pathfindersExpansion: {
       type: Boolean,
     },
+    prelude2Expansion: {
+      type: Boolean,
+    },
   },
   data() {
     // Start by giving every entry a default value
@@ -84,6 +87,7 @@ export default Vue.extend({
         ...this.communityCardsOption ? preludeCardNames('community') : [],
         ...this.moonExpansion ? preludeCardNames('moon') : [],
         ...this.pathfindersExpansion ? preludeCardNames('pathfinders') : [],
+        ...this.prelude2Expansion ? preludeCardNames('prelude2') : [],
       ],
       GAME_MODULES: GAME_MODULES,
     };
@@ -181,6 +185,9 @@ export default Vue.extend({
     },
     pathfindersExpansion(enabled) {
       this.watchSelect('pathfinders', enabled);
+    },
+    prelude2Expansion(enabled) {
+      this.watchSelect('prelude2', enabled);
     },
   },
 });

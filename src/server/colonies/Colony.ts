@@ -1,5 +1,4 @@
 import {AddResourcesToCard} from '../deferredActions/AddResourcesToCard';
-import {CardName} from '../../common/cards/CardName';
 import {ColonyBenefit} from '../../common/colonies/ColonyBenefit';
 import {DeferredAction, SimpleDeferredAction} from '../deferredActions/DeferredAction';
 import {Priority} from '../deferredActions/Priority';
@@ -27,6 +26,7 @@ import {sum} from '../../common/utils/utils';
 import {message} from '../logs/MessageBuilder';
 import {PlayerInput} from '../PlayerInput';
 import {SerializedColony} from '../SerializedColony';
+import {CardName} from '../../common/cards/CardName';
 
 export enum ShouldIncreaseTrack { YES, NO, ASK }
 export abstract class Colony implements IColony {
@@ -89,24 +89,10 @@ export abstract class Colony implements IColony {
       this.trackPosition = this.colonies.length;
     }
 
-    // TODO(kberg): Time for an onNewColony hook.
-
-    // Poseidon hook
-    const poseidon = player.game.getCardPlayerOrUndefined(CardName.POSEIDON);
-    if (poseidon !== undefined) {
-      poseidon.production.add(Resource.MEGACREDITS, 1, {log: true});
-    }
-
-    // CEO Naomi hook
-    if (player.cardIsInEffect(CardName.NAOMI)) {
-      player.stock.add(Resource.ENERGY, 2, {log: true});
-      player.stock.add(Resource.MEGACREDITS, 3, {log: true});
-    }
-
-    // Colony Trade Hub hook
-    const colonyTradeHub = player.game.getPlayers().find((player) => player.cardIsInEffect(CardName.COLONY_TRADE_HUB));
-    if (colonyTradeHub !== undefined) {
-      colonyTradeHub.stock.add(Resource.MEGACREDITS, 2, {log: true});
+    for (const cardOwner of player.game.getPlayers()) {
+      for (const card of cardOwner.tableau) {
+        card.onColonyAdded?.(player, cardOwner);
+      }
     }
   }
 
@@ -249,8 +235,10 @@ export abstract class Colony implements IColony {
       break;
 
     case ColonyBenefit.DRAW_CARDS_AND_DISCARD_ONE:
-      player.drawCard();
-      action = new DiscardCards(player, 1, 1, this.name + ' colony bonus. Select a card to discard');
+      player.defer(() => {
+        player.drawCard();
+        player.game.defer(new DiscardCards(player, 1, 1, this.name + ' colony bonus. Select a card to discard'), Priority.SUPERPOWER);
+      });
       break;
 
     case ColonyBenefit.DRAW_CARDS_AND_KEEP_ONE:
@@ -363,9 +351,11 @@ export abstract class Colony implements IColony {
       if (isGiveColonyBonus) {
         /*
          * When this method is called from within the GiveColonyBonus deferred action
-         * we return the player input directly instead of deferring it
+         * we return the player input directly instead of deferring it.
+         *
+         * TODO(kberg): why?
          */
-        return action.execute(); // undefined | PlayerInput
+        return action.execute();
       } else {
         game.defer(action);
         return undefined;

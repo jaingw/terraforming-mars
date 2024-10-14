@@ -5,7 +5,6 @@ import {CardType} from '../../../common/cards/CardType';
 import {IPlayer} from '../../IPlayer';
 import {Resource} from '../../../common/Resource';
 import {CardName} from '../../../common/cards/CardName';
-import {DecreaseAnyProduction} from '../../deferredActions/DecreaseAnyProduction';
 import {CardRenderer} from '../render/CardRenderer';
 import {all} from '../Options';
 import {GainProduction} from '../../deferredActions/GainProduction';
@@ -18,6 +17,9 @@ export class AsteroidMiningConsortium extends Card implements IProjectCard {
       tags: [Tag.JOVIAN],
       cost: 13,
       victoryPoints: 1,
+      behavior: {
+        decreaseAnyProduction: {type: Resource.TITANIUM, count: 1},
+      },
 
       requirements: {production: Resource.TITANIUM, count: 1},
       metadata: {
@@ -34,11 +36,6 @@ export class AsteroidMiningConsortium extends Card implements IProjectCard {
   }
 
   public override bespokePlay(player: IPlayer) {
-    player.game.defer(new DecreaseAnyProduction(
-      player,
-      Resource.TITANIUM,
-      {count: 1, stealing: true},
-    ));
     player.game.defer(new GainProduction(player, Resource.TITANIUM, {count: 1, log: false}));
     return undefined;
   }

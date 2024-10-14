@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 import {MiningRights} from '../../../src/server/cards/base/MiningRights';
-import {Game} from '../../../src/server/Game';
+import {IGame} from '../../../src/server/IGame';
 import {OrOptions} from '../../../src/server/inputs/OrOptions';
 import {SelectSpace} from '../../../src/server/inputs/SelectSpace';
 import {TestPlayer} from '../../TestPlayer';
@@ -16,7 +16,7 @@ import {testGame} from '../../TestGame';
 describe('MiningRights', () => {
   let card: MiningRights;
   let player: TestPlayer;
-  let game: Game;
+  let game: IGame;
 
   beforeEach(() => {
     card = new MiningRights();
@@ -101,7 +101,9 @@ describe('MiningRights', () => {
     player.playedCards = [card];
 
     const roboticWorkforce = new RoboticWorkforce();
-    const selectCard = cast(roboticWorkforce.play(player), SelectCard);
+    cast(roboticWorkforce.play(player), undefined);
+    runAllActions(game);
+    const selectCard = cast(player.popWaitingFor(), SelectCard);
     expect(selectCard.cards).deep.eq([card]);
     selectCard.cb([selectCard.cards[0]]);
     runAllActions(game);

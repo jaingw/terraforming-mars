@@ -7,6 +7,7 @@ import {CardType} from '../../../common/cards/CardType';
 import {Tag} from '../../../common/cards/Tag';
 import {ColonyName} from '../../../common/colonies/ColonyName';
 import {ColoniesHandler} from '../../colonies/ColoniesHandler';
+import {BuildColony} from '../../deferredActions/BuildColony';
 
 export class JovianExpedition extends Card implements IProjectCard {
   constructor() {
@@ -42,7 +43,9 @@ export class JovianExpedition extends Card implements IProjectCard {
 
     ColoniesHandler.addColonyTile(
       player,
-      {title: 'Select colony for Jovian Expedition', filter: ColonyName.TITANIA},
+      {title: 'Select colony tile to add', filter: ColonyName.TITANIA, cb: () =>{
+        game.defer(new BuildColony(player, {title: 'Select colony for Jovian Expedition'}));
+      }},
     );
     return undefined;
   }

@@ -82,16 +82,28 @@ export class GameLoader implements IGameLoader {
       const userNameMap = GameLoader.instance.userNameMap;
       // 统一转换成小写，以忽略大小写限制
       const getfunc = userNameMap.get;
-      const obj = {
-        _getfunc: function _getfunc(key: string) {
-          if (key === undefined || key === '') {
-            return undefined;
-          }
-          key = key.toLowerCase();
-          return getfunc.apply(this, [key]);
-        },
+      userNameMap.get = function(key: string) {
+        if (key === undefined || key === '') {
+          return undefined;
+        }
+        key = key.toLowerCase();
+        return getfunc.apply(this, [key]);
       };
-      userNameMap.get = obj._getfunc;
+
+      const userIdMap = GameLoader.instance.userIdMap;
+      // id截取前12位
+      const idgetfunc = userIdMap.get;
+      userIdMap.get = function(key: string) {
+        if (key === undefined || key === '') {
+          return undefined;
+        }
+        if (key.startsWith('u')) {
+          key = key.substring(0, 13);
+        } else {
+          key = key.substring(0, 12);
+        }
+        return idgetfunc.apply(this, [key]);
+      };
     }
     return GameLoader.instance;
   }
@@ -186,9 +198,9 @@ export class GameLoader implements IGameLoader {
         }
 
         // LOADING 等待读库回调
-        const pendingPlayer = this.pendingPlayer.get(playerId);
-        if (pendingPlayer !== undefined) {
-          pendingPlayer.push(resolve);
+        const pendingArray = this.pendingPlayer.get(playerId);
+        if (pendingArray !== undefined) {
+          pendingArray.push(resolve);
         } else {
           this.pendingPlayer.set(playerId, [resolve]);
         }
@@ -246,6 +258,25 @@ export class GameLoader implements IGameLoader {
         }
       }
     }
+
+    if (game.loadState === LoadState.LOADED) {
+      const pendingGames = this.pendingGame.get(gameId);
+      if (pendingGames !== undefined) {
+        for (const pendingGame of pendingGames) {
+          pendingGame(err ? undefined : game);
+        }
+        this.pendingGame.delete(gameId);
+      }
+      for (const player of game.getAllPlayers()) {
+        const pendingPlayers = this.pendingPlayer.get(player.id);
+        if (pendingPlayers !== undefined) {
+          for (const pendingPlayer of pendingPlayers) {
+            pendingPlayer(err ? undefined : this.playerToGame.get(player.id));
+          }
+          this.pendingPlayer.delete(player.id);
+        }
+      }
+    }
   }
 
   // public async getIds(): Promise<Array<GameIdLedger>> {
@@ -288,24 +319,6 @@ export class GameLoader implements IGameLoader {
   //     }
   //   }
 
-
-  //   const pendingGames = this.pendingGame.get(gameId);
-  //   if (pendingGames !== undefined) {
-  //     for (const pendingGame of pendingGames) {
-  //       pendingGame(err ? undefined : game);
-  //     }
-  //     this.pendingGame.delete(gameId);
-  //   }
-  //   for (const player of game.getAllPlayers()) {
-  //     const pendingPlayers = this.pendingPlayer.get(player.id);
-  //     if (pendingPlayers !== undefined) {
-  //       for (const pendingPlayer of pendingPlayers) {
-  //         pendingPlayer(err ? undefined : this.playerToGame.get(player.id));
-  //       }
-  //       this.pendingPlayer.delete(player.id);
-  //     }
-  //   }
-  // }
 
   private onAllGamesLoaded(): void {
     this.state = State.READY;

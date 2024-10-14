@@ -1,17 +1,17 @@
 import {expect} from 'chai';
 import {Bushes} from '../../../src/server/cards/base/Bushes';
-import {Game} from '../../../src/server/Game';
 import {OrOptions} from '../../../src/server/inputs/OrOptions';
 import {TestPlayer} from '../../TestPlayer';
-import {cast, runAllActions} from '../../TestingUtils';
+import {cast} from '../../TestingUtils';
 import {testGame} from '../../TestGame';
 import {SpaceMonsterPark} from '../../../src/server/cards/eros/SpaceMonsterPark';
 import {ImmigrationShuttles} from '../../../src/server/cards/base/ImmigrationShuttles';
+import { IGame } from '../../../src/server/IGame';
 
 describe('SpaceMonsterPark', function() {
   let card: SpaceMonsterPark;
   let player: TestPlayer;
-  let game: Game;
+  let game: IGame;
 
   beforeEach(function() {
     card = new SpaceMonsterPark();

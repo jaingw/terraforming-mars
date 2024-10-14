@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 import {SpecializedSettlement} from '../../../src/server/cards/pathfinders/SpecializedSettlement';
-import {Game} from '../../../src/server/Game';
+import {IGame} from '../../../src/server/IGame';
 import {TestPlayer} from '../../TestPlayer';
 import {cast, runAllActions} from '../../TestingUtils';
 import {EmptyBoard} from '../../ares/EmptyBoard';
@@ -17,7 +17,7 @@ import {OneOrArray} from '../../../src/common/utils/types';
 describe('SpecializedSettlement', function() {
   let card: SpecializedSettlement;
   let player: TestPlayer;
-  let game: Game;
+  let game: IGame;
 
   beforeEach(function() {
     card = new SpecializedSettlement();
@@ -126,10 +126,14 @@ describe('SpecializedSettlement', function() {
 
     const roboticWorkforce = new RoboticWorkforce();
     expect(roboticWorkforce.canPlay(player)).is.false;
-    expect(roboticWorkforce.play(player)).is.undefined;
 
     player.production.override(Units.of({energy: 1}));
-    const selectCard = cast(roboticWorkforce.play(player), SelectCard);
+
+    expect(roboticWorkforce.canPlay(player)).is.true;
+
+    cast(roboticWorkforce.play(player), undefined);
+    runAllActions(game);
+    const selectCard = cast(player.popWaitingFor(), SelectCard);
     expect(selectCard.cards).deep.eq([card]);
     selectCard.cb([selectCard.cards[0]]);
     expect(player.production.asUnits()).deep.eq(Units.of({megacredits: 3, heat: 1}));

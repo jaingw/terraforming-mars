@@ -16,12 +16,12 @@ import {UnexpectedInput} from './inputs/UnexpectedInput';
 import {Phase} from '../common/Phase';
 
 const colorNames = ['blue', 'red', 'yellow', 'green', 'black', 'purple', 'you', '红色', '绿色', '黄色', '蓝色', '黑色', '紫色'];
-function notFound(req: Request, res: Response): void {
+function notFound(req: Request, res: Response, msg: string = ''): void {
   if ( ! process.argv.includes('hide-not-found-warnings')) {
-    console.warn('Not found', req.method, req.url);
+    console.warn('UserManager Process Error', req.method, req.url, msg);
   }
   res.writeHead(404);
-  res.write('Not found');
+  res.write(msg ? msg : 'Not found');
   res.end();
 }
 
@@ -30,28 +30,24 @@ export function apiGameBack(userReq:any, req: Request, res: Response): void {
   const gameId = userReq['id'];
   const userId = userReq['userId'];
   if (gameId === undefined || gameId === '') {
-    console.warn('didn\'t find game id');
-    notFound(req, res);
+    notFound(req, res, 'Not find game id ' + gameId);
     return;
   }
 
   if (userId === undefined || userId === '') {
-    console.warn('didn\'t find user id');
-    notFound(req, res);
+    notFound(req, res, 'Not find user id ' + userId);
     return;
   }
 
   const user = GameLoader.getInstance().userIdMap.get(userId);
-  if (user === undefined || !user.canRollback()) {
-    console.warn('didn\'t find user ');
-    notFound(req, res);
+  if (user === undefined || !user.canRollback() || !user.checkToken(userId)) {
+    notFound(req, res, user === undefined ? 'Not find user ' + userId : !user.canRollback() ? '!user.canRollback()' : 'token过期');
     return;
   }
   const game = GameLoader.getInstance().games.get(gameId);
 
   if (game === undefined) {
-    console.warn('game is undefined');
-    notFound(req, res);
+    notFound(req, res, 'game is undefined');
     return;
   }
   console.log('user:'+ user.name +' rollback game ' + game.id);
@@ -64,15 +60,13 @@ export function apiGameBack(userReq:any, req: Request, res: Response): void {
 export function apiGetMyGames(req: Request, res: Response, ctx: Context): void {
   const userId = ctx.url.searchParams.get('id');
   if (userId === undefined || userId === null) {
-    console.warn('didn\'t find user id');
-    notFound(req, res);
+    notFound(req, res, 'not find user id');
     return;
   }
   const user = GameLoader.getInstance().userIdMap.get(userId);
 
-  if (user === undefined) {
-    console.warn('user is undefined');
-    notFound(req, res);
+  if (user === undefined || !user.checkToken(userId)) {
+    notFound(req, res, user === undefined ? 'user is undefined' : 'token过期');
     return;
   }
   const gameids = GameLoader.getInstance().usersToGames.get(user.id);
@@ -116,21 +110,22 @@ export function login(userReq:any, _req: Request, res: Response): Promise<void> 
   const userName: string = userReq.userName.trim().toLowerCase();
   let password: string = userReq.password.trim().toLowerCase();
   if (userName === undefined || userName.length === 0) {
-    throw new UnexpectedInput('UserName must not be empty ');
+    throw new UnexpectedInput('UserName must not be empty');
   }
   const user = GameLoader.getInstance().userNameMap.get(userName);
   if (user === undefined) {
-    throw new UnexpectedInput('User not exists ');
+    throw new UnexpectedInput('User not exists or Password error');
   }
   if (password === undefined || password.length <= 2) {
     throw new UnexpectedInput('Password must not be empty and  be longer than 2');
   }
   password = crypto.createHash('md5').update( password ).digest('hex');
   if (password !== user.password.trim().toLowerCase()) {
-    throw new UnexpectedInput('Password error');
+    throw new UnexpectedInput('User not exists or Password error');
   }
+  const token = user.addToken();
   res.setHeader('Content-Type', 'application/json');
-  res.write(JSON.stringify({id: user.id, name: user.name}));
+  res.write(JSON.stringify({id: token, name: user.name}));
   res.end();
   return Promise.resolve();
 }
@@ -162,27 +157,27 @@ export function register(userReq: any, _req: Request, res: Response): void {
 
 
 export function isvip(req: Request, res: Response, ctx: Context): void {
-  const userId = ctx.url.searchParams.get('userId');
+  let userId = ctx.url.searchParams.get('userId');
   if (userId === undefined || userId === '' || userId === null) {
-    console.warn('didn\'t find user id');
-    notFound(req, res);
+    notFound(req, res, 'not find user id');
     return;
   }
 
   const user = GameLoader.getInstance().userIdMap.get(userId);
-  if (user === undefined ) {
-    console.warn('didn\'t find user ');
-    notFound(req, res);
+  if (user === undefined || !user.checkToken(userId)) {
+    notFound(req, res, user === undefined ? 'not find user' : 'token过期');
     return;
   }
-  user.accessDate = getDate();
+  if (userId === user.id) {
+    userId = user.addToken();
+  }
+  const accessDate = getDate();
+  if (accessDate !== user.accessDate) {
+    user.accessDate = getDate();
+  }
   try {
     res.setHeader('Content-Type', 'application/json');
-    if ( user.isvip()) {
-      res.write('success');
-    } else {
-      res.write('error');
-    }
+    res.write(JSON.stringify({id: userId, isvip: user.isvip()}));
     res.end();
   } catch (err) {
     console.warn('error execute', err);
@@ -208,11 +203,11 @@ export function resign(userReq:any, req: Request, res: Response): void {
   }
   const userPlayer = GameLoader.getUserByPlayer(player);
   const user = GameLoader.getInstance().userIdMap.get(userId);
-  if (user === undefined || !user.isvip()) {
-    notFound(req, res);
+  if (user === undefined || !user.isvip() || !user.checkToken(userId)) {
+    notFound(req, res, user === undefined ? 'user === undefined' : !user.isvip() ? '!user.isvip() ' : 'token过期');
     return;
   }
-  if (userPlayer !== undefined && userPlayer.id !== userId) {// 已注册并且不等于登录用户  不能体退
+  if (userPlayer !== undefined && userPlayer.id !== user.id) {// 已注册并且不等于登录用户  不能体退
     notFound(req, res);
     return;
   }
@@ -228,8 +223,8 @@ export function resign(userReq:any, req: Request, res: Response): void {
 
 export function showHand(userReq:any, req: Request, res: Response): Promise<void> {
   const user = GameLoader.getInstance().userIdMap.get(userReq.userId);
-  if (user === undefined) {
-    notFound(req, res);
+  if (user === undefined || !user.checkToken(userReq.userId)) {
+    notFound(req, res, user === undefined? 'user === undefined' : 'token过期');
     return Promise.resolve();
   }
   if (userReq.showhandcards ) {
@@ -248,8 +243,8 @@ export function showHand(userReq:any, req: Request, res: Response): Promise<void
 //
 export async function sitDown(userReq:any, req: Request, res: Response): Promise<void> {
   const userme = GameLoader.getInstance().userIdMap.get(userReq.userId);
-  if (userme === undefined) {
-    notFound(req, res);
+  if (userme === undefined || !userme.checkToken(userReq.userId)) {
+    notFound(req, res, userme === undefined ? 'userme === undefined' : 'token过期');
     return;
   }
   if (userReq.playerId === undefined) {
@@ -258,22 +253,19 @@ export async function sitDown(userReq:any, req: Request, res: Response): Promise
   }
   const game = await GameLoader.getInstance().getByPlayerId(userReq.playerId);
   if (game === undefined) {
-    console.warn('sitDown game undefined');
-    notFound(req, res);
+    notFound(req, res, 'sitDown game undefined');
     return;
   }
   const player = game.getAllPlayers().find((player) => player.id === userReq.playerId);
   if (player === undefined || player.userId !== undefined) {
-    console.warn(`sitDown ${player === undefined} || ${player?.userId}`);
-    notFound(req, res);
+    notFound(req, res, `sitDown ${player === undefined} || ${player?.userId}`);
     return;
   }
 
   // 已经属于其他用户
   const userThat = GameLoader.getInstance().userNameMap.get(player.name);
   if (userThat !== undefined ) {
-    console.warn('sitDown userThat !== undefined');
-    notFound(req, res);
+    notFound(req, res, 'sitDown userThat !== undefined');
     return;
   }
 
@@ -344,8 +336,7 @@ export function getUserRank(req: Request, res: Response, ctx: Context): void {
     res.write(JSON.stringify(data));
     res.end();
   } else {
-    console.warn('didn\'t find user id or player name');
-    notFound(req, res);
+    notFound(req, res, 'not find user id or player name');
     return;
   }
 }

@@ -22,8 +22,8 @@ export class Thermopoli extends CorporationCard {
           b.megacredits(53);
           b.corpBox('effect', (ce) => {
             ce.vSpace(Size.LARGE);
-            ce.effect('When you send a delegate ,you gain 2 heat.', (eb) => {
-              eb.delegates(1).startEffect.heat(2);
+            ce.effect('When you send a delegate ,you gain 1 heat.', (eb) => {
+              eb.delegates(1).startEffect.heat(1);
             });
             ce.vSpace(Size.SMALL);
             ce.action('Gain 2 heat for each influence you have.', (eb) => {

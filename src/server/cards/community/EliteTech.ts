@@ -13,13 +13,13 @@ export class EliteTech extends CorporationCard {
     super({
       name: CardName.ELITETECH,
       tags: [],
-      startingMegaCredits: 49,
+      startingMegaCredits: 55,
 
       metadata: {
         cardNumber: 'XB13',
-        description: 'You start with 49 M€. As your first action, draw 1 card with a science tag.',
+        description: 'You start with 55 M€. As your first action, draw 1 card with a science tag.',
         renderData: CardRenderer.builder((b) => {
-          b.megacredits(49).cards(1, {secondaryTag: Tag.SCIENCE});
+          b.megacredits(55).cards(1, {secondaryTag: Tag.SCIENCE});
           b.corpBox('effect', (ce) => {
             ce.vSpace(Size.LARGE);
             ce.effect('when you playing a card without a requirement, you gain 1 M€.', (eb) => {
@@ -37,6 +37,8 @@ export class EliteTech extends CorporationCard {
   }
 
   public onCardPlayed(player: IPlayer, card: IProjectCard ) {
-    if (player.isCorporation(CardName.ELITETECH) && card.requirements === undefined) player.stock.add(Resource.MEGACREDITS, 1, {log: true});
+    if (player.isCorporation(CardName.ELITETECH) && (card.requirements === undefined || card.requirements.length === 0 )) {
+      player.stock.add(Resource.MEGACREDITS, 1, {log: true});
+    }
   }
 }

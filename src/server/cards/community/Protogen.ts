@@ -11,15 +11,15 @@ export class Protogen extends CorporationCard {
     super({
       name: CardName.PROTOGEN,
       tags: [Tag.MICROBE],
-      startingMegaCredits: 47,
+      startingMegaCredits: 52,
 
       initialActionText: 'Draw 1 card with a microbe tag',
       metadata: {
         cardNumber: 'XB06',
-        description: 'You start with 47 M€. As your first action, draw 1 card with a microbe tag.',
+        description: 'You start with 52 M€. As your first action, draw 1 card with a microbe tag.',
         renderData: CardRenderer.builder((b) => {
           b.br.br.br;
-          b.megacredits(47).cards(1, {secondaryTag: Tag.MICROBE});
+          b.megacredits(52).cards(2, {secondaryTag: Tag.MICROBE});
           b.corpBox('effect', (ce) => {
             ce.effect('When you gain microbes in one action, also gain 2 heat.', (eb) => {
               eb.microbes(1).asterix().startEffect.heat(2);
@@ -32,7 +32,7 @@ export class Protogen extends CorporationCard {
 
 
   public initialAction(player: IPlayer) {
-    player.drawCard(1, {tag: Tag.MICROBE});
+    player.drawCard(2, {tag: Tag.MICROBE});
     return undefined;
   }
   public onResourceAdded(player: IPlayer, card: ICard) {

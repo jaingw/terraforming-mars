@@ -14,14 +14,18 @@ export class ScolexIndustries extends CorporationCard {
     super({
       name: CardName.SCOLEX_INDUSTRIES,
       tags: [Tag.PLANT, Tag.POWER],
-      startingMegaCredits: 45,
+      startingMegaCredits: 40,
+
+      behavior: {
+        production: {energy: 1, plants: 1, steel: 1, titanium: 1},
+      },
 
       metadata: {
         cardNumber: 'XB05',
-        description: 'You start with 1 steel, titanium, plant and energy production, and 45 M€.',
+        description: 'You start with 1 steel, titanium, plant and energy production, and 40 M€.',
         renderData: CardRenderer.builder((b) => {
           b.br.br.br;
-          b.production((pb) => pb.steel(1).titanium(1).plants(1).energy(1)).megacredits(45);
+          b.production((pb) => pb.steel(1).titanium(1).plants(1).energy(1)).megacredits(40);
           b.corpBox('action', (ce) => {
             ce.action('Decrease 1 production (not MC), and Increase 1 production.', (eb) => {
               eb.minus(Size.SMALL).production((eb) => eb.wild(1)).startAction.plus(Size.SMALL).production((eb) => eb.wild(1));
@@ -30,14 +34,6 @@ export class ScolexIndustries extends CorporationCard {
         }),
       },
     });
-  }
-
-  public override bespokePlay(player: IPlayer) {
-    player.production.add(Resource.STEEL, 1);
-    player.production.add(Resource.TITANIUM, 1);
-    player.production.add(Resource.PLANTS, 1);
-    player.production.add(Resource.ENERGY, 1);
-    return undefined;
   }
 
   public canAct(player: IPlayer): boolean {

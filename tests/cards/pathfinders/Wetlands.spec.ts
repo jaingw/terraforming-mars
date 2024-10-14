@@ -1,4 +1,4 @@
-import {Game} from '../../../src/server/Game';
+import {IGame} from '../../../src/server/IGame';
 import {Wetlands} from '../../../src/server/cards/pathfinders/Wetlands';
 import {expect} from 'chai';
 import {TileType} from '../../../src/common/TileType';
@@ -17,7 +17,7 @@ const toSpaceId = (space: Space): string => space.id;
 describe('Wetlands', function() {
   let card: Wetlands;
   let player: TestPlayer;
-  let game: Game;
+  let game: IGame;
 
   beforeEach(function() {
     card = new Wetlands();
@@ -46,7 +46,7 @@ describe('Wetlands', function() {
     expect(card.availableSpaces(player).map(toSpaceId)).deep.eq(['09', '23']);
 
     player.plants = 3;
-    expect(card.canPlay(player)).is.false;
+    expect(player.getPlayableCardsForTest()).does.not.include(card);
   });
 
   // Same test as above, with Red City in the way

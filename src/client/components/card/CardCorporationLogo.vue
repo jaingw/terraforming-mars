@@ -179,6 +179,9 @@
     <template v-else-if="title ===  CardName.LUNA_CHAIN">
       <div class="card-luna-chain-logo"></div>
     </template>
+    <template v-else-if="title === CardName.EGLOGUE">
+      <div class="card-hotsprings-logo">Eglogue</div>
+    </template>
     <template v-else-if="title === CardName.SHINRA_TECH">
       <div class="card-playwrights-logo">🌸SHINRA<br/>TECH🌸</div>
     </template>
@@ -241,6 +244,15 @@
     </template>
     <template v-else-if="title === CardName.POLITICALREFORM">
       <div class="card-protogen-logo">🌸POLITICALREFORM🌸</div>
+    </template>
+    <template v-else-if="title === CardName.STARLINKDRIFTER">
+      <div class="card-protogen-logo">🌸STARLINKDRIFTER🌸</div>
+    </template>
+    <template v-else-if="title === CardName.PROWLER">
+      <div class="card-protogen-logo">🌸PROWLER🌸</div>
+    </template>
+    <template v-else-if="title === CardName.MIRRORCOAT">
+      <div class="card-protogen-logo">🌸MIRRORCOAT🌸</div>
     </template>
     <template v-else-if="title === CardName.MARS_MATHS">
       <div class="card-mars-maths-logo" style="font-family: Century Gothic, CenturyGothic, AppleGothic, sans-serif">

@@ -1,5 +1,6 @@
 
 import {getDay, myId} from './UserUtil';
+import {generateRandomId} from './utils/server-ids';
 
 export class User {
   public createtime: string = '';
@@ -10,6 +11,7 @@ export class User {
   public accessDate : string = '2021-01-01';
   public showhandcards : boolean = false;
   public donateNum : number = 0;
+  public tokenList : Array<string> = [];
 
   constructor(
         public name: string,
@@ -30,6 +32,7 @@ export class User {
       accessDate: this.accessDate,
       showhandcards: this.showhandcards,
       donateNum: this.donateNum,
+      tokenList: this.tokenList,
     });
   }
 
@@ -58,6 +61,33 @@ export class User {
   public reduceRollbackNum() {
     this.rollbackNum = Math.max( 0, this.rollbackNum -1 );
     this.rollbackDate = getDay();
+  }
+
+  public addToken() : string {
+    const token = this.id +generateRandomId('t');
+    if (!this.tokenList) {
+      this.tokenList = [];
+    }
+    this.tokenList.push(token);
+    this.tokenList = this.tokenList.slice(-3, this.tokenList.length); // 截取最后3个
+    return token;
+  }
+
+  public checkToken(token: string | null): boolean {
+    if (token === null) {
+      return false;
+    }
+    // 将userId刷新成 token,上线一段时间之后注释下面+, 直接用userId获取的会失败
+    if (token === this.id) {
+      return true;
+    }
+    if (!this.tokenList) {
+      this.tokenList = [];
+    }
+    if (this.tokenList.indexOf(token) < 0) {
+      return false;
+    }
+    return true;
   }
 
   // 1和2都是vip 数字用来区分不同的vip图标显示

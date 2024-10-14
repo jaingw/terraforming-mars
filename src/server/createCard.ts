@@ -36,6 +36,11 @@ const CARD_RENAMES = new Map<string, CardName>([
   ['Inventors Guild', CardName.INVENTORS_GUILD],
   ['Cryo Sleep', CardName.CRYO_SLEEP],
 
+  // TODO(konigsberg): remove after 2024-06-15
+  ['New Colony Planning Initiaitives', CardName.NEW_COLONY_PLANNING_INITIAITIVES],
+  ['Sinus Iridium Road Network', CardName.SINUS_IRDIUM_ROAD_NETWORK],
+  ['Venus First:Pathfinders', CardName.VENUS_FIRST],
+
 ]);
 
 function _createCard<T extends ICard>(cardName: CardName, cardManifestNames: Array<keyof ModuleManifest>): T | undefined {
@@ -112,8 +117,8 @@ export function ceosFromJSON(cards: Array<CardName>): Array<ICeoCard> {
     if (card !== undefined) {
       result.push(card);
     } else {
-      console.warn(`prelude card ${element} not found while loading game.`);
-      throw new Error(`prelude card ${element} not found while loading game.`);
+      console.warn(`ceo card ${element} not found while loading game.`);
+      throw new Error(`ceo card ${element} not found while loading game.`);
     }
   });
   return result;

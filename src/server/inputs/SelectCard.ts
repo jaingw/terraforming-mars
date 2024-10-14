@@ -8,6 +8,7 @@ import {SelectCardModel} from '../../common/models/PlayerInputModel';
 import {IPlayer} from '../IPlayer';
 import {cardsToModel} from '../models/ModelUtils';
 import {InputError} from './InputError';
+import {UnexpectedInput} from './UnexpectedInput';
 
 export type Options = {
   max: number,
@@ -65,10 +66,10 @@ export class SelectCard<T extends ICard> extends BasePlayerInput<Array<T>> {
       throw new InputError('Not a valid SelectCardResponse');
     }
     if (input.cards.length < this.config.min) {
-      throw new InputError('Not enough cards selected');
+      throw new UnexpectedInput('Not enough cards selected');
     }
     if (input.cards.length > this.config.max) {
-      throw new InputError('Too many cards selected');
+      throw new UnexpectedInput('Too many cards selected');
     }
     const cards = [];
     for (const cardName of input.cards) {

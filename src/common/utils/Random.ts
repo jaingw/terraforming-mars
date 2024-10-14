@@ -17,7 +17,7 @@ export class SeededRandom extends Random {
   constructor(seed = 0, currentSeed?: number) {
     super();
     this.seed = seed;
-    this.currentSeed = currentSeed ?? Math.floor(seed * 4294967296);
+    this.currentSeed = currentSeed ?? Math.floor(seed * 0X100000000);
   }
 
   public get current(): number {
@@ -30,7 +30,7 @@ export class SeededRandom extends Random {
     let t = this.currentSeed += 0x6D2B79F5;
     t = Math.imul(t ^ t >>> 15, t | 1);
     t ^= t + Math.imul(t ^ t >>> 7, t | 61);
-    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    return ((t ^ t >>> 14) >>> 0) / 0X100000000;
   }
 }
 

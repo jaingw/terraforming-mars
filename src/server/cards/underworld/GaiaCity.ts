@@ -21,7 +21,7 @@ export class GaiaCity extends Card implements IProjectCard {
         cardNumber: 'U05',
         renderData: CardRenderer.builder((b) => {
           b.production((pb) => pb.minus().energy(1).megacredits(2)).br;
-          b.city().openBrackets.excavate().closeBrackets.asterix().text('Placement Bonus x2');
+          b.city().super((b) => b.excavate(1)).asterix().text('Placement Bonus x2');
         }),
         description: 'Reduce your energy production one step and increase your M€ production 2 steps. ' +
         'Place a city in a space with ANY player\'s excavation marker. ' +
@@ -45,8 +45,9 @@ export class GaiaCity extends Card implements IProjectCard {
       'Select space for a city tile',
       this.availableSpaces(player))
       .andThen((space) => {
+        const occupyBefore = space.player === player;
         player.game.addCity(player, space);
-        player.game.grantPlacementBonuses(player, space, /* coveringExistingTile= */false);
+        player.game.grantPlacementBonuses(player, space, /* coveringExistingTile= */false, occupyBefore);
         return undefined;
       });
   }

@@ -72,6 +72,9 @@ export default Vue.extend({
     promoCardsOption: {
       type: Boolean,
     },
+    aresExtension: {
+      type: Boolean,
+    },
     communityCardsOption: {
       type: Boolean,
     },
@@ -109,6 +112,7 @@ export default Vue.extend({
         ...this.turmoil ? corpCardNames('turmoil') : [],
         ...this.promoCardsOption ? corpCardNames('promo') : [],
         ...this.communityCardsOption ? corpCardNames('community') : [],
+        ...this.aresExtension ? corpCardNames('ares') : [],
         ...this.moonExpansion ? corpCardNames('moon') : [],
         ...this.pathfindersExpansion ? corpCardNames('pathfinders') : [],
       ],

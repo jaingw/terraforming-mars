@@ -79,7 +79,7 @@ export class MarsNomads extends Card implements IActionCard {
       spaces)
       .andThen((space) => {
         player.game.nomadSpace = space.id;
-        player.game.grantPlacementBonuses(player, space, false);
+        player.game.grantPlacementBonuses(player, space, false, false);
 
         return undefined;
       });

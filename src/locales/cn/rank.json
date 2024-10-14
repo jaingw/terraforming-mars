@@ -54,5 +54,8 @@
   "Quit!":"放弃游戏!",
   "Additional":"额外",
   "mins per generation":"分钟/每时代",
-  " + every generation ":" + 后续每时代额外 "
+  " + every generation ":" + 后续每时代额外 ",
+  "Password must not be empty and  be longer than 2":"密码不能为空且不能少于3位",
+  "UserName must not be empty":"用户名不能为空",
+  "User not exists or Password error":"用户不存在或密码错误"
 }

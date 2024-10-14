@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 import {Ambient} from '../../../src/server/cards/pathfinders/Ambient';
-import {Game} from '../../../src/server/Game';
+import {IGame} from '../../../src/server/IGame';
 import {TestPlayer} from '../../TestPlayer';
 import {testGame} from '../../TestGame';
 import {cast, fakeCard, runAllActions, setTemperature} from '../../TestingUtils';
@@ -8,12 +8,16 @@ import {Tag} from '../../../src/common/cards/Tag';
 import {MAX_TEMPERATURE} from '../../../src/common/constants';
 import {OrOptions} from '../../../src/server/inputs/OrOptions';
 import {SelectCard} from '../../../src/server/inputs/SelectCard';
+import {Phase} from '../../../src/common/Phase';
+import {Reds} from '../../../src/server/turmoil/parties/Reds';
+import {PoliticalAgendas} from '../../../src/server/turmoil/PoliticalAgendas';
+import {TurmoilUtil} from '../../../src/server/turmoil/TurmoilUtil';
 
 describe('Ambient', function() {
   let card: Ambient;
   let player: TestPlayer;
   let player2: TestPlayer;
-  let game: Game;
+  let game: IGame;
 
   beforeEach(function() {
     card = new Ambient();
@@ -116,4 +120,25 @@ describe('Ambient', function() {
     // runAllActions(game);
     expect(getBlueActions()).is.undefined;
   });
+
+  const redsRuns = [
+    {heat: 8, mc: 3, expected: true},
+    {heat: 11, mc: 0, expected: true},
+    {heat: 8, mc: 0, expected: false},
+  ];
+  for (const run of redsRuns) {
+    it('is compatible with Reds + Helion ' + JSON.stringify(run), () => {
+      [game, player, player2] = testGame(2, {turmoilExtension: true});
+      player.setCorporationForTest(card);
+      player.canUseHeatAsMegaCredits = true;
+      player.game.phase = Phase.ACTION;
+      const turmoil = TurmoilUtil.getTurmoil(game);
+      turmoil.rulingParty = new Reds();
+      PoliticalAgendas.setNextAgenda(turmoil, player.game);
+      setTemperature(game, MAX_TEMPERATURE);
+      player.heat = run.heat;
+      player.megaCredits = run.mc;
+      expect(card.canAct(player)).eq(run.expected);
+    });
+  }
 });

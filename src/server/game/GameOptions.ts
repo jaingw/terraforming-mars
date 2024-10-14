@@ -43,6 +43,7 @@ export type GameOptions = {
   draftVariant: boolean;
   initialDraftVariant: boolean;
   initialCorpDraftVariant: boolean; // 双公司时初始轮抽公司
+  preludeDraftVariant: boolean;
   // corporationsDraft: boolean;
   startingCorporations: number;
   shuffleMapOption: boolean;
@@ -68,10 +69,10 @@ export type GameOptions = {
   escapeVelocityBonusSeconds?: number;
   escapeVelocityPeriod?: number;
   escapeVelocityPenalty?: number;
-  twoCorpsVariant: boolean;
+  // twoCorpsVariant: boolean;
   rankTimeLimit?: number; // 天梯 玩家超时限制
   rankTimePerGeneration?: number; // 天梯 每时代额外加成
-
+  seed: string|undefined;
 }
 
 export const DEFAULT_GAME_OPTIONS: GameOptions = {
@@ -105,6 +106,7 @@ export const DEFAULT_GAME_OPTIONS: GameOptions = {
   moonStandardProjectVariant: false,
   pathfindersExpansion: false,
   politicalAgendasExtension: AgendaStyle.STANDARD,
+  preludeDraftVariant: false,
   preludeExtension: false,
   prelude2Expansion: false,
   promoCardsOption: false,
@@ -128,8 +130,9 @@ export const DEFAULT_GAME_OPTIONS: GameOptions = {
   breakthrough: false,
   doubleCorp: false,
   initialCorpDraftVariant: true,
-  twoCorpsVariant: false,
+  // twoCorpsVariant: false,
   rankOption: false, // 天梯
   rankTimeLimit: constants.DEFAULT_RANK_TIME_LIMIT, // 天梯
   rankTimePerGeneration: constants.DEFAULT_RANK_TIME_PER_GENERATION, // 天梯 每时代额外加成
+  seed: '',
 };

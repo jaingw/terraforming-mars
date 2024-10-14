@@ -14,18 +14,23 @@ export class WeylandYutani extends CorporationCard {
     super({
       name: CardName.WEYLAND_YUTANI,
       tags: [Tag.SCIENCE],
-      startingMegaCredits: 42,
+      startingMegaCredits: 50,
 
       metadata: {
         cardNumber: 'XB01',
-        description: 'You start with 40 M€.',
+        description: 'You start with 50 M€.As your first action, draw 1 card with a science tag.',
         renderData: CardRenderer.builder((b) => {
-          b.megacredits(40);
+          b.megacredits(50).cards(1, {secondaryTag: Tag.SCIENCE});
           b.corpBox('effect', (ce) => {
             ce.vSpace(Size.LARGE);
-            ce.effect('when a science tag is played, you gain 2 M€.', (eb) => {
+            ce.effect(undefined, (eb) => {
               eb.science(1, {played, all}).startEffect;
-              eb.megacredits(2);
+              eb.megacredits(1, {all});
+            });
+            ce.vSpace();
+            ce.effect('when a science tag is played, incl. this, THAT PLAYER gains 1 M€, and you gain 1 M€.', (eb) => {
+              eb.science(1, {played, all}).startEffect;
+              eb.megacredits(1);
             });
           });
         }),
@@ -33,6 +38,11 @@ export class WeylandYutani extends CorporationCard {
     });
   }
 
+
+  public initialAction(player: IPlayer) {
+    player.drawCard(1, {tag: Tag.SCIENCE});
+    return undefined;
+  }
 
   public onCardPlayed(player: IPlayer, card: IProjectCard) {
     return this._onCardPlayed(player, card);
@@ -46,7 +56,8 @@ export class WeylandYutani extends CorporationCard {
   private _onCardPlayed(player: IPlayer, card: IProjectCard | ICorporationCard) {
     for (const tag of card.tags) {
       if (tag === Tag.SCIENCE) {
-        player.game.getCardPlayerOrThrow(this.name)?.stock.add(Resource.MEGACREDITS, 2, {log: true});
+        player.stock.add(Resource.MEGACREDITS, 1, {log: true});
+        player.game.getCardPlayerOrThrow(this.name)?.stock.add(Resource.MEGACREDITS, 1, {log: true});
       }
     }
   }

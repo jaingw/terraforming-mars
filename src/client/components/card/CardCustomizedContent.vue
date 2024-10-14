@@ -18,11 +18,10 @@ export default Vue.extend({
   },
   computed: {
     getAmount(): string {
-      console.log('amount', this.amount);
-      if (!this.amount || this.amount < 0) {
-        return '';
+      if (this.amount !== undefined && this.amount >= 0) {
+        return this.amount.toString();
       }
-      return this.amount.toString();
+      return '';
     },
   },
 });

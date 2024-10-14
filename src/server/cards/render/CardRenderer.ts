@@ -3,7 +3,7 @@ import {CardRenderSymbol} from './CardRenderSymbol';
 import {Size} from '../../../common/cards/render/Size';
 import {CardRenderItemType} from '../../../common/cards/render/CardRenderItemType';
 import {TileType} from '../../../common/TileType';
-import {ICardRenderCorpBoxAction, ICardRenderCorpBoxEffect, ICardRenderEffect, ICardRenderProductionBox, ICardRenderRoot, ICardRenderTile, ItemType} from '../../../common/cards/render/Types';
+import {ICardRenderCorpBoxAction, ICardRenderCorpBoxEffect, ICardRenderEffect, ICardRenderProductionBox, ICardRenderRoot, ICardRenderTile, ItemType, isICardRenderItem} from '../../../common/cards/render/Types';
 import {AltSecondaryTag} from '../../../common/cards/render/AltSecondaryTag';
 
 export class CardRenderer {
@@ -99,6 +99,9 @@ abstract class Builder<T> {
   }
 
   protected _appendToRow(thing: ItemType): this {
+    if (this.superscript && isICardRenderItem(thing)) {
+      thing.isSuperscript = true;
+    }
     this._currentRow().push(thing);
     return this;
   }
@@ -115,8 +118,8 @@ abstract class Builder<T> {
     return this._appendToRow(item);
   }
 
-  public oxygen(amount: number): this {
-    return this._appendToRow(new CardRenderItem(CardRenderItemType.OXYGEN, amount));
+  public oxygen(amount: number, options?: ItemOptions): this {
+    return this._appendToRow(new CardRenderItem(CardRenderItemType.OXYGEN, amount, options));
   }
 
   public venus(amount: number, options?: ItemOptions): this {
@@ -166,11 +169,6 @@ abstract class Builder<T> {
 
   public cards(amount: number, options?: ItemOptions): this {
     return this._appendToRow(new CardRenderItem(CardRenderItemType.CARDS, amount, options));
-  }
-
-  public globalCards(amount: number, options?: ItemOptions): this {
-    this._appendToRow(new CardRenderItem(CardRenderItemType.GLOBALCARDS, amount, options));
-    return this;
   }
 
   public floaters(amount: number, options?: ItemOptions): this {
@@ -696,12 +694,15 @@ abstract class Builder<T> {
     return this._appendToRow(CardRenderSymbol.vSpace(size));
   }
 
-  public get openBrackets(): this {
-    return this._appendToRow(CardRenderSymbol.bracketOpen());
-  }
+  private superscript = false;
 
-  public get closeBrackets(): this {
-    return this._appendToRow(CardRenderSymbol.bracketClose());
+  public super(sb: (builder: this) => void): this {
+    this._appendToRow(CardRenderSymbol.bracketOpen());
+    this.superscript = true;
+    sb(this);
+    this.superscript = false;
+    this._appendToRow(CardRenderSymbol.bracketClose());
+    return this;
   }
 
   /**

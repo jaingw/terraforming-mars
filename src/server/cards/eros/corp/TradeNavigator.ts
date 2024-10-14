@@ -26,7 +26,4 @@ export class TradeNavigator extends CorporationCard {
     });
   }
 
-  public canAct(): boolean {
-    return true;
-  }
 }

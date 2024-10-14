@@ -1,4 +1,4 @@
-import * as responses from './responses';
+import * as responses from '../server/responses';
 import {Server} from '../models/ServerModel';
 import {Handler} from './Handler';
 import {Context} from './IHandler';
@@ -54,7 +54,7 @@ export class Reset extends Handler {
     try {
       player = game.getPlayerById(playerId);
       const userPlayer = GameLoader.getUserByPlayer(player);
-      if (userPlayer !== undefined && userPlayer.id !== userId) {// 已注册并且不等于登录用户  不能体退
+      if (userPlayer !== undefined && !userPlayer.checkToken(userId)) {// 已注册并且不等于登录用户  不能体退
         responses.badRequest(req, res, 'user not found');
         return;
       }

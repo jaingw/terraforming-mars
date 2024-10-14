@@ -6,6 +6,7 @@ export class UnexpectedInput extends Error {
     this.name = 'UnexpectedInput';
   }
 
+  // 貌似打印日志堆栈的时候会输出
   public getInput() :string {
     return this.inputstr;
   }

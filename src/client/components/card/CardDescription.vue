@@ -1,5 +1,5 @@
 <template>
-  <div :class="classes" v-i18n>({{ description }})</div>
+  <div :class="classes" >({{ description }})</div>
 </template>
 
 <script lang="ts">

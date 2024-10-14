@@ -75,15 +75,12 @@ export class PoliticalAgendas {
         rulingParty,
         (bonusId) => {
           agenda.bonusId = bonusId;
-          // turmoil.onAgendaSelected(game);
+          turmoil.onAgendaSelected(game);
         },
         (policyId) => {
           agenda.policyId = policyId;
-          // turmoil.onAgendaSelected(game);
-        }).andThen(() => {
-        turmoil.onAgendaSelected(game);
-        return undefined;
-      }));
+          turmoil.onAgendaSelected(game);
+        }));
     } else {
       turmoil.onAgendaSelected(game);
     }

@@ -7,6 +7,7 @@ import {played} from '../Options';
 import {Size} from '../../../common/cards/render/Size';
 import {IPlayer} from '../../IPlayer';
 import {ICard} from '../ICard';
+import {Priority} from '../../deferredActions/Priority';
 
 export class CyberiaSystems extends RoboticWorkforceBase {
   constructor() {
@@ -37,10 +38,14 @@ export class CyberiaSystems extends RoboticWorkforceBase {
   }
 
   public override bespokePlay(player: IPlayer) {
-    const cards = this.getPlayableBuildingCards(player);
-    return this.selectBuildingCard(player, cards, 'Select first builder card to copy', (card) => {
+    const firstSet = this.getPlayableBuildingCards(player);
+    const selectFirstCard = this.selectBuildingCard(player, firstSet, 'Select first builder card to copy', (card) => {
       const secondSet = this.getPlayableBuildingCards(player).filter((c) => c !== card);
-      return this.selectBuildingCard(player, secondSet, 'Select second card to copy');
+      player.defer(this.selectBuildingCard(player, secondSet, 'Select second card to copy'), Priority.ROBOTIC_WORKFORCE);
+      return undefined;
     });
+
+    player.defer(selectFirstCard, Priority.ROBOTIC_WORKFORCE);
+    return undefined;
   }
 }

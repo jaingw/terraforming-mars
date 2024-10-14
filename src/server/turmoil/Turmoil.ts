@@ -9,7 +9,7 @@ import {PoliticalAgendasData, PoliticalAgendas} from './PoliticalAgendas';
 import {AgendaStyle} from '../../common/turmoil/Types';
 import {CardName} from '../../common/cards/CardName';
 import {MultiSet} from 'mnemonist';
-import {IPlayer} from '../IPlayer';
+import {IPlayer, isIPlayer} from '../IPlayer';
 import {SendDelegateToArea} from '../deferredActions/SendDelegateToArea';
 import {SelectParty} from '../inputs/SelectParty';
 import {Policy, PolicyId, policyDescription} from './Policy';
@@ -150,6 +150,18 @@ export class Turmoil {
       party.sendDelegate(playerId, game);
     }
      */
+
+    // POLITICALREFORM
+    if (isIPlayer(playerId)) {
+      const corp = playerId.getCorporation(CardName.POLITICALREFORM);
+      if (corp !== undefined && corp.data === undefined && this.rulingParty !== party) {
+        corp.data = party.name;
+        if (party.name === PartyName.UNITY) {
+          playerId.increaseTitaniumValue();
+        }
+      }
+    }
+
     this.checkDominantParty();
   }
 
@@ -234,48 +246,17 @@ export class Turmoil {
   }
 
   // PoliticalReform
-  private setSecondPartyForPoliticalReform(currentDominantParty: IParty, player: IPlayer) {
+  private endSecondPartyForPoliticalReform(player: IPlayer) {
     const corp = player.getCorporation(CardName.POLITICALREFORM);
     if (corp === undefined) {
       return;
     }
     if (corp.data !== undefined) {
-      const policy = getDefaultPolicy(corp.data as PartyName);
-      policy.onPolicyEnd?.(player.game);
-    }
-    const sortParties = [...this.parties].sort(
-      (p1, p2) => p2.delegates.get(player) - p1.delegates.get(player),
-    );
-    const max = sortParties[0].delegates.get(player);
-    if (max === 0 ) {
-      corp.data = undefined;
-      return;
-    }
-    const currentIndex = this.parties.indexOf(currentDominantParty);
-
-    let partiesToCheck = [];
-
-    // Manage if it's the first party or the last
-    if (currentIndex === 0) {
-      partiesToCheck = this.parties.slice(currentIndex + 1);
-    } else if (currentIndex === this.parties.length - 1) {
-      partiesToCheck = this.parties.slice(0, currentIndex);
-    } else {
-      const left = this.parties.slice(0, currentIndex);
-      const right = this.parties.slice(currentIndex + 1);
-      partiesToCheck = right.concat(left);
-    }
-
-    // Take the clockwise order
-    const partiesOrdered = partiesToCheck.reverse();
-    partiesOrdered.some((newParty) => {
-      if (newParty.delegates.get(player) === max) {
-        corp.data = newParty.name;
-        getDefaultPolicy(newParty.name).onPolicyStart?.(player.game);
-        return true;
+      if (corp.data === PartyName.UNITY) {
+        player.decreaseTitaniumValue();
       }
-      return false;
-    });
+      corp.data = undefined;
+    }
   }
 
   // Launch the turmoil phase
@@ -331,7 +312,7 @@ export class Turmoil {
     // hook of PoliticalReform
     game.getPlayers().forEach((player) => {
       if (player.isCorporation(CardName.POLITICALREFORM)) {
-        this.setSecondPartyForPoliticalReform(this.rulingParty, player);
+        this.endSecondPartyForPoliticalReform(player);
       }
     });
   }
@@ -377,7 +358,7 @@ export class Turmoil {
 
   public setNewChairman(newChairman : Delegate, game: IGame, setAgenda: boolean = true, gainTR: boolean = true) {
     // Change the chairman
-    if (this.chairman) {
+    if (this.chairman && game.beholdTheEmperor !== true) {
       // Return the current Chairman to reserve
       this.delegateReserve.add(this.chairman);
     }

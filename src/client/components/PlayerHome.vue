@@ -91,9 +91,10 @@
       <div class="player_home_block player_home_block--actions nofloat">
         <a name="actions" class="player_home_anchor"></a>
         <dynamic-title title="Actions" :color="thisPlayer.color"/>
-                    <label v-if="!playerView.isme && !playerView.block && userId"  style="display: inline-block;margin-bottom: 6px;">
-                        <button id="sitdown" class="played-cards-button btn btn-tiny"  v-on:click="sitDown()"><span v-i18n>Sit down</span></button>
-                    </label>
+          <label v-if="!playerView.isme && !playerView.block && userId"  style="display: inline-block;margin-bottom: 6px;" v-i18n>
+              <button id="sitdown" class="played-cards-button btn btn-tiny"  v-on:click="sitDown()"><span v-i18n>Sit down</span></button>
+              Sit down tips
+          </label>
         <waiting-for v-if="game.phase !== 'end'" :players="playerView.players" :playerView="playerView" :settings="settings" :waitingfor="playerView.waitingFor"></waiting-for>
       </div>
 
@@ -156,7 +157,7 @@
       </div>
 
       <div v-if="thisPlayer.selfReplicatingRobotsCards.length > 0" class="player_home_block">
-        <dynamic-title title="Self-Replicating Robots cards" :color="thisPlayer.color"/>
+        <dynamic-title title="Self-replicating Robots cards" :color="thisPlayer.color"/>
         <div>
           <div v-for="card in thisPlayer.selfReplicatingRobotsCards" :key="card.name" class="cardbox">
             <Card :card="card"/>

@@ -23,7 +23,7 @@ export interface SerializedPlayer extends DeprecatedFields{
     canUseCorruptionAsMegacredits: boolean;
     canUseHeatAsMegaCredits: boolean;
     canUseTitaniumAsMegacredits: boolean;
-    canUsePlantsAsMegaCredits: boolean;
+    canUsePlantsAsMegacredits: boolean;
     cardCost: number;
     cardDiscount: number;
     cardsInHand: Array<SerializedCard>;

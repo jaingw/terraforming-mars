@@ -1,7 +1,8 @@
 import {expect} from 'chai';
 import {Leavitt} from '../../../src/server/cards/community/Leavitt';
 import {Vitor} from '../../../src/server/cards/prelude/Vitor';
-import {Game} from '../../../src/server/Game';
+import {SelfReplicatingRobots} from '../../../src/server/cards/promo/SelfReplicatingRobots';
+import {IGame} from '../../../src/server/IGame';
 import {TestPlayer} from '../../TestPlayer';
 import {Tag} from '../../../src/common/cards/Tag';
 import {cast, runAllActions} from '../../TestingUtils';
@@ -12,7 +13,7 @@ describe('Leavitt', function() {
   let leavitt: Leavitt;
   let player: TestPlayer;
   let player2: TestPlayer;
-  let game: Game;
+  let game: IGame;
 
   beforeEach(function() {
     leavitt = new Leavitt();
@@ -36,7 +37,7 @@ describe('Leavitt', function() {
     expect(player.tags.count(Tag.SCIENCE)).to.eq(2);
 
     const serialized = game.serialize();
-    const newGame = game.loadFromJSON(serialized);
+    const newGame = game.loadFromJSON(serialized, true);
     const newPlayer = newGame.getPlayerById(player.id);
     expect(newPlayer.tags.count(Tag.SCIENCE)).to.eq(2);
   });
@@ -110,6 +111,15 @@ describe('Leavitt', function() {
     // Merely completing these is sufficient because
     // it doesn't throw an Error.
     player.setCorporationForTest(new Vitor());
+    expect(player.tags.count(Tag.SCIENCE)).to.eq(0);
+    leavitt.addColony(player);
+    expect(player.tags.count(Tag.SCIENCE)).to.eq(1);
+  });
+
+  it('Leavitt is compatible with Self-Replicating Robots #6664', () => {
+    // This test verifies that a regression doesn't reoccur.
+    // it doesn't throw an Error.
+    player.playedCards.push(new SelfReplicatingRobots());
     expect(player.tags.count(Tag.SCIENCE)).to.eq(0);
     leavitt.addColony(player);
     expect(player.tags.count(Tag.SCIENCE)).to.eq(1);

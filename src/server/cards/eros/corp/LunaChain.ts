@@ -2,11 +2,9 @@ import {CardRenderer} from '../../render/CardRenderer';
 import {CardName} from '../../../../common/cards/CardName';
 import {Tag} from '../../../../common/cards/Tag';
 import {CorporationCard} from '../../corporation/CorporationCard';
-import {SerializedCard} from '../../../SerializedCard';
 
 export class LunaChain extends CorporationCard {
-  public lastPay?: number = -1;
-  public triggerCount?: number = 0;
+  public data:{lastPay:number,triggerCount :number} = {lastPay:-100,triggerCount : 0};
   constructor() {
     super({
       name: CardName.LUNA_CHAIN,
@@ -21,8 +19,8 @@ export class LunaChain extends CorporationCard {
           b.br.br.br;
           b.megacredits(48);
           b.corpBox('effect', (ce) => {
-            ce.effect('After you pay for a card with the same amount as your last card, you gain 3 M€.', (eb) => {
-              eb.cards(1).megacredits(1, {text: 'X'}).equals().megacredits(1, {text: 'X'}).asterix().startEffect.megacredits(3);
+            ce.effect('当你打出的项目卡实际支付的M€与上一张项目卡相差为X时(X<3)，你获得(3-X)M€.', (eb) => {
+              eb.cards(1).megacredits(1, {text: 'M'}).minus().megacredits(1, {text: 'N'}).asterix().text('<3').startEffect.megacredits(1,{text:'3-X'});
             });
           });
         }),
@@ -38,13 +36,5 @@ export class LunaChain extends CorporationCard {
   //   this.effect(player, card);
   // }
 
-  public serialize(serialized: SerializedCard) {
-    serialized.lastPay = this.lastPay;
-    serialized.triggerCount = this.triggerCount;
-  }
 
-  public deserialize(serialized: SerializedCard) {
-    this.lastPay = serialized.lastPay;
-    this.triggerCount = serialized.triggerCount;
-  }
 }

@@ -58,7 +58,7 @@ export class Sabotage extends Card implements IProjectCard {
         }));
       }
 
-      if (target.megaCredits > 0) {
+      if (target.megaCredits > 0 && !target.isCorporation(CardName.MIRRORCOAT)) {
         const amountRemoved = Math.min(7, target.megaCredits);
         const optionTitle = this.title(amountRemoved, 'M€', target);
         availableActions.options.push(new SelectOption(optionTitle).andThen(() => {

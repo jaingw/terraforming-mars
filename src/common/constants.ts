@@ -49,6 +49,7 @@ export const GRAPHENE_VALUE = 4;
 // Map specific
 export const HELLAS_BONUS_OCEAN_COST = 6;
 export const VASTITAS_BOREALIS_BONUS_TEMPERATURE_COST = 3;
+export const TERRA_CIMMERIA_COLONY_COST = 5;
 
 // Moon
 export const MAXIMUM_HABITAT_RATE = 8;
@@ -75,7 +76,7 @@ export const ASIMOV_AWARD_BONUS = 2;
 // Underworld
 export const CORRUPTION_VALUE = 10;
 
-// export const ALL_LANGUAGES = ['en', 'de', 'fr', 'ru', 'cn', 'pl', 'es', 'br', 'it', 'ko', 'nl', 'hu', 'jp', 'bg'] as const;
+// export const ALL_LANGUAGES = ['en', 'de', 'fr', 'ru', 'cn', 'pl', 'es', 'br', 'it', 'ko', 'nl', 'hu', 'jp', 'bg', 'nb', 'ua'] as const;
 export const ALL_LANGUAGES = ['cn', 'en', 'de', 'fr', 'ru', 'pl'] as const;
 
 export const LANGUAGES: Record<typeof ALL_LANGUAGES[number], string> = {
@@ -93,6 +94,8 @@ export const LANGUAGES: Record<typeof ALL_LANGUAGES[number], string> = {
   // hu: 'Magyar',
   // jp: '日本語',
   // bg: 'Български',
+  // nb: 'Norsk',
+  // ua: 'Українська',
 };
 
 export const APP_NAME = 'Terraforming Mars';

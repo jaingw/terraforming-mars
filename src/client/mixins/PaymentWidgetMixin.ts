@@ -235,7 +235,7 @@ export const PaymentWidgetMixin = {
     availableHeat(): number {
       const model = this.asModel();
       const thisPlayer = model.playerView.thisPlayer;
-      const stormcraft = thisPlayer.tableau.find((card) => card.name === CardName.STORMCRAFT_INCORPORATED);
+      const stormcraft = thisPlayer.tableau.find((card) => card.name === CardName.STORMCRAFT_INCORPORATED || card.name === CardName._STORMCRAFT_INCORPORATED_);
       if (stormcraft?.resources !== undefined) {
         return thisPlayer.heat + (stormcraft.resources * 2);
       }

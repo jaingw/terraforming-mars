@@ -4,7 +4,10 @@ import {Card} from '../Card';
 import {CardName} from '../../../common/cards/CardName';
 import {CardType} from '../../../common/cards/CardType';
 import {Tag} from '../../../common/cards/Tag';
+import {IPlayer} from '../../IPlayer';
 export class AntiGravityExperiment extends Card implements IProjectCard {
+  public data: {generation: number} = {generation: -1};
+
   constructor() {
     super({
       type: CardType.EVENT,
@@ -26,15 +29,15 @@ export class AntiGravityExperiment extends Card implements IProjectCard {
     });
   }
 
-  public isDisabled = true;
-
-  public override getCardDiscount() {
-    if (this.isDisabled) return 0;
-    return 2;
+  public override getCardDiscount(player: IPlayer) {
+    if (this.data.generation !== undefined && player.game.generation === this.data.generation) {
+      return 2;
+    }
+    return 0;
   }
 
-  public override bespokePlay() {
-    this.isDisabled = false;
+  public override bespokePlay(player: IPlayer) {
+    this.data = {generation: player.game.generation};
     return undefined;
   }
 }

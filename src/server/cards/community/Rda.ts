@@ -34,14 +34,14 @@ export class Rda extends CorporationCard {
       name: CardName.RDA,
       tags: [Tag.BUILDING],
       initialActionText: 'Place a city tile',
-      startingMegaCredits: 49,
+      startingMegaCredits: 42,
 
       metadata: {
         cardNumber: 'XB09',
-        description: 'You start with 49 M€. As your first action in the game, place a city tile.',
+        description: 'You start with 42 M€. As your first action in the game, place a city tile.',
         renderData: CardRenderer.builder((b) => {
           b.br.br;
-          b.megacredits(49).nbsp.city();
+          b.megacredits(42).nbsp.city();
           b.corpBox('effect', (ce) => {
             ce.effect('When you place a tile ON MARS gain 1 additional resource on the space.', (eb) => {
               eb.emptyTile('normal', {size: Size.SMALL}).startEffect.plus().wild(1).asterix();

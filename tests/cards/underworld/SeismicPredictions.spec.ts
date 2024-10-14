@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {Game} from '../../../src/server/Game';
+import {IGame} from '../../../src/server/IGame';
 import {SeismicPredictions} from '../../../src/server/cards/underworld/SeismicPredictions';
 import {Turmoil} from '../../../src/server/turmoil/Turmoil';
 import {TestPlayer} from '../../TestPlayer';
@@ -7,11 +7,12 @@ import {testGame} from '../../TestGame';
 import {TileType} from '../../../src/common/TileType';
 import {UnderworldExpansion} from '../../../src/server/underworld/UnderworldExpansion';
 import {TurmoilUtil} from '../../../src/server/turmoil/TurmoilUtil';
+import {SpaceName} from '../../../src/server/SpaceName';
 
 describe('SeismicPredictions', function() {
   let card: SeismicPredictions;
   let player: TestPlayer;
-  let game: Game;
+  let game: IGame;
   let turmoil: Turmoil;
 
   beforeEach(() => {
@@ -21,17 +22,18 @@ describe('SeismicPredictions', function() {
   });
 
   const resolveTests = [
-    {mc: 10, ownedTiles: 0, claimed: 0, influence: 0, expect: {mc: 10}},
-    {mc: 10, ownedTiles: 0, claimed: 0, influence: 1, expect: {mc: 10}},
-    {mc: 10, ownedTiles: 1, claimed: 1, influence: 0, expect: {mc: 10}},
-    {mc: 10, ownedTiles: 1, claimed: 0, influence: 1, expect: {mc: 10}},
-    {mc: 10, ownedTiles: 0, claimed: 0, influence: 1, expect: {mc: 10}},
-    {mc: 10, ownedTiles: 4, claimed: 3, influence: 0, expect: {mc: 8}},
-    {mc: 10, ownedTiles: 4, claimed: 0, influence: 0, expect: {mc: 2}},
-    {mc: 10, ownedTiles: 6, claimed: 0, influence: 0, expect: {mc: 0}},
-    {mc: 10, ownedTiles: 6, claimed: 0, influence: 1, expect: {mc: 2}},
-    {mc: 10, ownedTiles: 6, claimed: 0, influence: 2, expect: {mc: 4}},
-    {mc: 10, ownedTiles: 6, claimed: 0, influence: 3, expect: {mc: 6}},
+    {mc: 10, ownedTiles: 0, claimed: 0, influence: 0, spaceColony: false, expect: {mc: 10}},
+    {mc: 10, ownedTiles: 0, claimed: 0, influence: 0, spaceColony: false, expect: {mc: 10}},
+    {mc: 10, ownedTiles: 0, claimed: 0, influence: 1, spaceColony: false, expect: {mc: 10}},
+    {mc: 10, ownedTiles: 1, claimed: 1, influence: 0, spaceColony: false, expect: {mc: 10}},
+    {mc: 10, ownedTiles: 1, claimed: 0, influence: 1, spaceColony: false, expect: {mc: 10}},
+    {mc: 10, ownedTiles: 0, claimed: 0, influence: 1, spaceColony: false, expect: {mc: 10}},
+    {mc: 10, ownedTiles: 4, claimed: 3, influence: 0, spaceColony: false, expect: {mc: 8}},
+    {mc: 10, ownedTiles: 4, claimed: 0, influence: 0, spaceColony: false, expect: {mc: 2}},
+    {mc: 10, ownedTiles: 6, claimed: 0, influence: 0, spaceColony: false, expect: {mc: 0}},
+    {mc: 10, ownedTiles: 6, claimed: 0, influence: 1, spaceColony: false, expect: {mc: 2}},
+    {mc: 10, ownedTiles: 6, claimed: 0, influence: 2, spaceColony: false, expect: {mc: 4}},
+    {mc: 10, ownedTiles: 6, claimed: 0, influence: 3, spaceColony: false, expect: {mc: 6}},
   ] as const;
 
   resolveTests.forEach((run, idx) => {
@@ -52,6 +54,10 @@ describe('SeismicPredictions', function() {
           space.excavator = player;
         }
       });
+
+      if (run.spaceColony) {
+        game.simpleAddTile(player, board.getSpaceOrThrow(SpaceName.GANYMEDE_COLONY), {tileType: TileType.CITY});
+      }
 
       card.resolve(game, turmoil);
 

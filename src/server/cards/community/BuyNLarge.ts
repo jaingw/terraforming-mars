@@ -29,8 +29,8 @@ export class BuyNLarge extends CorporationCard {
           b.effect('When you place a greenery tile or play a biology tag, add 1 seed resource to this card.', (eb) => {
             eb.greenery().slash().animals(1, {played}).slash().plants(1, {played}).slash().microbes(1, {played}).startEffect.seed();
           }).br;
-          b.effect('When you have 6 seeds, automatically convert to 8 plants.', (eb) => {
-            eb.text('6').seed().asterix().startAction.plants(8, {digit});
+          b.effect('When you have 7 seeds, automatically convert to 8 plants.', (eb) => {
+            eb.text('7').seed().asterix().startAction.plants(8, {digit});
           }).br;
         }),
         description: 'You start with 35M€. As your first action, place a greenery.',
@@ -39,7 +39,6 @@ export class BuyNLarge extends CorporationCard {
   }
 
   public override resourceCount = 1;
-
   public initialAction(player: IPlayer) {
     return new SelectSpace('Select space for greenery tile',
       player.game.board.getAvailableSpacesForGreenery(player) ).andThen((space: Space) => {
@@ -77,9 +76,9 @@ export class BuyNLarge extends CorporationCard {
 
   public onResourceAdded(player: IPlayer, playedCard: ICard) {
     if (playedCard.name !== this.name) return;
-    if (this.resourceCount >= 6) {
-      const delta = Math.floor(this.resourceCount / 6);
-      const deducted = delta * 6;
+    if (this.resourceCount >= 7) {
+      const delta = Math.floor(this.resourceCount / 7);
+      const deducted = delta * 7;
       this.resourceCount -= deducted;
       player.stock.add(Resource.PLANTS, 8*delta, {log: true});
       player.game.log('${0} removed ${1} seeds from ${2} to gain ${3} plants.',

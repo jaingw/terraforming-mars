@@ -34,3 +34,5 @@ build/assets/index_ca.html
 
 # misc
 .gitconfig
+
+/pnpm-lock.yaml

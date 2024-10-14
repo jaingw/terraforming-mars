@@ -22,7 +22,7 @@ export class _ArcadianCommunities_ extends ArcadianCommunities {
         .filter((space) => space.tile !== undefined && space.player !== undefined && space.player === cardOwner)
         .length;
     }
-    cardOwner.megaCredits += bonusResource;
+    cardOwner.stock.megacredits += bonusResource;
   }
 
 

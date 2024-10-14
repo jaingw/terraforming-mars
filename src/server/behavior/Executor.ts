@@ -128,7 +128,7 @@ export class Executor implements BehaviorExecutor {
     }
 
     if (behavior.decreaseAnyProduction !== undefined) {
-      if (!game.isSoloMode()) {
+      if (!game.isSoloMode() ) {
         const dap = behavior.decreaseAnyProduction;
         const targets = game.getPlayers().filter((p) => p.canHaveProductionReduced(dap.type, dap.count, player));
 
@@ -182,16 +182,15 @@ export class Executor implements BehaviorExecutor {
           robotCards: arctac.robotCards !== undefined,
         });
         const cards = action.getCards();
-        const count = cards[0].length + cards[1].length;
-        if (count === 0) {
+        if (cards.length === 0) {
           return false;
         }
         // Not playable if the behavior is based on spending a resource
         // from itself to add to itself, like Applied Science.
-        if (count === 1 && (behavior.spend?.resourcesHere ?? 0 > 0)) {
+        if (cards.length === 1 && (behavior.spend?.resourcesHere ?? 0 > 0)) {
           // TODO(kberg): also check wither arctac.min + spend is enough.
           // but that's just to make this future-proof.
-          if (cards[0][0]?.name === card.name) {
+          if (cards[0]?.name === card.name) {
             return false;
           }
         }
@@ -568,6 +567,17 @@ export class Executor implements BehaviorExecutor {
         }
       }
     }
+
+    if (behavior.log !== undefined) {
+      this.log(behavior.log, player, card);
+    }
+  }
+
+  private log(message: string, player: IPlayer, card: ICard) {
+    const replaced = message
+      .replaceAll('${player}', '${0}')
+      .replaceAll('${card}', '${1}');
+    player.game.log(replaced, (b) => b.player(player).card(card));
   }
 
   public onDiscard(behavior: Behavior, player: IPlayer, _card: ICard) {

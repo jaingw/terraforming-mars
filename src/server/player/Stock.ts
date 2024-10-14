@@ -151,7 +151,7 @@ export class Stock {
     if (delta < 0 && this.player.game.phase === Phase.ACTION && resource === Resource.ENERGY) {
       const solarPlant = this.player.getCorporation(CardName.SOLARPLANT);
       if (solarPlant !== undefined) {
-        this.player.defer(() => this.add(Resource.HEAT, -2*delta, {log: true}));
+        this.player.defer(() => this.add(Resource.HEAT, -delta, {log: true}));
       }
     }
   }
