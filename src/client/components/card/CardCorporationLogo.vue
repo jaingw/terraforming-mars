@@ -212,6 +212,15 @@
     <template v-else-if="title ===  CardName.RDA">
       <div class="card-rda-logo"></div>
     </template>
+    <template v-else-if="title ===  CardName.GREENRING">
+      <div class="card-green-ring-logo"></div>
+    </template>
+    <template v-else-if="title ===  CardName.ENERGY_SAVING_ECOLOGY">
+      <div class="corp-logo-energy-saving-ecology"></div>
+    </template>
+    <template v-else-if="title ===  CardName.GREEN_LEAF_DANCE">
+      <div class="corp-logo-green-leaf-dance"></div>
+    </template>
     <template v-else-if="title ===  CardName.PRISM">
       <div class="card-prism-logo"></div>
     </template>

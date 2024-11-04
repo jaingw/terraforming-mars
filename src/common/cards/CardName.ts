@@ -599,6 +599,8 @@ export enum CardName {
     PROWLER = '🌸Prowler🌸',
     MIRRORCOAT = '🌸MirrorCoat🌸',
     GREENRING = '🌸Green Ring🌸',
+    ENERGY_SAVING_ECOLOGY = '🌸Energy Saving Ecology🌸',
+    GREEN_LEAF_DANCE = '🌸Green Leaf Dance🌸',
 
     // Community preludes
     VALUABLE_GASES = 'Valuable Gases',
