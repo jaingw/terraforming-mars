@@ -2,7 +2,7 @@
  * @Author: Ender-Wiggin
  * @Date: 2024-10-26 12:21:26
  * @LastEditors: Ender-Wiggin
- * @LastEditTime: 2024-11-05 23:08:34
+ * @LastEditTime: 2024-11-05 23:26:24
  * @Description:
  */
 import {CorporationCard} from '../corporation/CorporationCard';
@@ -43,7 +43,7 @@ export class EnergySavingEcology extends CorporationCard {
           b.effect('', (eb) => {
             eb.minus().data({amount: 4, digit, all}).startAction.oceans(1).or();
           }).br;
-          b.effect('当你打出费用10或更少的牌或每次提升热产（而不是每1热产）时，拿1数据资源在此卡上', (eb) => {
+          b.effect('当你打出费用10或更少的牌或每次提升热产（而不是每1热产）时，拿1数据资源在此卡上，或移除此卡上的4数据放1海，或移除此卡上的6数据放1树,', (eb) => {
             eb.minus().data({amount: 6, digit, all}).startAction.greenery();
           }).br;
           // b.minus().data({amount: 6, digit, all}).startAction.greenery().br;
