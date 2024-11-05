@@ -2,7 +2,7 @@
  * @Author: Ender-Wiggin
  * @Date: 2024-10-26 12:21:26
  * @LastEditors: Ender-Wiggin
- * @LastEditTime: 2024-11-05 00:12:21
+ * @LastEditTime: 2024-11-05 22:50:33
  * @Description:
  */
 import {CorporationCard} from '../corporation/CorporationCard';
@@ -25,7 +25,7 @@ export class EnergySavingEcology extends CorporationCard {
     super({
       name: CardName.ENERGY_SAVING_ECOLOGY,
       tags: [Tag.SPACE],
-      startingMegaCredits: 49,
+      startingMegaCredits: 39,
       resourceType: CardResource.DATA,
 
       behavior: {
@@ -35,9 +35,9 @@ export class EnergySavingEcology extends CorporationCard {
 
       metadata: {
         cardNumber: 'XB20',
-        description: 'You start with 2 heat production and 49 M€.',
+        description: 'You start with 2 heat production and 39 M€.',
         renderData: CardRenderer.builder((b) => {
-          b.production((pb) => pb.heat(2)).nbsp.megacredits(49);
+          b.production((pb) => pb.heat(2)).nbsp.megacredits(39);
           b.br;
           b.minus().megacredits(10).slash().production((pb) => pb.heat(1)).colon().data().or().br;
           b.effect('', (eb) => {
