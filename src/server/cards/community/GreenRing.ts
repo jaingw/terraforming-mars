@@ -2,42 +2,46 @@ import {CardName} from '../../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
 import {CorporationCard} from '../corporation/CorporationCard';
 import {ICard} from '../ICard';
-import { Size } from '../../../common/cards/render/Size';
-import { IPlayer } from '../../IPlayer';
-import { Tag } from '../../../common/cards/Tag';
-import { IProjectCard, PlayableCard } from '../IProjectCard';
-import { CardType } from '../../../common/cards/CardType';
-import { isSpecialTile } from '../../boards/Board';
-import { AltSecondaryTag } from '../../../common/cards/render/AltSecondaryTag';
-import { SelectProjectCardToPlay } from '../../inputs/SelectProjectCardToPlay';
-import { TileType } from '../../../common/TileType';
+import {Size} from '../../../common/cards/render/Size';
+import {IPlayer} from '../../IPlayer';
+import {Tag} from '../../../common/cards/Tag';
+import {IProjectCard, PlayableCard} from '../IProjectCard';
+import {CardType} from '../../../common/cards/CardType';
+import {isSpecialTile} from '../../boards/Board';
+import {AltSecondaryTag} from '../../../common/cards/render/AltSecondaryTag';
+import {SelectProjectCardToPlay} from '../../inputs/SelectProjectCardToPlay';
+import {TileType} from '../../../common/TileType';
 
 export class GreenRing extends CorporationCard implements ICard {
   constructor() {
     super({
       name: CardName.GREENRING,
-      tags: [Tag.SPACE],
-      startingMegaCredits: 40,
+      tags: [Tag.EARTH],
+      startingMegaCredits: 53,
+      firstAction: {
+        text: 'Draw 2 green cards',
+        drawCard: {count: 2, type: CardType.AUTOMATED},
+      },
       // 請問今天能開發這公司嗎? 綠環公司(Green Ring), 40MC,1鈦標, 行動:回收一张你已打出的绿卡或蓝卡到你手上(但不能已特殊板块或回手牌),之後付費打出,之後棄掉此卡,可以將重播公司
       // 行動:回收一张已打出的绿卡或蓝卡到你手上(但不能已特殊板块或回手牌),之後付費打出,之後棄掉此卡,可以將重播公司
       metadata: {
         cardNumber: 'XB19',
-        description: 'You start with 40 M€.',
+        description: 'You start with 53 M€. As your first action, draw a green card',
         renderData: CardRenderer.builder((b) => {
-          b.megacredits(40);
+          b.megacredits(53).cards(2, {secondaryTag: AltSecondaryTag.GREEN});
           b.corpBox('action', (ce) => {
             ce.vSpace(Size.SMALL);
-            ce.action("付费重新打出一张你已打出的蓝卡或绿卡,不能是放置特殊版块或者回手牌的卡,执行完效果后移除游戏", (eb) => {
+            ce.action('付费重新打出一张你已打出的蓝卡或绿卡,不能是放置特殊版块或者回手牌的卡,执行完效果后移除游戏', (eb) => {
               eb.megacredits(1, {text: '?'}).startAction;
               eb.text('replay', Size.SMALL, true);
-              eb.nbsp.cards(1,{secondaryTag: AltSecondaryTag.BLUE}).text('OR').cards(1,{secondaryTag: AltSecondaryTag.GREEN});
+              eb.nbsp.cards(1, {secondaryTag: AltSecondaryTag.BLUE}).text('OR').cards(1, {secondaryTag: AltSecondaryTag.GREEN});
             });
           });
         }),
       },
     });
   }
-  
+
   public canAct(player: IPlayer): boolean {
     return this.getCards(player).length > 0;
   }
@@ -69,7 +73,7 @@ export class GreenRing extends CorporationCard implements ICard {
     CardName.OCEAN_FARM, // 21
     CardName.OCEAN_SANCTUARY, // 22
     CardName.MINING_RIGHTS_ARES,
-    CardName.MINING_AREA_ARES, 
+    CardName.MINING_AREA_ARES,
     CardName.MARS_HOT_SPRING,
 
     // The Moon
@@ -103,13 +107,13 @@ export class GreenRing extends CorporationCard implements ICard {
       if (card.tilesBuilt.some(isSpecialTile)) {
         return false;
       }
-      if( this.specialTiles.includes(card.name)){
+      if ( this.specialTiles.includes(card.name)) {
         return false;
       }
-      const  tileType = card.behavior?.tile?.type;
-      if(tileType !== undefined && tileType !== TileType.GREENERY 
-        && tileType !== TileType.OCEAN && tileType !== TileType.CITY){
-          return false; 
+      const tileType = card.behavior?.tile?.type;
+      if (tileType !== undefined && tileType !== TileType.GREENERY &&
+        tileType !== TileType.OCEAN && tileType !== TileType.CITY) {
+        return false;
       }
 
       const canPlay = player.canPlay(card);
@@ -122,14 +126,14 @@ export class GreenRing extends CorporationCard implements ICard {
     });
   }
 
-  
+
   public action(player: IPlayer) {
     const candidates = this.getCards(player);
     if (candidates.length === 0) {
       player.game.log('${0} had no collectable green or blue project cards', (b) => b.player(player));
       return undefined;
     }
-    
+
     const playableCards: Array<PlayableCard> = [];
     for (const card of candidates) {
       card.warnings.clear();
@@ -139,18 +143,16 @@ export class GreenRing extends CorporationCard implements ICard {
         details: true,
       });
     }
-    
+
     return new SelectProjectCardToPlay(player, playableCards).andThen((selectedCard) => {
       // SelectProjectCardToPlay会先打出卡牌, 再执行andThen, 这里应该先回收的
       // 先回收
       player.playedCards = player.playedCards.filter((c) => c.name !== selectedCard.name);
       selectedCard.onDiscard?.(player);
-      
-      //再重新打出
+
+      // 再重新打出
       // player.playCard(selectedCard, undefined, 'nothing'); // Play the card but don't add it to played cards
       return undefined;
     });
-    
   }
- 
 }

@@ -41,10 +41,12 @@ import {Thermopoli} from './Thermopoli';
 import {EliteTech} from './EliteTech';
 import {SolarPlant} from './SolarPlant';
 import {PoliticalReform} from './PoliticalReform';
-import { StarlinkDrifter } from './StarlinkDrifter';
-import { Prowler } from './Prowler';
-import { MirrorCoat } from './MirrorCoat';
-import { GreenRing } from './GreenRing';
+import {StarlinkDrifter} from './StarlinkDrifter';
+import {Prowler} from './Prowler';
+import {MirrorCoat} from './MirrorCoat';
+import {GreenRing} from './GreenRing';
+import {EnergySavingEcology} from './EnergySavingEcology';
+import {GreenLeafDance} from './GreenLeafDance';
 
 export const COMMUNITY_CARD_MANIFEST = new ModuleManifest({
   module: 'community',
@@ -80,6 +82,8 @@ export const COMMUNITY_CARD_MANIFEST = new ModuleManifest({
     [CardName.PROWLER]: {Factory: Prowler}, // XB17
     [CardName.MIRRORCOAT]: {Factory: MirrorCoat}, // XB18
     [CardName.GREENRING]: {Factory: GreenRing}, // XB19
+    [CardName.ENERGY_SAVING_ECOLOGY]: {Factory: EnergySavingEcology}, // XB20
+    [CardName.GREEN_LEAF_DANCE]: {Factory: GreenLeafDance}, // XB20
   },
   preludeCards: {
     // 粉丝扩的部分前序跟pf扩重合 先注释
