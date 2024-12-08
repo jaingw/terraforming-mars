@@ -47,6 +47,7 @@ import {MirrorCoat} from './MirrorCoat';
 import {GreenRing} from './GreenRing';
 import {EnergySavingEcology} from './EnergySavingEcology';
 import {GreenLeafDance} from './GreenLeafDance';
+import {RaincatScientificProbe} from './RaincatScientificProbe';
 
 export const COMMUNITY_CARD_MANIFEST = new ModuleManifest({
   module: 'community',
@@ -83,7 +84,8 @@ export const COMMUNITY_CARD_MANIFEST = new ModuleManifest({
     [CardName.MIRRORCOAT]: {Factory: MirrorCoat}, // XB18
     [CardName.GREENRING]: {Factory: GreenRing}, // XB19
     [CardName.ENERGY_SAVING_ECOLOGY]: {Factory: EnergySavingEcology}, // XB20
-    [CardName.GREEN_LEAF_DANCE]: {Factory: GreenLeafDance}, // XB20
+    [CardName.GREEN_LEAF_DANCE]: {Factory: GreenLeafDance}, // XB21
+    [CardName.RAINCAT_SCIENTIFIC_PROBE]: {Factory: RaincatScientificProbe}, // XB22
   },
   preludeCards: {
     // 粉丝扩的部分前序跟pf扩重合 先注释

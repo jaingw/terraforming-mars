@@ -77,7 +77,7 @@ export class Playwrights extends CorporationCard {
             .andThen(() => {
               player.playCard(selectedCard, undefined, 'nothing'); // Play the card but don't add it to played cards
               player.removedFromPlayCards.push(selectedCard); // Remove card from the game , in case Conscription/Indentured Workers invalid
-              if(player !== ownPlayer){
+              if (player !== ownPlayer) {
                 ownPlayer?.removedFromPlayCards.push(selectedCard);
               }
               if (selectedCard.name === CardName.SPECIAL_DESIGN) {

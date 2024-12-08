@@ -1,14 +1,21 @@
+/*
+ * @Author: Ender-Wiggin
+ * @Date: 2024-10-26 11:51:43
+ * @LastEditors: Ender-Wiggin
+ * @LastEditTime: 2024-12-08 14:51:33
+ * @Description:
+ */
 import {CardName} from '../../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
 import {CorporationCard} from '../corporation/CorporationCard';
 import {ICard} from '../ICard';
-import { Tag } from '../../../common/cards/Tag';
-import { Size } from '../../../common/cards/render/Size';
-import { IPlayer } from '../../IPlayer';
-import { Resource } from '../../../common/Resource';
-import { SelectProjectCardToPlay } from '../../inputs/SelectProjectCardToPlay';
-import {  PlayableCard } from '../IProjectCard';
-import { digit } from '../Options';
+import {Tag} from '../../../common/cards/Tag';
+import {Size} from '../../../common/cards/render/Size';
+import {IPlayer} from '../../IPlayer';
+import {Resource} from '../../../common/Resource';
+import {SelectProjectCardToPlay} from '../../inputs/SelectProjectCardToPlay';
+import {PlayableCard} from '../IProjectCard';
+import {digit} from '../Options';
 
 export class Prowler extends CorporationCard implements ICard {
   public bonus: number = 0;
@@ -17,10 +24,10 @@ export class Prowler extends CorporationCard implements ICard {
     super({
       name: CardName.PROWLER,
       tags: [Tag.PLANT],
-      startingMegaCredits: 45,
+      startingMegaCredits: 43,
 
       behavior: {
-        stock: {plants: 3},
+        stock: {plants: 5},
       },
 
       firstAction: {
@@ -29,9 +36,9 @@ export class Prowler extends CorporationCard implements ICard {
       },
       metadata: {
         cardNumber: 'XB17',
-        description: 'You start with 45 M€. 3 plants',
+        description: 'You start with 43 M€. 5 plants',
         renderData: CardRenderer.builder((b) => {
-          b.megacredits(45).nbsp.cards(2, {secondaryTag: Tag.PLANT}).plants(3, {digit});;
+          b.megacredits(43).nbsp.cards(2, {secondaryTag: Tag.PLANT}).plants(5, {digit});
 
           b.corpBox('action', (ce) => {
             ce.effect('当氧气满了,你起树时,可以获得1tr.', (eb) => {
@@ -41,37 +48,35 @@ export class Prowler extends CorporationCard implements ICard {
               eb.plants(1).asterix().startAction.text('play', Size.MEDIUM, true).cards(1, {secondaryTag: Tag.PLANT});
             });
           });
-
         }),
       },
     });
   }
- 
+
   public override getGlobalParameterRequirementBonus(_player: IPlayer): number {
     return this.bonus;
   }
 
 
-  
   public canAct(player: IPlayer): boolean {
-    if(player.plants === 0) {
+    if (player.plants === 0) {
       return false;
     }
     this.bonus = 50;
-    player.stock.deduct(Resource.PLANTS,1);
-    let  length =  player.cardsInHand.filter(card => card.tags.indexOf(Tag.PLANT) > -1 && player.canPlay(card)).length ;
+    player.stock.deduct(Resource.PLANTS, 1);
+    const length = player.cardsInHand.filter((card) => card.tags.indexOf(Tag.PLANT) > -1 && player.canPlay(card)).length;
     this.bonus = 0;
-    player.stock.add(Resource.PLANTS,1);
-    return  length > 0;
+    player.stock.add(Resource.PLANTS, 1);
+    return length > 0;
   }
 
   public action(player: IPlayer) {
     this.bonus = 50;
-    player.stock.deduct(Resource.PLANTS,1);
+    player.stock.deduct(Resource.PLANTS, 1);
 
     const playableCards: Array<PlayableCard> = [];
     for (const card of player.cardsInHand) {
-      if(card.tags.indexOf(Tag.PLANT) > -1 ){
+      if (card.tags.indexOf(Tag.PLANT) > -1 ) {
         card.warnings.clear();
         const canPlay = player.canPlay(card);
         if (canPlay !== false) {
@@ -85,9 +90,9 @@ export class Prowler extends CorporationCard implements ICard {
 
 
     return new SelectProjectCardToPlay(player, playableCards)
-    .andThen((_card) => {
-      this.bonus = 0;
-      return undefined;
-    });
+      .andThen((_card) => {
+        this.bonus = 0;
+        return undefined;
+      });
   }
 }
