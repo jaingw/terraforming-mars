@@ -2,7 +2,7 @@
  * @Author: Ender-Wiggin
  * @Date: 2024-10-26 12:57:01
  * @LastEditors: Ender-Wiggin
- * @LastEditTime: 2024-11-05 00:19:43
+ * @LastEditTime: 2024-11-21 01:04:05
  * @Description:
  */
 import {CorporationCard} from '../corporation/CorporationCard';
@@ -35,7 +35,7 @@ export class GreenLeafDance extends CorporationCard {
       },
 
       metadata: {
-        cardNumber: 'PfC1',
+        cardNumber: 'XB21',
         description: 'You start with 45 M€. As your first action, place an ocean tile.',
         renderData: CardRenderer.builder((b) => {
           b.br;

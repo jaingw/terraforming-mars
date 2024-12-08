@@ -110,7 +110,7 @@ export class EnergyStation extends Card implements IActionCard, IProjectCard {
       // FIMXE: 有个 api
       // player.heat += 2 * Math.abs(amount);
 
-      const heatAmount =  Math.abs(amount);
+      const heatAmount = Math.abs(amount);
 
       player.game.defer(
         new GainResources(owner, Resource.HEAT, {count: heatAmount}).andThen(() => from.game.log(
