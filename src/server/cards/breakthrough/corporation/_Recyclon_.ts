@@ -2,7 +2,7 @@
  * @Author: Ender-Wiggin
  * @Date: 2024-10-10 23:21:26
  * @LastEditors: Ender-Wiggin
- * @LastEditTime: 2024-12-08 14:48:06
+ * @LastEditTime: 2024-12-09 23:56:51
  * @Description:
  */
 import {CorporationCard} from '../../corporation/CorporationCard';
@@ -23,7 +23,7 @@ export class _Recyclon_ extends CorporationCard {
     super({
       name: CardName._RECYCLON_,
       tags: [Tag.MICROBE, Tag.BUILDING],
-      startingMegaCredits: 40,
+      startingMegaCredits: 38,
       resourceType: CardResource.MICROBE,
 
       behavior: {
@@ -33,10 +33,10 @@ export class _Recyclon_ extends CorporationCard {
 
       metadata: {
         cardNumber: 'R26',
-        description: 'You start with 40 M€ and 1 steel production.',
+        description: 'You start with 38 M€ and 1 steel production.',
         renderData: CardRenderer.builder((b) => {
           b.br.br;
-          b.megacredits(40).microbes(1).microbes(1).asterix().nbsp.production((pb) => pb.steel(1));
+          b.megacredits(38).microbes(1).microbes(1).asterix().nbsp.production((pb) => pb.steel(1));
           b.corpBox('effect', (ce) => {
             ce.effect('When you play a building tag, including this, gain 1 microbe to this card, or remove ALL microbes to gain same amount plants.', (eb) => {
               eb.microbes(1, {played}).slash().building(1, {played}).colon().microbes(1).or();
