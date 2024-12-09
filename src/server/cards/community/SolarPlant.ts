@@ -1,3 +1,10 @@
+/*
+ * @Author: Ender-Wiggin
+ * @Date: 2024-10-26 11:51:43
+ * @LastEditors: Ender-Wiggin
+ * @LastEditTime: 2024-10-29 23:49:08
+ * @Description:
+ */
 import {Tag} from '../../../common/cards/Tag';
 import {CardName} from '../../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
@@ -31,7 +38,7 @@ export class SolarPlant extends CorporationCard {
               eb.production((pb) => pb.text('-X').heat(1)).startAction.production((pb) => pb.text('+X').energy(1));
             });
             ce.vSpace();
-            ce.effect('For each energy resource you spend in action phase, gain 2 heat.', (eb) => {
+            ce.effect('For each energy resource you spend in action phase, gain 1 heat.', (eb) => {
               eb.text('x').energy(1).asterix().startEffect.text('x').heat(1);
             });
           });

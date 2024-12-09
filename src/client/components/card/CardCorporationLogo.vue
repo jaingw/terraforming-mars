@@ -198,7 +198,7 @@
       </div>
     </template>
     <template v-else-if="title === CardName.INTEGRATED_MICROORGANISMS">
-      <div class="card-protogen-logo">🌸INTEGRATED<br/>MICROORGANISMS🌸</div>
+      <div class="card-xuebao-logo">🌸INTEGRATED<br/>MICROORGANISMS🌸</div>
     </template>
     <template v-else-if="title === CardName.PROTOGEN">
       <div class="card-protogen-logo">🌸PROTOGEN🌸</div>
@@ -211,6 +211,9 @@
     </template>
     <template v-else-if="title ===  CardName.RDA">
       <div class="card-rda-logo"></div>
+    </template>
+    <template v-else-if="title ===  CardName.RAINCAT_SCIENTIFIC_PROBE">
+      <div class="card-raincat-logo"></div>
     </template>
     <template v-else-if="title ===  CardName.GREENRING">
       <div class="card-green-ring-logo"></div>
@@ -249,19 +252,19 @@
       <div class="card-elitetech-logo">🌸ELITETECH🌸</div>
     </template>
     <template v-else-if="title === CardName.SOLARPLANT">
-      <div class="card-protogen-logo">🌸SOLARPLANT🌸</div>
+      <div class="card-xuebao-logo">🌸SOLARPLANT🌸</div>
     </template>
     <template v-else-if="title === CardName.POLITICALREFORM">
-      <div class="card-protogen-logo">🌸POLITICALREFORM🌸</div>
+      <div class="card-xuebao-logo">🌸POLITICALREFORM🌸</div>
     </template>
     <template v-else-if="title === CardName.STARLINKDRIFTER">
-      <div class="card-protogen-logo">🌸STARLINKDRIFTER🌸</div>
+      <div class="card-xuebao-logo">🌸STARLINKDRIFTER🌸</div>
     </template>
     <template v-else-if="title === CardName.PROWLER">
-      <div class="card-protogen-logo">🌸PROWLER🌸</div>
+      <div class="card-xuebao-logo">🌸PROWLER🌸</div>
     </template>
     <template v-else-if="title === CardName.MIRRORCOAT">
-      <div class="card-protogen-logo">🌸MIRRORCOAT🌸</div>
+      <div class="card-xuebao-logo">🌸MIRRORCOAT🌸</div>
     </template>
     <template v-else-if="title === CardName.MARS_MATHS">
       <div class="card-mars-maths-logo" style="font-family: Century Gothic, CenturyGothic, AppleGothic, sans-serif">

@@ -47,6 +47,7 @@ import {MirrorCoat} from './MirrorCoat';
 import {GreenRing} from './GreenRing';
 import {EnergySavingEcology} from './EnergySavingEcology';
 import {GreenLeafDance} from './GreenLeafDance';
+import {RaincatScientificProbe} from './RaincatScientificProbe';
 
 export const COMMUNITY_CARD_MANIFEST = new ModuleManifest({
   module: 'community',
@@ -74,7 +75,7 @@ export const COMMUNITY_CARD_MANIFEST = new ModuleManifest({
     [CardName.RDA]: {Factory: Rda}, // XB9
     [CardName.ARK_NOVA]: {Factory: ArkNova}, // XB10
     // [ CardName.CITY_GREENHOUSE]:{Factory: CityGreenhouse}, // 雪宝这公司没人玩，注释了
-    [CardName.THERMOPOLI]: {Factory: Thermopoli}, // XB12
+    [CardName.THERMOPOLI]: {Factory: Thermopoli, compatibility: 'turmoil'}, // XB12
     [CardName.ELITETECH]: {Factory: EliteTech}, // XB13
     [CardName.SOLARPLANT]: {Factory: SolarPlant}, // XB14
     [CardName.POLITICALREFORM]: {Factory: PoliticalReform}, // XB15
@@ -83,7 +84,8 @@ export const COMMUNITY_CARD_MANIFEST = new ModuleManifest({
     [CardName.MIRRORCOAT]: {Factory: MirrorCoat}, // XB18
     [CardName.GREENRING]: {Factory: GreenRing}, // XB19
     [CardName.ENERGY_SAVING_ECOLOGY]: {Factory: EnergySavingEcology}, // XB20
-    [CardName.GREEN_LEAF_DANCE]: {Factory: GreenLeafDance}, // XB20
+    [CardName.GREEN_LEAF_DANCE]: {Factory: GreenLeafDance}, // XB21
+    [CardName.RAINCAT_SCIENTIFIC_PROBE]: {Factory: RaincatScientificProbe}, // XB22
   },
   preludeCards: {
     // 粉丝扩的部分前序跟pf扩重合 先注释

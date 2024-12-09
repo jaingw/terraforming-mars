@@ -1,3 +1,10 @@
+/*
+ * @Author: Ender-Wiggin
+ * @Date: 2024-10-26 11:51:43
+ * @LastEditors: Ender-Wiggin
+ * @LastEditTime: 2024-12-08 12:39:35
+ * @Description:
+ */
 import {Tag} from '../../../common/cards/Tag';
 import {IPlayer} from '../../IPlayer';
 import {ICorporationCard} from '../corporation/ICorporationCard';
@@ -14,10 +21,10 @@ export class IntegratedMicroorganisms extends CorporationCard {
       tags: [Tag.MICROBE],
       startingMegaCredits: 50,
 
-      initialActionText: 'Draw 1 card with a microbe tag',
+      initialActionText: 'Draw 2 cards with a microbe tag',
       metadata: {
         cardNumber: 'XB07',
-        description: 'You start with 50 M€. As your first action, draw 1 card with a microbe tag.',
+        description: 'You start with 50 M€. As your first action, draw 2 cards with a microbe tag.',
         renderData: CardRenderer.builder((b) => {
           b.br.br.br;
           b.megacredits(50).cards(1, {secondaryTag: Tag.MICROBE});
@@ -37,7 +44,7 @@ export class IntegratedMicroorganisms extends CorporationCard {
   }
 
   public initialAction(player: IPlayer) {
-    player.drawCard(1, {tag: Tag.MICROBE});
+    player.drawCard(2, {tag: Tag.MICROBE});
     return undefined;
   }
 

@@ -384,8 +384,8 @@ export default (Vue as WithRefs<Refs>).extend({
       names.push(...getCards(byType(CardType.AUTOMATED)).map(toName));
       names.push(...getCards(byType(CardType.ACTIVE)).map(toName));
       names.push(...getCards(byType(CardType.EVENT)).map(toName));
-      const result =  this.sort(names.filter(this.showCard));
-      console.log("getAllProjectCards result:" + result.length)
+      const result = this.sort(names.filter(this.showCard));
+      console.log('getAllProjectCards result:' + result.length);
       return result;
     },
     getAllCorporationCards() {

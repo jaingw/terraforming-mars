@@ -29,7 +29,7 @@ export class RemoveResources extends DeferredAction<number> {
       }
     }
 
-    if(this.target.isCorporation(CardName.MIRRORCOAT)){
+    if (this.target.isCorporation(CardName.MIRRORCOAT)) {
       this.cb(0);
       return undefined;
     }
