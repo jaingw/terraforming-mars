@@ -121,6 +121,6 @@ export const EROS_CARD_MANIFEST = new ModuleManifest({
   preludeCards: {
     [CardName.WG_PARTNERSHIP]: {Factory: WGPartnership}, // Q101
 
-  }, 
+  },
 
 });

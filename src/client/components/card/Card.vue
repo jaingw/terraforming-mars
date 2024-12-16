@@ -174,7 +174,7 @@ export default Vue.extend({
       return this.getCardType() === CardType.STANDARD_PROJECT || this.getCardType() === CardType.STANDARD_ACTION;
     },
     getLunaChainPay(): number {
-      return this.isCorporationCard() && this.card.data?.lastPay >=0 ? this.card.data.lastPay  : -1;
+      return this.isCorporationCard() && this.card.data?.lastPay >=0 ? this.card.data.lastPay : -1;
     },
   },
   computed: {

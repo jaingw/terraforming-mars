@@ -322,7 +322,7 @@ export class UnderworldExpansion {
 
   // TODO(kberg): turn into a deferred action?
   public static maybeBlockAttack(target: IPlayer, perpetrator: IPlayer, cb: (proceed: boolean) => PlayerInput | undefined): PlayerInput | undefined {
-    if(target.isCorporation(CardName.MIRRORCOAT)){
+    if (target.isCorporation(CardName.MIRRORCOAT)) {
       return cb(false);
     }
     if (target.game.gameOptions.underworldExpansion === false) {

@@ -1,3 +1,10 @@
+/*
+ * @Author: Ender-Wiggin
+ * @Date: 2024-10-26 11:51:43
+ * @LastEditors: Ender-Wiggin
+ * @LastEditTime: 2024-10-26 13:21:22
+ * @Description:
+ */
 import * as responses from '../server/responses';
 import {Handler} from './Handler';
 import {Context} from './IHandler';
@@ -15,7 +22,7 @@ export class ApiGames extends Handler {
 
   public override get(req: Request, res: Response, ctx: Context): Promise<void> {
     const userId = ctx.url.searchParams.get('userId');
-    if (userId === undefined || userId === null || !userId.startsWith(UserUtil.myId!)) {
+    if (userId === undefined || userId === null || !userId.startsWith(UserUtil.myId || '')) {
       console.warn('Not me');
       responses.notFound(req, res, 'Not me');
       return Promise.resolve();

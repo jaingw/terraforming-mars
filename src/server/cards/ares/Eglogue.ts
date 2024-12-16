@@ -2,13 +2,13 @@ import {CardRenderer} from '../render/CardRenderer';
 import {all} from '../Options';
 import {CardName} from '../../../common/cards/CardName';
 import {CorporationCard} from '../corporation/CorporationCard';
-import { Tag } from '../../../common/cards/Tag';
-import { IPlayer } from '../../IPlayer';
-import { SelectOption } from '../../inputs/SelectOption';
-import { Resource } from '../../../common/Resource';
-import { OrOptions } from '../../inputs/OrOptions';
-import { TileType } from '../../../common/TileType';
-import { SpaceBonus } from '../../../common/boards/SpaceBonus';
+import {Tag} from '../../../common/cards/Tag';
+import {IPlayer} from '../../IPlayer';
+import {SelectOption} from '../../inputs/SelectOption';
+import {Resource} from '../../../common/Resource';
+import {OrOptions} from '../../inputs/OrOptions';
+import {TileType} from '../../../common/TileType';
+import {SpaceBonus} from '../../../common/boards/SpaceBonus';
 
 export class Eglogue extends CorporationCard {
   constructor() {
@@ -48,28 +48,28 @@ export class Eglogue extends CorporationCard {
   public canAct(): boolean {
     return true;
   }
-  
+
   public action(player: IPlayer) {
     const getHeat = new SelectOption(
       '你获得4个热资源,其他对手获得2个热资源.',
       '获得热资源')
       .andThen(() => {
-        player.stock.add(Resource.HEAT, 4, { log: true });
-        player.game.getPlayers().filter(p => p !== player).forEach(p => p.stock.add(Resource.HEAT, 2, { log: true }));
+        player.stock.add(Resource.HEAT, 4, {log: true});
+        player.game.getPlayers().filter((p) => p !== player).forEach((p) => p.stock.add(Resource.HEAT, 2, {log: true}));
         return undefined;
       });
 
-    let  plants = 0;
-    player.game.getPlayers().filter(p => p !== player).forEach(p => {
-      if(p.heat > plants){
+    let plants = 0;
+    player.game.getPlayers().filter((p) => p !== player).forEach((p) => {
+      if (p.heat > plants) {
         plants = p.heat;
       }
     });
-    plants = Math.floor (plants / 2);
+    plants = Math.floor(plants / 2);
 
     const getPlants = new SelectOption(`你获得${plants}个叶子`, '获得叶子')
       .andThen(() => {
-        player.stock.add(Resource.PLANTS, plants, { log: true });
+        player.stock.add(Resource.PLANTS, plants, {log: true});
         return undefined;
       });
 

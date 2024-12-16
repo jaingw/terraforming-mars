@@ -6,7 +6,7 @@ import {cast} from '../../TestingUtils';
 import {testGame} from '../../TestGame';
 import {SpaceMonsterPark} from '../../../src/server/cards/eros/SpaceMonsterPark';
 import {ImmigrationShuttles} from '../../../src/server/cards/base/ImmigrationShuttles';
-import { IGame } from '../../../src/server/IGame';
+import {IGame} from '../../../src/server/IGame';
 
 describe('SpaceMonsterPark', function() {
   let card: SpaceMonsterPark;

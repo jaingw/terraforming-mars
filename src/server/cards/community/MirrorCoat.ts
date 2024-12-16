@@ -2,19 +2,19 @@ import {CardName} from '../../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
 import {CorporationCard} from '../corporation/CorporationCard';
 import {ICard} from '../ICard';
-import { Size } from '../../../common/cards/render/Size';
-import { IPlayer } from '../../IPlayer';
+import {Size} from '../../../common/cards/render/Size';
+import {IPlayer} from '../../IPlayer';
 import {getBehaviorExecutor} from '../../behavior/BehaviorExecutor';
-import { Behavior } from '../../behavior/Behavior';
-import { SelectCard } from '../../inputs/SelectCard';
-import { Priority } from '../../deferredActions/Priority';
-import { PlayerInput } from '../../PlayerInput';
-import { Tag } from '../../../common/cards/Tag';
-import { played } from '../Options';
-import { Resource } from '../../../common/Resource';
+import {Behavior} from '../../behavior/Behavior';
+import {SelectCard} from '../../inputs/SelectCard';
+import {Priority} from '../../deferredActions/Priority';
+import {PlayerInput} from '../../PlayerInput';
+import {Tag} from '../../../common/cards/Tag';
+import {played} from '../Options';
+import {Resource} from '../../../common/Resource';
 
 export class MirrorCoat extends CorporationCard implements ICard {
-  public data: {"isUsed": boolean} = {"isUsed" :false};
+  public data: {'isUsed': boolean} = {'isUsed': false};
   constructor() {
     super({
       name: CardName.MIRRORCOAT,
@@ -29,24 +29,24 @@ export class MirrorCoat extends CorporationCard implements ICard {
           b.corpBox('action', (ce) => {
             ce.vSpace(Size.SMALL);
             ce.text('效果: 对手减少你的资源或产能无效.', Size.SMALL);
-            ce.action("once per game:Raise your steel production 1 step. Copy the production boxes of 2 of your other cards with building tags.", (eb) => {
+            ce.action('once per game:Raise your steel production 1 step. Copy the production boxes of 2 of your other cards with building tags.', (eb) => {
               eb.empty().startAction.production((pb) => pb.steel(1)).text('Copy', Size.SMALL, true)
-              .production((pb) => pb.building(1, {played}))
-              .production((pb) => pb.building(1, {played}));
+                .production((pb) => pb.building(1, {played}))
+                .production((pb) => pb.building(1, {played}));
             });
           });
         }),
       },
     });
   }
- 
+
   public override bespokePlay(player: IPlayer) {
     player.drawCard(3);
     return undefined;
   }
-   
+
   public canAct(player: IPlayer): boolean {
-    if (this.data.isUsed !== true && player.isCorporation(CardName.MIRRORCOAT) && this.getPlayableBuildingCards(player).length  > 0) return true;
+    if (this.data.isUsed !== true && player.isCorporation(CardName.MIRRORCOAT) && this.getPlayableBuildingCards(player).length > 0) return true;
     return false;
   }
 
@@ -54,7 +54,7 @@ export class MirrorCoat extends CorporationCard implements ICard {
     return player.tableau.filter((card) => this.isCardApplicable(card, player));
   }
 
-  
+
   protected isCardApplicable(card: ICard, player: IPlayer): boolean {
     if (!card.tags.includes(Tag.BUILDING) && !card.tags.includes(Tag.WILD)) {
       return false;
@@ -94,10 +94,10 @@ export class MirrorCoat extends CorporationCard implements ICard {
     }
     return filtered;
   }
-  
+
   public action(player: IPlayer) {
     this.data.isUsed = true;
-    
+
     player.production.add(Resource.STEEL, 1, {log: true});
 
     const firstSet = this.getPlayableBuildingCards(player);
@@ -110,7 +110,7 @@ export class MirrorCoat extends CorporationCard implements ICard {
     player.defer(selectFirstCard, Priority.ROBOTIC_WORKFORCE);
     return undefined;
   }
- 
+
   protected selectBuildingCard(player: IPlayer, cards: ReadonlyArray<ICard>, title: string, cb: (card: ICard) => PlayerInput | undefined = () => undefined) {
     if (cards.length === 0) {
       return undefined;
