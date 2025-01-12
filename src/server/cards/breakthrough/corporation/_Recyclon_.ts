@@ -16,7 +16,6 @@ import {SelectOption} from '../../../inputs/SelectOption';
 import {OrOptions} from '../../../inputs/OrOptions';
 import {CardName} from '../../../../common/cards/CardName';
 import {CardRenderer} from '../../render/CardRenderer';
-import {played} from '../../Options';
 export class _Recyclon_ extends CorporationCard {
   constructor() {
     super({

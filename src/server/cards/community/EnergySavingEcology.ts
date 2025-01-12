@@ -19,7 +19,6 @@ import {SelectOption} from '../../inputs/SelectOption';
 import {PlaceOceanTile} from '../../deferredActions/PlaceOceanTile';
 import {PlaceGreeneryTile} from '../../deferredActions/PlaceGreeneryTile';
 import {IProjectCard, isIProjectCard} from '../IProjectCard';
-import { digit } from '../Options';
 
 export class EnergySavingEcology extends CorporationCard {
   constructor() {

@@ -12,8 +12,6 @@ import {Tag} from '../../../common/cards/Tag';
 // import {Size} from '../../../common/cards/render/Size';
 import {digit} from '../Options';
 import {ICorporationCard} from '../corporation/ICorporationCard';
-import {Space} from '../../boards/Space';
-import {Board} from '../../boards/Board';
 import {IProjectCard} from '../../cards/IProjectCard';
 import {Resource} from '../../../common/Resource';
 import {ICard} from '../../cards/ICard';
