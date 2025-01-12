@@ -20,7 +20,7 @@ export class HydrothermalVentArchaea extends Card implements IProjectCard {
         cardNumber: 'Q12',
         renderData: CardRenderer.builder((b) => {
           b.effect('When you increase Temperature 1 step, add a microbe to this card.', (eb) => {
-            eb.temperature(1).startEffect.microbes(1);
+            eb.temperature(1).startEffect.tag(Tag.MICROBE);
           }).br;
           b.vpText('1 VP per 2 Microbes on this card.');
         }),

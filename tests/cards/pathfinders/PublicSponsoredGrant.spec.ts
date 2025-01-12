@@ -13,7 +13,7 @@ import {CardName} from '../../../src/common/cards/CardName';
 import {TurmoilUtil} from '../../../src/server/turmoil/TurmoilUtil';
 import {MonsInsurance} from '../../../src/server/cards/promo/MonsInsurance';
 import {OrOptions} from '../../../src/server/inputs/OrOptions';
-import {cast} from '../../TestingUtils';
+import {cast, toName} from '../../TestingUtils';
 import {CardType} from '../../../src/common/cards/CardType';
 
 describe('PublicSponsoredGrant', function() {
@@ -64,8 +64,8 @@ describe('PublicSponsoredGrant', function() {
 
     options.options[0].cb();
 
-    expect(player.cardsInHand.map((c) => c.name)).has.members([CardName.BIOMASS_COMBUSTORS, CardName.COLONIZER_TRAINING_CAMP]);
-    expect(game.projectDeck.discardPile.map((c) => c.name)).deep.eq([CardName.SEARCH_FOR_LIFE]);
+    expect(player.cardsInHand.map(toName)).has.members([CardName.BIOMASS_COMBUSTORS, CardName.COLONIZER_TRAINING_CAMP]);
+    expect(game.projectDeck.discardPile.map(toName)).deep.eq([CardName.SEARCH_FOR_LIFE]);
   });
 
   it('works with events', function() {
@@ -80,7 +80,7 @@ describe('PublicSponsoredGrant', function() {
   });
 
   it('compatible with Mons Insurance', function() {
-    player2.setCorporationForTest(new MonsInsurance());
+    player2.corporations.push(new MonsInsurance());
     // This isn't very clean but it's necessary for the test.
     game.monsInsuranceOwner = player2;
     player.megaCredits = 10;

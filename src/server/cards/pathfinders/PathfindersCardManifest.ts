@@ -58,6 +58,7 @@ import {LunarEmbassy} from './LunarEmbassy';
 import {LuxuryEstate} from './LuxuryEstate';
 import {MagneticFieldStimulationDelays} from './MagneticFieldStimulationDelays';
 import {MarsDirect} from './MarsDirect';
+import {MarsFrontierAlliance} from './MarsFrontierAlliance';
 import {MarsMaths} from './MarsMaths';
 import {MartianCulture} from './MartianCulture';
 import {MartianDustProcessingPlant} from './MartianDustProcessingPlant';
@@ -102,7 +103,6 @@ import {SpaceRaceToMars} from './SpaceRaceToMars';
 import {SpaceRelay} from './SpaceRelay';
 import {SpecializedSettlement} from './SpecializedSettlement';
 import {Steelaris} from './Steelaris';
-import {StrategicBasePlanning} from './StrategicBasePlanning';
 import {SurveyMission} from './SurveyMission';
 import {TerraformingControlStation} from './TerraformingControlStation';
 import {TerraformingRobots} from './TerraformingRobots';
@@ -215,7 +215,7 @@ export const PATHFINDERS_CARD_MANIFEST = new ModuleManifest({
     [CardName.ROBIN_HAULINGS]: {Factory: RobinHaulings, compatibility: ['venus', 'pathfinders']},
     [CardName.ODYSSEY]: {Factory: Odyssey},
     [CardName.GAGARIN_MOBILE_BASE]: {Factory: GagarinMobileBase},
-    // [CardName.MARS_FRONTIER_ALLIANCE]: {Factory: MarsFrontierAlliance},
+    [CardName.MARS_FRONTIER_ALLIANCE]: {Factory: MarsFrontierAlliance, compatibility: 'turmoil'},
     [CardName.MIND_SET_MARS]: {Factory: MindSetMars, compatibility: 'turmoil'},
     [CardName.HABITAT_MARTE]: {Factory: HabitatMarte, compatibility: 'pathfinders'},
     [CardName.ADHAI_HIGH_ORBIT_CONSTRUCTIONS]: {Factory: AdhaiHighOrbitConstructions, compatibility: 'colonies'},
@@ -232,7 +232,6 @@ export const PATHFINDERS_CARD_MANIFEST = new ModuleManifest({
     // [CardName.CONSOLIDATION]: {Factory: Consolidation},
     [CardName.PERSONAL_AGENDA]: {Factory: PersonalAgenda},
     [CardName.VITAL_COLONY]: {Factory: VitalColony, compatibility: 'colonies'},
-    [CardName.STRATEGIC_BASE_PLANNING]: {Factory: StrategicBasePlanning, compatibility: 'colonies'},
     [CardName.DEEP_SPACE_OPERATIONS]: {Factory: DeepSpaceOperations},
     [CardName.EXPERIENCED_MARTIANS]: {Factory: ExperiencedMartians, compatibility: ['turmoil', 'pathfinders']},
     [CardName.THE_NEW_SPACE_RACE]: {Factory: TheNewSpaceRace, compatibility: 'turmoil'},

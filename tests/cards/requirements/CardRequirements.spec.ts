@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 import {CardRequirements} from '../../../src/server/cards/requirements/CardRequirements';
-import {runAllActions, cast, addGreenery, setTemperature, setOxygenLevel, setVenusScaleLevel, churnAction} from '../../TestingUtils';
+import {runAllActions, cast, addGreenery, setTemperature, setOxygenLevel, setVenusScaleLevel, churn} from '../../TestingUtils';
 import {AdaptationTechnology} from '../../../src/server/cards/base/AdaptationTechnology';
 import {TileType} from '../../../src/common/TileType';
 import {Ants} from '../../../src/server/cards/base/Ants';
@@ -149,10 +149,10 @@ describe('CardRequirements', function() {
   it('satisfies properly for floaters', function() {
     const requirements = {floaters: 2};
     const corp = new Celestic();
-    player.setCorporationForTest(corp);
-    churnAction(corp, player);
+    player.corporations.push(corp);
+    churn(corp.action(player), player);
     expect(satisfies(requirements, player)).eq(false);
-    churnAction(corp, player);
+    churn(corp.action(player), player);
     expect(satisfies(requirements, player)).eq(true);
   });
 

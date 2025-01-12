@@ -5,6 +5,8 @@ import {CardRenderItemType} from '../../../common/cards/render/CardRenderItemTyp
 import {TileType} from '../../../common/TileType';
 import {ICardRenderCorpBoxAction, ICardRenderCorpBoxEffect, ICardRenderEffect, ICardRenderProductionBox, ICardRenderRoot, ICardRenderTile, ItemType, isICardRenderItem} from '../../../common/cards/render/Types';
 import {AltSecondaryTag} from '../../../common/cards/render/AltSecondaryTag';
+import {CardResource} from '../../../common/CardResource';
+import {Tag} from '../../../common/cards/Tag';
 
 export class CardRenderer {
   public static builder(f: (builder: Builder<CardRenderRoot>) => void): ICardRenderRoot {
@@ -130,14 +132,6 @@ abstract class Builder<T> {
     return this._appendToRow(new CardRenderItem(CardRenderItemType.PLANTS, amount, options));
   }
 
-  public microbes(amount: number, options?: ItemOptions): this {
-    return this._appendToRow(new CardRenderItem(CardRenderItemType.MICROBES, amount, options));
-  }
-
-  public animals(amount: number, options?: ItemOptions): this {
-    return this._appendToRow(new CardRenderItem(CardRenderItemType.ANIMALS, amount, options));
-  }
-
   public heat(amount: number, options?: ItemOptions): this {
     return this._appendToRow(new CardRenderItem(CardRenderItemType.HEAT, amount, options));
   }
@@ -169,50 +163,6 @@ abstract class Builder<T> {
 
   public cards(amount: number, options?: ItemOptions): this {
     return this._appendToRow(new CardRenderItem(CardRenderItemType.CARDS, amount, options));
-  }
-
-  public floaters(amount: number, options?: ItemOptions): this {
-    return this._appendToRow(new CardRenderItem(CardRenderItemType.FLOATERS, amount, options));
-  }
-
-  public asteroids(amount: number, options?: ItemOptions): this {
-    return this._appendToRow(new CardRenderItem(CardRenderItemType.ASTEROIDS, amount, options));
-  }
-
-  public graphene(amount: number, options?: ItemOptions): this {
-    return this._appendToRow(new CardRenderItem(CardRenderItemType.GRAPHENE, amount, options));
-  }
-
-  public hydroelectricResource(amount: number, options?: ItemOptions): this {
-    return this._appendToRow(new CardRenderItem(CardRenderItemType.HYDROELECTRIC_RESOURCE, amount, options));
-  }
-
-  public event(options?: ItemOptions): this {
-    return this._appendToRow(new CardRenderItem(CardRenderItemType.EVENT, -1, options));
-  }
-
-  public space(options?: ItemOptions): this {
-    return this._appendToRow(new CardRenderItem(CardRenderItemType.SPACE, -1, options));
-  }
-
-  public earth(amount: number = -1, options?: ItemOptions): this {
-    return this._appendToRow(new CardRenderItem(CardRenderItemType.EARTH, amount, options));
-  }
-
-  public building(amount: number = -1, options?: ItemOptions): this {
-    return this._appendToRow(new CardRenderItem(CardRenderItemType.BUILDING, amount, options));
-  }
-
-  public cityTag(amount: number = -1, options?: ItemOptions): this { // 新增city tag
-    return this._appendToRow(new CardRenderItem(CardRenderItemType.CITY, amount, options));
-  }
-
-  public jovian(options?: ItemOptions): this {
-    return this._appendToRow(new CardRenderItem(CardRenderItemType.JOVIAN, -1, options));
-  }
-
-  public science(amount: number = 1, options?: ItemOptions): this {
-    return this._appendToRow(new CardRenderItem(CardRenderItemType.SCIENCE, amount, options));
   }
 
   public trade(options?: ItemOptions): this {
@@ -284,6 +234,10 @@ abstract class Builder<T> {
     return this._appendToRow(new CardRenderItem(CardRenderItemType.CHAIRMAN, -1, options));
   }
 
+  public policy() {
+    return this._appendToRow(new CardRenderItem(CardRenderItemType.POLICY));
+  }
+
   public globalEvent() {
     return this._appendToRow(new CardRenderItem(CardRenderItemType.GLOBAL_EVENT));
   }
@@ -300,33 +254,35 @@ abstract class Builder<T> {
     return this._appendToRow(new CardRenderItem(CardRenderItemType.WILD, amount, options));
   }
 
-  public preservation(amount: number) {
-    return this._appendToRow(new CardRenderItem(CardRenderItemType.PRESERVATION, amount));
+  public one(amount: number, options?: ItemOptions) {
+    return this._appendToRow(new CardRenderItem(CardRenderItemType.ONE, amount, options));
   }
 
   public diverseTag(amount: number = 1) {
     const item = new CardRenderItem(CardRenderItemType.DIVERSE_TAG, amount);
-    item.isPlayed = true;
-    this._appendToRow(item);
-    return this;
+    return this._appendToRow(item);
   }
 
   public blankTag(amount: number = 1) {
     const item = new CardRenderItem(CardRenderItemType.BLANK_TAG, amount);
-    item.isPlayed = true;
     return this._appendToRow(item);
   }
 
-  public fighter(amount: number = 1) {
-    return this._appendToRow(new CardRenderItem(CardRenderItemType.FIGHTER, amount));
+  public tag(tag: Tag, options?: number | ItemOptions) {
+    const opts: ItemOptions = typeof(options) === 'number' ? {amount: options} : {...options};
+    opts.tag = tag;
+    return this._appendToRow(new CardRenderItem(CardRenderItemType.TAG, opts.amount, opts));
   }
 
-  public cloneTrooper(amount: number = 1) {
-    return this._appendToRow(new CardRenderItem(CardRenderItemType.CLONE_TROOPER, amount));
-  }
-
-  public camps(amount: number = 1) {
-    return this._appendToRow(new CardRenderItem(CardRenderItemType.CAMPS, amount));
+  public resource(resource: CardResource, options?: number | ItemOptions) {
+    let opts: ItemOptions;
+    if (typeof(options) === 'number') {
+      opts = {amount: options};
+    } else {
+      opts = {...options};
+    }
+    opts.resource = resource;
+    return this._appendToRow(new CardRenderItem(CardRenderItemType.RESOURCE, -1, opts));
   }
 
   public selfReplicatingRobots() {
@@ -365,43 +321,12 @@ abstract class Builder<T> {
     return this._appendToRow(new CardRenderItem(CardRenderItemType.COMMUNITY));
   }
 
-  public disease() {
-    return this._appendToRow(new CardRenderItem(CardRenderItemType.DISEASE));
-  }
-
-  public data(options?: ItemOptions | undefined) {
-    return this._appendToRow(new CardRenderItem(CardRenderItemType.DATA_RESOURCE, 1, options));
-  }
-
-  public venusianHabitat(amount: number): this {
-    this._appendToRow(new CardRenderItem(CardRenderItemType.VENUSIAN_HABITAT, amount));
-    return this;
-  }
-
-  public specializedRobot(amount: number): this {
-    this._appendToRow(new CardRenderItem(CardRenderItemType.SPECIALIZED_ROBOT, amount));
-    return this;
-  }
-
-  public agenda(options?: ItemOptions | undefined): this {
-    this._appendToRow(new CardRenderItem(CardRenderItemType.AGENDA, 1, options));
-    return this;
-  }
-
   public multiplierWhite() {
     return this._appendToRow(new CardRenderItem(CardRenderItemType.MULTIPLIER_WHITE));
   }
 
   public description(description: string | undefined = undefined): this {
     return this._appendToRow(description);
-  }
-
-  public moon(amount: number = -1, options?: ItemOptions): this {
-    return this._appendToRow(new CardRenderItem(CardRenderItemType.MOON, amount, options));
-  }
-
-  public resourceCube(amount = 1, options?: ItemOptions): this {
-    return this._appendToRow(new CardRenderItem(CardRenderItemType.RESOURCE_CUBE, amount, options));
   }
 
   public moonHabitat(options?: ItemOptions | undefined): this {
@@ -429,27 +354,8 @@ abstract class Builder<T> {
     return this._appendToRow(new CardRenderItem(CardRenderItemType.MOON_MINING_RATE, 1, options));
   }
 
-  public syndicateFleet(amount: number = 1): this {
-    return this._appendToRow(new CardRenderItem(CardRenderItemType.SYNDICATE_FLEET, amount));
-  }
-
-  public mars(amount: number, options?: ItemOptions): this {
-    this._appendToRow(new CardRenderItem(CardRenderItemType.MARS, amount, options));
-    return this;
-  }
-
   public planetaryTrack(): this {
     this._appendToRow(new CardRenderItem(CardRenderItemType.PLANETARY_TRACK, 1));
-    return this;
-  }
-
-  public seed(): this {
-    this._appendToRow(new CardRenderItem(CardRenderItemType.SEED, 1));
-    return this;
-  }
-
-  public orbital(): this {
-    this._appendToRow(new CardRenderItem(CardRenderItemType.ORBITAL, 1));
     return this;
   }
 
@@ -499,36 +405,6 @@ abstract class Builder<T> {
 
   public corruptionShield() {
     const item = new CardRenderItem(CardRenderItemType.CORRUPTION_SHIELD);
-    return this._appendToRow(item);
-  }
-
-  public tool(count: number = 1, options?: ItemOptions) {
-    const item = new CardRenderItem(CardRenderItemType.TOOL, count, options);
-    return this._appendToRow(item);
-  }
-
-  public ware(count: number = 1, options?: ItemOptions) {
-    const item = new CardRenderItem(CardRenderItemType.WARE, count, options);
-    return this._appendToRow(item);
-  }
-
-  // public scoop(count: number = 1, options?: ItemOptions) {
-  //   const item = new CardRenderItem(CardRenderItemType.SCOOP, count, options);
-  //   return this._appendToRow(item);
-  // }
-
-  public journalism(count: number = 1, options?: ItemOptions) {
-    const item = new CardRenderItem(CardRenderItemType.JOURNALISM, count, options);
-    return this._appendToRow(item);
-  }
-
-  public supplyChain(options?: ItemOptions | undefined): this {
-    this._appendToRow(new CardRenderItem(CardRenderItemType.SUPPLY_CHAIN, 1, options));
-    return this;
-  }
-
-  public activist(count: number = 1, options?: ItemOptions) {
-    const item = new CardRenderItem(CardRenderItemType.ACTIVIST, count, options);
     return this._appendToRow(item);
   }
 

@@ -60,9 +60,16 @@ export type GameOptions = {
   heatFor: boolean; //  七热升温
   breakthrough: boolean;// 界限突破
   doubleCorp: boolean; // 双将
-  requiresMoonTrackCompletion: boolean; // Moon must be completed to end the game
-  requiresVenusTrackCompletion: boolean; // Venus must be completed to end the game
+  // TODO(maserion): Remove '?' by 2025-01-01
+  startingPreludes?: number;
+  /** Moon must be completed to end the game */
+  requiresMoonTrackCompletion: boolean;
+  /** Venus must be completed to end the game */
+  requiresVenusTrackCompletion: boolean;
+  /** Standard projects cost more MC and do not require steel or titanium */
   moonStandardProjectVariant: boolean;
+  /** Standard projects can be paid for with steel or titanium at a 1MC loss per alloy */
+  moonStandardProjectVariant1: boolean;
   altVenusBoard: boolean;
   escapeVelocityMode: boolean;
   escapeVelocityThreshold?: number;
@@ -104,6 +111,7 @@ export const DEFAULT_GAME_OPTIONS: GameOptions = {
   initialDraftVariant: false,
   moonExpansion: false,
   moonStandardProjectVariant: false,
+  moonStandardProjectVariant1: false,
   pathfindersExpansion: false,
   politicalAgendasExtension: AgendaStyle.STANDARD,
   preludeDraftVariant: false,
@@ -119,8 +127,9 @@ export const DEFAULT_GAME_OPTIONS: GameOptions = {
   shuffleMapOption: false,
   solarPhaseOption: false,
   soloTR: false,
-  startingCeos: 3,
-  startingCorporations: 2,
+  startingCeos: constants.CEO_CARDS_DEALT_PER_PLAYER,
+  startingCorporations: constants.CORPORATION_CARDS_DEALT_PER_PLAYER,
+  startingPreludes: constants.PRELUDE_CARDS_DEALT_PER_PLAYER,
   starWarsExpansion: false,
   turmoilExtension: false,
   underworldExpansion: false,

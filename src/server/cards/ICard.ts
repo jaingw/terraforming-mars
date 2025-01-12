@@ -6,7 +6,7 @@ import {IPlayer} from '../IPlayer';
 import {Tag} from '../../common/cards/Tag';
 import {CardResource} from '../../common/CardResource';
 import {CardName} from '../../common/cards/CardName';
-import {ICardMetadata} from '../../common/cards/ICardMetadata';
+import {CardMetadata} from '../../common/cards/CardMetadata';
 import {GlobalParameter} from '../../common/GlobalParameter';
 import {BoardType} from '../boards/BoardType';
 import {CardDiscount} from '../../common/cards/Types';
@@ -122,12 +122,15 @@ export interface ICard {
   onProductionGain?(player: IPlayer, resource: Resource, amount: number): void;
   onProductionPhase?(player: IPlayer): void;
 
+  /** Optional callback when ANY player adds a colony. */
   onColonyAdded?(player: IPlayer, cardOwner: IPlayer): void;
+  /** Optional callback when `player` adds a colony to Leavitt. */
+  onColonyAddedToLeavitt?(player: IPlayer): void;
 
   cost?: number; /** Used with IProjectCard and PreludeCard. */
   type: CardType;
   requirements: Array<CardRequirementDescriptor>;
-  metadata: ICardMetadata;
+  metadata: CardMetadata;
 
   /**
    * Per-instance state-specific warnings about this card's action.

@@ -8,7 +8,7 @@ import {Board} from '../../boards/Board';
 import {CardRenderer} from '../render/CardRenderer';
 import {CardName} from '../../../common/cards/CardName';
 import {CardType} from '../../../common/cards/CardType';
-import {ICardMetadata} from '../../../common/cards/ICardMetadata';
+import {CardMetadata} from '../../../common/cards/CardMetadata';
 import {Tag} from '../../../common/cards/Tag';
 import {AdjacencyBonus} from '../../ares/AdjacencyBonus';
 
@@ -16,7 +16,7 @@ export class WasteIncinerator extends Card implements IProjectCard {
   constructor(
     name: CardName = CardName.WASTE_INCINERATOR,
     adjacencyBonus: AdjacencyBonus | undefined = undefined,
-    metadata: ICardMetadata = {
+    metadata: CardMetadata = {
       cardNumber: 'Q11',
       renderData: CardRenderer.builder((b) => {
         b.effect('When you sell patents, you can gain 2 heat instead of 1 MC. ', (eb) => {

@@ -2,7 +2,7 @@ import {CardRenderer} from '../../render/CardRenderer';
 import {MiningGuild} from '../../corporation/MiningGuild';
 import {digit} from '../../Options';
 import {CardName} from '../../../../common/cards/CardName';
-import {ICardMetadata} from '../../../../common/cards/ICardMetadata';
+import {CardMetadata} from '../../../../common/cards/CardMetadata';
 import {Size} from '../../../../common/cards/render/Size';
 
 export class _MiningGuild_ extends MiningGuild {
@@ -10,7 +10,7 @@ export class _MiningGuild_ extends MiningGuild {
     return CardName._MINING_GUILD_;
   }
 
-  public override get metadata(): ICardMetadata {
+  public override get metadata(): CardMetadata {
     return {
       cardNumber: 'B02',
       // description: 'You start with 30 M€, 5 steel and 1 steel production.',

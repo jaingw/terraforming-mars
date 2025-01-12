@@ -11,7 +11,6 @@ export enum AltSecondaryTag {
   BLUE = 'blue',
   GREEN = 'green',
   NO_TAGS = 'no_tags',
-  ARES = 'ares',
   MOON_MINING_RATE = 'moon-mine',
   MOON_HABITAT_RATE = 'moon-colony',
   MOON_LOGISTICS_RATE = 'moon-road',
@@ -21,4 +20,7 @@ export enum AltSecondaryTag {
 
   // used in Faraday CEO
   DIVERSE = 'diverse',
+
+  // Used in Ares community corp
+  ARES = 'ares',
 }

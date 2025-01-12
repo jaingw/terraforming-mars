@@ -69,7 +69,7 @@ export class Eris extends CorporationCard {
         .andThen(() => {
           const title = 'Select space next to no other tile for hazard';
           const tileType = Math.floor(Math.random() * 2) === 0 ? TileType.DUST_STORM_MILD : TileType.EROSION_MILD;
-          game.defer(new PlaceHazardTile(player, tileType, availableSpaces, {title}));
+          game.defer(new PlaceHazardTile(player, tileType, {title, spaces: availableSpaces}));
           return undefined;
         }));
     }

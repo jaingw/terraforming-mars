@@ -10,7 +10,6 @@ import {SelectCard} from '../../inputs/SelectCard';
 import {Priority} from '../../deferredActions/Priority';
 import {PlayerInput} from '../../PlayerInput';
 import {Tag} from '../../../common/cards/Tag';
-import {played} from '../Options';
 import {Resource} from '../../../common/Resource';
 
 export class MirrorCoat extends CorporationCard implements ICard {
@@ -31,8 +30,8 @@ export class MirrorCoat extends CorporationCard implements ICard {
             ce.text('效果: 对手减少你的资源或产能无效.', Size.SMALL);
             ce.action('once per game:Raise your steel production 1 step. Copy the production boxes of 2 of your other cards with building tags.', (eb) => {
               eb.empty().startAction.production((pb) => pb.steel(1)).text('Copy', Size.SMALL, true)
-                .production((pb) => pb.building(1, {played}))
-                .production((pb) => pb.building(1, {played}));
+                .production((pb) => pb.tag(Tag.BUILDING))
+                .production((pb) => pb.tag(Tag.BUILDING));
             });
           });
         }),

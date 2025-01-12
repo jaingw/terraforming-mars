@@ -1,7 +1,6 @@
 import {IPlayer} from '../../../IPlayer';
 import {CardRenderer} from '../../render/CardRenderer';
 import {IProjectCard} from '../../IProjectCard';
-import {played} from '../../Options';
 import {CardName} from '../../../../common/cards/CardName';
 import {CardType} from '../../../../common/cards/CardType';
 import {Tag} from '../../../../common/cards/Tag';
@@ -21,7 +20,7 @@ export class _InterplanetaryCinematics_ extends CorporationCard {
           b.megacredits(50).nbsp.cards(2, {secondaryTag: Tag.EVENT});
           b.corpBox('effect', (ce) => {
             ce.effect('Your tags on event work the same as green or blue card. Event tag is a new tag for you. Each time you play an event, you gain 3 M€.', (eb) => {
-              eb.event({played}).startEffect.megacredits(3);
+              eb.tag(Tag.EVENT).startEffect.megacredits(3);
               eb.description();
             });
           });

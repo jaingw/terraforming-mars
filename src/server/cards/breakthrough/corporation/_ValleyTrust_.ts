@@ -3,7 +3,6 @@ import {IPlayer} from '../../../IPlayer';
 import {IProjectCard} from '../../IProjectCard';
 import {SelectCard} from '../../../inputs/SelectCard';
 import {CardRenderer} from '../../render/CardRenderer';
-import {played} from '../../Options';
 import {CardName} from '../../../../common/cards/CardName';
 import {Tag} from '../../../../common/cards/Tag';
 import {CorporationCard} from '../../corporation/CorporationCard';
@@ -27,7 +26,7 @@ export class _ValleyTrust_ extends CorporationCard {
           b.megacredits(37).nbsp.prelude().asterix();
           b.corpBox('effect', (ce) => {
             ce.effect('When you play a Science tag, you pay 2M€ less for it.', (eb) => {
-              eb.science(1, {played}).startEffect.megacredits(-2);
+              eb.tag(Tag.SCIENCE).startEffect.megacredits(-2);
             });
           });
         }),
@@ -49,7 +48,7 @@ export class _ValleyTrust_ extends CorporationCard {
         game.preludeDeck.draw(game),
         game.preludeDeck.draw(game),
       ].filter((x) => x !== undefined) as Array<IPreludeCard>;
-      return new SelectCard('Choose prelude card to play', 'Play', cardsDrawn ).andThen((foundCards: Array<IProjectCard>) => {
+      return new SelectCard('Choose prelude card to play', 'Play', cardsDrawn ).andThen((foundCards: ReadonlyArray<IProjectCard>) => {
         if (foundCards[0].canPlay === undefined || foundCards[0].canPlay(player)) {
           player.playCard(foundCards[0]);
         } else {

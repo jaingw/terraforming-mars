@@ -15,13 +15,12 @@
         <div class="create-game-page-container">
           <div class="create-game-page-column">
             <h4 v-i18n>№ of Players</h4>
-            <template v-for="pCount in [1, 2, 3, 4, 5, 6]">
-              <input type="radio" :value="pCount" name="playersCount" v-model="playersCount" :id="pCount + '-radio'"
-                :key="'__input' + pCount">
-              <label :for="pCount + '-radio'" :key="'_label' + pCount">
-                {{ getPlayersCountText(pCount) }}
-              </label>
-            </template>
+                            <div v-for="pCount in [1,2,3,4,5,6]" v-bind:key="pCount">
+                              <input type="radio" :value="pCount" name="playersCount" v-model="playersCount" :id="pCount+'-radio'">
+                              <label :for="pCount+'-radio'">
+                                    {{ getPlayersCountText(pCount) }}
+                                </label>
+                            </div>
           </div>
 
           <div class="create-game-page-column">
@@ -192,21 +191,17 @@
           <div class="create-game-page-column">
             <h4 v-i18n>Board</h4>
 
-            <template v-for="boardName in boards">
-              <div v-bind:key="boardName">
-                <div v-if="boardName === 'utopia planitia'" class="create-game-subsection-label" :key="boardName + '-lab'"
-                  v-i18n>Fan-made</div>
-                <input type="radio" :value="boardName" name="board" v-model="board" :id="boardName + '-checkbox'"
-                  :key="boardName">
-                <label :for="boardName + '-checkbox'" class="expansion-button" :key="'-' + boardName">
-                  <span :class="getBoardColorClass(boardName)">&#x2B22;</span>
-                  <span class="capitalized" v-i18n>{{ boardName }}</span>
-                  <template v-if="boardName !== RandomBoardOption.OFFICIAL && boardName !== RandomBoardOption.ALL">
-                    &nbsp;<a :href="boardHref(boardName)" class="tooltip" target="_blank">&#9432;</a>
-                  </template>
-                </label>
-              </div>
-            </template>
+                            <div v-for="boardName in boards" v-bind:key="boardName">
+                              <div v-if="boardName==='utopia planitia'" class="create-game-subsection-label" v-i18n>Fan-made</div>
+                              <input type="radio" :value="boardName" name="board" v-model="board" :id="boardName+'-checkbox'">
+                              <label :for="boardName+'-checkbox'" class="expansion-button">
+                                    <span :class="getBoardColorClass(boardName)">&#x2B22;</span>
+                                    <span class="capitalized" v-i18n>{{ boardName }}</span>
+                                    <template v-if="boardName !== RandomBoardOption.OFFICIAL && boardName !== RandomBoardOption.ALL">
+                                      &nbsp;<a :href="boardHref(boardName)" class="tooltip" target="_blank">&#9432;</a>
+                                    </template>
+                                </label>
+                              </div>
           </div>
 
           <div class="create-game-page-column">
@@ -217,6 +212,14 @@
                 v-model="startingCorporations" id="startingCorpNum-checkbox">
               <span v-i18n>Starting Corporations</span>
             </label>
+
+                            <template v-if="prelude">
+                              <label for="startingPreludeENum-checkbox">
+                              <div class="create-game-expansion-icon expansion-icon-prelude"></div>
+                              <input type="number" class="create-game-corporations-count" value="4" min="4" :max="8" v-model="startingPreludes" id="startingPreludeNum-checkbox">
+                                  <span v-i18n>Starting Preludes</span>
+                              </label>
+                            </template>
 
             <template v-if="ceoExtension">
               <label for="startingCEONum-checkbox">
@@ -453,11 +456,9 @@
                           :placeholder="getPlayerNamePlaceholder(index)" v-model="newPlayer.name" />
                       </div>
                       <div class="create-game-page-color-row">
-                        <template
-                          v-for="color in ['Red', 'Green', 'Yellow', 'Blue', 'Black', 'Purple', 'Orange', 'Pink']">
+                                              <template v-for="color in PLAYER_COLORS">
                           <div v-bind:key="color">
-                            <input type="radio" :value="color.toLowerCase()" :name="'playerColor' + (index + 1)"
-                              v-model="newPlayer.color" :id="'radioBox' + color + (index + 1)">
+                                                  <input type="radio" :value="color" :name="'playerColor' + (index + 1)" v-model="newPlayer.color" :id="'radioBox' + color + (index + 1)">
                             <label :for="'radioBox' + color + (index + 1)">
                               <div :class="'create-game-colorbox ' + getPlayerCubeColorClass(color)"></div>
                             </label>
@@ -508,7 +509,7 @@
         </div>
       </div>
     </div>
-
+    <QrCode/>
     <div class="create-game--block" v-if="showCorporationList">
       <CorporationsFilter ref="corporationsFilter" v-on:corporation-list-changed="updatecustomCorporations"
         v-bind:corporateEra="corporateEra" v-bind:prelude="prelude" v-bind:prelude2="prelude2Expansion"
@@ -519,29 +520,48 @@
     </div>
 
     <div class="create-game--block" v-if="showColoniesList">
-      <ColoniesFilter ref="coloniesFilter" v-on:colonies-list-changed="updatecustomColonies"
-        v-bind:venusNext="venusNext" v-bind:turmoil="turmoil" v-bind:pathfinders="pathfindersExpansion"
-        v-bind:communityCardsOption="communityCardsOption"></ColoniesFilter>
+              <ColoniesFilter
+                  ref="coloniesFilter"
+                  v-on:colonies-list-changed="updatecustomColonies"
+                  v-bind:venusNext="venusNext"
+                  v-bind:turmoil="turmoil"
+                  v-bind:pathfinders="pathfindersExpansion"
+                  v-bind:communityCardsOption="communityCardsOption"
+                  v-bind:ares="aresExtension"
+              ></ColoniesFilter>
     </div>
 
     <div class="create-game--block" v-if="showPreludesList">
-      <PreludesFilter ref="preludesFilter" v-on:prelude-list-changed="updateCustomPreludes"
-        v-bind:promoCardsOption="promoCardsOption" v-bind:communityCardsOption="communityCardsOption"
-        v-bind:moonExpansion="moonExpansion" v-bind:pathfindersExpansion="pathfindersExpansion" v-bind:prelude2Expansion="prelude2Expansion"></PreludesFilter>
+              <PreludesFilter
+                  ref="preludesFilter"
+                  v-on:prelude-list-changed="updateCustomPreludes"
+                  v-bind:promoCardsOption="promoCardsOption"
+                  v-bind:communityCardsOption="communityCardsOption"
+                  v-bind:moonExpansion="moonExpansion"
+                  v-bind:pathfindersExpansion="pathfindersExpansion"
+                  v-bind:ceoExtension="ceoExtension"
+                  v-bind:underworldExpansion="underworldExpansion"
+                  v-bind:prelude2Expansion="prelude2Expansion"
+              ></PreludesFilter>
     </div>
 
     <div class="create-game--block" v-if="showBannedCards">
-      <CardsFilter ref="cardsFilter" v-on:cards-list-changed="updateBannedCards"
-        :title="'Cards to exclude from the game'">
-      </CardsFilter>
+              <CardsFilter
+                  ref="cardsFilter"
+                  v-on:cards-list-changed="updateBannedCards"
+                  :title="'Cards to exclude from the game'"
+                  :hint="'Start typing the card name to exclude'"
+              ></CardsFilter>
     </div>
 
     <div class="create-game--block" v-if="showIncludedCards">
-      <CardsFilter ref="cardsFilter2" v-on:cards-list-changed="updateIncludedCards"
-        :title="'Cards to include in the game'">
-      </CardsFilter>
-    </div>
-    <QrCode />
+              <CardsFilter
+                  ref="cardsFilter2"
+                  v-on:cards-list-changed="updateIncludedCards"
+                  :title="'Cards to include in the game'"
+                  :hint="'Start typing the card name to include'"
+              ></CardsFilter>
+            </div>
     <preferences-icon></preferences-icon>
   </div>
 </template>
@@ -605,20 +625,24 @@ const vipOptions: any = {
 };
 
 type Refs = {
-  coloniesFilter: InstanceType<typeof ColoniesFilter>;
-  corporationsFilter: InstanceType<typeof CorporationsFilter>;
-  preludesFilter: InstanceType<typeof PreludesFilter>;
-  cardsFilter: InstanceType<typeof CardsFilter>;
+  coloniesFilter: InstanceType<typeof ColoniesFilter>,
+  corporationsFilter: InstanceType<typeof CorporationsFilter>,
+  preludesFilter: InstanceType<typeof PreludesFilter>,
+  cardsFilter: InstanceType<typeof CardsFilter>,
   cardsFilter2: InstanceType<typeof CardsFilter>,
-  file: HTMLInputElement;
+  file: HTMLInputElement,
+}
+
+type FormModel = {
+  preludeToggled: boolean;
+  uploading: boolean;
 };
 
 export default (Vue as WithRefs<Refs>).extend({
   name: 'CreateGameForm',
-  data(): CreateGameModel & { constants: typeof constants } {
+  data(): CreateGameModel & FormModel {
     return {
       isvip: false,
-      constants,
       firstIndex: 1,
       playersCount: 1,
       players: [
@@ -748,6 +772,7 @@ export default (Vue as WithRefs<Refs>).extend({
       requiresMoonTrackCompletion: false,
       randomMACheckbox: false,
       moonStandardProjectVariant: false,
+      moonStandardProjectVariant1: false,
       altVenusBoard: false,
       escapeVelocityMode: false,
       escapeVelocityThreshold: constants.DEFAULT_ESCAPE_VELOCITY_THRESHOLD,
@@ -758,9 +783,13 @@ export default (Vue as WithRefs<Refs>).extend({
       ceoExtension: false,
       customCeos: [],
       startingCeos: 3,
+      startingPreludes: 4,
       starWarsExpansion: false,
       underworldExpansion: false,
       preludeDraftVariant: undefined,
+
+      preludeToggled: false,
+      uploading: false,
     };
   },
   components: {
@@ -804,6 +833,12 @@ export default (Vue as WithRefs<Refs>).extend({
         this.preludeDraftVariant = true;
       }
     },
+    prelude2Expansion(value: boolean) {
+      if (value === true && this.preludeToggled === false && this.uploading === false) {
+        this.prelude = true;
+        this.preludeToggled = true;
+      }
+    },
     playersCount(value: number) {
       if (value === 1) {
         this.corporateEra = true;
@@ -816,6 +851,12 @@ export default (Vue as WithRefs<Refs>).extend({
     },
     RandomMAOptionType(): typeof RandomMAOptionType {
       return RandomMAOptionType;
+    },
+    constants(): typeof constants {
+      return constants;
+    },
+    PLAYER_COLORS(): typeof PLAYER_COLORS {
+      return PLAYER_COLORS;
     },
   },
   methods: {
@@ -836,110 +877,110 @@ export default (Vue as WithRefs<Refs>).extend({
       const reader = new FileReader();
       const component: CreateGameModel = this;
 
-      reader.addEventListener(
-        'load',
-        function() {
-          const warnings = [];
-          try {
-            const readerResults = reader.result;
-            if (typeof readerResults === 'string') {
-              const results = JSON.parse(readerResults);
+      reader.addEventListener('load', () => {
+        const warnings = [];
+        try {
+          const readerResults = reader.result;
+          if (typeof readerResults === 'string') {
+            this.uploading = true;
+            const results = JSON.parse(readerResults);
 
-              // load不允许加载seed
-              results.seed = '';
-              results.seededGame = false;
-              const players = results['players'];
-              const validationErrors = validatePlayers(players);
-              if (validationErrors.length > 0) {
-                throw new Error(validationErrors.join('\n'));
-              }
-
-              if (results.corporationsDraft !== undefined) {
-                warnings.push('Corporations draft is no longer available. Future versions might just raise an error, so edit your JSON file.');
-              }
-
-              const customCorporations = results[json_constants.CUSTOM_CORPORATIONS] || results[json_constants.OLD_CUSTOM_CORPORATIONS] || [];
-              const customColonies = results[json_constants.CUSTOM_COLONIES] || results[json_constants.OLD_CUSTOM_COLONIES] || [];
-              const bannedCards = results[json_constants.BANNED_CARDS] || results[json_constants.OLD_BANNED_CARDS] || [];
-              const includedCards = results[json_constants.INCLUDED_CARDS] || [];
-              const customPreludes = results[json_constants.CUSTOM_PRELUDES] || [];
-
-              component.playersCount = players.length;
-              component.showCorporationList = customCorporations.length > 0;
-              component.showColoniesList = customColonies.length > 0;
-              component.showBannedCards = bannedCards.length > 0;
-              component.showIncludedCards = includedCards.length > 0;
-              component.showPreludesList = customPreludes.length > 0;
-
-              // Capture the solar phase option since several of the other results will change
-              // it via the watch mechanism.
-              const capturedSolarPhaseOption = results.solarPhaseOption;
-
-              const specialFields = [
-                json_constants.CUSTOM_CORPORATIONS,
-                json_constants.OLD_CUSTOM_CORPORATIONS,
-                json_constants.CUSTOM_COLONIES,
-                json_constants.OLD_CUSTOM_COLONIES,
-                json_constants.CUSTOM_PRELUDES,
-                json_constants.BANNED_CARDS,
-                json_constants.INCLUDED_CARDS,
-                json_constants.OLD_BANNED_CARDS,
-                '_corporationsDraft',
-                'userId',
-                'players',
-                'constants',
-              ];
-              for (const k in results) {
-                if (specialFields.includes(k)) continue;
-                if (!Object.prototype.hasOwnProperty.call(component, k)) {
-                  warnings.push('Unknown property: ' + k);
-                }
-                // This is safe because of the hasOwnProperty check, above. hasOwnProperty doesn't help with type declarations.
-                (component as any)[k] = results[k];
-              }
-
-              for (let i = 0; i < players.length; i++) {
-                Object.assign(component.players[i], players[i]);
-                // component.players[i] = players[i];  这会使player对象替换，vue检测不到更换玩家颜色事件,不会自动修改背景色
-              }
-
-              // 非vip还原部分设置
-              if (!component.isvip) {
-                for (const k in vipOptions) {
-                  if (['customCorporationsList', 'customColoniesList', 'bannedCards', 'players', 'showPreludesList'].includes(k)) continue;
-                  (component as any)[k] = vipOptions[k];
-                }
-              }
-              if (component.randomMA !== RandomMAOptionType.NONE) {
-                component.randomMACheckbox = true;
-              }
-
-              Vue.nextTick(() => {
-                try {
-                  if (component.isvip) {
-                    if (component.showColoniesList) refs.coloniesFilter.updateColoniesByNames(customColonies);
-                    if (component.showCorporationList) refs.corporationsFilter.selectedCorporations = customCorporations;
-                    if (component.showPreludesList) refs.preludesFilter.updatePreludes(customPreludes);
-                    if (component.showBannedCards) refs.cardsFilter.selectedCardNames = bannedCards;
-                    if (component.showIncludedCards) refs.cardsFilter2.selectedCardNames = includedCards;
-                  }
-                  // if (!component.seededGame) component.seed = Math.random();
-                  // set to alter after any watched properties
-                  component.solarPhaseOption = Boolean(capturedSolarPhaseOption);
-                } catch (e) {
-                  window.alert('Error reading JSON ' + e);
-                }
-              });
+            // load不允许加载seed
+            results.seed = '';
+            results.seededGame = false;
+            const players = results['players'];
+            const validationErrors = validatePlayers(players);
+            if (validationErrors.length > 0) {
+              throw new Error(validationErrors.join('\n'));
             }
-            if (warnings.length > 0) {
-              window.alert('Settings loaded, with these warnings: \n' + warnings.join('\n'));
-            } else {
-              // window.alert('Settings loaded.');
+
+            if (results.corporationsDraft !== undefined) {
+              warnings.push('Corporations draft is no longer available. Future versions might just raise an error, so edit your JSON file.');
             }
-          } catch (e) {
-            window.alert('Error loading settings ' + e);
+
+            const customCorporations = results[json_constants.CUSTOM_CORPORATIONS] || results[json_constants.OLD_CUSTOM_CORPORATIONS] || [];
+            const customColonies = results[json_constants.CUSTOM_COLONIES] || results[json_constants.OLD_CUSTOM_COLONIES] || [];
+            const bannedCards = results[json_constants.BANNED_CARDS] || results[json_constants.OLD_BANNED_CARDS] || [];
+            const includedCards = results[json_constants.INCLUDED_CARDS] || [];
+            const customPreludes = results[json_constants.CUSTOM_PRELUDES] || [];
+
+            component.playersCount = players.length;
+            component.showCorporationList = customCorporations.length > 0;
+            component.showColoniesList = customColonies.length > 0;
+            component.showBannedCards = bannedCards.length > 0;
+            component.showIncludedCards = includedCards.length > 0;
+            component.showPreludesList = customPreludes.length > 0;
+
+            // Capture the solar phase option since several of the other results will change
+            // it via the watch mechanism.
+            const capturedSolarPhaseOption = results.solarPhaseOption;
+
+            const specialFields = [
+              json_constants.CUSTOM_CORPORATIONS,
+              json_constants.OLD_CUSTOM_CORPORATIONS,
+              json_constants.CUSTOM_COLONIES,
+              json_constants.OLD_CUSTOM_COLONIES,
+              json_constants.CUSTOM_PRELUDES,
+              json_constants.BANNED_CARDS,
+              json_constants.INCLUDED_CARDS,
+              json_constants.OLD_BANNED_CARDS,
+              '_corporationsDraft',
+              'userId',
+              'players',
+              'constants',
+            ];
+            for (const k in results) {
+              if (specialFields.includes(k)) continue;
+              if (!Object.prototype.hasOwnProperty.call(component, k)) {
+                warnings.push('Unknown property: ' + k);
+              }
+              // This is safe because of the hasOwnProperty check, above. hasOwnProperty doesn't help with type declarations.
+              (component as any)[k] = results[k];
+            }
+
+            for (let i = 0; i < players.length; i++) {
+              Object.assign(component.players[i], players[i]);
+              // component.players[i] = players[i];  这会使player对象替换，vue检测不到更换玩家颜色事件,不会自动修改背景色
+            }
+
+            // 非vip还原部分设置
+            if (!component.isvip) {
+              for (const k in vipOptions) {
+                if (['customCorporationsList', 'customColoniesList', 'bannedCards', 'players', 'showPreludesList'].includes(k)) continue;
+                (component as any)[k] = vipOptions[k];
+              }
+            }
+            if (component.randomMA !== RandomMAOptionType.NONE) {
+              component.randomMACheckbox = true;
+            }
+
+            Vue.nextTick(() => {
+              try {
+                if (component.isvip) {
+                  if (component.showColoniesList) refs.coloniesFilter.updateColoniesByNames(customColonies);
+                  if (component.showCorporationList) refs.corporationsFilter.selectedCorporations = customCorporations;
+                  if (component.showPreludesList) refs.preludesFilter.updatePreludes(customPreludes);
+                  if (component.showBannedCards) refs.cardsFilter.selectedCardNames = bannedCards;
+                  if (component.showIncludedCards) refs.cardsFilter2.selectedCardNames = includedCards;
+                }
+                // if (!component.seededGame) component.seed = Math.random();
+                // set to alter after any watched properties
+                component.solarPhaseOption = Boolean(capturedSolarPhaseOption);
+                this.uploading = false;
+              } catch (e) {
+                window.alert('Error reading JSON ' + e);
+              }
+            });
           }
-        }, false);
+          if (warnings.length > 0) {
+            window.alert('Settings loaded, with these warnings: \n' + warnings.join('\n'));
+          } else {
+            // window.alert('Settings loaded.');
+          }
+        } catch (e) {
+          window.alert('Error loading settings ' + e);
+        }
+      }, false);
       if (file) {
         if (/\.json$/i.test(file.name)) {
           reader.readAsText(file);
@@ -1024,6 +1065,7 @@ export default (Vue as WithRefs<Refs>).extend({
       if (this.moonExpansion === false) {
         this.requiresMoonTrackCompletion = false;
         this.moonStandardProjectVariant = false;
+        this.moonStandardProjectVariant1 = false;
       }
     },
     getBoardColorClass(boardName: BoardName | BoardNameType): string {
@@ -1050,11 +1092,11 @@ export default (Vue as WithRefs<Refs>).extend({
         return 'create-game-board-hexagon create-game-random';
       }
     },
-    getPlayerCubeColorClass(color: string): string {
-      return playerColorClass(color.toLowerCase(), 'bg');
+    getPlayerCubeColorClass(color: Color): string {
+      return playerColorClass(color, 'bg');
     },
-    getPlayerContainerColorClass(color: string): string {
-      return playerColorClass(color.toLowerCase(), 'bg_transparent');
+    getPlayerContainerColorClass(color: Color): string {
+      return playerColorClass(color, 'bg_transparent');
     },
     isEnabled(module: GameModule): boolean {
       const model: CreateGameModel = this;
@@ -1202,6 +1244,7 @@ export default (Vue as WithRefs<Refs>).extend({
       const ceoExtension = this.ceoExtension;
       const customCeos = this.customCeos;
       const startingCeos = this.startingCeos;
+      const startingPreludes = this.startingPreludes;
       const clonedGamedId: undefined | string = undefined;
 
       // Check custom colony count
@@ -1267,7 +1310,7 @@ export default (Vue as WithRefs<Refs>).extend({
       // TODO(kberg): this is a direct copy of the code right above.
       // Check custom prelude count
       if (this.showPreludesList && customPreludes.length > 0) {
-        const requiredPreludeCount = players.length * constants.PRELUDE_CARDS_DEALT_PER_PLAYER;
+        const requiredPreludeCount = players.length * startingPreludes;
         if (customPreludes.length < requiredPreludeCount) {
           window.alert(translateTextWithParams('Must select at least ${0} Preludes', [requiredPreludeCount.toString()]));
           return;
@@ -1340,6 +1383,7 @@ export default (Vue as WithRefs<Refs>).extend({
         requiresVenusTrackCompletion,
         'requiresMoonTrackCompletion': this.requiresMoonTrackCompletion,
         'moonStandardProjectVariant': this.moonStandardProjectVariant,
+        'moonStandardProjectVariant1': this.moonStandardProjectVariant1,
         'altVenusBoard': this.altVenusBoard,
         escapeVelocityMode,
         escapeVelocityThreshold,
@@ -1350,6 +1394,7 @@ export default (Vue as WithRefs<Refs>).extend({
         ceoExtension,
         customCeos,
         startingCeos,
+        startingPreludes,
         'starWarsExpansion': this.starWarsExpansion,
         'underworldExpansion': this.underworldExpansion,
       };

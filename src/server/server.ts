@@ -10,14 +10,12 @@ import * as fs from 'fs';
 import * as raw_settings from '../genfiles/settings.json';
 import * as prometheus from 'prom-client';
 import * as responses from './server/responses';
+// import * as ansi from 'ansi-escape-sequences';
 
 import {runId, serverId} from './utils/server-ids';
 import {processRequest} from './server/requestProcessor';
-import {registerBehaviorExecutor} from './behavior/BehaviorExecutor';
-import {Executor} from './behavior/Executor';
 import {GameLoader} from './database/GameLoader';
-import {ALL_MODULE_MANIFESTS} from './cards/AllManifests';
-import {initializeGlobalEventDealer} from './turmoil/globalEvents/GlobalEventDealer';
+import {globalInitialize} from './globalInitialize';
 
 process.on('uncaughtException', (err: any) => {
   console.error('UNCAUGHT EXCEPTION', err);
@@ -76,8 +74,7 @@ function createServer(): http.Server | https.Server {
 //   app: 'terraforming-mars-app',
 // });
 // prometheus.collectDefaultMetrics();
-initializeGlobalEventDealer(ALL_MODULE_MANIFESTS);
-registerBehaviorExecutor(new Executor());
+globalInitialize();
 
 export const server = createServer();
 
@@ -94,7 +91,8 @@ GameLoader.getInstance().start(() => {
   server.listen(process.env.PORT || 8081);
 
   if (!process.env.SERVER_ID) {
-    console.log(`The secret serverId for this server is \x1b[1m${serverId}\x1b[0m.`);
+    // console.log(`The secret serverId for this server is ${ansi.style.bold}${serverId}${ansi.style.reset}.`);
+    console.log(`The secret serverId for this server is ${serverId}.`);
     console.log(`Administrative routes can be found at admin?id=${serverId}`);
   }
   console.log(`The public run ID is ${runId}`);

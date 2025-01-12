@@ -1,13 +1,12 @@
 import {IParty} from './IParty';
 import {Party} from './Party';
 import {PartyName} from '../../../common/turmoil/PartyName';
-import {IGame} from '../../IGame';
 import {Tag} from '../../../common/cards/Tag';
 import {Resource} from '../../../common/Resource';
 import {Bonus} from '../Bonus';
 import {SelectPaymentDeferred} from '../../deferredActions/SelectPaymentDeferred';
 import {IPlayer} from '../../IPlayer';
-import {Policy} from '../Policy';
+import {Policy, IPolicy} from '../Policy';
 import {TITLES} from '../../inputs/titles';
 
 export class Scientists extends Party implements IParty {
@@ -16,7 +15,7 @@ export class Scientists extends Party implements IParty {
   readonly policies = [SCIENTISTS_POLICY_1, SCIENTISTS_POLICY_2, SCIENTISTS_POLICY_3, SCIENTISTS_POLICY_4];
 }
 
-class ScientistsBonus01 implements Bonus {
+class ScientistsBonus01 extends Bonus {
   readonly id = 'sb01' as const;
   readonly description = 'Gain 1 M€ for each science tag you have';
 
@@ -24,14 +23,12 @@ class ScientistsBonus01 implements Bonus {
     return player.tags.count(Tag.SCIENCE, 'raw-pf');
   }
 
-  grant(game: IGame) {
-    game.getPlayersInGenerationOrder().forEach((player) => {
-      player.stock.add(Resource.MEGACREDITS, this.getScore(player));
-    });
+  grantForPlayer(player: IPlayer) {
+    player.stock.add(Resource.MEGACREDITS, this.getScore(player));
   }
 }
 
-class ScientistsBonus02 implements Bonus {
+class ScientistsBonus02 extends Bonus {
   readonly id = 'sb02' as const;
   readonly description = 'Gain 1 M€ for every 3 cards in hand';
 
@@ -39,14 +36,12 @@ class ScientistsBonus02 implements Bonus {
     return Math.floor(player.cardsInHand.length / 3);
   }
 
-  grant(game: IGame) {
-    game.getPlayersInGenerationOrder().forEach((player) => {
-      player.stock.add(Resource.MEGACREDITS, this.getScore(player));
-    });
+  grantForPlayer(player: IPlayer) {
+    player.stock.add(Resource.MEGACREDITS, this.getScore(player));
   }
 }
 
-class ScientistsPolicy01 implements Policy {
+class ScientistsPolicy01 implements IPolicy {
   readonly id = 'sp01' as const;
   readonly description = 'Pay 10 M€ to draw 3 cards (Turmoil Scientists)';
 
@@ -67,30 +62,26 @@ class ScientistsPolicy01 implements Policy {
   }
 }
 
-class ScientistsPolicy02 implements Policy {
+class ScientistsPolicy02 implements IPolicy {
   readonly id = 'sp02' as const;
   readonly description = 'Your global requirements are +/- 2 steps';
 }
 
-class ScientistsPolicy03 implements Policy {
+class ScientistsPolicy03 implements IPolicy {
   readonly id = 'sp03' as const;
   readonly description = 'When you raise a global parameter, draw a card per step raised';
 }
 
-class ScientistsPolicy04 implements Policy {
+class ScientistsPolicy04 extends Policy {
   readonly id = 'sp04' as const;
   readonly description = 'Cards with Science tag requirements may be played with 1 less Science tag';
 
-  onPolicyStart(game: IGame) {
-    game.getPlayersInGenerationOrder().forEach((player) => {
-      player.hasTurmoilScienceTagBonus = true;
-    });
+  override onPolicyStartForPlayer(player: IPlayer) {
+    player.hasTurmoilScienceTagBonus = true;
   }
 
-  onPolicyEnd(game: IGame) {
-    game.getPlayersInGenerationOrder().forEach((player) => {
-      player.hasTurmoilScienceTagBonus = false;
-    });
+  override onPolicyEndForPlayer(player: IPlayer) {
+    player.hasTurmoilScienceTagBonus = false;
   }
 }
 

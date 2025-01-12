@@ -25,7 +25,6 @@ import {ICeoCard} from './cards/ceos/ICeoCard';
 import {PRELUDE2_CARD_MANIFEST} from './cards/prelude2/Prelude2CardManifest';
 import {STAR_WARS_CARD_MANIFEST} from './cards/starwars/StarwarsCardManifest';
 import {UNDERWORLD_CARD_MANIFEST} from './cards/underworld/UnderworldCardManifest';
-import {GameModule} from '../common/cards/GameModule';
 import {ALL_MODULE_MANIFESTS} from './cards/AllManifests';
 
 /**
@@ -94,7 +93,7 @@ export class GameCards {
     const cards = this.getCards<ICorporationCard>('corporationCards')
       .filter((card) => card.name !== CardName.BEGINNER_CORPORATION);
     // return this.addCustomCards(cards, this.gameOptions.customCorporationsList);
-    return  cards;
+    return cards;
   }
   public getPreludeCards() {
     let preludes = this.getCards<IPreludeCard>('preludeCards');
@@ -180,26 +179,7 @@ export class GameCards {
       return undefined;
     }
 
-    if (cf.compatibility === undefined) {
-      return new cf.Factory();
-    }
-    const expansions: Array<GameModule> = Array.isArray(cf.compatibility) ? cf.compatibility : [cf.compatibility];
-    if ( expansions.every((expansion) => {
-      switch (expansion) {
-      case 'venus':
-        return gameOptions.venusNextExtension;
-      case 'colonies':
-        return gameOptions.coloniesExtension;
-      case 'turmoil':
-        return gameOptions.turmoilExtension;
-      case 'moon':
-        return gameOptions.moonExpansion;
-      case 'pathfinders':
-        return gameOptions.pathfindersExpansion;
-      default:
-        throw new Error(`Unhandled expansion type ${expansion}`);
-      }
-    })) {
+    if (isCompatibleWith(cf, gameOptions)) {
       return new cf.Factory();
     }
     return undefined;

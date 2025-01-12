@@ -5,12 +5,10 @@
 //
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer
 //
-// So instead when annotating card items, {played: true} can be reduced to {played}.
 
 export const all = true;
 export const clone = true;
 export const digit = true;
-export const played = true;
 export const max = true;
 export const nextTo = true;
 export const cancelled = true;

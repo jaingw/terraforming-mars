@@ -3,7 +3,6 @@ import {Card} from '../Card';
 import {CardType} from '../../../common/cards/CardType';
 import {CardName} from '../../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
-import {played} from '../Options';
 import {Tag} from '../../../common/cards/Tag';
 
 export class PublicSpaceline extends Card implements IProjectCard {
@@ -16,12 +15,17 @@ export class PublicSpaceline extends Card implements IProjectCard {
 
       requirements: {tag: Tag.SPACE, count: 5},
 
+      behavior: {
+        production: {megacredits: 2},
+      },
+
       metadata: {
         cardNumber: 'U77',
         renderData: CardRenderer.builder((b) => {
           b.production((pb) => pb.megacredits(2)).br;
-          b.earth(1, {played}).earth(1, {played}).jovian({played}).jovian({played}).br;
-          b.venus(1, {played}).venus(1, {played}).mars(1, {played}).mars(1, {played});
+          b.plainText('Increase your M€ production 2 steps').br;
+          b.tag(Tag.EARTH).tag(Tag.EARTH).tag(Tag.JOVIAN).tag(Tag.JOVIAN).br;
+          b.tag(Tag.VENUS).tag(Tag.VENUS).tag(Tag.MARS).tag(Tag.MARS);
         }),
         description: 'Requires 5 space tags. This card has 2 Earth tags, 2 Jovian tags, 2 Venus tags, and 2 Mars tags.',
       },

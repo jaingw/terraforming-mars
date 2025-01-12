@@ -5,7 +5,6 @@ import {CardType} from '../../../common/cards/CardType';
 import {CardName} from '../../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
 import {Tag} from '../../../common/cards/Tag';
-import {played} from '../Options';
 
 export class SocialEvents extends Card implements IProjectCard {
   constructor() {
@@ -16,9 +15,9 @@ export class SocialEvents extends Card implements IProjectCard {
       tags: [Tag.EARTH, Tag.MARS],
 
       metadata: {
-        cardNumber: '...',
+        cardNumber: 'PfT10',
         renderData: CardRenderer.builder((b) => {
-          b.tr(1).slash().mars(2, {played});
+          b.tr(1).slash().tag(Tag.MARS, 2);
         }),
         description: 'Gain 1 TR for every 2 Mars tags you have (including this one.)',
       },

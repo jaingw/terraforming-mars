@@ -21,7 +21,9 @@ export class Thermopoli extends CorporationCard {
       tags: [Tag.SPACE],
       startingMegaCredits: 48,
 
-
+      behavior: {
+        turmoil: {influenceBonus: 1},
+      },
       metadata: {
         cardNumber: 'XB12',
         description: 'You start with 48 M€. As your first action, place two delegates in one party.',
@@ -30,8 +32,11 @@ export class Thermopoli extends CorporationCard {
           b.megacredits(48).nbsp.delegates(2);
           b.corpBox('effect', (ce) => {
             ce.vSpace(Size.LARGE);
-            ce.effect('When you send a delegate ,you gain 1 heat.', (eb) => {
-              eb.delegates(1).startEffect.heat(1);
+            // ce.effect('When you send a delegate ,you gain 1 heat.', (eb) => {
+            //   eb.delegates(1).startEffect.heat(1);
+            // });
+            ce.effect(undefined, (eb) => {
+              eb.empty().startEffect.influence();
             });
             ce.vSpace(Size.SMALL);
             ce.action('Gain 2 heat for each influence you have.', (eb) => {

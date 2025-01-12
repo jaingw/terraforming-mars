@@ -3,9 +3,9 @@ import {IPlayer} from '../../../IPlayer';
 import {IProjectCard} from '../../IProjectCard';
 import {EcoLine} from '../../corporation/EcoLine';
 import {CardRenderer} from '../../render/CardRenderer';
-import {digit, played} from '../../Options';
+import {digit} from '../../Options';
 import {CardName} from '../../../../common/cards/CardName';
-import {ICardMetadata} from '../../../../common/cards/ICardMetadata';
+import {CardMetadata} from '../../../../common/cards/CardMetadata';
 import {Size} from '../../../../common/cards/render/Size';
 import {Tag} from '../../../../common/cards/Tag';
 import {Resource} from '../../../../common/Resource';
@@ -36,7 +36,7 @@ export class _EcoLine_ extends EcoLine {
     return undefined;
   }
 
-  public override get metadata(): ICardMetadata {
+  public override get metadata(): CardMetadata {
     return {
       cardNumber: 'R17',
       description: 'You start with 2 plant production, 3 plants, and 36 M€.',
@@ -49,7 +49,7 @@ export class _EcoLine_ extends EcoLine {
             eb.plants(7, {digit}).startAction.greenery();
           });
           ce.effect('You may pay 7 plants to place greenery. When play a plant tag card, gain 2 M€.', (eb) => {
-            eb.plants(1, {played}).startEffect.megacredits(2);
+            eb.tag(Tag.PLANT).startEffect.megacredits(2);
           });
         });
       }),

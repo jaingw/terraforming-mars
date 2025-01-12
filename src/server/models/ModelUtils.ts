@@ -10,6 +10,7 @@ import {PlayCardMetadata} from '../inputs/SelectProjectCardToPlay';
 import {IColony} from '../colonies/IColony';
 import {CardName} from '../../common/cards/CardName';
 import {Tag} from '../../common/cards/Tag';
+import {asArray} from '../../common/utils/utils';
 
 export function cardsToModel(
   player: IPlayer,
@@ -18,11 +19,11 @@ export function cardsToModel(
     showResources?: boolean,
     showCalculatedCost?: boolean,
     extras?: Map<CardName, PlayCardMetadata>,
-    enabled?: Array<boolean>, // If provided, then the cards with false in `enabled` are not selectable and grayed out
+    enabled?: ReadonlyArray<boolean>, // If provided, then the cards with false in `enabled` are not selectable and grayed out
   } = {},
-): Array<CardModel> {
+): ReadonlyArray<CardModel> {
   return cards.map((card, index) => {
-    let discount = card.cardDiscount === undefined ? undefined : (Array.isArray(card.cardDiscount) ? card.cardDiscount : [card.cardDiscount]);
+    let discount = card.cardDiscount === undefined ? undefined : asArray(card.cardDiscount);
 
     // Too bad this is hard-coded
     if (card.name === CardName.CRESCENT_RESEARCH_ASSOCIATION) {

@@ -6,6 +6,7 @@
                 <a href="#" v-i18n v-on:click.prevent="selectAll('All')">All*</a> |
                 <a href="#" v-i18n v-on:click.prevent="selectNone('All')">None*</a> |
                 <a href="#" v-i18n v-on:click.prevent="invertSelection('All')">Invert*</a>
+                <input ref="filter" class="filter" :placeholder="$t('filter')" v-model="filterText">
             </div>
         </div>
         <br/>
@@ -19,7 +20,7 @@
                     <a href="#" v-i18n v-on:click.prevent="invertSelection(module)">Invert</a>
                 </div>
             </div>
-            <div v-for="prelude in cardsByModule[module]" v-bind:key="prelude">
+            <div v-for="prelude in cardsByModule[module]" v-bind:key="prelude" v-show="include(prelude)">
                 <label class="form-checkbox">
                     <input type="checkbox" v-model="selectedPreludes" :value="prelude"/>
                     <i class="form-icon"></i><span v-i18n>{{ prelude }}</span>
@@ -62,6 +63,12 @@ export default Vue.extend({
     pathfindersExpansion: {
       type: Boolean,
     },
+    ceoExtension: {
+      type: Boolean,
+    },
+    underworldExpansion: {
+      type: Boolean,
+    },
     prelude2Expansion: {
       type: Boolean,
     },
@@ -78,6 +85,7 @@ export default Vue.extend({
     GAME_MODULES.forEach((module) => cardsByModule[module].sort());
 
     return {
+      filterText: '',
       cardsByModule: cardsByModule,
       customPreludesList: false,
       selectedPreludes: [
@@ -87,6 +95,8 @@ export default Vue.extend({
         ...this.communityCardsOption ? preludeCardNames('community') : [],
         ...this.moonExpansion ? preludeCardNames('moon') : [],
         ...this.pathfindersExpansion ? preludeCardNames('pathfinders') : [],
+        ...this.ceoExtension ? preludeCardNames('ceo') : [],
+        ...this.underworldExpansion ? preludeCardNames('underworld') : [],
         ...this.prelude2Expansion ? preludeCardNames('prelude2') : [],
       ],
       GAME_MODULES: GAME_MODULES,
@@ -163,8 +173,18 @@ export default Vue.extend({
       case 'community': return 'Community';
       case 'moon': return 'The Moon';
       case 'pathfinders': return 'Pathfinders';
+      case 'ceo': return 'CEOs';
+      case 'underworld': return 'Underworld';
+      case 'prelude2': return 'Prelude 2';
       }
       return '';
+    },
+    include(name: string) {
+      const normalized = this.filterText.toLocaleUpperCase();
+      if (normalized.length === 0) {
+        return true;
+      }
+      return name.toLocaleUpperCase().includes(normalized);
     },
   },
   watch: {
@@ -185,6 +205,12 @@ export default Vue.extend({
     },
     pathfindersExpansion(enabled) {
       this.watchSelect('pathfinders', enabled);
+    },
+    ceoExtension(enabled) {
+      this.watchSelect('ceo', enabled);
+    },
+    underworldExpansion(enabled) {
+      this.watchSelect('underworld', enabled);
     },
     prelude2Expansion(enabled) {
       this.watchSelect('prelude2', enabled);

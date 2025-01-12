@@ -5,7 +5,6 @@ import {CardType} from '../../../common/cards/CardType';
 import {IPlayer} from '../../IPlayer';
 import {CardName} from '../../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
-import {played} from '../Options';
 
 export class TerraformingGanymede extends Card implements IProjectCard {
   constructor() {
@@ -19,7 +18,7 @@ export class TerraformingGanymede extends Card implements IProjectCard {
       metadata: {
         cardNumber: '197',
         renderData: CardRenderer.builder((b) => {
-          b.tr(1).slash().jovian({played});
+          b.tr(1).slash().tag(Tag.JOVIAN);
         }),
         description: 'Raise your TR 1 step for each Jovian tag you have, including this.',
       },
@@ -36,4 +35,6 @@ export class TerraformingGanymede extends Card implements IProjectCard {
 
     return undefined;
   }
+
+  // 帮我实现一个计分方法
 }

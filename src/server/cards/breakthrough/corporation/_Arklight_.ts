@@ -2,10 +2,10 @@ import {IPlayer} from '../../../IPlayer';
 import {IProjectCard} from '../../IProjectCard';
 import {Arklight} from '../../colonies/Arklight';
 import {CardRenderer} from '../../render/CardRenderer';
-import {played} from '../../Options';
 import {CardName} from '../../../../common/cards/CardName';
 import {CardType} from '../../../../common/cards/CardType';
 import {Tag} from '../../../../common/cards/Tag';
+import {CardResource} from '../../../../common/CardResource';
 
 export class _Arklight_ extends Arklight {
   constructor() {
@@ -20,11 +20,11 @@ export class _Arklight_ extends Arklight {
           b.corpBox('effect', (ce) => {
             ce.vSpace();
             ce.effect(undefined, (eb) => {
-              eb.animals(1, {played}).slash().plants(1, {played}).startEffect.animals(1);
+              eb.tag(Tag.ANIMAL).slash().tag(Tag.PLANT).startEffect.resource(CardResource.ANIMAL);
             });
             ce.vSpace();
             ce.effect('When you play an animal or plant tag, including this, add 1 animal to this card. When you gain an animal to ANY CARD, gain 1 M€.', (eb) => {
-              eb.animals(1).asterix().startEffect.megacredits(1);
+              eb.resource(CardResource.ANIMAL).asterix().startEffect.megacredits(1);
             });
             ce.vSpace(); // to offset the description to the top a bit so it can be readable
           });
@@ -43,3 +43,4 @@ export class _Arklight_ extends Arklight {
     }
   }
 }
+

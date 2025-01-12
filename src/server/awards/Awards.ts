@@ -18,11 +18,11 @@ import {Contractor} from './Contractor';
 import {Entrepreneur} from './Entrepreneur';
 import {FullMoon} from '../moon/FullMoon';
 import {LunarMagnate} from '../moon/LunarMagnate';
-import {CosmicSettler} from './CosmicSettler';
-import {Botanist} from './Botanist';
-import {Coordinator} from './Coordinator';
-import {Zoologist} from './Zoologist';
-import {Manufacturer} from './Manufacturer';
+import {CosmicSettler} from './arabiaTerra/CosmicSettler';
+import {Botanist} from './arabiaTerra/Botanist';
+import {Coordinator} from './arabiaTerra/Coordinator';
+import {Zoologist} from './arabiaTerra/Zoologist';
+import {Manufacturer} from './arabiaTerra/Manufacturer';
 import {Adapter} from './Adapter';
 import {Edgedancer} from './Edgedancer';
 import {Hoarder} from './Hoarder';
@@ -30,7 +30,6 @@ import {Naturalist} from './Naturalist';
 import {Voyager} from './Voyager';
 import {Curator} from './amazonisPlanitia/Curator';
 import {Engineer} from './amazonisPlanitia/Engineer';
-import {Historian} from './amazonisPlanitia/Historian';
 import {Tourist} from './amazonisPlanitia/Tourist';
 import {Biologist} from './terraCimmeria/Biologist';
 import {Economizer2} from './terraCimmeria/Economizer2';
@@ -89,7 +88,7 @@ export const MOON_AWARDS = [
 export const AMAZONIS_PLANITIA_AWARDS = [
   new Curator(),
   new Engineer(),
-  new Historian(),
+  new Coordinator(),
   new Tourist(),
   new Zoologist2(),
 ];

@@ -59,11 +59,21 @@ export class Faraday extends CeoCard {
   }
 
   public onCardPlayed(player: IPlayer, card: IProjectCard) {
-    if (card.tags.length === 0 || card.type === CardType.EVENT || !player.canAfford(2)) return;
+    if (card.tags.length === 0 || card.type === CardType.EVENT || !player.canAfford(2)) {
+      return;
+    }
 
+    this.processTags(player, card.tags);
+  }
+
+  public onColonyAddedToLeavitt(player: IPlayer) {
+    this.processTags(player, [Tag.SCIENCE]);
+  }
+
+  private processTags(player: IPlayer, tags: ReadonlyArray<Tag>) {
     const counts = this.countTags(player);
 
-    const tagsOnCard = MultiSet.from(card.tags);
+    const tagsOnCard = MultiSet.from(tags);
     tagsOnCard.forEachMultiplicity((countOnCard, tagOnCard) => {
       if (INVALID_TAGS.includes(tagOnCard)) return;
       if (this.gainedMultiple(countOnCard, counts[tagOnCard])) {
@@ -75,7 +85,7 @@ export class Faraday extends CeoCard {
   public effectOptions(player: IPlayer, tag: Tag) {
     if (!player.canAfford(3)) return;
     return new OrOptions(
-      new SelectOption(message('Pay 3 M€ to draw a ${1} card', (b) => b.string(tag))).andThen(() => {
+      new SelectOption(message('Pay 3 M€ to draw a ${0} card', (b) => b.string(tag))).andThen(() => {
         player.game.defer(new SelectPaymentDeferred(player, 3, {title: TITLES.payForCardAction(this.name)}))
           .andThen(() => player.drawCard(1, {tag: tag}));
         return undefined;

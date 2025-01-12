@@ -32,6 +32,9 @@ export type Spend = Units & {
 
   /** corruption from your personal supply. */
   corruption: number,
+
+  /** discard cards from your hand */
+  cards: number,
 }
 
 /** A set of steps that an action can perform in any specific order. */
@@ -52,7 +55,12 @@ export type Behavior = {
   stock?: Partial<CountableUnits>;
 
   /** Gain n standard resources */
-  standardResource?: number | {count: number, same?: boolean};
+  standardResource?: number | {
+    /** Number of resources to gain. */
+    count: number,
+    /** Must all resources be the same type? Default is true. */
+    same?: boolean,
+  };
 
   /** Add resources to this card itself */
   addResources?: Countable;
@@ -135,7 +143,7 @@ export type Behavior = {
   turmoil?: {
     influenceBonus?: 1,
     sendDelegates?: {
-      count: number,
+      count: Countable,
       manyParties?: boolean,
     },
   },

@@ -27,7 +27,7 @@ export class GreenLeafDance extends CorporationCard {
     super({
       name: CardName.GREEN_LEAF_DANCE,
       tags: [Tag.PLANT],
-      startingMegaCredits: 45,
+      startingMegaCredits: 42,
 
       firstAction: {
         text: 'Place your initial ocean.',
@@ -36,16 +36,16 @@ export class GreenLeafDance extends CorporationCard {
 
       metadata: {
         cardNumber: 'XB21',
-        description: 'You start with 45 M€. As your first action, place an ocean tile.',
+        description: 'You start with 42 M€. As your first action, place an ocean tile.',
         renderData: CardRenderer.builder((b) => {
           b.br;
-          b.megacredits(45).oceans(1);
+          b.megacredits(42).oceans(1);
           b.corpBox('effect', (ce) => {
             ce.vSpace();
             ce.effect(
-              'When you place a tile on an area that has a plant placement bonus, you can spend 3 MC to increase plant production 1 step.',
+              'When you place a tile on an area that has a plant placement bonus, you can spend 1 MC to increase plant production 1 step.',
               (eb) => {
-                eb.emptyTile('normal', {size: Size.SMALL}).nbsp.asterix().colon().megacredits(-3).empty().startAction.production((pb) => pb.plants(1));
+                eb.emptyTile('normal', {size: Size.SMALL}).nbsp.asterix().colon().megacredits(1).empty().startAction.production((pb) => pb.plants(1));
               });
           });
         }),

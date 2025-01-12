@@ -22,7 +22,7 @@ export class Protogen extends CorporationCard {
           b.megacredits(52).cards(2, {secondaryTag: Tag.MICROBE});
           b.corpBox('effect', (ce) => {
             ce.effect('When you gain microbes in one action, also gain 2 heat.', (eb) => {
-              eb.microbes(1).asterix().startEffect.heat(2);
+              eb.resource(CardResource.MICROBE).asterix().startEffect.heat(2);
             });
           });
         }),

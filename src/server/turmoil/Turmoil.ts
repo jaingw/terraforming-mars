@@ -12,8 +12,9 @@ import {MultiSet} from 'mnemonist';
 import {IPlayer, isIPlayer} from '../IPlayer';
 import {SendDelegateToArea} from '../deferredActions/SendDelegateToArea';
 import {SelectParty} from '../inputs/SelectParty';
-import {Policy, PolicyId, policyDescription} from './Policy';
+import {IPolicy, PolicyId, policyDescription} from './Policy';
 import {PlayerId} from '../../common/Types';
+import {ChoosePolicyBonus} from '../deferredActions/ChoosePolicyBonus';
 import {SerializedPlayerId} from '../SerializedPlayer';
 import {MARS_FIRST_POLICY_1, MarsFirst} from './parties/MarsFirst';
 import {GREENS_POLICY_1, Greens} from './parties/Greens';
@@ -26,7 +27,7 @@ export type Delegate = IPlayer | NeutralPlayer;
 
 export type PartyFactory = new() => IParty;
 
-export function getDefaultPolicy(partName: PartyName): Policy {
+export function getDefaultPolicy(partName: PartyName): IPolicy {
   switch (partName) {
   case PartyName.MARS:
     return MARS_FIRST_POLICY_1;
@@ -119,7 +120,7 @@ export class Turmoil {
     return party;
   }
 
-  rulingPolicy(): Policy {
+  rulingPolicy(): IPolicy {
     const rulingParty = this.rulingParty;
     const rulingPolicyId: PolicyId = PoliticalAgendas.currentAgenda(this).policyId;
     const policy = rulingParty.policies.find((policy) => policy.id === rulingPolicyId);
@@ -262,6 +263,7 @@ export class Turmoil {
   // Launch the turmoil phase
   public endGeneration(game: IGame): void {
     // 1 - All player lose 1 TR
+    game.log('All players lose 1 TR.');
     game.getPlayers().forEach((player) => {
       player.decreaseTerraformRating();
     });
@@ -324,13 +326,25 @@ export class Turmoil {
     }
   }
 
+  private executeAlliedOnPolicyEnd(player: IPlayer | undefined): void {
+    if (player?.alliedParty) {
+      const {alliedParty} = player;
+      const alliedPolicy = player.game.turmoil?.getPartyByName(alliedParty.partyName)?.policies.find((p) => p.id === alliedParty.agenda.policyId);
+      alliedPolicy?.onPolicyEndForPlayer?.(player);
+    }
+  }
+
   /**
    * Set the next ruling party as part of the Turmoil phase.
    */
   public setRulingParty(game: IGame): void {
     this.rulingPolicy().onPolicyEnd?.(game);
 
-    // Behond the Emperor Hook prevents changing the ruling party.
+    // Mars Frontier Alliance ends allied party policy
+    const alliedPlayer = game.getPlayers().find((p) => p.alliedParty !== undefined);
+    this.executeAlliedOnPolicyEnd(alliedPlayer);
+
+    // Behold the Emperor Hook prevents changing the ruling party.
     if (game.beholdTheEmperor !== true) {
       this.rulingParty = this.dominantParty;
     }
@@ -390,10 +404,47 @@ export class Turmoil {
     }
   }
 
+  // Returns the second-most dominant party. Used for Mars Frontier Alliance
+  private findSecondDominantParty(currentDominantParty: IParty): IParty | undefined {
+    const currentIndex = this.parties.indexOf(currentDominantParty);
+
+    let partiesToCheck: Array<IParty> = [];
+    if (currentIndex === 0) {
+      partiesToCheck = this.parties.slice(1);
+    } else if (currentIndex === this.parties.length - 1) {
+      partiesToCheck = this.parties.slice(0, -1);
+    } else {
+      partiesToCheck = [...this.parties.slice(currentIndex + 1), ...this.parties.slice(0, currentIndex)];
+    }
+
+    const sortParties = [...this.parties].sort(
+      (p1, p2) => p2.delegates.size - p1.delegates.size,
+    );
+    const first = sortParties[0].delegates.size;
+
+    const partiesOrdered = partiesToCheck.reverse();
+    return partiesOrdered.find((p) => p.delegates.size === first);
+  }
+
+  private applyRulingBonus(game: IGame, alliedPlayer: IPlayer | undefined): void {
+    if (game.turmoil && alliedPlayer) {
+      const currentDominantParty = game.turmoil.dominantParty;
+      const secondDominantParty = this.findSecondDominantParty(currentDominantParty);
+
+      if (secondDominantParty) {
+        alliedPlayer.setAlliedParty(secondDominantParty);
+      }
+    }
+  }
+
   // Called either directly during generation change, or after asking chairperson player
   // to choose an agenda.
   public onAgendaSelected(game: IGame): void {
     const rulingParty = this.rulingParty;
+
+    // Ruling bonus should be chosen between global or allied party if MFA is in play
+    const alliedPlayer = game.getPlayers().find((p) => p.alliedParty !== undefined);
+    this.applyRulingBonus(game, alliedPlayer);
 
     // Resolve Ruling Bonus
     const bonusId = PoliticalAgendas.currentAgenda(this).bonusId;
@@ -403,6 +454,17 @@ export class Turmoil {
     }
     game.log('The ruling bonus is: ${0}', (b) => b.string(bonus.description));
 
+    // Mars Frontier Alliance
+    if (alliedPlayer?.alliedParty) {
+      const alliedParty = this.parties.find((p) => p.name === alliedPlayer.alliedParty?.partyName);
+      if (alliedParty) {
+        const bonuses = [bonus, alliedParty.bonuses[0]];
+        game.defer(new ChoosePolicyBonus(alliedPlayer, bonuses, (bonusId) => {
+          const chosenBonus = this.parties.flatMap((p) => p.bonuses).find((b) => b.id === bonusId);
+          chosenBonus?.grantForPlayer?.(alliedPlayer);
+        }));
+      }
+    }
     bonus.grant(game);
 
     /**

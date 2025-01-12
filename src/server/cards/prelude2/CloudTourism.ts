@@ -5,7 +5,6 @@ import {CardType} from '../../../common/cards/CardType';
 import {IPlayer} from '../../IPlayer';
 import {ActionCard} from '../ActionCard';
 import {CardResource} from '../../../common/CardResource';
-import {played} from '../Options';
 import {Resource} from '../../../common/Resource';
 
 export class CloudTourism extends ActionCard {
@@ -23,14 +22,14 @@ export class CloudTourism extends ActionCard {
       },
 
       metadata: {
-        cardNumber: '',
+        cardNumber: 'P69',
         description: 'Increase your M€ production 1 step for each pair of Earth and Venus tags you own. 1 VP for every 3rd floater on this card.',
         renderData: CardRenderer.builder((b) => {
           b.action('Add 1 floater to this card.', (eb) => {
-            eb.empty().startAction.floaters(1);
+            eb.empty().startAction.resource(CardResource.FLOATER);
           }).br;
           b.production((pb) => {
-            pb.megacredits(1).slash().earth(1, {played}).venus(1, {played});
+            pb.megacredits(1).slash().tag(Tag.EARTH).tag(Tag.VENUS);
           });
         }),
       },
@@ -41,7 +40,8 @@ export class CloudTourism extends ActionCard {
     // This does its own calculation because player.tags isn't robust enough at the moment
     const counts = {
       earth: player.tags.count(Tag.EARTH, 'raw'),
-      venus: player.tags.count(Tag.VENUS, 'raw'),
+      // The +1 is "including this"
+      venus: player.tags.count(Tag.VENUS, 'raw') + 1,
     };
     if (player.cardIsInEffect(CardName.EARTH_EMBASSY)) {
       counts.earth += player.tags.count(Tag.MOON, 'raw');

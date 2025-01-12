@@ -43,7 +43,7 @@ export class RunciterAssociates extends CorporationCard {
       'Discard',
       player.cardsInHand,
       {min: 1, max: 1},
-    ).andThen((foundCards: Array<IProjectCard>) => {
+    ).andThen((foundCards: ReadonlyArray<IProjectCard>) => {
       for (const card of foundCards) {
         player.cardsInHand.splice(player.cardsInHand.indexOf(card), 1);
         player.game.projectDeck.discard(card);

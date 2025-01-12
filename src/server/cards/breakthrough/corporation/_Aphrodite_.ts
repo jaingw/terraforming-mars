@@ -4,7 +4,7 @@ import {CardRenderer} from '../../render/CardRenderer';
 import {Aphrodite} from '../../venusNext/Aphrodite';
 import {all} from '../../Options';
 import {CardName} from '../../../../common/cards/CardName';
-import {ICardMetadata} from '../../../../common/cards/ICardMetadata';
+import {CardMetadata} from '../../../../common/cards/CardMetadata';
 
 export class _Aphrodite_ extends Aphrodite {
   public override get name() {
@@ -23,7 +23,7 @@ export class _Aphrodite_ extends Aphrodite {
     return undefined;
   }
 
-  public override get metadata(): ICardMetadata {
+  public override get metadata(): CardMetadata {
     return {
       cardNumber: 'R01',
       description: 'You start with 40 M€. As your first action, raise Venus Scale 2 steps.',

@@ -2,7 +2,7 @@ import {expect} from 'chai';
 import {TestPlayer} from '../TestPlayer';
 import {GrantVenusAltTrackBonusDeferred} from '../../src/server/venusNext/GrantVenusAltTrackBonusDeferred';
 import {AndOptions} from '../../src/server/inputs/AndOptions';
-import {cast} from '../TestingUtils';
+import {cast, formatMessage} from '../TestingUtils';
 import {Tardigrades} from '../../src/server/cards/base/Tardigrades';
 import {OrOptions} from '../../src/server/inputs/OrOptions';
 import {SelectCard} from '../../src/server/inputs/SelectCard';
@@ -35,6 +35,7 @@ describe('GrantVenusAltTrackBonusDeferred', function() {
 
   it('reject too many bonuses', () => {
     const input = cast(new GrantVenusAltTrackBonusDeferred(player, 2, false).execute(), AndOptions);
+    expect(formatMessage(input.title)).to.contain('Gain 2 resource(s) for your');
     input.options[0].cb(0);
     input.options[0].cb(0);
     input.options[0].cb(0);
@@ -42,7 +43,7 @@ describe('GrantVenusAltTrackBonusDeferred', function() {
     input.options[0].cb(0);
     input.options[5].cb(3);
 
-    expect(() => input.cb(undefined)).to.throw('Select 2 resources.');
+    expect(() => input.cb(undefined)).to.throw('Select 2 resource(s)');
 
     player.heat = 0;
     input.options[5].cb(2);

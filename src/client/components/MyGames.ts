@@ -167,7 +167,7 @@ export const MyGames = Vue.component('my-games', {
 
     <div class="flex flex-wrap">
     <div class="w-full mr-8">
-      <ul class="flex mb-0 list-none flex-wrap pt-3 pb-4 flex-row">
+      <ul class="flex mb-0 list-none flex-wrap pt-3 pb-4 flex-row" style="cursor:pointer;">
         <li class="-mb-px mr-2 last:mr-0 flex-auto text-center">
           <div class="text-lg font-bold uppercase px-5 py-3 shadow-lg rounded block leading-normal" v-on:click="toggleTabs(1)" v-bind:class="{'text-blue-300 bg-gray-700': openTab !== 1, 'text-white bg-blue-300': openTab === 1}">
             <span v-i18n>User Information</span>
@@ -188,7 +188,7 @@ export const MyGames = Vue.component('my-games', {
         <div class="px-4 py-5 flex-auto">
           <div class="tab-content tab-space">
             <div v-bind:class="{'hidden': openTab !== 1, 'block': openTab === 1}">
-              <button class="rounded-md bg-blue-500 hover:bg-blue-300 w-24 p-2 text-md align-center"
+              <button class="rounded-md bg-blue-500 hover:bg-blue-300 w-32 p-2 text-md align-center"  style="cursor:pointer;"
                       v-on:click="changeLogin" v-i18n>
                 <span v-if="userName">LoginOut</span>
                 <span v-else>Login/Register</span>
@@ -207,8 +207,7 @@ export const MyGames = Vue.component('my-games', {
                       {{$t('Get Potato')}}
                     </a></div>
                   </div>
-<!--                    <img src="assets/qrcode/potato.png" style="height: 50px;vertical-align: middle; margin-top: 2px"/>-->
-                  </div>
+                </div>
 
                 <div class="flex flex-col items-center justify-center rounded-md bg-gray-500 w-64 h-32 my-4 pb-2 text-center text-md " v-i18n>
                   <div class="text-lg text-gray-700 font-bold">User Rank</div>
@@ -248,13 +247,13 @@ export const MyGames = Vue.component('my-games', {
             <div v-bind:class="{'hidden': openTab !== 3, 'block': openTab === 3}">
               <div v-if="userName">
               <div class="relative overflow-x-auto">
-              <table class="w-full text-sm text-left">
+              <table class="w-full text-sm text-left mygames">
                 <thead>
                 <tr class="bg-gray-500">
                   <th v-i18n>Create Time</th>
-                  <th v-i18n>Player Number</th>
-                  <th v-i18n>Players</th>
-                  <th v-i18n>Status</th>
+                  <th v-i18n>Player Number</th=>
+                  <th v-i18n>Players</th=>
+                  <th v-i18n>Status</th=>
                 </tr>
                 </thead>
                 <tbody>
@@ -267,7 +266,6 @@ export const MyGames = Vue.component('my-games', {
                         </span>
                   </td>
                   <td>
-<!--                    <div v-if="isGameRunning(game.phase)" class="rounded-md w-16 bg-green-600 text-center" v-i18n>Running</div>-->
                     <div v-if="isGameAbandon(game.phase)" class="rounded-md w-20 bg-gray-500 text-center p-1">
                       Abandon
                     </div>
@@ -286,55 +284,12 @@ export const MyGames = Vue.component('my-games', {
                 </tbody>
               </table>
               </div>
-<!--              <ul>-->
-<!--                <li v-for="game in games">-->
-<!--                  <a v-bind:href="'/game?id='+game.id" target="_blank">{{ game.id }}</a>-->
-<!--                  <span>{{ game.createtime.slice(5, 16) }}  {{ game.updatetime.slice(5, 16) }}  </span>-->
-<!--                  age: {{ game.gameAge }}-->
-<!--                  with {{ game.players.length }} player(s) :-->
-<!--                  <span class="player_home_block nofloat">-->
-<!--                        <span v-for="player in game.players" class="player_name"-->
-<!--                              :class="'player_bg_color_'+ player.color">-->
-<!--                            <a :href="'/player?id=' + player.id">{{ player.name }}</a>-->
-<!--                        </span>-->
-<!--                        <span v-if="isGameRunning(game.phase)">is running</span><span v-else>has ended</span>-->
-<!--                    </span>-->
-<!--                </li>-->
-<!--              </ul>-->
-              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+    </div>
+  </div>`,
 
-<!--    <div class="container mx-auto rounded-md border-solid border-4   border-orange-500 bg-opacity-10">-->
-<!--    <div class="text-xl text-blue-300"> User Information </div>-->
-<!--      <div class="column-2 gap-3 my-3">-->
-<!--        <div>-->
-<!--        <div class="text-sm text-gray-400 underline decoration-blue-300" v-i18n>User Name</div>-->
-<!--          <div class="text-lg text-gray-100">{{ userName }}</div>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
-
-<!--      <span v-if="this.vipDate"><img src="assets/qrcode/potato.png" style="height: 50px;vertical-align: middle;"/>-->
-<!--        {{ vipDate }}<img src="assets/qrcode/potato.png" style="height: 50px;vertical-align: middle;"/></span>-->
-<!--      <button class="btn btn-lg btn-success" style="margin-bottom: 7px;min-width: 80px;" v-on:click="changeLogin"-->
-<!--              v-i18n><span v-if="userName">LoginOut</span><span v-else>Login/Register</span></button>-->
-<!--    </h1>-->
-<!--    <confirm-dialog message="开启后其他玩家可以通过你的游戏链接查看你的手牌，但不能帮你操作" ref="showHand"-->
-<!--                    v-on:accept="confimUpdate" v-on:dismiss="cancelUpdate"/>-->
-<!--    <label class="form-switch" style="margin-left: 20px;display: inline-block;">-->
-<!--      <input type="checkbox" name="enable_sounds" v-model="enable_sounds" v-on:change="updateTips">-->
-<!--      <i class="form-icon"></i> <span v-i18n>Soundtip</span>-->
-<!--    </label>-->
-<!--    <label class="form-switch" style="margin-left: 20px;display: inline-block;">-->
-<!--      <input type="checkbox" name="showhandcards" v-model="showhandcards" v-on:change="updateShowHandCards">-->
-<!--      <i class="form-icon"></i> <span v-i18n>Show cards in hand to others</span>-->
-<!--    </label>-->
-<!--    <br>-->
-<!--    </div>-->`,
 });
-

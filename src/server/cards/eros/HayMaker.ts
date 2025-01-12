@@ -13,6 +13,7 @@ import {TileType} from '../../../common/TileType';
 import {SimpleDeferredAction} from '../../deferredActions/DeferredAction';
 import {digit} from '../../cards/Options';
 import {IPlayer} from '../../IPlayer';
+import {CardResource} from '../../../common/CardResource';
 
 export class HayMaker extends Card implements IProjectCard {
   constructor() {
@@ -26,7 +27,7 @@ export class HayMaker extends Card implements IProjectCard {
         cardNumber: 'Q55',
         renderData: CardRenderer.builder((b) => {
           b.minus().greenery().asterix().br;
-          b.resourceCube().heat(12, {digit}).br;
+          b.resource(CardResource.RESOURCE_CUBE).heat(12, {digit}).br;
         }),
         description: 'Remove one of your greenery and place a neutral cube. Gain 12 heat.',
       },

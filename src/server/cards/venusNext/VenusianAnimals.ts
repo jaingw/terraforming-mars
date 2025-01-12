@@ -6,7 +6,6 @@ import {CardResource} from '../../../common/CardResource';
 import {CardName} from '../../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
 import {Card} from '../Card';
-import {played} from '../Options';
 
 export class VenusianAnimals extends Card implements IProjectCard {
   constructor() {
@@ -23,7 +22,7 @@ export class VenusianAnimals extends Card implements IProjectCard {
         cardNumber: '259',
         renderData: CardRenderer.builder((b) => {
           b.effect('When you play a science tag, including this, add 1 animal to this card.', (eb)=> {
-            eb.science(1, {played}).startEffect.animals(1);
+            eb.tag(Tag.SCIENCE).startEffect.resource(CardResource.ANIMAL);
           }).br;
           b.vpText('1 VP per animal on this card.');
         }),
@@ -34,5 +33,8 @@ export class VenusianAnimals extends Card implements IProjectCard {
   public onCardPlayed(player: IPlayer, card: IProjectCard): void {
     const qty = player.tags.cardTagCount(card, Tag.SCIENCE);
     player.addResourceTo(this, {qty, log: true});
+  }
+  public onColonyAddedToLeavitt(player: IPlayer): void {
+    player.addResourceTo(this, {qty: 1, log: true});
   }
 }

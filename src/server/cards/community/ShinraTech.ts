@@ -4,7 +4,6 @@ import {IProjectCard} from '../IProjectCard';
 import {ICorporationCard} from '../corporation/ICorporationCard';
 import {CardName} from '../../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
-import {played} from '../Options';
 import {Resource} from '../../../common/Resource';
 import {CorporationCard} from '../corporation/CorporationCard';
 
@@ -23,7 +22,7 @@ export class ShinraTech extends CorporationCard {
           b.production((pb) => pb.energy(2)).megacredits(39).cards(1, {secondaryTag: Tag.POWER});
           b.corpBox('effect', (ce) => {
             ce.effect('When playing a power tag, increase MC production 2 steps', (eb) => {
-              eb.energy(1, {played}).asterix().startEffect.production((pb) => pb.megacredits(2));
+              eb.tag(Tag.POWER).asterix().startEffect.production((pb) => pb.megacredits(2));
             });
           });
         }),

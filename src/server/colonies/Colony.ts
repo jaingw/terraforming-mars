@@ -26,6 +26,9 @@ import {sum} from '../../common/utils/utils';
 import {message} from '../logs/MessageBuilder';
 import {PlayerInput} from '../PlayerInput';
 import {SerializedColony} from '../SerializedColony';
+import {PlaceHazardTile} from '../deferredActions/PlaceHazardTile';
+import {TileType} from '../../../src/common/TileType';
+import {ErodeSpacesDeferred} from '../underworld/ErodeSpacesDeferred';
 import {CardName} from '../../common/cards/CardName';
 
 export enum ShouldIncreaseTrack { YES, NO, ASK }
@@ -102,6 +105,12 @@ export abstract class Colony implements IColony {
     if (index>-1) {
       this.colonies.splice(index, 1);
     }
+
+    if (this.name === ColonyName.LEAVITT) {
+      for (const card of player.tableau) {
+        card.onColonyAddedToLeavitt?.(player);
+      }
+    }
   }
 
   /*
@@ -173,6 +182,10 @@ export abstract class Colony implements IColony {
           }
         }
       }
+    }
+
+    if (player.cardIsInEffect(CardName.VENUS_TRADE_HUB)) {
+      player.stock.add(Resource.MEGACREDITS, 3, {log: true});
     }
 
     // !== false because default is true.
@@ -296,6 +309,25 @@ export abstract class Colony implements IColony {
       });
       break;
 
+    case ColonyBenefit.PLACE_HAZARD_TILE:
+      const spaces = game.board.getAvailableSpacesOnLand(player)
+        .filter(((space) => space.tile === undefined))
+        .filter((space) => {
+          const adjacentSpaces = game.board.getAdjacentSpaces(space);
+          return adjacentSpaces.filter((space) => space.tile !== undefined).length === 0;
+        });
+
+      game.defer(new PlaceHazardTile(player, TileType.EROSION_MILD, {title: 'Select space next to no other tile for hazard', spaces}));
+      break;
+
+    case ColonyBenefit.ERODE_SPACES_ADJACENT_TO_HAZARDS:
+      game.defer(new ErodeSpacesDeferred(player, quantity));
+      break;
+
+    case ColonyBenefit.GAIN_MC_PER_HAZARD_TILE:
+      player.stock.megacredits += game.board.getHazards().length;
+      break;
+
     case ColonyBenefit.GAIN_TR:
       if (quantity > 0) {
         player.increaseTerraformRating(quantity, {log: true});
@@ -315,8 +347,10 @@ export abstract class Colony implements IColony {
       break;
 
     case ColonyBenefit.LOSE_RESOURCES:
-      if (resource === undefined) throw new Error('Resource cannot be undefined');
-      player.stock.deduct(resource, quantity);
+      if (resource === undefined) {
+        throw new Error('Resource cannot be undefined');
+      }
+      player.stock.deduct(resource, Math.min(player.stock.get(resource), quantity), {log: true});
       break;
 
     case ColonyBenefit.OPPONENT_DISCARD:

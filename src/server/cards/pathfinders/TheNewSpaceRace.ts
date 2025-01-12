@@ -20,7 +20,7 @@ export class TheNewSpaceRace extends PreludeCard implements IProjectCard {
       },
 
       metadata: {
-        cardNumber: '',
+        cardNumber: 'PfP14',
         renderData: CardRenderer.builder((b) => {
           b.firstPlayer().rulingParty().megacredits(12).br;
         }),

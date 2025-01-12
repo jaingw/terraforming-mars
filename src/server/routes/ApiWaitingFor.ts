@@ -20,22 +20,28 @@ export class ApiWaitingFor extends Handler {
     return player.getWaitingFor() !== undefined || (player.game.phase === Phase.END || player.game.phase === Phase.ABANDON || player.game.phase === Phase.TIMEOUT);
   }
 
-  // When player is undefined, caller is a spectator.
+  private playersWithInputs(game: IGame) {
+    return game.getPlayersInGenerationOrder().filter((player) => player.getWaitingFor() !== undefined).map((player) => player.color);
+  }
+
   private getPlayerWaitingForModel(player: IPlayer, game: IGame, gameAge: number, undoCount: number): WaitingForModel {
+    const inputs = this.playersWithInputs(game);
     if (this.timeToGo(player)) {
       // 由前端判断是否需要刷新
-      return {result: 'GO'};
+      return {result: 'GO', waitingFor: inputs};
     } else if (game.gameAge !== gameAge || game.undoCount > undoCount) {
-      return {result: 'REFRESH'};
+      return {result: 'REFRESH', waitingFor: inputs};
     }
-    return {result: 'WAIT'};
+    return {result: 'WAIT', waitingFor: inputs};
   }
 
   private getSpectatorWaitingForModel(game: IGame, gameAge: number, undoCount: number): WaitingForModel {
+    const inputs = this.playersWithInputs(game);
+
     if (game.gameAge > gameAge || game.undoCount > undoCount) {
-      return {result: 'REFRESH'};
+      return {result: 'REFRESH', waitingFor: inputs};
     }
-    return {result: 'WAIT'};
+    return {result: 'WAIT', waitingFor: inputs};
   }
 
   public override async get(req: Request, res: Response, ctx: Context): Promise<void> {

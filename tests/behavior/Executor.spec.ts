@@ -10,7 +10,7 @@ import {Resource} from '../../src/common/Resource';
 import {CardResource} from '../../src/common/CardResource';
 import {Tag} from '../../src/common/cards/Tag';
 import {CardType} from '../../src/common/cards/CardType';
-import {cast, fakeCard, formatLogMessage, runAllActions} from '../TestingUtils';
+import {cast, fakeCard, formatMessage, runAllActions} from '../TestingUtils';
 import {SelectCard} from '../../src/server/inputs/SelectCard';
 import {SelectPlayer} from '../../src/server/inputs/SelectPlayer';
 import {Tardigrades} from '../../src/server/cards/base/Tardigrades';
@@ -31,6 +31,8 @@ import {SelectSpace} from '../../src/server/inputs/SelectSpace';
 import {UnderworldExpansion} from '../../src/server/underworld/UnderworldExpansion';
 import {SelectResources} from '../../src/server/inputs/SelectResources';
 import {SelectResource} from '../../src/server/inputs/SelectResource';
+import {MicroMills} from '../../src/server/cards/base/MicroMills';
+import {HeatTrappers} from '../../src/server/cards/base/HeatTrappers';
 
 function asUnits(player: IPlayer): Units {
   return {
@@ -434,22 +436,30 @@ describe('Executor', () => {
     executor.execute({standardResource: 2}, player, fake);
     runAllActions(game);
 
-    const selectResources = cast(player.popWaitingFor(), SelectResources);
-    selectResources.options[2].cb(1);
-    selectResources.options[3].cb(1);
-    selectResources.cb(undefined);
+    const selectResource = cast(player.popWaitingFor(), SelectResource);
+    selectResource.cb('titanium');
 
-    expect(player.stock.asUnits()).deep.eq(Units.of({titanium: 1, plants: 1}));
+    expect(player.stock.asUnits()).deep.eq(Units.of({titanium: 2}));
   });
 
   it('standard resource, same', () => {
-    executor.execute({standardResource: {count: 3, same: true}}, player, fake);
+    executor.execute({standardResource: {count: 3}}, player, fake);
     runAllActions(game);
 
-    const selectResources = cast(player.popWaitingFor(), SelectResource);
-    selectResources.options[5].cb();
+    const selectResource = cast(player.popWaitingFor(), SelectResource);
+    selectResource.cb('heat');
 
     expect(player.stock.asUnits()).deep.eq(Units.of({heat: 3}));
+  });
+
+  it('standard resource, different', () => {
+    executor.execute({standardResource: {count: 3, same: false}}, player, fake);
+    runAllActions(game);
+
+    const selectResources = cast(player.popWaitingFor(), SelectResources);
+    selectResources.cb(Units.of({titanium: 2, plants: 1}));
+
+    expect(player.stock.asUnits()).deep.eq(Units.of({titanium: 2, plants: 1}));
   });
 
   it('spend - steel', () => {
@@ -510,7 +520,7 @@ describe('Executor', () => {
 
   it('spend - heat - Stormcraft', () => {
     const stormcraft = new StormCraftIncorporated();
-    player.setCorporationForTest(stormcraft);
+    player.corporations.push(stormcraft);
     const behavior = {spend: {heat: 3}};
     expect(executor.canExecute(behavior, player, fake)).is.false;
     stormcraft.resourceCount = 1;
@@ -534,6 +544,35 @@ describe('Executor', () => {
     expect(executor.canExecute(behavior, player, fake)).is.true;
     executor.execute(behavior, player, fake);
     expect(fake.resourceCount).eq(0);
+  });
+
+  it('spend - cards', () => {
+    const behavior = {spend: {cards: 2}};
+    player.cardsInHand.push(fake);
+    expect(executor.canExecute(behavior, player, fake)).is.false;
+    const microMills = new MicroMills();
+    player.cardsInHand.push(microMills);
+    expect(executor.canExecute(behavior, player, fake)).is.false;
+    const heatTrappers = new HeatTrappers();
+    player.cardsInHand.push(heatTrappers);
+    expect(executor.canExecute(behavior, player, fake)).is.true;
+    const birds = new Birds();
+    player.cardsInHand.push(birds);
+
+    executor.execute(behavior, player, fake);
+    runAllActions(game);
+    const selectCard = cast(player.popWaitingFor(), SelectCard);
+
+    expect(selectCard.cards).has.length(3);
+    expect(selectCard.config.max).eq(2);
+    expect(selectCard.config.min).eq(2);
+
+    selectCard.cb([birds, heatTrappers]);
+    runAllActions(game);
+
+    expect(player.cardsInHand).to.have.members([fake, microMills]);
+    expect(game.projectDeck.discardPile).to.contain(birds);
+    expect(game.projectDeck.discardPile).to.contain(heatTrappers);
   });
 
   it('or, canExecute', () => {
@@ -636,7 +675,7 @@ describe('Executor', () => {
       executor.execute({log: run.log}, player, fake);
       const logMessage = game.gameLog.pop()!;
       expect(logMessage.message).eq(run.expected.message);
-      expect(formatLogMessage(logMessage)).eq(run.expected.formatted);
+      expect(formatMessage(logMessage)).eq(run.expected.formatted);
     });
   }
 });

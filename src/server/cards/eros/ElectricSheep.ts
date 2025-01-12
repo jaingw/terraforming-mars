@@ -26,7 +26,7 @@ export class ElectricSheep extends Card implements IActionCard, IProjectCard {
         cardNumber: 'Q13',
         renderData: CardRenderer.builder((b) => {
           b.action('Add 1 Animal to this card.', (eb) => {
-            eb.empty().startAction.animals(1);
+            eb.empty().startAction.tag(Tag.ANIMAL);
           }).br;
           b.production((pb) => pb.minus().energy(1, {all})).br;
           b.vpText('1 VP per Animal on this card.');

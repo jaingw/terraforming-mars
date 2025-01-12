@@ -1,16 +1,36 @@
 @import "./variables.less";
 .card-corporation-expansion {
     position: absolute;
-    top: 75px;
-    right: 33px;
+    top: 38px;
+    right: -11px;
+}
+
+.card-standard-expansion {
+  position: absolute;
+  top: 90px;
+  right: 33px;
 }
 
 .card-container {
+    .project-icon-expansion-container {
+        flex-direction: row;
+        display: flex;
+        bottom: 5px;
+        left: 5px;
+        position: absolute;
+    }
+    .resource-card-icon-expansion-container {
+        flex-direction: row;
+        display: flex;
+        bottom: 38px;
+        left: 5px;
+        position: absolute;
+    }
     .project-icon:after,
     .preludeCard-icon:after {
-        bottom: 8px;
-        left: 8px;
-        margin: 0px;
+        position: relative;
+        margin: 3px;
+        display: block;
     }
     .card-superscript {
       vertical-align: super;
@@ -855,6 +875,26 @@
                     font-size: 7px;
                 }
             }
+            .card-eris-logo {
+              color: darkred;
+              font-family: Times, serif;
+              letter-spacing: 4px;
+              text-align: center;
+              margin: 0 0 10px -35px;
+              text-shadow: 0 0 1px black, 0 2px 2px darkred;
+              font-size: 40px;
+              position: relative;
+              top: 22px;
+            }
+            .card-athena-logo {
+                color: teal;
+                text-transform: uppercase;
+                text-shadow: 0 0 1px black, 0 2px 2px darkturquoise;
+                font-size: 28px;
+                position: relative;
+                top: 20px;
+                right: 20px;
+            }
             .card-tycho-magnetics-logo {
               position: absolute;
               text-transform: none;
@@ -1210,6 +1250,13 @@
                 height: 45px;
                 width: 144px;
                 background-size: 144px 45px;
+                margin-top: 10px;
+            }
+            .card-mars-frontier-alliance-logo {
+                background-image: url(./assets/pathfinders/corp-logo-mars-frontier-alliance.png);
+                height: 45px;
+                width: 170px;
+                background-size: 170px 45px;
                 margin-top: 10px;
             }
             .card-ambient-logo {
@@ -1604,6 +1651,9 @@
             .card-resource-hydroelectric-resource {
                 background-image: url(./assets/resources/hydroelectric-resource.png);
             }
+            .card-resource-one {
+              background-image: url(./assets/resources/one.png);
+            }
             .card-resource-clone-trooper {
                 background-image: url(./assets/resources/clone-trooper.png);
             }
@@ -1651,6 +1701,9 @@
             }
             .card-resource-supply-chain {
               background-image: url(./assets/underworld/card-resource-supply-chain.png);
+            }
+            .card-resource-director {
+              background-image: url("./assets/resources/clone-trooper.png");
             }
 
             .card-neutral-delegate {
@@ -1935,6 +1988,15 @@
                 background-repeat: no-repeat;
                 margin-right: 10px;
             }
+            .turmoil-policy-tile {
+                display: inline-block;
+                background-image: url(./assets/resources/policy.png);
+                width: 60px;
+                height: 40px;
+                background-size: 60px 40px;
+                background-repeat: no-repeat;
+                margin-right: 10px;
+            }
             /*tags*/
             .card-resource-tag {
                 position: relative;
@@ -2127,6 +2189,9 @@
               position: relative;
               top: 1px;
               left: 1px;
+            }
+            .card-tag-ares {
+              background-image: url("./assets/expansion_icons/expansion_icon_ares.png");
             }
             /* special case Project requirements */
             .card-project-requirements {

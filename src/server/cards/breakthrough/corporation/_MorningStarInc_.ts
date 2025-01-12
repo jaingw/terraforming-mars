@@ -1,9 +1,8 @@
 import {IPlayer} from '../../../IPlayer';
 import {CardRenderer} from '../../render/CardRenderer';
 import {MorningStarInc} from '../../venusNext/MorningStarInc';
-import {played} from '../../Options';
 import {CardName} from '../../../../common/cards/CardName';
-import {ICardMetadata} from '../../../../common/cards/ICardMetadata';
+import {CardMetadata} from '../../../../common/cards/CardMetadata';
 import {Size} from '../../../../common/cards/render/Size';
 import {Tag} from '../../../../common/cards/Tag';
 import {Resource} from '../../../../common/Resource';
@@ -27,7 +26,7 @@ export class _MorningStarInc_ extends MorningStarInc {
     this.isUsed = true;
     return undefined;
   }
-  public override get metadata(): ICardMetadata {
+  public override get metadata(): CardMetadata {
     return {
       cardNumber: 'R06',
       description: 'You start with 50 M€. As your first action, reveal cards from the deck until you have revealed 3 Venus-tag cards. Take those into hand and discard the rest.',
@@ -39,7 +38,7 @@ export class _MorningStarInc_ extends MorningStarInc {
             eb.venus(1).startEffect.text('+/- 2');
           });
           ce.effect('Your Venus requirements are +/- 2 steps, your choice in each case. Once per game, increase your M€ production 1 step for each Venus tag you have.', (eb) => {
-            eb.empty().startAction.production((pb) => pb.megacredits(1).slash().venus(1, {played})).asterix();
+            eb.empty().startAction.production((pb) => pb.megacredits(1).slash().tag(Tag.VENUS)).asterix();
           });
         });
       }),

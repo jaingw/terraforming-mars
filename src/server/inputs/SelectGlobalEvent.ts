@@ -4,6 +4,7 @@ import {SelectGlobalEventModel} from '../../common/models/PlayerInputModel';
 import {IGlobalEvent} from '../turmoil/globalEvents/IGlobalEvent';
 import {InputError} from './InputError';
 import {UnexpectedInput} from './UnexpectedInput';
+import {toName} from '../../common/utils/utils';
 
 export class SelectGlobalEvent extends BasePlayerInput<Array<IGlobalEvent>> {
   constructor(public globalEvents: ReadonlyArray<IGlobalEvent>,
@@ -21,7 +22,7 @@ export class SelectGlobalEvent extends BasePlayerInput<Array<IGlobalEvent>> {
       title: this.title,
       buttonLabel: this.buttonLabel,
       type: 'globalEvent',
-      globalEventNames: this.globalEvents.map((globalEvent) => globalEvent.name),
+      globalEventNames: this.globalEvents.map(toName),
       max: this.maxCardsToSelect,
       min: this.minCardsToSelect,
     };

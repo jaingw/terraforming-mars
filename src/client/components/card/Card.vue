@@ -16,7 +16,7 @@
             <div  v-html="getCardContent()"></div>
           </template>
         </div>
-      <CardExpansion :expansion="getCardExpansion()" :isCorporation="isCorporationCard()"/>
+      <CardExpansion :expansion="getCardExpansion()" :isCorporation="isCorporationCard()" :isResourceCard="isResourceCard()" :compatibility="getCardCompatibility()" />
       <CardCustomizedContent v-if="isLunaChainCard" :amount="getLunaChainPay()" />
       <CardResourceCounter v-if="hasResourceType" :amount="getResourceAmount()" :type="resourceType" />
       <CardExtraContent :card="card" />
@@ -40,7 +40,7 @@ import CardTags from './CardTags.vue';
 import {CardType} from '@/common/cards/CardType';
 import CardContent from './CardContent.vue';
 import CardHelp from './CardHelp.vue';
-import {ICardMetadata} from '@/common/cards/ICardMetadata';
+import {CardMetadata} from '@/common/cards/CardMetadata';
 import {Tag} from '@/common/cards/Tag';
 import {getPreferences} from '@/client/utils/PreferencesManager';
 import {CardResource} from '@/common/CardResource';
@@ -49,7 +49,8 @@ import {Color} from '@/common/Color';
 import {CardRequirementDescriptor} from '@/common/cards/CardRequirementDescriptor';
 // import * as HTML_DATA from '@/genfiles/cards-html-cn.json';
 import * as HTML_DATA from '@/genfiles/cards.json';
-
+import {GameModule} from '@/common/cards/GameModule';
+// import { newCard } from '@/server/createCard';
 
 function getCardContentCN(cardName: string): string {
   let htmlData: string | undefined = '';
@@ -95,7 +96,11 @@ export default Vue.extend({
     const cardName = this.card.name;
 
     const card = getCardOrThrow(cardName);
-
+    // 调试卡牌样式临时用下
+    // const icard = newCard(cardName);
+    // if(icard){
+    //   card.metadata = icard.metadata;
+    // }
     return {
       cardInstance: card,
       hovering: false,
@@ -108,8 +113,18 @@ export default Vue.extend({
       }
       return '';
     },
-    getCardExpansion(): string {
+    getCardExpansion(): GameModule {
       return this.cardInstance.module;
+    },
+    getCardCompatibility(): Array<GameModule> {
+      return this.cardInstance.compatibility;
+    },
+    isResourceCard(): boolean {
+      if (this.cardInstance.resourceType !== undefined) {
+        return true;
+      } else {
+        return false;
+      }
     },
     getTags(): Array<string> {
       const type = this.getCardType();
@@ -154,7 +169,7 @@ export default Vue.extend({
       }
       return classes.join(' ');
     },
-    getCardMetadata(): ICardMetadata {
+    getCardMetadata(): CardMetadata {
       return this.cardInstance.metadata;
     },
     getCardRequirements(): Array<CardRequirementDescriptor> {

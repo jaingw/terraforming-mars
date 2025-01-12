@@ -3,7 +3,7 @@ import {IPlayer} from '../../IPlayer';
 import {PlayerInput} from '../../PlayerInput';
 import {CardRenderer} from '../render/CardRenderer';
 import {CeoCard} from './CeoCard';
-import {all, played} from '../Options';
+import {all} from '../Options';
 import {Tag} from '../../../common/cards/Tag';
 import {IProjectCard} from '../IProjectCard';
 import {MoonExpansion} from '../../moon/MoonExpansion';
@@ -16,21 +16,22 @@ export class Neil extends CeoCard {
       metadata: {
         cardNumber: 'L34',
         renderData: CardRenderer.builder((b) => {
-          b.moon(1, {played, all}).colon().megacredits(1);
+          b.effect('Gain 1 M€ when any player plays a Moon tag.', (eb) => eb.tag(Tag.MOON, {all}).startEffect.megacredits(1));
           b.br.br;
           b.opgArrow().production((pb) => pb.megacredits(1, {text: '?'})).asterix();
         }),
-        description: 'Gain 1 M€ when any player plays a Moon tag. Once per game, increase your M€ production by the value of the LOWEST Moon rate.',
+        description: 'Once per game, increase your M€ production by the value of the LOWEST Moon rate.',
       },
     });
   }
 
-  public onCardPlayed(player: IPlayer, card: IProjectCard) {
+  public onCardPlayedFromAnyPlayer(thisCardOwner: IPlayer, _playedCardOwner: IPlayer, card: IProjectCard) {
     for (const tag of card.tags) {
       if (tag === Tag.MOON) {
-        player.game.getCardPlayerOrThrow(this.name).stock.add(Resource.MEGACREDITS, 1, {log: true});
+        thisCardOwner.game.getCardPlayerOrThrow(this.name).stock.add(Resource.MEGACREDITS, 1, {log: true});
       }
     }
+    return undefined;
   }
 
   public action(player: IPlayer): PlayerInput | undefined {

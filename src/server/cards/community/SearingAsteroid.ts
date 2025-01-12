@@ -3,7 +3,6 @@
 // import {CardRenderer} from '../render/CardRenderer';
 // import {Card} from '../Card';
 // import {Tag} from '../../../common/cards/Tag';
-// import {played} from '../Options';
 // import {ICorporationCard} from '../corporation/ICorporationCard';
 // import {ResourceType} from '../../../common/ResourceType';
 //
@@ -24,7 +23,7 @@
 //             eb.temperature(1).startEffect.asteroids(1);
 //           }).br;
 //           b.effect('When paying for a space card, or the STANDARD TEMPERATURE PROJECT, Asteroid here may be used as 3 M€ each.', (eb) => {
-//             eb.titanium(1, {played}).slash().temperature(1).startEffect.asteroids(1).equals().megacredits(3);
+//             eb.titanium(1, { }).slash().temperature(1).startEffect.asteroids(1).equals().megacredits(3);
 //           }).br;
 //         }),
 //         description: 'You start with 48M€ and 2 Asteroid  on this card.',

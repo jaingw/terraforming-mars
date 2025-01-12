@@ -4,11 +4,12 @@ import {getPreferences} from '@/client/utils/PreferencesManager';
 import {LogMessageData} from '@/common/logs/LogMessageData';
 import {Log} from '@/common/logs/Log';
 import {PlayerViewModel} from '@/common/models/PlayerModel';
-import {TileType, tileTypeToString} from '@/common/TileType';
+import {tileTypeToString} from '@/common/TileType';
+import {Color} from '@/common/Color';
 
 type Context = {
   playerView: PlayerViewModel | undefined;
-  players: Map<string /* Color */, string>;
+  players: Map<Color, string>;
 }
 
 const context: Context = {
@@ -31,19 +32,12 @@ export function translateMessage(message: Message): string {
       return '';
     }
     switch (datum.type) {
-    case LogMessageDataType.RAW_STRING:
-      return datum.value;
     case LogMessageDataType.PLAYER:
       return context.players.get(datum.value) ?? datum.value;
     case LogMessageDataType.TILE_TYPE:
-      return tileTypeToString[datum.value as unknown as TileType];
-    case LogMessageDataType.CARD:
-    case LogMessageDataType.GLOBAL_EVENT:
-    case LogMessageDataType.STRING:
-    case LogMessageDataType.PARTY:
-      return translateText(datum.value);
+      return tileTypeToString[datum.value];
     default:
-      return translateText(datum.value);
+      return translateText(datum.value.toString());
     }
   });
 }
@@ -87,7 +81,10 @@ export function translateText(englishText: string): string {
     }
     // 转小写匹配
     if (translatedText === undefined && temp.length > 10 && temp !== temp.toLocaleLowerCase() ) {
-      translatedText = translateText(temp.toLocaleLowerCase());
+      const t = translateText(temp.toLocaleLowerCase());
+      if (t !== temp.toLocaleLowerCase()) {
+        translatedText = t;
+      }
     }
   }
   if (translatedText === undefined && englishText && englishText.replace(/#..\d+/g, '').length > 3 ) {// 测试环境打印
@@ -128,7 +125,7 @@ export function translateTextWithParams(englishText: string, params: Array<strin
 }
 
 function normalizeText(text: string): string {
-  return text.replace(/[\n\r]/g, '').replace(/[ ]+/g, ' ');
+  return text.replace(/[\n\r]/g, '').replace(/[ ]+/g, ' ').trim();
 }
 
 function translateChildren(node: Node) {

@@ -4,7 +4,7 @@ import {CardName} from '../../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
 import {Card} from '../Card';
 import {IPlayer} from '../../IPlayer';
-import {SelectSpace} from '../../inputs/SelectSpace';
+import {PlaceCityTile} from '../../deferredActions/PlaceCityTile';
 import {Tag} from '../../../common/cards/Tag';
 
 export class GaiaCity extends Card implements IProjectCard {
@@ -41,14 +41,14 @@ export class GaiaCity extends Card implements IProjectCard {
   }
 
   public override bespokePlay(player: IPlayer) {
-    return new SelectSpace(
-      'Select space for a city tile',
-      this.availableSpaces(player))
-      .andThen((space) => {
+    player.game.defer(new PlaceCityTile(player, {
+      spaces: this.availableSpaces(player),
+    })).andThen((space) => {
+      if (space) {
         const occupyBefore = space.player === player;
-        player.game.addCity(player, space);
-        player.game.grantPlacementBonuses(player, space, /* coveringExistingTile= */false, occupyBefore);
-        return undefined;
-      });
+        player.game.grantPlacementBonuses(player, space, false, occupyBefore);
+      }
+    });
+    return undefined;
   }
 }

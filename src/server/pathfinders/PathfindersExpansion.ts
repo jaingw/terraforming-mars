@@ -15,7 +15,7 @@ import {IPlayer} from '../IPlayer';
 import {Resource} from '../../common/Resource';
 import {CardResource} from '../../common/CardResource';
 import {Reward} from '../../common/pathfinders/Reward';
-import {SelectResourcesDeferred} from '../deferredActions/SelectResourcesDeferred';
+import {GainResources} from '../inputs/GainResources';
 import {SendDelegateToArea} from '../deferredActions/SendDelegateToArea';
 import {Tag} from '../../common/cards/Tag';
 import {VictoryPointsBreakdown} from '../game/VictoryPointsBreakdown';
@@ -107,22 +107,22 @@ export class PathfindersExpansion {
             PathfindersExpansion.grant(reward, from, tag);
           });
         }
-        rewards.everyone.forEach((reward) => {
-          game.getPlayers().forEach((p) => {
+      }
+      rewards.everyone.forEach((reward) => {
+        game.getPlayers().forEach((p) => {
+          PathfindersExpansion.grant(reward, p, tag);
+        });
+      });
+      if (rewards.mostTags.length > 0) {
+        const players = PathfindersExpansion.playersWithMostTags(
+          tag,
+          game.getPlayers().slice(),
+          from );
+        rewards.mostTags.forEach((reward) => {
+          players.forEach((p) => {
             PathfindersExpansion.grant(reward, p, tag);
           });
         });
-        if (rewards.mostTags.length > 0) {
-          const players = PathfindersExpansion.playersWithMostTags(
-            tag,
-            game.getPlayers().slice(),
-            from );
-          rewards.mostTags.forEach((reward) => {
-            players.forEach((p) => {
-              PathfindersExpansion.grant(reward, p, tag);
-            });
-          });
-        }
       }
       // game.indentation--;
     }
@@ -205,7 +205,7 @@ export class PathfindersExpansion {
       player.production.add(Resource.PLANTS, 1, {log: true});
       break;
     case 'resource':
-      game.defer(new SelectResourcesDeferred(player, 1, 'Gain 1 resource for your Planetary track bonus.'));
+      player.defer(new GainResources(player, 1, 'Gain 1 resource for your Planetary track bonus.'));
       break;
     case 'steel':
       player.stock.add(Resource.STEEL, 1, {log: true});

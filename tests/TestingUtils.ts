@@ -14,7 +14,6 @@ import {CardName} from '../src/common/cards/CardName';
 import {CardType} from '../src/common/cards/CardType';
 import {SpaceId} from '../src/common/Types';
 import {PlayerInput} from '../src/server/PlayerInput';
-import {IActionCard} from '../src/server/cards/ICard';
 import {TestPlayer} from './TestPlayer';
 import {PartyName} from '../src/common/turmoil/PartyName';
 import {IPlayer} from '../src/server/IPlayer';
@@ -22,6 +21,7 @@ import {CardRequirements} from '../src/server/cards/requirements/CardRequirement
 import {Warning} from '../src/common/cards/Warning';
 import {TurmoilUtil} from '../src/server/turmoil/TurmoilUtil';
 import {testGame as testGameProxy} from './TestGame';
+import {LogMessage} from '../src/common/logs/LogMessage';
 
 /**
  * Creates a new game for testing. Has some hidden behavior for testing:
@@ -82,13 +82,6 @@ export function addCity(player: IPlayer, spaceId?: SpaceId): Space {
   return space;
 }
 
-export function resetBoard(game: IGame): void {
-  game.board.spaces.forEach((space) => {
-    space.player = undefined;
-    space.tile = undefined;
-  });
-}
-
 export function setRulingParty(game: IGame, partyName: PartyName, policyId?: PolicyId) {
   const turmoil = TurmoilUtil.getTurmoil(game);
   const party = turmoil.getPartyByName(partyName);
@@ -110,17 +103,8 @@ export function runAllActions(game: IGame) {
 }
 
 export function runNextAction(game: IGame) {
-  return game.deferredActions.pop()?.execute();
-}
-
-// Use churnAction instead.
-export function cardAction(card: IActionCard, player: TestPlayer): PlayerInput | undefined {
-  const input = card.action(player);
-  if (input !== undefined) {
-    return input;
-  }
-  runAllActions(player.game);
-  return player.popWaitingFor();
+  const action = game.deferredActions.pop();
+  return action?.execute();
 }
 
 export function forceGenerationEnd(game: IGame) {
@@ -129,17 +113,15 @@ export function forceGenerationEnd(game: IGame) {
   game.playerIsFinishedTakingActions();
 }
 
-/** Provides a readable version of a log message for easier testing. */
-export function formatLogMessage(message: Message): string {
-  return Log.applyData(message, (datum) => datum.value);
-}
-
 /** Provides a readable version of a message for easier testing. */
 export function formatMessage(message: Message | string): string {
   if (typeof message === 'string') {
     return message;
   }
-  return Log.applyData(message, (datum) => datum.value);
+  const text = Log.applyData(message, (datum) => datum.value.toString());
+  const prefix = (message instanceof LogMessage && message.playerId) ?
+    `(${message.playerId}): ` : '';
+  return prefix + text;
 }
 
 /**
@@ -233,7 +215,7 @@ export function cast<T>(obj: any, klass: ConstructorOf<T> | undefined): T | unde
     return undefined;
   }
   if (!(obj instanceof klass)) {
-    throw new Error(`Not an instance of ${klass.name}: ${obj.constructor.name}`);
+    throw new Error(`Not an instance of ${klass.name}: ${obj?.constructor?.name}`);
   }
   return obj;
 }
@@ -262,26 +244,6 @@ export function getSendADelegateOption(player: IPlayer) {
 }
 
 /**
- * Simulate the behavior of a playing a project card run through the deferred action queue, returning the
- * next input the player must supply.
- *
- * ../srcsee churn.
- */
-export function churnPlay(card: IProjectCard, player: TestPlayer) {
-  return churn(() => card.play(player), player);
-}
-
-/**
- * Simulate the behavior of a card action run through the deferred action queue, returning the
- * next input the player must supply.
- *
- * ../srcsee churn.
- */
-export function churnAction(card: IActionCard, player: TestPlayer) {
-  return churn(() => card.action(player), player);
-}
-
-/**
  * Simulate the behavior of a block run through the deferred action queue, returning the next input
  * the player must supply.
  *
@@ -304,4 +266,12 @@ export function doWait<T>(player: TestPlayer, klass: new (...args: any[]) => T, 
   const [waitingFor, cb] = player.popWaitingFor2();
   f(cast(waitingFor, klass));
   cb?.();
+}
+
+/**
+ * Returns the name of any named item. Ideal for iterating with the Array.map and other iterative functions.
+ */
+// Use common/utils/utils/toName
+export function toName<T>(item: {name: T}): T {
+  return item.name;
 }

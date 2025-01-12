@@ -13,11 +13,11 @@ import {SelectOption} from '../inputs/SelectOption';
 import {SelectColony} from '../inputs/SelectColony';
 import {IColonyTrader} from '../colonies/IColonyTrader';
 import {TradeWithCollegiumCopernicus} from '../cards/pathfinders/CollegiumCopernicus';
-import {VictoryPointsBreakdown} from '../game/VictoryPointsBreakdown';
 import {message} from '../logs/MessageBuilder';
 import {TradeWithDarksideSmugglersUnion} from '../cards/moon/DarksideSmugglersUnion';
 import {Payment} from '../../common/inputs/Payment';
 import {TradeWithHectateSpeditions} from '../cards/underworld/HecateSpeditions';
+import {ColonyName} from '../../../src/common/colonies/ColonyName';
 
 const STEEL_TRADE_COST = 4;
 
@@ -105,17 +105,36 @@ export class Colonies {
     return trade;
   }
 
-  public getPlayableColonies(allowDuplicate: boolean = false) {
+  public getPlayableColonies(allowDuplicate: boolean = false, cost: number = 0) {
     return this.player.game.colonies
-      .filter((colony) => colony.isActive && !colony.isFull())
-      .filter((colony) => allowDuplicate || !colony.colonies.includes(this.player));
+      .filter((colony) => {
+        if (colony.isActive === false) {
+          return false;
+        }
+        if (colony.isFull()) {
+          return false;
+        }
+        if (!allowDuplicate && colony.colonies.includes(this.player)) {
+          return false;
+        }
+        if (colony.name === ColonyName.VENUS && !this.player.canAfford({cost: cost, tr: {venus: 1}})) {
+          return false;
+        }
+        if (colony.name === ColonyName.EUROPA && !this.player.canAfford({cost: cost, tr: {oceans: 1}})) {
+          return false;
+        }
+        if (colony.name === ColonyName.LEAVITT) {
+          const pharmacyUnion = this.player.getCorporation(CardName.PHARMACY_UNION);
+          if ((pharmacyUnion?.resourceCount ?? 0) > 0 && !this.player.canAfford({cost: cost, tr: {tr: 1}})) {
+            return false;
+          }
+        }
+        return true;
+      });
   }
 
-  public calculateVictoryPoints(victoryPointsBreakdown: VictoryPointsBreakdown) {
-    // Titania Colony VP
-    if (this.player.colonies.victoryPoints > 0) {
-      victoryPointsBreakdown.setVictoryPoints('victoryPoints', this.victoryPoints, 'Colony VP');
-    }
+  public getVictoryPoints(): number {
+    return this.player.colonies.victoryPoints;
   }
 
   public getFleetSize(): number {

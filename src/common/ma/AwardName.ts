@@ -31,9 +31,9 @@ export const awardNames = [
   'Lunar Magnate',
 
   // Amazonis Planitia
+  // NB: the fifth award for Amazonis Plantia is Coordinator, also part of Arabia Terra.
   'Curator',
   'Engineer',
-  'Historian',
   'Tourist',
   'A. Zoologist',
 
@@ -41,13 +41,13 @@ export const awardNames = [
   'Cosmic Settler',
   'Botanist',
   'Coordinator',
-  'Manufacturer',
+  'A. Manufacturer',
   'Zoologist',
 
   // Terra Cimmeria
   'Biologist',
   'T. Economizer',
-  'Politician',
+  'T. Politician',
   'Urbanist',
   'Warmonger',
 
@@ -61,6 +61,38 @@ export const awardNames = [
   // Underworld
   'Kingpin',
   'EdgeLord',
+
+  // Modular awards
+  'Administrator',
+  'Constructor',
+  'Founder',
+  'Investor',
+  'Highlander',
+  'Landscaper',
+  'Metropolist',
+  'Mogul',
+  'Traveller',
+
 ] as const;
 
 export type AwardName = typeof awardNames[number];
+
+export const AWARD_RENAMES = new Map<string, AwardName>([
+  // When renaming an award add the old name here (like the example below), and add a TODO (like the example below)
+  // And remember to add a test in spec.ts.
+
+  // TODO(yournamehere): remove after 2021-04-05
+  // TODO(kberg): remove after 2024-11-15
+  
+  ['DesertSettler', 'Desert Settler'],
+  ['EstateDealer', 'Estate Dealer'],
+  ['Entrepeneur', 'Entrepreneur'],
+  ['Manufacturer', 'A. Manufacturer'],
+  ['Politician', 'T. Politician'],
+  ['Historian', 'Coordinator'],
+]);
+
+export function maybeRenamedAward(name: string): AwardName {
+  const renamed = AWARD_RENAMES.get(name);
+  return renamed ?? (name as AwardName);
+}

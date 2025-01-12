@@ -12,6 +12,6 @@ export enum Color {
   GRAY = 'gray',
 }
 
-export const PLAYER_COLORS = [Color.BLUE, Color.RED, Color.YELLOW, Color.GREEN, Color.BLACK, Color.PURPLE, Color.ORANGE, Color.PINK] as const;
+export const PLAYER_COLORS = [Color.RED, Color.GREEN, Color.YELLOW, Color.BLUE, Color.BLACK, Color.PURPLE, Color.ORANGE, Color.PINK] as const;
 
 export type ColorWithNeutral = Color | 'NEUTRAL';

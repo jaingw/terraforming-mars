@@ -19,13 +19,14 @@ import {SelectOption} from '../../inputs/SelectOption';
 import {PlaceOceanTile} from '../../deferredActions/PlaceOceanTile';
 import {PlaceGreeneryTile} from '../../deferredActions/PlaceGreeneryTile';
 import {IProjectCard, isIProjectCard} from '../IProjectCard';
+import { digit } from '../Options';
 
 export class EnergySavingEcology extends CorporationCard {
   constructor() {
     super({
       name: CardName.ENERGY_SAVING_ECOLOGY,
       tags: [Tag.SPACE],
-      startingMegaCredits: 39,
+      startingMegaCredits: 45,
       resourceType: CardResource.ASTEROID,
 
       behavior: {
@@ -35,19 +36,16 @@ export class EnergySavingEcology extends CorporationCard {
 
       metadata: {
         cardNumber: 'XB20',
-        description: 'You start with 2 heat production and 39 M€.',
+        description: 'You start with 2 heat production and 45 M€.',
         renderData: CardRenderer.builder((b) => {
-          b.production((pb) => pb.heat(2)).nbsp.megacredits(39);
-          b.br;
-          b.minus().megacredits(10).slash().production((pb) => pb.heat(1)).colon().asteroids(1).or().br;
-          b.effect('', (eb) => {
-            eb.minus().asteroids(4, {digit}).startAction.oceans(1).or();
+          b.production((pb) => pb.heat(2)).nbsp.megacredits(45).br;
+          b.minus().megacredits(10).slash().production((pb) => pb.heat(1)).colon().resource(CardResource.ASTEROID, 1).or().br; //asteroids
+          b.effect(undefined, (eb) => {
+            eb.minus().resource(CardResource.ASTEROID, {amount:3,digit}).startAction.oceans(1).or();
           }).br;
-          b.effect('当你打出费用10或更少的牌或每次提升热产（而不是每1热产）时，拿1数据资源在此卡上，或移除此卡上的4数据放1海，或移除此卡上的6数据放1树,', (eb) => {
-            eb.minus().asteroids(6, {digit}).startAction.greenery();
-          }).br;
-          // b.minus().asteroid({amount: 6, digit, all}).startAction.greenery().br;
-          // b.text('当你打出费用10或更少的牌或提升热产时，拿1数据资源在此卡上（即使1次升2+热产，也只能拿1数据），或移除此卡上的4数据放1海，或移除此卡上的6数据放1树,');
+          b.effect('当你打出费用10或更少的牌或每次提升热产（而不是每1热产）时，拿1陨石资源在此卡上，或移除此卡上的3陨石放1海，或移除此卡上的5陨石放1树,', (eb) => {
+            eb.minus().resource(CardResource.ASTEROID, {amount:5,digit}).startAction.greenery();
+          });
         }),
       },
     });
@@ -67,15 +65,15 @@ export class EnergySavingEcology extends CorporationCard {
           player.addResourceTo(this, 1);
           return undefined;
         }),
-        new SelectOption('Remove 4 asteroid resources from this card to place an Ocean', 'Remove resource').andThen(() => {
-          player.removeResourceFrom(this, 4);
+        new SelectOption('Remove 3 asteroid resources from this card to place an Ocean', 'Remove resource').andThen(() => {
+          player.removeResourceFrom(this, 3);
           player.game.defer(new PlaceOceanTile(player));
           return undefined;
         }));
 
-      if (this.resourceCount >= 6) {
-        options.options.push( new SelectOption('Remove 6 asteroid resource from this card to place an Ocean', 'Remove resource').andThen(() => {
-          player.removeResourceFrom(this, 6);
+      if (this.resourceCount >= 5) {
+        options.options.push( new SelectOption('Remove 5 asteroid resource from this card to place an Ocean', 'Remove resource').andThen(() => {
+          player.removeResourceFrom(this, 5);
           player.game.defer(new PlaceGreeneryTile(player));
           return undefined;
         }));

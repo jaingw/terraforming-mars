@@ -16,7 +16,7 @@ export type DrawOptions = {
 
 export type AllOptions = DrawOptions & ChooseOptions;
 
-export class DrawCards extends DeferredAction<Array<IProjectCard>> {
+export class DrawCards extends DeferredAction<ReadonlyArray<IProjectCard>> {
   // Visible for tests.
   public constructor(
     player: IPlayer,
@@ -29,7 +29,7 @@ export class DrawCards extends DeferredAction<Array<IProjectCard>> {
   public execute(): undefined {
     this.player.game.resettable = false;
     const game = this.player.game;
-    const cards = game.projectDeck.drawByCondition(game, this.count, (card) => {
+    const cards = game.projectDeck.drawByConditionLegacy(game, this.count, (card) => {
       if (this.options.resource !== undefined && this.options.resource !== card.resourceType) {
         return false;
       }

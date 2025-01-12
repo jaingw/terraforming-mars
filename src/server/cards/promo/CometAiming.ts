@@ -27,26 +27,29 @@ export class CometAiming extends Card implements IActionCard, IProjectCard {
         cardNumber: 'X16',
         renderData: CardRenderer.builder((b) => {
           b.action('Spend 1 titanium to add 1 asteroid resource to ANY CARD.', (eb) => {
-            eb.titanium(1).startAction.asteroids(1).asterix();
+            eb.titanium(1).startAction.resource(CardResource.ASTEROID).asterix();
           }).br;
           b.or().br;
           b.action('Remove 1 asteroid here to place an ocean.', (eb) => {
-            eb.asteroids(1).startAction.oceans(1);
+            eb.resource(CardResource.ASTEROID).startAction.oceans(1);
           });
         }),
       },
     });
   }
 
-  private canPlaceOcean(player: IPlayer) {
-    return player.game.canAddOcean() && player.canAfford({cost: 0, tr: {oceans: 1}});
+  private canAffordOcean(player: IPlayer) {
+    return player.canAfford({cost: 0, tr: {oceans: 1}});
   }
 
   public canAct(player: IPlayer): boolean {
     if (player.titanium > 0) {
       return true;
     }
-    return this.resourceCount > 0 && this.canPlaceOcean(player);
+    if (this.resourceCount > 0 && this.canAffordOcean(player)) {
+      return true;
+    }
+    return false;
   }
 
   public action(player: IPlayer) {
@@ -76,16 +79,21 @@ export class CometAiming extends Card implements IActionCard, IProjectCard {
     };
 
     if (this.resourceCount === 0) {
-      if (asteroidCards.length === 1) return addAsteroidToSelf();
-      return addAsteroidToCard;
+      return asteroidCards.length === 1 ? addAsteroidToSelf() : addAsteroidToCard;
     }
 
-    if (player.titanium === 0) return spendAsteroidResource();
+    if (player.titanium === 0) {
+      return spendAsteroidResource();
+    }
 
     const availableActions = [];
 
-    if (this.canPlaceOcean(player)) {
-      availableActions.push(new SelectOption('Remove an asteroid resource to place an ocean', 'Remove asteroid').andThen(spendAsteroidResource));
+    if (this.canAffordOcean(player)) {
+      const placeOceanOption = new SelectOption('Remove an asteroid resource to place an ocean', 'Remove asteroid').andThen(spendAsteroidResource);
+      if (!player.game.canAddOcean()) {
+        placeOceanOption.warnings = ['maxoceans'];
+      }
+      availableActions.push(placeOceanOption);
     }
 
     if (asteroidCards.length === 1) {

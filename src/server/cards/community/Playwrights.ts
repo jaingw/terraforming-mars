@@ -11,6 +11,7 @@ import {Size} from '../../../common/cards/render/Size';
 import {MoonExpansion} from '../../moon/MoonExpansion';
 import {all} from '../Options';
 import {SpecialDesignProxy} from './SpecialDesignProxy';
+import {inplaceRemove} from '../../../common/utils/utils';
 
 export class Playwrights extends CorporationCard {
   constructor() {
@@ -58,16 +59,16 @@ export class Playwrights extends CorporationCard {
     }
 
     return new SelectCard<IProjectCard>(
-      'Select event card to replay at cost in M€ and remove from play', 'Select', replayableEvents)
+      'Select event card to replay at cost in M€ and remove from play', 'Select', replayableEvents, {played: false})
       .andThen(
         ([card]) => {
           const selectedCard: IProjectCard = card;
 
           let ownPlayer:IPlayer;
           players.forEach((p) => {
-            const cardIndex = p.playedCards.findIndex((c) => c.name === selectedCard.name);
-            if (cardIndex !== -1) {
-              p.playedCards.splice(cardIndex, 1);
+            const card = p.getPlayedCard(selectedCard.name);
+            if (card !== undefined) {
+              inplaceRemove(p.playedCards, card);
               ownPlayer = p;
             }
           });

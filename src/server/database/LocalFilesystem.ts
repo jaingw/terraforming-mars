@@ -14,6 +14,7 @@ const defaultDbFolder = path.resolve(process.cwd(), './db/files');
 export class LocalFilesystem implements IDatabase {
   protected readonly dbFolder: string;
   private readonly historyFolder: string;
+  public static quiet: boolean = false;
   constructor(dbFolder: string = defaultDbFolder) {
     this.dbFolder = dbFolder;
     this.historyFolder = path.resolve(dbFolder, 'history');

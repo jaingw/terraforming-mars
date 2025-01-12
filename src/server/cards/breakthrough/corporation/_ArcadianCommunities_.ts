@@ -4,7 +4,7 @@ import {ArcadianCommunities} from '../../promo/ArcadianCommunities';
 import {Space} from '../../../boards/Space';
 import {digit} from '../../Options';
 import {CardName} from '../../../../common/cards/CardName';
-import {ICardMetadata} from '../../../../common/cards/ICardMetadata';
+import {CardMetadata} from '../../../../common/cards/CardMetadata';
 import {Size} from '../../../../common/cards/render/Size';
 import {BoardType} from '../../../boards/BoardType';
 
@@ -26,7 +26,7 @@ export class _ArcadianCommunities_ extends ArcadianCommunities {
   }
 
 
-  public override get metadata(): ICardMetadata {
+  public override get metadata(): CardMetadata {
     return {
       cardNumber: 'R44',
       description: 'You start with 40 M€ and 10 steel. AS YOUR FIRST ACTION, PLACE A COMMUNITY [PLAYER MARKER] ON A NON-RESERVED AREA.',

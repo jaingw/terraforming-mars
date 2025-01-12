@@ -2,7 +2,6 @@ import {IProjectCard} from '../IProjectCard';
 import {Card} from '../Card';
 import {IPlayer} from '../../IPlayer';
 import {CardRenderer} from '../render/CardRenderer';
-import {played} from '../Options';
 import {CardName} from '../../../common/cards/CardName';
 import {CardType} from '../../../common/cards/CardType';
 import {Tag} from '../../../common/cards/Tag';
@@ -19,7 +18,7 @@ export class StarCoreMining extends Card implements IProjectCard {
         cardNumber: 'Q07',
         renderData: CardRenderer.builder((b) => {
           b.effect(undefined, (eb) => {
-            eb.startEffect.plants(1, {played}).slash().energy(1, {played}).slash().space( {played}).slash().building(1, {played});
+            eb.startEffect.tag(Tag.PLANT).slash().tag(Tag.POWER).slash().tag(Tag.SPACE).slash().tag(Tag.BUILDING);
           }).br;
           b.effect(undefined, (eb) => {
             eb.empty().startEffect;

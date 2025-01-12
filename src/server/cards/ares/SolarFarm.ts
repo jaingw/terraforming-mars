@@ -1,6 +1,6 @@
 import {Card} from '../Card';
 import {CardName} from '../../../common/cards/CardName';
-import {SelectSpace} from '../../inputs/SelectSpace';
+import {PlaceTile} from '../../../server/deferredActions/PlaceTile';
 import {CanAffordOptions, IPlayer} from '../../IPlayer';
 import {SpaceBonus} from '../../../common/boards/SpaceBonus';
 import {TileType} from '../../../common/TileType';
@@ -12,6 +12,7 @@ import {message} from '../../logs/MessageBuilder';
 import {Units} from '../../../common/Units';
 
 export class SolarFarm extends Card implements IProjectCard {
+  public data: number = -1; 
   constructor() {
     super({
       type: CardType.AUTOMATED,
@@ -35,24 +36,36 @@ export class SolarFarm extends Card implements IProjectCard {
   }
 
   public productionBox(player: IPlayer) {
-    const space = player.game.board.getSpaceByTileCard(this.name);
-    if (space === undefined) {
-      throw new Error('Solar Farm space not found');
+    if(this.data === -1) {
+      // 历史没有设置data的已打出卡牌, 重新加载时, 需要重新初始化data;
+      const space = player.game.board.getSpaceByTileCard(this.name);
+      if (space === undefined) {
+        throw new Error('Solar Farm space not found');
+      }
+      this.data = space.bonus.filter((b) => b === SpaceBonus.PLANT).length;
     }
-    const plantsOnSpace = space.bonus.filter((b) => b === SpaceBonus.PLANT).length;
-    return Units.of({energy: plantsOnSpace});
+    return Units.of({energy: this.data ?? 0});
   }
 
   public override bespokePlay(player: IPlayer) {
-    return new SelectSpace(message('Select space for ${0} tile', (b) => b.card(this)), player.game.board.getAvailableSpacesOnLand(player))
-      .andThen((space) => {
-        player.game.addTile(player, space, {
-          tileType: TileType.SOLAR_FARM,
-          card: this.name,
-        });
-        player.production.adjust(this.productionBox(player), {log: true});
-        space.adjacency = {bonus: [SpaceBonus.ENERGY, SpaceBonus.ENERGY]};
-        return undefined;
-      });
+    // 先设置个0, 避免重新初始化data;
+    this.data = 0;
+    player.game.defer(
+      new PlaceTile(player, {
+        tile: {tileType: TileType.SOLAR_FARM, card: this.name},
+        on: 'land',
+        title: message('Select space for ${0} tile', (b) => b.card(this)),
+        adjacencyBonus: {bonus: [SpaceBonus.ENERGY, SpaceBonus.ENERGY]},
+      }).andThen(() => {
+        
+        const space = player.game.board.getSpaceByTileCard(this.name);
+        if (space === undefined) {
+          throw new Error('Solar Farm space not found');
+        }
+        this.data = space.bonus.filter((b) => b === SpaceBonus.PLANT).length;
+        const production = Units.of({energy: this.data ?? 0});
+        player.production.adjust(production, {log: true});
+      }));
+    return undefined;
   }
 }

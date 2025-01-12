@@ -110,9 +110,9 @@
                           <td class="game-end-mc">
                             <div>{{ p.megaCredits }}</div>
                           </td>
-                          <td>
-                            <div v-if="game.gameOptions.showTimers && !game.gameOptions.rankOption" class="game-end-timer">{{ getTimer(p) }}</div>
-                            <div v-if="game.gameOptions.showTimers && game.gameOptions.rankOption" :class="[checkTimeOut(p), 'game-end-timer']">{{ getCountDownTimer(p) }}</div>
+                          <td  v-if="game.gameOptions.showTimers">
+                            <div v-if="!game.gameOptions.rankOption" class="game-end-timer">{{ getTimer(p) }}</div>
+                            <div v-if="game.gameOptions.rankOption" :class="[checkTimeOut(p), 'game-end-timer']">{{ getCountDownTimer(p) }}</div>
                           </td>
                           <td><div class="game-end-timer">{{ p.actionsTakenThisGame }}</div></td>
                       </tr>
@@ -207,7 +207,7 @@ import {PlayerViewModel, PublicPlayerModel, ViewModel} from '@/common/models/Pla
 import Board from '@/client/components/Board.vue';
 import MoonBoard from '@/client/components/moon/MoonBoard.vue';
 import PlanetaryTracks from '@/client/components/pathfinders/PlanetaryTracks.vue';
-import LogPanel from '@/client/components/LogPanel.vue';
+import LogPanel from '@/client/components/logpanel/LogPanel.vue';
 import AppButton from '@/client/components/common/AppButton.vue';
 import RankTier from '@/client/components/RankTier.vue';
 import VictoryPointChart, {DataSet} from '@/client/components/gameend/VictoryPointChart.vue';
@@ -222,6 +222,7 @@ import {$t, translateTextWithParams, translateMessage} from '@/client/directives
 import {Message} from '@/common/logs/Message';
 import {LogMessageDataType} from '@/common/logs/LogMessageDataType';
 import {MADetail} from '@/common/game/IVictoryPointsBreakdown';
+import {AwardName} from '@/common/ma/AwardName';
 
 function getViewModel(playerView: ViewModel | undefined, spectator: ViewModel | undefined): ViewModel {
   if (playerView !== undefined) return playerView;
@@ -290,7 +291,7 @@ export default Vue.extend({
     isSoloGame(): boolean {
       return this.players.length === 1;
     },
-    vpDataset(): Array<DataSet> {
+    vpDataset(): ReadonlyArray<DataSet> {
       return this.players.map((player) => {
         return {
           label: player.name,
@@ -299,11 +300,11 @@ export default Vue.extend({
         };
       });
     },
-    globalsDataset(): Array<DataSet> {
+    globalsDataset(): ReadonlyArray<DataSet> {
       const dataset = [];
 
       const gpg = this.game.globalsPerGeneration;
-      function getValues(param: GlobalParameter, min: number, max: number): Array<number> {
+      function getValues(param: GlobalParameter, min: number, max: number): ReadonlyArray<number> {
         return gpg.map((entry) => {
           const val = entry[param] ?? min;
           return 100 * (val - min) / (max - min);
@@ -339,8 +340,8 @@ export default Vue.extend({
     VictoryPointChart,
   },
   methods: {
-    getEndGamePlayerRowColorClass(color: string): string {
-      return playerColorClass(color.toLowerCase(), 'bg_transparent');
+    getEndGamePlayerRowColorClass(color: Color): string {
+      return playerColorClass(color, 'bg_transparent');
     },
     getTimer(p: PublicPlayerModel): string {
       return Timer.toString(p.timer);
@@ -417,11 +418,11 @@ export default Vue.extend({
           },
           {
             type: LogMessageDataType.AWARD,
-            value: data.messageArgs[1],
+            value: data.messageArgs[1] as AwardName,
           },
           {
             type: LogMessageDataType.PLAYER,
-            value: data.messageArgs[2],
+            value: data.messageArgs[2] as Color,
           },
         ],
       };

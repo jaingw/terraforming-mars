@@ -4,6 +4,7 @@ import {SerializedCard} from './SerializedCard';
 import {SerializedTimer} from '../common/SerializedTimer';
 import {PlayerId} from '../common/Types';
 import {UnderworldPlayerData} from './underworld/UnderworldData';
+import {AlliedParty} from './turmoil/AlliedParty';
 
 export interface SerializedPlayerId {
     id: PlayerId;
@@ -19,6 +20,9 @@ export interface SerializedPlayer extends DeprecatedFields{
     actionsTakenThisGame: number;
     actionsTakenThisRound: number;
     actionsThisGeneration: Array<CardName>;
+    alliedParty: AlliedParty | undefined;
+    // TODO(kberg): remove ? by 2024-10-01
+    autoPass?: boolean;
     beginner: boolean;
     canUseCorruptionAsMegacredits: boolean;
     canUseHeatAsMegaCredits: boolean;
@@ -42,6 +46,7 @@ export interface SerializedPlayer extends DeprecatedFields{
     dealtPreludeCards: Array<SerializedCard>;
     dealtProjectCards: Array<SerializedCard>;
     draftedCards: Array<SerializedCard>;
+    draftHand: Array<CardName>,
     energy: number;
     energyProduction: number;
     fleetSize: number;
@@ -67,6 +72,7 @@ export interface SerializedPlayer extends DeprecatedFields{
     playedCards: Array<SerializedCard>;
     politicalAgendasActionUsedCount: number;
     preludeCardsInHand: Array<SerializedCard>;
+    preservationProgram: boolean;
     removedFromPlayCards: Array<SerializedCard>;
     removingPlayers: Array<string>;
     scienceTagCount: number;

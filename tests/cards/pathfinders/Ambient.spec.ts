@@ -12,6 +12,7 @@ import {Phase} from '../../../src/common/Phase';
 import {Reds} from '../../../src/server/turmoil/parties/Reds';
 import {PoliticalAgendas} from '../../../src/server/turmoil/PoliticalAgendas';
 import {TurmoilUtil} from '../../../src/server/turmoil/TurmoilUtil';
+import {toName} from '../../../src/common/utils/utils';
 
 describe('Ambient', function() {
   let card: Ambient;
@@ -22,7 +23,7 @@ describe('Ambient', function() {
   beforeEach(function() {
     card = new Ambient();
     [game, player, player2] = testGame(2);
-    player.setCorporationForTest(card);
+    player.corporations.push(card);
   });
 
   it('initialAction', function() {
@@ -93,7 +94,7 @@ describe('Ambient', function() {
       return option === undefined ? undefined : cast(option, SelectCard);
     };
 
-    expect(getBlueActions()!.cards.map((c) => (c as any).name)).deep.eq([card.name]);
+    expect(getBlueActions()!.cards.map(toName)).deep.eq([card.name]);
 
     expect(player.getTerraformRating()).eq(20);
 
@@ -107,7 +108,7 @@ describe('Ambient', function() {
 
     // 原站本来是runall之前为undefined  runall之后才有，本站一次执行多个行动， action也放到runall里面去了
     // expect(getBlueActions()).is.undefined;
-    expect(getBlueActions()!.cards.map((c) => (c as any).name)).deep.eq([card.name]);
+    expect(getBlueActions()!.cards.map(toName)).deep.eq([card.name]);
 
     getBlueActions()!.cb([card]);
     runAllActions(game);
@@ -129,7 +130,7 @@ describe('Ambient', function() {
   for (const run of redsRuns) {
     it('is compatible with Reds + Helion ' + JSON.stringify(run), () => {
       [game, player, player2] = testGame(2, {turmoilExtension: true});
-      player.setCorporationForTest(card);
+      player.corporations.push(card);
       player.canUseHeatAsMegaCredits = true;
       player.game.phase = Phase.ACTION;
       const turmoil = TurmoilUtil.getTurmoil(game);

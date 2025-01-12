@@ -24,14 +24,14 @@ export class CityStandardProject extends StandardProjectCard {
   }
 
   protected override discount(player: IPlayer): number {
-    if (player.playedCards.find((card) => card.name === CardName.PREFABRICATION_OF_HUMAN_HABITATS)) {
+    if (player.getPlayedCard(CardName.PREFABRICATION_OF_HUMAN_HABITATS)) {
       return 2 + super.discount(player);
     }
     return super.discount(player);
   }
 
   public override canPayWith(player: IPlayer) {
-    if (player.playedCards.find((card) => card.name === CardName.PREFABRICATION_OF_HUMAN_HABITATS)) {
+    if (player.getPlayedCard(CardName.PREFABRICATION_OF_HUMAN_HABITATS)) {
       return {steel: true};
     } else if (player.isCorporation(CardName._MINING_GUILD_)) {/* 矿业公司突破：标动城市可以用铁 */
       return {steel: true};

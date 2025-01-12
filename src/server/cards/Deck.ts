@@ -10,7 +10,7 @@ import {inplaceShuffle} from '../utils/shuffle';
 import {Logger} from '../logs/Logger';
 import {IPreludeCard} from './prelude/IPreludeCard';
 import {ICeoCard} from './ceos/ICeoCard';
-import {IGame} from '../IGame';
+import {toName} from '../../common/utils/utils';
 
 /**
  * A deck of cards to draw from, and also its discard pile.
@@ -59,13 +59,6 @@ export class Deck<T extends ICard> {
     }
   }
 
-  /**
-   * @deprecated use draw or drawOrThrow
-   */
-  public drawLegacy(logger: Logger, source: 'top' | 'bottom' = 'top'): T {
-    return this.drawOrThrow(logger, source);
-  }
-
   public draw(logger: Logger, source: 'top' | 'bottom' = 'top'): T | undefined {
     if (this.drawPile.length === 0) {
       logger.log(`The ${this.type} discard pile has been shuffled to form a new deck.`);
@@ -98,8 +91,12 @@ export class Deck<T extends ICard> {
     return cards;
   }
 
+  public size(): number {
+    return this.drawPile.length + this.discardPile.length;
+  }
+
   public canDraw(count: number): boolean {
-    return this.drawPile.length + this.discardPile.length > count;
+    return this.size() >= count;
   }
 
   private shuffleIfNecessary(logger: Logger) {
@@ -117,16 +114,23 @@ export class Deck<T extends ICard> {
     return card;
   }
 
-  public drawByCondition(game: IGame, total: number, include: (card: T) => boolean) {
+  /**
+   * @deprecated use drawByConditionOrThrow, or create a safer version of drawByCondition
+   */
+  public drawByConditionLegacy(logger: Logger, total: number, include: (card: T) => boolean) {
+    return this.drawByConditionOrThrow(logger, total, include);
+  }
+
+  public drawByConditionOrThrow(logger: Logger, total: number, include: (card: T) => boolean) {
     const result: Array<T> = [];
     const discardedCards = new Set<CardName>();
 
     while (result.length < total) {
       if (discardedCards.size >= this.drawPile.length + this.discardPile.length) {
-        game.log(`discarded every ${this.type} card without a match`);
+        logger.log(`discarded every ${this.type} card without a match`);
         break;
       }
-      const projectCard = this.drawLegacy(game);
+      const projectCard = this.drawOrThrow(logger);
       if (include(projectCard)) {
         result.push(projectCard);
       } else {
@@ -135,7 +139,7 @@ export class Deck<T extends ICard> {
       }
     }
     if (discardedCards.size > 0) {
-      LogHelper.logDiscardedCards(game, Array.from(discardedCards));
+      LogHelper.logDiscardedCards(logger, Array.from(discardedCards));
     }
 
     return result;
@@ -152,8 +156,8 @@ export class Deck<T extends ICard> {
 
   public serialize(): SerializedDeck {
     return {
-      drawPile: this.drawPile.map((c) => c.name),
-      discardPile: this.discardPile.map((c) => c.name),
+      drawPile: this.drawPile.map(toName),
+      discardPile: this.discardPile.map(toName),
     };
   }
 }

@@ -17,7 +17,6 @@ import {OrOptions} from '../../../inputs/OrOptions';
 import {CardName} from '../../../../common/cards/CardName';
 import {CardRenderer} from '../../render/CardRenderer';
 import {played} from '../../Options';
-
 export class _Recyclon_ extends CorporationCard {
   constructor() {
     super({
@@ -36,11 +35,11 @@ export class _Recyclon_ extends CorporationCard {
         description: 'You start with 38 M€ and 1 steel production.',
         renderData: CardRenderer.builder((b) => {
           b.br.br;
-          b.megacredits(38).microbes(1).microbes(1).asterix().nbsp.production((pb) => pb.steel(1));
+          b.megacredits(38).resource(CardResource.MICROBE).resource(CardResource.MICROBE).asterix().nbsp.production((pb) => pb.steel(1));
           b.corpBox('effect', (ce) => {
-            ce.effect('When you play a building tag, including this, gain 1 microbe to this card, or remove ALL microbes to gain same amount plants.', (eb) => {
-              eb.microbes(1, {played}).slash().building(1, {played}).colon().microbes(1).or();
-              eb.text('X').microbes(1).startEffect.text('X').plants(1);
+            ce.effect('When you play a building tag, including this, or a microbe tag, gain 1 microbe to this card, or remove ALL microbes to gain same amount plants.', (eb) => {
+              eb.tag(Tag.MICROBE).slash().tag(Tag.BUILDING).colon().resource(CardResource.MICROBE).or();
+              eb.text('X').resource(CardResource.MICROBE).startEffect.text('X').plants(1);
             });
           });
         }),

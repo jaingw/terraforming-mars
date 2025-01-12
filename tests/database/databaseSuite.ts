@@ -1,7 +1,8 @@
-import {expect} from 'chai';
-import {use} from 'chai';
+import {expect, use} from 'chai';
 import chaiAsPromised = require('chai-as-promised');
 use(chaiAsPromised);
+import chaiDeepEqualIgnoreUndefined from 'chai-deep-equal-ignore-undefined';
+use(chaiDeepEqualIgnoreUndefined);
 
 import {ITestDatabase} from './ITestDatabase';
 import {Game} from '../../src/server/Game';
@@ -9,25 +10,27 @@ import {TestPlayer} from '../TestPlayer';
 import {restoreTestDatabase, setTestDatabase} from '../utils/setup';
 import {GameId} from '../../src/common/Types';
 import {statusCode} from '../../src/common/http/statusCode';
+import {cast} from '../TestingUtils';
+import {SelectInitialCards} from '../../src/server/inputs/SelectInitialCards';
 
 /**
  * Describes a database test
  */
-export type DatabaseTestDescriptor = {
+export type DatabaseTestDescriptor<T extends ITestDatabase> = {
   name: string,
-  constructor: () => ITestDatabase,
+  constructor: () => T,
   stats: any,
   omit?: Partial<{
     purgeUnfinishedGames: boolean,
     markFinished: boolean,
     moreCleaning: boolean,
   }>,
-  otherTests?(dbFunction: () => ITestDatabase): void,
+  otherTests?(dbFactory: () => T): void,
 };
 
-export function describeDatabaseSuite(dtor: DatabaseTestDescriptor) {
+export function describeDatabaseSuite<T extends ITestDatabase>(dtor: DatabaseTestDescriptor<T>) {
   describe(dtor.name, () => {
-    let db: ITestDatabase;
+    let db: T;
     beforeEach(() => {
       db = dtor.constructor();
       setTestDatabase(db);
@@ -50,6 +53,7 @@ export function describeDatabaseSuite(dtor: DatabaseTestDescriptor) {
     it('getGameIds - removes duplicates', async () => {
       const player = TestPlayer.BLACK.newPlayer();
       const game = Game.newInstance('game-id-1212', [player], player);
+      cast(player.popWaitingFor(), SelectInitialCards);
       await db.lastSaveGamePromise;
       game.save();
       await db.lastSaveGamePromise;
@@ -61,6 +65,7 @@ export function describeDatabaseSuite(dtor: DatabaseTestDescriptor) {
     it('getGameIds - includes finished games', async () => {
       const player = TestPlayer.BLACK.newPlayer();
       const game = Game.newInstance('game-id-1212', [player], player);
+      cast(player.popWaitingFor(), SelectInitialCards);
       await db.lastSaveGamePromise;
       Game.newInstance('game-id-2323', [player], player);
       await db.lastSaveGamePromise;
@@ -206,6 +211,24 @@ export function describeDatabaseSuite(dtor: DatabaseTestDescriptor) {
       //   expect(postPurgeEntry).is.undefined;
       // });
     }
+
+    it('getGame', async () => {
+      const player = TestPlayer.BLACK.newPlayer();
+      const game = Game.newInstance('game-id-1212', [player], player, {underworldExpansion: true});
+      await db.lastSaveGamePromise;
+      expect(game.lastSaveId).eq(1);
+
+      player.megaCredits = 200;
+      game.log('databaseSuite.getGame test');
+
+      const expected = game.serialize();
+      await db.saveGame(game);
+
+      const actual = await db.getGame(game.id);
+      expect(actual.gameLog[actual.gameLog.length -1].message).eq('databaseSuite.getGame test');
+      expect(actual.gameOptions.underworldExpansion).eq(true);
+      expect(actual).deepEqualIgnoreUndefined(expected);
+    });
 
     it('getGameVersion', async () => {
       const player = TestPlayer.BLACK.newPlayer();

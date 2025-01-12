@@ -1,4 +1,3 @@
-/* eslint-disable guard-for-in */
 // Generates the files settings.json and translations.json, stored in src/genfiles
 
 require('dotenv').config();
@@ -49,8 +48,15 @@ function getAllTranslations() {
 function getBuildMetadata() /* {head: string, date: string} */ {
   // assumes SOURCE_VERSION is git hash
   if (process.env.SOURCE_VERSION) {
+    const randomString = Array(20).fill()
+    .map(() => {
+        const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+        return chars[Math.floor(Math.random() * chars.length)];
+    })
+    .join('');
+     
     return {
-      head: process.env.SOURCE_VERSION.substring(0, 7),
+      head: randomString.substring(0, 7),
       date: new Date(new Date().getTime()+8*60*60*1000).toISOString().slice(0, 16).replace('T', ' '),
     };
   }
@@ -180,3 +186,4 @@ function generateTranslations() {
 }
 
 generateTranslations();
+

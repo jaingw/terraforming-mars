@@ -134,9 +134,6 @@
       <div class="card-curiosity-ii-logo">Curiosity II</div>
     </template>
 
-    <template v-else-if="title === CardName.ERIS">
-      <div class="card-eris-logo">Eris</div>
-    </template>
     <template v-else-if="title === CardName.COLONIAL_ONE">
       <div class="card-colonial-one-logo">Colonial One</div>
     </template>
@@ -181,6 +178,9 @@
     </template>
     <template v-else-if="title === CardName.EGLOGUE">
       <div class="card-hotsprings-logo">Eglogue</div>
+    </template>
+    <template v-else-if="title === CardName.EARTHCATCULT">
+      <div class="card-protogen-logo">EarthCatCult</div>
     </template>
     <template v-else-if="title === CardName.SHINRA_TECH">
       <div class="card-playwrights-logo">🌸SHINRA<br/>TECH🌸</div>
@@ -296,6 +296,12 @@
     <template v-else-if="title === CardName.KUIPER_COOPERATIVE">
       <div class="card-kuiper-logo">Kuiper<br/>Cooperative</div>
     </template>
+    <template v-else-if="title === CardName.ERIS">
+      <div class="card-eris-logo">Eris</div>
+    </template>
+    <template v-else-if="title === CardName.ATHENA">
+      <div class="card-athena-logo">Athena</div>
+    </template>
     <template v-else>
       <div :class="logoClass">{{capsTitle}}</div>
     </template>
@@ -326,6 +332,7 @@ const imageOnlyLogos: Map<CardName, string> = new Map([
   [CardName.ROBIN_HAULINGS, 'card-robin-haulings-logo'],
   [CardName.COLLEGIUM_COPERNICUS, 'card-collegium-copernicus-logo'],
   [CardName.MARS_DIRECT, 'card-mars-direct-logo'],
+  [CardName.MARS_FRONTIER_ALLIANCE, 'card-mars-frontier-alliance-logo'],
   [CardName.AMBIENT, 'card-ambient-logo'],
   [CardName.SOYLENT_SEEDLING_SYSTEMS, 'card-soylent-logo'],
   [CardName.BIO_SOL, 'card-bio-sol-logo'],

@@ -24,7 +24,7 @@ export class Cow extends Card implements IActionCard, IProjectCard {
         cardNumber: 'Q15',
         renderData: CardRenderer.builder((b) => {
           b.action('Spend 1 plant to add 1 Animal to this card and gain 5 M€.', (eb) => {
-            eb.plants(1).startAction.megacredits(5).nbsp.animals(1);
+            eb.plants(1).startAction.megacredits(5).nbsp.resource(CardResource.ANIMAL);
           }).br;
           b.vpText('1 VP for per 2 Animals on this card.');
         }),

@@ -14,5 +14,7 @@ export type PlayerInputType =
     'colony' |
     'productionToLose' |
     'aresGlobalParameters' |
-    'globalEvent';
-    // jiang SELECT_GLOBAL_CARD
+    'globalEvent' |
+    'policy' |
+    'resource' |
+    'resources';

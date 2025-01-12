@@ -41,11 +41,11 @@ export class Keplertec extends ActiveCorporationCard {
         renderData: CardRenderer.builder((b) => {
           b.megacredits(33).titanium(3, {digit}).production((pb) => pb.titanium(1)).br;
           b.action('Spend 1 titanium to put a fighter resource on ANY card.', (ab) => {
-            ab.titanium(1).startAction.fighter(1).asterix();
+            ab.titanium(1).startAction.resource(CardResource.FIGHTER).asterix();
           }).br;
           b.effect('When you place a fighter resource on this card, draw 4 random underground resource tokens. ' +
             'Pick one of them and claim the reward on it. Then shuffle the tokens back into the pile.', (eb) => {
-            eb.fighter(1).startEffect.undergroundResources(1, {text: '?'}).asterix();
+            eb.resource(CardResource.FIGHTER).startEffect.undergroundResources(1, {text: '?'}).asterix();
           }).br;
         }),
       },
@@ -59,16 +59,8 @@ export class Keplertec extends ActiveCorporationCard {
     }
     const tokens: Array<UndergroundResourceToken> = [];
     for (let i = 0; i < 4; i++) {
-      const token = game.underworldData.tokens.pop();
-      if (token === undefined) {
-        // TODO(kberg): handle
-        break;
-      }
+      const token = UnderworldExpansion.drawExcavationToken(game);
       tokens.push(token);
-    }
-    if (tokens.length === 0) {
-      // TODO(kberg): handle
-      return;
     }
 
     const orOptions = new OrOptions();

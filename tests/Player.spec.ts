@@ -13,7 +13,6 @@ import {Player} from '../src/server/Player';
 import {Color} from '../src/common/Color';
 import {TharsisRepublic} from '../src/server/cards/corporation/TharsisRepublic';
 import {CardName} from '../src/common/cards/CardName';
-import {GlobalParameter} from '../src/common/GlobalParameter';
 import {cast, doWait, getSendADelegateOption, runAllActions} from './TestingUtils';
 import {SelfReplicatingRobots} from '../src/server/cards/promo/SelfReplicatingRobots';
 import {IProjectCard} from '../src/server/cards/IProjectCard';
@@ -154,29 +153,6 @@ describe('Player', function() {
     expect(bufferGas).to.be.undefined;
   });
 
-  it('wgt includes all parameters at the game start', () => {
-    const player = new Player('blue', Color.BLUE, false, 0, 'p-blue');
-    Game.newInstance('gameid', [player], player, {venusNextExtension: false});
-    player.worldGovernmentTerraforming();
-    const parameters = waitingForGlobalParameters(player);
-    expect(parameters).to.have.members([
-      GlobalParameter.OXYGEN,
-      GlobalParameter.TEMPERATURE,
-      GlobalParameter.OCEANS]);
-  });
-
-  it('wgt includes all parameters at the game start, with Venus', () => {
-    const player = new Player('blue', Color.BLUE, false, 0, 'p-blue');
-    Game.newInstance('gameid', [player], player, {venusNextExtension: true});
-    player.worldGovernmentTerraforming();
-    const parameters = waitingForGlobalParameters(player);
-    expect(parameters).to.have.members([
-      GlobalParameter.OXYGEN,
-      GlobalParameter.TEMPERATURE,
-      GlobalParameter.OCEANS,
-      GlobalParameter.VENUS]);
-  });
-
   // it('wgt includes all parameters at the game start, with The Moon', () => {
   //   const player = TestPlayers.BLUE.newPlayer();
   //  const gameOptions = testGameOptions({venusNextExtension: false, moonExpansion: true});
@@ -191,7 +167,6 @@ describe('Player', function() {
   //    GlobalParameter.MOON_HABITAT_RATE,
   //     GlobalParameter.MOON_LOGISTICS_RATE]);
   // });
-
   it('Include buffer gas for solo games with 63 TR', function() {
     const player = new Player('blue', Color.BLUE, false, 0, 'p-blue');
     Game.newInstance('gameid', [player], player, {soloTR: true});
@@ -257,6 +232,7 @@ describe('Player', function() {
       turmoilPolicyActionUsed: false,
       politicalAgendasActionUsedCount: 0,
       hasTurmoilScienceTagBonus: false,
+      preservationProgram: false,
       oceanBonus: 86,
       scienceTagCount: 97,
       plantsNeededForGreenery: 5,
@@ -276,6 +252,8 @@ describe('Player', function() {
       totalDelegatesPlaced: 0,
       victoryPointsByGeneration: [],
       underworldData: {corruption: 0},
+      alliedParty: {agenda: {bonusId: 'gb01', policyId: 'gp01'}, partyName: PartyName.GREENS},
+      draftHand: [],
       heatForTemperature: 0,
       undoing: false,
       exited: false, // 是否体退
@@ -295,7 +273,7 @@ describe('Player', function() {
     const srr = new SelfReplicatingRobots();
     player.playedCards.push(srr);
     srr.targetCards.push(new LunarBeam());
-    expect(player.getSelfReplicatingRobotsTargetCards().length).eq(1);
+    expect(player.getSelfReplicatingRobotsTargetCards()).has.length(1);
   });
   it('removes tags from card played from self replicating robots', () => {
     const player = TestPlayer.BLUE.newPlayer();
@@ -338,7 +316,7 @@ describe('Player', function() {
     expect(log).is.empty;
 
     player.addResourceTo(card, {qty: 3, log: true});
-    expect(log.length).eq(1);
+    expect(log).has.length(1);
     const logEntry = log[0];
     expect(logEntry.data[1].value).eq('3');
     expect(logEntry.data[3].value).eq('Pets');
@@ -374,26 +352,26 @@ describe('Player', function() {
     card.resourceCount = 6;
     player.removeResourceFrom(card);
     expect(card.resourceCount).eq(5);
-    expect(log.length).eq(1);
+    expect(log).has.length(1);
     expect(log[0].data[1].value).eq('1');
     expect(log[0].data[3].value).eq('Pets');
 
     log.length = 0;
     player.removeResourceFrom(card, 1);
     expect(card.resourceCount).eq(4);
-    expect(log.length).eq(1);
+    expect(log).has.length(1);
     expect(log[0].data[1].value).eq('1');
 
     log.length = 0;
     player.removeResourceFrom(card, 3);
-    expect(log.length).eq(1);
+    expect(log).has.length(1);
     expect(log[0].data[1].value).eq('3');
 
     log.length = 0;
     card.resourceCount = 4;
     player.removeResourceFrom(card, 5);
     expect(card.resourceCount).eq(0);
-    expect(log.length).eq(1);
+    expect(log).has.length(1);
     expect(log[0].data[1].value).eq('4');
   });
 
@@ -513,33 +491,29 @@ describe('Player', function() {
     expect(player.megaCredits).eq(15);
     expect(player.preludeCardsInHand).deep.eq([alliedBanks]);
   });
+
+  it('autopass', () => {
+    const [game, player, player2] = testGame(2);
+
+    game.phase = Phase.ACTION;
+
+    player.autopass = true;
+    player.takeAction();
+    expect(game.activePlayer).eq(player2.id);
+  });
 });
 
-function waitingForGlobalParameters(player: Player): Array<GlobalParameter> {
-  return cast(player.getWaitingFor(), OrOptions).options.map((o) => o.title as string).map(titlesToGlobalParameter);
-}
+it('everybody autopasses', () => {
+  const [game, player, player2] = testGame(2);
 
-function titlesToGlobalParameter(title: string): GlobalParameter {
-  if (title.includes('temperature')) {
-    return GlobalParameter.TEMPERATURE;
-  }
-  if (title.includes('ocean')) {
-    return GlobalParameter.OCEANS;
-  }
-  if (title.includes('oxygen')) {
-    return GlobalParameter.OXYGEN;
-  }
-  if (title.includes('Venus')) {
-    return GlobalParameter.VENUS;
-  }
-  if (title.includes('habitat')) {
-    return GlobalParameter.MOON_HABITAT_RATE;
-  }
-  if (title.includes('mining')) {
-    return GlobalParameter.MOON_MINING_RATE;
-  }
-  if (title.includes('logistics')) {
-    return GlobalParameter.MOON_LOGISTICS_RATE;
-  }
-  throw new Error('title does not match any description: ' + title);
-}
+  game.phase = Phase.ACTION;
+
+  player.autopass = true;
+  player2.autopass = true;
+  player.takeAction();
+
+  expect(game.phase).eq(Phase.RESEARCH);
+  expect(player.autopass).is.false;
+  expect(player2.autopass).is.false;
+});
+

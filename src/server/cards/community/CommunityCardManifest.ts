@@ -1,16 +1,17 @@
-import {CardName} from '../../../common/cards/CardName';
-import {ModuleManifest} from '../ModuleManifest';
-import {GlobalEventName} from '../../../common/turmoil/globalEvents/GlobalEventName';
-
 import {AerospaceMission} from './AerospaceMission';
 import {AgricolaInc} from './AgricolaInc';
+import {Athena} from './Athena';
 import {ByElection} from './ByElection';
+import {CardName} from '../../../common/cards/CardName';
 import {CuriosityII} from './CuriosityII';
+import {Eris} from './Eris';
 import {ExecutiveOrder} from './ExecutiveOrder';
+import {GlobalEventName} from '../../../common/turmoil/globalEvents/GlobalEventName';
 import {Incite} from './Incite';
 import {JunkVentures} from './JunkVentures';
 import {LeadershipSummit} from './LeadershipSummit';
 import {Midas} from './Midas';
+import {ModuleManifest} from '../ModuleManifest';
 import {Playwrights} from './Playwrights';
 import {PoliticalUprising} from './PoliticalUprising';
 import {ProjectWorkshop} from './ProjectWorkshop';
@@ -83,6 +84,8 @@ export const COMMUNITY_CARD_MANIFEST = new ModuleManifest({
     [CardName.PROWLER]: {Factory: Prowler}, // XB17
     [CardName.MIRRORCOAT]: {Factory: MirrorCoat}, // XB18
     [CardName.GREENRING]: {Factory: GreenRing}, // XB19
+    [CardName.ERIS]: {Factory: Eris, compatibility: 'ares'},
+    [CardName.ATHENA]: {Factory: Athena, compatibility: 'ares'},
     [CardName.ENERGY_SAVING_ECOLOGY]: {Factory: EnergySavingEcology}, // XB20
     [CardName.GREEN_LEAF_DANCE]: {Factory: GreenLeafDance}, // XB21
     [CardName.RAINCAT_SCIENTIFIC_PROBE]: {Factory: RaincatScientificProbe}, // XB22

@@ -159,10 +159,11 @@ export class GameHandler extends Handler {
             initialDraftVariant: gameReq.initialDraft,
             moonExpansion: gameReq.moonExpansion,
             moonStandardProjectVariant: gameReq.moonStandardProjectVariant,
+            moonStandardProjectVariant1: gameReq.moonStandardProjectVariant1,
             pathfindersExpansion: gameReq.pathfindersExpansion,
             politicalAgendasExtension: gameReq.politicalAgendasExtension,
             prelude2Expansion: gameReq.prelude2Expansion,
-            preludeDraftVariant: gameReq.preludeDraftVariant,
+            preludeDraftVariant: gameReq.initialDraft, // 初始轮抽肯定带着prelude
             preludeExtension: gameReq.prelude,
             promoCardsOption: gameReq.promoCardsOption,
             erosCardsOption: gameReq.erosCardsOption,
@@ -178,12 +179,13 @@ export class GameHandler extends Handler {
             heatFor: gameReq.heatFor,
             breakthrough: gameReq.breakthrough,
             doubleCorp: gameReq.doubleCorp,
-            initialCorpDraftVariant: gameReq.initialCorpDraftVariant,
+            initialCorpDraftVariant: gameReq.initialCorpDraftVariant && gameReq.doubleCorp,
             startingCeos: gameReq.startingCeos,
             rankOption: gameReq.rankOption, // 天梯
             rankTimeLimit: gameReq.rankTimeLimit, // 天梯
             rankTimePerGeneration: gameReq.rankTimePerGeneration,
             startingCorporations: gameReq.startingCorporations,
+            startingPreludes: gameReq.startingPreludes,
             starWarsExpansion: gameReq.starWarsExpansion,
             turmoilExtension: gameReq.turmoil,
             // twoCorpsVariant: gameReq.twoCorpsVariant,

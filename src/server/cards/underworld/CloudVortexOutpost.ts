@@ -1,11 +1,10 @@
 import {IPlayer} from '../../IPlayer';
 import {Tag} from '../../../common/cards/Tag';
-import {CardType} from '../../../common/cards/CardType';
 import {CardName} from '../../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
 import {PreludeCard} from '../prelude/PreludeCard';
 import {AltSecondaryTag} from '../../../common/cards/render/AltSecondaryTag';
-import {IProjectCard} from '../IProjectCard';
+import {IProjectCard, isIProjectCard} from '../IProjectCard';
 import {CardResource} from '../../../common/CardResource';
 
 export class CloudVortexOutpost extends PreludeCard {
@@ -24,7 +23,7 @@ export class CloudVortexOutpost extends PreludeCard {
           b.venus(2).br;
           b.plainText('Raise Venus 2 steps').br;
           b.effect('After you play your FIRST project card that can hold floaters, put 3 floaters on it.',
-            (eb) => eb.cards(1, {secondaryTag: AltSecondaryTag.FLOATER}).asterix().startEffect.floaters(3));
+            (eb) => eb.cards(1, {secondaryTag: AltSecondaryTag.FLOATER}).asterix().startEffect.resource(CardResource.FLOATER, 3));
         }),
       },
     });
@@ -32,16 +31,11 @@ export class CloudVortexOutpost extends PreludeCard {
 
   public data: {isDisabled: boolean} = {isDisabled: false};
 
-  private validCard(card: IProjectCard) {
-    return card.resourceType === CardResource.FLOATER &&
-      (card.type === CardType.EVENT || card.type === CardType.AUTOMATED || card.type === CardType.ACTIVE);
-  }
-
   onCardPlayed(player: IPlayer, card: IProjectCard) {
     if (this.data.isDisabled) {
       return;
     }
-    if (this.validCard(card)) {
+    if (card.resourceType === CardResource.FLOATER && isIProjectCard(card)) {
       player.addResourceTo(card, {qty: 3, log: true});
       this.data.isDisabled = true;
     }

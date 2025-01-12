@@ -24,12 +24,12 @@ export class L1TradeTerminal extends Card {
       },
 
       metadata: {
-        cardNumber: '',
+        cardNumber: 'P78',
         renderData: CardRenderer.builder((b) => {
           b.effect('When you trade, first increase that colony tile track 2 steps.', (eb) =>
             eb.trade().startEffect.text('+2')).br;
           b.text('3').diverseTag().asterix().br;
-          b.plainText('(Add a resource to 3 different cards.)').br;
+          b.plainText('(Add a resource to 3 different cards that already have resources.)').br;
         }),
       },
     });
@@ -42,13 +42,13 @@ export class L1TradeTerminal extends Card {
       }
     }
 
-    const cards = player.getResourceCards();
-    if (cards.length <= 3) {
+    const cards = player.getCardsWithResources();
+    if (cards.length === 3) {
       addResources(cards);
       return undefined;
     }
 
-    return new SelectCard('Select 3 cards to gain 1 resource each', 'Add Resources', cards, {min: 3, max: 3})
+    return new SelectCard('Select up to 3 cards to gain 1 resource each', 'Add Resources', cards, {min: 0, max: 3})
       .andThen((cards) => {
         addResources(cards);
         return undefined;

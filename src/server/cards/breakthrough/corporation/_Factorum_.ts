@@ -1,7 +1,7 @@
 import {CardRenderer} from '../../render/CardRenderer';
 import {Factorum} from '../../promo/Factorum';
 import {CardName} from '../../../../common/cards/CardName';
-import {ICardMetadata} from '../../../../common/cards/ICardMetadata';
+import {CardMetadata} from '../../../../common/cards/CardMetadata';
 import {Size} from '../../../../common/cards/render/Size';
 import {Tag} from '../../../../common/cards/Tag';
 
@@ -17,7 +17,7 @@ export class _Factorum_ extends Factorum {
     super();
   }
 
-  public override get metadata(): ICardMetadata {
+  public override get metadata(): CardMetadata {
     return {
       cardNumber: 'R22',
       description: 'You start with 45 M€. Increase your steel production 1 step.',

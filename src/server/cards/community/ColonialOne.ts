@@ -25,14 +25,14 @@ export class ColonialOne extends CorporationCard {
         description: 'You start with 35 M€ and 1 extra trade fleet. Add 3 fighter resources to this card.',
         renderData: CardRenderer.builder((b) => {
           b.br.br;
-          b.megacredits(35).tradeFleet().fighter(3);
+          b.megacredits(35).tradeFleet().resource(CardResource.FIGHTER, 3);
           b.corpBox('action', (ce) => {
             ce.vSpace(Size.LARGE);
             ce.action(undefined, (eb) => {
               eb.empty().startAction.text('+/-', Size.LARGE).colonies(1, {size: Size.SMALL}).text(' TRACK', Size.SMALL);
             });
             ce.action('Increase or decrease any colony tile track 1 step, or spend 1 fighter resource on this card to trade for free.', (eb) => {
-              eb.or(Size.MEDIUM).nbsp.fighter().startAction.trade();
+              eb.or(Size.MEDIUM).nbsp.resource(CardResource.FIGHTER).startAction.trade();
             });
           });
         }),

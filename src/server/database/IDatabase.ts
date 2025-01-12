@@ -38,7 +38,6 @@ export type GameIdLedger = {gameId: GameId, participantIds: Array<ParticipantId>
  * in the game. Why, I have no idea, says kberg.
 */
 export interface IDatabase {
-
     /**
      * Creates any tables needed
      */
@@ -139,7 +138,6 @@ export interface IDatabase {
     saveUser(id: string, name: string, password: string, prop: string): void ;
     getUsers(cb:(err: any, allUsers:Array<User>)=> void): void ;
     refresh(): void ;
-
 
         /**
      * A maintenance task that purges abandoned solo games older

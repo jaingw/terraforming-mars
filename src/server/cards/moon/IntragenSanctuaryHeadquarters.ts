@@ -5,7 +5,7 @@ import {ICorporationCard} from '../corporation/ICorporationCard';
 import {CorporationCard} from '../corporation/CorporationCard';
 import {CardRenderer} from '../render/CardRenderer';
 import {CardResource} from '../../../common/CardResource';
-import {all, played} from '../Options';
+import {all} from '../Options';
 import {AltSecondaryTag} from '../../../common/cards/render/AltSecondaryTag';
 import {ICard} from '../ICard';
 
@@ -31,11 +31,11 @@ export class IntragenSanctuaryHeadquarters extends CorporationCard {
       metadata: {
         description: 'You start with 38 M€. ' +
         'As your first action, place a habitat tile on The Moon and raise the habitat rate 1 step. 1 VP for every 2 animals on this card.',
-        cardNumber: '',
+        cardNumber: 'MC8',
         renderData: CardRenderer.builder((b) => {
           b.megacredits(38).moonHabitat({secondaryTag: AltSecondaryTag.MOON_HABITAT_RATE}).br;
           b.effect('When any player plays an animal tag (including this), add 1 animal on this card.', (eb) => {
-            eb.animals(1, {played, all}).startEffect.animals(1);
+            eb.tag(Tag.ANIMAL, {all}).startEffect.resource(CardResource.ANIMAL);
           }).br;
         }),
       },

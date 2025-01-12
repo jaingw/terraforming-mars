@@ -7,6 +7,7 @@ import {SpendableCardResource} from '../common/inputs/Spendable';
 import {ICard, IActionCard} from './cards/ICard';
 import {TRSource} from '../common/cards/TRSource';
 import {IProjectCard} from './cards/IProjectCard';
+import {IPreludeCard} from './cards/prelude/IPreludeCard';
 import {PlayerInput} from './PlayerInput';
 import {Resource} from '../common/Resource';
 import {CardResource} from '../common/CardResource';
@@ -32,6 +33,8 @@ import {OrOptions} from './inputs/OrOptions';
 import {Stock} from './player/Stock';
 import {UnderworldPlayerData} from './underworld/UnderworldData';
 import {UserRank} from '../common/rank/RankManager';
+import {AlliedParty} from './turmoil/AlliedParty';
+import {IParty} from './turmoil/parties/IParty';
 
 export type ResourceSource = IPlayer | GlobalEventName | ICard;
 
@@ -41,8 +44,6 @@ export type CanAffordOptions = Partial<PaymentOptions> & {
   tr?: TRSource,
 }
 
-export type DraftType = 'initial' | 'prelude' | 'standard';
-
 /**
  * Behavior when playing a card:
  *   add it to the tableau
@@ -50,7 +51,7 @@ export type DraftType = 'initial' | 'prelude' | 'standard';
  *   only play the card (used for replaying a card)
  *   or do nothing.
  */
-export type CardAction ='add' | 'discard' | 'nothing' | 'action-only';
+export type CardAction = 'add' | 'discard' | 'nothing' | 'double-down';
 
 export interface IPlayer {
   readonly id: PlayerId;
@@ -103,15 +104,20 @@ export interface IPlayer {
 
   // Cards
   dealtCorporationCards: Array<ICorporationCard>;
-  dealtPreludeCards: Array<IProjectCard>;
+  dealtPreludeCards: Array<IPreludeCard>;
   dealtCeoCards: Array<ICeoCard>;
   dealtProjectCards: Array<IProjectCard>;
   cardsInHand: Array<IProjectCard>;
-  preludeCardsInHand: Array<IProjectCard>;
+  preludeCardsInHand: Array<IPreludeCard>;
   ceoCardsInHand: Array<IProjectCard>;
   playedCards: Array<IProjectCard>;
-  draftedCards: Array<IProjectCard | ICorporationCard>;
   cardCost: number;
+
+  /** Cards this player has in their draft hand. Player chooses from them, and passes them to the next player */
+  draftHand: Array<IProjectCard>; //  undrafted cards
+  /** Cards this player has already chosen during this draft round */
+  draftedCards: Array<IProjectCard >;
+  /** true when this player is drafting, false when player is not, undefined when there is no draft phase. */
   needsToDraft?: boolean;
 
   timer: Timer;
@@ -139,6 +145,12 @@ export interface IPlayer {
 
   // Hotsprings
   heatProductionStepsIncreasedThisGeneration: number ;
+  /**
+   * When true, Preservation Program is in effect, and the player has not triggered a TR gain this generation.
+   *
+   * False when the player does not have Preservation Program, or after the first TR in the action phase.
+   */
+  preservationProgram: boolean;
 
   // The number of actions a player can take this round.
   // It's almost always 2, but certain cards can change this value.
@@ -152,6 +164,7 @@ export interface IPlayer {
   totalDelegatesPlaced: number;
 
   underworldData: UnderworldPlayerData;
+  alliedParty?: AlliedParty;
 
   tearDown(): void;
   tableau: Array<ICorporationCard | IProjectCard>;
@@ -168,6 +181,10 @@ export interface IPlayer {
    * Return the corporation card this player has played by the given name, or throw an Error.
    */
   getCorporationOrThrow(corporationName: CardName): ICorporationCard;
+  /**
+   * Return the card this player has played by the given name, or `undefined`.
+   */
+  getPlayedCard(cardName: CardName): ICard | undefined;
   getTitaniumValue(): number;
   increaseTitaniumValue(): void;
   decreaseTitaniumValue(): void;
@@ -184,6 +201,7 @@ export interface IPlayer {
   getActionsThisGeneration(): Set<CardName>;
   addActionThisGeneration(cardName: CardName): void;
   getVictoryPoints(): IVictoryPointsBreakdown;
+  /* A card is in effect if it is played. This does not apply to corporations. It could. */
   cardIsInEffect(cardName: CardName): boolean;
   hasProtectedHabitats(): boolean;
   plantsAreProtected(): boolean;
@@ -197,12 +215,6 @@ export interface IPlayer {
   canHaveProductionReduced(resource: Resource, minQuantity: number, attacker: IPlayer): boolean;
   maybeBlockAttack(perpetrator: IPlayer, cb: (proceed: boolean) => PlayerInput | undefined): void;
 
-  /**
-   * Return true if this player cannot have their production reduced.
-   *
-   * It can if this player is attacking themselves, or if this player has played Private Security.
-   */
-  productionIsProtected(attacker: IPlayer): boolean;
   /**
    * In the multiplayer game, after an attack, the attacked player makes a claim
    * for insurance. If Mons Insurance is in the game, the claimant will receive
@@ -269,18 +281,8 @@ export interface IPlayer {
   getUsableOPGCeoCards(): Array<ICeoCard>;
   runProductionPhase(): void;
   finishProductionPhase(): void;
-  worldGovernmentTerraforming(): void;
 
-  /**
-   * Ask the player to draft from a set of cards.
-   *
-   * @param type the type of draft being asked for.
-   * @param passTo  The player _this_ player passes remaining cards to.
-   * @param passedCards The cards received from the draw, or from the prior player. If empty, it's the first
-   *   step in the draft, and this function will deal cards.
-   */
-  askPlayerToDraft(initialDraft: boolean, passTo: IPlayer, passedCards?: Array<IProjectCard | ICorporationCard>): void;
-  runResearchPhase(draftVariant: boolean): void;
+  runResearchPhase(): void;
   getCardCost(card: IProjectCard): number;
 
   /** The number of resources on this card for this player, or 0 if the player does not have this card. */
@@ -302,6 +304,8 @@ export interface IPlayer {
   discardPlayedCard(card: IProjectCard): void;
   discardCardFromHand(card: IProjectCard, options?: {log?: boolean}): void;
 
+  /** Player has prestated they want to pass on their next turn */
+  autopass: boolean;
   /** Player is done taking actions this generation. */
   pass(): void;
   takeActionForFinalGreenery(): void;
@@ -320,6 +324,7 @@ export interface IPlayer {
   getOpponents(): ReadonlyArray<IPlayer>;
   /** Add `corp`'s initial action to the deferred action queue, if it has one. */
   deferInitialAction(corp: ICorporationCard): void;
+  /** Return possible mid-game actions like play a card and fund an award, but not play prelude card. */
   getActions(): OrOptions;
   process(input: InputResponse): void;
   getWaitingFor(): PlayerInput | undefined;
@@ -333,6 +338,7 @@ export interface IPlayer {
   defer(input: PlayerInput | undefined | void | (() => PlayerInput | undefined | void), priority?: Priority): void;
   getUserRank(): UserRank | undefined ;
   addOrUpdateUserRank(userRank: UserRank): void;
+  setAlliedParty(party: IParty): void;
 }
 
 export function isIPlayer(object: any): object is IPlayer {

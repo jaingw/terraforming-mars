@@ -3,7 +3,6 @@ import {CardRenderer} from '../../render/CardRenderer';
 import {SelectAmount} from '../../../inputs/SelectAmount';
 import {AndOptions} from '../../../inputs/AndOptions';
 import {SimpleDeferredAction} from '../../../deferredActions/DeferredAction';
-import {played} from '../../Options';
 import {CardName} from '../../../../common/cards/CardName';
 import {Size} from '../../../../common/cards/render/Size';
 import {Tag} from '../../../../common/cards/Tag';
@@ -35,7 +34,7 @@ export class Chaos extends CorporationCard {
           b.corpBox('effect', (ce) => {
             ce.effect(undefined, (eb) => {
               ce.vSpace(Size.LARGE);
-              eb.production((pb) => pb.wild(1)).startEffect.wild(1, {played}).asterix();
+              eb.production((pb) => pb.wild(1)).startEffect.tag(Tag.WILD).asterix();
             });
             ce.vSpace();
             ce.effect('When perform an action, each of your highest production can provide a wild tag; When producing, each of your highest tag number can provide a standard resource.', (eb) => {

@@ -34,7 +34,7 @@ export class _Pristar_ extends Pristar {
         b.cards(10, {digit}).asterix().nbsp.plate('PASS');
         b.corpBox('effect', (ce) => {
           ce.effect('During production phase, if you did not get TR so far this generation, add one preservation resource here and gain 6 M€.', (eb) => {
-            eb.tr(1, {size: Size.SMALL, cancelled: true}).startEffect.preservation(1).megacredits(6);
+            eb.tr(1, {size: Size.SMALL, cancelled: true}).startEffect.resource(CardResource.PRESERVATION, 1).megacredits(6);
           });
         });
       }),

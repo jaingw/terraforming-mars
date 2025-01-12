@@ -1,3 +1,4 @@
+
 import * as constants from '../common/constants';
 import {BeginnerCorporation} from './cards/corporation/BeginnerCorporation';
 import {Board} from './boards/Board';
@@ -22,7 +23,7 @@ import {ALL_MILESTONES} from './milestones/Milestones';
 import {ALL_AWARDS} from './awards/Awards';
 import {PartyHooks} from './turmoil/parties/PartyHooks';
 import {Phase} from '../common/Phase';
-import {IPlayer, isIPlayer} from './IPlayer';
+import {IPlayer} from './IPlayer';
 import {Player} from './Player';
 import {PlayerId, GameId, SpectatorId, SpaceId} from '../common/Types';
 import {PlayerInput} from './PlayerInput';
@@ -72,7 +73,7 @@ import {IPathfindersData} from './pathfinders/IPathfindersData';
 import {CorporationDeck, PreludeDeck, ProjectDeck, CeoDeck} from './cards/Deck';
 import {Logger} from './logs/Logger';
 import {SerializedPlayer, SerializedPlayerId} from './SerializedPlayer';
-import {addDays, dayStringToDays} from './database/utils';
+import {addDays, stringToNumber} from './database/utils';
 import {ALL_TAGS, Tag} from '../common/cards/Tag';
 import {IGame, Score} from './IGame';
 import {CardManifest} from './cards/ModuleManifest';
@@ -86,6 +87,19 @@ import {SpaceType} from '../common/boards/SpaceType';
 import {SendDelegateToArea} from './deferredActions/SendDelegateToArea';
 import {InputError} from './inputs/InputError';
 import {BuildColony} from './deferredActions/BuildColony';
+import {newInitialDraft, newStandardDraft} from './Draft';
+import {toName} from '../common/utils/utils';
+import {SelectSpace} from './inputs/SelectSpace';
+import {maybeRenamedMilestone} from '../common/ma/MilestoneName';
+import {maybeRenamedAward} from '../common/ma/AwardName';
+
+// Can be overridden by tests
+
+let createGameLog: () => Array<LogMessage> = () => [];
+
+export function setGameLog(f: () => Array<LogMessage>) {
+  createGameLog = f;
+}
 
 export enum LoadState {
   HALFLOADED = 'halfloaded',
@@ -109,7 +123,7 @@ export class Game implements IGame, Logger {
   public createdTime: Date = new Date(0);
   // 前端需要根据gameAge 和 undoCount 来判断是否刷新, undoCount 用于获取其他玩家撤回的刷新
   public gameAge: number = 0; // Each log event increases it
-  public gameLog: Array<LogMessage> = [];
+  public gameLog: Array<LogMessage> = createGameLog();
   public undoCount: number = 0; // Each undo increases it， 不入库，所以不会大于1
   public inputsThisRound = 0;
   public resettable: boolean = false; // 显示reset按钮 ， 用不上的属性
@@ -133,18 +147,17 @@ export class Game implements IGame, Logger {
 
   // Player data
   public activePlayer: IPlayer;
+  /** Players that are done with the game after final greenery placement. */
   private donePlayers: Set<IPlayer> = new Set<IPlayer>();// 结束游戏时已放完最后的绿化
   private passedPlayers: Set<IPlayer> = new Set<IPlayer>();
   private researchedPlayers: Set<IPlayer> = new Set<IPlayer>();
-  private draftedPlayers: Set<IPlayer> = new Set<IPlayer>();
-  // The first player of this generation.
+  /** The first player of this generation. */
   public first: IPlayer;
 
   // Drafting
-  private draftRound: number = 1; // 轮抽到几张牌了
-  // Used when drafting the first 10 project cards.
-  private initialDraftIteration: number = 1; // 初始轮抽轮次：第一次5张为1,第二次5张为2，前序为3, 公司为4
-  private unDraftedCards: Map<IPlayer, Array<IProjectCard | ICorporationCard>> = new Map();
+
+  public draftRound: number = 1; // 轮抽到几张牌了
+  public initialDraftIteration: number = 1;// 初始轮抽轮次：第一次5张为1,第二次5张为2，前序为3, 公司为4
 
   // Milestones and awards
   public claimedMilestones: Array<ClaimedMilestone> = [];
@@ -189,12 +202,20 @@ export class Game implements IGame, Logger {
   public tradeEmbargo: boolean = false;
   // Behold The Emperor
   public beholdTheEmperor: boolean = false;
+  // Double Down
+  public inDoubleDown: boolean = false;
 
-  // The set of tags available in this game.
+  /* The set of tags available in this game. */
   public readonly tags: ReadonlyArray<Tag>;
+
   // Rank Mode
   public quitPlayers: Set<IPlayer> = new Set<IPlayer>;// 天梯 玩家申请退出游戏 所有人均同意则废弃游戏
   public endGameInProgress: boolean = false; // 锁 避免同时多次访问`endGame`
+  /*
+   * An optimized list of the players, in generation order. This is erased every time first placer changes,
+   * and refilled on calls to getPlayersInGenerationOrder
+   */
+  playersInGenerationOrder: Array<IPlayer> = [];
 
   private constructor(
     id: GameId,
@@ -212,14 +233,14 @@ export class Game implements IGame, Logger {
     this.players = players;
     const playerIds = players.map((p) => p.id);
     if (playerIds.includes(first.id) === false) {
-      throw new Error('Cannot find first player ' + first.id + ' in ' + playerIds);
+      throw new Error('Cannot find first player ' + first.id + ' in [' + playerIds + ']');
     }
     if (new Set(playerIds).size !== players.length) {
-      throw new Error('Duplicate player found: ' + playerIds);
+      throw new Error('Duplicate player found: [' + playerIds + ']');
     }
     const colors = players.map((p) => p.color);
     if (new Set(colors).size !== players.length) {
-      throw new Error('Duplicate color found: ' + colors);
+      throw new Error('Duplicate color found: [' + colors + ']');
     }
 
     this.first = first;
@@ -311,7 +332,7 @@ export class Game implements IGame, Logger {
           corporationCards.splice(index, 1, new cardFactory.Factory() );
         }
       });
-      customCorporationCards.forEach((cardName,index ) => {
+      customCorporationCards.forEach((cardName, index ) => {
         const cardFactory = breakCards.find((cardFactory) => cardFactory.cardName_ori === cardName);
         if (cardFactory !== undefined) {
           customCorporationCards.splice(index, 1, new cardFactory.Factory().name);
@@ -432,7 +453,8 @@ export class Game implements IGame, Logger {
           player.dealtProjectCards.push(...projectDeck.drawN(game, 10));
         }
         if (gameOptions.preludeExtension) {
-          player.dealtPreludeCards.push(...preludeDeck.drawN(game, constants.PRELUDE_CARDS_DEALT_PER_PLAYER));
+          gameOptions.startingPreludes = Math.max(gameOptions.startingPreludes ?? 0, constants.PRELUDE_CARDS_DEALT_PER_PLAYER);
+          player.dealtPreludeCards.push(...preludeDeck.drawN(game, gameOptions.startingPreludes));
           // player.dealtPreludeCards.push(...preludeDeck.drawN(game, 36));
         }
         if (gameOptions.ceoExtension) {
@@ -472,12 +494,12 @@ export class Game implements IGame, Logger {
     return game;
   }
 
-  // Function use to properly start the game: with project draft or with research phase
+  /** Properly starts the game with the project draft, or initial research phase. */
   public gotoInitialPhase(): void {
     // Initial Draft
     if (this.gameOptions.initialDraftVariant) {
       this.phase = Phase.INITIALDRAFTING;
-      this.runDraftRound(true);
+      newInitialDraft(this).startDraft(true);
     } else {
       this.gotoInitialResearchPhase();
     }
@@ -516,9 +538,6 @@ export class Game implements IGame, Logger {
     } as IShortData);
   }
 
-  public toJSON(): string {
-    return JSON.stringify(this.serialize());
-  }
   public serialize(): SerializedGame {
     const result: SerializedGame = {
       exitedPlayers: Array.from(this.exitedPlayers).map((p) => p.serialize()),
@@ -536,7 +555,6 @@ export class Game implements IGame, Logger {
       currentSeed: this.rng.current,
       deferredActions: [],
       donePlayers: Array.from(this.donePlayers).map((p) => p.serializeId()),
-      draftedPlayers: Array.from(this.draftedPlayers).map((p) => p.serializeId()),
       draftRound: this.draftRound,
       first: this.first.serializeId(),
       fundedAwards: serializeFundedAwards(this.fundedAwards),
@@ -652,7 +670,7 @@ export class Game implements IGame, Logger {
     if (this.isSoloMode() && this.gameOptions.venusNextExtension) {
       return globalParametersMaxed && venusMaxed;
     }
-    // new option "requiresVenusTrackCompletion" also makes maximizing Venus a game-end requirement
+    // Option "requiresVenusTrackCompletion" also makes maximizing Venus a game-end requirement
     if (this.gameOptions.venusNextExtension && this.gameOptions.requiresVenusTrackCompletion) {
       return globalParametersMaxed && venusMaxed;
     }
@@ -740,6 +758,7 @@ export class Game implements IGame, Logger {
   }
 
   private playerHasPickedCorporationCard(player: IPlayer, corporationCard: ICorporationCard, corporationCard2: ICorporationCard | undefined) {
+    // TODO(kberg): I think we can get rid of this weird validation at a later time.
     player.pickedCorporationCard = corporationCard;
     player.pickedCorporationCard2 = corporationCard2;
     if (this.players.every((p) => p.pickedCorporationCard !== undefined)) {
@@ -755,7 +774,7 @@ export class Game implements IGame, Logger {
                 'Select corp card to play first',
                 'Play',
                 [somePlayer.pickedCorporationCard, somePlayer.pickedCorporationCard2],
-              ).andThen((foundCards: Array<ICorporationCard>) => {
+              ).andThen((foundCards: ReadonlyArray<ICorporationCard>) => {
                 if (somePlayer.pickedCorporationCard === undefined || somePlayer.pickedCorporationCard2 === undefined) {
                   throw new Error(`pickedCorporationCard is not defined for ${somePlayer.id}`);
                 }
@@ -801,7 +820,7 @@ export class Game implements IGame, Logger {
     this.triggerOtherCorpEffects(player, corporationCard);
 
     // Activate some colonies
-    ColoniesHandler.onCardPlayed(this, corporationCard);
+    ColoniesHandler.maybeActivateColonies(this, corporationCard);
 
     PathfindersExpansion.onCardPlayed(player, corporationCard);
 
@@ -893,6 +912,7 @@ export class Game implements IGame, Logger {
     }
     firstIndex = (firstIndex + 1) % this.players.length;
     this.first = this.players[firstIndex];
+    this.playersInGenerationOrder.length = 0;
   }
 
   // Only used in the prelude The New Space Race.
@@ -901,35 +921,18 @@ export class Game implements IGame, Logger {
       throw new Error(`player ${newFirstPlayer.id} is not part of this game`);
     }
     this.first = newFirstPlayer;
-  }
-
-  private runDraftRound(initialDraft: boolean = false): void {
-    this.draftedPlayers.clear();
-    this.players.forEach((player) => {
-      if (this.draftRound === 1 ) {
-        if (!initialDraft || this.initialDraftIteration === 1 || this.initialDraftIteration === 2 ) {
-          player.askPlayerToDraft(initialDraft, this.giveDraftCardsTo(player));
-        } else if (this.initialDraftIteration === 3) {
-          player.askPlayerToDraft(initialDraft, this.giveDraftCardsTo(player), player.dealtPreludeCards);
-        } else if ( this.initialDraftIteration === 4) {
-          player.askPlayerToDraft(initialDraft, this.giveDraftCardsTo(player), player.dealtCorporationCards);
-        }
-      } else {
-        const draftCardsFrom = this.getDraftCardsFrom(player);
-        const cards = this.unDraftedCards.get(draftCardsFrom);
-        this.unDraftedCards.delete(draftCardsFrom);
-        player.askPlayerToDraft(initialDraft, this.giveDraftCardsTo(player), cards);
-      }
-    });
+    this.playersInGenerationOrder.length = 0;
   }
 
   /**
    * 两种方式调用 1、非初始轮抽，开局发完牌调用该方法；2、初始轮抽完，调用该方法
    * 初始轮抽选完牌后会将 phase 置为Phase.RESEARCH 并保存， 重新load时可以直接调用该方法选择买牌
    */
-  private gotoInitialResearchPhase(): void {
+  public gotoInitialResearchPhase(save:boolean = false): void {
     this.phase = Phase.RESEARCH;
-
+    if (save) {
+      this.save();
+    }
     for (const player of this.players) {
       if (player.pickedCorporationCard === undefined && player.dealtCorporationCards.length > 0) {
         player.setWaitingFor(this.selectInitialCards(player));
@@ -941,7 +944,7 @@ export class Game implements IGame, Logger {
     }
   }
 
-  private gotoResearchPhase(): void {
+  public gotoResearchPhase(): void {
     this.phase = Phase.RESEARCH;
     this.researchedPlayers.clear();
 
@@ -950,15 +953,14 @@ export class Game implements IGame, Logger {
       this.save();
     }
     this.players.forEach((player) => {
-      player.runResearchPhase(this.gameOptions.draftVariant && this.players.length > 1 );
+      player.runResearchPhase();
     });
   }
 
   private gotoDraftPhase(): void {
     this.phase = Phase.DRAFTING;
     this.draftRound = 1;
-    this.save();
-    this.runDraftRound();
+    newStandardDraft(this).startDraft(true);
   }
 
   public gameIsOver(): boolean {
@@ -990,6 +992,7 @@ export class Game implements IGame, Logger {
       return;
     }
     if (this.gameIsOver()) {
+      console.log("postProductionPhase takeNextFinalGreeneryAction  " + this.id);
       this.log('Final greenery placement', (b) => b.forNewGeneration());
       // chaos生产之后会需要选择资源，先选完再执行放树
       this.deferredActions.runAll(() => this.takeNextFinalGreeneryAction());
@@ -1022,6 +1025,11 @@ export class Game implements IGame, Logger {
   }
 
   private gotoEndGeneration() {
+    if (this.deferredActions.length > 0) {
+      this.deferredActions.runAll(() => this.gotoEndGeneration());
+      return;
+    }
+
     this.endGenerationForColonies();
 
     TurmoilUtil.ifTurmoil(this, (turmoil) => {
@@ -1077,6 +1085,9 @@ export class Game implements IGame, Logger {
     this.players.forEach((player) => {
       player.hasIncreasedTerraformRatingThisGeneration = false;
       player.heatProductionStepsIncreasedThisGeneration = 0;
+      if (player.cardIsInEffect(CardName.PRESERVATION_PROGRAM)) {
+        player.preservationProgram = true;
+      }
     });
 
     if (this.gameOptions.draftVariant && this.players.length > 1 ) {
@@ -1088,15 +1099,96 @@ export class Game implements IGame, Logger {
 
   private gotoWorldGovernmentTerraforming() {
     if (this.firstExited) {
-      this.doneWorldGovernmentTerraforming();
+      this.gotoEndGeneration();
       return;
     }
-    this.first.worldGovernmentTerraforming();
+    this.worldGovernmentTerraforming();
   }
 
-  public doneWorldGovernmentTerraforming() {
-    // Carry on to next phase
-    this.gotoEndGeneration();
+  public worldGovernmentTerraformingInput(player: IPlayer): OrOptions {
+    const orOptions = new OrOptions();
+    orOptions.title = 'Select action for World Government Terraforming';
+    orOptions.buttonLabel = 'Confirm';
+    if (this.getTemperature() < constants.MAX_TEMPERATURE) {
+      orOptions.options.push(
+        new SelectOption('Increase temperature', 'Increase').andThen(() => {
+          this.increaseTemperature(player, 1);
+          this.log('${0} acted as World Government and increased temperature', (b) => b.player(player));
+          return undefined;
+        }),
+      );
+    }
+    if (this.getOxygenLevel() < constants.MAX_OXYGEN_LEVEL) {
+      orOptions.options.push(
+        new SelectOption('Increase oxygen', 'Increase').andThen(() => {
+          this.increaseOxygenLevel(player, 1);
+          this.log('${0} acted as World Government and increased oxygen level', (b) => b.player(player));
+          return undefined;
+        }),
+      );
+    }
+    if (this.canAddOcean()) {
+      orOptions.options.push(
+        new SelectSpace('Add an ocean', this.board.getAvailableSpacesForOcean(player))
+          .andThen((space) => {
+            this.addOcean(player, space);
+            this.log('${0} acted as World Government and placed an ocean', (b) => b.player(player));
+            return undefined;
+          }),
+      );
+    }
+    if (this.getVenusScaleLevel() < constants.MAX_VENUS_SCALE && this.gameOptions.venusNextExtension) {
+      orOptions.options.push(
+        new SelectOption('Increase Venus scale', 'Increase').andThen(() => {
+          this.increaseVenusScaleLevel(player, 1);
+          this.log('${0} acted as World Government and increased Venus scale', (b) => b.player(player));
+          return undefined;
+        }),
+      );
+    }
+
+    MoonExpansion.ifMoon(this, (moonData) => {
+      if (this !== undefined) {
+        // 月球扩不配提世界政府
+        return;
+      }
+      if (moonData.habitatRate < constants.MAXIMUM_HABITAT_RATE) {
+        orOptions.options.push(
+          new SelectOption('Increase the Moon habitat rate', 'Increase').andThen(() => {
+            MoonExpansion.raiseHabitatRate(player, 1);
+            return undefined;
+          }),
+        );
+      }
+
+      if (moonData.miningRate < constants.MAXIMUM_MINING_RATE) {
+        orOptions.options.push(
+          new SelectOption('Increase the Moon mining rate', 'Increase').andThen(() => {
+            MoonExpansion.raiseMiningRate(player, 1);
+            return undefined;
+          }),
+        );
+      }
+
+      if (moonData.logisticRate < constants.MAXIMUM_LOGISTICS_RATE) {
+        orOptions.options.push(
+          new SelectOption('Increase the Moon logistics rate', 'Increase').andThen(() => {
+            MoonExpansion.raiseLogisticRate(player, 1);
+            return undefined;
+          }),
+        );
+      }
+    });
+
+    return orOptions;
+  }
+
+  public worldGovernmentTerraforming(): void {
+    const player = this.first;
+    const input = this.worldGovernmentTerraformingInput(player);
+    player.setWaitingFor(input, () => {
+      this.gotoEndGeneration();
+    });
   }
 
   private allPlayersHavePassed(): boolean {
@@ -1116,32 +1208,11 @@ export class Game implements IGame, Logger {
     return this.researchedPlayers.has(player);
   }
 
-  private hasDrafted(player: IPlayer): boolean {
-    return this.draftedPlayers.has(player);
-  }
-
-  private allPlayersHaveFinishedResearch(): boolean {
-    for (const player of this.players) {
-      if (!this.hasResearched(player)) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  private allPlayersHaveFinishedDraft(): boolean {
-    for (const player of this.players) {
-      if (!this.hasDrafted(player)) {
-        return false;
-      }
-    }
-    return true;
-  }
-
   public playerIsFinishedWithResearchPhase(player: IPlayer): void {
     this.deferredActions.runAllFor(player, () => {
       this.researchedPlayers.add(player);
-      if (this.allPlayersHaveFinishedResearch()) {
+      if (this.researchedPlayers.size === this.players.length) {
+        this.researchedPlayers.clear();
         this.phase = Phase.ACTION;
         this.passedPlayers.clear();
         TheNewSpaceRace.potentiallyChangeFirstPlayer(this);
@@ -1150,88 +1221,7 @@ export class Game implements IGame, Logger {
     });
   }
 
-  public playerIsFinishedWithDraftingPhase(initialDraft: boolean, player: IPlayer, cards : Array<ICorporationCard| IProjectCard>): void {
-    this.draftedPlayers.add(player);
-    this.unDraftedCards.set(player, cards);
-
-    if (this.allPlayersHaveFinishedDraft() === false) {
-      return;
-    }
-
-    // If more than 1 card are to be passed to the next player, that means we're still drafting
-    if (cards.length > 1) {
-      this.draftRound++;
-      this.runDraftRound(initialDraft);
-      return;
-    }
-
-    // Push last card for each player
-    this.players.forEach((player) => {
-      const lastCards = this.unDraftedCards.get(this.getDraftCardsFrom(player));
-      if (lastCards !== undefined) {
-        player.draftedCards.push(...lastCards);
-      }
-
-      if (initialDraft) {
-        if (this.initialDraftIteration === 2) {
-          player.dealtProjectCards = player.draftedCards as Array<IProjectCard>;
-          player.draftedCards = [];
-        } else if (this.initialDraftIteration === 3) {
-          player.dealtPreludeCards = player.draftedCards as Array<IProjectCard>;
-          player.draftedCards = [];
-        } else if (this.initialDraftIteration === 4) {
-          player.dealtCorporationCards = player.draftedCards as Array<ICorporationCard>;
-          player.draftedCards = [];
-        }
-      }
-    });
-
-    if (initialDraft === false) {
-      this.gotoResearchPhase();
-      return;
-    }
-
-    if (this.initialDraftIteration === 1) {
-      this.initialDraftIteration++;
-      this.draftRound = 1;
-      this.runDraftRound(true);
-    } else if (this.initialDraftIteration === 2 && this.gameOptions.preludeExtension) {
-      // jiang 远程版本    } else if (this.initialDraftIteration === 2 && this.gameOptions.preludeExtension && this.gameOptions.preludeDraftVariant) {
-
-      this.initialDraftIteration++;
-      this.draftRound = 1;
-      this.runDraftRound(true);
-    } else if ((this.initialDraftIteration === 2 && !this.gameOptions.preludeExtension || this.initialDraftIteration === 3) &&
-        this.gameOptions.doubleCorp && this.gameOptions.initialCorpDraftVariant) {
-      this.initialDraftIteration = 4;
-      this.draftRound = 1;
-      this.runDraftRound(true);
-    } else {
-      this.phase = Phase.RESEARCH;
-      this.save();
-      this.gotoInitialResearchPhase();
-    }
-  }
-
-  private getDraftCardsFrom(player: IPlayer): IPlayer {
-    // Special-case for the initial draft direction on second iteration
-    if (this.generation === 1 && (this.initialDraftIteration === 2 || this.initialDraftIteration === 4)) {
-      return this.getPlayerBefore(player);
-    }
-
-    return this.generation % 2 === 0 ? this.getPlayerBefore(player) : this.getPlayerAfter(player);
-  }
-
-  private giveDraftCardsTo(player: IPlayer): IPlayer {
-    // Special-case for the initial draft direction on second iteration
-    if (this.generation === 1 && (this.initialDraftIteration === 2 || this.initialDraftIteration === 4)) {
-      return this.getPlayerAfter(player);
-    }
-
-    return this.generation % 2 === 0 ? this.getPlayerAfter(player) : this.getPlayerBefore(player);
-  }
-
-  private getPlayerBefore(player: IPlayer): IPlayer {
+  public getPlayerBefore(player: IPlayer): IPlayer {
     const playerIndex = this.players.indexOf(player);
     if (playerIndex === -1) {
       throw new Error(`Player ${player.id} not in game ${this.id}`);
@@ -1241,7 +1231,7 @@ export class Game implements IGame, Logger {
     return this.players[(playerIndex === 0) ? this.players.length - 1 : playerIndex - 1];
   }
 
-  private getPlayerAfter(player: IPlayer): IPlayer {
+  public getPlayerAfter(player: IPlayer): IPlayer {
     const playerIndex = this.players.indexOf(player);
 
     if (playerIndex === -1) {
@@ -1251,7 +1241,6 @@ export class Game implements IGame, Logger {
     // Go to the beginning of the array if we reached the end
     return this.players[(playerIndex + 1 >= this.players.length) ? 0 : playerIndex + 1];
   }
-
 
   public playerIsFinishedTakingActions(): void {
     if (this.deferredActions.length > 0) {
@@ -1318,7 +1307,7 @@ export class Game implements IGame, Logger {
     }
 
     players.forEach((player) => {
-      const corporation = player.corporations.map((c) => c.name).join('|');
+      const corporation = player.corporations.map(toName).join('|');
       const vpb = player.getVictoryPoints();
       scores.push({corporation: corporation,
         playerScore: vpb.total, player: player.name, userId: player.userId});
@@ -1395,6 +1384,7 @@ export class Game implements IGame, Logger {
   public playerIsDoneWithGame(player: IPlayer): void {
     this.donePlayers.add(player);
     // Go back in to find someone else to play final greeneries.
+    console.log("playerIsDoneWithGame takeNextFinalGreeneryAction " +  this.id);
     this.takeNextFinalGreeneryAction();
   }
 
@@ -1460,13 +1450,13 @@ export class Game implements IGame, Logger {
 
     if (this.phase !== Phase.SOLAR) {
       TurmoilHandler.onGlobalParameterIncrease(player, GlobalParameter.OXYGEN, steps);
-      player.increaseTerraformRating(steps,{log:true});
+      player.increaseTerraformRating(steps, {log: true});
     }
 
     // wg hook
     if (this.phase === Phase.SOLAR && this.wgPartnershipOwner) {
       TurmoilHandler.onGlobalParameterIncrease(this.wgPartnershipOwner, GlobalParameter.OXYGEN, steps);
-      this.wgPartnershipOwner.increaseTerraformRating(steps,{log:true});
+      this.wgPartnershipOwner.increaseTerraformRating(steps, {log: true});
     }
 
     if (this.oxygenLevel < constants.OXYGEN_LEVEL_FOR_TEMPERATURE_BONUS &&
@@ -1523,6 +1513,7 @@ export class Game implements IGame, Logger {
           this.defer(new GrantVenusAltTrackBonusDeferred(player, standardResourcesGranted, grantWildResource));
         }
       }
+      player.playedCards.forEach((card) => card.onGlobalParameterIncrease?.(player, GlobalParameter.VENUS, steps));
       TurmoilHandler.onGlobalParameterIncrease(player, GlobalParameter.VENUS, steps);
       player.increaseTerraformRating(steps);
     };
@@ -1690,7 +1681,6 @@ export class Game implements IGame, Logger {
       execute(this.wgPartnershipOwner);
     }
 
-    
 
     this.players.forEach((p) => {
       p.tableau.forEach((playedCard) => {
@@ -1710,13 +1700,8 @@ export class Game implements IGame, Logger {
   }
 
   // occupyBefore 是否被玩家标记占领,影响拉屎公司的奖励
-  public grantPlacementBonuses(player: IPlayer, space: Space, coveringExistingTile: boolean, arcadianCommunityBonus: boolean = false) {
-    console.log('grantPlacementBonuses:'+ JSON.stringify(space, (_key, value) => {
-      if (isIPlayer(value)) {
-        return {id: value.id};
-      }
-      return value;
-    }) +' coveringExistingTile:' + coveringExistingTile);
+  public grantPlacementBonuses(player: IPlayer, space: Space, coveringExistingTile: boolean = false, arcadianCommunityBonus: boolean = false) {
+    // console.log('grantPlacementBonuses:'+ space.id + space.player?.name +' coveringExistingTile:' + coveringExistingTile);
     if (!coveringExistingTile) {
       this.grantSpaceBonuses(player, space);
     }
@@ -1727,6 +1712,8 @@ export class Game implements IGame, Logger {
       }
     });
 
+    // TODO(kberg): these might not apply for some bonuses, e.g. Frontier Town.
+    // https://boardgamegeek.com/thread/3344366/article/44658730#44658730
     if (space.tile !== undefined) {
       AresHandler.ifAres(this, () => {
         AresHandler.earnAdjacencyBonuses(player, space);
@@ -1872,7 +1859,7 @@ export class Game implements IGame, Logger {
       return undefined;
     }
 
-    if (player.isCorporation(CardName.PROWLER) && this.oxygenLevel >= constants.MAX_OXYGEN_LEVEL){
+    if (player.isCorporation(CardName.PROWLER) && this.oxygenLevel >= constants.MAX_OXYGEN_LEVEL) {
       player.increaseTerraformRating(1);
     }
 
@@ -1934,17 +1921,12 @@ export class Game implements IGame, Logger {
 
   // Players returned in play order starting with first player this generation.
   public getPlayersInGenerationOrder(): ReadonlyArray<IPlayer> {
-    const ret: Array<IPlayer> = [];
-    let insertIdx = 0;
-    for (const p of this.players) {
-      if (p.id === this.first.id || insertIdx > 0) {
-        ret.splice(insertIdx, 0, p);
-        insertIdx ++;
-      } else {
-        ret.push(p);
-      }
+    if (this.playersInGenerationOrder.length === 0) {
+      const e = [...this.players, ...this.players];
+      const idx = Math.max(e.findIndex((p) => p.id === this.first.id) , 0) ;
+      this.playersInGenerationOrder = e.slice(idx, idx + this.players.length);
     }
-    return ret;
+    return this.playersInGenerationOrder;
   }
 
   // 包含体退玩家
@@ -2058,7 +2040,7 @@ export class Game implements IGame, Logger {
     if (this.createdTime.getTime() === 0) {
       return 0;
     }
-    const days = dayStringToDays(process.env.MAX_GAME_DAYS, 10);
+    const days = stringToNumber(process.env.MAX_GAME_DAYS, 10);
     return addDays(this.createdTime, days).getTime();
   }
 
@@ -2069,7 +2051,7 @@ export class Game implements IGame, Logger {
     }
     // Assign each attributes
     const o = Object.assign(this, d);
-
+    this.playersInGenerationOrder.length = 0;
     // Brand new deferred actions queue
     this.deferredActions = new DeferredActionsQueue();
 
@@ -2142,9 +2124,8 @@ export class Game implements IGame, Logger {
 
     d.milestones.forEach((element: IMilestone | string) => {
       let milestoneName = typeof element === 'string' ? element : element.name;
-      if ( milestoneName === 'Tactitian') {
-        milestoneName = 'Tactician';
-      }
+      milestoneName = maybeRenamedMilestone(milestoneName);
+     
       const foundMilestone = ALL_MILESTONES.find((milestone) => milestone.name === milestoneName);
       if (foundMilestone !== undefined) {
         this.milestones.push(foundMilestone);
@@ -2153,15 +2134,8 @@ export class Game implements IGame, Logger {
 
     d.awards.forEach((element: IAward | string) => {
       let awardName = typeof element === 'string' ? element : element.name;
-      if ( awardName === 'DesertSettler') {
-        awardName = 'Desert Settler';
-      }
-      if (awardName === 'EstateDealer') {
-        awardName = 'Estate Dealer';
-      }
-      if (awardName === 'Entrepeneur') {
-        awardName = 'Entrepreneur';
-      }
+      awardName = maybeRenamedAward(awardName);
+     
       const foundAward = ALL_AWARDS.find((award) => award.name === awardName);
       if (foundAward !== undefined) {
         this.awards.push(foundAward);
@@ -2224,6 +2198,7 @@ export class Game implements IGame, Logger {
 
     // Rebuild researched players set
     this.researchedPlayers = new Set<IPlayer>();
+
     d.researchedPlayers.forEach((element: SerializedPlayerId) => {
       const player = this.players.find((player) => player.id === element.id);
       if (player) {
@@ -2231,14 +2206,7 @@ export class Game implements IGame, Logger {
       }
     });
 
-    // Rebuild drafted players set
-    this.draftedPlayers = new Set<IPlayer>();
-    d.draftedPlayers.forEach((element: SerializedPlayerId) => {
-      const player = this.players.find((player) => player.id === element.id);
-      if (player) {
-        this.draftedPlayers.add(player);
-      }
-    });
+    //   player.draftHand = cardsFromJSON(cardNames);
 
 
     // Mons insurance
@@ -2251,9 +2219,6 @@ export class Game implements IGame, Logger {
     if (d.wgPartnershipOwner !== undefined) {
       this.wgPartnershipOwner = this.players.find((player) => player.id === d.wgPartnershipOwner?.id);
     }
-
-    // Reinit undrafted cards map
-    this.unDraftedCards = new Map<Player, IProjectCard[]>();
 
     // Define who was the first player for this generation
     const first = this.players.find((player) => player.id === d.first.id);
@@ -2277,18 +2242,18 @@ export class Game implements IGame, Logger {
     // Still in Draft or Research of generation 1
     if (this.generation === 1 && this.players.some((p) => p.corporations.length === 0 )) {
       if (this.phase === Phase.INITIALDRAFTING) {
-        this.runDraftRound(true);
+        newInitialDraft(this).startDraft(false);
       } else {
         this.gotoInitialResearchPhase();
       }
     } else if (this.phase === Phase.DRAFTING) {
-      this.runDraftRound();
+      newStandardDraft(this).startDraft(false);
     } else if (this.phase === Phase.RESEARCH) {
       // this.gotoResearchPhase();
       // 避免重复save 这里去除了gotoResearchPhase方法的保存逻辑
       this.researchedPlayers.clear();
       this.players.forEach((player) => {
-        player.runResearchPhase(this.gameOptions.draftVariant && this.players.length > 1 );
+        player.runResearchPhase();
       });
     } else {
       // We should be in ACTION phase, let's prompt the active player for actions
@@ -2353,10 +2318,10 @@ export class Game implements IGame, Logger {
     return this;
   }
 
-  public rollback() {
+  public async rollback() {
     if (this.lastSaveId > 0 ) {
-      Database.getInstance().cleanGameSave(this.id, this.lastSaveId);
-      Database.getInstance().restoreGame(this.id, this.lastSaveId-1, this, 'manager');
+      await Database.getInstance().cleanGameSave(this.id, this.lastSaveId);
+      await Database.getInstance().restoreGame(this.id, this.lastSaveId-1, this, 'manager');
     }
   }
 

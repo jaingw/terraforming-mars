@@ -91,11 +91,11 @@
       <div class="player_home_block player_home_block--actions nofloat">
         <a name="actions" class="player_home_anchor"></a>
         <dynamic-title title="Actions" :color="thisPlayer.color"/>
-          <label v-if="!playerView.isme && !playerView.block && userId"  style="display: inline-block;margin-bottom: 6px;" v-i18n>
+          <div v-if="canSitDown"  style="display: inline-block;margin-bottom: 6px;" v-i18n>
               <button id="sitdown" class="played-cards-button btn btn-tiny"  v-on:click="sitDown()"><span v-i18n>Sit down</span></button>
-              Sit down tips
-          </label>
-        <waiting-for v-if="game.phase !== 'end'" :players="playerView.players" :playerView="playerView" :settings="settings" :waitingfor="playerView.waitingFor"></waiting-for>
+              <span style="margin-left: 5px;" v-i18n>Sit down tips</span>
+          </div>
+        <waiting-for v-if="game.phase !== 'end' && game.phase !== 'timeout' && game.phase !== 'abandon'" :players="playerView.players" :playerView="playerView" :settings="settings" :waitingfor="playerView.waitingFor"></waiting-for>
       </div>
 
       <div class="player_home_block player_home_block--hand" v-if="playerView.draftedCards.length > 0">
@@ -146,11 +146,11 @@
         <div v-for="card in getCardsByType(thisPlayer.tableau, [CardType.CEO])" :key="card.name" class="cardbox">
             <Card :card="card" :actionUsed="isCardActivated(card, thisPlayer)" :cubeColor="thisPlayer.color"/>
         </div>
-        <div v-show="isVisible('ACTIVE')" v-for="card in sortActiveCards(getCardsByType(thisPlayer.tableau, [CardType.ACTIVE]))" :key="card.name" class="cardbox">
+        <div v-show="isVisible('ACTIVE')" v-for="card in sortActiveCards(getCardsByType(thisPlayer.tableau, [CardType.ACTIVE, CardType.PRELUDE]).filter(isActive))" :key="card.name" class="cardbox">
             <Card :card="card" :actionUsed="isCardActivated(card, thisPlayer)" :cubeColor="thisPlayer.color"/>
         </div>
 
-        <stacked-cards v-show="isVisible('AUTOMATED')" :cards="getCardsByType(thisPlayer.tableau, [CardType.AUTOMATED, CardType.PRELUDE])" ></stacked-cards>
+        <stacked-cards v-show="isVisible('AUTOMATED')" :cards="getCardsByType(thisPlayer.tableau, [CardType.AUTOMATED, CardType.PRELUDE]).filter(isNotActive)" ></stacked-cards>
 
         <stacked-cards v-show="isVisible('EVENT')" :cards="getCardsByType(thisPlayer.tableau, [CardType.EVENT])" ></stacked-cards>
 
@@ -275,7 +275,7 @@
       </div>
       <div class="player_home_colony_cont">
         <div class="player_home_colony" v-for="colony in game.colonies" :key="colony.name">
-          <colony :colony="colony"></colony>
+          <colony :colony="colony" :active="colony.isActive"></colony>
         </div>
       </div>
     </div>
@@ -286,6 +286,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import axios from 'axios';
+import * as raw_settings from '@/genfiles/settings.json';
 
 import Board from '@/client/components/Board.vue';
 import Card from '@/client/components/card/Card.vue';
@@ -295,7 +296,7 @@ import PlayersOverview from '@/client/components/overview/PlayersOverview.vue';
 import WaitingFor from '@/client/components/WaitingFor.vue';
 import Sidebar from '@/client/components/Sidebar.vue';
 import Colony from '@/client/components/colonies/Colony.vue';
-import LogPanel from '@/client/components/LogPanel.vue';
+import LogPanel from '@/client/components/logpanel/LogPanel.vue';
 import Turmoil from '@/client/components/turmoil/Turmoil.vue';
 import {playerColorClass} from '@/common/utils/utils';
 import PlanetaryTracks from '@/client/components/pathfinders/PlanetaryTracks.vue';
@@ -315,7 +316,8 @@ import {nextTileView, TileView} from './board/TileView';
 import {getCardsByType, isCardActivated} from '@/client/utils/CardUtils';
 import {sortActiveCards} from '@/client/utils/ActiveCardsSortingOrder';
 
-import * as raw_settings from '@/genfiles/settings.json';
+import {CardModel} from '@/common/models/CardModel';
+import {getCardOrThrow} from '../cards/ClientCardManifest';
 
 export interface PlayerHomeModel {
   showHand: boolean;
@@ -380,6 +382,16 @@ export default Vue.extend({
     cardsInHandCount(): number {
       const playerView = this.playerView;
       return playerView.cardsInHand.length + playerView.preludeCardsInHand.length + playerView.ceoCardsInHand.length;
+    },
+    canSitDown(): boolean {
+      const playerView = this.playerView;
+      if (playerView.isme || playerView.block || !this.userId) {
+        return false;
+      }
+      if (playerView.players.filter((player: PublicPlayerModel) => player.name === this.userName).length === 0) {
+        return true;
+      }
+      return false;
     },
     getCardsByType(): typeof getCardsByType {
       return getCardsByType;
@@ -547,6 +559,13 @@ export default Vue.extend({
       } else {
         return '';
       }
+    },
+    isActive(cardModel: CardModel): boolean {
+      const card = getCardOrThrow(cardModel.name);
+      return card.type === CardType.ACTIVE || card.hasAction;
+    },
+    isNotActive(cardModel: CardModel): boolean {
+      return !getCardOrThrow(cardModel.name).hasAction;
     },
   },
   destroyed() {

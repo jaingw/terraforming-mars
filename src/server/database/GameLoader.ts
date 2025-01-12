@@ -104,6 +104,21 @@ export class GameLoader implements IGameLoader {
         }
         return idgetfunc.apply(this, [key]);
       };
+
+      const userRankMap = GameLoader.instance.userRankMap;
+      // id截取前12位
+      const rankgetfunc = userRankMap.get;
+      userRankMap.get = function(key: string) {
+        if (key === undefined || key === '') {
+          return undefined;
+        }
+        if (key.startsWith('u')) {
+          key = key.substring(0, 13);
+        } else {
+          key = key.substring(0, 12);
+        }
+        return rankgetfunc.apply(this, [key]);
+      };
     }
     return GameLoader.instance;
   }
@@ -234,7 +249,7 @@ export class GameLoader implements IGameLoader {
 
   private onGameLoaded(game: IGame, err: boolean = false): void {
     const gameId = game.id;
-    console.log(`load game ${gameId}`);
+    console.log(`load game ${gameId}  ${err}`);
     if (err) {
       // 加载失败 移除game_id相关数据
       this.games.delete(gameId);

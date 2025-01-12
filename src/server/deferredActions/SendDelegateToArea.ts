@@ -5,8 +5,7 @@ import {Priority} from './Priority';
 import {SelectPaymentDeferred} from './SelectPaymentDeferred';
 import {Delegate, Turmoil} from '../turmoil/Turmoil';
 import {TurmoilUtil} from '../turmoil/TurmoilUtil';
-import {CardName} from '../../common/cards/CardName';
-import {Resource} from '../../common/Resource';
+import {toName} from '../../common/utils/utils';
 
 export type Options = {
   /** The number of delegates to replace. Default is 1. */
@@ -45,7 +44,7 @@ export class SendDelegateToArea extends DeferredAction {
       });
     }
 
-    return parties.map((party) => party.name);
+    return parties.map(toName);
   }
 
   public execute() {
@@ -68,9 +67,9 @@ export class SendDelegateToArea extends DeferredAction {
             this.turmoil.sendDelegateToParty(this.player, partyName, this.player.game);
           }
         }
-        if (this.player.isCorporation(CardName.THERMOPOLI)) {
-          this.player.stock.add(Resource.HEAT, numDelegateToSend * 1, {log: true});
-        }
+        // if (this.player.isCorporation(CardName.THERMOPOLI)) {
+        //   this.player.stock.add(Resource.HEAT, numDelegateToSend * 1, {log: true});
+        // }
 
         if (this.options?.freeStandardAction === true) {
           this.turmoil.usedFreeDelegateAction.add(this.player);

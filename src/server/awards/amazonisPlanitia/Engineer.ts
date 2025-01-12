@@ -19,7 +19,6 @@ export const BESPOKE_PRODUCTION_CARDS: ReadonlyArray<CardName> = [
   CardName.POWER_SUPPLY_CONSORTIUM,
   // Colonies
   CardName.COMMUNITY_SERVICES,
-  CardName.ECOLOGY_RESEARCH,
   CardName.LUNAR_EXPORTS,
   CardName.MINORITY_REFUGE,
   CardName.PIONEER_SETTLEMENT,
@@ -38,6 +37,9 @@ export const BESPOKE_PRODUCTION_CARDS: ReadonlyArray<CardName> = [
   CardName.MICROBIOLOGY_PATENTS,
   CardName.OUMUAMUA_TYPE_OBJECT_SURVEY,
   CardName.SMALL_OPEN_PIT_MINE,
+  // Prelude 2
+  CardName.CLOUD_TOURISM,
+  CardName.MICROGRAVITY_NUTRITION,
 ] as const;
 
 // Mapping from [CardName => boolean] indicating whether a card is eligible for Engineer.

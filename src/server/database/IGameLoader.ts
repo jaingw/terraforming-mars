@@ -28,6 +28,12 @@ export interface IGameLoader {
    */
   // getByGameId(gameId: GameId, bypassCache: boolean): Promise<Game | undefined>;
   getByParticipantId(playerId: PlayerId | SpectatorId): Promise<IGame | undefined>;
+  /**
+   * Reload a game at a specific version, deleting all versions ahead of it.
+   *
+   * @param {GameId} gameId the id of the game to retrieve
+   * @param {number} saveId the save id to load
+   */
   // restoreGameAt(gameId: GameId, saveId: number): Promise<Game>;
 
   /**

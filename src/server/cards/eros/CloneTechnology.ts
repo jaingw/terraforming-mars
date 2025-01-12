@@ -4,7 +4,6 @@ import {SelectCard} from '../../inputs/SelectCard';
 import {ICard} from '../ICard';
 import {CardRenderer} from '../render/CardRenderer';
 import {Card} from '../Card';
-import {played} from '../Options';
 import {CardName} from '../../../common/cards/CardName';
 import {CardType} from '../../../common/cards/CardType';
 import {Tag} from '../../../common/cards/Tag';
@@ -23,7 +22,7 @@ export class CloneTechnology extends Card implements IProjectCard {
       metadata: {
         cardNumber: 'Q04',
         renderData: CardRenderer.builder((b) => {
-          b.production((pb) => pb.text('X').plants(1, {played})).nbsp.text('X').plants(1).asterix();
+          b.production((pb) => pb.text('X').plants(1)).nbsp.text('X').plants(1).asterix();
         }),
         description: 'Duplicate the production box and plant resource of one of your plant cards.',
       },
@@ -45,7 +44,7 @@ export class CloneTechnology extends Card implements IProjectCard {
       return undefined;
     }
 
-    return new SelectCard('Select plant card to copy', 'Copy', availableCards ).andThen((selectedCards: Array<ICard>) => {
+    return new SelectCard('Select plant card to copy', 'Copy', availableCards ).andThen((selectedCards: ReadonlyArray<ICard>) => {
       const foundCard: ICard = selectedCards[0];
 
       if (foundCard.produce) {

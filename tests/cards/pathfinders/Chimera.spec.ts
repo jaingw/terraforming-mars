@@ -9,7 +9,7 @@ import {testGame} from '../../TestGame';
 import {CardName} from '../../../src/common/cards/CardName';
 import {fakeCard} from '../../TestingUtils';
 import {Tag} from '../../../src/common/cards/Tag';
-import {Businessperson} from '../../../src/server/milestones/Businessperson';
+import {Businessperson} from '../../../src/server/milestones/arabiaTerra/Businessperson';
 import {Scientist} from '../../../src/server/awards/Scientist';
 import {Ecologist} from '../../../src/server/milestones/Ecologist';
 import {Algae} from '../../../src/server/cards/base/Algae';
@@ -24,7 +24,7 @@ describe('Chimera', function() {
   beforeEach(function() {
     card = new Chimera();
     [/* game */, player] = testGame(1);
-    player.setCorporationForTest(card);
+    player.corporations.push(card);
   });
 
   it('as action', function() {

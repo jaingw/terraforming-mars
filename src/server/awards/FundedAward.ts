@@ -1,7 +1,7 @@
 import {IAward} from './IAward';
 import {IPlayer} from '../IPlayer';
 import {SerializedPlayerId} from '../SerializedPlayer';
-import {AwardName} from '../../common/ma/AwardName';
+import { maybeRenamedAward} from '../../common/ma/AwardName';
 
 export type FundedAward = {
   award: IAward;
@@ -27,18 +27,10 @@ export function deserializeFundedAwards(
   players: Array<IPlayer>,
   awards: Array<IAward>): Array<FundedAward> {
   return fundedAwards.map((element: SerializedFundedAward) => {
-    // Rebuild funded awards
-    if (element.award.name === 'DesertSettler' as AwardName) {
-      element.award.name = 'Desert Settler';
-    }
-    if (element.award.name === 'EstateDealer' as AwardName) {
-      element.award.name = 'Estate Dealer';
-    }
-    if (element.award.name === 'Entrepeneur' as AwardName) {
-      element.award.name = 'Entrepreneur';
-    }
+   
     const player = players.find((player) => player.id === element.player.id);
-    const award = awards.find((award) => award.name === element.award.name);
+    const awardName = maybeRenamedAward(element.award.name);
+    const award = awards.find((award) => award.name === awardName);
     if (player && award) {
       return {
         player: player,

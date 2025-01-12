@@ -131,11 +131,7 @@ export class UnderworldExpansion {
         return;
       }
     }
-    const undergroundResource = game.underworldData?.tokens.pop();
-    if (undergroundResource === undefined) {
-      // TODO(kberg): collect tokens from all players
-      throw new Error('Cannot identify excavation space, no available tokens.');
-    }
+    const undergroundResource = this.drawExcavationToken(game);
     space.undergroundResources = undergroundResource;
     for (const p of game.getPlayersInGenerationOrder()) {
       for (const card of p.tableau) {
@@ -158,7 +154,7 @@ export class UnderworldExpansion {
    *
    * If a player played Concession Rights this generation, they automatically ignore placement restrictions.
    */
-  public static excavatableSpaces(player: IPlayer, ignorePlacementRestrictions: boolean = false, ignoreConcsesionRights: boolean = false) {
+  public static excavatableSpaces(player: IPlayer, options?: {ignorePlacementRestrictions?: boolean, ignoreConcsesionRights?: boolean}) {
     const board = player.game.board;
 
     // Compute any space that any player can excavate.
@@ -174,13 +170,13 @@ export class UnderworldExpansion {
       return space.spaceType !== SpaceType.COLONY;
     });
 
-    if (ignorePlacementRestrictions === true) {
+    if (options?.ignorePlacementRestrictions === true) {
       return anyExcavatableSpaces;
     }
 
-    const concessionRights = player.playedCards.find((card) => card.name === CardName.CONCESSION_RIGHTS);
+    const concessionRights = player.getPlayedCard(CardName.CONCESSION_RIGHTS);
     if (concessionRights?.generationUsed === player.game.generation) {
-      if (ignoreConcsesionRights === false) {
+      if (options?.ignoreConcsesionRights !== true) {
         return anyExcavatableSpaces;
       }
     }
@@ -328,7 +324,7 @@ export class UnderworldExpansion {
     if (target.game.gameOptions.underworldExpansion === false) {
       return cb(true);
     }
-    const privateMilitaryContractor = target.playedCards.find((card) => card.name === CardName.PRIVATE_MILITARY_CONTRACTOR);
+    const privateMilitaryContractor = target.getPlayedCard(CardName.PRIVATE_MILITARY_CONTRACTOR);
     const militaryContractorFighters = privateMilitaryContractor?.resourceCount ?? 0;
     if (target.underworldData.corruption === 0 && militaryContractorFighters === 0) {
       return cb(true);
@@ -432,7 +428,7 @@ export class UnderworldExpansion {
     game.getPlayersInGenerationOrder().forEach((player) => player.underworldData.temperatureBonus = undefined);
   }
 
-  //   // TODO(kberg): add viz for temperature bonus.
+  //   // TODOc(kberg): add viz for temperature bonus.
   static onTemperatureChange(game: IGame, steps: number) {
     if (game.phase !== Phase.ACTION) {
       return;
@@ -461,5 +457,13 @@ export class UnderworldExpansion {
         throw new Error('Unknown temperatore bonus: ' + player.underworldData.temperatureBonus);
       }
     });
+  }
+
+  public static drawExcavationToken(game: IGame): UndergroundResourceToken {
+    const token = game.underworldData?.tokens.pop();
+    if (token === undefined) {
+      throw new Error('No underground resource token!');
+    }
+    return token;
   }
 }

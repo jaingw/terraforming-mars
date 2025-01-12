@@ -3,6 +3,7 @@ import {ColonyName} from '../colonies/ColonyName';
 import {ColorWithNeutral} from '../Color';
 import {GlobalEventName} from '../turmoil/globalEvents/GlobalEventName';
 import {PartyName} from '../turmoil/PartyName';
+import {PolicyId} from '../turmoil/Types';
 import {PlayerId, SpaceId} from '../Types';
 import {Units} from '../Units';
 import {twoWayDifference} from '../utils/utils';
@@ -37,6 +38,15 @@ export interface AndOptionsResponse {
 
 export function isAndOptionsResponse(response: InputResponse): response is AndOptionsResponse {
   return response.type === 'and' && matches(response, ['type', 'responses']);
+}
+
+export interface SelectInitialCardsResponse {
+  type: 'initialCards',
+  responses: Array<InputResponse>;
+}
+
+export function isSelectInitialCardsResponse(response: InputResponse): response is SelectInitialCardsResponse {
+  return response.type === 'initialCards' && matches(response, ['type', 'responses']);
 }
 
 export interface SelectCardResponse {
@@ -154,9 +164,37 @@ export function isSelectGlobalEventResponse(response: InputResponse): response i
   return response.type === 'globalEvent' && matches(response, ['type', 'globalEventNames']);
 }
 
+export interface SelectPolicyResponse {
+  type: 'policy',
+  policyId: PolicyId;
+}
+
+export function isSelectPolicyResponse(response: InputResponse): response is SelectPolicyResponse {
+  return response.type === 'policy' && matches(response, ['type', 'policyId']);
+}
+
+export interface SelectResourceResponse {
+  type: 'resource',
+  resource: keyof Units,
+}
+
+export function isSelectResourceResponse(response: InputResponse): response is SelectResourceResponse {
+  return response.type === 'resource' && matches(response, ['type', 'resource']);
+}
+
+export interface SelectResourcesResponse {
+  type: 'resources',
+  units: Units,
+}
+
+export function isSelectResourcesResponse(response: InputResponse): response is SelectResourcesResponse {
+  return response.type === 'resources' && matches(response, ['type', 'units']);
+}
+
 export type InputResponse =
   AndOptionsResponse |
   OrOptionsResponse |
+  SelectInitialCardsResponse |
   SelectAmountResponse |
   SelectCardResponse |
   SelectColonyResponse |
@@ -169,4 +207,7 @@ export type InputResponse =
   SelectProjectCardToPlayResponse |
   SelectSpaceResponse |
   ShiftAresGlobalParametersResponse |
-  SelectGlobalEventResponse;
+  SelectGlobalEventResponse |
+  SelectPolicyResponse |
+  SelectResourceResponse |
+  SelectResourcesResponse;

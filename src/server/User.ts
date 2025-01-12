@@ -77,9 +77,9 @@ export class User {
     if (token === null) {
       return false;
     }
-    // 将userId刷新成 token,上线一段时间之后注释下面+, 直接用userId获取的会失败
+    // 将userId刷新成 token, 直接用userId获取的会失败
     if (token === this.id) {
-      return true;
+      return false;
     }
     if (!this.tokenList) {
       this.tokenList = [];

@@ -5,7 +5,7 @@ import {CorporationCard} from '../corporation/CorporationCard';
 import {Size} from '../../../common/cards/render/Size';
 import {PartyName} from '../../../common/turmoil/PartyName';
 import {IPlayer} from '../../IPlayer';
-import {Policy} from '../../turmoil/Policy';
+import {IPolicy} from '../../turmoil/Policy';
 import {KELVINISTS_POLICY_1} from '../../turmoil/parties/Kelvinists';
 import {SCIENTISTS_POLICY_1} from '../../turmoil/parties/Scientists';
 import {ICard} from '../ICard';
@@ -57,14 +57,14 @@ export class PoliticalReform extends CorporationCard implements ICard {
     }
 
     if (this.data === PartyName.KELVINISTS) {
-      const policy: Policy = KELVINISTS_POLICY_1;
+      const policy: IPolicy = KELVINISTS_POLICY_1;
       if (policy.canAct?.(player)) {
         policy.action?.(player);
       }
     }
 
     if (this.data === PartyName.SCIENTISTS) {
-      const policy: Policy = SCIENTISTS_POLICY_1;
+      const policy: IPolicy = SCIENTISTS_POLICY_1;
       if (policy.canAct?.(player)) {
         policy.action?.(player);
       }

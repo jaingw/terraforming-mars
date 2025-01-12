@@ -84,7 +84,7 @@ describe('CloneTechnology', () => {
 
   it('Should play with corporation cards', () => {
     const corporationCard = new _EcoLine_();
-    player.setCorporationForTest(corporationCard);
+    player.corporations.push(corporationCard);
 
     const selectCard = cast(card.play(player), SelectCard);
     selectCard.cb([corporationCard]);
@@ -138,7 +138,7 @@ describe('CloneTechnology', () => {
     expect(player.plants).to.eq(0);
 
     player.stock.plants = 0;
-    player.setCorporationForTest(new Manutech);
+    player.corporations.push(new Manutech);
     expect(card.canPlay(player)).is.true;
     const selectCard3 = cast(card.play(player), SelectCard);
     selectCard3.cb([nitrophilicMoss]);

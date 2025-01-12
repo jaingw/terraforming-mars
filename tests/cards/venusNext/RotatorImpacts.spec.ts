@@ -36,7 +36,7 @@ describe('RotatorImpacts', () => {
   it('Works with MSI corporation', () => {
     const corp = new MorningStarInc();
     corp.play(player);
-    player.setCorporationForTest(corp);
+    player.corporations.push(corp);
 
     setVenusScaleLevel(game, 18);
     expect(card.canPlay(player)).is.true;
@@ -83,6 +83,7 @@ describe('RotatorImpacts', () => {
     card.resourceCount = 1;
 
     setVenusScaleLevel(game, MAX_VENUS_SCALE);
-    expect(card.canAct(player)).is.not.true;
+    expect(card.canAct(player)).is.true;
+    expect(Array.from(card.warnings)).contains('maxvenus');
   });
 });

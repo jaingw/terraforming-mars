@@ -2,7 +2,7 @@
 import {IPlayer} from '../IPlayer';
 import {IMilestone} from './IMilestone';
 import {SerializedPlayerId} from '../SerializedPlayer';
-import {MilestoneName} from '../../common/ma/MilestoneName';
+import {maybeRenamedMilestone} from '../../common/ma/MilestoneName';
 
 export type ClaimedMilestone = {
   milestone: IMilestone;
@@ -29,11 +29,10 @@ export function deserializeClaimedMilestones(
   players: Array<IPlayer>,
   milestones: Array<IMilestone>): Array<ClaimedMilestone> {
   return claimedMilestones.map((element: SerializedClaimedMilestone) => {
-    if (element.milestone.name === 'Tactitian' as MilestoneName) {
-      element.milestone.name = 'Tactician';
-    }
+    const milestoneName = maybeRenamedMilestone(element.milestone.name);
+   
     const player = players.find((player) => player.id === element.player.id);
-    const milestone = milestones.find((milestone) => milestone.name === element.milestone.name);
+    const milestone = milestones.find((milestone) => milestone.name === milestoneName);
     if (player && milestone) {
       return {player, milestone};
     } else {

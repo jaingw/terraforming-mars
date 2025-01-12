@@ -21,29 +21,38 @@ import {CardResource} from '../../../common/CardResource';
 import {CorporationCard} from '../corporation/CorporationCard';
 import {OrOptions} from '../../inputs/OrOptions';
 import {SelectOption} from '../../inputs/SelectOption';
+import { Size } from '../../../common/cards/render/Size';
 
-const RESOURCE_AUTO_NUM = 6;
+const RESOURCE_AUTO_NUM = 5;
 
 export class RaincatScientificProbe extends CorporationCard {
   constructor() {
     super({
       name: CardName.RAINCAT_SCIENTIFIC_PROBE,
       tags: [Tag.SCIENCE, Tag.EARTH],
-      startingMegaCredits: 48,
+      startingMegaCredits: 44,
       resourceType: CardResource.SCIENCE,
 
       metadata: {
         cardNumber: 'XB22',
         renderData: CardRenderer.builder((b) => {
-          b.megacredits(48).br;
-          b.effect('每打1张手牌(包括此卡),拿1个科学资源', (eb) => {
-            eb.cards(1).startEffect.science();
-          }).br;
-          b.effect('每当有6个科学资源，自动拿3钢/2钛/2叶', (eb) => {
-            eb.text('6').science().asterix().startAction.steel(3, {digit}).slash().titanium(2, {digit}).slash().plants(2, {digit});
-          }).br;
+          b.megacredits(44).br;
+          b.corpBox('effect', (ce) => {
+            ce.vSpace(Size.LARGE);
+            ce.effect(undefined, (eb) => {
+              eb.cards(1).startEffect.resource(CardResource.SCIENCE);
+            });
+            ce.vSpace();
+            ce.effect(undefined, (eb) => {
+              eb.resource(CardResource.SCIENCE,RESOURCE_AUTO_NUM).startAction.steel(3, {digit}).or;
+            });
+            ce.vSpace();
+            ce.effect('每打1张手牌(包括此卡),拿1个科学资源,每当有5个科学资源，自动拿3钢/2钛/3电', (eb) => {
+              eb.resource(CardResource.SCIENCE,RESOURCE_AUTO_NUM).startAction.titanium(2, {digit}).slash().energy(3, {digit});
+            }).vSpace(Size.SMALL);
+          })
         }),
-        description: 'You start with 48M€.',
+        description: 'You start with 44M€.',
       },
     });
   }
@@ -61,14 +70,14 @@ export class RaincatScientificProbe extends CorporationCard {
     return undefined;
   }
 
-  public onTilePlaced(cardOwner: IPlayer, activePlayer: IPlayer, space: Space) {
-    if (cardOwner.id !== activePlayer.id) {
-      return;
-    }
-    if (Board.isGreenerySpace(space)) {
-      cardOwner.addResourceTo(this, {log: true});
-    }
-  }
+  // public onTilePlaced(cardOwner: IPlayer, activePlayer: IPlayer, space: Space) {
+  //   if (cardOwner.id !== activePlayer.id) {
+  //     return;
+  //   }
+  //   if (Board.isGreenerySpace(space)) {
+  //     cardOwner.addResourceTo(this, {log: true});
+  //   }
+  // }
 
   public onResourceAdded(player: IPlayer, playedCard: ICard) {
     if (playedCard.name !== this.name) return;
@@ -81,8 +90,8 @@ export class RaincatScientificProbe extends CorporationCard {
         new SelectOption('Gain 2 titaniums', 'Gain titantium').andThen(() => {
           player.stock.add(Resource.TITANIUM, 2, {log: true});
           return undefined;
-        }), new SelectOption('Gain 2 plants', 'Gain plant').andThen(() => {
-          player.stock.add(Resource.PLANTS, 2, {log: true});
+        }), new SelectOption('Gain 3 energy', 'Gain energy').andThen(() => {
+          player.stock.add(Resource.ENERGY, 3, {log: true});
           return undefined;
         }),
       ));

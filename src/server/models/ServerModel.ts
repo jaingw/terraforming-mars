@@ -34,6 +34,7 @@ import {UnderworldExpansion} from '../underworld/UnderworldExpansion';
 import {Tag} from '../../common/cards/Tag';
 import {Units} from '../../common/Units';
 import {isICloneTagCard} from '../cards/pathfinders/ICloneTagCard';
+import {toName} from '../../common/utils/utils';
 
 export class Server {
   public static getSimpleGameModel(game: IGame, userId : string = ''): SimpleGameModel {
@@ -73,7 +74,7 @@ export class Server {
       awards: this.getAwards(game),
       colonies: coloniesToModel(game, game.colonies, false, true),
       deckSize: game.projectDeck.drawPile.length,
-      discardedColonies: game.discardedColonies.map((c) => c.name),
+      discardedColonies: game.discardedColonies.map(toName),
       expectedPurgeTimeMs: game.expectedPurgeTimeMs(),
       gameAge: game.gameAge,
       gameOptions: this.getGameOptionsAsModel(game.gameOptions),
@@ -112,7 +113,7 @@ export class Server {
       const thisPlayerIndex = players.findIndex((p) => p.color === player.color);
       const thisPlayer: PublicPlayerModel = players[thisPlayerIndex];
 
-      return {
+      const rv: PlayerViewModel = {
         cardsInHand: (block && !showhandcards ) ? [] : cardsToModel(player, player.cardsInHand, {showCalculatedCost: true}),
         ceoCardsInHand: cardsToModel(player, player.ceoCardsInHand),
         dealtCorporationCards: block? []:cardsToModel(player, player.dealtCorporationCards),
@@ -130,6 +131,7 @@ export class Server {
         thisPlayer: thisPlayer,
         waitingFor: block? undefined: this.getWaitingFor(player, player.getWaitingFor()),
         players: players,
+        autopass: player.autopass,
 
         // jaing
         undoing: player.undoing,
@@ -141,6 +143,7 @@ export class Server {
         isme: isme,
         isvip: GameLoader.getUserByPlayer(player)?.isvip() || 0,
       };
+      return rv;
     } catch (err) {
       console.warn('error get player', err);
       return { } as PlayerViewModel;
@@ -332,6 +335,7 @@ export class Server {
       waitingFor: player.getWaitingFor() === undefined? undefined : {},
       excavations: UnderworldExpansion.excavationMarkerCount(player),
       corruption: player.underworldData.corruption,
+      alliedParty: player.alliedParty,
 
       // undoing: false,
       // gameId: '',

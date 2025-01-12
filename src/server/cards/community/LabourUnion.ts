@@ -38,7 +38,7 @@ export class LabourUnion extends CorporationCard {
   public onProductionPhase(player: IPlayer) {
     if (player.cardsInHand.length > 8) {
       const cardsToDiscard: number = player.cardsInHand.length - 8;
-      player.game.defer(new DiscardCards(player, cardsToDiscard));
+      player.game.defer(new DiscardCards(player, cardsToDiscard,cardsToDiscard));
     }
     return undefined;
   }

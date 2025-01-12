@@ -5,14 +5,13 @@ import {CardType} from '../../../common/cards/CardType';
 import {CanAffordOptions, IPlayer} from '../../IPlayer';
 import {CardResource} from '../../../common/CardResource';
 import {TileType} from '../../../common/TileType';
-import {SelectSpace} from '../../inputs/SelectSpace';
+import {PlaceTile} from '../../../server/deferredActions/PlaceTile';
 import {Space} from '../../boards/Space';
 import {CardName} from '../../../common/cards/CardName';
 import {AdjacencyBonus} from '../../ares/AdjacencyBonus';
-import {ICardMetadata} from '../../../common/cards/ICardMetadata';
+import {CardMetadata} from '../../../common/cards/CardMetadata';
 import {CardRenderer} from '../render/CardRenderer';
 import {Phase} from '../../../common/Phase';
-import {played} from '../Options';
 import {Board} from '../../boards/Board';
 
 export class EcologicalZone extends Card implements IProjectCard {
@@ -20,7 +19,7 @@ export class EcologicalZone extends Card implements IProjectCard {
     name = CardName.ECOLOGICAL_ZONE,
     cost = 12,
     adjacencyBonus: AdjacencyBonus | undefined = undefined,
-    metadata: ICardMetadata = {
+    metadata: CardMetadata = {
       description: {
         text: 'Requires that YOU have a greenery tile. Place this tile adjacent to ANY greenery.',
         align: 'left',
@@ -28,7 +27,7 @@ export class EcologicalZone extends Card implements IProjectCard {
       cardNumber: '128',
       renderData: CardRenderer.builder((b) => {
         b.effect('When you play an animal or plant tag INCLUDING THESE, add an animal to this card.', (eb) => {
-          eb.animals(1, {played}).slash().plants(1, {played}).startEffect.animals(1);
+          eb.tag(Tag.ANIMAL).slash().tag(Tag.PLANT).startEffect.resource(CardResource.ANIMAL);
         }).br;
         b.vpText('1 VP per 2 animals on this card.').tile(TileType.ECOLOGICAL_ZONE, true).asterix();
       }),
@@ -65,13 +64,13 @@ export class EcologicalZone extends Card implements IProjectCard {
       player.addResourceTo(this, {qty: 1, log: true});
     }
 
-    return new SelectSpace('Select space next to greenery for special tile', this.getAvailableSpaces(player))
-      .andThen((space) => {
-        player.game.addTile(player, space, {
-          tileType: TileType.ECOLOGICAL_ZONE,
-        });
-        space.adjacency = this.adjacencyBonus;
-        return undefined;
-      });
+    player.game.defer(
+      new PlaceTile(player, {
+        tile: {tileType: TileType.ECOLOGICAL_ZONE, card: this.name},
+        on: () => this.getAvailableSpaces(player),
+        title: 'Select space next to greenery for special tile',
+        adjacencyBonus: this.adjacencyBonus,
+      }));
+    return undefined;
   }
 }

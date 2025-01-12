@@ -640,7 +640,7 @@ describe('UnderworldExpansion', function() {
 
     const orOptions = cast(tester.playerInput, OrOptions);
 
-    expect(orOptions.options.length).eq(2);
+    expect(orOptions.options).has.length(2);
     orOptions.options[0].cb();
 
     expect(tester.called).is.true;
@@ -662,7 +662,7 @@ describe('UnderworldExpansion', function() {
 
     const orOptions = cast(tester.playerInput, OrOptions);
 
-    expect(orOptions.options.length).eq(3);
+    expect(orOptions.options).has.length(3);
     expect(formatMessage(orOptions.options[0].title)).matches(/Private Military Contractor/);
     orOptions.options[0].cb();
 

@@ -31,7 +31,7 @@ export class AccumulatedKnowledge extends PreludeCard implements IProjectCard {
     player.drawCard(4);
 
     game.defer(new SimpleDeferredAction(player, () => new OrOptions(
-      new SelectCard('Discard a card to draw a card', 'Discard', player.cardsInHand).andThen( (foundCards: Array<IProjectCard>) => {
+      new SelectCard('Discard a card to draw a card', 'Discard', player.cardsInHand).andThen( (foundCards: ReadonlyArray<IProjectCard>) => {
         player.cardsInHand.splice(player.cardsInHand.indexOf(foundCards[0]), 1);
         game.projectDeck.discard(foundCards[0]);
         player.cardsInHand.push(game.projectDeck.drawOrThrow(game));

@@ -13,7 +13,7 @@ import {CardModel} from '@/common/models/CardModel';
 import CardTitle from './CardTitle.vue';
 import {CardType} from '@/common/cards/CardType';
 import CardContent from './CardContent.vue';
-import {ICardMetadata} from '@/common/cards/ICardMetadata';
+import {CardMetadata} from '@/common/cards/CardMetadata';
 import {CardResource} from '@/common/CardResource';
 import {getCardOrThrow} from '@/client/cards/ClientCardManifest';
 import {CardRequirementDescriptor} from '../../../common/cards/CardRequirementDescriptor';
@@ -47,7 +47,7 @@ export default Vue.extend({
     getCardType(): CardType {
       return this.cardInstance.type;
     },
-    getCardMetadata(): ICardMetadata {
+    getCardMetadata(): CardMetadata {
       return this.cardInstance.metadata;
     },
     getCardRequirements(): Array<CardRequirementDescriptor> {

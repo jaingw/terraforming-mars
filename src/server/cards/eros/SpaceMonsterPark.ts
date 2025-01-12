@@ -9,7 +9,6 @@ import {CardResource} from '../../../common/CardResource';
 import {CardName} from '../../../common/cards/CardName';
 import {Priority} from '../../deferredActions/Priority';
 import {CardRenderer} from '../render/CardRenderer';
-import {played} from '../Options';
 
 export class SpaceMonsterPark extends Card implements IProjectCard {
   constructor() {
@@ -28,9 +27,9 @@ export class SpaceMonsterPark extends Card implements IProjectCard {
       metadata: {
         cardNumber: 'Q59',
         renderData: CardRenderer.builder((b) => {
-          b.space({played}).slash().earth(1, {played}).slash().venus(1, {played}).colon().floaters(1).br;
+          b.tag(Tag.SPACE).slash().tag(Tag.EARTH).slash().tag(Tag.VENUS).colon().resource(CardResource.FLOATER).br;
           b.or().br;
-          b.minus().floaters(2).plus().cards(1);
+          b.minus().resource(CardResource.FLOATER, 2).plus().cards(1);
           b.production((pb) => {
             pb.minus().titanium(1);
           });

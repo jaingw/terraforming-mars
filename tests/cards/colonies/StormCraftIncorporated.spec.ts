@@ -4,7 +4,7 @@ import * as constants from '../../../src/common/constants';
 import {testGame} from '../../TestGame';
 import {SelectAmount} from '../../../src/server/inputs/SelectAmount';
 import {TestPlayer} from '../../TestPlayer';
-import {cast, churnAction} from '../../TestingUtils';
+import {cast, churn} from '../../TestingUtils';
 
 describe('StormCraftIncorporated', function() {
   let card: StormCraftIncorporated;
@@ -13,14 +13,14 @@ describe('StormCraftIncorporated', function() {
   beforeEach(function() {
     card = new StormCraftIncorporated();
     [/* game */, player] = testGame(2);
-    player.setCorporationForTest(card);
+    player.corporations.push(card);
   });
 
   it('Should play', function() {
     const play = card.play(player);
     expect(play).is.undefined;
 
-    expect(churnAction(card, player)).is.undefined;
+    expect(churn(card.action(player), player)).is.undefined;
 
     expect(card.resourceCount).to.eq(1);
   });

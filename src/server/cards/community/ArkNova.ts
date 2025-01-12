@@ -1,7 +1,7 @@
 import {ICorporationCard} from '../corporation/ICorporationCard';
 import {CardName} from '../../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
-import {digit, played} from '../Options';
+import {digit} from '../Options';
 import {CardResource} from '../../../common/CardResource';
 import {IPlayer} from '../../IPlayer';
 import {IProjectCard} from '../IProjectCard';
@@ -25,10 +25,10 @@ export class ArkNova extends CorporationCard {
         description: 'You start with 49 M€.',
         renderData: CardRenderer.builder((b) => {
           b.br;
-          b.megacredits(49).nbsp.building(1, {played}).slash().cityTag(1, {played}).colon().animals(1).br;
+          b.megacredits(49).nbsp.tag(Tag.BUILDING).slash().tag(Tag.CITY).colon().resource(CardResource.ANIMAL).br;
           b.text('(Action: When you play a card with a building or city tag, add 1 animal on this card.)', Size.SMALL, false, false).br;
           b.effect('When you have 3 animals, automatically convert to 1 steel and draw 1 card.', (eb) => {
-            eb.text('3').animals(1).asterix().startAction.steel(1, {digit}).cards(1);
+            eb.text('3').resource(CardResource.ANIMAL).asterix().startAction.steel(1, {digit}).cards(1);
           }).br;
         }),
       },

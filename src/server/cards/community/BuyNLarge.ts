@@ -3,7 +3,7 @@ import {CardName} from '../../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
 import {Tag} from '../../../common/cards/Tag';
 // import {Size} from '../../../common/cards/render/Size';
-import {played, digit} from '../Options';
+import {digit} from '../Options';
 import {ICorporationCard} from '../corporation/ICorporationCard';
 import {Space} from '../../boards/Space';
 import {Board} from '../../boards/Board';
@@ -27,10 +27,10 @@ export class BuyNLarge extends CorporationCard {
         renderData: CardRenderer.builder((b) => {
           b.megacredits(35).greenery().br;
           b.effect('When you place a greenery tile or play a biology tag, add 1 seed resource to this card.', (eb) => {
-            eb.greenery().slash().animals(1, {played}).slash().plants(1, {played}).slash().microbes(1, {played}).startEffect.seed();
+            eb.greenery().slash().tag(Tag.ANIMAL).slash().tag(Tag.PLANT).slash().tag(Tag.MICROBE).startEffect.resource(CardResource.SEED);
           }).br;
           b.effect('When you have 7 seeds, automatically convert to 8 plants.', (eb) => {
-            eb.text('7').seed().asterix().startAction.plants(8, {digit});
+            eb.text('7').resource(CardResource.SEED).asterix().startAction.plants(8, {digit});
           }).br;
         }),
         description: 'You start with 35M€. As your first action, place a greenery.',

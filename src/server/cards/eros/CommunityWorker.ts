@@ -2,7 +2,6 @@ import {IProjectCard} from '../IProjectCard';
 import {IPlayer} from '../../IPlayer';
 import {Card} from '../Card';
 import {CardRenderer} from '../render/CardRenderer';
-import {played} from '../Options';
 import {CardName} from '../../../common/cards/CardName';
 import {CardType} from '../../../common/cards/CardType';
 import {Tag} from '../../../common/cards/Tag';
@@ -20,7 +19,7 @@ export class CommunityWorker extends Card implements IProjectCard {
         cardNumber: 'Q20',
         renderData: CardRenderer.builder((b) => {
           b.effect('When you play a card WITH NO TAGS, including this, you gain 4M€.', (eb) => {
-            eb.noTags({played}).startEffect.megacredits(4);
+            eb.noTags().startEffect.megacredits(4);
           });
         }),
       },

@@ -16,6 +16,7 @@ import {SelectPaymentDeferred} from '../deferredActions/SelectPaymentDeferred';
 import {SelectProductionToLoseDeferred} from '../deferredActions/SelectProductionToLoseDeferred';
 import {_AresHazardPlacement} from './AresHazards';
 import {CrashlandingBonus} from '../pathfinders/CrashlandingBonus';
+import {Board} from '../boards/Board';
 
 export class AresHandler {
   private constructor() {}
@@ -117,6 +118,9 @@ export class AresHandler {
       if (adjacentPlayer.cardIsInEffect(CardName.MARKETING_EXPERTS)) {
         ownerBonus = 2;
       }
+      if (adjacentPlayer.cardIsInEffect(CardName.EARTHCATCULT)) {
+        ownerBonus = ownerBonus+1;
+      }
 
       adjacentPlayer.megaCredits += ownerBonus;
       player.game.log('${0} gains ${1} M€ for a tile placed next to ${2}', (b) => b.player(adjacentPlayer).number(ownerBonus).string(tileText));
@@ -137,12 +141,16 @@ export class AresHandler {
     }
   }
 
-  // TODO(kberg): replace with isHazardTileType?
   public static hasHazardTile(space: Space): boolean {
     return hazardSeverity(space.tile?.tileType) !== HazardSeverity.NONE;
   }
 
-  private static computeAdjacencyCosts(game: IGame, space: Space, subjectToHazardAdjacency: boolean): AdjacencyCost {
+  private static computeAdjacencyCosts(player: IPlayer, space: Space, subjectToHazardAdjacency: boolean): AdjacencyCost {
+    if (player.isCorporation(CardName.ATHENA)) {
+      subjectToHazardAdjacency = false;
+    }
+
+    const game = player.game;
     // Summing up production cost isn't really the way to do it, because each tile could
     // reduce different production costs. Oh well.
     let megaCreditCost = 0;
@@ -179,7 +187,7 @@ export class AresHandler {
     if (player.game.phase === Phase.SOLAR) {
       return {megacredits: 0, production: 0};
     }
-    const cost = AresHandler.computeAdjacencyCosts(player.game, space, subjectToHazardAdjacency);
+    const cost = AresHandler.computeAdjacencyCosts(player, space, subjectToHazardAdjacency);
 
     // Make this more sophisticated, a player can pay for different adjacencies
     // with different production units, and, a severe hazard can't split payments.
@@ -264,5 +272,9 @@ export class AresHandler {
     }
     player.increaseTerraformRating(steps);
     player.game.log('${0}\'s TR increases ${1} step(s) for removing ${2}', (b) => b.player(player).number(steps).tileType(initialTileType));
+  }
+
+  public static anyAdjacentSpaceGivesBonus(board: Board, space: Space, bonus: SpaceBonus): boolean {
+    return board.getAdjacentSpaces(space).some((adj) => adj.adjacency?.bonus.includes(bonus));
   }
 }

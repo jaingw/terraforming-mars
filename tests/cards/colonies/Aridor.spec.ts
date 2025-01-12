@@ -14,6 +14,7 @@ import {SelectColony} from '../../../src/server/inputs/SelectColony';
 import {InputResponse} from '../../../src/common/inputs/InputResponse';
 import {ColonyName} from '../../../src/common/colonies/ColonyName';
 import {GHGProducingBacteria} from '../../../src/server/cards/base/GHGProducingBacteria';
+import {Leavitt} from '../../../src/server/cards/community/Leavitt';
 
 let card: Aridor;
 let game: IGame;
@@ -26,7 +27,7 @@ describe('Aridor', function() {
     // 2-player so as to not bother with pre-game action that drops a colony.
     [game, player, player2] = testGame(2, {coloniesExtension: true});
 
-    player.setCorporationForTest(card);
+    player.corporations.push(card);
   });
 
   it('Should play', function() {
@@ -86,7 +87,7 @@ describe('Aridor', function() {
   });
 
   it('initialAction - chooses Venus, which is activated', () => {
-    player2.setCorporationForTest(new Celestic());
+    player2.corporations.push(new Celestic());
     const venus = new Venus();
     game.discardedColonies.push(venus);
     player.deferInitialAction(card);
@@ -116,5 +117,17 @@ describe('Aridor', function() {
     const reserializedAridor = cast(reserializedPlayer.corporations?.[0], Aridor);
 
     expect(Array.from(reserializedAridor.allTags)).deep.eq([Tag.ANIMAL, Tag.SCIENCE, Tag.CITY, Tag.BUILDING]);
+  });
+
+  it('Compatible with Leavitt #6349', () => {
+    player.corporations.push(card);
+
+    expect(player.production.megacredits).eq(0);
+
+    const leavitt = new Leavitt();
+    leavitt.addColony(player);
+
+    runAllActions(game);
+    expect(player.production.megacredits).eq(1);
   });
 });

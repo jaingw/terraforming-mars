@@ -1,4 +1,8 @@
 {
+    "Build Colony bonus": "Bonus za budowę kolonii",
+    "Colony bonus": "Bonus kolonialny",
+    "Trade bonus": "Bonus handlowy",
+    
     "Callisto": "Kallisto",
     "Ceres": "Ceres",
     "Enceladus": "Enceladus",
@@ -38,7 +42,7 @@
     "Enceladus - (Microbes)": "Enceladus - (Mikroby)",
     "Europa - (Production)": "Europa - (Produkcja)",
     "Ganymede - (Plants)": "Ganimedes - (Roślinność)",
-    "Io - (Heat)": "Iо - (Ciepło)",
+    "Io - (Heat)": "Io - (Ciepło)",
     "Luna - (MegaCredits)": "Księżyc - (M€)",
     "Miranda - (Animals)": "Miranda - (Zwierzęta)",
     "Pluto - (Cards)": "Pluton - (Karty)",

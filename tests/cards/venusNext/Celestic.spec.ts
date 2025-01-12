@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 import {Celestic} from '../../../src/server/cards/venusNext/Celestic';
 import {testGame} from '../../TestGame';
-import {churnAction} from '../../TestingUtils';
+import {churn} from '../../TestingUtils';
 
 describe('Celestic', function() {
   it('Should play', function() {
@@ -10,9 +10,9 @@ describe('Celestic', function() {
     const play = card.play(player);
     expect(play).is.undefined;
 
-    player.setCorporationForTest(card);
+    player.corporations.push(card);
 
-    expect(churnAction(card, player)).is.undefined;
+    expect(churn(card.action(player), player)).is.undefined;
     expect(card.resourceCount).to.eq(1);
     player.addResourceTo(card, 4);
     expect(card.getVictoryPoints(player)).to.eq(1);

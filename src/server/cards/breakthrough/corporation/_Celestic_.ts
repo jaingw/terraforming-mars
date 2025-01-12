@@ -5,6 +5,7 @@ import {CardName} from '../../../../common/cards/CardName';
 import {CardType} from '../../../../common/cards/CardType';
 import {AltSecondaryTag} from '../../../../common/cards/render/AltSecondaryTag';
 import {Size} from '../../../../common/cards/render/Size';
+import {CardResource} from '../../../../common/CardResource';
 
 export class _Celestic_ extends Celestic {
   constructor() {
@@ -19,11 +20,11 @@ export class _Celestic_ extends Celestic {
           b.corpBox('action', (ce) => {
             ce.vSpace();
             ce.action('Add a floater to ANY card.', (eb) => {
-              eb.empty().startAction.floaters(1).asterix();
+              eb.empty().startAction.resource(CardResource.FLOATER).asterix();
             });
             ce.vSpace(Size.SMALL);
             ce.effect( 'When you gain a floater to ANY CARD, gain 1 M€. 1 VP per 3 floaters on this card', (eb) => {
-              eb.floaters(1).asterix().startEffect.megacredits(1);
+              eb.resource(CardResource.FLOATER).asterix().startEffect.megacredits(1);
             });
             ce.vSpace(Size.SMALL);
           });

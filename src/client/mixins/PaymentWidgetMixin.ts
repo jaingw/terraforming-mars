@@ -3,7 +3,7 @@ import {CardName} from '@/common/cards/CardName';
 import {CardModel} from '@/common/models/CardModel';
 import {SelectPaymentModel, SelectProjectCardToPlayModel} from '@/common/models/PlayerInputModel';
 import {PlayerViewModel} from '@/common/models/PlayerModel';
-import {Tag} from '@/common/cards/Tag';
+import {Tag} from '../../common/cards/Tag';
 import {Units} from '@/common/Units';
 import {CardResource} from '@/common/CardResource';
 import {getCard} from '@/client/cards/ClientCardManifest';
@@ -19,7 +19,7 @@ export type SelectPaymentDataModel = {
 
 export type SelectProjectCardToPlayDataModel = SelectPaymentDataModel & {
   // The cards to select from
-  cards: Array<CardModel>;
+  cards: ReadonlyArray<CardModel>;
 
   // Information about the currently selected card
   cardName: CardName;

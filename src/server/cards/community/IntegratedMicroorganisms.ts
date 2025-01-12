@@ -11,7 +11,6 @@ import {ICorporationCard} from '../corporation/ICorporationCard';
 import {CardName} from '../../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
 import {IProjectCard} from '../../cards/IProjectCard';
-import {played} from '../../cards/Options';
 import {CorporationCard} from '../corporation/CorporationCard';
 
 export class IntegratedMicroorganisms extends CorporationCard {
@@ -27,10 +26,10 @@ export class IntegratedMicroorganisms extends CorporationCard {
         description: 'You start with 50 M€. As your first action, draw 2 cards with a microbe tag.',
         renderData: CardRenderer.builder((b) => {
           b.br.br.br;
-          b.megacredits(50).cards(1, {secondaryTag: Tag.MICROBE});
+          b.megacredits(50).cards(2, {secondaryTag: Tag.MICROBE});
           b.corpBox('effect', (ce) => {
             ce.effect('When you play a Microbe tag, including this, you draw 1 card.', (eb) => {
-              eb.microbes(1, {played}).startEffect.cards(1);
+              eb.tag(Tag.MICROBE).startEffect.cards(1);
             });
           });
         }),

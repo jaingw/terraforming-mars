@@ -36,7 +36,6 @@ export type SerializedGame = {
     createdTimeMs: number;
     deferredActions: Array<DeferredAction>;
     donePlayers: Array<SerializedPlayerId>;
-    draftedPlayers: Array<SerializedPlayerId>;
     draftRound: number;
     first: SerializedPlayerId;
     fundedAwards: Array<SerializedFundedAward>;
@@ -73,7 +72,7 @@ export type SerializedGame = {
     tradeEmbargo?: boolean;
     turmoil?: SerializedTurmoil;
     undoCount: number;
-    underworldData?: UnderworldData;
+    underworldData: UnderworldData;
     venusScaleLevel: number;
     venusNextExtension?: boolean;
 

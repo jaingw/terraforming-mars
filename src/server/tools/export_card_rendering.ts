@@ -3,7 +3,7 @@ import * as fs from 'fs';
 
 import {ALL_MODULE_MANIFESTS} from '../cards/AllManifests';
 import {CardManifest, GlobalEventManifest, ModuleManifest} from '../cards/ModuleManifest';
-import {ICard} from '../cards/ICard';
+import {ICard, isIActionCard} from '../cards/ICard';
 import {GameModule} from '../../common/cards/GameModule';
 import {IGlobalEvent} from '../turmoil/globalEvents/IGlobalEvent';
 import {IClientGlobalEvent} from '../../common/turmoil/IClientGlobalEvent';
@@ -20,7 +20,7 @@ import {AwardName} from '../../common/ma/AwardName';
 import {MilestoneName} from '../../common/ma/MilestoneName';
 import {CardType} from '../../common/cards/CardType';
 import {OneOrArray} from '../../common/utils/types';
-import {initializeGlobalEventDealer} from '../turmoil/globalEvents/GlobalEventDealer';
+import {globalInitialize} from '../globalInitialize';
 
 class CardProcessor {
   public static json: Array<ClientCard> = [];
@@ -71,6 +71,7 @@ class CardProcessor {
       startingMegaCredits: startingMegaCredits,
       cardCost: cardCost,
       compatibility: [],
+      hasAction: isIActionCard(card),
     };
 
     if (Array.isArray(compatibility)) {
@@ -166,7 +167,7 @@ if (!fs.existsSync('src/genfiles')) {
   fs.mkdirSync('src/genfiles');
 }
 
-initializeGlobalEventDealer(ALL_MODULE_MANIFESTS);
+globalInitialize();
 CardProcessor.makeJson();
 GlobalEventProcessor.makeJson();
 ColoniesProcessor.makeJson();

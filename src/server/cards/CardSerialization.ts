@@ -6,6 +6,7 @@ import {SelfReplicatingRobots} from './promo/SelfReplicatingRobots';
 import {SerializedCard} from '../SerializedCard';
 import {CardType} from '../../common/cards/CardType';
 import {ICard} from './ICard';
+import {asArray} from '../../common/utils/utils';
 import {ICorporationCard} from './corporation/ICorporationCard';
 
 export function serializePlayedCard(card: ICard): SerializedCard {
@@ -102,7 +103,7 @@ export function deserializeProjectCard(element: SerializedCard): IProjectCard {
   }
   if (!(card instanceof SelfReplicatingRobots)) {
     if (element.bonusResource !== undefined) {
-      card.bonusResource = Array.isArray(element.bonusResource) ? element.bonusResource : [element.bonusResource];
+      card.bonusResource = asArray(element.bonusResource);
     }
   }
   if (isCeoCard(card)) {

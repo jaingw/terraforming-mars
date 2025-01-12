@@ -14,6 +14,7 @@ import Vue from 'vue';
 import {PlayerInputType} from '@/common/input/PlayerInputType';
 import {PlayerViewModel, PublicPlayerModel} from '@/common/models/PlayerModel';
 import {PlayerInputModel} from '@/common/models/PlayerInputModel';
+import {InputResponse} from '@/common/inputs/InputResponse';
 import AndOptions from '@/client/components/AndOptions.vue';
 import OrOptions from '@/client/components/OrOptions.vue';
 import SelectAmount from '@/client/components/SelectAmount.vue';
@@ -30,7 +31,8 @@ import SelectColony from '@/client/components/SelectColony.vue';
 import SelectProductionToLose from '@/client/components/SelectProductionToLose.vue';
 import ShiftAresGlobalParameters from '@/client/components/ShiftAresGlobalParameters.vue';
 import SelectGlobalEvent from '@/client/components/SelectGlobalEvent.vue';
-import {InputResponse} from '@/common/inputs/InputResponse';
+import SelectResource from '@/client/components/SelectResource.vue';
+import SelectResources from '@/client/components/SelectResources.vue';
 
 const typeToComponentName: Record<PlayerInputType, string> = {
   'and': 'and-options',
@@ -49,6 +51,9 @@ const typeToComponentName: Record<PlayerInputType, string> = {
   'productionToLose': 'select-production-to-lose',
   'aresGlobalParameters': 'shift-ares-global-parameters',
   'globalEvent': 'select-global-event',
+  'policy': 'select-policy',
+  'resource': 'select-resource',
+  'resources': 'select-resources',
 };
 
 export default Vue.component('player-input-factory', {
@@ -89,6 +94,8 @@ export default Vue.component('player-input-factory', {
     SelectProductionToLose,
     ShiftAresGlobalParameters,
     SelectGlobalEvent,
+    'select-resource': SelectResource,
+    'select-resources': SelectResources,
   },
   methods: {
     saveData() {

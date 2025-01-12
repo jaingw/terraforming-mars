@@ -6,7 +6,6 @@ import {CardResource} from '../../../common/CardResource';
 import {CardName} from '../../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
 import {Card} from '../Card';
-import {played} from '../Options';
 
 export class JovianDefenseDepartment extends Card implements IProjectCard {
   constructor() {
@@ -22,7 +21,7 @@ export class JovianDefenseDepartment extends Card implements IProjectCard {
         cardNumber: 'Q57',
         renderData: CardRenderer.builder((b) => {
           b.effect('When you play a Jovian tag, including this, add 1 Asteroid to this card.', (eb)=> {
-            eb.jovian({played}).startEffect.asteroids(1);
+            eb.tag(Tag.JOVIAN).startEffect.resource(CardResource.ASTEROID);
           }).br;
           b.vpText('1 VP per Asteroid on this card.');
         }),

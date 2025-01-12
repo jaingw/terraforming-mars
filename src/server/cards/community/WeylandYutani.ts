@@ -5,7 +5,7 @@ import {ICorporationCard} from '../corporation/ICorporationCard';
 import {CardName} from '../../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
 import {Size} from '../../../common/cards/render/Size';
-import {all, played} from '../Options';
+import {all} from '../Options';
 import {Resource} from '../../../common/Resource';
 import {CorporationCard} from '../corporation/CorporationCard';
 
@@ -24,12 +24,12 @@ export class WeylandYutani extends CorporationCard {
           b.corpBox('effect', (ce) => {
             ce.vSpace(Size.LARGE);
             ce.effect(undefined, (eb) => {
-              eb.science(1, {played, all}).startEffect;
+              eb.tag(Tag.SCIENCE, {all}).startEffect;
               eb.megacredits(1, {all});
             });
             ce.vSpace();
             ce.effect('when a science tag is played, incl. this, THAT PLAYER gains 1 M€, and you gain 1 M€.', (eb) => {
-              eb.science(1, {played, all}).startEffect;
+              eb.tag(Tag.SCIENCE, {all}).startEffect;
               eb.megacredits(1);
             });
           });
