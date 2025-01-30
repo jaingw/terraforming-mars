@@ -1,12 +1,12 @@
 <template>
         <div id="game-setup-detail" class="game-setup-detail-container">
           <ul>
-            <li><div class="setup-item text-yellow-600" v-i18n>Rank Mode:</div>
-              <div v-if="gameOptions.rankOption" class="game-config generic bg-yellow-600" v-i18n>On</div>
+            <li><div class="text-yellow-600 setup-item" v-i18n>Rank Mode:</div>
+              <div v-if="gameOptions.rankOption" class="bg-yellow-600 game-config generic" v-i18n>On</div>
               <div v-else class="game-config generic" v-i18n>Off</div>
             </li>
-            <li><div v-if="gameOptions.rankTimeLimit && gameOptions.rankOption" class="setup-item text-yellow-600" v-i18n>Rank Mode Time Limit:</div>
-              <div v-if="gameOptions.rankTimeLimit && gameOptions.rankOption"  class="game-config generic bg-yellow-600" v-i18n>{{gameOptions.rankTimeLimit + $t(' + every generation ') + gameOptions.rankTimePerGeneration + $t(' Min per Player')}}</div>
+            <li><div v-if="gameOptions.rankTimeLimit && gameOptions.rankOption" class="text-yellow-600 setup-item" v-i18n>Rank Mode Time Limit:</div>
+              <div v-if="gameOptions.rankTimeLimit && gameOptions.rankOption"  class="bg-yellow-600 game-config generic" v-i18n>{{gameOptions.rankTimeLimit + $t(' + every generation ') + gameOptions.rankTimePerGeneration + $t(' Min per Player')}}</div>
             </li>
             <li><div class="setup-item" v-i18n>Expansion:</div>
               <div v-if="gameOptions.venusNextExtension" class="create-game-expansion-icon expansion-icon-venus"></div>
@@ -20,6 +20,7 @@
               <div v-if="gameOptions.pathfindersExpansion" class="create-game-expansion-icon expansion-icon-pathfinders"></div>
               <div v-if="gameOptions.communityCardsOption" class="create-game-expansion-icon expansion-icon-community"></div>
               <div v-if="gameOptions.erosCardsOption" class="create-game-expansion-icon expansion-icon-eros"></div>
+              <div v-if="gameOptions.commissionCardsOption" class="create-game-expansion-icon expansion-icon-commission"></div>
               <div v-if="isPoliticalAgendasOn" class="create-game-expansion-icon expansion-icon-agendas"></div>
               <div v-if="gameOptions.ceoExtension" class="create-game-expansion-icon expansion-icon-ceo"></div>
               <div v-if="gameOptions.underworldExpansion" class="create-game-expansion-icon expansion-icon-underworld"></div>

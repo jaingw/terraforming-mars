@@ -1,6 +1,5 @@
 import {CardName} from '../../../common/cards/CardName';
 import {ModuleManifest} from '../ModuleManifest';
-import {EarthCatCult} from '../community/EarthCatCult';
 import {BioengineeringEnclosure} from './BioengineeringEnclosure';
 import {BiofertilizerFacility} from './BiofertilizerFacility';
 import {ButterflyEffect} from './ButterflyEffect';
@@ -61,7 +60,6 @@ export const ARES_CARD_MANIFEST = new ModuleManifest({
   },
   corporationCards: {
     [CardName.EGLOGUE]: {Factory: Eglogue}, // A28
-    [CardName.EARTHCATCULT]: {Factory: EarthCatCult}, // A29
   },
   cardsToRemove: [
     CardName.CAPITAL,

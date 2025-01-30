@@ -2,7 +2,7 @@
  * @Author: Ender-Wiggin
  * @Date: 2024-10-26 12:57:01
  * @LastEditors: Ender-Wiggin
- * @LastEditTime: 2024-11-21 01:04:05
+ * @LastEditTime: 2025-01-29 13:37:56
  * @Description:
  */
 import {CorporationCard} from '../corporation/CorporationCard';
@@ -27,7 +27,7 @@ export class GreenLeafDance extends CorporationCard {
     super({
       name: CardName.GREEN_LEAF_DANCE,
       tags: [Tag.PLANT],
-      startingMegaCredits: 42,
+      startingMegaCredits: 45,
 
       firstAction: {
         text: 'Place your initial ocean.',
@@ -36,16 +36,16 @@ export class GreenLeafDance extends CorporationCard {
 
       metadata: {
         cardNumber: 'XB21',
-        description: 'You start with 42 M€. As your first action, place an ocean tile.',
+        description: 'You start with 45 M€. As your first action, place an ocean tile.',
         renderData: CardRenderer.builder((b) => {
           b.br;
-          b.megacredits(42).oceans(1);
+          b.megacredits(45).oceans(1);
           b.corpBox('effect', (ce) => {
             ce.vSpace();
             ce.effect(
-              'When you place a tile on an area that has a plant placement bonus, you can spend 1 MC to increase plant production 1 step.',
+              'When you place a tile on an area that has a plant placement bonus, you can spend 2 MC to increase plant production 1 step.',
               (eb) => {
-                eb.emptyTile('normal', {size: Size.SMALL}).nbsp.asterix().colon().megacredits(1).empty().startAction.production((pb) => pb.plants(1));
+                eb.emptyTile('normal', {size: Size.SMALL}).nbsp.asterix().colon().megacredits(2).empty().startAction.production((pb) => pb.plants(1));
               });
           });
         }),
@@ -67,11 +67,11 @@ export class GreenLeafDance extends CorporationCard {
       return;
     }
 
-    if (cardOwner.canAfford({cost: 3})) {
+    if (cardOwner.canAfford({cost: 2})) {
       const orOptions = new OrOptions();
       orOptions.options.push(
-        new SelectOption('Pay 3 M€ to increase a plant production').andThen(() => {
-          cardOwner.game.defer(new SelectPaymentDeferred(cardOwner, 3, {title: TITLES.payForCardAction(this.name)}))
+        new SelectOption('Pay 2 M€ to increase a plant production').andThen(() => {
+          cardOwner.game.defer(new SelectPaymentDeferred(cardOwner, 2, {title: TITLES.payForCardAction(this.name)}))
             .andThen(() => cardOwner.production.add(Resource.PLANTS, 1, {log: true}));
           return undefined;
         }),

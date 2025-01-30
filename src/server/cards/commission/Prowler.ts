@@ -2,7 +2,7 @@
  * @Author: Ender-Wiggin
  * @Date: 2024-10-26 11:51:43
  * @LastEditors: Ender-Wiggin
- * @LastEditTime: 2024-12-08 14:51:33
+ * @LastEditTime: 2025-01-28 13:48:46
  * @Description:
  */
 import {CardName} from '../../../common/cards/CardName';

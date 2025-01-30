@@ -37,7 +37,7 @@ type Data = {
   selectedColonies: Array<ColonyName>,
   modules: Array<ColonyModule>,
 }
-type ColonyModule = 'colonies' | 'community' | 'pathfinders';
+type ColonyModule = 'colonies' | 'community' | 'pathfinders'; // 目前赞助内容里面不包括殖民地,因此这里不做处理
 type Group = ColonyModule | 'All';
 
 export default Vue.extend({

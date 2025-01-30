@@ -67,6 +67,7 @@ export class GlobalEventDealer {
       ares: gameOptions.aresExtension,
       promo: gameOptions.promoCardsOption,
       community: gameOptions.communityCardsOption,
+      commission: false, // 赞助暂时不支持全球事件
       moon: gameOptions.moonExpansion,
       pathfinders: gameOptions.pathfindersExpansion,
       ceo: gameOptions.ceoExtension,

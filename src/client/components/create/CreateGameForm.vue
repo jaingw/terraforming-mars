@@ -113,6 +113,14 @@
                 target="_blank">&#9432;</a>
             </label>
 
+            <input type="checkbox" name="commission" id="commissionCards-checkbox" v-model="commissionCardsOption"
+              v-if="isvip">
+            <label for="commissionCards-checkbox" class="expansion-button" :class="{ forbidden: !isvip }">
+              <div class="create-game-expansion-icon expansion-icon-commission"></div>
+              <span v-i18n>Commission</span>&nbsp;<a href="https://docs.qq.com/pdf/DQUFZaHdMWHl2V21M" class="tooltip"
+                target="_blank">&#9432;</a>
+            </label>
+
             <input type="checkbox" name="themoon" id="themoon-checkbox" v-model="moonExpansion" v-if="isvip">
             <label for="themoon-checkbox" class="expansion-button" :class="{ forbidden: !isvip }">
               <div class="create-game-expansion-icon expansion-icon-themoon"></div>
@@ -192,7 +200,7 @@
             <h4 v-i18n>Board</h4>
 
                             <div v-for="boardName in boards" v-bind:key="boardName">
-                              <div v-if="boardName==='utopia planitia'" class="create-game-subsection-label" v-i18n>Fan-made</div>
+                              <div v-if="boardName==='arabia terra'" class="create-game-subsection-label" v-i18n>Fan-made</div>
                               <input type="radio" :value="boardName" name="board" v-model="board" :id="boardName+'-checkbox'">
                               <label :for="boardName+'-checkbox'" class="expansion-button">
                                     <span :class="getBoardColorClass(boardName)">&#x2B22;</span>
@@ -380,7 +388,7 @@
             <label for="rank-checkbox" :class="{ forbidden: !isvip }">
               <div class="create-game-expansion-icon expansion-icon-rank"></div>
               <span :class="isvip ? 'text-yellow-600' : 'text-gray-300'" v-i18n>Rank Mode</span>&nbsp;&nbsp;&nbsp;
-              <a href="/ranks" class="tooltip text-yellow-600" :data-tooltip="$t('Go To Ranking')"
+              <a href="/ranks" class="text-yellow-600 tooltip" :data-tooltip="$t('Go To Ranking')"
                 target="_blank">&#9432;</a>
             </label>
             <label for="rankTimeLimit-checkbox" v-show="rankOption">
@@ -516,6 +524,7 @@
         v-bind:venusNext="venusNext" v-bind:colonies="colonies" v-bind:turmoil="turmoil"
         v-bind:promoCardsOption="promoCardsOption" v-bind:erosCardsOption="erosCardsOption"
         v-bind:communityCardsOption="communityCardsOption"  v-bind:aresExtension="aresExtension" v-bind:moonExpansion="moonExpansion"
+        v-bind:commissionCardsOption="commissionCardsOption"
         v-bind:pathfindersExpansion="pathfindersExpansion"></CorporationsFilter>
     </div>
 
@@ -542,6 +551,7 @@
                   v-bind:ceoExtension="ceoExtension"
                   v-bind:underworldExpansion="underworldExpansion"
                   v-bind:prelude2Expansion="prelude2Expansion"
+                  v-bind:commissionCardsOption="commissionCardsOption"
               ></PreludesFilter>
     </div>
 
@@ -610,6 +620,7 @@ const vipOptions: any = {
   moonExpansion: false,
   politicalAgendasExtension: AgendaStyle.STANDARD,
   pathfindersExpansion: false,
+  commissionCardsOption: false,
 
   shuffleMapOption: false,
   removeNegativeGlobalEventsOption: false,
@@ -731,10 +742,10 @@ export default (Vue as WithRefs<Refs>).extend({
         BoardName.THARSIS,
         BoardName.HELLAS,
         BoardName.ELYSIUM,
-        RandomBoardOption.OFFICIAL,
         BoardName.UTOPIA_PLANITIA,
         BoardName.VASTITAS_BOREALIS_NOVUS,
         BoardName.TERRA_CIMMERIA_NOVUS,
+        RandomBoardOption.OFFICIAL,
         BoardName.ARABIA_TERRA,
         BoardName.AMAZONIS,
         BoardName.TERRA_CIMMERIA,
@@ -747,6 +758,7 @@ export default (Vue as WithRefs<Refs>).extend({
       shuffleMapOption: false,
       promoCardsOption: true,
       communityCardsOption: false,
+      commissionCardsOption: false,
       erosCardsOption: false,
       aresExtension: false,
       politicalAgendasExtension: AgendaStyle.STANDARD,
@@ -1116,6 +1128,7 @@ export default (Vue as WithRefs<Refs>).extend({
       case 'ceo': return model.ceoExtension;
       case 'starwars': return model.starWarsExpansion;
       case 'underworld': return model.underworldExpansion;
+      case 'commission': return model.commissionCardsOption;
       default: throw new Error('Unknown module: ' + module);
       }
     },
@@ -1213,6 +1226,7 @@ export default (Vue as WithRefs<Refs>).extend({
       const seed = this.seed;
       const promoCardsOption = this.promoCardsOption;
       const communityCardsOption = this.communityCardsOption;
+      const commissionCardsOption = this.commissionCardsOption;
       const erosCardsOption = this.erosCardsOption;
       const aresExtension = this.aresExtension;
       const politicalAgendasExtension = this.politicalAgendasExtension;
@@ -1352,6 +1366,7 @@ export default (Vue as WithRefs<Refs>).extend({
         solarPhaseOption,
         promoCardsOption,
         communityCardsOption,
+        commissionCardsOption,
         erosCardsOption,
         aresExtension,
         politicalAgendasExtension,

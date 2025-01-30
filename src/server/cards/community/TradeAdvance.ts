@@ -1,3 +1,10 @@
+/*
+ * @Author: Ender-Wiggin
+ * @Date: 2024-10-10 23:21:26
+ * @LastEditors: Ender-Wiggin
+ * @LastEditTime: 2025-01-28 13:49:37
+ * @Description:
+ */
 import {Tag} from '../../../common/cards/Tag';
 import {IPlayer} from '../../IPlayer';
 import {PreludeCard} from '../prelude/PreludeCard';
