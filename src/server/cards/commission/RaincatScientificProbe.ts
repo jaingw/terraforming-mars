@@ -2,14 +2,13 @@
  * @Author: Ender-Wiggin
  * @Date: 2024-11-21 01:00:48
  * @LastEditors: Ender-Wiggin
- * @LastEditTime: 2024-12-08 12:39:23
+ * @LastEditTime: 2025-01-28 13:51:10
  * @Description:
  */
 import {IPlayer} from '../../IPlayer';
 import {CardName} from '../../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
 import {Tag} from '../../../common/cards/Tag';
-// import {Size} from '../../../common/cards/render/Size';
 import {digit} from '../Options';
 import {ICorporationCard} from '../corporation/ICorporationCard';
 import {IProjectCard} from '../../cards/IProjectCard';
@@ -19,7 +18,7 @@ import {CardResource} from '../../../common/CardResource';
 import {CorporationCard} from '../corporation/CorporationCard';
 import {OrOptions} from '../../inputs/OrOptions';
 import {SelectOption} from '../../inputs/SelectOption';
-import { Size } from '../../../common/cards/render/Size';
+import {Size} from '../../../common/cards/render/Size';
 
 const RESOURCE_AUTO_NUM = 5;
 
@@ -42,13 +41,13 @@ export class RaincatScientificProbe extends CorporationCard {
             });
             ce.vSpace();
             ce.effect(undefined, (eb) => {
-              eb.resource(CardResource.SCIENCE,RESOURCE_AUTO_NUM).startAction.steel(3, {digit}).or;
+              eb.resource(CardResource.SCIENCE, RESOURCE_AUTO_NUM).startAction.steel(3, {digit}).or;
             });
             ce.vSpace();
             ce.effect('每打1张手牌(包括此卡),拿1个科学资源,每当有5个科学资源，自动拿3钢/2钛/3电', (eb) => {
-              eb.resource(CardResource.SCIENCE,RESOURCE_AUTO_NUM).startAction.titanium(2, {digit}).slash().energy(3, {digit});
+              eb.resource(CardResource.SCIENCE, RESOURCE_AUTO_NUM).startAction.titanium(2, {digit}).slash().energy(3, {digit});
             }).vSpace(Size.SMALL);
-          })
+          });
         }),
         description: 'You start with 44M€.',
       },

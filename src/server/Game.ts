@@ -2125,7 +2125,7 @@ export class Game implements IGame, Logger {
     d.milestones.forEach((element: IMilestone | string) => {
       let milestoneName = typeof element === 'string' ? element : element.name;
       milestoneName = maybeRenamedMilestone(milestoneName);
-     
+
       const foundMilestone = ALL_MILESTONES.find((milestone) => milestone.name === milestoneName);
       if (foundMilestone !== undefined) {
         this.milestones.push(foundMilestone);
@@ -2135,7 +2135,7 @@ export class Game implements IGame, Logger {
     d.awards.forEach((element: IAward | string) => {
       let awardName = typeof element === 'string' ? element : element.name;
       awardName = maybeRenamedAward(awardName);
-     
+
       const foundAward = ALL_AWARDS.find((award) => award.name === awardName);
       if (foundAward !== undefined) {
         this.awards.push(foundAward);
@@ -2409,7 +2409,6 @@ export class Game implements IGame, Logger {
     const playerLength = this.getAllPlayers().length;
 
     this.quitPlayers.add(this.getPlayerById(playerId as PlayerId));
-    console.log('是否有玩家超时：', this.shouldGoToTimeOutPhase());
 
     if (this.phase === Phase.END || this.phase === Phase.ABANDON || this.phase === Phase.TIMEOUT) {
       return;

@@ -57,6 +57,9 @@ export default Vue.extend({
     communityCardsOption: {
       type: Boolean,
     },
+    commissionCardsOption: {
+      type: Boolean,
+    },
     moonExpansion: {
       type: Boolean,
     },
@@ -93,6 +96,8 @@ export default Vue.extend({
         ...preludeCardNames('prelude'),
         ...this.promoCardsOption ? preludeCardNames('promo') : [],
         ...this.communityCardsOption ? preludeCardNames('community') : [],
+        ...this.commissionCardsOption ? preludeCardNames('commission') : [],
+
         ...this.moonExpansion ? preludeCardNames('moon') : [],
         ...this.pathfindersExpansion ? preludeCardNames('pathfinders') : [],
         ...this.ceoExtension ? preludeCardNames('ceo') : [],
@@ -199,6 +204,9 @@ export default Vue.extend({
     },
     communityCardsOption(enabled) {
       this.watchSelect('community', enabled);
+    },
+    commissionCardsOption(enabled) {
+      this.watchSelect('commission', enabled);
     },
     moonExpansion(enabled) {
       this.watchSelect('moon', enabled);

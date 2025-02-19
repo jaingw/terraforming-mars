@@ -18,7 +18,7 @@ import {Manutech} from '../../../src/server/cards/venusNext/Manutech';
 import {CloneTechnology} from '../../../src/server/cards/eros/CloneTechnology';
 import {Greenhouses} from '../../../src/server/cards/base/Greenhouses';
 import {DesignedOrganisms} from '../../../src/server/cards/pathfinders/DesignedOrganisms';
-import {ScolexIndustries} from '../../../src/server/cards/community/ScolexIndustries';
+import {ScolexIndustries} from '../../../src/server/cards/commission/ScolexIndustries';
 
 describe('CloneTechnology', () => {
   let card: CloneTechnology;

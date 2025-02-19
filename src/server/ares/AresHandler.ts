@@ -119,7 +119,10 @@ export class AresHandler {
         ownerBonus = 2;
       }
       if (adjacentPlayer.cardIsInEffect(CardName.EARTHCATCULT)) {
-        ownerBonus = ownerBonus+1;
+        const card = adjacentPlayer.getCorporation(CardName.EARTHCATCULT);
+        if (card) {
+          adjacentPlayer.addResourceTo(card, {qty: 1, log: true});
+        }
       }
 
       adjacentPlayer.megaCredits += ownerBonus;

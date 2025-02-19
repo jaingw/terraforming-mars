@@ -12,6 +12,7 @@ export interface GameOptionsModel_ {
   ceoExtension: boolean,
   coloniesExtension: boolean,
   communityCardsOption: boolean,
+  commissionCardsOption: boolean,
   corporateEra: boolean,
   draftVariant: boolean,
   escapeVelocityMode: boolean,

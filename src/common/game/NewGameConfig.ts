@@ -49,6 +49,7 @@ export interface NewGameConfig {
   prelude2Expansion: boolean;
   promoCardsOption: boolean;
   communityCardsOption: boolean;
+  commissionCardsOption: boolean;
   erosCardsOption: boolean;
   aresExtension: boolean;
   // aresHazards: boolean;

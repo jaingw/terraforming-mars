@@ -85,6 +85,9 @@ export default Vue.extend({
     pathfindersExpansion: {
       type: Boolean,
     },
+    commissionCardsOption: {
+      type: Boolean,
+    },
   },
   data() {
     // Start by giving every entry a default value
@@ -117,6 +120,7 @@ export default Vue.extend({
         ...this.aresExtension ? corpCardNames('ares') : [],
         ...this.moonExpansion ? corpCardNames('moon') : [],
         ...this.pathfindersExpansion ? corpCardNames('pathfinders') : [],
+        ...this.commissionCardsOption ? corpCardNames('commission') : [],
       ],
       GAME_MODULES: GAME_MODULES.filter((x) => x !== 'breakthrough'),
       MODULE_NAMES: MODULE_NAMES,
@@ -214,6 +218,9 @@ export default Vue.extend({
     },
     pathfindersExpansion(enabled) {
       this.watchSelect('pathfinders', enabled);
+    },
+    commissionCardsOption(enabled) {
+      this.watchSelect('commission', enabled);
     },
   },
 });

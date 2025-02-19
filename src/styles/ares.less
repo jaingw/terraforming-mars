@@ -19,6 +19,11 @@
   .card-tile-ares;
 }
 
+.card-tile-ecological-zone-ares {
+  .board-space-tile--ecological-zone-ares;
+  .card-tile-ares;
+}
+
 .card-tile-great-dam-ares {
   .board-space-tile--great-dam-ares;
   .card-tile-ares;
@@ -208,8 +213,16 @@
 }
 
 .board-space-tile--adjacency-tile {
-	background: url(./assets/board_icons_ares.png) -79px -83px no-repeat;
+	background-image: url(./assets/tiles/empty_ares.png);
+	width: 32px !important;
+	height: 34px !important;
+	background-size: 32px 34px !important;
+	position: relative;
 }
+
+// .board-space-tile--adjacency-tile {
+// 	background: url(./assets/board_icons_ares.png) -79px -83px no-repeat;
+// }
 
 .ares-container {
 	font-size: 14px;

@@ -1,3 +1,10 @@
+/*
+ * @Author: Ender-Wiggin
+ * @Date: 2025-01-27 14:10:20
+ * @LastEditors: Ender-Wiggin
+ * @LastEditTime: 2025-01-28 14:05:41
+ * @Description:
+ */
 import {CardName} from '@/common/cards/CardName';
 import {ColonyName} from '@/common/colonies/ColonyName';
 import {RandomMAOptionType} from '@/common/ma/RandomMAOptionType';
@@ -27,6 +34,7 @@ export type CreateGameModel = {
   clonedGameId: GameId | undefined;
   colonies: boolean;
   communityCardsOption: boolean;
+  commissionCardsOption: boolean;
   corporateEra: boolean;
   customCeos: Array<CardName>;
   customColonies: Array<ColonyName>;

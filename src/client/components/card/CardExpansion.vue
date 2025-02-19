@@ -27,6 +27,7 @@ const MODULE_TO_CSS: Omit<Record<GameModule, string>, 'base'> = {
   ceo: 'ceo-icon',
   starwars: 'starwars-icon',
   underworld: 'underworld-icon',
+  commission: 'commission-icon',
 };
 
 export default Vue.extend({

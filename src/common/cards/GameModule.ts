@@ -16,6 +16,7 @@ export const GAME_MODULES = [
   'ceo',
   'starwars',
   'underworld',
+  'commission', // 以后赞助的卡牌都放在这个模块里
 ] as const;
 export type GameModule = typeof GAME_MODULES[number];
 
@@ -29,6 +30,7 @@ export const MODULE_NAMES: Readonly<Record<GameModule, string>> = {
   prelude2: 'Prelude 2',
   turmoil: 'Turmoil',
   community: 'Community',
+  commission: 'Commission',
   breakthrough: 'Breakthrough',
   eros: 'Eros',
   ares: 'Ares',

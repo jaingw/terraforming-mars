@@ -70,7 +70,10 @@ export class GameHandler extends Handler {
       return allBoards.filter((name) => {
         return name === BoardName.THARSIS ||
           name === BoardName.HELLAS ||
-          name === BoardName.ELYSIUM;
+          name === BoardName.ELYSIUM ||
+          name === BoardName.UTOPIA_PLANITIA ||
+          name === BoardName.VASTITAS_BOREALIS_NOVUS ||
+          name === BoardName.TERRA_CIMMERIA_NOVUS;
       });
     }
     return [board];
@@ -141,6 +144,7 @@ export class GameHandler extends Handler {
             clonedGamedId: gameReq.clonedGamedId,
             coloniesExtension: gameReq.colonies,
             communityCardsOption: gameReq.communityCardsOption,
+            commissionCardsOption: gameReq.commissionCardsOption,
             corporateEra: gameReq.corporateEra,
             customCeos: gameReq.customCeos,
             customColoniesList: gameReq.customColoniesList,
@@ -209,6 +213,7 @@ export class GameHandler extends Handler {
               erosCardsOption: false,
               aresExtension: false,
               communityCardsOption: false,
+              commissionCardsOption: false,
               moonExpansion: false,
               politicalAgendasExtension: AgendaStyle.STANDARD,
               pathfindersExpansion: false,
