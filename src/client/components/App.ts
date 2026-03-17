@@ -4,6 +4,7 @@ import CardList from '@/client/components/cardlist/CardList.vue';
 import CreateGameForm from '@/client/components/create/CreateGameForm.vue';
 import GameEnd from '@/client/components/GameEnd.vue';
 import GameHome from '@/client/components/GameHome.vue';
+import GameLobby from '@/client/components/lobby/GameLobby.vue';
 import GamesOverview from '@/client/components/GamesOverview.vue';
 import Help from '@/client/components/help/Help.vue';
 import LoadGameForm from '@/client/components/LoadGameForm.vue';
@@ -19,8 +20,9 @@ import {SpectatorModel} from '@/common/models/SpectatorModel';
 import {isPlayerId, isSpectatorId} from '@/common/Types';
 import {hasShowModal, showModal, windowHasHTMLDialogElement} from './HTMLDialogElementCompatibility';
 import {statusCode} from '@/common/http/statusCode';
+import {showError} from '../utils/showAlert';
 
-const dialogPolyfill = require('dialog-polyfill');
+import dialogPolyfill from 'dialog-polyfill';
 
 
 import {Login} from './Login';
@@ -29,6 +31,12 @@ import {MyGames} from './MyGames';
 import {Donate} from './Donate';
 import {PreferencesManager} from '../utils/PreferencesManager';
 import {Ranks} from './Ranks';
+import UserProfile from './UserProfile.vue';
+import MePage from './Me.vue';
+import NavBar from './common/NavBar.vue';
+import AdminHome from './admin/AdminHome.vue';
+import TfmButton from './common/TfmButton.vue';
+import TfmIcon from './common/TfmIcon.vue';
 
 function getDay() {
   return new Date(new Date().getTime()+8*60*60*1000).toISOString().slice(0, 10).replace('T', ' ');
@@ -37,6 +45,8 @@ function getDay() {
 export interface MainAppData {
     screen: string;
     oscreen: string;
+    /** User identifier for user profile page (user ID or name) */
+    userProfileId: string;
     /**
      * player or spectator are set once the app component has loaded.
      * Vue only watches properties that exist initially. When we
@@ -59,6 +69,7 @@ export interface MainAppData {
 
 const data: MainAppData = {
   screen: 'empty',
+  userProfileId: '',
   playerkey: 0,
   settings: raw_settings,
   isServerSideRequestInProgress: false,
@@ -89,6 +100,7 @@ export const mainAppSettings = {
     'player-input-factory': PlayerInputFactory,
     'start-screen': StartScreen,
     'create-game-form': CreateGameForm,
+    'game-lobby': GameLobby,
     'load-game-form': LoadGameForm,
     'game-home': GameHome,
     'player-home': PlayerHome,
@@ -102,18 +114,69 @@ export const mainAppSettings = {
     'my-games': MyGames,
     'donate': Donate,
     'ranks': Ranks, // 天梯排行榜
+    'user-profile': UserProfile,
+    'me-page': MePage,
+    'nav-bar': NavBar,
+    'tfm-button': TfmButton,
+    'tfm-icon': TfmIcon,
+    'admin-home': AdminHome,
     // 这里引入是为了统一编译进去，渲染 card 并在card_HTML.spec.ts中获取html 保存到json中
     // 'cardHTML': CardHTML,
   },
   'methods': {
+    handleRouteChange() {
+      const currentPathname = getLastPathSegment();
+      const app = this as unknown as (MainAppData) & (typeof mainAppSettings.methods);
+
+      if (currentPathname === paths.GAMES_OVERVIEW) {
+        app.screen = 'games-overview';
+      } else if (currentPathname === paths.NEW_GAME) {
+        app.screen = 'create-game-form';
+      } else if (currentPathname === paths.LOBBY) {
+        app.screen = 'game-lobby';
+      } else if (currentPathname === paths.LOAD) {
+        app.screen = 'load';
+      } else if (currentPathname === paths.CARDS) {
+        app.screen = 'cards';
+      } else if (currentPathname === paths.HELP) {
+        app.screen = 'help';
+      } else if (currentPathname === paths.ADMIN) {
+        app.screen = 'admin';
+      } else if (currentPathname === 'login') {
+        app.screen = 'login';
+      } else if (currentPathname === 'register') {
+        app.screen = 'register';
+      } else if (currentPathname === 'mygames' || currentPathname === 'me') {
+        app.screen = 'me-page';
+      } else if (currentPathname === 'donate') {
+        app.screen = 'donate';
+      } else if (currentPathname === 'ranks') {
+        app.screen = 'ranks';
+      } else if (getFullPath().startsWith('user/')) {
+        const identifier = getFullPath().substring('user/'.length);
+        if (identifier) {
+          app.userProfileId = decodeURIComponent(identifier);
+          app.screen = 'user-profile';
+        } else {
+          app.screen = 'start-screen';
+        }
+      } else if (currentPathname !== paths.PLAYER && currentPathname !== paths.THE_END && currentPathname !== paths.GAME) {
+        app.screen = 'start-screen';
+      }
+    },
     showAlert(message: string, cb: () => void = () => {}): void {
       const dialogElement: HTMLElement | null = document.getElementById('alert-dialog');
       const buttonElement: HTMLElement | null = document.getElementById('alert-dialog-button');
       const messageElement: HTMLElement | null = document.getElementById('alert-dialog-message');
+      const titleElement: HTMLElement | null = document.querySelector('.alert-dialog__title');
       if (buttonElement !== null && messageElement !== null && dialogElement !== null && hasShowModal(dialogElement)) {
         messageElement.innerHTML = $t(message);
+        if (titleElement) {
+          titleElement.innerHTML = $t('Error');
+        }
         const handler = () => {
           buttonElement.removeEventListener('click', handler);
+          (dialogElement as HTMLDialogElement).close();
           cb();
         };
         buttonElement.addEventListener('click', handler);
@@ -142,7 +205,11 @@ export const mainAppSettings = {
       }
       xhr.open('GET', url);
       xhr.onerror = function() {
-        alert('Error getting game data');
+        console.warn('XHR error for', url, xhr.status);
+        // Don't alert for 404 errors as they may be transient
+        if (xhr.status !== statusCode.notFound) {
+          showError('Error getting game data');
+        }
       };
       xhr.onload = function() {
         try {
@@ -200,7 +267,11 @@ export const mainAppSettings = {
               }
             }
           } else {
-            alert('Unexpected server response: ' + xhr.statusText);
+            console.warn('Unexpected status code:', xhr.status, 'for', url);
+            // Don't alert for 404 errors in polling scenario
+            if (xhr.status !== statusCode.notFound) {
+              showError('Unexpected server response: ' + xhr.statusText);
+            }
           }
         } catch (e) {
           console.warn('Error processing XHR response: ' + e);
@@ -227,7 +298,7 @@ export const mainAppSettings = {
             }
             app.isvip = false;
             PreferencesManager.INSTANCE.set('vip', false);
-            alert(msg);
+            showError(msg);
           });
         } else {
           response.json().then((data: { id: string; isvip: boolean; }) => {
@@ -246,7 +317,7 @@ export const mainAppSettings = {
         .then(onSucces)
         .catch((e) => {
           console.warn('error', e);
-          alert('Unexpected server response');
+          showError('Unexpected server response');
         });
 
       if (vip && vip === 'true') {
@@ -268,11 +339,16 @@ export const mainAppSettings = {
   mounted() {
     // document.title = constants.APP_NAME;
     if (!windowHasHTMLDialogElement()) {
-      dialogPolyfill.default.registerDialog(document.getElementById('alert-dialog'));
+      (dialogPolyfill as any).default.registerDialog(document.getElementById('alert-dialog'));
     }
     const currentPathname = getLastPathSegment();
     const app = this as unknown as (MainAppData) & (typeof mainAppSettings.methods);
     const userId = PreferencesManager.load('userId');
+
+    window.addEventListener('popstate', () => {
+      app.handleRouteChange();
+    });
+
     if (userId !== '') {
       if (currentPathname === '') {// 首页强制更新vip
         PreferencesManager.INSTANCE.set('vipupdate', '');
@@ -289,13 +365,13 @@ export const mainAppSettings = {
       } else if (isSpectatorId(id)) {
         app.updateSpectator();
       } else {
-        alert('Bad id URL parameter.');
+        showError('Bad id URL parameter.');
       }
     } else if (currentPathname === paths.GAME) {
       const xhr = new XMLHttpRequest();
       xhr.open('GET', paths.API_GAME + window.location.search+'&userId='+ userId );
       xhr.onerror = function() {
-        alert('Error getting game data');
+        showError('Error getting game data');
       };
       xhr.onload = function() {
         if (xhr.status === statusCode.ok) {
@@ -307,35 +383,13 @@ export const mainAppSettings = {
           app.game = xhr.response as SimpleGameModel;
           app.screen = 'game-home';
         } else {
-          alert('Unexpected server response');
+          showError('Unexpected server response');
         }
       };
       xhr.responseType = 'json';
       xhr.send();
-    } else if (currentPathname === paths.GAMES_OVERVIEW) {
-      app.screen = 'games-overview';
-    } else if (currentPathname === paths.NEW_GAME) {
-      app.screen = 'create-game-form';
-    } else if (currentPathname === paths.LOAD) {
-      app.screen = 'load';
-    } else if (currentPathname === paths.CARDS) {
-      app.screen = 'cards';
-    } else if (currentPathname === paths.HELP) {
-      app.screen = 'help';
-    } else if (currentPathname === paths.ADMIN) {
-      app.screen = 'admin';
-    } else if (currentPathname === 'login') {
-      app.screen = 'login';
-    } else if (currentPathname === 'register') {
-      app.screen = 'register';
-    } else if (currentPathname === 'mygames') {
-      app.screen = 'my-games';
-    } else if (currentPathname === 'donate') {
-      app.screen = 'donate';
-    } else if (currentPathname === 'ranks') {
-      app.screen = 'ranks';
     } else {
-      app.screen = 'start-screen';
+      app.handleRouteChange();
     }
 
     if (userId === '') {// 没有用户id时  调用赞助页面方法
@@ -349,4 +403,12 @@ export const mainAppSettings = {
 function getLastPathSegment() {
   // Leave only the last part of /path
   return window.location.pathname.replace(/.*\//g, '');
+}
+
+/**
+ * Get the full path without leading slash.
+ * e.g. "/user/john" -> "user/john"
+ */
+function getFullPath() {
+  return window.location.pathname.substring(1);
 }

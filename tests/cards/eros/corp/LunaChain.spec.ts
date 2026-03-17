@@ -8,7 +8,7 @@ import {MineralDeposit} from '../../../../src/server/cards/base/MineralDeposit';
 import {Payment} from '../../../../src/common/inputs/Payment';
 import {Greenhouses} from '../../../../src/server/cards/base/Greenhouses';
 import {OptimalAerobraking} from '../../../../src/server/cards/base/OptimalAerobraking';
-import { EnergyMarket } from '../../../../src/server/cards/promo/EnergyMarket';
+import {EnergyMarket} from '../../../../src/server/cards/promo/EnergyMarket';
 
 describe('LunaChain', () => {
   let card: LunaChain;

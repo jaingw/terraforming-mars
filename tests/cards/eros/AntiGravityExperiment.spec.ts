@@ -8,10 +8,10 @@ import {Research} from '../../../src/server/cards/base/Research';
 import {SearchForLife} from '../../../src/server/cards/base/SearchForLife';
 import {EarthCatapult} from '../../../src/server/cards/base/EarthCatapult';
 import {Tag} from '../../../src/common/cards/Tag';
-import { DeuteriumExport } from '../../../src/server/cards/venusNext/DeuteriumExport';
-import { AdvancedAlloys } from '../../../src/server/cards/base/AdvancedAlloys';
-import { InventorsGuild } from '../../../src/server/cards/base/InventorsGuild';
-import { LagrangeObservatory } from '../../../src/server/cards/base/LagrangeObservatory';
+import {DeuteriumExport} from '../../../src/server/cards/venusNext/DeuteriumExport';
+import {AdvancedAlloys} from '../../../src/server/cards/base/AdvancedAlloys';
+import {InventorsGuild} from '../../../src/server/cards/base/InventorsGuild';
+import {LagrangeObservatory} from '../../../src/server/cards/base/LagrangeObservatory';
 
 
 describe('AntiGravityExperiment', () => {
@@ -25,13 +25,13 @@ describe('AntiGravityExperiment', () => {
   });
 
   function addScienceTags(n: number) {
-    if(n === 6) {
+    if (n === 6) {
       player.playedCards.push(new Research());
       player.playedCards.push(new SearchForLife());
       player.playedCards.push(new AdvancedAlloys());
       player.playedCards.push(new InventorsGuild());
       player.playedCards.push(new LagrangeObservatory());
-      return ;
+      return;
     }
     for (let i = 0; i < n; i++) {
       player.playedCards.push(fakeCard({tags: [Tag.SCIENCE]}));

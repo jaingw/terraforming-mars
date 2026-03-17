@@ -230,7 +230,7 @@ describe('PharmacyUnion', () => {
   describe('Prioritize effect order', () => {
     it('Compatible with Splice', () => {
       const card = new PharmacyUnion();
-      const [game , player, player2] = testGame(2);
+      const [game, player, player2] = testGame(2);
 
       player2.megaCredits = 44;
       player2.playCorporationCard(new Splice());
@@ -286,7 +286,7 @@ describe('PharmacyUnion', () => {
     // Symbiotic Fungus has a microbe tag, and doesn't hold microbes, which simplifies Splice's decision.
     // And is actually the case where Pharmacy Union was not working out.
     player.playCard(new SymbioticFungus());
-    
+
     // Expect this to be the PU action.
     game.deferredActions.runNext();
     expect(player.megaCredits).eq(0);

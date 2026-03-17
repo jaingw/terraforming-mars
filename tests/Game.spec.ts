@@ -155,7 +155,7 @@ describe('Game', () => {
     const game = Game.newInstance('game-draft', [player, player2], player);
     if (player.getWaitingFor() instanceof SelectInitialCards) {
       player.popWaitingFor();
-    } 
+    }
     if (player2.getWaitingFor() instanceof SelectInitialCards) {
       player2.popWaitingFor();
     }
@@ -176,7 +176,7 @@ describe('Game', () => {
     const game = Game.newInstance('game-classic', [player, player2], player);
     if (player.getWaitingFor() instanceof SelectInitialCards) {
       player.popWaitingFor();
-    } 
+    }
     if (player2.getWaitingFor() instanceof SelectInitialCards) {
       player2.popWaitingFor();
     }
@@ -196,7 +196,7 @@ describe('Game', () => {
     const game = Game.newInstance('game-solo', [player], player);
     if (player.getWaitingFor() instanceof SelectInitialCards) {
       player.popWaitingFor();
-    } 
+    }
     game.playerHasPassed(player);
     game.playerIsFinishedTakingActions();
     expect(game.getGeneration()).to.eq(2);
@@ -208,7 +208,7 @@ describe('Game', () => {
     const game = Game.newInstance('game-venusterraform', [player, player2], player, {venusNextExtension: true, requiresVenusTrackCompletion: true});
     if (player.getWaitingFor() instanceof SelectInitialCards) {
       player.popWaitingFor();
-    } 
+    }
     if (player2.getWaitingFor() instanceof SelectInitialCards) {
       player2.popWaitingFor();
     }
@@ -319,7 +319,7 @@ describe('Game', () => {
     player.plants = 9;
 
     // Pass last turn
-    forceGenerationEnd(game,true);
+    forceGenerationEnd(game, true);
 
     // Final greenery placement is considered part of the production phase.
     expect(game.phase).to.eq(Phase.PRODUCTION);
@@ -358,7 +358,7 @@ describe('Game', () => {
     player.plants = 9;
 
     // Pass last turn
-    forceGenerationEnd(game,true);
+    forceGenerationEnd(game, true);
 
     // Final greenery placement is considered part of the production phase.
     expect(game.phase).to.eq(Phase.PRODUCTION);

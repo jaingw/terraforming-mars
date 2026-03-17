@@ -31,7 +31,7 @@ describe('SpaceMonsterPark', function() {
 
     player.playedCards.remove(card);
     card = new SpaceMonsterPark();
-    
+
     player.playCard(card);
     expect(game.deferredActions).has.lengthOf(3); // 应该是先加两个,然后选择加第三个还是直接抽牌
     let input = game.deferredActions.peek()!.execute();
@@ -70,5 +70,4 @@ describe('SpaceMonsterPark', function() {
     game.deferredActions.pop()?.execute();
     expect(card.resourceCount).to.eq(2);
   });
-
 });

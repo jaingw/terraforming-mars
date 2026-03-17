@@ -28,7 +28,7 @@ describe('BuyNLarge', () => {
     [game, player, player2] = testGame(2, {skipInitialShuffling: true});
   });
 
-  it('初始资金为35，初始资源1', () => {
+  it('初始资金为30，初始资源1', () => {
     player.playCorporationCard(card);
     expect(card.resourceCount).to.eq(1);
   });
@@ -90,30 +90,43 @@ describe('BuyNLarge', () => {
     expect(card.resourceCount).to.eq(initialResources + 3);
   });
 
-  it('当有7个种子资源时自动转换为8植物', () => {
+  it('当有8个种子资源时自动转换为8植物', () => {
     // 打出公司卡并完成初始行动
     player.playCorporationCard(card);
     runAllActions(game);
 
 
-    // 需要打出6个生物标签卡片
-    player.playCard(new Greenhouses());
-    player.playCard(new Bushes());
-    player.playCard(new Moss());
-    player.playCard(new Heather());
-    player.playCard(new Lichen());
-
-    expect(card.resourceCount).to.eq(6);
+    // 手动设置资源到7（差1个达到阈值8）
+    card.resourceCount = 7;
 
     // 记录初始植物数量
     const initialPlants = player.plants;
-    player.playCard(new Ants());
 
+    // 打出1张生物标签卡，获得第8个种子
+    player.playCard(new Ants());
     runAllActions(game);
 
-    // 验证种子资源被消耗，得到植物
-    expect(card.resourceCount).to.eq(0); // 7个种子应被转换
+    // 验证种子资源被消耗（8个种子 → 0），得到植物
+    expect(card.resourceCount).to.eq(0); // 8个种子应被转换
     expect(player.plants).to.eq(initialPlants + 8); // 获得8植物
+  });
+
+  it('7个种子资源时不应触发转换', () => {
+    player.playCorporationCard(card);
+    runAllActions(game);
+
+    // 手动设置资源到6
+    card.resourceCount = 6;
+
+    const initialPlants = player.plants;
+
+    // 打出1张生物标签卡，获得第7个种子
+    player.playCard(new Ants());
+    runAllActions(game);
+
+    // 7个种子不足以触发转换（阈值为8）
+    expect(card.resourceCount).to.eq(7);
+    expect(player.plants).to.eq(initialPlants);
   });
 
   it('当放置多个绿化时，每次都获得种子资源', () => {

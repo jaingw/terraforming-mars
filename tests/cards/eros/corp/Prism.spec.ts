@@ -7,15 +7,15 @@ import {Lichen} from '../../../../src/server/cards/base/Lichen';
 import {Steelworks} from '../../../../src/server/cards/base/Steelworks';
 import {ResearchCoordination} from '../../../../src/server/cards/prelude/ResearchCoordination';
 import {OlympusConference} from '../../../../src/server/cards/base/OlympusConference';
-import { AdaptedLichen } from '../../../../src/server/cards/base/AdaptedLichen';
-import { ResearchNetwork } from '../../../../src/server/cards/prelude/ResearchNetwork';
-import { MediaGroup } from '../../../../src/server/cards/base/MediaGroup';
-import { HiTechLab } from '../../../../src/server/cards/promo/HiTechLab';
-import { CarbonNanosystems } from '../../../../src/server/cards/promo/CarbonNanosystems';
-import { BusinessNetwork } from '../../../../src/server/cards/base/BusinessNetwork';
-import { Grass } from '../../../../src/server/cards/base/Grass';
-import { DeepWellHeating } from '../../../../src/server/cards/base/DeepWellHeating';
-import { GeothermalPower } from '../../../../src/server/cards/base/GeothermalPower';
+import {AdaptedLichen} from '../../../../src/server/cards/base/AdaptedLichen';
+import {ResearchNetwork} from '../../../../src/server/cards/prelude/ResearchNetwork';
+import {MediaGroup} from '../../../../src/server/cards/base/MediaGroup';
+import {HiTechLab} from '../../../../src/server/cards/promo/HiTechLab';
+import {CarbonNanosystems} from '../../../../src/server/cards/promo/CarbonNanosystems';
+import {BusinessNetwork} from '../../../../src/server/cards/base/BusinessNetwork';
+import {Grass} from '../../../../src/server/cards/base/Grass';
+import {DeepWellHeating} from '../../../../src/server/cards/base/DeepWellHeating';
+import {GeothermalPower} from '../../../../src/server/cards/base/GeothermalPower';
 
 describe('Prism', () => {
   let card: Prism;

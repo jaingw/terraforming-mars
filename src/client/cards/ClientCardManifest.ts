@@ -4,7 +4,7 @@ import {GameModule} from '@/common/cards/GameModule';
 import {ClientCard} from '@/common/cards/ClientCard';
 // import {WGParternship} from '../../cards/eros/corp/WGParternship';
 // @ts-ignore cards.json doesn't exist during npm run build
-import * as cardJson from '@/genfiles/cards.json';
+import cardJson from '@/genfiles/cards.json';
 
 const cards: Map<CardName, ClientCard> = new Map();
 const cardArray: Array<ClientCard> = [];

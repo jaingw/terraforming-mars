@@ -33,6 +33,7 @@ export class CloneTechnology extends Card implements IProjectCard {
     CardName.MOSS,
     CardName.NITROPHILIC_MOSS,
     CardName.POTATOES,
+    CardName.MICROGRAVITY_NUTRITION, // 这张牌没有 behavior
     // CardName.WETLANDS   -4 plants
     // CardName.GUERILLA_ECOLOGISTS -4 plants
   ];

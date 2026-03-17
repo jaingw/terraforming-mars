@@ -22,6 +22,7 @@ import {PlayerViewModel, PublicPlayerModel} from '@/common/models/PlayerModel';
 import {AndOptionsModel} from '@/common/models/PlayerInputModel';
 import AppButton from '@/client/components/common/AppButton.vue';
 import {AndOptionsResponse, InputResponse} from '@/common/inputs/InputResponse';
+import {showWarning} from '../utils/showAlert';
 
 interface DataModel {
   responded: Array<InputResponse | undefined>,
@@ -76,7 +77,7 @@ export default Vue.extend({
     },
     saveData() {
       if (this.canSave() === false) {
-        alert('Not all options selected');
+        showWarning('Not all options selected');
         return;
       }
       for (const child of this.$children) {

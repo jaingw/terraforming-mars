@@ -166,10 +166,30 @@ export class InMemoryDatabase implements IDatabase {
   saveUserGameResult(): Promise<void> {
     throw new Error('Method not implemented.');
   }
+  updateUserProp(): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+  async getUserGameStats(): Promise<import('@/server/database/IDatabase').IUserGameStats> {
+    const emptyBlock: import('@/server/database/IDatabase').IUserGameStatsBlock = {
+      totalGames: 0, wins: 0, losses: 0, winRate: 0,
+      fleeCount: 0, fleeRate: 0, avgScore: 0, avgPosition: 0,
+      totalRankGames: 0, rankWins: 0,
+    };
+    return {allTime: emptyBlock, recent3Months: emptyBlock};
+  }
   getGames(): Promise<Array<IGameShortData>> {
     return Promise.resolve([]);
   }
   async restoreGame(_game_id: GameId, _save_id: number, _game: IGame, _playId: string): Promise<void> {
     return Promise.resolve();
+  }
+  saveSeasonSnapshot(): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+  getSeasonSnapshots(): Promise<Array<{userId: string, rankValue: number, mu: number, sigma: number, trueskill: number, pointsEarned: number, finalPosition: number}>> {
+    throw new Error('Method not implemented.');
+  }
+  updateUserPoints(): Promise<void> {
+    throw new Error('Method not implemented.');
   }
 }

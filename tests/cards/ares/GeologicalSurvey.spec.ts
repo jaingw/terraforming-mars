@@ -8,7 +8,7 @@ import {SpaceBonus} from '../../../src/common/boards/SpaceBonus';
 import {SpaceType} from '../../../src/common/boards/SpaceType';
 import {TileType} from '../../../src/common/TileType';
 import {EmptyBoard} from '../../testing/EmptyBoard';
-import {addGreenery, setRulingParty, runAllActions, cast,  maxOutOceans, setOxygenLevel, setTemperature,  forceGenerationEnd} from '../../TestingUtils';
+import {addGreenery, setRulingParty, runAllActions, cast, maxOutOceans, setOxygenLevel, setTemperature, forceGenerationEnd} from '../../TestingUtils';
 import {TestPlayer} from '../../TestPlayer';
 import {OceanCity} from '../../../src/server/cards/ares/OceanCity';
 import {SelectSpace} from '../../../src/server/inputs/SelectSpace';
@@ -179,7 +179,7 @@ describe('GeologicalSurvey', () => {
     player.steel = 0;
 
     // Pass last turn
-    forceGenerationEnd(game,true);
+    forceGenerationEnd(game, true);
 
     // Final greenery placement is considered part of the production phase.
     expect(game.phase).to.eq(Phase.PRODUCTION);

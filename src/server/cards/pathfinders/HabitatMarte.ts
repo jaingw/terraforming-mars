@@ -3,8 +3,8 @@ import {Tag} from '../../../common/cards/Tag';
 import {CardName} from '../../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
 import {ICorporationCard} from '../corporation/ICorporationCard';
-import { IPlayer } from '../../IPlayer';
-import { ICard } from '../ICard';
+import {IPlayer} from '../../IPlayer';
+import {ICard} from '../ICard';
 
 export class HabitatMarte extends CorporationCard implements ICorporationCard {
   constructor() {
@@ -40,27 +40,25 @@ export class HabitatMarte extends CorporationCard implements ICorporationCard {
   //       player.playCard(new ScienceTagCard(), undefined, 'nothing');
   //     }
   //   }
-  // } 
+  // }
 
   public onCardPlayedForCorps(player: IPlayer, card: ICard): void {
-
     const qty = card.tags.filter((cardTag) => cardTag === Tag.MARS).length;
     if (qty > 0) {
-      for(let i = 0; i < qty; i++) {
+      for (let i = 0; i < qty; i++) {
         // 触发建造者自己的卡片效果
         for (const card of player.tableau) {
           // 如果本人有WEYLAND_YUTANI， 确保触发WEYLAND_YUTANI的两次效果
-          card.onNonCardTagAdded?.(player,Tag.SCIENCE,player);
+          card.onNonCardTagAdded?.(player, Tag.SCIENCE, player);
         }
         // WeylandYutani特殊处理：需要监听所有玩家的Leavitt建造行为
         for (const cardOwner of player.game.players) {
           if (cardOwner !== player && cardOwner.tableau.has(CardName.WEYLAND_YUTANI)) {
             const weylandCard = cardOwner.tableau.get(CardName.WEYLAND_YUTANI);
-            (weylandCard as any).onNonCardTagAdded?.(player,Tag.SCIENCE,cardOwner);
+            (weylandCard as any).onNonCardTagAdded?.(player, Tag.SCIENCE, cardOwner);
           }
         }
       }
     }
-  } 
- 
+  }
 }

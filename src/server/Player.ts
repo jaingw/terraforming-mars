@@ -1862,16 +1862,16 @@ export class Player implements IPlayer {
 
       const replacer = (_key: string, value: any) => {
         if (value instanceof Player) {
-          return {id: value.id, name: value.name}; 
+          return {id: value.id, name: value.name};
         }
         if (value instanceof Game) {
-          return {id: value.id}; 
+          return {id: value.id};
         }
         // 对于其他值，返回原值
         return value;
-      }
-      
-      console.warn(message, JSON.stringify( this.waitingFor, replacer, 2),  JSON.stringify( input, replacer, 2) );
+      };
+
+      console.warn(message, JSON.stringify( this.waitingFor, replacer, 2), JSON.stringify( input, replacer, 2) );
       if (THROW_STATE_ERRORS) {
         throw new Error(message);
       }

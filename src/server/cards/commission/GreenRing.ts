@@ -144,14 +144,10 @@ export class GreenRing extends CorporationCard implements ICard {
       playableCards.push(card);
     }
 
-    return new SelectProjectCardToPlay(player, playableCards, {action: 'discard'}).andThen((selectedCard) => {
-      // SelectProjectCardToPlay会先打出卡牌, 再执行andThen, 这里应该先回收的
-      // 先回收
-      // player.playedCards.remove(selectedCard as ICard);
-      // selectedCard.onDiscard?.(player);
+    return new SelectProjectCardToPlay(player, playableCards, {action: 'nothing'}).andThen((selectedCard) => {
+      player.playedCards.remove(selectedCard);
+      selectedCard.onDiscard?.(player);
       player.removedFromPlayCards.push(selectedCard);
-      // 再重新打出
-      // player.playCard(selectedCard, undefined, 'nothing'); // Play the card but don't add it to played cards
       return undefined;
     });
   }

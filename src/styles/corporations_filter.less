@@ -3,37 +3,187 @@
     vertical-align: top;
     width: 275px;
     margin: 0 0 25px 25px;
+    background: @mars-deep;
+    border: 1px solid @mars-border;
+    padding: 16px;
+    border-radius: 4px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+    transition: border-color 0.2s ease;
+
+    &:hover {
+        border-color: fade(@mars-rust, 40%);
+    }
+}
+
+.corporations-filter-group-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    color: @mars-text;
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.corporations-filter-items {
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 4px;
+
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: @mars-void;
+        border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: @mars-border;
+        border-radius: 3px;
+
+        &:hover {
+            background: @mars-surface;
+        }
+    }
 }
 
 .corporations-filter-toolbox-cont {
     h2 {
-        margin-bottom: 32px;
+        margin-bottom: 12px;
+        color: @mars-text;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-weight: bold;
     }
 
     .corporations-filter-toolbox {
-        font-size: 13px;
-        background: #333;
-        padding: 5px;
-        position: absolute;
-        display: inline-block;
-        vertical-align: top;
-        margin: -30px 0 0 0px;
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        font-size: 12px;
+        background: @mars-surface;
+        padding: 6px 10px;
+        border-radius: 4px;
+        margin-bottom: 12px;
+        flex-wrap: wrap;
 
         a {
-            padding: 0 5px;
+            padding: 3px 8px;
+            color: @mars-cyan;
+            text-decoration: none;
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.03em;
+            transition: all 0.2s ease;
+            border-radius: 2px;
+
+            &:hover {
+                color: @mars-text;
+                background: @mars-border;
+            }
         }
-        input {
-          padding: 0 5px;
-          background: #333;
-          color: white;
-          ::placeholder {
-            color: #ddd;
-          }
+
+        .toolbox-divider {
+            color: @mars-border;
+            margin: 0 2px;
+        }
+
+        input.filter {
+            margin-left: 8px;
+            padding: 4px 8px;
+            background: @mars-void;
+            color: @mars-text;
+            border: 1px solid @mars-border;
+            border-radius: 4px;
+            font-size: 12px;
+            outline: none;
+            transition: border-color 0.2s ease;
+
+            &:focus {
+                border-color: @mars-cyan;
+            }
+
+            &::placeholder {
+                color: @mars-text-faint;
+            }
         }
     }
 
     .corporations-filter-toolbox--topmost {
-        margin: -63px 0 0 200px;
+        margin: 0;
+    }
+}
+
+.corporations-filter {
+    .form-checkbox {
+        display: flex;
+        align-items: center;
+        padding: 6px 8px;
+        margin: 2px 0;
+        border-radius: 3px;
+        transition: background-color 0.15s ease;
+        cursor: pointer;
+
+        &:hover {
+            background: @mars-surface;
+        }
+
+        input[type="checkbox"] {
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border: 1px solid @mars-border;
+            border-radius: 3px;
+            background: @mars-void;
+            cursor: pointer;
+            margin-right: 8px;
+            position: relative;
+            transition: all 0.15s ease;
+            flex-shrink: 0;
+
+            &:checked {
+                background: @mars-rust;
+                border-color: @mars-rust;
+
+                &::after {
+                    content: "";
+                    position: absolute;
+                    left: 5px;
+                    top: 2px;
+                    width: 4px;
+                    height: 8px;
+                    border: solid @mars-text;
+                    border-width: 0 2px 2px 0;
+                    transform: rotate(45deg);
+                }
+            }
+
+            &:focus {
+                outline: none;
+                border-color: @mars-cyan;
+                box-shadow: 0 0 0 2px fade(@mars-cyan, 20%);
+            }
+        }
+
+        .form-icon {
+            display: none;
+        }
+
+        span {
+            color: @mars-text-dim;
+            font-size: 13px;
+            flex: 1;
+        }
+
+        .create-game-expansion-icon {
+            margin-left: 4px;
+            flex-shrink: 0;
+        }
     }
 }
 

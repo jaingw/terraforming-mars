@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" type="text/css" media="all" href="/styles.css?v=<%- VERSION %>" />
+        <link rel="stylesheet" type="text/css" media="all" href="/tailwindcss.css?v=<%- VERSION %>">
+        <title>Terraforming Mars</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+        <meta name="description" content="Terraforming Mars Open Source Web Application" />
+    </head>
+    <body id="ts-preferences-target">
+        <dialog id="alert-dialog" class="alert-dialog">
+            <div class="alert-dialog__content">
+                <div class="alert-dialog__header">
+                    <div class="alert-dialog__icon"></div>
+                    <h3 class="alert-dialog__title" v-i18n>Error</h3>
+                </div>
+                <div class="alert-dialog__body">
+                    <p id="alert-dialog-message"></p>
+                </div>
+                <div class="alert-dialog__footer">
+                    <button id="alert-dialog-button" class="alert-dialog__btn" v-i18n>OK</button>
+                </div>
+            </div>
+        </dialog>
+        <div id="app" :class="'topmost-'+screen">
+            <nav-bar v-if="['start-screen','create-game-form','game-lobby','load','cards','help','login','register','my-games','me-page','donate','ranks','user-profile','games-overview'].indexOf(screen) !== -1"></nav-bar>
+            <div class="main-container">
+                <start-screen v-if="screen === 'start-screen'" :version="settings.version"></start-screen>
+                <create-game-form
+                    v-else-if="screen === 'create-game-form'"
+                ></create-game-form>
+                <game-lobby
+                    v-else-if="screen === 'game-lobby'"
+                ></game-lobby>
+                <load-game-form v-else-if="screen === 'load'"></load-game-form>
+                <game-home
+                    v-else-if="screen === 'game-home'"
+                    :game="game"
+                ></game-home>
+                <player-home
+                    v-else-if="screen === 'player-home' && playerView !== undefined"
+                    :player-view="playerView"
+                    :key="playerkey"
+                    :settings="settings"
+                ></player-home>
+                <spectator-home
+                    v-else-if="screen === 'spectator-home' && spectator !== undefined"
+                    :spectator="spectator"
+                    :key="playerkey"
+                    :settings="settings"
+                ></spectator-home>
+                <game-end
+                    v-else-if="screen === 'the-end'"
+                    :player-view="playerView"
+                    :spectator="spectator"
+                ></game-end>
+                <games-overview
+                    v-else-if="screen === 'games-overview'"
+                ></games-overview>
+                <card-list v-else-if="screen === 'cards'"></card-list>
+                <admin-home v-else-if="screen === 'admin'"></admin-home>
+                <login-home v-else-if="screen === 'login-home'"></login-home>
+                <Help v-else-if="screen === 'help'"></Help>
+                <debug-ui v-else-if="screen === 'debug-ui'"></debug-ui>
+                <login v-if="screen === 'login'"></login>
+                <my-games v-if="screen === 'my-games'"></my-games>
+                <me-page v-if="screen === 'me-page'"></me-page>
+                <register v-if="screen === 'register'"></register>
+                <donate v-if="screen === 'donate'"></donate>
+                <users v-if="screen === 'users'"></users>
+                <ranks v-if="screen === 'ranks'"></ranks>
+                <user-profile v-if="screen === 'user-profile'" :identifier="userProfileId"></user-profile>
+            </div>
+        </div>
+        <div  style="text-align:center;margin:-35px 0 0 60px;position: relative;"><a href="https://beian.miit.gov.cn" target="_blank" style="font-size: 12px; color: #999;">粤ICP备17128934号</a></div>
+        <!-- Vite entry point -->
+        <script type="module" src="/src/client/main.ts"></script>
+    </body>
+</html>

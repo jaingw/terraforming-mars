@@ -49,7 +49,7 @@ export class ValuableGases extends PreludeCard implements IProjectCard {
     //  const playableCards = this.getPlayableCards(player);  todo jiang
     const playableCards = player.getPlayableCards().filter((card) =>
       card.resourceType === CardResource.FLOATER &&
-      card.type === CardType.ACTIVE 
+      card.type === CardType.ACTIVE,
     );
     if (playableCards.length !== 0) {
       player.defer(new SelectProjectCardToPlay(player, playableCards)

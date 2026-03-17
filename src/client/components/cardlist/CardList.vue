@@ -1,6 +1,16 @@
 <template>
+  <div class="card-list-page bg-mars-void text-mars-text"
+    style="flex: 1; min-height: 0; overflow-y: auto; background-image: radial-gradient(ellipse at 50% -10%, rgba(226,82,14,0.12) 0%, transparent 50%), radial-gradient(ellipse at 80% 90%, rgba(34,211,238,0.05) 0%, transparent 40%), linear-gradient(rgba(38,48,80,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(38,48,80,0.3) 1px, transparent 1px); background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;">
+
   <div class="card-list-container" :class="getLanguageCssClass()">
-    <h1 v-i18n>Cards List</h1>
+    <!-- Page Title -->
+    <div class="card-list-page-header">
+      <div class="card-list-page-header__title">
+        <span class="card-list-page-header__dot"></span>
+        <h1 v-i18n>Cards List</h1>
+      </div>
+      <div class="card-list-page-header__line"></div>
+    </div>
 
       <!-- start filters -->
 
@@ -28,10 +38,12 @@
         </button>
       </div>
 
-      <div id="selections" v-show="showAdvanced">
-        <!-- expansions -->
-        <div class="selection-row">
-          <button id="toggle-checkbox" v-on:click="invertExpansions()">Invert</button>
+       <div id="selections" v-show="showAdvanced">
+         <!-- expansions -->
+          <div class="selection-row">
+           <button id="toggle-checkbox-invert" v-on:click="invertExpansions()" title="Invert selection">
+             <i class="fas fa-sync-alt"></i>
+           </button>
 
           <span v-for="expansion in allModules" :key="expansion">
             <input type="checkbox" :name="expansion" :id="`${expansion}-checkbox`" v-model="expansions[expansion]">
@@ -42,11 +54,11 @@
           </span>
         </div>
 
-        <!-- types -->
-        <div class="selection-row">
-          <button id="toggle-checkbox" v-on:click="invertTypes()">
-              <span v-i18n>Invert</span>
-          </button>
+         <!-- types -->
+          <div class="selection-row">
+           <button id="toggle-checkbox-invert" v-on:click="invertTypes()" title="Invert selection">
+               <i class="fas fa-sync-alt"></i>
+           </button>
 
           <span v-for="type in allTypes" :key="type">
             <input type="checkbox" :name="`${type}-cardType`" :id="`${type}-cardType-checkbox`" v-model="types[type]">
@@ -58,11 +70,11 @@
           </span>
         </div>
 
-        <!-- tags -->
-        <div class="selection-row">
-          <button id="toggle-checkbox" v-on:click="invertTags()">
-              <span v-i18n>Invert</span>
-          </button>
+         <!-- tags -->
+          <div class="selection-row">
+           <button id="toggle-checkbox-invert" v-on:click="invertTags()" title="Invert selection">
+               <i class="fas fa-sync-alt"></i>
+           </button>
           <span v-for="tag in allTags" :key="tag">
             <input v-if="tag === 'event'" type="checkbox" :name="`${tag}-cardType`" :id="`${tag}-tag-checkbox`" v-model="types.event">
             <input v-else type="checkbox" :name="`${tag}-cardType`" :id="`${tag}-tag-checkbox`" v-model="tags[tag]">
@@ -176,6 +188,7 @@
         <preferences-icon></preferences-icon>
       </div>
   </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -248,11 +261,11 @@ export default (Vue as WithRefs<Refs>).extend({
         CardType.PRELUDE,
         CardType.CORPORATION,
         CardType.STANDARD_PROJECT,
-        CardType.CEO,
         'colonyTiles',
         'globalEvents',
         'milestones',
         'awards',
+        CardType.CEO,
         'agendas',
       ];
     },
@@ -450,3 +463,26 @@ export default (Vue as WithRefs<Refs>).extend({
   },
 });
 </script>
+
+<style scoped>
+#toggle-checkbox-invert {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.5);
+  padding: 6px 10px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 32px;
+}
+
+#toggle-checkbox-invert:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+#toggle-checkbox-invert:active {
+  background: rgba(255, 255, 255, 0.1);
+}
+</style>

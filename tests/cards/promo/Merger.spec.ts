@@ -191,21 +191,21 @@ describe('Merger', () => {
   });
 
   // it('Works with both Terralabs and Polyphemos together', () => {
-    // player.playCorporationCard(new Polyphemos());
-    // expect(player.cardCost).eq(5);
-    // player.playCorporationCard(new TerralabsResearch());
-    // expect(player.cardCost).eq(3);
+  // player.playCorporationCard(new Polyphemos());
+  // expect(player.cardCost).eq(5);
+  // player.playCorporationCard(new TerralabsResearch());
+  // expect(player.cardCost).eq(3);
 
-    // const corps = player.playedCards.corporations();
-    // for (const corp of corps) {
-    //   player.playedCards.remove(corp);
-    // }
+  // const corps = player.playedCards.corporations();
+  // for (const corp of corps) {
+  //   player.playedCards.remove(corp);
+  // }
 
 
-    // player.playCorporationCard(new TerralabsResearch());
-    // expect(player.cardCost).eq(1);
-    // player.playCorporationCard(new Polyphemos());
-    // expect(player.cardCost).eq(3);
+  // player.playCorporationCard(new TerralabsResearch());
+  // expect(player.cardCost).eq(1);
+  // player.playCorporationCard(new Polyphemos());
+  // expect(player.cardCost).eq(3);
   // });
 
   // Same behavior should apply to Polyphemos.

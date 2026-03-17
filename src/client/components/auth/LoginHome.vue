@@ -16,6 +16,7 @@
 import Vue from 'vue';
 import {paths} from '@/common/app/paths';
 import {statusCode} from '@/common/http/statusCode';
+import {showError} from '../../utils/showAlert';
 
 type Data = {
   user: string | undefined;
@@ -31,7 +32,7 @@ export default Vue.extend({
   mounted() {
     const xhr = new XMLHttpRequest();
     xhr.open('GET', paths.API_PROFILE);
-    xhr.onerror = () => alert('Error getting session profile data');
+    xhr.onerror = () => showError('Error getting session profile data');
     xhr.onload = () => {
       try {
         if (xhr.status === statusCode.ok) {

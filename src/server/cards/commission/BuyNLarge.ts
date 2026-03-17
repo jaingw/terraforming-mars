@@ -12,27 +12,32 @@ import {ICard} from '../../cards/ICard';
 import {CardResource} from '../../../common/CardResource';
 import {CorporationCard} from '../corporation/CorporationCard';
 
+/** Number of seeds required to auto-convert to plants */
+const SEED_THRESHOLD = 8;
+/** Number of plants gained per conversion */
+const PLANTS_GAINED = 8;
+
 export class BuyNLarge extends CorporationCard {
   constructor() {
     super({
       name: CardName.BUY_N_LARGE,
       tags: [Tag.PLANT],
-      startingMegaCredits: 35,
+      startingMegaCredits: 30,
       resourceType: CardResource.SEED,
       initialActionText: 'Place a greenery',
 
       metadata: {
         cardNumber: 'XB08',
         renderData: CardRenderer.builder((b) => {
-          b.megacredits(35).greenery().br;
+          b.megacredits(30).greenery().br;
           b.effect('When you place a greenery tile or play a biology tag, add 1 seed resource to this card.', (eb) => {
             eb.greenery().slash().tag(Tag.ANIMAL).slash().tag(Tag.PLANT).slash().tag(Tag.MICROBE).startEffect.resource(CardResource.SEED);
           }).br;
-          b.effect('When you have 7 seeds, automatically convert to 8 plants.', (eb) => {
-            eb.text('7').resource(CardResource.SEED).asterix().startAction.plants(8, {digit});
+          b.effect(`When you have ${SEED_THRESHOLD} seeds, automatically convert to ${PLANTS_GAINED} plants.`, (eb) => {
+            eb.text(String(SEED_THRESHOLD)).resource(CardResource.SEED).asterix().startAction.plants(PLANTS_GAINED, {digit});
           }).br;
         }),
-        description: 'You start with 35M€. As your first action, place a greenery.',
+        description: 'You start with 30M€. As your first action, place a greenery.',
       },
     });
   }
@@ -70,13 +75,13 @@ export class BuyNLarge extends CorporationCard {
 
   public onResourceAdded(player: IPlayer, playedCard: ICard) {
     if (playedCard.name !== this.name) return;
-    if (this.resourceCount >= 7) {
-      const delta = Math.floor(this.resourceCount / 7);
-      const deducted = delta * 7;
+    if (this.resourceCount >= SEED_THRESHOLD) {
+      const delta = Math.floor(this.resourceCount / SEED_THRESHOLD);
+      const deducted = delta * SEED_THRESHOLD;
       this.resourceCount -= deducted;
-      player.stock.add(Resource.PLANTS, 8*delta, {log: true});
+      player.stock.add(Resource.PLANTS, PLANTS_GAINED * delta, {log: true});
       player.game.log('${0} removed ${1} seeds from ${2} to gain ${3} plants.',
-        (b) => b.player(player).number(deducted).card(this).number(8*delta));
+        (b) => b.player(player).number(deducted).card(this).number(PLANTS_GAINED * delta));
     }
   }
 }

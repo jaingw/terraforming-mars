@@ -5,11 +5,21 @@ import {TierName} from '../rank/TierName';
 export class RankTier {
   constructor(
         public name: TierName,
-        public measurement: 'star' | 'value', // 展示方式为星星或者数字
+        public measurement: 'star' | 'value',
         public maxStars: number,
         public stars: number = 0,
         public value: number = 0,
   ) {
+  }
+
+  public toJSON() {
+    return {
+      name: this.name,
+      measurement: this.measurement,
+      maxStars: this.maxStars === Infinity ? null : this.maxStars,
+      stars: this.stars,
+      value: this.value,
+    };
   }
 }
 

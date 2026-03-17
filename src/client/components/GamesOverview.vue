@@ -20,6 +20,7 @@ import GameOverview from '@/client/components/admin/GameOverview.vue';
 import {SimpleGameModel} from '@/common/models/SimpleGameModel';
 import {GameId} from '@/common/Types';
 import {statusCode} from '@/common/http/statusCode';
+import {showError} from '../utils/showAlert';
 
 type FetchStatus = {
   id: GameId;
@@ -52,7 +53,7 @@ export default Vue.extend({
       const xhr = new XMLHttpRequest();
       xhr.open('GET', 'api/games?serverId='+this.serverId+'&userId='+ PreferencesManager.load('userId'));
       xhr.onerror = function() {
-        alert('Error getting games data');
+        showError('Error getting games data');
       };
       xhr.onload = () => {
         if (xhr.status === statusCode.ok) {
@@ -63,10 +64,10 @@ export default Vue.extend({
             // (vueApp as any).getGame(gameId);
             // });
           } else {
-            alert('Unexpected response fetching games from API');
+            showError('Unexpected response fetching games from API');
           }
         } else {
-          alert('Unexpected response fetching games from API');
+          showError('Unexpected response fetching games from API');
         }
       };
       xhr.responseType = 'json';

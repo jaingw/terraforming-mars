@@ -1,7 +1,7 @@
 {
     "You start with 42 M€. Instead of choosing from 10 cards during setup, you get 10 cards for free.": "开始时拥有42M€,取代你的第一次研究阶段(第一次购买卡牌阶段),你免费保留这10张牌",
-    
-    
+
+
     "Colonizer Training Camp": "开拓者训练营",
     "Oxygen must be 5% or less.": "氧气浓度必须少于或等于5%",
 
@@ -682,14 +682,17 @@
   "Titanium production":"钛产能",
   "Steel production":"钢铁产能",
   "Standard projects":"标准项目",
+  "CORPORATION": "公司",
+  "Global Events": "全球事件",
+  "Colony Tiles": "殖民地",
 
 
-  
-  
+
+
   "steal":"偷取",
   "next card":"下张牌",
     "Copy A":"复制一个",
-    
+
   "Power":"电力标志",
   "2 Power":"2电力标志",
   "3 Power":"3电力标志",

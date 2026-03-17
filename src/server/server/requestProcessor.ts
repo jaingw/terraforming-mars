@@ -37,6 +37,7 @@ import {getHerokuIpAddress} from './heroku';
 import * as responses from './responses';
 import {ApiUserManager, userGetHandler, userPostHandler} from '../routes/ApiUserManager';
 import {SessionManager} from './auth/SessionManager';
+import {handleWithHono} from '../hono/bridge';
 
 
 const metrics = {
@@ -106,10 +107,12 @@ const handlers: Map<string, IHandler> = new Map(
     ['login', ServeApp.INSTANCE],
     ['register', ServeApp.INSTANCE],
     ['mygames', ServeApp.INSTANCE],
+    ['me', ServeApp.INSTANCE],
     ['donate', ServeApp.INSTANCE],
     ['users', ServeApp.INSTANCE],
     ['exec', ServeApp.INSTANCE],
     ['ranks', ServeApp.INSTANCE], // 天梯排行榜
+    [paths.LOBBY, ServeApp.INSTANCE], // 游戏大厅
   ],
 );
 
@@ -120,10 +123,10 @@ function getIPAddress(req: Request): string {
     return herokuIpAddress;
   }
   const socketIpAddress = req.socket.address();
-  if (typeof socketIpAddress === 'object') {
+  if (typeof socketIpAddress === 'object' && 'address' in socketIpAddress) {
     return '!' + socketIpAddress.address + '!';
   }
-  return socketIpAddress;
+  return String(socketIpAddress);
 }
 
 function getHandler(pathname: string): IHandler | undefined {
@@ -134,8 +137,12 @@ function getHandler(pathname: string): IHandler | undefined {
   if (userGetHandler.get(pathname) !== undefined || userPostHandler.get(pathname) !== undefined ) {
     return ApiUserManager.INSTANCE;
   }
-  if (pathname.startsWith('assets/') ) {
+  if (pathname.startsWith('assets/') || pathname.startsWith('css/') || pathname.startsWith('chunks/')) {
     return ServeAsset.INSTANCE;
+  }
+  // Handle user profile paths like user/xxx
+  if (pathname.startsWith('user/')) {
+    return ServeApp.INSTANCE;
   }
   return undefined;
 }
@@ -192,6 +199,9 @@ export function processRequest(req: Request, res: Response): void {
     if (handler !== undefined) {
       metrics.count.inc({path: pathname, method: req.method});
       handler.processRequest(req, res, ctx);
+    } else if (handleWithHono(req, res)) {
+      // Hono 处理了此请求（新的 /api/v2/* 路由）
+      metrics.count.inc({path: pathname, method: req.method});
     } else {
       pathnameForLatency = undefined;
       responses.notFound(req, res);

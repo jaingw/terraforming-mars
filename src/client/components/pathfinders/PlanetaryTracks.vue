@@ -1,5 +1,13 @@
 <template>
   <div class="pathfinders_cont">
+
+    <table class="track-numbers">
+      <tr>
+        <td>&nbsp;</td>
+        <td v-for="idx in range" :key="idx">{{idx}}</td>
+      </tr>
+    </table>
+
     <div class="track track-background-venus" v-if="tracks.venus >= 0">
       <div class="track-tag track-tag-venus"></div>
       <table class="track-venus">

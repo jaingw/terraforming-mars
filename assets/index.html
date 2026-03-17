@@ -1,10 +1,17 @@
+<!--
+ * @Author: Ender-Wiggin
+ * @Date: 2026-02-03 15:32:45
+ * @LastEditors: Ender-Wiggin
+ * @LastEditTime: 2026-02-11 09:44:53
+ * @Description:
+-->
 <!DOCTYPE html>
 <html>
     <head>
         <link rel="stylesheet" type="text/css" media="all" href="/styles.css?v=VERSION" />
         <link rel="stylesheet" type="text/css" media="all" href="/tailwindcss.css">
         <title>Terraforming Mars</title>
-        <meta name="viewport" content='width=1260, user-scalable=1' />
+        <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
         <meta name="description" content="Terraforming Mars Open Source Web Application" />
     </head>
     <body id="ts-preferences-target">
@@ -20,6 +27,7 @@
                     </form>
                 </dialog>
             </section>
+            <nav-bar v-if="['start-screen','create-game-form','game-lobby','load','cards','help','login','register','my-games','me-page','donate','ranks','user-profile','games-overview'].indexOf(screen) !== -1"></nav-bar>
             <div class="main-container">
                 <start-screen v-if="screen === 'start-screen'" :version="settings.version"></start-screen>
                 <create-game-form
@@ -57,13 +65,16 @@
                 <debug-ui v-else-if="screen === 'debug-ui'"></debug-ui>
                 <login v-if="screen === 'login'"></login>
                 <my-games v-if="screen === 'my-games'"></my-games>
+                <me-page v-if="screen === 'me-page'"></me-page>
                 <register v-if="screen === 'register'"></register>
                 <donate v-if="screen === 'donate'"></donate>
                 <users v-if="screen === 'users'"></users>
                 <ranks v-if="screen === 'ranks'"></ranks>
+                <user-profile v-if="screen === 'user-profile'" :identifier="userProfileId"></user-profile>
             </div>
         </div>
-        <div  style="text-align:center;margin:-35px 0 0 60px;position: relative;"><a href="https://beian.miit.gov.cn" target="_blank">粤ICP备17128934号</a></div>
+        <div  style="text-align:center;margin:-35px 0 0 60px;position: relative;"><a href="https://beian.miit.gov.cn" target="_blank" style="font-size: 12px; color: #999;">粤ICP备17128934号</a></div>
         <script src="/main.js?v=VERSION"></script>
     </body>
 </html>
+

@@ -24,7 +24,7 @@ describe('ImperialStarDestroyer', () => {
 
   it('双倍贸易奖励：与殖民地贸易时应获得双倍奖励', () => {
     player.playCorporationCard(card);
-    
+
     // 初始化殖民地Luna
     const luna = new Luna();
     luna.isActive = true;

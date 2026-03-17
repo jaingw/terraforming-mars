@@ -21,7 +21,7 @@ describe('GreenLeafDance', () => {
     [game, player, player2] = testGame(2, {skipInitialShuffling: true});
   });
 
-  it('should start with 45 M€ and place an ocean', () => {
+  it('should start with 35 M€ and place an ocean', () => {
     player.playCorporationCard(card);
     player.defer(card.initialAction(player));
     runAllActions(game);

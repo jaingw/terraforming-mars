@@ -29,15 +29,21 @@
 .exec-input{
     color: #020202;
     width: 800px;
-    max-width: 800px;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 .donate-screen {
     width: 700px;
+    max-width: 100%;
     margin: 0 auto;
+    padding: 0 12px;
+    box-sizing: border-box;
 }
 .donate-screen-links{
     margin: 0 auto;
     width: 695px;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 #mc {
     background: #222;
@@ -118,10 +124,15 @@
 
 #app{
     min-height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .main-container{
     min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
 }
 
 #player-home{
@@ -276,19 +287,40 @@ game home 玩家名字
 .tier-Challenger { background-position-x: right; }
 
 .stars-container {
-
     font-size: 0px;
     margin-top: 20px;
     .tier-star {
         display: inline-block;
-        background-repeat: no-repeat;
         width: 15px;
         height: 15px;
-        background-size: 100% 100%;
+        margin: 0 1px;
+        position: relative;
+        
+        &::before {
+            content: '★';
+            font-size: 14px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
     }
 
-    .star-light {background-image: url(assets/rank/star-rate.png);}
-    .star-dark {background-image: url(assets/rank/star-black.png);}
+    .star-light {
+        &::before {
+            color: #fbbf24;
+            text-shadow: 0 0 4px rgba(251, 191, 36, 0.6), 0 0 8px rgba(251, 191, 36, 0.3);
+            filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+        }
+    }
+
+    .star-dark {
+        &::before {
+            color: rgba(148, 163, 184, 0.35);
+            text-shadow: 0 0 1px rgba(148, 163, 184, 0.5);
+            -webkit-text-stroke: 0.5px rgba(148, 163, 184, 0.3);
+        }
+    }
 }
 
 .rank-value-container {
@@ -316,8 +348,212 @@ game home 玩家名字
 
 
 /**
-qrcode
+qrcode - inline button + modal
 */
+
+.qr-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 6px;
+}
+
+.qr-inline__text {
+  color: #cbd5e1;
+}
+
+.qr-inline__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid #263050;
+  background: rgba(17, 26, 46, 0.9);
+  color: #f97316;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 6px;
+}
+
+.qr-inline__btn:hover {
+  border-color: #f97316;
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.2), rgba(17, 26, 46, 0.95));
+  box-shadow: 0 0 16px rgba(249, 115, 22, 0.4);
+  transform: translateY(-1px);
+}
+
+.qr-inline__btn i {
+  font-size: 20px;
+}
+
+.qr-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 14, 26, 0.9);
+  backdrop-filter: blur(8px);
+}
+
+.qr-modal__content {
+  position: relative;
+  background: linear-gradient(145deg, #111a2e 0%, #1a2540 100%);
+  border: 1px solid #263050;
+  padding: 24px;
+  min-width: 320px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6), 0 0 40px rgba(226, 82, 14, 0.15);
+  clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+}
+
+.qr-modal__content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #e2520e, rgba(226, 82, 14, 0.3), transparent);
+}
+
+.qr-modal__close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: #94a3b8;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+
+.qr-modal__close:hover {
+  color: #f97316;
+  background: rgba(249, 115, 22, 0.15);
+}
+
+.qr-modal__tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.qr-modal__tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1px solid #263050;
+  background: rgba(17, 26, 46, 0.5);
+  color: #94a3b8;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+}
+
+.qr-modal__tab:hover {
+  border-color: #e2520e;
+  color: #f1f5f9;
+}
+
+.qr-modal__tab--active {
+  border-color: #f97316;
+  background: linear-gradient(135deg, rgba(226, 82, 14, 0.2), rgba(17, 26, 46, 0.8));
+  color: #f97316;
+  box-shadow: 0 0 16px rgba(226, 82, 14, 0.3);
+}
+
+.qr-modal__tab i {
+  font-size: 16px;
+}
+
+.qr-modal__body {
+  position: relative;
+  min-height: 220px;
+}
+
+.qr-modal__panel {
+  text-align: center;
+}
+
+.qr-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  color: #f1f5f9;
+  font-size: 16px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.qr-modal__header i {
+  color: #f97316;
+  font-size: 20px;
+}
+
+.qr-modal__img {
+  width: 180px;
+  height: 180px;
+  border: 1px solid #263050;
+  display: block;
+  margin: 0 auto;
+}
+
+.qr-modal-enter-active,
+.qr-modal-leave-active {
+  transition: all 0.25s ease;
+}
+
+.qr-modal-enter,
+.qr-modal-leave-to {
+  opacity: 0;
+}
+
+.qr-modal-enter .qr-modal__content,
+.qr-modal-leave-to .qr-modal__content {
+  transform: scale(0.95);
+}
+
+.qr-switch-enter-active,
+.qr-switch-leave-active {
+  transition: all 0.2s ease;
+}
+
+.qr-switch-enter,
+.qr-switch-leave-to {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.qr-fade-enter-active,
+.qr-fade-leave-active {
+  transition: opacity 0.25s ease;
+}
+
+.qr-fade-enter,
+.qr-fade-leave-to {
+  opacity: 0;
+}
 
 .bottom_tools{position:fixed;z-index:1070;right:40px;bottom:40px;}
 .bottom_tools>*{font:0/0 a;display:block;margin-top:5px;color:transparent;border:0;background-color:transparent;text-shadow:none}

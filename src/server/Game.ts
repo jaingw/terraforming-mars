@@ -78,6 +78,7 @@ import {UnderworldData} from './underworld/UnderworldData';
 import {UnderworldExpansion} from './underworld/UnderworldExpansion';
 import {Dealer} from './Dealer';
 import {getNewSkills, UserRank} from '../common/rank/RankManager';
+import {getSeasonId, getWinnerPointsReward} from '../common/rank/SeasonManager';
 import {SendDelegateToArea} from './deferredActions/SendDelegateToArea';
 import {InputError} from './inputs/InputError';
 import {BuildColony} from './deferredActions/BuildColony';
@@ -811,7 +812,7 @@ export class Game implements IGame, Logger {
         const game = this;
         const chooseFirstCorp = function() {
           for (const somePlayer of game.playersInGenerationOrder) {
-            if (somePlayer.playedCards.corporations().length  === 0) {
+            if (somePlayer.playedCards.corporations().length === 0) {
               if (somePlayer.pickedCorporationCard === undefined || somePlayer.pickedCorporationCard2 === undefined) {
                 throw new Error(`pickedCorporationCard is not defined for ${somePlayer.id}`);
               }
@@ -819,20 +820,20 @@ export class Game implements IGame, Logger {
                 'Select corp card to play first',
                 'Play',
                 [somePlayer.pickedCorporationCard, somePlayer.pickedCorporationCard2],
-                ).andThen((foundCards: ReadonlyArray<ICorporationCard>) => {
-                  if (somePlayer.pickedCorporationCard === undefined || somePlayer.pickedCorporationCard2 === undefined) {
-                    throw new Error(`pickedCorporationCard is not defined for ${somePlayer.id}`);
-                  }
-                  somePlayer.playCorporationCard( foundCards[0]);
-                  somePlayer.playCorporationCard( somePlayer.pickedCorporationCard.name === foundCards[0].name ? somePlayer.pickedCorporationCard2 : somePlayer.pickedCorporationCard);
-                  somePlayer.pickedCorporationCard = undefined;
-                  somePlayer.pickedCorporationCard2 = undefined;
-                  game.playerIsFinishedWithResearchPhase(somePlayer);
-                  return undefined;
-                })
-                , () => {
-                  chooseFirstCorp();
+              ).andThen((foundCards: ReadonlyArray<ICorporationCard>) => {
+                if (somePlayer.pickedCorporationCard === undefined || somePlayer.pickedCorporationCard2 === undefined) {
+                  throw new Error(`pickedCorporationCard is not defined for ${somePlayer.id}`);
                 }
+                somePlayer.playCorporationCard( foundCards[0]);
+                somePlayer.playCorporationCard( somePlayer.pickedCorporationCard.name === foundCards[0].name ? somePlayer.pickedCorporationCard2 : somePlayer.pickedCorporationCard);
+                somePlayer.pickedCorporationCard = undefined;
+                somePlayer.pickedCorporationCard2 = undefined;
+                game.playerIsFinishedWithResearchPhase(somePlayer);
+                return undefined;
+              })
+              , () => {
+                chooseFirstCorp();
+              },
               );
               break;
             }
@@ -1343,6 +1344,8 @@ export class Game implements IGame, Logger {
     const sortedPlayers = this.getSortedPlayers(); // 玩家排名，包含体退玩家，尽管目前排名模式不能体退
     // 天梯 更新段位和排名
     if (this.isRankMode() && this.players.length > 1) {
+      const currentSeason = await Database.getInstance().getCurrentSeason();
+      const currentSeasonId = currentSeason?.seasonId || getSeasonId();
       const userRanks: Array<UserRank> = [];
       const rankedPlayers: Array<IPlayer> = [];
       // const timeOutPlayer = this.checkTimeOutPlayer();
@@ -1360,25 +1363,45 @@ export class Game implements IGame, Logger {
         // 玩家放弃游戏，无事发生
         console.log('all players quit the game');
       } else {
-        // 超时或者正常结束，都会更新段位和排名
-        // 如果成功获取更新后的UserRank：1. 写回UserRankMap 2. 将更新值传入数据库
-        const userNewRanks= getNewSkills(userRanks, timeOutUserRank);
-        console.log(`gotoEndGame before userRanks ${JSON.stringify(userRanks)} , after ${JSON.stringify(userNewRanks)}`);
-        for (let i = 0; i < userNewRanks.length; i ++ ) {
-          rankedPlayers[i].addOrUpdateUserRank(userNewRanks[i]);
-          Database.getInstance().updateUserRank(userNewRanks[i]);
+        // 过滤掉赛季不匹配的玩家（历史赛季数据只读）
+        const validIndices: number[] = [];
+        const validUserRanks: Array<UserRank> = [];
+        for (let i = 0; i < userRanks.length; i++) {
+          if (userRanks[i].seasonId === currentSeasonId) {
+            validIndices.push(i);
+            validUserRanks.push(userRanks[i]);
+          } else {
+            console.warn(`[Rank] Skipping player ${rankedPlayers[i].userId}: season mismatch (expected ${currentSeasonId}, got ${userRanks[i].seasonId})`);
+          }
+        }
+
+        if (validUserRanks.length > 0) {
+          const userNewRanks = getNewSkills(validUserRanks, timeOutUserRank);
+          const winnerPoints = getWinnerPointsReward(validUserRanks.length);
+          console.log(`gotoEndGame before userRanks ${JSON.stringify(validUserRanks)} , after ${JSON.stringify(userNewRanks)}`);
+          for (let i = 0; i < userNewRanks.length; i++) {
+            const originalIndex = validIndices[i];
+            // 胜者（第一名）获得额外积分
+            if (i === 0) {
+              userNewRanks[i].points = (userNewRanks[i].points || 0) + winnerPoints;
+              console.log(`[Rank] Winner ${userNewRanks[i].userId} earned ${winnerPoints} point(s) in ${validUserRanks.length}p game`);
+            }
+            rankedPlayers[originalIndex].addOrUpdateUserRank(userNewRanks[i]);
+            Database.getInstance().updateUserRank(userNewRanks[i]);
+          }
         }
       }
     }
 
-    // 天梯 存储历史数据和段位变化情况
-    // 1. 获取天梯排名的历史数据，用于显示变化以及在未来赛季重置时获取备份 @param position是玩家名次，写入数据库时+1
-    // 2. TODO: 在用户信息界面可以提供一定信息，例如近期胜率等等...
+    // 存储所有已登录玩家的对局结果（天梯 & 休闲均保存）
+    // is_rank 字段标记是否为天梯对局，用于后续查询过滤
+    // @param position 玩家名次，写入数据库时 +1（从 1 开始）
     sortedPlayers.forEach((player, position) => {
       const newUserRank = player.getUserRank();
       if (player.userId === undefined) return; // table `user_game_results` pk: user_id + game_id
       const playerIndex = players.indexOf(player);
-      Database.getInstance().saveUserGameResult(player.userId, this.id, this.phase, scores[playerIndex], players.length, this.generation, this.createtime, position+1, this.isRankMode(), newUserRank);
+      const isTimeoutPlayer = timeOutPlayer !== undefined && player === timeOutPlayer;
+      Database.getInstance().saveUserGameResult(player.userId, this.id, this.phase, scores[playerIndex], players.length, this.generation, this.createtime, position+1, this.isRankMode(), newUserRank, isTimeoutPlayer);
     });
 
     return;
@@ -2287,6 +2310,7 @@ export class Game implements IGame, Logger {
       throw new Error('No Player found when rebuilding First Player');
     }
     this.first = first;
+    this.setFirstPlayer(first);
 
     // Define who is the active player and init the take action phase
     let active = this.players.find((player) => player.id === d.activePlayer.id);

@@ -100,5 +100,12 @@ GameLoader.getInstance().start(() => {
   }
   console.log(`The public run ID is ${runId}`);
   console.log('Server is ready.');
+
+  // 赛季检查：服务器启动时检查是否需要重置赛季
+  import('./rank/SeasonResetHandler').then(({checkAndResetSeason}) => {
+    checkAndResetSeason().catch((err: any) => {
+      console.error('[Season] Error during season check:', err);
+    });
+  });
 });
 

@@ -140,6 +140,7 @@ import LanguageIcon from '@/client/components/LanguageIcon.vue';
 import {Timer} from '@/common/Timer';
 import {Phase} from '@/common/Phase';
 import {GameOptions} from '../../server/game/GameOptions';
+import {showError} from '../utils/showAlert';
 
 let ui_timeout_id : number;
 export default Vue.extend({
@@ -289,7 +290,7 @@ export default Vue.extend({
           const root = this.$root as unknown as typeof mainAppSettings.methods;
           root.showAlert( xhr.response.message || '', () =>{});
         } else {
-          alert('Error sending input');
+          showError('Error sending input');
         }
       };
       const senddata ={'playerId': this.playerView.id, 'userId': userId};

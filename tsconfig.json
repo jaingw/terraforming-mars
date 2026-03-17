@@ -1,6 +1,12 @@
 // A base configuration for src and tests, and also the config
 // Visual Studio Code reads
 {
+    "ts-node": {
+        "compilerOptions": {
+            "module": "commonjs"
+        },
+        "transpileOnly": true
+    },
     // Compiler options are mostly for the sub-configurations
     "compilerOptions": {
         // ES2019 support is pretty broad for Browsers, except for Function.prototype.toString, which is just not
@@ -43,5 +49,8 @@
        // "script.ts",
        // "server.ts",
        // "server_test.ts"
+    ],
+    "exclude": [
+        "node_modules"
     ],
 }

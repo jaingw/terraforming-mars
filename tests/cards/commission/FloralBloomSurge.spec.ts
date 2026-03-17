@@ -9,8 +9,8 @@ import {AdaptedLichen} from '../../../src/server/cards/base/AdaptedLichen';
 import {ProtectedValley} from '../../../src/server/cards/base/ProtectedValley';
 import {ArcticAlgae} from '../../../src/server/cards/base/ArcticAlgae';
 import {Greenhouses} from '../../../src/server/cards/base/Greenhouses';
-import { SearchForLife } from '../../../src/server/cards/base/SearchForLife';
-import { NoctisFarming } from '../../../src/server/cards/base/NoctisFarming';
+import {SearchForLife} from '../../../src/server/cards/base/SearchForLife';
+import {NoctisFarming} from '../../../src/server/cards/base/NoctisFarming';
 
 describe('FloralBloomSurge', () => {
   let card: FloralBloomSurge;

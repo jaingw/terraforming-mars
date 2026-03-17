@@ -652,6 +652,10 @@ export enum CardName {
   LAND_HARVEST = '🌸置地丰收🌸',
   RESEARCH_ACCELERATOR = '🌸研究催化剂🌸',
   CONSTRUCTION_AID = '🌸建材援助🌸',
+  POLAR_ANIMALS = '🌸极地动物🌸',
+  OMNIVORE = '🌸雜食動物🌸',
+  MOLTEN_RESERVE = '🌸熔融儲備🌸',
+  LOST_BOUNTY = '🌸失落之馈🌸',
 
     PLANETARY_METEOR_HARVESTERS = '星际碎屑',
     UNIQUE_ITEM_BOUNTY = '奇物丰收',
@@ -764,6 +768,7 @@ export enum CardName {
   JOVIAN_DEFENSE_DEPARTMENT = 'Jovian Defense Department',
   SPACE_MONSTER_PARK = 'Space Monster Park',
   ENERGY_STATION = 'Energy Station',
+  MAKE_IT_RAIN = '淘金潮',
   LUNA_CHAIN = 'Luna Chain',
 
   // The Moon.

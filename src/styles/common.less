@@ -65,6 +65,18 @@ body {
     margin: 0 0 0 60px;
 }
 
+/* Mobile responsive: reduce main-container margin */
+@media (max-width: 768px) {
+    .main-container {
+        margin: 0 0 0 0;
+    }
+}
+@media (min-width: 769px) and (max-width: 1024px) {
+    .main-container {
+        margin: 0 0 0 20px;
+    }
+}
+
 .hidden {
     display: none !important;
 }
@@ -214,8 +226,155 @@ h2 {
     .player_pink_bg_translucent();
 }
 
+/* ============ Alert Dialog Styles ============ */
 .alert-dialog {
     position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 0;
+    border: none;
+    background: transparent;
+    max-width: 420px;
+    width: calc(100% - 32px);
+    z-index: 9999;
+}
+
+.alert-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+.alert-dialog__content {
+    background: linear-gradient(135deg, rgba(17, 26, 46, 0.98) 0%, rgba(26, 37, 64, 0.95) 100%);
+    border: 1px solid rgba(38, 48, 80, 0.7);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6), 0 0 40px rgba(226, 82, 14, 0.08);
+    position: relative;
+}
+
+.alert-dialog__content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(226, 82, 14, 0.5), transparent);
+}
+
+.alert-dialog__header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(38, 48, 80, 0.5);
+}
+
+.alert-dialog__icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.alert-dialog__icon::before {
+    content: '!';
+    color: #ef4444;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.alert-dialog__title {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #f1f5f9;
+    font-family: monospace;
+}
+
+.alert-dialog__body {
+    padding: 20px;
+}
+
+.alert-dialog__body p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #cbd5e1;
+}
+
+.alert-dialog__footer {
+    padding: 16px 20px;
+    display: flex;
+    justify-content: flex-end;
+    border-top: 1px solid rgba(38, 48, 80, 0.5);
+}
+
+.alert-dialog__btn {
+    padding: 10px 24px;
+    background: linear-gradient(135deg, #e2520e, #f97316);
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 0 12px rgba(226, 82, 14, 0.25);
+}
+
+.alert-dialog__btn:hover {
+    box-shadow: 0 0 20px rgba(226, 82, 14, 0.4);
+    transform: translateY(-1px);
+}
+
+/* Alert dialog types */
+.alert-dialog--error .alert-dialog__icon {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: rgba(239, 68, 68, 0.3);
+}
+.alert-dialog--error .alert-dialog__icon::before {
+    content: '!';
+    color: #ef4444;
+}
+
+.alert-dialog--warning .alert-dialog__icon {
+    background: rgba(245, 158, 11, 0.15);
+    border-color: rgba(245, 158, 11, 0.3);
+}
+.alert-dialog--warning .alert-dialog__icon::before {
+    content: '!';
+    color: #f59e0b;
+}
+
+.alert-dialog--info .alert-dialog__icon {
+    background: rgba(34, 211, 238, 0.15);
+    border-color: rgba(34, 211, 238, 0.3);
+}
+.alert-dialog--info .alert-dialog__icon::before {
+    content: 'i';
+    font-style: italic;
+    color: #22d3ee;
+}
+
+.alert-dialog--success .alert-dialog__icon {
+    background: rgba(45, 212, 191, 0.15);
+    border-color: rgba(45, 212, 191, 0.3);
+}
+.alert-dialog--success .alert-dialog__icon::before {
+    content: '✓';
+    color: #2dd4bf;
 }
 
 .general-warning {
@@ -254,4 +413,53 @@ h2 {
 @import "./pathfinders.less";
 @import "./language_icon.less";
 @import "./underworld.less";
+/* game_lobby styles now handled by Tailwind in GameLobby.vue */
+
+/* ============ Global Mobile Responsive Utilities ============ */
+/* Ensure game board pages still have minimum width for proper rendering */
+@media (max-width: 1024px) {
+    .topmost-the-game,
+    .topmost-player-home,
+    .topmost-game-end {
+        min-width: 1024px;
+        overflow-x: auto;
+    }
+}
+
+/* Touch-friendly improvements for mobile */
+@media (max-width: 768px) {
+    /* Ensure buttons/links have minimum tap target */
+    button, a.btn, .btn {
+        min-height: 36px;
+    }
+
+    /* Prevent horizontal overflow on non-game pages */
+    .topmost-start-screen,
+    .topmost-game-lobby,
+    .topmost-me-page,
+    .topmost-ranks,
+    .topmost-user-profile,
+    .topmost-cards,
+    .topmost-create-game-form,
+    .topmost-login,
+    .topmost-register,
+    .topmost-donate,
+    .topmost-help,
+    .topmost-load {
+        max-width: 100vw;
+        overflow-x: hidden;
+    }
+
+    /* Reduce body font slightly for mobile */
+    body {
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+    }
+
+    /* Smooth scrolling */
+    html {
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+    }
+}
 

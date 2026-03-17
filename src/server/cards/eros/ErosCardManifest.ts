@@ -53,6 +53,7 @@ import {SpaceMonsterPark} from './SpaceMonsterPark';
 import {EnergyStation} from './EnergyStation';
 import {LunaChain} from './corp/LunaChain';
 import {WGPartnership} from './WGPartnership';
+import {MakeItRain} from './MakeItRain';
 
 
 export const EROS_CARD_MANIFEST = new ModuleManifest({
@@ -96,6 +97,7 @@ export const EROS_CARD_MANIFEST = new ModuleManifest({
     [CardName.TRANTOR]: {Factory: Trantor}, // Q58
     [CardName.SPACE_MONSTER_PARK]: {Factory: SpaceMonsterPark}, // Q59,
     [CardName.ENERGY_STATION]: {Factory: EnergyStation}, // Q60,
+    [CardName.MAKE_IT_RAIN]: {Factory: MakeItRain}, // Q61
 
   },
   corporationCards: {

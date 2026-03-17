@@ -3,25 +3,31 @@
         <div class="corporations-filter-toolbox-cont">
             <h2 v-i18n>Corporations</h2>
             <div class="corporations-filter-toolbox corporations-filter-toolbox--topmost">
-                <a href="#" v-i18n v-on:click.prevent="selectAll('All')">All*</a> |
-                <a href="#" v-i18n v-on:click.prevent="selectNone('All')">None*</a> |
+                <a href="#" v-i18n v-on:click.prevent="selectAll('All')">All*</a>
+                <span class="toolbox-divider">|</span>
+                <a href="#" v-i18n v-on:click.prevent="selectNone('All')">None*</a>
+                <span class="toolbox-divider">|</span>
                 <a href="#" v-i18n v-on:click.prevent="invertSelection('All')">Invert*</a>
                 <input ref="filter" class="filter" :placeholder="$t('filter')" v-model="filterText">
             </div>
         </div>
-        <br/>
         <template v-for="module in GAME_MODULES">
           <div class="corporations-filter-group" v-if="cardsByModule[module].length > 0" v-bind:key="module">
             <div class="corporations-filter-toolbox-cont">
-                <div><span v-i18n>{{MODULE_NAMES[module]}}</span>&nbsp;<div :class="icon(module)"></div></div><br>
+                <div class="corporations-filter-group-header">
+                    <span v-i18n>{{MODULE_NAMES[module]}}</span>
+                    <div :class="icon(module)"></div>
+                </div>
                 <div class="corporations-filter-toolbox">
-                    <a href="#" v-i18n v-on:click.prevent="selectAll(module)">All</a> |
-                    <a href="#" v-i18n v-on:click.prevent="selectNone(module)">None</a> |
+                    <a href="#" v-i18n v-on:click.prevent="selectAll(module)">All</a>
+                    <span class="toolbox-divider">|</span>
+                    <a href="#" v-i18n v-on:click.prevent="selectNone(module)">None</a>
+                    <span class="toolbox-divider">|</span>
                     <a href="#" v-i18n v-on:click.prevent="invertSelection(module)">Invert</a>
                 </div>
             </div>
-            <div v-for="corporation in cardsByModule[module]" v-bind:key="corporation" v-show="include(corporation)">
-                <label class="form-checkbox">
+            <div class="corporations-filter-items">
+                <label class="form-checkbox" v-for="corporation in cardsByModule[module]" v-bind:key="corporation" v-show="include(corporation)">
                     <input type="checkbox" v-model="selectedCorporations" :value="corporation"/>
                     <i class="form-icon"></i><span v-i18n>{{ corporation }}</span>
                     <div v-for="expansion in compatibility(corporation)" :key="expansion" :class="icon(expansion)"></div>

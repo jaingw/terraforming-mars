@@ -5,7 +5,7 @@ import {testGame, runAllActions} from '../../TestingUtils';
 import {TestPlayer} from '../../TestPlayer';
 import {IGame} from '../../../src/server/IGame';
 import {Luna} from '../../../src/server/colonies/Luna';
-import { Ceres } from '../../../src/server/colonies/Ceres';
+import {Ceres} from '../../../src/server/colonies/Ceres';
 
 
 describe('PlantSmuggling', () => {

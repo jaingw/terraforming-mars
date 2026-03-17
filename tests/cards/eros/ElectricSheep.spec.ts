@@ -21,7 +21,7 @@ describe('ElectricSheep', function() {
 
   function addPowerTags() {
     // 打出4张真实能量标签卡牌
-    player.playCard(new PowerPlant());  // +1 energy
+    player.playCard(new PowerPlant()); // +1 energy
     player.playCard(new GiantSpaceMirror()); // +3 energy
     player.playCard(new GeothermalPower()); // +2 energy
     player.playCard(new SolarPower()); // +1 energy

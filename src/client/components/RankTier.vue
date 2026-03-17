@@ -24,23 +24,13 @@ export default Vue.extend({
     showNumber: {
       type: Boolean,
     },
-    // hideZeroTags: {
-    //   type: Boolean,
-    // },
-    // isTopBar: {
-    //   type: Boolean,
-    //   default: false,
-    // },
-    // conciseTagsViewDefaultValue: {
-    //   type: Boolean,
-    //   required: false,
-    //   default: true,
-    // },
   },
-  data() {
-    return {
-      displayRankValue: Math.round(this.rankTier?.value * 100 | 0), // 乘100，看起来刺激一点
-    };
+  computed: {
+    displayRankValue(): number {
+      const val = this.rankTier?.value;
+      if (val === undefined || val === null) return 0;
+      return Math.round(val * 100);
+    },
   },
 });
 

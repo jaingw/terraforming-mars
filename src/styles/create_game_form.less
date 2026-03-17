@@ -26,17 +26,35 @@
     }
 }
 
+/* Mobile responsive for create game form */
+@media (max-width: 640px) {
+    .topmost-create-game-form .main-container {
+        margin: 0 8px;
+    }
+
+    .create-game-player {
+        padding: 12px;
+        margin: 8px 0;
+    }
+
+    .create-game-solo-player {
+        padding: 12px;
+        margin: 16px 8px;
+    }
+}
+
 .create-game-player {
     padding: 25px;
     margin: 10px 0px 10px 15px
 }
 
 .create-game-solo-player {
-    background: #595858;
+    background: rgba(17, 26, 46, 0.85);
+    border: 1px solid rgba(38, 48, 80, 0.6);
     display: inline-block;
     padding: 20px;
     margin: 30px 15px;
-    border-radius: 8px;
+    border-radius: 6px;
 }
 
 .create-game-options-block {
@@ -47,8 +65,9 @@
 .create-game--block {
     margin: 16px 16px 0 18px;
     padding: 20px;
-    border-radius: 10px;
-    background: black;
+    border-radius: 6px;
+    background: rgba(10, 14, 26, 0.92);
+    border: 1px solid rgba(38, 48, 80, 0.5);
 }
 
 .create-game-form {
@@ -60,6 +79,108 @@
     padding-left: 15px;
     text-align: left;
     width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+}
+
+/* Primary action button - Create Room / Create game */
+.btn-create-game {
+    background: linear-gradient(135deg, #e2520e 0%, #f97316 100%);
+    border: none;
+    border-radius: 6px;
+    color: #ffffff;
+    font-family: Ubuntu, sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    padding: 12px 28px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    box-shadow: 0 4px 16px rgba(226, 82, 14, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-create-game:hover {
+    background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
+    box-shadow: 0 6px 24px rgba(226, 82, 14, 0.45);
+    transform: translateY(-1px);
+}
+
+.btn-create-game:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 8px rgba(226, 82, 14, 0.25);
+}
+
+/* Secondary/Cancel button */
+.btn-cancel-game {
+    background: rgba(26, 37, 64, 0.8);
+    border: 1px solid rgba(38, 48, 80, 0.6);
+    border-radius: 6px;
+    color: #cbd5e1;
+    font-family: Ubuntu, sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+    padding: 12px 28px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.btn-cancel-game:hover {
+    background: rgba(38, 48, 80, 0.9);
+    border-color: rgba(226, 82, 14, 0.4);
+    color: #f1f5f9;
+}
+
+.btn-cancel-game:active {
+    transform: translateY(1px);
+}
+
+/* Settings buttons container */
+.create-game-settings-buttons {
+    display: flex;
+    gap: 8px;
+    margin-left: 20px;
+}
+
+/* Upload/Download settings buttons */
+.btn-settings-upload,
+.btn-settings-download {
+    background: rgba(26, 37, 64, 0.8);
+    border: 1px solid rgba(38, 48, 80, 0.6);
+    border-radius: 6px;
+    color: #cbd5e1;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 18px;
+}
+
+.btn-settings-upload:hover,
+.btn-settings-download:hover {
+    background: rgba(38, 48, 80, 0.9);
+    border-color: rgba(34, 211, 238, 0.4);
+    color: #22d3ee;
+}
+
+.btn-settings-upload:active,
+.btn-settings-download:active {
+    transform: scale(0.95);
+}
+
+/* Icon styling inside settings buttons */
+.btn-settings-upload .icon,
+.btn-settings-download .icon {
+    pointer-events: none;
 }
 
 .create-game-corporation {
@@ -79,45 +200,51 @@
 }
 
 .form-input::placeholder {
-    /* Chrome, Firefox, Opera, Safari 10.1+ */
-    color: #888888;
-    opacity: 1; /* Firefox */
+    color: #64748b;
+    opacity: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 13px;
 }
 
 .form-input::-ms-input-placeholder {
-    /* Internet Explorer 10-11 */
-    color: #888888;
+    color: #64748b;
 }
 
 .form-input::-ms-input-placeholder {
-    /* Microsoft Edge */
-    color: #888888;
+    color: #64748b;
 }
 
 .tooltip:hover {
     text-decoration: none;
 }
 .create-game-divider {
-    background:rgba(148, 148, 148, 0.5);
-    height: 3px;
-    line-height: 3px;
+    background: linear-gradient(to right, rgba(226, 82, 14, 0.5), rgba(38, 48, 80, 0.5) 40%, transparent 100%);
+    height: 1px;
+    line-height: 1px;
     width: 100%;
     margin-top: 16px;
     margin-bottom: 8px;
 }
 
 .create-game-subsection-label {
-    font-size: 22px;
-    color: gray;
-    padding-top: 10px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding-top: 14px;
     padding-bottom: 10px;
+    border-bottom: 1px solid rgba(38, 48, 80, 0.4);
+    margin-bottom: 4px;
 }
 
 .create-game-page-container {
   display: flex;
   flex-flow: row wrap;
-  background-color: black;
-  border-radius: 10px;
+  background: rgba(17, 26, 46, 0.6);
+  border: 1px solid rgba(38, 48, 80, 0.4);
+  border-radius: 6px;
 }
 
 .create-game-page-column {
@@ -148,13 +275,14 @@
 }
 
 .create-game-page-column label {
-  color: #ccc;
+  color: #94a3b8;
   display: inline-block;
-  background-color: #303030;
-  padding: 10px 20px 10px 20px;
+  background: rgba(17, 26, 46, 0.85);
+  border: 1px solid rgba(38, 48, 80, 0.6);
+  padding: 10px 20px;
   font-family: Ubuntu, Sans;
   font-size: 23px;
-  border-radius: 8px;
+  border-radius: 4px;
   text-align: center;
   margin: 4px;
   min-width: 125px;
@@ -162,6 +290,7 @@
   line-height: 40px;
   display: flex;
   justify-content: center;
+  transition: all 0.2s ease;
 }
 
 .create-game-page-column .expansion-button {
@@ -170,24 +299,30 @@
   }
 
 .create-game-page-column label:hover {
-  background-color: rgb(104, 104, 104);
+  background: rgba(26, 37, 64, 0.9);
+  border-color: rgba(226, 82, 14, 0.35);
+  color: #cbd5e1;
   cursor: pointer;
 }
 
 .create-game-page-column input[type="radio"]:checked + label {
-  background-color: rgb(199, 199, 199);
-  color: black;
+  background: rgba(226, 82, 14, 0.15);
+  border-color: rgba(226, 82, 14, 0.6);
+  color: #f1f5f9;
+  box-shadow: 0 0 10px rgba(226, 82, 14, 0.1);
 }
 .create-game-page-column input[type="radio"]:checked + label a {
-    color:black
+    color: #f59e0b;
 }
 
 .create-game-page-column input[type="checkbox"]:checked + label {
-  background-color: rgb(199, 199, 199);
-  color: black;
+  background: rgba(226, 82, 14, 0.15);
+  border-color: rgba(226, 82, 14, 0.6);
+  color: #f1f5f9;
+  box-shadow: 0 0 10px rgba(226, 82, 14, 0.1);
 }
 .create-game-page-column input[type="checkbox"]:checked + label a {
-    color:black
+    color: #f59e0b;
 }
 
 .create-game-page-column .create-game-board-hexagon {
@@ -222,7 +357,7 @@
 }
 
 .create-game-page-column .create-game-random {
-    color: rgb(106,106,106);
+    color: #64748b;
 }
 
 .create-game-expansion-icon {
@@ -266,21 +401,21 @@
 
 .create-game-player-name {
     height: 40px;
-    border: none;
-    color: #ccc;
-    text-shadow: 0 0 2px black;
-    border-bottom: none;
+    border: 1px solid rgba(38, 48, 80, 0.5);
+    color: #f1f5f9;
+    text-shadow: 0 0 2px rgba(0,0,0,0.5);
     font-size: 20px;
     letter-spacing: 1px;
     font-weight: bold;
-    border-radius: 5px;
-    background: linear-gradient(#303030,transparent);
-    background: rgba(0,0,0,.3);
+    border-radius: 4px;
+    background: rgba(10, 14, 26, 0.6);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .create-game-player-name:focus {
-    border: none;
-    box-shadow: none;
+    border-color: rgba(34, 211, 238, 0.5);
+    box-shadow: 0 0 8px rgba(34, 211, 238, 0.12);
+    outline: none;
 }
 
 .create-game-page-color-row {
@@ -323,12 +458,13 @@
 .create-game-page-column input[type="radio"]:checked + label.label-randomMAOption::after {
     position: absolute;
     width: 40px;
-    height: 12px;
-    top: -10px;
+    height: 3px;
+    top: -4px;
     left: 50%;
     margin-left: -20px;
     content: " ";
-    background-color: rgb(199, 199, 199);
+    background: linear-gradient(90deg, transparent, #e2520e, transparent);
+    border-radius: 2px;
 }
 
 .create-game-page-column input[type="radio"]:checked + label.label-agendaStyle {
@@ -337,12 +473,13 @@
 .create-game-page-column input[type="radio"]:checked + label.label-agendaStyle::after {
     position: absolute;
     width: 40px;
-    height: 12px;
-    top: -10px;
+    height: 3px;
+    top: -4px;
     left: 50%;
     margin-left: -20px;
     content: " ";
-    background-color: rgb(199, 199, 199);
+    background: linear-gradient(90deg, transparent, #e2520e, transparent);
+    border-radius: 2px;
 }
 
 .agendaStyle-random {
@@ -376,9 +513,141 @@
   .discord-invite {
     padding: 0px 15px;
     font-size: 20px;
+    color: #94a3b8;
   }
 
   .changelog {
     padding: 0px 15px;
+    color: #94a3b8;
   }
+
+  /* Heading styles */
+  h1 {
+    color: #f1f5f9;
+    font-size: 22px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    padding: 16px 18px 10px;
+  }
+
+  h4 {
+    color: #cbd5e1;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(38, 48, 80, 0.4);
+  }
+}
+
+/* Number inputs inside labels (corp count, handicap, timers) */
+.create-game-corporations-count,
+.player-handicap {
+    background: rgba(10, 14, 26, 0.8);
+    border: 1px solid rgba(38, 48, 80, 0.6);
+    color: #f1f5f9;
+    border-radius: 3px;
+    font-family: monospace;
+    transition: border-color 0.2s ease;
+
+    &:focus {
+        border-color: rgba(34, 211, 238, 0.5);
+        box-shadow: 0 0 6px rgba(34, 211, 238, 0.1);
+        outline: none;
+    }
+}
+
+/* Seed input */
+.create-game-page-column input[type="text"] {
+    padding: 8px 12px;
+    font-size: 14px;
+    background: rgba(10, 14, 26, 0.9);
+    border: 1px solid rgba(38, 48, 80, 0.7);
+    border-radius: 3px;
+    color: #f1f5f9;
+    font-family: monospace;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+    &:focus {
+        border-color: rgba(34, 211, 238, 0.5);
+        box-shadow: 0 0 8px rgba(34, 211, 238, 0.12);
+        outline: none;
+    }
+}
+
+/* Forbidden label (non-VIP) */
+.create-game-page-column label.forbidden {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+/* Discord invite banner styling */
+.create-game-discord-invite {
+    color: #94a3b8;
+    padding: 4px 18px;
+    font-size: 14px;
+}
+
+/* Mobile adjustments for create game form */
+@media (max-width: 768px) {
+    .create-game h1 {
+        font-size: 17px;
+        padding: 12px 12px 8px;
+    }
+
+    .create-game h4 {
+        font-size: 12px;
+    }
+
+    .create-game--block {
+        margin: 10px 8px 0;
+        padding: 14px;
+    }
+
+    .create-game-page-column label {
+        font-size: 16px;
+        min-width: 90px;
+        height: 48px;
+        padding: 8px 12px;
+        line-height: 32px;
+    }
+
+    .create-game-subsection-label {
+        font-size: 14px;
+    }
+
+    .agendas-text {
+        font-size: 16px;
+    }
+
+    /* Mobile button adjustments */
+    .create-game-action {
+        margin: 24px 5px;
+        padding-left: 5px;
+        gap: 10px;
+    }
+
+    .btn-create-game,
+    .btn-cancel-game {
+        font-size: 15px;
+        padding: 10px 20px;
+        flex: 1;
+        min-width: 120px;
+    }
+
+    .create-game-settings-buttons {
+        margin-left: 0;
+        width: 100%;
+        justify-content: flex-start;
+        margin-top: 10px;
+    }
+
+    .btn-settings-upload,
+    .btn-settings-download {
+        width: 40px;
+        height: 40px;
+    }
 }

@@ -6,6 +6,13 @@
     "Options": "选项",
     "Promos": "Promo卡牌",
     "Starting Corporations": "起始公司",
+    "corporation": "公司",
+    "event": "事件",
+    "active": "蓝卡",
+    "automated": "绿卡",
+    "prelude": "前序",
+    "ceo": "CEO",
+    "standard_project": "标准项目",
     "Board": "版图",
     "Beginner?": "使用新手公司?",
     "Red": "红色",
@@ -384,6 +391,7 @@
     "Final game log":"结束游戏日志",
     "Looking for people to play with? Join us qq group: 859050306":"加入QQ群（859050306），和我们一起玩",
     "Want to play more DIY expansion? Join us qq group: 859050306":"加入QQ群（859050306），查看群公告开启更多diy扩展玩法",
+    "or scan":"或扫码",
 
     "Claim a milestone":"宣称一个里程碑",
     "Build colony":"建设一个殖民地",
@@ -505,6 +513,7 @@
     "Don't increase colony track": "不提升殖民地等级",
     "Increase Europa colony track before trade": "在 木卫二(产能) 贸易前提升等级",
     "Place your tile here?": "确定放在这里吗?",
+    "Don't show this again": "不再提示",
     "Pay with Megacredits": "用M€支付",
     "Pay with Titanium": "用钛支付",
     "Pay with Steel": "用钢铁支付",
@@ -668,5 +677,7 @@
     "This action will have no effect.":"此行动将没有效果。",
     "Note: This action will target you.":"注意：此行动将以你为目标。",
     "Note: playing a card with a microbe tag will cause you to lose 4 M€ (or as much as possible).":"注意：打出带有微生物标志的卡牌将导致你失去4M€（或尽可能多的钱）。",
-    "Warning: Your only greeneries are special tiles.":"警告：你的所有绿化都是特殊板块。"
+    "Warning: Your only greeneries are special tiles.":"警告：你的所有绿化都是特殊板块。",
+    "Select space to erode": "选择要侵蚀的空间",
+    "Trade Income: Erode X adjacent spaces": "贸易收入：侵蚀 X 个相邻空间"
 }

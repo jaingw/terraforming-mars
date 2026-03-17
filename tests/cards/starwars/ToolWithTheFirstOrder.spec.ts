@@ -53,7 +53,7 @@ describe('ToolWithTheFirstOrder', () => {
     expect(player.actionsTakenThisRound).eq(1);
     expect(game.activePlayer).eq(player);
 
-    
+
     player.takeAction();
     const [waitingFor1, cb1] = player.popWaitingFor2();
     const patents1 = cast(findOption(waitingFor1!, 'Sell patents'), SelectCard);

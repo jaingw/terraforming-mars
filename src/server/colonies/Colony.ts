@@ -107,13 +107,13 @@ export abstract class Colony implements IColony {
       // 触发建造者自己的卡片效果
       for (const card of player.tableau) {
         // 如果本人有WEYLAND_YUTANI， 确保触发WEYLAND_YUTANI的两次效果
-        card.onNonCardTagAdded?.(player, Tag.SCIENCE,player);
+        card.onNonCardTagAdded?.(player, Tag.SCIENCE, player);
       }
       // WeylandYutani特殊处理：需要监听所有玩家的Leavitt建造行为
       for (const cardOwner of player.game.players) {
         if (cardOwner !== player && cardOwner.tableau.has(CardName.WEYLAND_YUTANI)) {
           const weylandCard = cardOwner.tableau.get(CardName.WEYLAND_YUTANI);
-          (weylandCard as any).onNonCardTagAdded?.(player, Tag.SCIENCE,cardOwner);
+          (weylandCard as any).onNonCardTagAdded?.(player, Tag.SCIENCE, cardOwner);
         }
       }
     }
@@ -171,7 +171,7 @@ export abstract class Colony implements IColony {
 
   private handleTrade(player: IPlayer, options: TradeOptions) {
     const resource = Array.isArray(this.metadata.trade.resource) ? this.metadata.trade.resource[this.trackPosition] : this.metadata.trade.resource;
-    const num =  this.metadata.trade.quantity[this.trackPosition];
+    const num = this.metadata.trade.quantity[this.trackPosition];
     this.giveBonus(player, this.metadata.trade.type, num, resource);
 
     // !== false because default is true.

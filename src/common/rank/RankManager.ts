@@ -18,6 +18,8 @@ export class UserRank {
       public mu: number,
       public sigma: number,
       public trueskill: number = 0, // 顶段后显示积分,由mu和sigma计算得出
+      public points: number = 0, // 赛季累计积分
+      public seasonId: string = '', // 当前赛季ID
   ) {
     if (this.userId.startsWith('u')) {
       this.userId = userId.substring(0, 13);
@@ -96,10 +98,39 @@ export function getNewSkills(userRanks: Array<UserRank>, timeOutUser: UserRank |
       userRank.trueskill = userRank.mu - 3 * userRank.sigma;
       updatedRanks.push(userRank);
     }
-  } else { // 超时情况 不会影响隐藏分，只扣表现分
+  } else {
+    // 超时情况：超时玩家视为最后一名，其他玩家视为并列第一
+    // 同时也会更新TrueSkill隐藏分
+    // 构建排名：超时玩家排最后，其他玩家并列第一（rank相同）
+    const timeOutIndex = userRanks.indexOf(timeOutUser);
+    const reorderedRanks: Array<UserRank> = [];
+    const reorderedRatings: Array<Array<Rating>> = [];
+    const ranks: Array<number> = [];
+
+    // 先放非超时玩家（并列第一，rank=1）
     for (let i = 0; i < playerNumber; i++) {
-      const userRank = userRanks[i];
+      if (i !== timeOutIndex) {
+        reorderedRanks.push(userRanks[i]);
+        reorderedRatings.push([new Rating(userRanks[i].mu, userRanks[i].sigma)]);
+        ranks.push(1); // 并列第一
+      }
+    }
+    // 再放超时玩家（最后一名）
+    reorderedRanks.push(timeOutUser);
+    reorderedRatings.push([new Rating(timeOutUser.mu, timeOutUser.sigma)]);
+    ranks.push(playerNumber); // 最后一名
+
+    // 使用rank参数进行TrueSkill计算（支持并列）
+    const updatedRatings = rate(reorderedRatings, ranks);
+
+    for (let i = 0; i < reorderedRanks.length; i++) {
+      const userRank = reorderedRanks[i];
+      // 超时扣星/补偿星
       userRank.setRankValueDeltaByTimeOut(userRank === timeOutUser);
+      // 更新TrueSkill隐藏分
+      userRank.mu = updatedRatings[i][0].mu;
+      userRank.sigma = updatedRatings[i][0].sigma;
+      userRank.trueskill = userRank.mu - 3 * userRank.sigma;
       updatedRanks.push(userRank);
     }
   }

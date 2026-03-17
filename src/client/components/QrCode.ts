@@ -3,34 +3,74 @@ import Vue from 'vue';
 export const QrCode = Vue.component('qrcode', {
   data: function() {
     return {
-      wxmouseenter: -1,
-      qqmouseenter: -1,
+      showModal: false,
+      activeQr: 'wx' as 'wx' | 'qq',
     };
   },
   methods: {
-    fadeIn: function(e:string) {
-      if ( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
-        return;
-      }
-      e === 'wx' ? this.wxmouseenter = 1 : this.qqmouseenter = 1;
+    openModal: function(type: 'wx' | 'qq') {
+      this.activeQr = type;
+      this.showModal = true;
     },
-    fadeOut: function(e:string) {
-      e === 'wx' ? this.wxmouseenter = 0 : this.qqmouseenter = 0;
+    closeModal: function() {
+      this.showModal = false;
     },
-    qrclick: function(e:string) {
-      if (e === 'wx') {
-        this.wxmouseenter === 1 ? this.wxmouseenter = 0 : this.wxmouseenter = 1;
-      } else {
-        this.qqmouseenter === 1 ? this.qqmouseenter = 0 : this.qqmouseenter = 1;
-      }
+    selectQr: function(type: 'wx' | 'qq') {
+      this.activeQr = type;
     },
   },
   template: `
-    <div class="bottom_tools" style="bottom: 40px;">
-      <div class="qr_wx" @mouseover="fadeIn('wx')" @mouseout="fadeOut('wx')" @click="qrclick('wx')">二维码</div>
-      <div class="qr_qq" @mouseover="fadeIn('qq')" @mouseout="fadeOut('qq')" @click="qrclick('qq')">二维码</div>
-      <img class="qr_imgwx" src="assets/qrcode/qr_imgwx.png" :class="wxmouseenter==1?'qrshow':wxmouseenter==0?'qrhide':'hide'">
-      <img class="qr_imgqq" src="assets/qrcode/qr_imgqq.png" :class="qqmouseenter==1?'qrshow':qqmouseenter==0?'qrhide':'hide'">
-    </div>
-    `,
+    <span class="qr-inline">
+      <span class="qr-inline__text" v-i18n>or scan</span>
+      <button class="qr-inline__btn qr-inline__btn--wx" @click="openModal('wx')" title="WeChat">
+        <i class="fab fa-weixin"></i>
+      </button>
+      <button class="qr-inline__btn qr-inline__btn--qq" @click="openModal('qq')" title="QQ">
+        <i class="fab fa-qq"></i>
+      </button>
+      <transition name="qr-modal">
+        <div v-if="showModal" class="qr-modal" @click.self="closeModal">
+          <div class="qr-modal__content">
+            <button class="qr-modal__close" @click="closeModal">
+              <i class="fas fa-times"></i>
+            </button>
+            <div class="qr-modal__tabs">
+              <button 
+                class="qr-modal__tab" 
+                :class="{'qr-modal__tab--active': activeQr === 'wx'}"
+                @click="selectQr('wx')">
+                <i class="fab fa-weixin"></i>
+                <span>WeChat</span>
+              </button>
+              <button 
+                class="qr-modal__tab" 
+                :class="{'qr-modal__tab--active': activeQr === 'qq'}"
+                @click="selectQr('qq')">
+                <i class="fab fa-qq"></i>
+                <span>QQ</span>
+              </button>
+            </div>
+            <div class="qr-modal__body">
+              <transition name="qr-switch" mode="out-in">
+                <div v-if="activeQr === 'wx'" key="wx" class="qr-modal__panel">
+                  <div class="qr-modal__header">
+                    <i class="fab fa-weixin"></i>
+                    <span>WeChat QR Code</span>
+                  </div>
+                  <img class="qr-modal__img" src="assets/qrcode/qr_imgwx.png" alt="WeChat QR">
+                </div>
+                <div v-else key="qq" class="qr-modal__panel">
+                  <div class="qr-modal__header">
+                    <i class="fab fa-qq"></i>
+                    <span>QQ QR Code</span>
+                  </div>
+                  <img class="qr-modal__img" src="assets/qrcode/qr_imgqq.png" alt="QQ QR">
+                </div>
+              </transition>
+            </div>
+          </div>
+        </div>
+      </transition>
+    </span>
+  `,
 });

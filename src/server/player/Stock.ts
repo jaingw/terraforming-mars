@@ -5,6 +5,7 @@ import {CrashSiteCleanup} from '../cards/promo/CrashSiteCleanup';
 import {CardName} from '../../common/cards/CardName';
 import {Phase} from '../../common/Phase';
 import {EnergyStation} from '../cards/eros/EnergyStation';
+import {MoltenReserve} from '../cards/commission/MoltenReserve';
 import {LogHelper} from '../LogHelper';
 import {From, isFromPlayer} from '../logs/From';
 import {BaseStock} from './StockBase';
@@ -70,6 +71,14 @@ export class Stock extends BaseStock {
       const solarPlant = this.player.playedCards.get(CardName.SOLARPLANT);
       if (solarPlant !== undefined) {
         this.player.defer(() => this.add(Resource.HEAT, -delta, {log: true}));
+      }
+    }
+
+    // MOLTEN_RESERVE hook: when gaining heat, gain 1 MC (once per gain event)
+    if (delta > 0 && resource === Resource.HEAT) {
+      const moltenReserve = this.player.playedCards.get(CardName.MOLTEN_RESERVE);
+      if (moltenReserve !== undefined) {
+        this.player.defer(() => MoltenReserve.onHeatGain(this.player));
       }
     }
   }

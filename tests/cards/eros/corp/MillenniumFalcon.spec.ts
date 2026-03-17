@@ -15,10 +15,10 @@ describe('MillenniumFalcon', () => {
   beforeEach(() => {
     card = new MillenniumFalcon();
     [game, player] = testGame(2, {
-      coloniesExtension: true, 
-      customColoniesList: [ColonyName.CALLISTO, ColonyName.CERES, ColonyName.TITANIA, ColonyName.LUNA,ColonyName.IO], 
+      coloniesExtension: true,
+      customColoniesList: [ColonyName.CALLISTO, ColonyName.CERES, ColonyName.TITANIA, ColonyName.LUNA, ColonyName.IO],
       skipInitialShuffling: true,
-      communityCardsOption:true
+      communityCardsOption: true,
     });
   });
 
@@ -99,6 +99,5 @@ describe('MillenniumFalcon', () => {
     // 验证殖民地已被移动
     expect(callisto.colonies.includes(player)).to.be.false;
     expect(ceres.colonies.includes(player)).to.be.true;
-
   });
 });

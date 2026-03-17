@@ -44,8 +44,8 @@ export class Biobatteries extends Card implements IProjectCard {
     const powerTags = player.tags.count(Tag.POWER, 'raw') + 1; // including this
     const microbeTags = player.tags.count(Tag.MICROBE, 'raw') + 1; // including this
     const wildTags = player.tags.count(Tag.WILD, 'raw');
-    player.stock.add(Resource.ENERGY, microbeTags + wildTags, {log: true});
-    player.game.defer(new AddResourcesToCard(player, CardResource.MICROBE, {count: powerTags}));
+    player.stock.add(Resource.ENERGY, microbeTags, {log: true});
+    player.game.defer(new AddResourcesToCard(player, CardResource.MICROBE, {count: powerTags + wildTags}));
     return undefined;
   }
 }

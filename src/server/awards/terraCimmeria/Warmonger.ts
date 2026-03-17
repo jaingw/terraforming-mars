@@ -51,7 +51,7 @@ export class Warmonger implements IAward {
     // Turmoil
     // Promo
     CardName.MONS_INSURANCE,
-    // eros 
+    // eros
     CardName.ELECTRIC_SHEEP,
     // Moon
     CardName.ANCIENT_SHIPYARDS,

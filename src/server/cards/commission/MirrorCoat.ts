@@ -18,13 +18,13 @@ export class MirrorCoat extends CorporationCard implements ICard {
     super({
       name: CardName.MIRRORCOAT,
       tags: [],
-      startingMegaCredits: 49,
+      startingMegaCredits: 39,
 
       metadata: {
         cardNumber: 'XB18',
-        description: 'You start with 49 M€. Draw 3 cards.',
+        description: 'You start with 39 M€. Draw 2 cards.',
         renderData: CardRenderer.builder((b) => {
-          b.megacredits(49).nbsp.cards(3);
+          b.megacredits(39).nbsp.cards(2);
           b.corpBox('action', (ce) => {
             ce.vSpace(Size.SMALL);
             ce.text('效果: 对手减少你的资源或产能无效.', Size.SMALL);
@@ -40,7 +40,7 @@ export class MirrorCoat extends CorporationCard implements ICard {
   }
 
   public override bespokePlay(player: IPlayer) {
-    player.drawCard(3);
+    player.drawCard(2);
     return undefined;
   }
 

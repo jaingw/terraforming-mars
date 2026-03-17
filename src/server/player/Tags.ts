@@ -264,8 +264,8 @@ export class Tags {
     let maximum = this.tagsInGame();
     if (playerIsOdyssey || interplanetary) maximum++;
 
-    if (mode === 'globalEvent') return Math.min(uniqueTags.size , maximum);
-    return Math.min(uniqueTags.size + wildTagCount , maximum);
+    if (mode === 'globalEvent') return Math.min(uniqueTags.size, maximum);
+    return Math.min(uniqueTags.size + wildTagCount, maximum);
   }
 
   // Return true if this player has all the tags in `tags` showing.

@@ -13,11 +13,11 @@ import {FusionPower} from '../../../../src/server/cards/base/FusionPower';
 import {Sponsors} from '../../../../src/server/cards/base/Sponsors';
 import {SpaceElevator} from '../../../../src/server/cards/base/SpaceElevator';
 import {Mine} from '../../../../src/server/cards/base/Mine';
-import { AcquiredCompany } from '../../../../src/server/cards/base/AcquiredCompany';
-import { AdvancedAlloys } from '../../../../src/server/cards/base/AdvancedAlloys';
-import { InventorsGuild } from '../../../../src/server/cards/base/InventorsGuild';
-import { AdaptedLichen } from '../../../../src/server/cards/base/AdaptedLichen';
-import { Grass } from '../../../../src/server/cards/base/Grass';
+import {AcquiredCompany} from '../../../../src/server/cards/base/AcquiredCompany';
+import {AdvancedAlloys} from '../../../../src/server/cards/base/AdvancedAlloys';
+import {InventorsGuild} from '../../../../src/server/cards/base/InventorsGuild';
+import {AdaptedLichen} from '../../../../src/server/cards/base/AdaptedLichen';
+import {Grass} from '../../../../src/server/cards/base/Grass';
 
 
 describe('Chaos', () => {
@@ -82,7 +82,7 @@ describe('Chaos', () => {
       plants: player.plants,
       energy: player.energy,
       heat: player.heat,
-    }
+    };
     // 只分配1个资源，比如分配到 energy
     input.options[4].cb(1); // energy
     input.options[0].cb(0); // megacredits
@@ -92,7 +92,7 @@ describe('Chaos', () => {
     input.options[5].cb(0); // heat
     input.cb(undefined);
     runAllActions(game);
-    
+
     expect(player.energy-resources.energy).to.eq(1);
     expect(player.megaCredits-resources.megacredits).to.eq(0);
     expect(player.steel-resources.steel).to.eq(0);
@@ -103,7 +103,7 @@ describe('Chaos', () => {
     player.playCard(new SearchForLife()); // SCIENCE
     card.onProductionPhase(player);
     runAllActions(game);
-    
+
     const resources2 = {
       megacredits: player.megaCredits,
       steel: player.steel,
@@ -111,7 +111,7 @@ describe('Chaos', () => {
       plants: player.plants,
       energy: player.energy,
       heat: player.heat,
-    }
+    };
 
     input = cast(player.popWaitingFor(), AndOptions);
     // 只分配1个资源，比如分配到 energy

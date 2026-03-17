@@ -1,0 +1,27 @@
+{
+  "lockfileVersion": 1,
+  "configVersion": 1,
+  "workspaces": {
+    "": {
+      "name": "opencode-plugins",
+      "dependencies": {
+        "@opencode-ai/plugin": "1.1.50",
+      },
+      "devDependencies": {
+        "jsonc-parser": "3.3.1",
+        "zod": "4.3.5",
+      },
+    },
+  },
+  "packages": {
+    "@opencode-ai/plugin": ["@opencode-ai/plugin@1.1.50", "https://nexus.npt.seabank.io/repository/npm-bank/@opencode-ai/plugin/-/plugin-1.1.50.tgz", { "dependencies": { "@opencode-ai/sdk": "1.1.50", "zod": "4.1.8" } }, "sha512-1n2IqryCJjCRwmsOPXLd8oJ7N0Ik5Kn3m+xGhzCmY8ekwfhu9gSzNeDiDHKW6zqULfiNkkP54s6QYr0njuDO2A=="],
+
+    "@opencode-ai/sdk": ["@opencode-ai/sdk@1.1.50", "https://nexus.npt.seabank.io/repository/npm-bank/@opencode-ai/sdk/-/sdk-1.1.50.tgz", {}, "sha512-qw0jv1TYJ6fA1Ga1Qkvicq+wrUS2Z6MyPG0LykI3mxMb9yRk9sr1ARX+T26Ij7DiRW4x7ffp36F9EE63Lyl1YQ=="],
+
+    "jsonc-parser": ["jsonc-parser@3.3.1", "https://nexus.npt.seabank.io/repository/npm-bank/jsonc-parser/-/jsonc-parser-3.3.1.tgz", {}, "sha512-HUgH65KyejrUFPvHFPbqOY0rsFip3Bo5wb4ngvdi1EpCYWUQDC5V+Y7mZws+DLkr4M//zQJoanu1SP+87Dv1oQ=="],
+
+    "zod": ["zod@4.3.5", "https://nexus.npt.seabank.io/repository/npm-bank/zod/-/zod-4.3.5.tgz", {}, "sha512-k7Nwx6vuWx1IJ9Bjuf4Zt1PEllcwe7cls3VNzm4CQ1/hgtFUK2bRNG3rvnpPUhFjmqJKAKtjV576KnUkHocg/g=="],
+
+    "@opencode-ai/plugin/zod": ["zod@4.1.8", "https://nexus.npt.seabank.io/repository/npm-bank/zod/-/zod-4.1.8.tgz", {}, "sha512-5R1P+WwQqmmMIEACyzSvo4JXHY5WiAFHRMg+zBZKgKS+Q1viRa0C1hmUKtHltoIFKtIdki3pRxkmpP74jnNYHQ=="],
+  }
+}

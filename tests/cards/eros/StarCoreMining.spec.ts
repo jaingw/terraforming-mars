@@ -7,8 +7,8 @@ import {AsteroidMining} from '../../../src/server/cards/base/AsteroidMining';
 import {Steelworks} from '../../../src/server/cards/base/Steelworks';
 import {Lichen} from '../../../src/server/cards/base/Lichen';
 import {SearchForLife} from '../../../src/server/cards/base/SearchForLife';
-import { EnergySaving } from '../../../src/server/cards/base/EnergySaving';
-import { SpaceElevator } from '../../../src/server/cards/base/SpaceElevator';
+import {EnergySaving} from '../../../src/server/cards/base/EnergySaving';
+import {SpaceElevator} from '../../../src/server/cards/base/SpaceElevator';
 
 
 describe('StarCoreMining', () => {

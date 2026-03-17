@@ -370,6 +370,18 @@ export class GameLoader implements IGameLoader {
       });
 
       Database.getInstance().getGames().then( (allGames:Array<IGameShortData> ) => {
+        // Load user ranks regardless of whether there are games
+        Database.getInstance().getUserRanks().then( (allUserRanks:Array<UserRank> ) => {
+          if (allUserRanks.length > 0) {
+            console.log(`loading all ranks ${allUserRanks.length}`);
+            allUserRanks.forEach((userRank) => {
+              $this.userRankMap.set(userRank.userId, userRank);
+            });
+          }
+        }).catch((err) => {
+          console.error('error loading all user ranks', err);
+        });
+
         if (allGames.length === 0) {
           $this.onAllGamesLoaded();
           cb();
@@ -390,21 +402,6 @@ export class GameLoader implements IGameLoader {
           }
         });
         $this.loadNextGame(cb);
-
-        // FIXME: 嵌套Promise有点怪，但是不这么写测试用例会报错，要求必须加载完所有游戏
-        Database.getInstance().getUserRanks().then( (allUserRanks:Array<UserRank> ) => {
-          if (allUserRanks.length === 0) {
-            return;
-          }
-          console.log(`loading all ranks ${allUserRanks.length}`);
-
-          allUserRanks.forEach((userRank) => {
-            $this.userRankMap.set(userRank.userId, userRank); // TODO: 是否要加一个检查是否是用户的判断？
-          });
-        }).catch((err) => {
-          console.error('error loading all user ranks', err);
-          return;
-        });
       }).catch((err) => {
         console.error('error loading all games', err);
         $this.onAllGamesLoaded();

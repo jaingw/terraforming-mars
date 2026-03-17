@@ -7,6 +7,24 @@ import {Phase} from '../../common/Phase';
 import {User} from '../User';
 import {UserRank} from '../../common/rank/RankManager';
 
+export interface IUserGameStatsBlock {
+    totalGames: number;
+    wins: number;
+    losses: number;
+    winRate: number;
+    fleeCount: number;
+    fleeRate: number;
+    avgScore: number;
+    avgPosition: number;
+    totalRankGames: number;
+    rankWins: number;
+}
+
+export interface IUserGameStats {
+    allTime: IUserGameStatsBlock;
+    recent3Months: IUserGameStatsBlock;
+}
+
 export interface IShortData {
     id:string,
     phase : Phase,
@@ -136,6 +154,7 @@ export interface IDatabase {
     cleanGameAllSaves(game_id: string): void;
     cleanGameSave(game_id: string, save_id: number): void;
     saveUser(id: string, name: string, password: string, prop: string): void ;
+    updateUserProp(id: string, prop: string): void;
     getUsers(cb:(err: any, allUsers:Array<User>)=> void): void ;
     refresh(): void ;
 
@@ -170,8 +189,21 @@ export interface IDatabase {
     addUserRank(userRank: UserRank): void ;
     getUserRanks(limit?: number): Promise<Array<UserRank>>;
     updateUserRank(userRank: UserRank): Promise<void>;
-    saveUserGameResult(user_id: string, game_id: string, phase: string, score: Score, players: number, generations: number, create_time: string, position: number, is_rank: boolean, user_rank: UserRank | undefined): void;
-    // createSession(session: Session): Promise<void>;
-    // deleteSession(sessionId: SessionId): Promise<void>;
-    // getSessions(): Promise<Array<Session>>;
+    saveUserGameResult(user_id: string, game_id: string, phase: string, score: Score, players: number, generations: number, create_time: string, position: number, is_rank: boolean, user_rank: UserRank | undefined, is_timeout?: boolean): void;
+
+    /**
+     * Get aggregated game stats for a user.
+     * Returns all-time and recent (last 3 months) stats.
+     */
+    getUserGameStats(userId: string): Promise<IUserGameStats>;
+
+    // 赛季相关
+    saveSeasonSnapshot(userId: string, seasonId: string, rankValue: number, mu: number, sigma: number, trueskill: number, pointsEarned: number, finalPosition: number): Promise<void>;
+    getSeasonSnapshots(seasonId: string): Promise<Array<{userId: string, rankValue: number, mu: number, sigma: number, trueskill: number, pointsEarned: number, finalPosition: number}>>;
+    getAvailableSeasons(): Promise<Array<string>>;
+    updateUserPoints(userId: string, points: number): Promise<void>;
+  setCurrentSeason(seasonId: string, seasonName: string, startDate: Date, endDate: Date): Promise<void>;
+  getCurrentSeason(): Promise<{seasonId: string, seasonName: string, startDate: string, endDate: string} | undefined>;
+  saveSeason(seasonId: string, seasonName: string, startDate: Date, endDate: Date): Promise<void>;
+  getSeason(seasonId: string): Promise<{seasonId: string, seasonName: string, startDate: string, endDate: string} | undefined>;
 }

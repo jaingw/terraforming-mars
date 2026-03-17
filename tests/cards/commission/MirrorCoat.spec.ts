@@ -25,11 +25,11 @@ describe('MirrorCoat', () => {
     player2.megaCredits = 100;
   });
 
-  it('should start with 49 M€ and draw 3 cards', () => {
+  it('should start with 39 M€ and draw 2 cards', () => {
     player.playCorporationCard(card);
     runAllActions(game);
-    expect(card.startingMegaCredits).to.eq(49);
-    expect(player.cardsInHand.length).to.eq(3);
+    expect(card.startingMegaCredits).to.eq(39);
+    expect(player.cardsInHand.length).to.eq(2);
   });
 
   it('should only act once and copy two building cards production', () => {

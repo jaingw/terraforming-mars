@@ -9,7 +9,7 @@ import {SpaceBonus} from '../../../src/common/boards/SpaceBonus';
 import {ArcticAlgae} from '../../../src/server/cards/base/ArcticAlgae';
 import {SpaceType} from '../../../src/common/boards/SpaceType';
 import {Phase} from '../../../src/common/Phase';
-import {addGreenery, cast,   forceGenerationEnd,  maxOutOceans, runAllActions, setOxygenLevel, setTemperature} from '../../TestingUtils';
+import {addGreenery, cast, forceGenerationEnd, maxOutOceans, runAllActions, setOxygenLevel, setTemperature} from '../../TestingUtils';
 import {TestPlayer} from '../../TestPlayer';
 import {OceanCity} from '../../../src/server/cards/ares/OceanCity';
 import {SelectSpace} from '../../../src/server/inputs/SelectSpace';
@@ -202,7 +202,7 @@ describe('EcologicalSurvey', () => {
     player.plants = 9;
 
     // Pass last turn
-    forceGenerationEnd(game,true);
+    forceGenerationEnd(game, true);
 
     // Final greenery placement is considered part of the production phase.
     expect(game.phase).to.eq(Phase.PRODUCTION);

@@ -2,7 +2,7 @@ import {expect} from 'chai';
 import {Supercapacitors} from '../../../src/server/cards/promo/Supercapacitors';
 import {IGame} from '../../../src/server/IGame';
 import {TestPlayer} from '../../TestPlayer';
-import {cast, doWait,  forceGenerationEnd, runAllActions} from '../../TestingUtils';
+import {cast, doWait, forceGenerationEnd, runAllActions} from '../../TestingUtils';
 import {testGame} from '../../TestGame';
 import {SelectCard} from '../../../src/server/inputs/SelectCard';
 import {SelectAmount} from '../../../src/server/inputs/SelectAmount';
@@ -39,7 +39,7 @@ describe('Supercapacitors', () => {
     player.production.override({energy: 2, heat: 3});
     player.energy = 5;
     player.heat = 0;
-    forceGenerationEnd(game,true);
+    forceGenerationEnd(game, true);
     runAllActions(game);
 
     doWait(player, SelectAmount, (selectAmount) => {

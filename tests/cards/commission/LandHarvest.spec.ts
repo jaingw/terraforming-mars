@@ -35,20 +35,20 @@ describe('LandHarvest', () => {
     player.playCard(card);
     runAllActions(game);
 
-  //   const initialMegacredits = player.megaCredits;
+    //   const initialMegacredits = player.megaCredits;
 
-  //   const action = cast(player.popWaitingFor(), SelectSpace);
-  //   const space = action.spaces[0];
-  //   action.cb(space);
-  //   runAllActions(game);
+    //   const action = cast(player.popWaitingFor(), SelectSpace);
+    //   const space = action.spaces[0];
+    //   action.cb(space);
+    //   runAllActions(game);
 
-  //   // 验证版块已放置
-  //   expect(space.tile?.tileType).to.eq(TileType.RESTRICTED_AREA);
-  //   expect(space.adjacency).to.deep.eq({bonus: [SpaceBonus.DRAW_CARD]});
-  //   expect(player.game.board.spaces.filter((space) => space.tile !== undefined).length).to.eq(initialTileCount + 1);
+    //   // 验证版块已放置
+    //   expect(space.tile?.tileType).to.eq(TileType.RESTRICTED_AREA);
+    //   expect(space.adjacency).to.deep.eq({bonus: [SpaceBonus.DRAW_CARD]});
+    //   expect(player.game.board.spaces.filter((space) => space.tile !== undefined).length).to.eq(initialTileCount + 1);
 
-  //   // 验证玩家获得了2MC
-  //   expect(player.megaCredits).to.eq(initialMegacredits + 2);
+    //   // 验证玩家获得了2MC
+    //   expect(player.megaCredits).to.eq(initialMegacredits + 2);
 
     // 效果：在火星上放置版块时获得2MC
 

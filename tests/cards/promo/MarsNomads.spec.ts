@@ -275,14 +275,14 @@ describe('MarsNomads', () => {
 
   it('undo should restore nomad space correctly', () => {
     const serialized = game.serialize();
-    
+
     const space = board.getAvailableSpacesOnLand(player)[0];
     const selectSpace = cast(card.play(player), SelectSpace);
     selectSpace.cb(space);
     expect(game.nomadSpace).eq(space.id);
 
     // Simulate undo by serializing and deserializing
-    
+
     const newGame = Game.rebuild('gtest', [player, player2], player);
     newGame.loadFromJSON(serialized);
 

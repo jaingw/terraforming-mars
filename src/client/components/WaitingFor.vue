@@ -34,7 +34,7 @@
 
 import Vue from 'vue';
 import * as constants from '@/common/constants';
-import * as raw_settings from '@/genfiles/settings.json';
+import raw_settings from '@/genfiles/settings.json';
 import {vueRoot} from '@/client/components/vueRoot';
 import {PlayerInputModel} from '@/common/models/PlayerInputModel';
 import {playerColorClass} from '@/common/utils/utils';
@@ -207,22 +207,37 @@ export default Vue.extend({
             this.playersWaitingFor = result.waitingFor;
             if (result.result === 'GO' && this.waitingfor === undefined && !this.playerView.block) {
               // Will only apply to player, not spectator.
-              root.updatePlayer();
-              this.notify();
+              // Add error handling for updatePlayer
+              try {
+                root.updatePlayer();
+                this.notify();
+              } catch (err) {
+                console.warn('Error calling updatePlayer:', err);
+                // If update fails, continue waiting instead of stopping
+                return;
+              }
               // We don't need to wait anymore - it's our turn
               return;
             } else if (result.result === 'REFRESH') {
               // Something changed, let's refresh UI
-              if (isPlayerId(this.playerView.id)) {
-                root.updatePlayer();
-              } else {
-                root.updateSpectator();
+              try {
+                if (isPlayerId(this.playerView.id)) {
+                  root.updatePlayer();
+                } else {
+                  root.updateSpectator();
+                }
+              } catch (err) {
+                console.warn('Error calling updatePlayer/updateSpectator:', err);
+                // Continue polling on error
+                return;
               }
-
               return;
             }
-          } else {
-            root.showAlert(`Received unexpected response from server (${xhr.status}). This is often due to the server restarting.`, () => {});
+          } else if (xhr.status !== statusCode.ok) {
+            // Only show alert for non-200 status codes
+            if (xhr.status !== 404) {
+              root.showAlert(`Received unexpected response from server (${xhr.status}). This is often due to the server restarting.`, () => {});
+            }
             failednum ++;
           }
           console.log(`allnum:${allnum}, failednum:${failednum}` );

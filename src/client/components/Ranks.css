@@ -1,0 +1,111 @@
+.ranks-tab {
+  clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
+  background: rgba(17,26,46,0.4);
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+.ranks-tab--active {
+  border-color: rgba(38,48,80,0.7);
+  background: rgba(17,26,46,0.8);
+}
+.ranks-panel {
+  position: relative;
+  background: rgba(17,26,46,0.95);
+  border-color: #263050;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.03);
+}
+.ranks-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 30px;
+  height: 2px;
+  background: linear-gradient(to right, #e2520e, transparent);
+}
+.ranks-panel::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 30px;
+  height: 2px;
+  background: linear-gradient(to left, #e2520e, transparent);
+}
+.ranks-tiers-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.ranks-tier-card {
+  border: 1px solid rgba(38,48,80,0.5);
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+  background: linear-gradient(135deg, rgba(17,26,46,0.95) 0%, rgba(26,37,64,0.8) 100%);
+  transition: all 0.25s ease;
+}
+.ranks-tier-card:hover {
+  border-color: rgba(38,48,80,0.9);
+  transform: translateX(4px);
+}
+/* ============ Podium ============ */
+.ranks-podium {
+  transition: transform 0.25s ease;
+}
+.ranks-podium:hover {
+  transform: translateY(-4px);
+}
+
+/* Podium visibility and mobile list handled by Tailwind responsive classes */
+
+/* ============ Mobile Responsive ============ */
+@media (max-width: 640px) {
+  .ranks-page {
+    padding: 12px !important;
+  }
+
+  /* Season info: wrap */
+  .ranks-page .mb-3.text-xs {
+    line-height: 1.6;
+  }
+  .ranks-page .mb-3.text-xs .ml-3 {
+    display: block;
+    margin-left: 0 !important;
+    margin-top: 2px;
+  }
+
+  /* Tabs: smaller */
+  .ranks-tab {
+    padding: 8px 6px !important;
+    font-size: 10px !important;
+  }
+
+  /* Panel padding */
+  .ranks-panel {
+    padding: 12px !important;
+  }
+
+  /* Ranking table */
+  .ranks-panel table th,
+  .ranks-panel table td {
+    padding: 8px 6px !important;
+    font-size: 12px;
+  }
+
+  /* Rule rows */
+  .ranks-rule-row {
+    flex-direction: column;
+    gap: 8px !important;
+  }
+
+  /* Tier cards */
+  .ranks-tier-card .flex.items-center.gap-4.p-4 {
+    padding: 10px !important;
+    gap: 10px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .ranks-page {
+    padding: 8px !important;
+  }
+}

@@ -145,7 +145,8 @@ export class ServeAsset extends Handler {
 
   private toFile(urlPath: string, encodings: Set<Encoding>): { file?: string, encoding?: Encoding } {
     switch (urlPath) {
-    case 'build/assets/index_ca.html':
+    case 'build/index.html':
+    case 'build/assets/index_ca.html': // Legacy webpack output (kept for backward compat)
     case 'assets/Prototype.ttf':
     case 'assets/Prototype-ru.ttf':
     case 'assets/Prototype-pl.ttf':
@@ -175,9 +176,9 @@ export class ServeAsset extends Handler {
     case 'main.js.map':
       return this.toMainFile(urlPath, encodings);
 
-    // sw.js is empty. Although not confirmed, it seems sw.js is necessary
-    // for mobile notifications. If confirmed that it is not necessary, this
-    // can be removed.
+      // sw.js is empty. Although not confirmed, it seems sw.js is necessary
+      // for mobile notifications. If confirmed that it is not necessary, this
+      // can be removed.
       // case 'sw.js':
       // case '/sw.js':
       //   return this.toServiceWorkerFile(urlPath);
@@ -192,6 +193,14 @@ export class ServeAsset extends Handler {
 
         // Only allow assets inside of assets directory
         if (resolvedFile.startsWith(assetsRoot)) {
+          return {file: resolvedFile};
+        }
+      }
+      // Serve Vite build chunks and CSS assets from build/ directory
+      if (urlPath.startsWith('css/') || urlPath.startsWith('chunks/')) {
+        const buildRoot = path.resolve('./build');
+        const resolvedFile = path.resolve(path.normalize('build/' + urlPath));
+        if (resolvedFile.startsWith(buildRoot)) {
           return {file: resolvedFile};
         }
       }

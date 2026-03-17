@@ -53,7 +53,6 @@ export class BoardOfDirectors extends PreludeCard implements IActionCard {
     const prelude = game.preludeDeck.drawOrThrow(player.game);
 
     if (player.canAfford(12)) {
-      
       // 检查前序卡是否可以打出
       if (prelude.canPlay?.(player, {cost: 12}) === false) {
         prelude.warnings.add('preludeFizzle');
@@ -73,14 +72,14 @@ export class BoardOfDirectors extends PreludeCard implements IActionCard {
         'Buy', [prelude], {min: 0, max: 1}).andThen((selected) => {
         if (selected.length === 1) {
           const card = selected[0];
-          
+
           game.defer(new SelectPaymentDeferred(player, 12, {title: 'Select how to pay 12 M€'})).andThen(() => {
             player.removeResourceFrom(this, 1);
-            
+
             // 支付12块之后，再检查一次
             // 获取卡片的支付选项，包括可能的TR增加所需的额外费用（红党规则）
             const options = player.affordOptionsForCard(card);
-      
+
             // 使用公开的canAfford方法检查玩家是否能够负担所有费用，包括红党执政下的额外费用
             if (!player.canAfford(options)) {
               // 如果不能负担全部费用，记录并终止操作
@@ -88,7 +87,7 @@ export class BoardOfDirectors extends PreludeCard implements IActionCard {
               PreludesExpansion.fizzle(player, card);
               return undefined;
             }
-            
+
             // 如果卡片不能打出，则fizzle
             if (card.canPlay?.(player) === false) {
               PreludesExpansion.fizzle(player, card);

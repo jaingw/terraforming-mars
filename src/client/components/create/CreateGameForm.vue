@@ -4,10 +4,12 @@
       <span v-i18n>{{ constants.APP_NAME }}</span> — <span v-i18n>Create New Game</span>
     </h1>
     <div class="create-game-discord-invite" v-if="!isvip">
-      <span v-i18n>Want to play more DIY expansion? Join us qq group: 859050306</span> .
+      <span v-i18n>Want to play more DIY expansion? Join us qq group: 859050306</span>
+      <QrCode/>
     </div>
     <div class="discord-invite" v-else-if="playersCount === 1">
-      <span v-i18n>Looking for people to play with? Join us qq group: 859050306</span> .
+      <span v-i18n>Looking for people to play with? Join us qq group: 859050306</span>
+      <QrCode/>
     </div>
 
     <div class="create-game-form create-game-panel create-game--block">
@@ -15,7 +17,7 @@
         <div class="create-game-page-container">
           <div class="create-game-page-column">
             <h4 v-i18n>№ of Players</h4>
-                            <div v-for="pCount in [1,2,3,4,5,6]" v-bind:key="pCount">
+                            <div v-for="pCount in (lobbyMode ? [2,3,4,5,6] : [1,2,3,4,5,6])" v-bind:key="pCount">
                               <input type="radio" :value="pCount" name="playersCount" v-model="playersCount" :id="pCount+'-radio'">
                               <label :for="pCount+'-radio'">
                                     {{ getPlayersCountText(pCount) }}
@@ -453,20 +455,20 @@
             </label>
           </div>
 
-          <div class="create-game-players-cont" v-if="playersCount > 1">
+          <div class="create-game-players-cont" v-if="playersCount > 1 && !lobbyMode">
             <div class="container">
               <div class="columns">
                 <template v-for="(newPlayer, index) in getPlayers()">
-                  <div v-bind:key="index">
-                    <div :class="'form-group col6 create-game-player ' + getPlayerContainerColorClass(newPlayer.color)" :key="newPlayer.color">
+                  <div :key="index">
+                    <div :class="'form-group col6 create-game-player ' + getPlayerContainerColorClass(newPlayer.color)">
                       <div>
                         <input class="form-input form-inline create-game-player-name"
                           :placeholder="getPlayerNamePlaceholder(index)" v-model="newPlayer.name" />
                       </div>
                       <div class="create-game-page-color-row">
-                                              <template v-for="color in PLAYER_COLORS">
-                          <div v-bind:key="color">
-                                                  <input type="radio" :value="color" :name="'playerColor' + (index + 1)" v-model="newPlayer.color" :id="'radioBox' + color + (index + 1)">
+                        <template v-for="color in PLAYER_COLORS">
+                          <div :key="color">
+                            <input type="radio" :value="color" :name="'playerColor' + (index + 1)" v-model="newPlayer.color" :id="'radioBox' + color + (index + 1)">
                             <label :for="'radioBox' + color + (index + 1)">
                               <div :class="'create-game-colorbox ' + getPlayerCubeColorClass(color)"></div>
                             </label>
@@ -474,18 +476,6 @@
                         </template>
                       </div>
                       <div>
-                        <!-- <template v-if="beginnerOption">
-                                                <label v-if="isBeginnerToggleEnabled()" class="form-switch form-inline create-game-beginner-option-label">
-                                                    <input type="checkbox" v-model="newPlayer.beginner">
-                                                    <i class="form-icon"></i> <span v-i18n>Beginner?</span>&nbsp;
-                                                </label>
-
-                                                <label class="form-label">
-                                                    <input type="number" class="form-input form-inline player-handicap" value="0" min="0" :max="10" v-model.number="newPlayer.handicap" />
-                                                    <i class="form-icon"></i><span v-i18n>TR Boost</span>&nbsp;
-                                                </label>
-                                               </template> -->
-
                         <label class="form-radio form-inline" v-if="!randomFirstPlayer">
                           <input type="radio" name="firstIndex" :value="index + 1" v-model="firstIndex">
                           <i class="form-icon"></i> <span v-i18n>Goes First?</span>
@@ -499,25 +489,28 @@
           </div>
 
           <div class="create-game-action">
-            <AppButton title="Create game" size="big" @click="createGame" />
-            <span v-if="isvip">
+            <template v-if="lobbyMode">
+              <button class="btn-create-game" @click="createLobbyRoom" v-i18n>Create Room</button>
+              <button class="btn-cancel-game" @click="$emit('lobby-cancel')" v-i18n>Cancel</button>
+            </template>
+            <button v-else class="btn-create-game" @click="createGame" v-i18n>Create game</button>
+            <div v-if="isvip" class="create-game-settings-buttons">
               <label>
-                <div class="btn btn-primary btn-action btn-lg"><i class="icon icon-upload"></i></div>
+                <div class="btn-settings-upload" title="Upload settings"><i class="icon icon-upload"></i></div>
                 <input style="display: none" type="file" accept=".json" id="settings-file" ref="file"
                   v-on:change="uploadSettings()" />
               </label>
 
               <label>
-                <div v-on:click="downloadSettings()" class="btn btn-primary btn-action btn-lg"><i
+                <div v-on:click="downloadSettings()" class="btn-settings-download" title="Download settings"><i
                     class="icon icon-download"></i>
                 </div>
               </label>
-            </span>
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <QrCode/>
     <div class="create-game--block" v-if="showCorporationList">
               <CorporationsFilter
                   ref="corporationsFilter"
@@ -579,7 +572,6 @@ import {translateText, translateTextWithParams} from '@/client/directives/i18n';
 import ColoniesFilter from '@/client/components/create/ColoniesFilter.vue';
 import {ColonyName} from '@/common/colonies/ColonyName';
 import CardsFilter from '@/client/components/create/CardsFilter.vue';
-import AppButton from '@/client/components/common/AppButton.vue';
 import {playerColorClass} from '@/common/utils/utils';
 import {PreferencesManager} from '../../utils/PreferencesManager';
 import {RandomMAOptionType} from '@/common/ma/RandomMAOptionType';
@@ -594,6 +586,8 @@ import {mainAppSettings} from '../App';
 import {CreateGameModel} from './CreateGameModel';
 import {statusCode} from '../../../common/http/statusCode';
 import {paths} from '@/common/app/paths';
+import {showError, showWarning} from '../../utils/showAlert';
+import {lobbyService, rankService} from '../../services';
 // import * as HTTPResponseCode from '@/client/utils/HTTPResponseCode';
 
 const REVISED_COUNT_ALGORITHM = false;
@@ -639,6 +633,12 @@ type FormModel = {
 
 export default (Vue as WithRefs<Refs>).extend({
   name: 'CreateGameForm',
+  props: {
+    lobbyMode: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data(): CreateGameModel & FormModel {
     return {
       isvip: false,
@@ -730,7 +730,6 @@ export default (Vue as WithRefs<Refs>).extend({
     };
   },
   components: {
-    AppButton,
     CardsFilter,
     ColoniesFilter,
     CorporationsFilter,
@@ -741,6 +740,10 @@ export default (Vue as WithRefs<Refs>).extend({
   mounted() {
     const root = this.$root as any;
     this.isvip = root.isvip;
+    // Lobby mode: default to 2 players since solo is not supported
+    if (this.lobbyMode && this.playersCount < 2) {
+      this.playersCount = 2;
+    }
   },
   watch: {
     allOfficialExpansions(value: boolean) {
@@ -948,17 +951,17 @@ export default (Vue as WithRefs<Refs>).extend({
                 component.solarPhaseOption = Boolean(capturedSolarPhaseOption);
                 this.uploading = false;
               } catch (e) {
-                window.alert('Error reading JSON ' + e);
+                showError('Error reading JSON ' + e);
               }
             });
           }
           if (warnings.length > 0) {
-            window.alert('Settings loaded, with these warnings: \n' + warnings.join('\n'));
+            showWarning('Settings loaded, with these warnings: \n' + warnings.join('\n'));
           } else {
             // window.alert('Settings loaded.');
           }
         } catch (e) {
-          window.alert('Error loading settings ' + e);
+          showError('Error loading settings ' + e);
         }
       }, false);
       if (file) {
@@ -1206,7 +1209,7 @@ export default (Vue as WithRefs<Refs>).extend({
         }
 
         if (customColonies.length < neededColoniesCount) {
-          window.alert(translateTextWithParams('Must select at least ${0} colonies', [neededColoniesCount.toString()]));
+          showWarning(translateTextWithParams('Must select at least ${0} colonies', [neededColoniesCount.toString()]));
           return;
         }
       }
@@ -1267,7 +1270,7 @@ export default (Vue as WithRefs<Refs>).extend({
           // }
         }
         if (customCorporations.length < neededCorpsCount) {
-          window.alert(translateTextWithParams('Must select at least ${0} corporations', [neededCorpsCount.toString()]));
+          showWarning(translateTextWithParams('Must select at least ${0} corporations', [neededCorpsCount.toString()]));
           return;
         }
         let valid = true;
@@ -1293,7 +1296,7 @@ export default (Vue as WithRefs<Refs>).extend({
       if (this.showPreludesList && customPreludes.length > 0) {
         const requiredPreludeCount = players.length * startingPreludes;
         if (customPreludes.length < requiredPreludeCount) {
-          window.alert(translateTextWithParams('Must select at least ${0} Preludes', [requiredPreludeCount.toString()]));
+          showWarning(translateTextWithParams('Must select at least ${0} Preludes', [requiredPreludeCount.toString()]));
           return;
         }
         let valid = true;
@@ -1371,15 +1374,10 @@ export default (Vue as WithRefs<Refs>).extend({
     },
     // 天梯 检查玩家id是否可以参加排名模式
     async checkUsersForRankMode(): Promise<boolean> {
-      const players = this.players.slice(0, this.playersCount);
-      for (const player of players) {
-        if (player.name === '') {
-          return false;
-        }
-        const result = await fetch('/api/userrank?playerName=' + player.name).then(
-          (response) => response.status,
-        );
-        if (result !== statusCode.ok) return false;
+      for (const player of this.players) {
+        if (!player.name) continue;
+        const isValid = await rankService.checkUserRankByPlayerName(player.name);
+        if (!isValid) return false;
       }
       return true;
     },
@@ -1387,7 +1385,7 @@ export default (Vue as WithRefs<Refs>).extend({
       const lastcreated = Number(PreferencesManager.load('lastcreated')) || 0;
       const nowtime = new Date().getTime();
       if (nowtime - lastcreated < 60000 && !this.isvip || nowtime - lastcreated < 3000) { // location.href.indexOf("localhost") < 0){
-        alert('请不要频繁创建游戏');
+        showWarning('请不要频繁创建游戏');
         return;
       }
 
@@ -1395,13 +1393,13 @@ export default (Vue as WithRefs<Refs>).extend({
       if (this.rankOption === true) {
         const vaildForCreate = await this.checkUsersForRankMode();
         if (!vaildForCreate) {
-          alert('存在玩家不符合天梯规则，请检查');
+          showWarning('存在玩家不符合天梯规则，请检查');
           return;
         }
       }
 
       if (this.seededGame && (this.seed === undefined || this.seed.length < 6)) {
-        alert('请输入至少6位随机种子');
+        showWarning('请输入至少6位随机种子');
         return;
       }
 
@@ -1439,8 +1437,36 @@ export default (Vue as WithRefs<Refs>).extend({
         })
         .catch((error: Error) => {
           root.isServerSideRequestInProgress = false;
-          alert(error.message);
+          showError(error.message);
         });
+    },
+    async createLobbyRoom() {
+      const dataToSend = await this.serializeSettings();
+      if (dataToSend === undefined) return;
+
+      const gameConfig = JSON.parse(dataToSend);
+      // 移除 players（lobby 模式下不需要玩家信息，玩家在大厅加入）
+      delete gameConfig.players;
+
+      const userId = PreferencesManager.load('userId');
+      const userName = PreferencesManager.load('userName');
+
+      if (!userId || !userName) {
+        showWarning('Please login first');
+        return;
+      }
+
+      try {
+        const result = await lobbyService.createRoom({
+          userId,
+          userName,
+          gameConfig,
+          maxPlayers: this.playersCount,
+        });
+        this.$emit('lobby-room-created', result.room);
+      } catch (err: any) {
+        showError(err.body || err.message || 'Failed to create room');
+      }
     },
   },
 });

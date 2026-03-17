@@ -113,7 +113,44 @@ export class PostgreSQL implements IDatabase {
     // 天梯 新增`user_rank`表记录用户的排名
     await this.client.query('CREATE TABLE IF NOT EXISTS user_rank (id varchar not null, rank_value integer default 0, mu float4, sigma float4,trueskill float4, PRIMARY KEY (id))');
     // 天梯 玩家数据表，用于保存段位的历史记录，和未来的数据分析 TODO: 未来如果做分析的话加上index
-    await this.client.query('CREATE TABLE IF NOT EXISTS user_game_results (user_id varchar not null, game_id varchar not null, players integer, generations integer, createtime timestamp(0) default now(), corporation text, position integer, player_score integer, rank_value integer, mu float4, sigma float4,trueskill float4, is_rank integer, phase text, PRIMARY KEY (user_id, game_id))');
+    await this.client.query('CREATE TABLE IF NOT EXISTS user_game_results (user_id varchar not null, game_id varchar not null, players integer, generations integer, createtime timestamp(0) default now(), corporation text, position integer, player_score integer, rank_value integer, mu float4, sigma float4,trueskill float4, is_rank integer, phase text, is_timeout integer default 0, PRIMARY KEY (user_id, game_id))');
+    // Migrate: add is_timeout column if missing (backward-compatible)
+    await this.client.query('ALTER TABLE user_game_results ADD COLUMN IF NOT EXISTS is_timeout integer default 0').catch(() => {});
+
+    // 赛季快照表：保存每个赛季结束时的排名数据
+    await this.client.query(`CREATE TABLE IF NOT EXISTS rank_seasons (
+      user_id varchar not null,
+      season_id varchar not null,
+      rank_value integer default 0,
+      mu float4,
+      sigma float4,
+      trueskill float4,
+      points_earned integer default 0,
+      final_position integer,
+      createtime timestamp(0) default now(),
+      PRIMARY KEY (user_id, season_id))`);
+
+    // 当前赛季信息表（只存储一个当前赛季）
+    await this.client.query(`CREATE TABLE IF NOT EXISTS current_season (
+      season_id varchar not null,
+      season_name varchar,
+      start_date timestamp(0) default now(),
+      end_date timestamp(0))`);
+
+    // 所有赛季元数据表
+    await this.client.query(`CREATE TABLE IF NOT EXISTS seasons (
+      season_id varchar not null PRIMARY KEY,
+      season_name varchar,
+      start_date timestamp(0),
+      end_date timestamp(0))`);
+
+    // 兼容性：为已有的 user_rank 表添加 points 和 season_id 列
+    try {
+      await this.client.query('ALTER TABLE user_rank ADD COLUMN IF NOT EXISTS points integer default 0');
+      await this.client.query('ALTER TABLE user_rank ADD COLUMN IF NOT EXISTS season_id varchar');
+    } catch (err) {
+      console.warn('ALTER TABLE user_rank (may already exist):', err);
+    }
   }
 
   public async getPlayerCount(gameId: GameId): Promise<number> {
@@ -433,6 +470,13 @@ export class PostgreSQL implements IDatabase {
       }
     });
   }
+  updateUserProp(id: string, prop: string): void {
+    this.client.query('UPDATE users SET prop = $1 WHERE id = $2', [prop, id], function(err: any) {
+      if (err) {
+        return console.error('PostgreSQL:updateUserProp', err);
+      }
+    });
+  }
   getUsers(cb: (err: any, allUsers: Array<User>) => void): void {
     const allUsers:Array<User> = [];
     const sql: string = 'SELECT distinct id, name, password, prop, createtime FROM users ';
@@ -498,7 +542,7 @@ export class PostgreSQL implements IDatabase {
 
   addUserRank(userRank: UserRank): void {
     // Insert user
-    this.client.query('INSERT INTO user_rank(id, rank_value, mu, sigma, trueskill) VALUES($1, $2, $3, $4, $5)', [userRank.userId, userRank.rankValue, userRank.mu, userRank.sigma, userRank.trueskill], function(err: { message: any; }) {
+    this.client.query('INSERT INTO user_rank(id, rank_value, mu, sigma, trueskill, points, season_id) VALUES($1, $2, $3, $4, $5, $6, $7)', [userRank.userId, userRank.rankValue, userRank.mu, userRank.sigma, userRank.trueskill, userRank.points || 0, userRank.seasonId || ''], function(err: { message: any; }) {
       if (err) {
         return console.error('addUserRank', userRank, err);
       }
@@ -507,33 +551,157 @@ export class PostgreSQL implements IDatabase {
 
   public async getUserRanks(limit:number | undefined = 0): Promise<Array<UserRank>> {
     const concatLimit: string = limit === 0 ? '' : ' limit ' + limit.toString();
-    const sql: string = ' SELECT id, rank_value, mu, sigma, trueskill FROM user_rank   order by rank_value desc,trueskill desc  ' + concatLimit;
+    const sql: string = ' SELECT id, rank_value, mu, sigma, trueskill, points, season_id FROM user_rank   order by rank_value desc,trueskill desc  ' + concatLimit;
     const allUserRanks : Array<UserRank> = [];
     const res = await this.client.query(sql);
-    res.rows.forEach((row) => {
-      const userRank = new UserRank(row.id, row.rank_value, row.mu, row.sigma, row.trueskill);
+    res.rows.forEach((row: any) => {
+      const userRank = new UserRank(row.id, row.rank_value, row.mu, row.sigma, row.trueskill, row.points || 0, row.season_id || '');
       allUserRanks.push(userRank);
     });
     return allUserRanks;
   }
 
   public async updateUserRank(userRank:UserRank): Promise<void> {
-    await this.client.query('UPDATE user_rank SET rank_value = $1, mu = $2, sigma = $3 , trueskill = $4 WHERE id = $5', [userRank.rankValue, userRank.mu, userRank.sigma, userRank.trueskill, userRank.userId]);
+    await this.client.query('UPDATE user_rank SET rank_value = $1, mu = $2, sigma = $3, trueskill = $4, points = $5, season_id = $6 WHERE id = $7', [userRank.rankValue, userRank.mu, userRank.sigma, userRank.trueskill, userRank.points || 0, userRank.seasonId || '', userRank.userId]);
   }
 
   // @param position: 这局游戏第几名
-  saveUserGameResult(user_id: string, game_id: string, phase: string, score: Score, players: number, generations: number, create_time: string, position: number, is_rank: boolean, user_rank: UserRank | undefined): void {
+  saveUserGameResult(user_id: string, game_id: string, phase: string, score: Score, players: number, generations: number, create_time: string, position: number, is_rank: boolean, user_rank: UserRank | undefined, is_timeout: boolean = false): void {
     const sql: string = user_rank !== undefined ?
-      'INSERT INTO user_game_results (user_id, game_id, players, generations, createtime, corporation, position, player_score, rank_value, mu, sigma,trueskill, is_rank, phase) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)' :
-      'INSERT INTO user_game_results (user_id, game_id, players, generations, createtime, corporation, position, player_score, is_rank, phase) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)';
+      'INSERT INTO user_game_results (user_id, game_id, players, generations, createtime, corporation, position, player_score, rank_value, mu, sigma,trueskill, is_rank, phase, is_timeout) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)' :
+      'INSERT INTO user_game_results (user_id, game_id, players, generations, createtime, corporation, position, player_score, is_rank, phase, is_timeout) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)';
     const params: any = user_rank !== undefined ?
-      [user_id, game_id, players, generations, create_time, score.corporation, position, score.playerScore, user_rank.rankValue, user_rank.mu, user_rank.sigma, user_rank.trueskill, is_rank?1:0, phase] :
-      [user_id, game_id, players, generations, create_time, score.corporation, position, score.playerScore, is_rank?1:0, phase];
+      [user_id, game_id, players, generations, create_time, score.corporation, position, score.playerScore, user_rank.rankValue, user_rank.mu, user_rank.sigma, user_rank.trueskill, is_rank?1:0, phase, is_timeout?1:0] :
+      [user_id, game_id, players, generations, create_time, score.corporation, position, score.playerScore, is_rank?1:0, phase, is_timeout?1:0];
 
     this.client.query(sql, params, (err) => {
       if (err) {
         console.error('saveUserGameResult', err, params);
       }
     });
+  }
+
+  async getUserGameStats(userId: string): Promise<import('./IDatabase').IUserGameStats> {
+    const buildStatsQuery = (dateFilter: string) => `
+      SELECT
+        COUNT(*) as total_games,
+        SUM(CASE WHEN is_timeout = 0 THEN 1 ELSE 0 END) as non_timeout_games,
+        SUM(CASE WHEN position = 1 AND is_timeout = 0 THEN 1 ELSE 0 END) as wins,
+        SUM(CASE WHEN position > 1 AND is_timeout = 0 THEN 1 ELSE 0 END) as losses,
+        SUM(CASE WHEN is_timeout = 1 THEN 1 ELSE 0 END) as flee_count,
+        COALESCE(AVG(player_score), 0) as avg_score,
+        COALESCE(AVG(position), 0) as avg_position,
+        SUM(CASE WHEN is_rank = 1 THEN 1 ELSE 0 END) as total_rank_games,
+        SUM(CASE WHEN is_rank = 1 AND position = 1 THEN 1 ELSE 0 END) as rank_wins
+      FROM user_game_results
+      WHERE user_id = $1 ${dateFilter}
+    `;
+
+    const allTimeResult = await this.client.query(buildStatsQuery(''), [userId]);
+    const threeMonthsAgo = new Date();
+    threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+    const recentResult = await this.client.query(
+      buildStatsQuery('AND createtime >= $2'),
+      [userId, threeMonthsAgo.toISOString()],
+    );
+
+    const mapRow = (row: any): import('./IDatabase').IUserGameStatsBlock => {
+      const totalGames = parseInt(row.total_games) || 0;
+      const nonTimeoutGames = parseInt(row.non_timeout_games) || 0;
+      const wins = parseInt(row.wins) || 0;
+      const fleeCount = parseInt(row.flee_count) || 0;
+      return {
+        totalGames,
+        wins,
+        losses: parseInt(row.losses) || 0,
+        winRate: nonTimeoutGames > 0 ? Math.round((wins / nonTimeoutGames) * 10000) / 100 : 0,
+        fleeCount,
+        fleeRate: totalGames > 0 ? Math.round((fleeCount / totalGames) * 10000) / 100 : 0,
+        avgScore: Math.round(parseFloat(row.avg_score) * 100) / 100,
+        avgPosition: Math.round(parseFloat(row.avg_position) * 100) / 100,
+        totalRankGames: parseInt(row.total_rank_games) || 0,
+        rankWins: parseInt(row.rank_wins) || 0,
+      };
+    };
+
+    return {
+      allTime: mapRow(allTimeResult.rows[0]),
+      recent3Months: mapRow(recentResult.rows[0]),
+    };
+  }
+
+  // 赛季相关方法
+  public async saveSeasonSnapshot(userId: string, seasonId: string, rankValue: number, mu: number, sigma: number, trueskill: number, pointsEarned: number, finalPosition: number): Promise<void> {
+    await this.client.query(
+      'INSERT INTO rank_seasons (user_id, season_id, rank_value, mu, sigma, trueskill, points_earned, final_position) VALUES($1, $2, $3, $4, $5, $6, $7, $8) ON CONFLICT (user_id, season_id) DO NOTHING',
+      [userId, seasonId, rankValue, mu, sigma, trueskill, pointsEarned, finalPosition],
+    );
+  }
+
+  public async getSeasonSnapshots(seasonId: string): Promise<Array<{userId: string, rankValue: number, mu: number, sigma: number, trueskill: number, pointsEarned: number, finalPosition: number}>> {
+    const result = await this.client.query('SELECT user_id, rank_value, mu, sigma, trueskill, points_earned, final_position FROM rank_seasons WHERE season_id = $1 ORDER BY final_position ASC', [seasonId]);
+    return result.rows.map((row: any) => ({
+      userId: row.user_id,
+      rankValue: row.rank_value,
+      mu: row.mu,
+      sigma: row.sigma,
+      trueskill: row.trueskill,
+      pointsEarned: row.points_earned,
+      finalPosition: row.final_position,
+    }));
+  }
+
+  public async getAvailableSeasons(): Promise<Array<string>> {
+    const result = await this.client.query('SELECT DISTINCT season_id FROM rank_seasons ORDER BY season_id DESC', []);
+    return result.rows.map((row: any) => row.season_id);
+  }
+
+  public async updateUserPoints(userId: string, points: number): Promise<void> {
+    await this.client.query('UPDATE user_rank SET points = $1 WHERE id = $2', [points, userId]);
+  }
+
+  public async setCurrentSeason(seasonId: string, seasonName: string, startDate: Date, endDate: Date): Promise<void> {
+    // 先删除旧记录，再插入新记录（确保只有一条当前赛季记录）
+    await this.client.query('DELETE FROM current_season');
+    await this.client.query(
+      'INSERT INTO current_season (season_id, season_name, start_date, end_date) VALUES ($1, $2, $3, $4)',
+      [seasonId, seasonName, startDate.toISOString(), endDate.toISOString()],
+    );
+  }
+
+  public async getCurrentSeason(): Promise<{seasonId: string, seasonName: string, startDate: string, endDate: string} | undefined> {
+    const result = await this.client.query('SELECT season_id, season_name, start_date, end_date FROM current_season', []);
+    if (result.rows.length === 0) {
+      return undefined;
+    }
+    const row = result.rows[0];
+    return {
+      seasonId: row.season_id,
+      seasonName: row.season_name,
+      startDate: row.start_date,
+      endDate: row.end_date,
+    };
+  }
+
+  public async saveSeason(seasonId: string, seasonName: string, startDate: Date, endDate: Date): Promise<void> {
+    await this.client.query(
+      `INSERT INTO seasons (season_id, season_name, start_date, end_date) VALUES ($1, $2, $3, $4)
+       ON CONFLICT(season_id) DO UPDATE SET season_name = EXCLUDED.season_name, start_date = EXCLUDED.start_date, end_date = EXCLUDED.end_date`,
+      [seasonId, seasonName, startDate.toISOString(), endDate.toISOString()],
+    );
+  }
+
+  public async getSeason(seasonId: string): Promise<{seasonId: string, seasonName: string, startDate: string, endDate: string} | undefined> {
+    const result = await this.client.query('SELECT season_id, season_name, start_date, end_date FROM seasons WHERE season_id = $1', [seasonId]);
+    if (result.rows.length === 0) {
+      return undefined;
+    }
+    const row = result.rows[0];
+    return {
+      seasonId: row.season_id,
+      seasonName: row.season_name,
+      startDate: row.start_date,
+      endDate: row.end_date,
+    };
   }
 }

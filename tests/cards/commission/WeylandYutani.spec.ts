@@ -7,10 +7,10 @@ import {Tag} from '../../../src/common/cards/Tag';
 import {IGame} from '../../../src/server/IGame';
 import {Research} from '../../../src/server/cards/base/Research';
 import {SearchForLife} from '../../../src/server/cards/base/SearchForLife';
-import { Leavitt } from '../../../src/server/cards/community/Leavitt';
+import {Leavitt} from '../../../src/server/cards/community/Leavitt';
 import {HabitatMarte} from '../../../src/server/cards/pathfinders/HabitatMarte';
-import { AgroDrones } from '../../../src/server/cards/pathfinders/AgroDrones';
-import { MartianCulture } from '../../../src/server/cards/pathfinders/MartianCulture';
+import {AgroDrones} from '../../../src/server/cards/pathfinders/AgroDrones';
+import {MartianCulture} from '../../../src/server/cards/pathfinders/MartianCulture';
 
 describe('WeylandYutani', () => {
   let card: WeylandYutani;
@@ -103,7 +103,7 @@ describe('WeylandYutani', () => {
     leavitt.addColony(player2);
 
     runAllActions(game);
-    expect(player.megaCredits).to.eq(initialMC3 + 1); 
+    expect(player.megaCredits).to.eq(initialMC3 + 1);
     expect(player2.megaCredits).to.eq(initialMC2 + 1);
   });
 
@@ -122,17 +122,17 @@ describe('WeylandYutani', () => {
       const marsCard = new AgroDrones(); // 有1个Mars标签
       player.playCard(marsCard);
 
-      expect(player.megaCredits).to.eq(initialMC + 2);  
+      expect(player.megaCredits).to.eq(initialMC + 2);
 
-        // 玩家1打出2个 Mars标签卡
-        player.playCard(new MartianCulture);
-        expect(player.megaCredits).to.eq(initialMC + 2 + 4);  
+      // 玩家1打出2个 Mars标签卡
+      player.playCard(new MartianCulture);
+      expect(player.megaCredits).to.eq(initialMC + 2 + 4);
     });
 
     it('多人场景：玩家1有WeylandYutani，玩家2有HabitatMarte并打出Mars标签卡', () => {
       // 玩家1打出WeylandYutani
       player.playCorporationCard(card);
-      
+
       // 玩家2获得HabitatMarte
       const habitatMarte = new HabitatMarte();
       player2.playedCards.push(habitatMarte);
@@ -145,11 +145,9 @@ describe('WeylandYutani', () => {
       // 玩家2打出Mars标签卡
       const marsCard = new AgroDrones(); // 有1个Mars标签
       player2.playCard(marsCard);
-      
+
       expect(player.megaCredits).to.eq(initialMC1 + 1);
       expect(player2.megaCredits).to.eq(initialMC2 + 1);
     });
-
   });
-
 });

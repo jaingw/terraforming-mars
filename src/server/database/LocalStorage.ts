@@ -227,6 +227,9 @@ export class LocalStorage implements IDatabase {
   saveUser(_id: string, _name: string, _password: string, _prop: string): void {
     throw new Error('Method not implemented.');
   }
+  updateUserProp(_id: string, _prop: string): void {
+    // No-op for LocalStorage
+  }
   getUsers(_cb: (err: any, allUsers: User[]) => void): void {
     throw new Error('Method not implemented.');
   }
@@ -243,6 +246,38 @@ export class LocalStorage implements IDatabase {
     throw new Error('Method not implemented.');
   }
   saveUserGameResult(): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+  async getUserGameStats(): Promise<import('./IDatabase').IUserGameStats> {
+    const emptyBlock: import('./IDatabase').IUserGameStatsBlock = {
+      totalGames: 0, wins: 0, losses: 0, winRate: 0,
+      fleeCount: 0, fleeRate: 0, avgScore: 0, avgPosition: 0,
+      totalRankGames: 0, rankWins: 0,
+    };
+    return {allTime: emptyBlock, recent3Months: emptyBlock};
+  }
+  saveSeasonSnapshot(): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+  getSeasonSnapshots(): Promise<Array<{userId: string, rankValue: number, mu: number, sigma: number, trueskill: number, pointsEarned: number, finalPosition: number}>> {
+    throw new Error('Method not implemented.');
+  }
+  getAvailableSeasons(): Promise<Array<string>> {
+    throw new Error('Method not implemented.');
+  }
+  updateUserPoints(): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+  setCurrentSeason(_seasonId: string, _seasonName: string, _startDate: Date, _endDate: Date): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+  getCurrentSeason(): Promise<{seasonId: string, seasonName: string, startDate: string, endDate: string} | undefined> {
+    throw new Error('Method not implemented.');
+  }
+  saveSeason(_seasonId: string, _seasonName: string, _startDate: Date, _endDate: Date): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+  getSeason(_seasonId: string): Promise<{seasonId: string, seasonName: string, startDate: string, endDate: string} | undefined> {
     throw new Error('Method not implemented.');
   }
 }

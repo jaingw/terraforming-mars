@@ -28,8 +28,6 @@
           <h1 v-i18n>Game settings</h1>
           <game-setup-detail :gameOptions="game.gameOptions" :playerNumber="game.players.length" :lastSoloGeneration="game.lastSoloGeneration"  ></game-setup-detail>
         </div>
-
-        <qrcode/>
       </div>
 
 

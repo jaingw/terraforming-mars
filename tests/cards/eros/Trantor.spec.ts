@@ -12,7 +12,7 @@ import {LunaMetropolis} from '../../../src/server/cards/venusNext/LunaMetropolis
 import {Stratopolis} from '../../../src/server/cards/venusNext/Stratopolis';
 import {MaxwellBase} from '../../../src/server/cards/venusNext/MaxwellBase';
 import {TileType} from '../../../src/common/TileType';
-import { PhobosSpaceHaven } from '../../../src/server/cards/base/PhobosSpaceHaven';
+import {PhobosSpaceHaven} from '../../../src/server/cards/base/PhobosSpaceHaven';
 
 function getTrantorVP(player: TestPlayer) {
   const details = player.getVictoryPoints().detailsCards;
@@ -29,7 +29,7 @@ describe('Trantor', function() {
 
   beforeEach(() => {
     card = new Trantor();
-    [game, player, player1, player2] = testGame(3, {skipInitialShuffling: true,erosCardsOption: true,promoCardsOption:true,venusNextExtension:true});
+    [game, player, player1, player2] = testGame(3, {skipInitialShuffling: true, erosCardsOption: true, promoCardsOption: true, venusNextExtension: true});
   });
 
   it('canPlay 总是可以打出', function() {

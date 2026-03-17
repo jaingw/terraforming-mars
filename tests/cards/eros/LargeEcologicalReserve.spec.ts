@@ -3,7 +3,7 @@ import {LargeEcologicalReserve} from '../../../src/server/cards/eros/LargeEcolog
 import {testGame, runAllActions, cast} from '../../TestingUtils';
 import {TileType} from '../../../src/common/TileType';
 import {TestPlayer} from '../../TestPlayer';
-import { SelectSpace } from '../../../src/server/inputs/SelectSpace';
+import {SelectSpace} from '../../../src/server/inputs/SelectSpace';
 
 // TODO: 补充红党 ruling policy 相关费用测试
 // TODO: 补充氧气已满/无地可放等极端场景

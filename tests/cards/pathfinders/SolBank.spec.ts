@@ -26,7 +26,7 @@ describe('SolBank', () => {
   let game: IGame;
 
   beforeEach(() => {
-    [game, player] = testGame(1, {coloniesExtension: true, turmoilExtension: true,skipInitialCardSelection:true});
+    [game, player] = testGame(1, {coloniesExtension: true, turmoilExtension: true, skipInitialCardSelection: true});
     runAllActions(game);
     // Player is waiting for SelectColony. Popping it. The cast is just to ensure that if this changes, the test changes.
     cast(player.popWaitingFor(), SelectColony);
@@ -34,9 +34,6 @@ describe('SolBank', () => {
     player.playCorporationCard(solBank);
     player.megaCredits = 100;
     game.colonies.push(new Luna());
-
-    
-    
   });
 
   it('paying for project card', () => {

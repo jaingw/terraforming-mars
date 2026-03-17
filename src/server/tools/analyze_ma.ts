@@ -35,7 +35,9 @@ function processRequest(req: Request, res: Response): void {
   }
 }
 
-const server = http.createServer(processRequest);
+const server = http.createServer((req: http.IncomingMessage, res: http.ServerResponse) => {
+  processRequest(req, res);
+});
 console.log('Starting server on port ' + (process.env.PORT || 8081));
 server.listen(process.env.PORT || 8081);
 

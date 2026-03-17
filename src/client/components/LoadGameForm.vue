@@ -26,6 +26,7 @@ import {SimpleGameModel} from '@/common/models/SimpleGameModel';
 import {vueRoot} from '@/client/components/vueRoot';
 import {GameId} from '@/common/Types';
 import {paths} from '@/common/app/paths';
+import {showError, showWarning} from '../utils/showAlert';
 
 type LoadGameFormDataModel = {
   gameId: GameId | undefined;
@@ -48,13 +49,13 @@ export default Vue.extend({
       const gameId = this.gameId;
       const rollbackCount = this.rollbackCount;
       if (gameId === undefined) {
-        alert('Specify a game id');
+        showWarning('Specify a game id');
         return;
       }
       const xhr = new XMLHttpRequest();
       xhr.open('PUT', paths.LOAD_GAME);
       xhr.onerror = function() {
-        alert('Error loading game');
+        showError('Error loading game');
       };
       xhr.onload = () => {
         if (xhr.status === statusCode.ok) {
@@ -68,7 +69,7 @@ export default Vue.extend({
             vueRoot(this).screen = 'game-home';
           }
         } else {
-          alert('Unexpected server response');
+          showError('Unexpected server response');
         }
       };
       const loadGameFormModel: LoadGameFormModel = {

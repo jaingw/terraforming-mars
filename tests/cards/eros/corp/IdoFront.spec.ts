@@ -9,9 +9,9 @@ import {Lichen} from '../../../../src/server/cards/base/Lichen';
 import {Tag} from '../../../../src/common/cards/Tag';
 import {ResearchCoordination} from '../../../../src/server/cards/prelude/ResearchCoordination';
 import {ImportedGHG} from '../../../../src/server/cards/base/ImportedGHG';
-import { GeothermalPower } from '../../../../src/server/cards/base/GeothermalPower';
-import { SolarWindPower } from '../../../../src/server/cards/base/SolarWindPower';
-import { SolarPower } from '../../../../src/server/cards/base/SolarPower';
+import {GeothermalPower} from '../../../../src/server/cards/base/GeothermalPower';
+import {SolarWindPower} from '../../../../src/server/cards/base/SolarWindPower';
+import {SolarPower} from '../../../../src/server/cards/base/SolarPower';
 
 
 describe('IdoFront', () => {

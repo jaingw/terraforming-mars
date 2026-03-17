@@ -13,6 +13,202 @@
     margin: 0 auto;
 }
 
+.start-screen-links {
+    margin: 0 auto;
+    width: 370px;
+    padding-top: 40px;
+}
+
+/* ============ Mars-themed Hero Header ============ */
+.start-screen-hero {
+    position: relative;
+    margin-bottom: 16px;
+    padding: 24px 0 16px;
+}
+
+.start-screen-hero__accent {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(to bottom, #e2520e, rgba(226, 82, 14, 0.2), transparent);
+    border-radius: 2px;
+}
+
+.start-screen-hero__content {
+    padding-left: 16px;
+}
+
+.start-screen-hero__label {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: #94a3b8;
+    margin-bottom: 4px;
+}
+
+.start-screen-hero__name {
+    font-size: 36px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #f1f5f9;
+    text-shadow: 0 0 20px rgba(226, 82, 14, 0.25);
+    line-height: 1.1;
+}
+
+.start-screen-hero__line {
+    margin-top: 14px;
+    height: 1px;
+    background: linear-gradient(
+        to right,
+        rgba(226, 82, 14, 0.7),
+        rgba(226, 82, 14, 0.3) 30%,
+        rgba(38, 48, 80, 0.5) 60%,
+        transparent 100%
+    );
+}
+
+/* ============ Primary Link Buttons (with planet backgrounds) ============ */
+.start-screen-link {
+    text-decoration: none;
+    cursor: pointer;
+    box-shadow: inset 0 0 0px 1px rgba(38, 48, 80, 0.7);
+    height: 90px;
+    line-height: 28px;
+    border-radius: 6px;
+    color: #f1f5f9;
+    text-shadow: 0 0 4px rgba(0,0,0,0.8), 0 2px 2px rgba(0,0,0,0.6);
+    padding-left: 17px;
+    width: 369px;
+    display: flex;
+    margin-bottom: 6px;
+    font-size: 26px;
+    text-transform: uppercase;
+    font-weight: bold;
+    letter-spacing: 2px;
+    padding-bottom: 15px;
+    flex-direction: column-reverse;
+    background-image: url("assets/buttons-homepage/planets.jpg");
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+
+    &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: linear-gradient(90deg, #e2520e, transparent 60%);
+        opacity: 0;
+        transition: opacity 0.25s ease;
+    }
+
+    &:hover, &:visited, &:active, &:focus {
+        color: #f1f5f9;
+        text-decoration: none;
+    }
+
+    &:hover {
+        filter: brightness(120%);
+        box-shadow: inset 0 0 0px 1px rgba(226, 82, 14, 0.5), 0 4px 16px rgba(0,0,0,0.4);
+
+        &::after {
+            opacity: 1;
+        }
+    }
+}
+
+.start-screen-link--new-game {
+    background-position: 0px -90px;
+}
+
+.start-screen-link--lobby {
+    background-position: 0px -180px;
+}
+
+.start-screen-link--me {
+    background-position: 0px -270px;
+}
+
+.start-screen-link--donate {
+    background-position: 0px -360px;
+}
+
+.start-screen-link--cards {
+    background-position: 0px -450px;
+}
+
+.start-screen-link--ranking {
+    background-position: 0px -540px;
+}
+
+/* ============ Secondary Navigation Buttons ============ */
+.start-screen-secondary {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 8px;
+    margin-bottom: 16px;
+}
+
+.start-screen-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 48px;
+    background: rgba(17, 26, 46, 0.85);
+    border: 1px solid rgba(38, 48, 80, 0.7);
+    border-radius: 4px;
+    color: #cbd5e1;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+
+    &:hover, &:visited, &:active, &:focus {
+        text-decoration: none;
+    }
+
+    &:hover {
+        background: rgba(226, 82, 14, 0.1);
+        border-color: rgba(226, 82, 14, 0.45);
+        color: #f1f5f9;
+        box-shadow: 0 0 12px rgba(226, 82, 14, 0.08);
+    }
+}
+
+/* ============ Footer: Language + Version ============ */
+.start-screen-footer {
+    padding-top: 20px;
+    text-align: center;
+}
+
+.start-screen-version-cont {
+    margin-top: 10px;
+    text-align: center;
+    font-size: 11px;
+    color: #64748b;
+    font-family: monospace;
+    letter-spacing: 0.04em;
+}
+
+.start-screen-version {
+    margin-top: -3px;
+}
+
+.start-screen-date {
+    color: #64748b;
+}
+
+/* ============ Legacy classes (kept for compatibility) ============ */
 .start-screen-game-title {
     color: #daab63;
     padding: 40px 0 10px 0;
@@ -25,121 +221,13 @@
     margin-bottom: 20px;
 }
 
-.start-screen-links {
-    margin: 0 auto;
-    width: 370px;
-    padding-top: 50px;
-}
-
-.start-screen-link {
-    text-decoration: none;
-    cursor: pointer;
-    box-shadow: inset 0 0 0px 1px #333;
-    height: 90px;
-    line-height: 28px;
-    border-radius: 10px;
-    color: #eee;
-    text-shadow: 0 0 2px black, 0 2px 1px black;
-    padding-left: 17px;
-    width: 369px;
-    height: 90px;
-    display: flex;
-    margin-bottom: 5px;
-    font-size: 26px;
-    text-transform: uppercase;
-    font-weight: bold;
-    letter-spacing: 1px;
-    padding-bottom: 15px;
-    flex-direction: column-reverse;
-    background-image: url("assets/buttons-homepage/planets.jpg");
-
-    &:hover, &:visited, &:active, &:focus {
-        color: #eee;
-        text-decoration: none;
-    }
-
-    &:hover {
-        filter: brightness(120%);
-    }
-}
-
-.start-screen-header {
-    box-shadow: inset 0 0 20px 20px black;
-    font-family: Prototype;
-    line-height: 90px;
-    font-size: 16px;
-    width: 369px;
-    height: 90px;
-    line-height: 30px;
-    color: #daab63;
-    display: block;
-    margin-bottom: 5px;
-    margin-left: 5px;
-    text-shadow: 0 0 2px black, 0 2px 2px black;
-    letter-spacing: 1px;
-    background-image: url("assets/buttons-homepage/planets.jpg");
-}
-
-.start-screen-title-top {
-    transform: scaleX(2);
-    text-align: center;
-    padding-top: 15px;
-}
-
-.start-screen-title-bottom {
-    transform: scaleX(2);
-    text-align: center;
-    font-size: 30px;
-}
-
-.start-screen-link--new-game {
-    background-position: 0px -90px;
-}
-
-.start-screen-link--how-to-play {
-    background-position: 0px -180px;
-}
-
-.start-screen-link--cards-list {
-    background-position: 0px -270px;
-}
-
-.start-screen-link--board-game {
-    background-position: 0px -360px;
-}
-
-.start-screen-link--about {
-    background-position: 0px -450px;
-}
-
-.start-screen-link--changelog {
-    background-position: 0px -540px;
-}
-
-.start-screen-link--chat {
-    background-position: 0px -630px;
-}
-
-.start-screen-link--languages {
-    padding-top: 30px;
-    background-position: 0px -630px;
-}
-
-.start-screen-version-cont {
-    margin-top: 10px;
-    text-align: center;
-}
-
-.start-screen-version {
-    margin-top: -5px;
-}
-
 .notice {
     font-size: @font_size_small;
     position: absolute;
     bottom: 0px;
     right: 0px;
     padding: 16px 24px;
+    color: #64748b;
 }
 
 .source-code {
@@ -152,21 +240,95 @@
 }
 
 .source-code-text {
-    color: white;
+    color: #94a3b8;
     font-size: smaller;
-    text-shadow: 0 0 2px darkgrey, 0 2px 2px darkgrey;
     letter-spacing: 0.25rem;
     text-decoration: none;
 }
 
-.source-code-text:focus {
-    text-decoration: none;
-}
-
+.source-code-text:focus,
 .source-code-text:hover {
     text-decoration: none;
+    color: #cbd5e1;
 }
 
 .source-code-text:visited {
-    color: white;
+    color: #94a3b8;
+}
+
+/* ============ Mobile Responsive ============ */
+@media (max-width: 640px) {
+    .start-screen {
+        width: 100%;
+        padding: 0 12px;
+        box-sizing: border-box;
+    }
+
+    .start-screen-links {
+        width: 100%;
+        padding-top: 24px;
+        box-sizing: border-box;
+    }
+
+    .start-screen-hero {
+        padding: 18px 0 12px;
+        margin-bottom: 12px;
+    }
+
+    .start-screen-hero__label {
+        font-size: 11px;
+        letter-spacing: 0.15em;
+    }
+
+    .start-screen-hero__name {
+        font-size: 28px;
+    }
+
+    .start-screen-link {
+        width: 100%;
+        height: 70px;
+        font-size: 20px;
+        padding-left: 14px;
+        padding-bottom: 12px;
+        box-sizing: border-box;
+        background-size: cover;
+    }
+
+    .start-screen-secondary {
+        gap: 4px;
+        margin-top: 8px;
+        margin-bottom: 12px;
+    }
+
+    .start-screen-nav {
+        height: 42px;
+        font-size: 12px;
+        letter-spacing: 0.06em;
+    }
+
+    .notice {
+        position: relative;
+        padding: 12px;
+        text-align: center;
+    }
+}
+
+@media (max-width: 400px) {
+    .start-screen-link {
+        height: 60px;
+        font-size: 18px;
+    }
+
+    .start-screen-hero__name {
+        font-size: 24px;
+    }
+
+    .start-screen-hero__label {
+        font-size: 10px;
+    }
+
+    .start-screen-nav {
+        height: 38px;
+        font-size: 11px;
+    }
 }

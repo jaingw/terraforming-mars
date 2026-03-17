@@ -7,7 +7,7 @@ import {TestPlayer} from '../TestPlayer';
 import {PoliticalAgendas} from '../../src/server/turmoil/PoliticalAgendas';
 import {PolicyId} from '../../src/common/turmoil/Types';
 import {OrOptions} from '../../src/server/inputs/OrOptions';
-import { SelectInitialCards } from '../../src/server/inputs/SelectInitialCards';
+import {SelectInitialCards} from '../../src/server/inputs/SelectInitialCards';
 
 describe('PoliticalAgendas', () => {
   let player1: TestPlayer;

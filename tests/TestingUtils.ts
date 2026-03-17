@@ -108,14 +108,14 @@ export function runNextAction(game: IGame) {
 }
 const testplayer = TestPlayer.BLUE.newPlayer();
 
-export function forceGenerationEnd(game: IGame,keepwaitng:boolean = false ) {
+export function forceGenerationEnd(game: IGame, keepwaitng:boolean = false ) {
   while (game.deferredActions.pop() !== undefined) {} // eslint-disable-line no-empty
   game.playersInGenerationOrder.forEach((player) => player.pass());
   for (const player of game.players) {
     testplayer.popWaitingFor.call(player);
   }
   game.playerIsFinishedTakingActions();
-  if(!keepwaitng){
+  if (!keepwaitng) {
     for (const player of game.players) {
       testplayer.popWaitingFor.call(player);
     }
