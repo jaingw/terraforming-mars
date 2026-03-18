@@ -12,6 +12,7 @@ import {GameLoader} from '../database/GameLoader';
 import {Database} from '../database/Database';
 import {IPlayer} from '../IPlayer';
 import {Phase} from '../../common/Phase';
+import {requireRouteParam} from './middleware';
 
 const TEST_API_ENABLED = process.env.TEST_API === 'true';
 
@@ -136,10 +137,7 @@ testRoutes.get('/userGameStats/:userId', async (c) => {
     return c.json({error: 'Requires TEST_API=true'}, 404);
   }
 
-  const userId = c.req.param('userId');
-  if (!userId) {
-    return c.json({error: 'Missing userId'}, 400);
-  }
+  const userId = requireRouteParam(c, 'userId');
 
   try {
     const stats = await Database.getInstance().getUserGameStats(userId);

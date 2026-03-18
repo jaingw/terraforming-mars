@@ -45,6 +45,14 @@ export async function requireAdmin(c: Context, next: Next): Promise<Response | u
   return undefined;
 }
 
+export function requireRouteParam(c: Context, name: string): string {
+  const value = c.req.param(name);
+  if (!value) {
+    throw new ServiceError(400, `Missing ${name} parameter`);
+  }
+  return value;
+}
+
 export function createSafeHandler<T>(
   fn: (c: Context) => T | Promise<T>,
 ): (c: Context) => Promise<Response> {

@@ -80,6 +80,13 @@ export default defineConfig({
         entryFileNames: 'main.js',
         chunkFileNames: 'chunks/[name]-[hash].js',
         assetFileNames: 'css/[name]-[hash][extname]',
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('vue')) return 'vendor-vue';
+            return 'vendor';
+          }
+          return undefined;
+        },
       },
     },
   },

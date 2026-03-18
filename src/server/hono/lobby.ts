@@ -18,7 +18,7 @@
 
 import {Hono} from 'hono';
 import {LobbyService} from '../services/LobbyService';
-import {createSafeHandler} from './middleware';
+import {createSafeHandler, requireRouteParam} from './middleware';
 
 const lobbyRoutes = new Hono();
 
@@ -42,7 +42,7 @@ lobbyRoutes.get(
 lobbyRoutes.get(
   '/:roomId',
   createSafeHandler((c) => {
-    const roomId = c.req.param('roomId');
+    const roomId = requireRouteParam(c, 'roomId');
     const room = LobbyService.getRoom(roomId);
     return {room};
   }),
@@ -51,7 +51,7 @@ lobbyRoutes.get(
 lobbyRoutes.get(
   '/:roomId/colors',
   createSafeHandler((c) => {
-    const roomId = c.req.param('roomId');
+    const roomId = requireRouteParam(c, 'roomId');
     const colors = LobbyService.getAvailableColors(roomId);
     return {colors};
   }),
@@ -60,7 +60,7 @@ lobbyRoutes.get(
 lobbyRoutes.post(
   '/:roomId/join',
   createSafeHandler(async (c) => {
-    const roomId = c.req.param('roomId');
+    const roomId = requireRouteParam(c, 'roomId');
     const body = await c.req.json();
     const room = LobbyService.joinRoom(roomId, body);
     return {room};
@@ -70,7 +70,7 @@ lobbyRoutes.post(
 lobbyRoutes.post(
   '/:roomId/leave',
   createSafeHandler(async (c) => {
-    const roomId = c.req.param('roomId');
+    const roomId = requireRouteParam(c, 'roomId');
     const body = await c.req.json();
     const room = LobbyService.leaveRoom(roomId, body.userId);
     return {room, closed: room === null};
@@ -80,7 +80,7 @@ lobbyRoutes.post(
 lobbyRoutes.post(
   '/:roomId/kick',
   createSafeHandler(async (c) => {
-    const roomId = c.req.param('roomId');
+    const roomId = requireRouteParam(c, 'roomId');
     const body = await c.req.json();
     const room = LobbyService.kickPlayer(roomId, body);
     return {room};
@@ -90,7 +90,7 @@ lobbyRoutes.post(
 lobbyRoutes.post(
   '/:roomId/start',
   createSafeHandler(async (c) => {
-    const roomId = c.req.param('roomId');
+    const roomId = requireRouteParam(c, 'roomId');
     const body = await c.req.json();
     const room = LobbyService.startConfirm(roomId, body.userId);
     return {room};
@@ -100,7 +100,7 @@ lobbyRoutes.post(
 lobbyRoutes.post(
   '/:roomId/confirm',
   createSafeHandler(async (c) => {
-    const roomId = c.req.param('roomId');
+    const roomId = requireRouteParam(c, 'roomId');
     const body = await c.req.json();
     const room = LobbyService.confirmReady(roomId, body.userId);
 
@@ -117,7 +117,7 @@ lobbyRoutes.post(
 lobbyRoutes.get(
   '/:roomId/poll',
   createSafeHandler((c) => {
-    const roomId = c.req.param('roomId');
+    const roomId = requireRouteParam(c, 'roomId');
     const room = LobbyService.getRoom(roomId);
     const allReady = room.players.every((p) => p.isReady);
 
@@ -133,7 +133,7 @@ lobbyRoutes.get(
 lobbyRoutes.post(
   '/:roomId/markStarted',
   createSafeHandler(async (c) => {
-    const roomId = c.req.param('roomId');
+    const roomId = requireRouteParam(c, 'roomId');
     const body = await c.req.json();
     const room = LobbyService.markStarted(roomId, body.gameId, body.gameData);
     return {room};

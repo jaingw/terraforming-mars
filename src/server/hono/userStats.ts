@@ -8,6 +8,7 @@
 import {Hono} from 'hono';
 import {Database} from '../database/Database';
 import {GameLoader} from '../database/GameLoader';
+import {requireRouteParam} from './middleware';
 
 export const userStatsRoutes = new Hono();
 
@@ -18,11 +19,7 @@ export const userStatsRoutes = new Hono();
  * Provides both all-time and recent (last 3 months) aggregations.
  */
 userStatsRoutes.get('/:userId', async (c) => {
-  const userId = c.req.param('userId');
-
-  if (!userId) {
-    return c.json({error: 'Missing userId'}, 400);
-  }
+  const userId = requireRouteParam(c, 'userId');
 
   // Verify user exists
   const user = GameLoader.getInstance().userIdMap.get(userId);

@@ -11,6 +11,7 @@ import {Database} from '../database/Database';
 import {User} from '../User';
 import {UserRank} from '../../common/rank/RankManager';
 import {IUserGameStats} from '../database/IDatabase';
+import {requireRouteParam} from './middleware';
 
 export interface IUserProfileResponse {
   id: string;
@@ -90,11 +91,7 @@ export const userProfileRoutes = new Hono();
  * The identifier is first tried as a user ID, then as a username.
  */
 userProfileRoutes.get('/:identifier', async (c) => {
-  const identifier = c.req.param('identifier');
-
-  if (!identifier) {
-    return c.json({error: 'Missing user identifier'}, 400);
-  }
+  const identifier = requireRouteParam(c, 'identifier');
 
   // Try by ID first
   let user: User | undefined = GameLoader.getInstance().userIdMap.get(identifier);
