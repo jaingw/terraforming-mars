@@ -1,16 +1,10 @@
 {
     "compilerOptions": {
         "outDir": "../build/src",
-        "target": "es5",
-        "experimentalDecorators": true,
+        "rootDir": ".",
         "allowJs": true,
         "composite": true,
-        "downlevelIteration":true,
-        // "target": "es2017"
-        // "declaration": true,// 控制是否在build目录生成.d.ts
-    },
-    "vueCompilerOptions": {
-        "target": 2.7
+        "experimentalDecorators": true
     },
     "extends": "../tsconfig.json",
     "include": [

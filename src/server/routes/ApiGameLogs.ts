@@ -3,7 +3,6 @@ import {Handler} from './Handler';
 import {Context} from './IHandler';
 import {GameLogs} from './GameLogs';
 import {isPlayerId, isSpectatorId} from '../../common/Types';
-import {GameLoader} from '../database/GameLoader';
 import {Request} from '../Request';
 import {Response} from '../Response';
 
@@ -25,7 +24,7 @@ export class ApiGameLogs extends Handler {
       return Promise.resolve();
     }
 
-    const game = await GameLoader.getInstance().getByPlayerId(id);
+    const game = await ctx.gameLoader.getByPlayerId(id);
 
     if (game === undefined) {
       responses.notFound(req, res, 'game not found');
@@ -49,4 +48,3 @@ export class ApiGameLogs extends Handler {
     return Promise.resolve();
   }
 }
-

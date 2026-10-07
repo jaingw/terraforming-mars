@@ -256,15 +256,23 @@ game home 玩家名字
 }
 
 .tier-container {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    height: 53px;
-    //border-width: 2px;
-    //border-color: #0bda0b;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 53px;
+    max-width: 100%;
+    white-space: nowrap;
+}
+
+.tier-meta {
+    display: inline-flex;
+    align-items: center;
+    min-height: 53px;
+    white-space: nowrap;
 }
 .tier-type {
     display: block;
+    flex: 0 0 auto;
     background-image: url(assets/rank/rank-division.png);
     background-repeat: no-repeat;
     //background-position: 0px 0px;
@@ -287,8 +295,9 @@ game home 玩家名字
 .tier-Challenger { background-position-x: right; }
 
 .stars-container {
+    display: inline-flex;
+    align-items: center;
     font-size: 0px;
-    margin-top: 20px;
     .tier-star {
         display: inline-block;
         width: 15px;
@@ -324,10 +333,7 @@ game home 玩家名字
 }
 
 .rank-value-container {
-    margin-left: 5px;
-    margin-top: 10px;
     text-align: center;
-    align-items: center;
     font-family: Prototype;
     font-size: 30px;
     color: #48d8ff;
@@ -335,8 +341,6 @@ game home 玩家名字
 }
 
 .star-value-container {
-    margin-left: 5px;
-    margin-top: 10px;
     text-align: center;
     align-items: center;
     font-family: Prototype;
@@ -513,7 +517,7 @@ qrcode - inline button + modal
 
 .qr-modal__img {
   width: 180px;
-  height: 180px;
+  height: 216px;
   border: 1px solid #263050;
   display: block;
   margin: 0 auto;

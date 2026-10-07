@@ -39,7 +39,9 @@ export function initializeGlobalEventDealer(allModuleManifests: Array<ModuleMani
 export function getGlobalEventByName(globalEventName: GlobalEventName): IGlobalEvent | undefined {
   const Factory = ALL_EVENTS.get(globalEventName);
 
-  if (Factory !== undefined) return new Factory();
+  if (Factory !== undefined) {
+    return new Factory();
+  }
   console.warn(`unable to find global event ${globalEventName}`);
   return undefined;
 }
@@ -73,6 +75,7 @@ export class GlobalEventDealer {
       ceo: gameOptions.ceoExtension,
       starwars: gameOptions.starWarsExpansion,
       underworld: gameOptions.underworldExpansion,
+      deltaProject: gameOptions.deltaProjectExpansion,
     };
 
     for (const manifest of ALL_MODULE_MANIFESTS) {
@@ -117,8 +120,8 @@ export class GlobalEventDealer {
 
   public serialize(): SerializedGlobalEventDealer {
     return {
-      globalEventsDeck: this.deck.map(toName),
-      discardedGlobalEvents: this.discards.map(toName),
+      deck: this.deck.map(toName),
+      discarded: this.discards.map(toName),
     } as SerializedGlobalEventDealer;
   }
 
@@ -135,14 +138,20 @@ export class GlobalEventDealer {
     }
 
     const deck: Array<IGlobalEvent> = [];
-    d.globalEventsDeck.forEach((element: GlobalEventName) => {
+    const serializedDeck = d.globalEventsDeck ?? d.deck ?? [];
+    serializedDeck.forEach((element: GlobalEventName) => {
       const globalEvent = getGlobalEventByName(globalEventName(element));
-      if (globalEvent !== undefined) deck.push(globalEvent);
+      if (globalEvent !== undefined) {
+        deck.push(globalEvent);
+      }
     });
     const discardPile: Array<IGlobalEvent> = [];
-    d.discardedGlobalEvents.forEach((element: GlobalEventName) => {
+    const serializedDiscardPile = d.discardedGlobalEvents ?? d.discarded ?? [];
+    serializedDiscardPile.forEach((element: GlobalEventName) => {
       const globalEvent = getGlobalEventByName(globalEventName(element));
-      if (globalEvent !== undefined) discardPile.push(globalEvent);
+      if (globalEvent !== undefined) {
+        discardPile.push(globalEvent);
+      }
     });
     return new GlobalEventDealer(deck, discardPile);
   }

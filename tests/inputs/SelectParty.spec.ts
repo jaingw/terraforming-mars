@@ -29,4 +29,11 @@ describe('SelectParty', () => {
     expect(() => selectParty.process({type: 'party', partyName: PartyName.SCIENTISTS}))
       .to.throw(Error, /Invalid party selected/);
   });
+
+  it('Rejects null responses as invalid input', () => {
+    const selectParty = new SelectParty('', '', [PartyName.GREENS, PartyName.KELVINISTS]).andThen(cb);
+
+    expect(() => selectParty.process(null as never))
+      .to.throw(Error, /Not a valid SelectPartyResponse/);
+  });
 });

@@ -1,11 +1,12 @@
 import {expect} from 'chai';
-import {cast, forceGenerationEnd, runAllActions} from '../../TestingUtils';
+import {forceGenerationEnd, runAllActions} from '../../TestingUtils';
 import {testGame} from '../../TestGame';
 import {Phase} from '../../../src/common/Phase';
 import {PartyName} from '../../../src/common/turmoil/PartyName';
 import {Greta} from '../../../src/server/cards/ceos/Greta';
 import {Omnicourt} from '../../../src/server/cards/venusNext/Omnicourt';
 import {BigAsteroid} from '../../../src/server/cards/base/BigAsteroid';
+import {cast} from '../../../src/common/utils/utils';
 
 describe('Greta', () => {
   let card: Greta;

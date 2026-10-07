@@ -1,29 +1,34 @@
 <template>
   <div class="card-container filterDiv hover-hide-res" :class="cardClasses">
-      <div class="card-content-wrapper"  @mouseover="hovering = true" @mouseleave="hovering = false">
-          <div v-if="!isStandardProject" class="card-cost-and-tags">
-              <CardCost :amount="cost" :newCost="reducedCost" />
-              <div v-if="showPlayerCube" :class="playerCubeClass"></div>
-              <card-help v-show="hasHelp" :name="card.name" />
-              <CardTags :tags="tags" />
-          </div>
-
-          <CardTitle :title="card.name" :type="cardType"/>
-          <CardContent :metadata="cardMetadata" :requirements="cardRequirements" :isCorporation="isCorporationCard" :padBottom="hasResourceType"  />
+    <div class="card-content-wrapper"  @mouseover="hovering = true" @mouseleave="hovering = false">
+      <div v-if="!isStandardProject" class="card-cost-and-tags">
+        <CardCost :amount="cost" :newCost="reducedCost" />
+        <div v-if="showPlayerCube" :class="playerCubeClass"></div>
+        <card-help v-if="hasHelpText" :name="card.name" :hovering="hovering" />
+        <CardTags :tags="tags" />
       </div>
-      <CardExpansion :expansion="cardExpansion" :isCorporation="isCorporationCard" :isResourceCard="isResourceCard" :compatibility="cardCompatibility" />
-      <CardCustomizedContent v-if="isLunaChainCard" :amount="lunaChainPay" />
-      <CardResourceCounter v-if="hasResourceType" :amount="resourceAmount" :type="resourceType" />
-      <CardExtraContent :card="card" />
-      <slot/>
+
+      <CardTitle :title="card.name" :type="cardType"/>
+      <CardContent
+        :metadata="cardMetadata"
+        :requirements="cardRequirements"
+        :isCorporation="isCorporationCard"
+        :padBottom="hasResourceType" />
+    </div>
+    <CardExpansion :expansion="cardExpansion" :isCorporation="isCorporationCard" :isResourceCard="isResourceCard" :compatibility="cardCompatibility" />
+    <CardCustomizedContent v-if="isLunaChainCard" :amount="lunaChainPay" />
+    <CardResourceCounter v-if="hasResourceType" :amount="resourceAmount" :type="resourceType" />
+    <CardExtraContent :card="card" />
+    <slot/>
   </div>
 </template>
 
 <script lang="ts">
 
-import Vue from 'vue';
+import {defineComponent} from 'vue';
 
 import {CardModel} from '@/common/models/CardModel';
+import {CARD_HELP_TEXT} from '@/client/cards/CardHelpText';
 import CardTitle from './CardTitle.vue';
 import CardResourceCounter from './CardResourceCounter.vue';
 import CardCustomizedContent from './CardCustomizedContent.vue';
@@ -46,7 +51,7 @@ import {GameModule} from '@/common/cards/GameModule';
 // import { newCard } from '@/server/createCard';
 
 
-export default Vue.extend({
+export default defineComponent({
   name: 'Card',
   components: {
     CardTitle,
@@ -134,7 +139,7 @@ export default Vue.extend({
     },
     cardClasses(): string {
       const classes = [];
-      classes.push('card-' + this.card.name.toLowerCase().replace(/ /g, '-'));
+      classes.push('card-' + this.card.name.toLowerCase().replaceAll(' ', '-'));
 
       if (this.card.isDisabled) {
         classes.push('card-unavailable');
@@ -154,7 +159,7 @@ export default Vue.extend({
     cardMetadata(): CardMetadata {
       return this.cardInstance.metadata;
     },
-    cardRequirements(): ReadonlyArray<CardRequirementDescriptor> {
+    cardRequirements(): ReadonlyArray<CardRequirementDescriptor> | undefined {
       return this.cardInstance.requirements;
     },
     resourceAmount(): number {
@@ -165,7 +170,7 @@ export default Vue.extend({
     },
     isProjectCard(): boolean {
       const type = this.cardType;
-      return type !== CardType.PRELUDE && type !== CardType.CORPORATION && type !== CardType.CEO;
+      return type === CardType.AUTOMATED || type === CardType.ACTIVE || type === CardType.EVENT;
     },
     isStandardProject() : boolean {
       return this.cardType === CardType.STANDARD_PROJECT || this.cardType === CardType.STANDARD_ACTION;
@@ -180,21 +185,14 @@ export default Vue.extend({
       return this.cardInstance.name === 'Luna Chain';
     },
     resourceType(): CardResource {
-      if (this.robotCard !== undefined || this.card.isSelfReplicatingRobotsCard === true) return CardResource.RESOURCE_CUBE;
+      if (this.robotCard !== undefined || this.card.isSelfReplicatingRobotsCard === true) {
+        return CardResource.RESOURCE_CUBE;
+      }
       // This last RESOURCE_CUBE is functionally unnecessary and serves to satisfy the type contract.
       return this.cardInstance.resourceType ?? CardResource.RESOURCE_CUBE;
     },
-    bottomPadding(): string {
-      if (this.cardMetadata.victoryPoints !== undefined) {
-        return 'long';
-      }
-      if (this.hasResourceType) {
-        return 'short';
-      }
-      return '';
-    },
-    hasHelp(): boolean {
-      return this.hovering && this.cardInstance.metadata.hasExternalHelp === true;
+    hasHelpText(): boolean {
+      return CARD_HELP_TEXT[this.card.name] !== undefined;
     },
     showPlayerCube(): boolean {
       return getPreferences().experimental_ui && this.actionUsed;

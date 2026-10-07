@@ -22,7 +22,7 @@ userStatsRoutes.get('/:userId', async (c) => {
   const userId = requireRouteParam(c, 'userId');
 
   // Verify user exists
-  const user = GameLoader.getInstance().userIdMap.get(userId);
+  const user = await GameLoader.getInstance().getUserById(userId);
   if (!user) {
     return c.json({error: 'User not found'}, 404);
   }

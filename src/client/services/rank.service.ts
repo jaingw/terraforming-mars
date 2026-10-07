@@ -2,7 +2,7 @@ import {request} from '@/client/utils/request';
 import {LeaderboardResponse} from './types';
 
 class RankService {
-  async getLeaderboard(limit: number): Promise<LeaderboardResponse> {
+  getLeaderboard(limit: number): Promise<LeaderboardResponse> {
     return request.get<LeaderboardResponse>('/api/userranks', {limit});
   }
 

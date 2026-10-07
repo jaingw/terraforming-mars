@@ -31,7 +31,6 @@ import {TileType} from '../../../src/common/TileType';
 import {ErodeSpacesDeferred} from '../underworld/ErodeSpacesDeferred';
 import {CardName} from '../../common/cards/CardName';
 
-export enum ShouldIncreaseTrack { YES, NO, ASK }
 export abstract class Colony implements IColony {
   // Players can't build colonies on Miranda until someone has played an Animal card.
   // isActive is the gateway for that action and any other card with that type of constraint
@@ -121,8 +120,8 @@ export abstract class Colony implements IColony {
 
   public removeColony(player: IPlayer): void {
     player.game.log('${0} remove a colony from ${1}', (b) => b.player(player).colony(this));
-    const index=this.colonies.indexOf(player);
-    if (index>-1) {
+    const index = this.colonies.indexOf(player);
+    if (index > -1) {
       this.colonies.splice(index, 1);
     }
   }
@@ -183,8 +182,8 @@ export abstract class Colony implements IColony {
     // !== false because default is true.
     if (options.usesTradeFleet !== false) {
       this.visitor = player;
+      player.colonies.usedTradeFleets++;
       // TradeNavigator
-      player.colonies.tradesThisGeneration++;
       if (player.game.finishFirstTrading === false) {
         player.game.finishFirstTrading = true;
         const TradingNavigator = player.game.players
@@ -278,12 +277,16 @@ export abstract class Colony implements IColony {
       break;
 
     case ColonyBenefit.GAIN_PRODUCTION:
-      if (resource === undefined) throw new Error('Resource cannot be undefined');
+      if (resource === undefined) {
+        throw new Error('Resource cannot be undefined');
+      }
       player.production.add(resource, quantity, {log: true});
       break;
 
     case ColonyBenefit.GAIN_RESOURCES:
-      if (resource === undefined) throw new Error('Resource cannot be undefined');
+      if (resource === undefined) {
+        throw new Error('Resource cannot be undefined');
+      }
       player.stock.add(resource, quantity, {log: true});
       break;
 
@@ -368,12 +371,16 @@ export abstract class Colony implements IColony {
       break;
 
     case ColonyBenefit.OPPONENT_DISCARD:
-      if (game.isSoloMode()) break;
+      if (game.isSoloMode()) {
+        break;
+      }
       action = new SimpleDeferredAction(
         player,
         () => {
           const playersWithCards = game.players.filter((p) => p.cardsInHand.length > 0);
-          if (playersWithCards.length === 0) return undefined;
+          if (playersWithCards.length === 0) {
+            return undefined;
+          }
           return new SelectPlayer(playersWithCards, 'Select player to discard a card', 'Select')
             .andThen((selectedPlayer) => {
               game.defer(new DiscardCards(selectedPlayer, 1, 1, this.name + ' colony effect. Select a card to discard'));
@@ -387,7 +394,9 @@ export abstract class Colony implements IColony {
       break;
 
     case ColonyBenefit.STEAL_RESOURCES:
-      if (resource === undefined) throw new Error('Resource cannot be undefined');
+      if (resource === undefined) {
+        throw new Error('Resource cannot be undefined');
+      }
       action = new StealResources(player, resource, quantity);
       break;
 
@@ -401,7 +410,9 @@ export abstract class Colony implements IColony {
          * When this method is called from within the GiveColonyBonus deferred action
          * we return the player input directly instead of deferring it.
          *
-         * TODO(kberg): why?
+         * This is related to how certain colony bonuses require player interaction.
+         * The deferred action queue doesn't work well when asking for inputs for
+         * multple players.
          */
         return action.execute();
       } else {

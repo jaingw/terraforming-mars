@@ -30,8 +30,7 @@
 
 <script lang="ts">
 
-import Vue from 'vue';
-import {WithRefs} from 'vue-typed-refs';
+import {defineComponent} from 'vue';
 
 import AppButton from '@/client/components/common/AppButton.vue';
 import {getCard, getCardOrThrow} from '@/client/cards/ClientCardManifest';
@@ -47,14 +46,11 @@ import {SelectInitialCardsResponse} from '@/common/inputs/InputResponse';
 import {CardType} from '@/common/cards/CardType';
 import Colony from '@/client/components/colonies/Colony.vue';
 import {ColonyName} from '@/common/colonies/ColonyName';
-import {ColonyModel} from '@/common/models/ColonyModel';
+import {ColonyModel, simpleColonyModel} from '@/common/models/ColonyModel';
 import * as titles from '@/common/inputs/SelectInitialCards';
 import {ClientCard} from '../../common/cards/ClientCard';
 import {sum} from '@/common/utils/utils';
 
-type Refs = {
-  confirmation: InstanceType<typeof ConfirmDialog>,
-}
 
 type DataModel = {
   selectedCards: Array<CardName>,
@@ -67,23 +63,32 @@ type DataModel = {
   warning: string | undefined,
 }
 
-export default (Vue as WithRefs<Refs>).extend({
+type Refs = {
+  confirmation: InstanceType<typeof ConfirmDialog>;
+};
+
+export default defineComponent({
   name: 'SelectInitialCards',
   props: {
     playerView: {
       type: Object as () => PlayerViewModel,
+      required: true,
     },
     playerinput: {
       type: Object as () => SelectInitialCardsModel,
+      required: true,
     },
     onsave: {
       type: Function as unknown as () => (out: SelectInitialCardsResponse) => void,
+      required: true,
     },
     showsave: {
       type: Boolean,
+      required: true,
     },
     showtitle: {
       type: Boolean,
+      default: true,
     },
     preferences: {
       type: Object as () => Readonly<Preferences>,
@@ -201,6 +206,7 @@ export default (Vue as WithRefs<Refs>).extend({
       if (this.selectedCorporations.length === 0 || this.selectedCorporations[0] === undefined) {
         return NaN;
       }
+      const corpName = this.selectedCorporations[0].name;
       // The ?? 0 is only because ClientCard applies to _all_ cards.
       let starting = this.selectedCorporations[0].startingMegaCredits ?? 0;
       let cardCost = this.selectedCorporations[0].cardCost === undefined ? constants.CARD_COST : this.selectedCorporations[0].cardCost;
@@ -218,14 +224,22 @@ export default (Vue as WithRefs<Refs>).extend({
         starting += ( this.selectedCorporations[1].startingMegaCredits ?? 0) - constants.STARTING_MEGA_CREDITS_SUB;
       }
       starting -= this.selectedCards.length * cardCost;
+
+      if (corpName === CardName.SAGITTA_FRONTIER_SERVICES) {
+        // Effect for playing itself.
+        starting += 4;
+      }
+
       return starting;
     },
     saveIfConfirmed() {
       const projectCards = this.selectedCards.filter((name) => getCard(name)?.type !== CardType.PRELUDE);
       let showAlert = false;
-      if (this.preferences.show_alerts && projectCards.length === 0) showAlert = true;
+      if (this.preferences.show_alerts && projectCards.length === 0) {
+        showAlert = true;
+      }
       if (showAlert) {
-        this.$refs.confirmation.show();
+        this.typedRefs.confirmation.show();
       } else {
         this.saveData();
       }
@@ -339,6 +353,11 @@ export default (Vue as WithRefs<Refs>).extend({
         this.warning = 'You haven\'t selected any project cards';
         return true;
       }
+      const startingMc = this.getStartingMegacredits();
+      if (isFinite(startingMc) && startingMc < 0) {
+        this.warning = 'Starting M€ would be negative. Select fewer project cards or a different corporation.';
+        return false;
+      }
       return true;
     },
     validate() {
@@ -347,18 +366,14 @@ export default (Vue as WithRefs<Refs>).extend({
     confirmSelection() {
       this.saveData();
     },
-    // TODO(kberg): Duplicate of LogPanel.getColony
     getColony(colonyName: ColonyName): ColonyModel {
-      return {
-        colonies: [],
-        isActive: false,
-        name: colonyName,
-        trackPosition: 0,
-        visitor: undefined,
-      };
+      return simpleColonyModel(colonyName);
     },
   },
   computed: {
+    typedRefs(): Refs {
+      return this.$refs as Refs;
+    },
     playerCanChooseAridor() {
       return this.playerView.dealtCorporationCards.some((card) => card.name === CardName.ARIDOR);
     },

@@ -3,10 +3,11 @@ import {CardRenderSymbol} from './CardRenderSymbol';
 import {Size} from '../../../common/cards/render/Size';
 import {CardRenderItemType} from '../../../common/cards/render/CardRenderItemType';
 import {TileType} from '../../../common/TileType';
-import {ICardRenderCorpBoxAction, ICardRenderCorpBoxEffect, ICardRenderEffect, ICardRenderProductionBox, ICardRenderRoot, ICardRenderTile, ItemType, isICardRenderItem} from '../../../common/cards/render/Types';
+import {ICardRenderCorpBoxAction, ICardRenderCorpBoxEffect, ICardRenderCorpBoxEffectAction, ICardRenderEffect, ICardRenderProductionBox, ICardRenderRoot, ICardRenderTile, ItemType, isICardRenderItem} from '../../../common/cards/render/Types';
 import {AltSecondaryTag} from '../../../common/cards/render/AltSecondaryTag';
 import {CardResource} from '../../../common/CardResource';
 import {Tag} from '../../../common/cards/Tag';
+import {liteBoolean, LiteBoolean} from '../../../common/LiteBoolean';
 
 export class CardRenderer {
   public static builder(f: (builder: Builder<CardRenderRoot>) => void): ICardRenderRoot {
@@ -23,7 +24,10 @@ class CardRenderRoot implements ICardRenderRoot {
 
 class CardRenderProductionBox implements ICardRenderProductionBox {
   public readonly is = 'production-box';
-  constructor(public rows: Array<Array<ItemType>>) {}
+  public rows: Array<Array<ItemType>>;
+  constructor(rows: Array<Array<ItemType>>) {
+    this.rows = rows;
+  }
 
   public static builder(f: (builder: ProductionBoxBuilder) => void): CardRenderProductionBox {
     const builder = new ProductionBoxBuilder();
@@ -34,12 +38,23 @@ class CardRenderProductionBox implements ICardRenderProductionBox {
 
 class CardRenderTile implements ICardRenderTile {
   public readonly is = 'tile';
-  constructor(public tile: TileType, public hasSymbol: boolean, public isAres: boolean) { }
+  public tile: TileType;
+  public hasSymbol: LiteBoolean;
+  public isAres: LiteBoolean;
+  constructor(tile: TileType, hasSymbol: boolean, isAres: boolean) {
+    this.tile = tile;
+    this.hasSymbol = liteBoolean(hasSymbol);
+    this.isAres = liteBoolean(isAres);
+  }
 }
 
 class CardRenderEffect implements ICardRenderEffect {
   public readonly is = 'effect';
-  constructor(public rows: Array<Array<ItemType>>) {}
+  public rows: Array<Array<ItemType>>;
+
+  constructor(rows: Array<Array<ItemType>>) {
+    this.rows = rows;
+  }
 
   public static builder(f: (builder: EffectBuilder) => void): CardRenderEffect {
     const builder = new EffectBuilder();
@@ -67,7 +82,10 @@ class CardRenderEffect implements ICardRenderEffect {
 
 class CardRenderCorpBoxEffect implements ICardRenderCorpBoxEffect {
   public readonly is = 'corp-box-effect';
-  constructor(public rows: Array<Array<ItemType>>) { }
+  public rows: Array<Array<ItemType>>;
+  constructor(rows: Array<Array<ItemType>>) {
+    this.rows = rows;
+  }
 
   public static builder(f: (builder: CorpEffectBuilderEffect) => void): CardRenderCorpBoxEffect {
     const builder = new CorpEffectBuilderEffect();
@@ -78,10 +96,27 @@ class CardRenderCorpBoxEffect implements ICardRenderCorpBoxEffect {
 
 class CardRenderCorpBoxAction implements ICardRenderCorpBoxAction {
   public readonly is = 'corp-box-action';
-  constructor(public rows: Array<Array<ItemType>>) { }
+  public rows: Array<Array<ItemType>>;
+  constructor(rows: Array<Array<ItemType>>) {
+    this.rows = rows;
+  }
 
   public static builder(f: (builder: CorpEffectBuilderAction) => void): CardRenderCorpBoxAction {
     const builder = new CorpEffectBuilderAction();
+    f(builder);
+    return builder.build();
+  }
+}
+
+class CardRenderCorpBoxEffectAction implements ICardRenderCorpBoxEffectAction {
+  public readonly is = 'corp-box-effect-action';
+  public rows: Array<Array<ItemType>>;
+  constructor(rows: Array<Array<ItemType>>) {
+    this.rows = rows;
+  }
+
+  public static builder(f: (builder: CorpEffectBuilderEffectAction) => void): CardRenderCorpBoxEffectAction {
+    const builder = new CorpEffectBuilderEffectAction();
     f(builder);
     return builder.build();
   }
@@ -156,7 +191,7 @@ abstract class Builder<T> {
   public megacredits(amount: number, options?: ItemOptions): this {
     const item = new CardRenderItem(CardRenderItemType.MEGACREDITS, amount, options);
     item.amountInside = true;
-    item.showDigit = false;
+    item.showDigit = undefined;
     item.size = options?.size ?? Size.MEDIUM;
     return this._appendToRow(item);
   }
@@ -394,7 +429,7 @@ abstract class Builder<T> {
   }
 
   public claim(count: number = 1) {
-    return this.text('CLAIM').text(count.toString());
+    return this.text('CLAIM').nbsp.text(count.toString());
   }
 
   public corruption(count: number = 1, options?: ItemOptions) {
@@ -404,6 +439,11 @@ abstract class Builder<T> {
 
   public undergroundResources(count: number = 1, options?: ItemOptions) {
     const item = new CardRenderItem(CardRenderItemType.UNDERGROUND_RESOURCES, count, options);
+    return this._appendToRow(item);
+  }
+
+  public undergroundShelters() {
+    const item = new CardRenderItem(CardRenderItemType.UNDERGROUND_SHELTERS);
     return this._appendToRow(item);
   }
 
@@ -460,12 +500,14 @@ abstract class Builder<T> {
     return this._appendToRow(builder);
   }
 
-  public corpBox(type: 'action' | 'effect', eb: (builder: CorpEffectBuilderEffect | CorpEffectBuilderAction) => void): this {
+  public corpBox(type: 'action' | 'effect' | 'effect-action', eb: (builder: CorpEffectBuilderEffect | CorpEffectBuilderAction | CorpEffectBuilderEffectAction) => void): this {
     this.br;
     if (type === 'action') {
       return this._appendToRow(CardRenderCorpBoxAction.builder(eb));
-    } else {
+    } else if (type === 'effect') {
       return this._appendToRow(CardRenderCorpBoxEffect.builder(eb));
+    } else {
+      return this._appendToRow(CardRenderCorpBoxEffectAction.builder(eb));
     }
   }
 
@@ -521,18 +563,8 @@ abstract class Builder<T> {
     const item = new CardRenderItem(CardRenderItemType.TEXT);
     item.text = text;
     item.size = size;
-    item.isUppercase = uppercase;
-    item.isBold = isBold;
-    return this._appendToRow(item);
-  }
-
-  public text2(text: string, options: {size?: Size, caps?: boolean, bold?: boolean, all?: boolean}) {
-    const item = new CardRenderItem(CardRenderItemType.TEXT);
-    item.text = text;
-    item.size = options.size || Size.MEDIUM;
-    item.isUppercase = options.caps || false;
-    item.isBold = options.bold || true;
-    item.anyPlayer = options.all;
+    item.isUppercase = liteBoolean(uppercase);
+    item.isBold = liteBoolean(isBold);
     return this._appendToRow(item);
   }
 
@@ -651,5 +683,11 @@ class CorpEffectBuilderEffect extends Builder<CardRenderCorpBoxEffect> {
 class CorpEffectBuilderAction extends Builder<CardRenderCorpBoxAction> {
   public override build(): CardRenderCorpBoxAction {
     return new CardRenderCorpBoxAction(this._data);
+  }
+}
+
+class CorpEffectBuilderEffectAction extends Builder<CardRenderCorpBoxEffectAction> {
+  public override build(): CardRenderCorpBoxEffectAction {
+    return new CardRenderCorpBoxEffectAction(this._data);
   }
 }

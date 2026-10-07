@@ -10,6 +10,8 @@ import {TurmoilUtil} from '../../../src/server/turmoil/TurmoilUtil';
 import {IGame} from '../../../src/server/IGame';
 import {Turmoil} from '../../../src/server/turmoil/Turmoil';
 import {SendDelegateToArea} from '../../../src/server/deferredActions/SendDelegateToArea';
+import {PoliticalAgendas} from '../../../src/server/turmoil/PoliticalAgendas';
+import {Tag} from '../../../src/common/cards/Tag';
 
 describe('PoliticalReform', () => {
   let card: PoliticalReform;
@@ -47,7 +49,7 @@ describe('PoliticalReform', () => {
     runAllActions(game);
 
     // 确认data属性已设置为热主义者党
-    expect(card.data).to.equal(PartyName.KELVINISTS);
+    expect(PoliticalReform.getPartyName(card.data)).to.equal(PartyName.KELVINISTS);
 
     // 检查是否可以使用热主义者党的政策行动
     expect(card.canAct(player)).to.be.true;
@@ -67,14 +69,14 @@ describe('PoliticalReform', () => {
     // 第一次派送代表
     turmoil.sendDelegateToParty(player, PartyName.KELVINISTS, game);
     runAllActions(game);
-    expect(card.data).to.equal(PartyName.KELVINISTS);
+    expect(PoliticalReform.getPartyName(card.data)).to.equal(PartyName.KELVINISTS);
 
     // 第二次派送代表到另一个非执政党
     turmoil.sendDelegateToParty(player, PartyName.GREENS, game);
     runAllActions(game);
 
     // 确认data属性仍然是第一次设置的党派
-    expect(card.data).to.equal(PartyName.KELVINISTS);
+    expect(PoliticalReform.getPartyName(card.data)).to.equal(PartyName.KELVINISTS);
   });
 
   it('其他玩家派送代表不触发公司效果', () => {
@@ -124,14 +126,14 @@ describe('PoliticalReform', () => {
     runAllActions(game);
 
     // 验证触发了公司效果
-    expect(card.data).to.equal(PartyName.KELVINISTS);
+    expect(PoliticalReform.getPartyName(card.data)).to.equal(PartyName.KELVINISTS);
   });
 
   it('应该在新的一代重置效果', () => {
     // 第一次派送代表触发效果
     turmoil.sendDelegateToParty(player, PartyName.KELVINISTS, game);
     runAllActions(game);
-    expect(card.data).to.equal(PartyName.KELVINISTS);
+    expect(PoliticalReform.getPartyName(card.data)).to.equal(PartyName.KELVINISTS);
 
     // 结束当前时代
     finishGeneration(game);
@@ -143,6 +145,50 @@ describe('PoliticalReform', () => {
     // 新的时代应该能再次触发效果
     turmoil.sendDelegateToParty(player, PartyName.GREENS, game);
     runAllActions(game);
-    expect(card.data).to.equal(PartyName.GREENS);
+    expect(PoliticalReform.getPartyName(card.data)).to.equal(PartyName.GREENS);
+  });
+
+  it('支持议会扩的行动政策', () => {
+    const marsAgenda = PoliticalAgendas.getAgenda(turmoil, PartyName.MARS);
+    marsAgenda.policyId = 'mp04';
+
+    player.megaCredits = 20;
+    const handBefore = player.cardsInHand.length;
+
+    turmoil.sendDelegateToParty(player, PartyName.MARS, game);
+    turmoil.sendDelegateToParty(player2, PartyName.GREENS, game);
+    turmoil.sendDelegateToParty('NEUTRAL', PartyName.GREENS, game);
+    runAllActions(game);
+
+    expect(PoliticalReform.getPartyName(card.data)).to.equal(PartyName.MARS);
+    expect(card.canAct(player)).to.be.true;
+
+    card.action(player);
+    runAllActions(game);
+
+    expect(player.megaCredits).to.equal(16);
+    expect(player.cardsInHand.length).to.equal(handBefore + 1);
+    expect(player.cardsInHand[player.cardsInHand.length - 1].tags).to.include(Tag.BUILDING);
+  });
+
+  it('支持议会扩的被动政策并在时代结束时移除', () => {
+    const marsAgenda = PoliticalAgendas.getAgenda(turmoil, PartyName.MARS);
+    marsAgenda.policyId = 'mp03';
+
+    expect(player.getSteelValue()).to.equal(2);
+
+    turmoil.sendDelegateToParty(player, PartyName.MARS, game);
+    turmoil.sendDelegateToParty(player2, PartyName.GREENS, game);
+    turmoil.sendDelegateToParty('NEUTRAL', PartyName.GREENS, game);
+    runAllActions(game);
+
+    expect(PoliticalReform.getPartyName(card.data)).to.equal(PartyName.MARS);
+    expect(player.getSteelValue()).to.equal(3);
+
+    finishGeneration(game);
+    runAllActions(game);
+
+    expect(card.data).to.be.undefined;
+    expect(player.getSteelValue()).to.equal(2);
   });
 });

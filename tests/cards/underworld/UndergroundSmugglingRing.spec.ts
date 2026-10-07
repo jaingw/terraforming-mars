@@ -1,9 +1,10 @@
 import {expect} from 'chai';
 import {UndergroundSmugglingRing} from '../../../src/server/cards/underworld/UndergroundSmugglingRing';
 import {testGame} from '../../TestGame';
-import {cast, runAllActions} from '../../TestingUtils';
+import {runAllActions} from '../../TestingUtils';
 import {SelectResource} from '../../../src/server/inputs/SelectResource';
 import {Units} from '../../../src/common/Units';
+import {cast} from '@/common/utils/utils';
 
 describe('UndergroundSmugglingRing', () => {
   it('canPlay', () => {
@@ -12,7 +13,7 @@ describe('UndergroundSmugglingRing', () => {
 
     expect(card.canPlay(player)).is.false;
 
-    player.underworldData.tokens.push('nothing');
+    player.underworldData.tokens.push({token: 'nothing', shelter: false, active: false});
 
     expect(card.canPlay(player)).is.true;
   });

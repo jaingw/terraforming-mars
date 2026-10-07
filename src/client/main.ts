@@ -1,11 +1,14 @@
-import Vue from 'vue';
+import {createApp, defineAsyncComponent} from 'vue';
 
 import {trimEmptyTextNodes} from '@/client/directives/TrimWhitespace';
-import {mainAppSettings} from '@/client/components/App';
+import App from '@/client/components/App.vue';
 import {getPreferences} from '@/client/utils/PreferencesManager';
+import {SoundManager} from '@/client/utils/SoundManager';
 import i18nPlugin from '@/client/plugins/i18n.plugin';
 // import {startOauth} from '@/client/oauth';
+const PlayerInputFactory = defineAsyncComponent(() => import(/* webpackChunkName: "player-input" */ '@/client/components/PlayerInputFactory.vue'));
 
+import '../styles/common.less';
 import '../styles/tailwindcss.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
@@ -14,12 +17,14 @@ declare global {
     _translations: { [key: string]: string } | undefined;
   }
 }
+declare const __APP_VERSION__: string;
+
 async function bootstrap() {
   const lang = getPreferences().lang || 'cn';
 
   if (lang !== 'en') {
     try {
-      window._translations = await fetch(`/assets/locales/${lang}.json`).then((res) => res.json());
+      window._translations = await fetch(`/assets/locales/${lang}.json?v=${__APP_VERSION__}`).then((res) => res.json());
       for (const key in window._translations) {
         if (key.length > 10) {// 由于部分文案由大写更换成了小写,这里做个兼容
           window._translations[key.toLocaleLowerCase()] = window._translations[key];
@@ -35,11 +40,15 @@ async function bootstrap() {
     }
   }
 
-  Vue.use(i18nPlugin);
+  const app = createApp(App);
 
-  Vue.directive('trim-whitespace', {
-    inserted: trimEmptyTextNodes,
-    componentUpdated: trimEmptyTextNodes,
+  app.use(i18nPlugin);
+
+  app.component('player-input-factory', PlayerInputFactory);
+
+  app.directive('trim-whitespace', {
+    mounted: trimEmptyTextNodes,
+    updated: trimEmptyTextNodes,
   });
 
   // if (window.isSecureContext && 'serviceWorker' in navigator) {
@@ -50,11 +59,11 @@ async function bootstrap() {
   //   });
   // }
 
-  (window as any).vm = new Vue(mainAppSettings);
+  app.mount('#app');
+  SoundManager.initialize();
 }
 
 bootstrap();
-
 const x = tt;
 // x = bigboxpromo;
 // x= globalEvent;

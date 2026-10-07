@@ -138,7 +138,7 @@
             top: 14px;
             left: 16px;
         }
-        .card-morning-star-logo {
+        .card-morning-star-inc\.-logo {
             position: absolute;
             top: 11px;
             left: 4px;
@@ -242,7 +242,7 @@
             transform:scale(1.2,1); /* W3C */
             box-shadow:  6px 6px 5px  grey;
         }
-        .card-luna-logo {
+        .card-point-luna-logo {
             position: absolute;
             top: 8px;
             left: 21px;
@@ -991,12 +991,42 @@
             margin-top: 10px;
         }
         .card-crescent-research-association-logo {
-            background-image: url(./assets/moon/corp-logo-crescent-research.png);
-            height: 50px;
-            width: 150px;
-            background-size: 150px 50px;
-            margin-top: 10px;
+          display: flex;
+          .crescent-research-association-image {
+              background-image: url(./assets/moon/corp-logo-crescent-research.png);
+              height: 50px;
+              width: 52px;
+              background-size: 52px 50px;
+              margin-top: 10px;
+          }
+          .crescent-research-association-title {
+            margin-left: 2px;
+            font-family: Arial, Helvetica, sans-serif;
+            color: white;
+            text-shadow:
+              .5px .5px 0 black,
+              -.5px .5px 0 black,
+              .5px -.5px 0 black,
+              -.5px -.5px 0 black;
+            margin-top: 25px;
+            font-size: 7.5px;
+            font-weight: bold;
+            transform: scaleY(1.6);
+            line-height: .4rem;
+            text-align: left;
+          }
+          .crescent-research-association-row1 {
+            transform: scaleY(1.6);
+          }
+          hr {
+            border-color: white;
+            border-width: 0.5px;
+          }
+          .crescent-research-association-row2 {
+            transform: scaleY(1.6);
+          }
         }
+
         .card-luna-first-incorporated-logo {
             background-image: url(./assets/moon/corp-logo-luna-first.png);
             height: 50px;
@@ -1224,6 +1254,19 @@
             margin-top: 10px;
             margin-left: 79px;
         }
+        .card-gagarin-mobile-base-logo {
+          .gagarin-mobile-base-svg-logo {
+            width: 160px;
+            margin-top: 10px;
+            margin-bottom: -12px;
+          }
+          .gagarin-mobile-base-title {
+            text-align: left;
+            font-family: sans-serif;
+            color: black;
+          }
+
+        }
         .card-steelaris-logo {
             background-image: url(./assets/pathfinders/corp-logo-steelaris.png);
             height: 35px;
@@ -1274,7 +1317,7 @@
             background-size: 144px 45px;
             margin-top: 10px;
         }
-        .card-soylent-logo {
+        .card-soylent-seedling-systems-logo {
             background-image: url(./assets/pathfinders/corp-logo-soylent.png);
             height: 45px;
             width: 144px;
@@ -1294,6 +1337,19 @@
             width: 184px;
             background-size: 184px 45px;
             margin-top: 10px;
+        }
+        .card-solbank-logo {
+          margin-top: 10px;
+          font-size: 30px;
+          .solbank-first {
+            color: gold;
+            text-shadow: 0.5px 0.5px silver, -0.5px -0.5px silver, 0.5px -0.5px silver, -0.5px 0.5px silver;
+            margin-right: -6px;
+          }
+          .solbank-second {
+            color: silver;
+            text-shadow: 0.25px 0.25px gold, -0.25px -0.25px gold, 0.25px -0.25px gold, -0.25px 0.25px gold;
+          }
         }
         .card-mind-set-mars-logo {
             background-image: url(./assets/pathfinders/corp-logo-mind-set-mars.png);
@@ -1322,27 +1378,263 @@
             width: 111px;
             background-size: 111px 80px;
         }
+        .card-hadesphere-logo {
+          .row1 {
+            font-size: 30px;
+            position: absolute;
+            top: 8px;
+            padding: 4px;
+            text-align: center;
+            font-style: italic;
+            font-weight: bold;
+            font-family: Arial, Verdana, sans-serif;
+            -webkit-transform: scale(.75, 1);
+            -moz-transform: scale(.75, 1);
+            -ms-transform: scale(.75, 1);
+            -o-transform: scale(.75, 1);
+            transform: scale(.75, 1);
+            background: linear-gradient(to bottom, rgb(100, 100, 200), rgb(0, 0, 150));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+          }
+          .row2 {
+            font-size: 18px;
+            position: absolute;
+            top: 32px;
+            padding: 4px;
+            width: 90%;
+            text-align: center;
+            font-family: Arial, Verdana, sans-serif;
+            color: brown;
+            -webkit-background-clip: text;
+            background-clip: text;
+          }
+        }
+        .card-demetron-labs-logo {
+          font-family: "Trebuchet MS", Arial, sans-serif;
+          width: 70%;
+          padding: 4px;
 
-            .card-elitetech-logo {
-                position: absolute;
-                top: 24px;
-                left: -4px;
-                color: #0d3665;
-                font-family: 'Ubuntu';
-                letter-spacing: 1px;
-                text-shadow: 0 1px 1px rgb(95, 39, 148);
-                font-size: 24px;
-            }
-            .card-city-power-shift-logo {
-                position: absolute;
-                top: 40px;
-                left: -4px;
-                color: #0d3665;
-                font-family: 'Ubuntu';
-                letter-spacing: 1px;
-                text-shadow: 0 1px 1px rgb(95, 39, 148);
-                font-size: 24px;
-	    }
+          text-align: right;
+          .row1 {
+            font-size: 28px;
+            color: rgb(18, 36, 65);
+          }
+          .row2 {
+            font-size: 18px;
+            color: rgb(39, 107, 107);
+            font-style: italic;
+            margin-top: -12px;
+          }
+        }
+        .card-jenson-boyle-co-logo {
+          position: absolute;
+          top: 10px;
+          left: 8px;
+          font-size: 16px;
+          color: white;
+          line-height: 33px;
+          background: #615102;
+          padding-left: 10px;
+          padding-right: 10px;
+          border-radius: 6% / 50%;
+          font-weight: normal;
+          border: 2px solid white;
+          box-shadow: 6px 6px 5px grey;
+          font-family: serif;
+        }
+        .card-henkei-genetics-logo {
+          margin-top:24px;
+          text-align: left;
+          display: flex;
+
+          .jp {
+            position: relative;
+            width: 50px;
+            height: 40px;
+            background: red;
+            border-radius: 50% / 10%;
+            color: white;
+            text-align: center;
+            text-indent: .1em;
+          }
+          .jp:before {
+            content: "変形";
+            font-size: 22px;
+            position: absolute;
+            top: 10%;
+            bottom: 10%;
+            right: -5%;
+            left: -5%;
+            background: inherit;
+            border-radius: 5% / 50%;
+          }
+
+          .eng {
+            color: black;
+            font-size: 20px;
+            margin-top: 4px;
+            margin-left: 10px;
+            letter-spacing: -0.05rem;
+          }
+        }
+        .card-arborist-collective-logo {
+          display: flex;
+          .arborist-collective-svg-logo {
+            width: 70px;
+            margin-top: 10px;
+          }
+          .arborist-collective-title {
+            font-family: Times New Roman;
+            color: #266719;
+            margin-top: 21px;
+          }
+          .arborist-collective-row-1 {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: -13px;
+          }
+          hr {
+            border-color: #266719;
+            border-width: 0.5px;
+          }
+          .arborist-collective-row-2 {
+            margin-top: -16px;
+            font-size: 12px;
+          }
+        }
+        .card-kingdom-of-tauraro-logo {
+          display: flex;
+          margin-top: 10px;
+          padding-left: 10px;
+          text-align: left;
+          .kingdom-of-tauraro-svg-logo {
+            width: 72px;
+          }
+          .kingdom-of-tauraro-title {
+            color: #075412ff;
+            font-size: 20px;
+            line-height: 113%;
+          }
+        }
+        .card-aeron-genomics-logo {
+          display: flex;
+          .aeron-genomics-svg-logo {
+            width: 76px;
+            margin-top: 10px;
+          }
+          .aeron-genomics-title {
+            font-family: Consolas, 'Courier New', Courier, monospace;
+            color: #328932;
+            font-size: 13px;
+            padding-top: 21px;
+          }
+        }
+        .card-keplertec-logo {
+          display: flex;
+          .keplertec-svg-logo {
+            width: 32px;
+            height: 32px;
+            margin-top: 10px;
+          }
+
+          .keplertec-title {
+            font-family: "Arial Narrow", "Verdana", sans-serif;
+            color: yellow;
+            text-shadow:
+              1px 1px 0 black,
+              -1px 1px 0 black,
+              1px -1px 0 black,
+              -1px -1px 0 black;
+            padding-top: 18px;
+            margin-left: 6px;
+            line-height: 1;
+            font-size: 17px;
+          }
+        }
+        .card-voltagon-logo {
+          display: flex;
+          .voltagon-svg-logo {
+            width: 74px;
+            margin-top: 10px;
+          }
+
+          .voltagon-title {
+            font-family: "Arial Narrow", "Verdana", sans-serif;
+            color: #4a1a66;
+            text-shadow:
+              1px 1px 0 white,
+              -1px 1px 0 white,
+              1px -1px 0 white,
+              -1px -1px 0 white;
+            padding-top: 37px;
+            line-height: 1;
+            font-size: 24px;
+          }
+        }
+        .card-anubis-securities-logo {
+          .anubis-securities-svg-logo {
+            width: 74px;
+            margin-top: 10px;
+          }
+
+          .anubis-securities-title {
+            font-family: 'Times New Roman';
+            color: #3e3e3e;
+            font-size: 13px;
+            padding-top: 21px;
+            line-height: 1;
+          }
+
+          .anubis-row-1 {
+            font-size: 25px;
+          }
+          .anubis-row-2 {
+            font-size: 13px;
+          }
+
+          display: flex;
+        }
+        .card-hecate-speditions-logo {
+          margin-top: 10px;
+          padding-left: 10px;
+          width: 82px;
+          background-color: black;
+          text-align: left;
+          color: white;
+          .row1 {
+            font-size: 20px;
+            margin-bottom: -13px;
+          }
+          .hecate-speditions-svg-logo {
+            width: 72px;
+          }
+          .row2 {
+            font-size: 13px;
+            margin-top: -16px;
+          }
+        }
+        .card-elitetech-logo {
+            position: absolute;
+            top: 24px;
+            left: -4px;
+            color: #0d3665;
+            font-family: 'Ubuntu';
+            letter-spacing: 1px;
+            text-shadow: 0 1px 1px rgb(95, 39, 148);
+            font-size: 24px;
+        }
+        .card-city-power-shift-logo {
+            position: absolute;
+            top: 40px;
+            left: -4px;
+            color: #0d3665;
+            font-family: 'Ubuntu';
+            letter-spacing: 1px;
+            text-shadow: 0 1px 1px rgb(95, 39, 148);
+            font-size: 24px;
+        }
         .card-poldertech-1-logo {
             color: rgb(27, 86, 158);
             text-shadow: 0 0 1px black;
@@ -1361,6 +1653,18 @@
             text-align: left;
             top: 4px;
             left: 20px;
+        }
+
+
+        .card-junk-ventures-logo {
+            color: firebrick;
+            font-family: Ubuntu;
+            text-align: center;
+            text-shadow: 0 2px 2px gray;
+            font-size: 30px;
+            position: relative;
+            top: 12px;
+            left: -8px;
         }
     }
     .card-content-corporation {
@@ -1385,6 +1689,7 @@
         &:not(.global-event-card-content) {
           overflow-x: hidden;
         }
+
         &::-webkit-scrollbar-track {
             background-color: transparent;
             border-radius: 0 0 32px 0;
@@ -1537,7 +1842,7 @@
         color: #0000;
     }
     /*resources*/
-    .card-resource {
+    .card-resource-base() {
         font-family: Prototype;
         position: relative;
         display: inline-block;
@@ -1550,21 +1855,23 @@
         background-size: 30px;
         filter: drop-shadow(0px 0px 1px black);
         vertical-align: middle;
-                &--has-secondary-tag:extend(.card-container .card-content-wrapper .card-content .card-resource) {
-            width: 30px;
-            height: 30px;
-            background-size: 30px;
+    }
+    .card-resource {
+        .card-resource-base();
+        &--has-secondary-tag {
+            .card-resource-base();
             margin-right: 10px;
             margin-top: 8px;
             margin-bottom: 8px;
         }
-                &--superscript:extend(.card-container .card-content-wrapper .card-content .card-resource) {
-          height: 16px;
-          width: 16px;
-          background-size: 16px;
-          margin-left: 1px;
-          margin-right: 1px;
-          margin-bottom: 12px;
+        &--superscript {
+            .card-resource-base();
+            height: 16px;
+            width: 16px;
+            background-size: 16px;
+            margin-left: 1px;
+            margin-right: 1px;
+            margin-bottom: 12px;
         }
     }
     .card-resource-trade-discount {
@@ -1585,6 +1892,15 @@
         font-size: 24px;
         line-height: 46px;
     }
+
+    .card-money--S {
+        width: 20px;
+        height: 20px;
+        background-size: 20px;
+        font-size: 14px;
+        line-height: 20px;
+    }
+
 
     // TODO(kberg): this is a duplicate of .card-resources-counter / .card-resource@{value})
     // Not only can this be reduced using the same construct, but let's get rid of the CSS duplication.
@@ -1724,24 +2040,6 @@
     }
 
     // Is this even used?
-    .card-resource-tool {
-    background-image: url(./assets/underworld/card-resource-tool.png);
-    }
-    .card-resource-ware {
-    background-image: url(./assets/underworld/card-resource-ware.png);
-    }
-    .card-resource-scoop {
-    background-image: url(./assets/underworld/card-resource-scoop.png);
-    }
-    .card-resource-journalism {
-    background-image: url(./assets/underworld/card-resource-journalism.png);
-    }
-    .card-resource-activist {
-    background-image: url(./assets/underworld/card-resource-activist.png);
-    }
-    .card-resource-supply-chain {
-    background-image: url(./assets/underworld/card-resource-supply-chain.png);
-    }
     .card-resource-director {
     background-image: url("./assets/resources/director.png");
     }
@@ -1782,9 +2080,9 @@
     }
     .card-underground-shelters {
       background-image: url(./assets/underworld/underground-shelters.png);
-      width: 44px;
-      background-size: 44px 44px;
-      height: 44px;
+      width: 30px;
+      height: 30px;
+      background-size: 30px;
     }
     /* CEO Assets */
     .card-arrow-opg {
@@ -2049,7 +2347,7 @@
         margin-right: 10px;
     }
     /*tags*/
-    .card-resource-tag {
+    .card-resource-tag-base() {
         position: relative;
         display: inline-block;
         text-align: center;
@@ -2064,16 +2362,18 @@
         box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6), 0 0 0 2px rgba(0, 0, 0, 0.3);
         vertical-align: middle;
         filter: brightness(0.9);
-                &--S:extend(.card-container .card-content-wrapper .card-content .card-resource-tag) {
-            width: 30px;
-            height: 30px;
+    }
+    .card-resource-tag {
+        .card-resource-tag-base();
+        &--S {
+            .card-resource-tag-base();
             background-size: 34px;
             margin-left: 2px;
         }
     }
     // TODO(kberg) This set of tags looks like a duplicate of cards.less.
     @tags: wild, building, space, power, jovian, venus, earth, city, mars,
-    microbe, plant, animal, event, science, none, moon, crime, empty;
+    microbe, plant, animal, event, science, moon, crime, empty;
     each(@tags, {
       .card-tag-@{value} {
         background-image: url("./assets/tags/@{value}.png");
@@ -2096,11 +2396,21 @@
       vertical-align: middle;
       background:white;
     }
+
+   .card-tag-size--S {
+      height: 22px;
+      width: 22px;
+      background-size: 26px;
+      margin-left: 0px;
+      margin-right: 0px;
+    }
+
     .card-no-tags:after {
       content: "X";
       position: relative;
       top: 1px;
     }
+
     .card-private-security {
         .card-x {
             vertical-align: middle;
@@ -3012,18 +3322,18 @@ each(@parties, {
       vertical-align: middle;
   }
 
-    // resources.less also has a variable called resource_types.
-    @card_resource_types: microbe, animal, science, floater, fighter, camp,
-    asteroid, disease, preservation, data, syndicate-fleet, cube,
-    venusian-habitat, specialized-robot, seed, orbital, agenda, graphene, hydroelectric-resource,
-    clone-trooper, director, tool, ware, activist, journalism, supply-chain;
-    each(@card_resource_types, {
-    .card-resource-@{value} {
-        background-image: url("./assets/resources/@{value}.png");
-    }
-    })
+}
+ // resources.less also has a variable called resource_types.
+@card_resource_types: microbe, animal, science, floater, fighter, camp,
+asteroid, disease, preservation, data, syndicate-fleet,
+venusian-habitat, specialized-robot, seed, orbital, agenda, graphene, hydroelectric-resource,
+clone-trooper, director, tool, ware, activist, journalism, supply-chain;
+each(@card_resource_types, {
+.card-resource-@{value} {
+    background-image: url("./assets/resources/@{value}.png");
+}
+})
 
-    .card-resource-cube {
-    background-image: url("./assets/cube.png");
-    }
+.card-resource-cube {
+  background-image: url("./assets/cube.png");
 }

@@ -24,7 +24,8 @@ export class GiveColonyBonus extends DeferredAction {
       return undefined;
     }
 
-    for (const player of this.colony.colonies) {
+    for (const colonyPlayer of this.colony.colonies) {
+      const player = typeof colonyPlayer === 'string' ? this.player.game.getPlayerById(colonyPlayer) : colonyPlayer;
       if (!this.selfish) {
         // Normal behavior; colony owners get their bonuses.
         this.waitingFor.add(player.id);

@@ -16,6 +16,33 @@
             text-decoration: none;
         }
     }
+    .accordion-body {
+        max-height: none;
+    }
+}
+
+.terraformed-banner {
+    background: linear-gradient(to right, #e28c22, #ffcc64, #e28c22);
+    color: #000;
+    text-align: center;
+    padding: 12px;
+    font-size: 24px;
+    font-family: Prototype, Ubuntu, Sans-Serif;
+    font-weight: bold;
+    text-transform: uppercase;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+    z-index: 100;
+    position: relative;
+    border-bottom: 2px solid #805700;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+@keyframes slide-down {
+    from { transform: translateY(-100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
 }
 
 // text shadows
@@ -38,10 +65,10 @@
     text-shadow: -1px -1px 6px @player_purple, 1px 1px 1px #333a;
 }
 .player_shadow_color_orange {
-    text-shadow: -1px -1px 6px @player_orange 1px 1px 1px #333a;
+    text-shadow: -1px -1px 6px @player_orange, 1px 1px 1px #333a;
 }
 .player_shadow_color_pink {
-    text-shadow: -1px -1px 6px @player_pink 1px 1px 1px #333a;
+    text-shadow: -1px -1px 6px @player_pink, 1px 1px 1px #333a;
 }
 
 .game-title {
@@ -120,28 +147,8 @@
     }
 
     .grid-item.player_tag_bg_color_pink {
-        background-color: rgb(245, 116, 187, 0.2);
+        background-color: rgba(245, 116, 187, 0.2);
     }
-    .city-count {
-        background: url(./assets/icon_city.png) center no-repeat;
-        filter: invert(100%) contrast(200%);
-    }
-
-    .colony-count {
-        background: url(./assets/icon_colony.png) center no-repeat;
-        background-size: 24px;
-    }
-
-    .influence-count {
-        background: url(./assets/icon_influence.png) center no-repeat;
-        filter: invert(100%) contrast(200%);
-        background-size: 28px;
-    }
-
-    .card-count {
-        background: url(./assets/preferences_cards.png) center no-repeat;
-    }
-
     .vp-count {
         background-image: url(./assets/board/mars.png);
         background-size: 65px;
@@ -432,6 +439,11 @@
     visibility: hidden;
 }
 
+.hotkey-target {
+  visibility: hidden;
+  scroll-margin-top: 70px;
+}
+
 .highlighter_box {
     text-shadow: 1px 1px 1px #222, -1px -1px 1px #666;
     padding: 1px 10px;
@@ -612,6 +624,13 @@
             border-radius: 10px 10px 0 0;
         }
 
+        .claimable {
+          border: 1px solid #b0b040;
+        }
+        .not-claimable {
+          border: 0px solid;
+        }
+
         @ma-name:
           terraformer, mayor, gardener, builder, planner,
           landlord, banker, scientist, thermalist, miner,
@@ -646,12 +665,17 @@
           incorporator, manufacturer, politician,
 
           administrator, constructor, founder, highlander, hydrologist, investor,
-          landscaper, metropolist, mogul, thawer, traveller,
+          landscaper, metropolist, mogul, thawer, traveller, blacksmith,
 
           collector, electrician, fundraiser, geologist, landshaper, lobbyist, philantropist,
           planetologist, producer, researcher, sponsor, forester, breeder, thermoengineer,
 
-          kingpin, edgelord, tunneler, risktaker,
+          kingpin, excavator, tunneler, risktaker,
+
+          architect, c-forester, coastguard,
+
+          builder7, legend4, pioneer4, metallurgist, spacefarer4, tactician4,
+          terraformer29, terran5, trader, tycoon10, suburbian, briber, merchant,
         ;
         each(@ma-name, {
           .ma-name--@{value} {
@@ -829,12 +853,15 @@
         background-position: -490px 0;
     }
 }
+.player_home_block--underground-tokens {
+  height: 50px;
+}
 .deck-size {
     position: absolute;
     width: 33px;
     margin: 30px 0 0 0;
     font-family: Prototype;
-    font-size: 15px;
+    font-size: 11px;
     text-align: center;
     color: #fff;
 }
@@ -863,13 +890,20 @@
   animation:smoth-fade-animation 2000ms infinite;
 }
 
-.top-bar {
+.top-bar-container {
     position: sticky;
-    margin: -22px 0 0 auto;
-    margin-bottom: 15px;
-    z-index: 105;
     top: -12px;
-    display: flex;
+    z-index: 105;
+    margin-top: -22px;
+    margin-right: 0;
+    margin-bottom: 15px;
+    margin-left: -20px;
+}
+
+.top-bar {
+    margin: 0 0 0 auto;
+    margin-bottom: 0;
+    display: inline-flex;
 
     .top-bar-collapser {
         background: #303030;
@@ -904,7 +938,7 @@
 }
 
 .top-bar-collapsed {
-    margin: -32px 0 0 -20px;
+    margin: 0; // Handled by container
 
     .player-info {
         display: none;

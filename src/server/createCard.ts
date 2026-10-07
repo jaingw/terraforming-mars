@@ -10,44 +10,11 @@ import {WGParternship} from './cards/eros/corp/WGParternship';
 import {IPreludeCard} from './cards/prelude/IPreludeCard';
 import {ICeoCard} from './cards/ceos/ICeoCard';
 import {ALL_MODULE_MANIFESTS} from './cards/AllManifests';
-
-const CARD_RENAMES = new Map<string, CardName>([
-  // When renaming a card, add the old name here (like the example below), and add a TODO (like the example below)
-  // And remember to add a test in createCard.spec.ts.
-
-  // eg
-  // TODO(yournamehere): remove after 2021-04-05
-  // ['Earth Embasy', CardName.EARTH_EMBASSY],
-  ['MAxwell Base', CardName.MAXWELL_BASE],
-  ['Great Dam Promo', CardName.GREAT_DAM_PROMO],
-  ['Deimos Down Promo', CardName.DEIMOS_DOWN_PROMO],
-  ['Magnetic Field Generators Promo', CardName.MAGNETIC_FIELD_GENERATORS_PROMO],
-  ['Septum Tribus', CardName.SEPTEM_TRIBUS],
-
-  ['CEOs Favorite Project', CardName.CEOS_FAVORITE_PROJECT],
-  ['Rad-Chem Factory', CardName.RAD_CHEM_FACTORY],
-  ['Titan Floater Launch-pad', CardName.TITAN_FLOATING_LAUNCHPAD],
-  ['Earth Embasy', CardName.EARTH_EMBASSY],
-  ['Nitrogenrich Comet', CardName.FALL_OF_SUNRISE],
-
-  ['Designed Micro-organisms', CardName.DESIGNED_MICROORGANISMS],
-  ['Refugee Camp', CardName.REFUGEE_CAMPS],
-  ['Allied Banks', CardName.ALLIED_BANK],
-  ['Inventors Guild', CardName.INVENTORS_GUILD],
-  ['Cryo Sleep', CardName.CRYO_SLEEP],
-
-
-  ['New Colony Planning Initiaitives', CardName.NEW_COLONY_PLANNING_INITIAITIVES],
-  ['Sinus Irdium Road Network', CardName.SINUS_IRDIUM_ROAD_NETWORK],
-  ['Venus First:Pathfinders', CardName.VENUS_FIRST],
-
-  ['Space Corridors', CardName.SPACE_LANES],
-  ['City Park', CardName.CITY_PARKS],
-  ['Concession Rights', CardName.TUNNELING_LOOPHOLE],
-]);
+import {resolveCardName} from '../common/cards/CardRenames';
+import {toName} from '../common/utils/utils';
 
 function _createCard<T extends ICard>(cardName: CardName, cardManifestNames: Array<keyof ModuleManifest>): T | undefined {
-  const standardizedCardName = CARD_RENAMES.get(cardName) || cardName;
+  const standardizedCardName = resolveCardName(cardName);
 
   for (const moduleManifest of ALL_MODULE_MANIFESTS) {
     for (const manifestName of cardManifestNames) {
@@ -58,12 +25,15 @@ function _createCard<T extends ICard>(cardName: CardName, cardManifestNames: Arr
       }
     }
   }
-  console.warn(`card not found ${cardName}`);
   return undefined;
 }
 
-export function newCard(cardName: CardName): ICard | undefined {
-  return _createCard(cardName, ['corporationCards', 'projectCards', 'preludeCards', 'ceoCards']);
+export function newCard(cardName: CardName): ICard {
+  const card = _createCard(cardName, ['corporationCards', 'projectCards', 'preludeCards', 'ceoCards']);
+  if (card === undefined) {
+    throw new Error(`Card [${cardName}] not found`);
+  }
+  return card;
 }
 
 export function newCorporationCard(cardName: CardName): ICorporationCard | undefined {
@@ -99,12 +69,13 @@ function cfj<T extends ICard>(cards: ReadonlyArray<CardName>, resolver: (c: Card
   }
   const result: Array<T> = [];
   cards.forEach((element: CardName) => {
-    const card = resolver(element);
+    const name = toName(element);
+    const card = resolver(name);
     if (card !== undefined) {
       result.push(card);
     } else {
-      console.warn(`${cardType} card ${element} not found while loading game.`);
-      throw new Error(`${cardType} card ${element} not found while loading game.`);
+      console.warn(`${cardType} card ${name} not found while loading game.`);
+      throw new Error(`${cardType} card ${name} not found while loading game.`);
     }
   });
   return result;
@@ -125,4 +96,3 @@ export function ceosFromJSON(cards: ReadonlyArray<CardName>): Array<ICeoCard> {
 export function preludesFromJSON(cards: ReadonlyArray<CardName>): Array<IPreludeCard> {
   return cfj(cards, newPrelude, 'newPrelude');
 }
-

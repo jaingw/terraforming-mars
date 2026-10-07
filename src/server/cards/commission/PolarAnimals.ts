@@ -11,6 +11,7 @@ import {TileType} from '../../../common/TileType';
 import {PlaceTile} from '../../deferredActions/PlaceTile';
 import {SelectAmount} from '../../inputs/SelectAmount';
 import {Resource} from '../../../common/Resource';
+import {SpaceBonus} from '../../../common/boards/SpaceBonus';
 
 export class PolarAnimals extends Card implements IProjectCard {
   constructor() {
@@ -44,6 +45,7 @@ export class PolarAnimals extends Card implements IProjectCard {
         tile: {tileType: TileType.ECOLOGICAL_ZONE, card: this.name},
         on: () => player.game.board.getAvailableSpacesOnLand(player),
         title: 'Select space for animal tile',
+        adjacencyBonus: {bonus: [SpaceBonus.ANIMAL]},
       }));
     return undefined;
   }

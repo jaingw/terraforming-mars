@@ -1,6 +1,4 @@
 import {Color} from '@/common/Color';
-import {CardName} from '@/common/cards/CardName';
-import {ColonyName} from '@/common/colonies/ColonyName';
 
 export interface LoginResponse {
   id: string;
@@ -10,6 +8,11 @@ export interface LoginResponse {
 export interface VipCheckResponse {
   id: string;
   isvip: boolean;
+}
+
+export interface PasswordResetLinkResponse {
+  resetUrl: string;
+  expiresAt: number;
 }
 
 export interface UserRankResponse {

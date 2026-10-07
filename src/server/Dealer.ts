@@ -7,7 +7,7 @@ import {LogHelper} from './LogHelper';
 import {serializedCardName} from './cards/CardSerialization';
 import {Logger} from './logs/Logger';
 import {IPreludeCard} from './cards/prelude/IPreludeCard';
-import {cardsFromJSON, corporationCardsFromJSON} from './createCard';
+import {cardsFromJSON, corporationCardsFromJSON, preludesFromJSON} from './createCard';
 import {Random, UnseededRandom} from '../common/utils/Random';
 
 const INCOMPATIBLE_PRELUDES = [CardName.BY_ELECTION, CardName.THE_NEW_SPACE_RACE] as const;
@@ -122,7 +122,7 @@ export class Dealer {
     dealer.corporationCards = corporationCardsFromJSON(d.corporationCards.map((x) => x.name));
     dealer.deck = cardsFromJSON(d.deck.map((x) => x.name));
     dealer.discarded = cardsFromJSON(d.discarded.map((x) => x.name));
-    dealer.preludeDeck = cardsFromJSON(d.preludeDeck.map((x) => x.name)) as Array<IPreludeCard>;
+    dealer.preludeDeck = preludesFromJSON(d.preludeDeck.map((x) => x.name));
     return dealer;
   }
 

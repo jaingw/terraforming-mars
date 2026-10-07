@@ -54,9 +54,15 @@ export abstract class Draft {
     } else {
       arrays.push(...this.game.players.map((player) => player.draftHand));
       if (this.passDirection() === 'after') {
-        arrays.unshift(arrays.pop()!); // eslint-disable-line @typescript-eslint/no-non-null-assertion
+        const array = arrays.pop();
+        if (array) {
+          arrays.unshift(array);
+        }
       } else {
-        arrays.push(arrays.shift()!); // eslint-disable-line @typescript-eslint/no-non-null-assertion
+        const array = arrays.shift();
+        if (array) {
+          arrays.push(array);
+        }
       }
     }
 
@@ -72,6 +78,8 @@ export abstract class Draft {
    *
    * Games are stored after every selection, whereas historically it was
    * stored after round. So restoring the draft is a bit tricky.
+   * 
+   * jaing: 轮抽每一步保存太重了， 忽略这个方法， 每次重启时回到轮抽初始状态
    */
   public restoreDraft() {
     const players = this.game.players;
@@ -244,8 +252,10 @@ class InitialDraft extends Draft {
       } else if (this.game.gameOptions.initialCorpDraftVariant) {
         this.game.initialDraftIteration = 4;
         new CorporationDraft(this.game).startDraft();
+      } else if (this.game.gameOptions.ceoExtension && this.game.gameOptions.ceosDraftVariant) {
+        newCEOsDraft(this.game).startDraft();
       } else {
-        this.game.gotoInitialResearchPhase();
+        this.game.gotoInitialResearchPhase(true);
       }
       break;
     }
@@ -258,7 +268,9 @@ class PreludeDraft extends Draft {
   }
 
   override draw(player: IPlayer) {
-    return player.dealtPreludeCards;
+    // Return a copy. Otherwise inplaceRemove on draftHand later mutates
+    // dealtPreludeCards, leaking other players' picks.
+    return [...player.dealtPreludeCards];
   }
 
   override cardsToKeep(_player: IPlayer): number {
@@ -277,9 +289,12 @@ class PreludeDraft extends Draft {
       player.draftedCards = [];
     }
     if (this.game.gameOptions.initialCorpDraftVariant) {
+      this.game.initialDraftIteration = 4;
       new CorporationDraft(this.game).startDraft();
+    } else if (this.game.gameOptions.ceoExtension && this.game.gameOptions.ceosDraftVariant) {
+      newCEOsDraft(this.game).startDraft();
     } else {
-      this.game.gotoInitialResearchPhase();
+      this.game.gotoInitialResearchPhase(true);
     }
   }
 }
@@ -290,7 +305,9 @@ class CEOsDraft extends Draft {
   }
 
   override draw(player: IPlayer) {
-    return player.dealtCeoCards;
+    // Return a copy. Otherwise inplaceRemove on draftHand later mutates
+    // dealtCeoCards, leaking other players' picks.
+    return [...player.dealtCeoCards];
   }
 
   override cardsToKeep(_player: IPlayer): number {
@@ -308,7 +325,7 @@ class CEOsDraft extends Draft {
       player.draftedCards = [];
     }
 
-    this.game.gotoInitialResearchPhase();
+    this.game.gotoInitialResearchPhase(true);
   }
 }
 
@@ -331,13 +348,18 @@ class CorporationDraft extends Draft {
   }
 
   override endRound() {
+    this.game.draftRound = 1;
     for (const player of this.game.players) {
       // TODO(kberg): player.draftedCards is not ideal here.
       player.dealtCorporationCards = player.draftedCards as Array<ICard> as Array<ICorporationCard>;
       player.draftedCards = [];
     }
 
-    this.game.gotoInitialResearchPhase(true);
+    if (this.game.gameOptions.ceoExtension && this.game.gameOptions.ceosDraftVariant) {
+      newCEOsDraft(this.game).startDraft();
+    } else {
+      this.game.gotoInitialResearchPhase(true);
+    }
   }
 }
 

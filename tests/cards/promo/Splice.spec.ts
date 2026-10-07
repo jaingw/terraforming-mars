@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {cast, formatMessage, runAllActions} from '../../TestingUtils';
+import {formatMessage, runAllActions} from '../../TestingUtils';
 import {Tardigrades} from '../../../src/server/cards/base/Tardigrades';
 import {PharmacyUnion} from '../../../src/server/cards/promo/PharmacyUnion';
 import {Recyclon} from '../../../src/server/cards/promo/Recyclon';
@@ -9,6 +9,7 @@ import {OrOptions} from '../../../src/server/inputs/OrOptions';
 import {TestPlayer} from '../../TestPlayer';
 import {SelectOption} from '../../../src/server/inputs/SelectOption';
 import {IGame} from '../../../src/server/IGame';
+import {cast} from '../../../src/common/utils/utils';
 
 describe('Splice', () => {
   let card: Splice;
@@ -25,7 +26,7 @@ describe('Splice', () => {
     const tardigrades = new Tardigrades();
     cast(card.play(player), undefined);
 
-    player.corporations.push(card);
+    player.playedCards.push(card);
 
     player2.playedCards.push(tardigrades);
     cast(card.onCardPlayedByAnyPlayer(player, tardigrades, player2), undefined);
@@ -46,14 +47,14 @@ describe('Splice', () => {
   it('Should play with multiple microbe tags', () => {
     const pharmacyUnion = new PharmacyUnion();
     cast(card.play(player), undefined);
-    player.corporations.push(card);
+    player.playedCards.push(card);
 
     runAllActions(game);
     cast(player.getWaitingFor(), undefined);
     cast(player2.popWaitingFor(), undefined);
 
     cast(pharmacyUnion.play(player), undefined);
-    player2.corporations.push(pharmacyUnion);
+    player2.playedCards.push(pharmacyUnion);
 
     cast(card.onCardPlayedByAnyPlayer(player, pharmacyUnion, player2), undefined);
 

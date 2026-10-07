@@ -4,14 +4,12 @@ require('console-stamp')(
   {format: ':date(yyyy-mm-dd HH:MM:ss Z)'},
 );
 
-import * as https from 'https';
-import * as http from 'http';
-import * as fs from 'fs';
-import * as raw_settings from '../genfiles/settings.json';
-import * as prometheus from 'prom-client';
+import https from 'https';
+import http from 'http';
+import fs from 'fs';
+import raw_settings from '../genfiles/settings.json';
 import * as responses from './server/responses';
 // import * as ansi from 'ansi-escape-sequences';
-
 import {runId, serverId} from './utils/server-ids';
 import {processRequest} from './server/requestProcessor';
 import {GameLoader} from './database/GameLoader';
@@ -28,21 +26,6 @@ function requestHandler(req: http.IncomingMessage, res: http.ServerResponse): vo
     responses.internalServerError(req, res, error);
   }
 }
-
-const metrics = {
-  startServer: new prometheus.Gauge({
-    name: 'server_start_server',
-    help: 'Time to initialize the server',
-    registers: [prometheus.register],
-  }),
-  startDatabase: new prometheus.Gauge({
-    name: 'server_start_database',
-    help: 'Time to initialize the database',
-    registers: [prometheus.register],
-  }),
-
-};
-metrics;
 
 function createServer(): http.Server | https.Server {
 // If they've set up https
@@ -70,18 +53,10 @@ function createServer(): http.Server | https.Server {
   }
 }
 
-// prometheus.register.setDefaultLabels({
-//   app: 'terraforming-mars-app',
-// });
-// prometheus.collectDefaultMetrics();
 globalInitialize();
 
 export const server = createServer();
-
-// await timeAsync(Database.getInstance().initialize())
-//     .then((v) => {
-//       metrics.startDatabase.set(v.duration);
-//     });
+const DAILY_SEASON_CHECK_INTERVAL_MS = 24 * 60 * 60 * 1000;
 
 // Initialize the session manager after initializing the database.
 // await SessionManager.getInstance().initialize();
@@ -92,6 +67,7 @@ GameLoader.getInstance().start(() => {
   console.log('Starting server on port ' + (process.env.PORT || 8081));
 
   server.listen(process.env.PORT || 8081);
+  // server.listen((process.env.PORT || 8081), '0.0.0.0');
 
   if (!process.env.SERVER_ID) {
     // console.log(`The secret serverId for this server is ${ansi.style.bold}${serverId}${ansi.style.reset}.`);
@@ -101,11 +77,15 @@ GameLoader.getInstance().start(() => {
   console.log(`The public run ID is ${runId}`);
   console.log('Server is ready.');
 
-  // 赛季检查：服务器启动时检查是否需要重置赛季
-  import('./rank/SeasonResetHandler').then(({checkAndResetSeason}) => {
+  const runSeasonCheck = () => import('./rank/SeasonResetHandler').then(({checkAndResetSeason}) => {
     checkAndResetSeason().catch((err: any) => {
       console.error('[Season] Error during season check:', err);
     });
   });
-});
 
+  // 赛季检查：启动时执行一次，之后每天执行一次。
+  runSeasonCheck();
+  setInterval(() => {
+    runSeasonCheck();
+  }, DAILY_SEASON_CHECK_INTERVAL_MS).unref();
+});

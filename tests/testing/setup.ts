@@ -3,10 +3,10 @@ import {IDatabase} from '../../src/server/database/IDatabase';
 import {SerializedGame} from '../../src/server/SerializedGame';
 import {GameLoader} from '../../src/server/database/GameLoader';
 import {globalInitialize} from '../../src/server/globalInitialize';
-import {UserRank} from '../../src/common/rank/RankManager';
 import {State} from '../../src/server/database/IGameLoader';
 import {LoadState} from '../../src/server/Game';
 import {IGame} from '../../src/server/IGame';
+import {Player} from '../../src/server/Player';
 
 const FAKE_DATABASE: IDatabase = {
   markFinished: () => Promise.resolve(),
@@ -22,20 +22,21 @@ const FAKE_DATABASE: IDatabase = {
   saveGameResults: () => {},
   saveGame: () => Promise.resolve(),
   purgeUnfinishedGames: () => Promise.resolve([]),
-  compressCompletedGames: () => Promise.resolve(),
   stats: () => Promise.resolve({}),
   cleanGame: () => Promise.resolve(),
   cleanGameAllSaves: () => {},
   cleanGameSave: () => {},
-  saveUser: () => {},
+  saveUser: () => Promise.resolve(),
   getUsers: () => {},
+  getUser: () => Promise.resolve(undefined),
+  getUserByName: () => Promise.resolve(undefined),
   refresh: () => {},
   storeParticipants: () => Promise.resolve(),
   getParticipants: () => Promise.resolve([]),
 
   // 天梯测试
   addUserRank: () => Promise.resolve(),
-  getUserRanks: () => Promise.resolve({} as UserRank[]),
+  getUserRanks: () => Promise.resolve([]),
   updateUserRank: () => Promise.resolve(),
   saveUserGameResult: () => {},
   updateUserProp: () => Promise.resolve(),
@@ -83,3 +84,9 @@ export function setTestGameLoader(gameLoader: GameLoader) {
 }
 GameLoader.getInstance = () => gameLoaderUnderTest;
 globalInitialize();
+
+const originalPlayerProcess = Player.prototype.process;
+Player.prototype.process = function(body: any) {
+  const requestBody = body !== undefined && typeof body === 'object' && 'input' in body ? body : {input: body};
+  return originalPlayerProcess.call(this, requestBody);
+};

@@ -1,18 +1,21 @@
 import {IGame, Score} from '../../src/server/IGame';
 import {GameOptions} from '../../src/server/game/GameOptions';
 import {SerializedGame} from '../../src/server/SerializedGame';
-import {GameIdLedger, IDatabase, IGameShortData} from '../../src/server/database/IDatabase';
-import {GameId, ParticipantId} from '../../src/common/Types';
+import {GameNotFoundError, IDatabase, IGameMetadata, UserNameExistsError} from '../../src/server/database/IDatabase';
+import {GameId} from '../../src/common/Types';
 
 import {UserRank} from '../../src/common/rank/RankManager';
 import {User} from '../../src/server/User';
 import {Session, SessionId} from '../../src/server/auth/Session';
 import {Clock} from '../../src/common/Timer';
+import {normalizeUserId} from '../../src/common/utils/normalizeUserId';
 
 export class InMemoryDatabase implements IDatabase {
   public games: Map<GameId, Array<SerializedGame | undefined>> = new Map();
   protected completedGames: Map<GameId, Date> = new Map();
   protected sessions: Map<SessionId, Session> = new Map();
+  protected users: Map<string, User> = new Map();
+  protected userRanks: Map<string, UserRank> = new Map();
   private clock: Clock;
 
   constructor(clock: Clock = new Clock()) {
@@ -25,30 +28,19 @@ export class InMemoryDatabase implements IDatabase {
   async getGame(gameId: GameId): Promise<SerializedGame> {
     const row = this.games.get(gameId);
     if (row === undefined || row.length === 0) {
-      throw new Error('not found');
+      throw new GameNotFoundError(gameId);
     } else {
       const game = row[row.length -1];
       return game!;
     }
-  }
-  async getGameId(id: ParticipantId): Promise<GameId> {
-    // Direct copy of LocalFilesystem. :D
-    const participants = await this.getParticipants();
-    for (const entry of participants) {
-      if (entry.participantIds.includes(id)) {
-        return entry.gameId;
-      }
-    }
-    throw new Error(`participant id ${id} not found`);
   }
   getSaveIds(gameId: GameId): Promise<number[]> {
     const row = this.games.get(gameId);
     if (row === undefined || row.length === 0) {
       return Promise.reject(new Error('not found'));
     } else {
-      const result: Array<number | undefined> =
-        row!.map((value, idx) => value !== undefined ? idx : undefined);
-      return Promise.resolve(result.filter((result) => result !== undefined) as Array<number>);
+      const result = row!.map((value, idx) => value !== undefined ? idx : undefined);
+      return Promise.resolve(result.filter((result) => result !== undefined));
     }
   }
   getGameVersion(gameId: GameId, saveId: number): Promise<SerializedGame> {
@@ -65,6 +57,42 @@ export class InMemoryDatabase implements IDatabase {
   getGameIds(): Promise<GameId[]> {
     return Promise.resolve(Array.from(this.games.keys()));
   }
+  async getGames(): Promise<Array<IGameMetadata>> {
+    return Array.from(this.games.entries()).map(([gameId, saves]) => {
+      let game: SerializedGame | undefined;
+      for (let idx = saves.length - 1; idx >= 0; idx--) {
+        if (saves[idx] !== undefined) {
+          game = saves[idx];
+          break;
+        }
+      }
+      return {
+        gameId,
+        participants: game === undefined ? [] : this.getParticipantIds(game),
+        userids: game === undefined ? [] : this.getUserIds(game),
+        shortData: game === undefined ? undefined : {
+          id: game.id,
+          phase: game.phase,
+          createtime: game.createtime,
+          updatetime: game.updatetime,
+          gameAge: game.gameAge,
+          lastSaveId: game.lastSaveId,
+          players: game.players,
+        },
+        updatedTime: game?.updatetime,
+      };
+    });
+  }
+  async getGameIdByParticipant(_participantId: string): Promise<GameId | undefined> {
+    return (await this.getGames())
+      .find((metadata) => metadata.participants.includes(_participantId))
+      ?.gameId;
+  }
+  async getGamesByUserId(userId: string, limit: number = 30): Promise<Array<IGameMetadata>> {
+    return (await this.getGames())
+      .filter((metadata) => metadata.userids.includes(normalizeUserId(userId)))
+      .slice(0, limit);
+  }
   async getPlayerCount(gameId: GameId): Promise<number> {
     const game = await this.getGame(gameId);
     return game.players.length;
@@ -79,6 +107,22 @@ export class InMemoryDatabase implements IDatabase {
     row[game.lastSaveId] = game.serialize();
     game.lastSaveId++;
     return Promise.resolve();
+  }
+  private getParticipantIds(game: SerializedGame): Array<string> {
+    const participantIds = new Set<string>(game.players.map((player) => player.id));
+    if (game.spectatorId !== undefined) {
+      participantIds.add(game.spectatorId);
+    }
+    return Array.from(participantIds);
+  }
+  private getUserIds(game: SerializedGame): Array<string> {
+    const userIds = new Set<string>();
+    for (const player of game.players) {
+      if (player.userId !== undefined && player.userId !== '') {
+        userIds.add(normalizeUserId(player.userId));
+      }
+    }
+    return Array.from(userIds);
   }
   saveGameResults(_gameId: GameId, _players: number, _generations: number, _gameOptions: GameOptions, _scores: Score[]): void {
     throw new Error('Method not implemented.');
@@ -100,46 +144,47 @@ export class InMemoryDatabase implements IDatabase {
     this.completedGames.set(gameId, new Date(this.clock.now()));
     return Promise.resolve();
   }
-  purgeUnfinishedGames(): Promise<Array<GameId>> {
-    const keys = [...this.games.keys()];
-    for (const key of keys) {
-      this.games.delete(key);
+  purgeUnfinishedGames(dayAgo?: string): Promise<Array<GameId>> {
+    if (dayAgo === undefined) {
+      return Promise.resolve([]);
     }
-    return Promise.resolve(keys);
-  }
-  compressCompletedGames(): Promise<unknown> {
-    return Promise.resolve();
+    const dayAgoTime = new Date(dayAgo.replace(' ', 'T')).getTime();
+    const gameIds: Array<GameId> = [];
+    for (const [gameId, saves] of this.games) {
+      const latest = saves.slice().reverse().find((save) => save !== undefined);
+      if (latest === undefined || this.completedGames.has(gameId)) {
+        continue;
+      }
+      if (new Date(latest.updatetime.replace(' ', 'T')).getTime() < dayAgoTime) {
+        gameIds.push(gameId);
+      }
+    }
+    for (const gameId of gameIds) {
+      this.games.delete(gameId);
+    }
+    return Promise.resolve(gameIds);
   }
   stats(): Promise<{[ key: string ]: string | number;}> {
     return Promise.resolve({
       type: 'InMemoryDatabase',
     });
   }
-  storeParticipants() {
-    return Promise.resolve();
+  async saveUser(id: string, name: string, password: string, prop: string): Promise<void> {
+    const normalizedName = name.trim().toLowerCase();
+    if (Array.from(this.users.values()).some((user) => user.name.trim().toLowerCase() === normalizedName)) {
+      throw new UserNameExistsError(name);
+    }
+    this.users.set(normalizeUserId(id), Object.assign(new User(name, password, id), JSON.parse(prop)));
   }
-  async getParticipants(): Promise<Array<GameIdLedger>> {
-    const entries: Array<GameIdLedger> = [];
-    this.games.forEach((games, gameId) => {
-      // Last save is always defined
-      const lastSave = games[games.length - 1]!;
-      const participantIds: Array<ParticipantId> = lastSave.players.map((p) => p.id);
-      if (lastSave.spectatorId) {
-        participantIds.push(lastSave.spectatorId);
-      }
-      entries.push({gameId, participantIds});
-    });
-    return entries;
+  getUsers(cb: (err: any, allUsers: User[]) => void): void {
+    cb(undefined, Array.from(this.users.values()));
   }
-
-  saveUser(_id: string, _name: string, _password: string, _prop: string): void {
-    throw new Error('Method not implemented.');
+  getUser(id: string): Promise<User | undefined> {
+    return Promise.resolve(this.users.get(normalizeUserId(id)));
   }
-  updateUser(_user: User): void {
-    throw new Error('Method not implemented.');
-  }
-  getUsers(_cb: (err: any, allUsers: User[]) => void): void {
-    throw new Error('Method not implemented.');
+  getUserByName(name: string): Promise<User | undefined> {
+    const normalizedName = name.trim().toLowerCase();
+    return Promise.resolve(Array.from(this.users.values()).find((user) => user.name.trim().toLowerCase() === normalizedName));
   }
   refresh(): void {
     throw new Error('Method not implemented.');
@@ -154,11 +199,18 @@ export class InMemoryDatabase implements IDatabase {
   cleanGameSave(_game_id: string, _save_id: number): void {
     throw new Error('Method not implemented.');
   }
-  addUserRank(_userRank:UserRank): void {
-    throw new Error('Method not implemented.');
+  addUserRank(userRank:UserRank): void {
+    this.userRanks.set(normalizeUserId(userRank.userId), userRank);
   }
-  getUserRanks(): Promise<Array<UserRank>> {
-    throw new Error('Method not implemented.');
+  getUserRank(userId: string): Promise<UserRank | undefined> {
+    return Promise.resolve(this.userRanks.get(normalizeUserId(userId)));
+  }
+  getUserRanks(limit?: number, _seasonId?: string): Promise<Array<UserRank>> {
+    const ranks = Array.from(this.userRanks.values()).map((userRank) => {
+      userRank.userName = this.users.get(normalizeUserId(userRank.userId))?.name ?? 'Unknown';
+      return userRank;
+    });
+    return Promise.resolve(limit === undefined || limit === 0 ? ranks : ranks.slice(0, limit));
   }
   updateUserRank(): Promise<void> {
     throw new Error('Method not implemented.');
@@ -176,9 +228,6 @@ export class InMemoryDatabase implements IDatabase {
       totalRankGames: 0, rankWins: 0,
     };
     return {allTime: emptyBlock, recent3Months: emptyBlock};
-  }
-  getGames(): Promise<Array<IGameShortData>> {
-    return Promise.resolve([]);
   }
   async restoreGame(_game_id: GameId, _save_id: number, _game: IGame, _playId: string): Promise<void> {
     return Promise.resolve();

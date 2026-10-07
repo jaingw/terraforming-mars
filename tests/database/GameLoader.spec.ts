@@ -1,300 +1,312 @@
 import {expect} from 'chai';
-import {Database} from '../../src/server/database/Database';
 import {Game} from '../../src/server/Game';
 import {GameLoader} from '../../src/server/database/GameLoader';
-import {Player} from '../../src/server/Player';
 import {SerializedGame} from '../../src/server/SerializedGame';
-import {IGameShortData} from '../../src/server/database/IDatabase';
-import {IDatabase} from '../../src/server/database/IDatabase';
 import {TestPlayer} from '../TestPlayer';
+import {GameId, PlayerId} from '../../src/common/Types';
+import {restoreTestDatabase, restoreTestGameLoader, setTestDatabase, setTestGameLoader} from '../testing/setup';
+import {sleep} from '../TestingUtils';
+import {InMemoryDatabase} from '../testing/InMemoryDatabase';
+import {State} from '../../src/server/database/IGameLoader';
+import {Phase} from '../../src/common/Phase';
+import {User} from '../../src/server/User';
 import {UserRank} from '../../src/common/rank/RankManager';
-import {IGame} from '../../src/server/IGame';
+import {rejects} from 'node:assert';
 
-describe('GameLoader', function() {
-  const expectedGameIds: Array<IGameShortData> = [{'gameId': 'galpha'}, {'gameId': 'gfoobar'}];
-  const expectedUserRank: Array<UserRank> = [new UserRank('1', 2, 25, 8), new UserRank('2', 5, 25, 8)];
-  const originalGenerateId = (Player as any).prototype.generateId;
-  const originalGetInstance = (Database as any).getInstance;
-  const player = TestPlayer.BLUE.newPlayer();
-  const player2 = TestPlayer.RED.newPlayer();
-  const game = Game.newInstance('gfoobar', [player, player2], player);
-  let playerIdIndex = 0;
+class TestDatabase extends InMemoryDatabase {
+  public failure: 'getGameIds' | undefined = undefined;
+  public getGameSleep = 0;
+  public getGameCalls = 0;
+  public getGameIdByParticipantCalls = 0;
+  public getUserCalls = 0;
+  public getUserByNameCalls = 0;
+  public getUserRankCalls = 0;
+  public failNextGetGame = false;
+  public failNextGetUser = false;
+  public failNextGetUserByName = false;
+  public failNextGetUserRank = false;
 
-  before(function() {
-    (Player as any).prototype.generateId = function() {
-      return 'bar-' + (playerIdIndex++);
-    };
-    const database: Partial<IDatabase> = {
-      getGame: function(gameId: string) : Promise<SerializedGame > {
-        if (gameId === 'gfoobar') {
-          return Promise.resolve(game.serialize());
-        } else {
-          return Promise.resolve( game.serialize());
-        }
-      },
-      getGames: function(): Promise<Array<IGameShortData>> {
-        return Promise.resolve(expectedGameIds);
-      },
-      saveGame: function(): Promise<void> {
-        return Promise.resolve();
-      },
-      getUsers: function(): Promise<void> {
-        return Promise.resolve();
-      },
-      initialize: function(): Promise<void> {
-        return Promise.resolve();
-      },
-      getUserRanks: function(): Promise<Array<UserRank>> {
-        return Promise.resolve(expectedUserRank);
-      },
-    };
-    (Database as any).getInstance = function() {
-      return database;
-    };
+  override async getGame(gameId: GameId): Promise<SerializedGame> {
+    this.getGameCalls++;
+    if (this.failNextGetGame) {
+      this.failNextGetGame = false;
+      throw new Error('transient getGame failure');
+    }
+    const game = await super.getGame(gameId);
+    await sleep(this.getGameSleep);
+    return game;
+  }
+
+  override getGameIds(): Promise<GameId[]> {
+    if (this.failure === 'getGameIds') {
+      return Promise.reject(new Error('error'));
+    }
+    return super.getGameIds();
+  }
+
+  override async getGameIdByParticipant(participantId: string): Promise<GameId | undefined> {
+    this.getGameIdByParticipantCalls++;
+    return super.getGameIdByParticipant(participantId);
+  }
+
+  override async getUser(userId: string): Promise<User | undefined> {
+    this.getUserCalls++;
+    if (this.failNextGetUser) {
+      this.failNextGetUser = false;
+      throw new Error('transient getUser failure');
+    }
+    return super.getUser(userId);
+  }
+
+  override async getUserByName(name: string): Promise<User | undefined> {
+    this.getUserByNameCalls++;
+    if (this.failNextGetUserByName) {
+      this.failNextGetUserByName = false;
+      throw new Error('transient getUserByName failure');
+    }
+    return super.getUserByName(name);
+  }
+
+  override async getUserRank(userId: string): Promise<UserRank | undefined> {
+    this.getUserRankCalls++;
+    if (this.failNextGetUserRank) {
+      this.failNextGetUserRank = false;
+      throw new Error('transient getUserRank failure');
+    }
+    return super.getUserRank(userId);
+  }
+}
+
+describe('GameLoader', () => {
+  let instance: GameLoader;
+  let database: TestDatabase;
+  let game: Game;
+
+  function newTestInstance(): GameLoader {
+    return Reflect.construct(GameLoader, []) as GameLoader;
+  }
+
+  function resetForTesting(loader: GameLoader): void {
+    const state = loader as any;
+    state.games.clear();
+    state.playerToGame.clear();
+    state.userIdMap.clear();
+    state.userNameMap.clear();
+    state.userRankMap.clear();
+    state.loadingGames.clear();
+    state.allGameIds = [];
+    state.state = State.READY;
+  }
+
+  beforeEach(() => {
+    instance = newTestInstance();
+    setTestGameLoader(instance);
+    database = new TestDatabase();
+    setTestDatabase(database);
+    const player = TestPlayer.BLUE.newPlayer();
+    const player2 = TestPlayer.RED.newPlayer();
+    game = Game.newInstance('gameid', [player, player2], player, 'spectatorid');
+    resetForTesting(instance);
   });
-  beforeEach(function() {
-    // (GameLoader.getInstance() as GameLoader).reset();
-  });
-  after(function() {
-    (Player as any).prototype.generateId = originalGenerateId;
-    (Database as any).getInstance = originalGetInstance;
+  afterEach(() => {
+    restoreTestDatabase();
+    restoreTestGameLoader();
   });
 
-  it('uses shared instance', function() {
-    expect(GameLoader.getInstance()).to.eq(GameLoader.getInstance());
+  it('uses shared instance', () => {
+    expect(instance).to.eq(GameLoader.getInstance());
   });
 
-  it('gets undefined when player does not exist', async function() {
-    const game = await GameLoader.getInstance().getByParticipantId('pfoobar');
+  it('gets undefined when player does not exist', async () => {
+    const game = await instance.getByPlayerId('player-doesnotexist' as PlayerId);
     expect(game).is.undefined;
   });
 
-  it('gets game when it exists in database', function(done) {
-    let actualGame1: IGame | undefined = undefined;
-    GameLoader.getInstance().getGameById('gfoobar', (game1) => {
-      actualGame1 = game1;
-      expect(actualGame1).is.undefined;
-      done();
-    });
+  it('gets game when it exists in memory', async () => {
+    instance.add(game);
+    const game1 = await instance.getGame('gameid');
+    expect(game1!.id).to.eq(game.id);
   });
 
-  it('gets no game when fails to deserialize from database', function() {
-    let actualGame1: IGame | undefined = game;
-    const originalLoadFromJSON = Game.prototype.loadFromJSON;
-    Game.prototype.loadFromJSON = function() {
-      throw new Error('could not parse this');
-    };
-    GameLoader.getInstance().getGameById('gfoobar', (game1) => {
-      actualGame1 = game1;
-    });
-    expect(actualGame1).is.undefined;
-    Game.prototype.loadFromJSON = originalLoadFromJSON;
+  it('loads game from database when it is not loaded in memory', async () => {
+    const game1 = await instance.getGame('gameid');
+    expect(game1?.id).eq(game.id);
+    expect(instance.games.size).eq(1);
   });
 
-  it('gets game when requested before database loaded', function(done) {
-    const workingGetGames = Database.getInstance().getGames;
-    Database.getInstance().getGames = () => Promise.resolve([{'gameId': 'gfoobar'}]);
-    // (GameLoader.getInstance() as GameLoader).reset();
-    GameLoader.getInstance().getGameById('gfoobar', (game1) => {
-      try {
-        expect(game1).is.undefined;
-        done();
-      } catch (error) {
-        done(error);
-      } finally {
-        Database.getInstance().getGames = workingGetGames;
-      }
-    });
-  });
-  // it('gets player when requested before database loaded', async function( ) {
-  //   const workingGetGames = Database.getInstance().getGames;
-  //   Database.getInstance().getGames = () => Promise.resolve([{'gameId': 'gfoobar'}]);
-  //   (GameLoader.getInstance() as GameLoader).reset();
-  //   const game1 = await GameLoader.getInstance().getByParticipantId(game.playersInGenerationOrder[0].id);
-  //   expect(game1).is.not.undefined;
-  //   Database.getInstance().getGames = workingGetGames;
-  // });
+  it('shares one game instance between concurrent database loads', async () => {
+    database.getGameSleep = 50;
 
-  // it('gets no game when game goes missing from database', function() {
-  //   const originalGetGame = Database.getInstance().getGame;
-  //   GameLoader.getInstance().getGameById('never', (game1) => {
-  //     expect(game1).is.undefined;
-  //   });
-  //   GameLoader.getInstance().getGameById('gfoobar', (game1) => {
-  //     expect(game1).is.not.undefined;
-  //   });
-  //   Database.getInstance().getGame = originalGetGame;
-  // });
+    const [game1, game2] = await Promise.all([
+      instance.getGame('gameid'),
+      instance.getGame('gameid'),
+    ]);
 
-  // it('loads games requested before database loaded', function() {
-  //   const originalGetGame = Database.getInstance().getGame;
-  //   GameLoader.getInstance().getGameById('never', (game1) => {
-  //     expect(game1).is.undefined;
-  //   });
-  //   GameLoader.getInstance().getGameById('gfoobar', (game1) => {
-  //     expect(game1).is.not.undefined;
-  //   });
-  //   Database.getInstance().getGame = originalGetGame;
-  // });
-
-  // it('gets player when it exists in database', function(done) {
-  //   const players = game.playersInGenerationOrder;
-  //   GameLoader.getInstance().getByParticipantId(players[Math.floor(Math.random() * players.length)].id, (game1) => {
-  //     try {
-  //       expect(game1!.id).to.eq(game.id);
-  //       done();
-  //     } catch (error) {
-  //       done(error);
-  //     }
-  //   });
-  // });
-
-  it('gets game when added and not in database', function() {
-    let actualGame1: IGame | undefined = undefined;
-    game.id = 'galpha';
-    GameLoader.getInstance().add(game);
-    GameLoader.getInstance().getGameById('galpha', (game1) => {
-      actualGame1 = game1;
-      expect(actualGame1).eq(game);
-      game.id = 'gfoobar';
-    });
+    expect(game1).eq(game2);
+    expect(game1).eq(instance.games.get(game.id));
+    expect(database.getGameCalls).eq(1);
   });
 
-
-  // it('loads values after error pulling game ids', function(done) {
-  //   const workingGetGames = Database.getInstance().getGames;
-  //   Database.getInstance().getGames = () => Promise.reject(new Error('error'));
-  //   (GameLoader.getInstance() as GameLoader).reset();
-  //   GameLoader.getInstance().getGameById('gfoobar', (game1) => {
-  //     try {
-  //       expect(game1).is.not.undefined;
-  //       done();
-  //     } catch (error) {
-  //       done(error);
-  //     } finally {
-  //       Database.getInstance().getGames = workingGetGames;
-  //     }
-  //   });
-  // });
-
-  // it('loads values when no game ids', function(done) {
-  //   const workingGetGames = Database.getInstance().getGames;
-  //   Database.getInstance().getGames = () => Promise.resolve([]);
-  //   (GameLoader.getInstance() as GameLoader).reset();
-  //   GameLoader.getInstance().getGameById('gfoobar', (game1) => {
-  //     try {
-  //       expect(game1).is.not.undefined;
-  //       done();
-  //     } catch (error) {
-  //       done(error);
-  //     } finally {
-  //       Database.getInstance().getGames = workingGetGames;
-  //     }
-  //   });
-  // });
-
-  it('loads players that will never exist', async function( ) {
-    const workingGetGames = Database.getInstance().getGames;
-    Database.getInstance().getGames = () => Promise.resolve([]);
-    (GameLoader.getInstance() as GameLoader).reset();
-    const game1 = await GameLoader.getInstance().getByParticipantId('pfoobar');
+  it('gets no game when requested before database loaded', async () => {
+    (instance as any).state = State.LOADING;
+    const game1 = await instance.getGame('gameid');
     expect(game1).is.undefined;
-    Database.getInstance().getGames = workingGetGames;
   });
 
-  it('User Rank should be update', async function( ) {
-    // const workingGetGames = Database.getInstance().getGames;
-    // const userRanks = Database.getInstance().getUserRanks();
-    // Database.getInstance().getGames = () => Promise.resolve([]);
-    // (GameLoader.getInstance() as GameLoader).addOrUpdateUserRank(new UserRank('1', 10, 20, 5));
-    // const userRank1 = await GameLoader.getInstance().('pfoobar');
-    // const workingGetGames = Database.getInstance().getGames;
-    const userId = '1';
-    Database.getInstance().getUserRanks = () => Promise.resolve([new UserRank('1', 2, 25, 8, 0), new UserRank('2', 5, 25, 8, 0)]);
-    // expect(GameLoader.getInstance().userRankMap.get(userId)?.rankValue).eq(2);
-    // (GameLoader.getInstance() as GameLoader).reset();
-    // expect(GameLoader.getInstance().userRankMap.get(userId)?.rankValue).eq(2);
-    (GameLoader.getInstance() as GameLoader).addOrUpdateUserRank(new UserRank('1', 10, 20, 5, 0));
-    expect(GameLoader.getInstance().userRankMap.get(userId)?.rankValue).eq(10);
+  it('gets no player when requested before database loaded', async () => {
+    (instance as any).state = State.LOADING;
+    const game1 = await instance.getByPlayerId(game.playersInGenerationOrder[0].id);
+    expect(game1).is.undefined;
   });
 
-  // it('loads players available later', function(done) {
-  //   const workingGetGames = Database.getInstance().getGames;
-  //   Database.getInstance().getGames = () => Promise.resolve([{'gameId': 'gfoobar'}]);
-  //   (GameLoader.getInstance() as GameLoader).reset();
-  //   GameLoader.getInstance().getGameById('gfoobar', (game1) => {
-  //     try {
-  //       expect(game1).is.not.undefined;
-  //       expect(game1!.id).to.eq('gfoobar');
-  //       GameLoader.getInstance().getByParticipantId(game.getPlayersInGenerationOrder()[0].id, (game1) => {
-  //         try {
-  //           expect(game1!.id).to.eq('gfoobar');
-  //           done();
-  //         } catch (error) {
-  //           done(error);
-  //         } finally {
-  //           Database.getInstance().getGames = workingGetGames;
-  //         }
-  //       });
-  //     } catch (error) {
-  //       done(error);
-  //     }
-  //   });
-  // });
+  it('caches misses when game is not in memory or database', async () => {
+    const game1 = await instance.getGame('game-never');
+    expect(game1).is.undefined;
+    const game2 = await instance.getGame('game-never');
+    expect(game2).is.undefined;
+    expect(database.getGameCalls).eq(1);
+  });
 
-  // it('restoreGameAt', async () => {
-  //   game.generation = 12;
-  //   game.save();
+  it('does not cache transient game load failures as misses', async () => {
+    database.failNextGetGame = true;
 
-  //   expect(game.lastSaveId).eq(1);
+    await rejects(instance.getGame('gameid'), /transient getGame failure/);
+    expect((await instance.getGame('gameid'))?.id).eq(game.id);
+    expect(database.getGameCalls).eq(2);
+  });
 
-  //   game.generation = 13;
-  //   game.save();
+  it('does not cache transient user lookup failures as misses', async () => {
+    const user = new User('test-user', 'password', 'u123456789012');
 
-  //   expect(game.lastSaveId).eq(2);
-  //   game.save();
+    database.failNextGetUser = true;
+    await rejects(instance.getUserById(user.id), /transient getUser failure/);
+    expect(await instance.getUserById(user.id)).eq(user);
+    expect(database.getUserCalls).eq(2);
 
-  //   game.generation = 14;
-  //   expect(game.lastSaveId).eq(3);
+    resetForTesting(instance);
+    database.failNextGetUserByName = true;
+    await rejects(instance.getUserByName(user.name), /transient getUserByName failure/);
+    expect(await instance.getUserByName(user.name)).eq(user);
+    expect(database.getUserByNameCalls).eq(2);
+  });
 
-  //   expect(await Database.getInstance().getSaveIds(game.id)).deep.eq([0, 1, 2, 3]);
+  it('does not cache transient user rank lookup failures as misses', async () => {
+    const userRank = new UserRank('u123456789012', 1, 25, 8.333);
+    database.addUserRank(userRank);
+    database.failNextGetUserRank = true;
 
-  //   await Database.getInstance().restoreGame(game.id, 2, game, '');
+    await rejects(instance.getUserRankById(userRank.userId), /transient getUserRank failure/);
+    expect(await instance.getUserRankById(userRank.userId)).eq(userRank);
+    expect(database.getUserRankCalls).eq(2);
+  });
 
-  //   expect(game.generation).eq(13);
-  // This may seem strange, but what's happening is that the save id is
-  // incremented at the end of save(). It loads #2, and increments.
-  //   expect(game.lastSaveId).eq(2);
-  //   expect(await Database.getInstance().getSaveIds(game.id)).deep.eq([0, 1, 2]);
-  // });
+  it('addOrUpdateUserRank with onlyIfCached refreshes cached entries but never adds new ones', () => {
+    const cached = new UserRank('u123456789012', 1, 25, 8.333);
+    instance.addOrUpdateUserRank(cached);
 
-  // it('saveGame', async () => {
-  //   game.generation = 12;
-  //   game.save();
+    // 已缓存：刷新为新值
+    instance.addOrUpdateUserRank(new UserRank(cached.userId, 9, 30, 6), true);
+    expect(instance.getCachedUserRanks()).to.have.length(1);
+    expect(instance.getCachedUserRanks()[0].rankValue).eq(9);
 
-  //   expect(game.lastSaveId).eq(2);
+    // 未缓存：不新增，缓存大小不变
+    instance.addOrUpdateUserRank(new UserRank('u987654321098', 2, 20, 7), true);
+    expect(instance.getCachedUserRanks()).to.have.length(1);
+    expect(instance.getCachedUserRanks().find((rank) => rank.userId === 'u987654321098')).is.undefined;
+  });
 
-  //   game.generation = 13;
-  //   game.save();
+  it('gets player when it exists in memory', async () => {
+    const players = game.playersInGenerationOrder;
+    instance.add(game);
+    const game1 = await instance.getByPlayerId(players[Math.floor(Math.random() * players.length)].id);
+    expect(game1!.id).to.eq(game.id);
+  });
 
-  //   expect(await Database.getInstance().getSaveIds(game.id)).deep.eq([0, 1, 2]);
-  // });
+  it('gets game when added and not in database', async () => {
+    // Violating the readonly nature for this test. It ensures that no game with the specific ID is not in the loader.
+    (game.id as GameId) = 'gameid-alpha';
+    instance.add(game);
+    const game1 = await instance.getGame('gameid-alpha');
+    expect(game1!.id).to.eq('gameid-alpha');
+  });
+
+  it('gets player when added and not in database', async () => {
+    const players = game.playersInGenerationOrder;
+    instance.add(game);
+    const game1 = await instance.getByPlayerId(players[Math.floor(Math.random() * players.length)]!.id);
+    expect(game1).is.not.undefined;
+    expect((await instance.getByPlayerId('p-blue-id'))?.id).to.eq('gameid');
+    expect((await instance.getByPlayerId('spectatorid'))?.id).to.eq('gameid');
+  });
+
+  it('gets no game when startup is waiting', async () => {
+    (instance as any).state = State.WAITING;
+    const game1 = await instance.getGame('gameid');
+    expect(game1).is.undefined;
+  });
+
+  it('loads values when matching game exists in database', async () => {
+    const game1 = await instance.getGame('gameid');
+    expect(game1?.id).eq('gameid');
+  });
+
+  it('loads players that will never exist', async () => {
+    const game1 = await instance.getByPlayerId('p-non-existent-id' as PlayerId);
+    expect(game1).is.undefined;
+  });
+
+  it('loads players available later', async () => {
+    instance.add(game);
+    const game1 = await instance.getGame('gameid');
+    expect(game1!.id).to.eq('gameid');
+    const game2 = await GameLoader.getInstance().getByPlayerId(game.playersInGenerationOrder[0].id);
+    expect(game2!.id).to.eq('gameid');
+  });
+
+  it('waits for games to finish loading', async () => {
+    (instance as any).state = State.LOADING;
+    const loaded = await instance.getGame('gameid');
+    expect(loaded).is.undefined;
+  });
+
+  it('evicts inactive games after 12 hours and reloads them on the next access', async () => {
+    instance.add(game);
+    game.phase = Phase.END;
+
+    instance.cleanupExpiredLoadedGames();
+    expect(instance.games.get(game.id)).eq(game);
+
+    (instance as any).lastAccessedAt.set(game.id, Date.now() - 12 * 60 * 60 * 1000);
+    instance.cleanupExpiredLoadedGames();
+    expect(instance.games.get(game.id)).is.undefined;
+
+    const reloaded = await instance.getGame(game.id);
+    expect(reloaded?.id).eq(game.id);
+    expect(database.getGameCalls).eq(1);
+  });
+
+  it('saveGame', async () => {
+    game.generation = 12;
+    instance.saveGame(game);
+
+    expect(game.lastSaveId).eq(2);
+
+    game.generation = 13;
+    instance.saveGame(game);
+
+    expect(await database.getSaveIds(game.id)).deep.eq([0, 1, 2]);
+  });
 
 
-  // it('saveGame, already deleted', async () => {
-  //   game.generation = 12;
-  //   game.save();
+  it('saveGame, already deleted', async () => {
+    game.generation = 12;
+    instance.saveGame(game);
 
-  //   expect(game.lastSaveId).eq(4);
+    expect(game.lastSaveId).eq(2);
 
-  //   game.generation = 13;
-  //   game.save();
+    game.generation = 13;
+    instance.saveGame(game);
 
-  //   Database.getInstance().markFinished(game.id);
-  //   Database.getInstance().compressCompletedGames();
-  // });
-
-  it('completeGame', () => {
-
+    database.markFinished(game.id);
   });
 });

@@ -1,51 +1,48 @@
 <template>
-    <div id="game-home" class="game-home-container">
-        <h1><a href="/" v-i18n>Terraforming Mars</a> [game id: <span>{{getGameId()}}</span>]</h1>
-      <h4 v-if="game.gameOptions.rankOption" class="text-yellow-600" v-i18n>This game is <a href="/ranks" class="text-yellow-400">Rank Mode</a>. If all players agree to quit, game will be abandoned. If you run out of time, you will lose the game. Good Luck!</h4>
-        <h4 v-i18n>Send players their links below. As game administrator pick your link to use.</h4>
-        <div v-if="game !== undefined" style="margin:0px 15px;">Game Age： {{game.gameAge}} ,Last Save Id : {{game.saveId}}
-          <span v-if="game.rollback == true">--&gt;
-            <span class="btn btn-lg btn-success"  v-on:click="gameback()" > ROLLBACK({{game.rollbackNum}})</span>
-            <span style="margin-left:10px" v-if="game.delete == true"><button class="btn btn-lg btn-success"  v-on:click="deleteGame()" > DELETE</button></span>
-          </span>
-        </div>
-        <ul>
-          <li v-for="(player, index) in (game === undefined ? [] : game.players)" :key="player.color">
-            <span class="turn-order">{{getTurnOrder(index)}}</span>
-            <span :class="'color-square ' + getPlayerCubeColorClass(player.color)">{{playerSymbol(player.color)}}</span>
-            <span class="player_name" :class="getPlayerCubeColorClass(player.color)"><a :href="'/player?id=' + player.id">{{player.name}}</a></span>
-            <AppButton title="copy" size="tiny" @click="copyUrl(player.id)"/>
-            <span v-if="isPlayerUrlCopied(player.id)" class="copied-notice"><span v-i18n>Copied!</span></span>
-          </li>
-        </ul>
+  <div id="game-home" class="game-home-container">
+    <h1><a href="/" v-i18n>Terraforming Mars</a> [game id: <span>{{getGameId()}}</span>]</h1>
+    <h4 v-if="game.gameOptions.rankOption" class="text-yellow-600" v-i18n>This game is <a href="/ranks" class="text-yellow-400">Rank Mode</a>. If all players agree to quit, game will be abandoned. If you run out of time, you will lose the game. Good Luck!</h4>
+    <h4 v-i18n>Send players their links below. As game administrator pick your link to use.</h4>
+    <div style="margin: 0 15px 12px;">
+      <QrCode/>
+    </div>
+    <div v-if="game !== undefined" style="margin:0px 15px;">Game Age： {{game.gameAge}} ,Last Save Id : {{game.saveId}}
+      <span v-if="game.rollback == true">--&gt;
+        <span class="btn btn-lg btn-success" v-on:click="gameback()">ROLLBACK({{game.rollbackNum}})</span>
+        <span style="margin-left:10px" v-if="game.delete == true"><button class="btn btn-lg btn-success" v-on:click="deleteGame()">DELETE</button></span>
+      </span>
+    </div>
+    <ul>
+      <li v-for="(player, index) in (game === undefined ? [] : game.players)" :key="player.color">
+        <span class="turn-order">{{getTurnOrder(index)}}</span>
+        <span :class="'color-square ' + getPlayerCubeColorClass(player.color)">{{playerSymbol(player.color)}}</span>
+        <span class="player_name" :class="getPlayerCubeColorClass(player.color)"><a :href="getHref(player.id)">{{player.name}}</a></span>
+        <AppButton title="copy" size="tiny" @click="copyUrl(player.id)"/>
+        <span v-if="isPlayerUrlCopied(player.id)" class="copied-notice"><span v-i18n>Copied!</span></span>
+      </li>
+    </ul>
 
-        <div class="spacing-setup"></div>
+    <div class="spacing-setup"></div>
 
-        <!-- <purge-warning :expectedPurgeTimeMs="game.expectedPurgeTimeMs"></purge-warning> -->
-
-        <div class="spacing-setup"></div>
-        <div v-if="game !== undefined">
-          <h1 v-i18n>Game settings</h1>
-          <game-setup-detail :gameOptions="game.gameOptions" :playerNumber="game.players.length" :lastSoloGeneration="game.lastSoloGeneration"  ></game-setup-detail>
-        </div>
-      </div>
-
-
+    <div class="spacing-setup"></div>
+    <div v-if="game !== undefined">
+      <h1 v-i18n>Game settings</h1>
+      <game-setup-detail :gameOptions="game.gameOptions" :playerNumber="game.players.length" :lastSoloGeneration="game.lastSoloGeneration"></game-setup-detail>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
-
-import Vue from 'vue';
+import {defineComponent} from 'vue';
 import {PreferencesManager} from '../utils/PreferencesManager';
 import {SimpleGameModel} from '@/common/models/SimpleGameModel';
 import AppButton from '@/client/components/common/AppButton.vue';
-// import PurgeWarning from '@/client/components/common/PurgeWarning.vue';
 import {playerColorClass} from '@/common/utils/utils';
 import GameSetupDetail from '@/client/components/GameSetupDetail.vue';
-import {QrCode} from './QrCode';
-import {ParticipantId} from '@/common/Types';
+import QrCode from './QrCode.vue';
 import {Color} from '@/common/Color';
 import {playerSymbol} from '@/client/utils/playerSymbol';
+import {setDocumentTitle} from '../utils/documentTitle';
 
 // taken from https://stackoverflow.com/a/46215202/83336
 // The solution to copying to the clipboard in this case is
@@ -64,18 +61,18 @@ function copyToClipboard(text: string): void {
 }
 const DEFAULT_COPIED_PLAYER_ID = '-1';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'game-home',
   props: {
     game: {
       type: Object as () => SimpleGameModel,
+      required: true,
     },
   },
   components: {
     AppButton,
     'game-setup-detail': GameSetupDetail,
-    'qrcode': QrCode,
-    // PurgeWarning,
+    QrCode,
   },
   data() {
     return {
@@ -107,18 +104,18 @@ export default Vue.extend({
     getPlayerCubeColorClass(color: Color): string {
       return playerColorClass(color, 'bg');
     },
-    getHref(playerId: ParticipantId): string {
-      if (playerId === this.game.spectatorId) {
-        return `spectator?id=${playerId}`;
-      }
+    getHref(playerId: string): string {
       return `player?id=${playerId}`;
     },
-    copyUrl(playerId: ParticipantId | undefined): void {
-      if (playerId === undefined) return;
+    copyUrl(playerId: string | undefined): void {
+      if (playerId === undefined) {
+        return;
+      }
       // Get current location path without game?id=xxxxxxx
       const path = window.location.href.replace(/game\?id=.*/, '');
       copyToClipboard(path + this.getHref(playerId));
       this.urlCopiedPlayerId = playerId;
+      setTimeout(this.setCopiedIdToDefault, 3000);
     },
     isPlayerUrlCopied(playerId: string): boolean {
       return playerId === this.urlCopiedPlayerId;
@@ -127,9 +124,8 @@ export default Vue.extend({
       return playerSymbol(color);
     },
   },
-
-
+  mounted() {
+    setDocumentTitle(this.game.name);
+  },
 });
-
 </script>
-

@@ -13,7 +13,7 @@ import {CardName} from '../../../src/common/cards/CardName';
 import {TurmoilUtil} from '../../../src/server/turmoil/TurmoilUtil';
 import {MonsInsurance} from '../../../src/server/cards/promo/MonsInsurance';
 import {OrOptions} from '../../../src/server/inputs/OrOptions';
-import {cast} from '../../TestingUtils';
+import {cast} from '@/common/utils/utils';
 import {toName} from '../../../src/common/utils/utils';
 import {CardType} from '../../../src/common/cards/CardType';
 
@@ -81,7 +81,7 @@ describe('PublicSponsoredGrant', () => {
   });
 
   it('compatible with Mons Insurance', () => {
-    player2.corporations.push(new MonsInsurance());
+    player2.playedCards.push(new MonsInsurance());
     // This isn't very clean but it's necessary for the test.
     game.monsInsuranceOwner = player2;
     player.megaCredits = 10;

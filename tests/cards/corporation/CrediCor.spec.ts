@@ -7,7 +7,7 @@ import {GreeneryStandardProject} from '../../../src/server/cards/base/standardPr
 import {CrediCor} from '../../../src/server/cards/corporation/CrediCor';
 import {testGame} from '../../TestGame';
 import {TestPlayer} from '../../TestPlayer';
-import {cast} from '../../TestingUtils';
+import {cast} from '@/common/utils/utils';
 
 describe('CrediCor', () => {
   let card: CrediCor;
@@ -20,7 +20,7 @@ describe('CrediCor', () => {
 
   it('Should play', () => {
     cast(card.play(player), undefined);
-    player.corporations.push(card);
+    player.playedCards.push(card);
     card.onStandardProject(player, new AsteroidStandardProject());
     card.onStandardProject(player, new CityStandardProject());
     card.onStandardProject(player, new GreeneryStandardProject());
@@ -28,7 +28,7 @@ describe('CrediCor', () => {
   });
 
   it('Runs onCardPlayed', () => {
-    player.corporations.push(card);
+    player.playedCards.push(card);
     expect(player.megaCredits).to.eq(0);
     player.playCard(new GiantIceAsteroid());
     expect(player.megaCredits).to.eq(4);

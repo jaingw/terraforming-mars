@@ -19,7 +19,7 @@ export class _EcoLine_ extends EcoLine {
     return 38;
   }
 
-  public onCardPlayedForCorps(player: IPlayer, card: ICard) {
+  public onCardPlayed(player: IPlayer, card: ICard) {
     if (player.playedCards.has(this.name)) {
       for (const tag of card.tags) {
         if (tag === Tag.PLANT) {
@@ -49,5 +49,3 @@ export class _EcoLine_ extends EcoLine {
     };
   }
 }
-
-

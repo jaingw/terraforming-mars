@@ -11,7 +11,7 @@ import {SelectAmount} from '../../inputs/SelectAmount';
 
 import {CardRenderer} from '../render/CardRenderer';
 import {all} from '../Options';
-import {GainResources} from '../../deferredActions/GainResources';
+import {GainResourcesDeferred} from '../../deferredActions/GainResourcesDeferred';
 import {Priority} from '../../deferredActions/Priority';
 import {IActionCard} from '../ICard';
 
@@ -103,8 +103,9 @@ export class EnergyStation extends Card implements IActionCard, IProjectCard {
     }
     const owner = player.game.energyStationOwner;
 
-    console.log('aaa');
-    if (!owner) return;
+    if (!owner) {
+      return;
+    }
     if (resource === Resource.PLANTS && amount < 0) {
       // player.game.someoneHasRemovedOtherPlayersPlants = true;
       // FIMXE: 有个 api
@@ -113,9 +114,9 @@ export class EnergyStation extends Card implements IActionCard, IProjectCard {
       const heatAmount = Math.abs(amount);
 
       player.game.defer(
-        new GainResources(owner, Resource.HEAT, {count: heatAmount}).andThen(() => from.game.log(
+        new GainResourcesDeferred(owner, Resource.HEAT, {count: heatAmount}).andThen(() => from.game.log(
           '${0} gained ${1} ${2} from ${3}',
-          (b) => b.player(owner).number(heatAmount).string(Resource.HEAT).cardName(this.name as CardName))),
+          (b) => b.player(owner).number(heatAmount).string(Resource.HEAT).cardName(CardName.ENERGY_STATION))),
         player.id !== from.id ? Priority.OPPONENT_TRIGGER : undefined);
     }
   }

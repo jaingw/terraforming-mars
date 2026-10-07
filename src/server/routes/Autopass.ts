@@ -5,7 +5,6 @@ import {Context} from './IHandler';
 import {isPlayerId} from '../../common/Types';
 import {Request} from '../Request';
 import {Response} from '../Response';
-import {GameLoader} from '../database/GameLoader';
 
 /**
  * Toggle the player's autopass setting.
@@ -30,7 +29,7 @@ export class Autopass extends Handler {
     const autopass = ctx.url.searchParams.get('autopass') === 'true';
 
     // This is the exact same code as in `ApiPlayer`. I bet it's not the only place.
-    const game = await GameLoader.getInstance().getByPlayerId(playerId);
+    const game = await ctx.gameLoader.getByPlayerId(playerId);
     if (game === undefined) {
       responses.notFound(req, res, 'cannot find game for that player');
       return;

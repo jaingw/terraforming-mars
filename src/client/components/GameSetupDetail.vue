@@ -8,26 +8,30 @@
       </li>
       <li v-if="gameOptions.rankTimeLimit && gameOptions.rankOption" class="setup-row">
         <div class="setup-item" v-i18n>Rank Mode Time Limit:</div>
-        <div class="setup-badge setup-badge--ranked">{{gameOptions.rankTimeLimit + $t(' + every generation ') + gameOptions.rankTimePerGeneration + $t(' Min per Player')}}</div>
+        <div class="setup-badge setup-badge--ranked">
+          {{ gameOptions.rankTimeLimit + $t(' + every generation ') + gameOptions.rankTimePerGeneration + $t(' Min per Player') }}
+        </div>
       </li>
       <li class="setup-row">
         <div class="setup-item" v-i18n>Expansion:</div>
         <div class="setup-expansions">
-          <div v-if="gameOptions.expansions.venus" class="create-game-expansion-icon expansion-icon-venus"></div>
-          <div v-if="gameOptions.expansions.prelude" class="create-game-expansion-icon expansion-icon-prelude"></div>
-          <div v-if="gameOptions.expansions.prelude2" class="create-game-expansion-icon expansion-icon-prelude2"></div>
-          <div v-if="gameOptions.expansions.colonies" class="create-game-expansion-icon expansion-icon-colony"></div>
-          <div v-if="gameOptions.expansions.turmoil" class="create-game-expansion-icon expansion-icon-turmoil"></div>
-          <div v-if="gameOptions.expansions.promo" class="create-game-expansion-icon expansion-icon-promo"></div>
-          <div v-if="gameOptions.expansions.ares" class="create-game-expansion-icon expansion-icon-ares"></div>
-          <div v-if="gameOptions.expansions.moon" class="create-game-expansion-icon expansion-icon-themoon"></div>
-          <div v-if="gameOptions.expansions.pathfinders" class="create-game-expansion-icon expansion-icon-pathfinders"></div>
-          <div v-if="gameOptions.expansions.community" class="create-game-expansion-icon expansion-icon-community"></div>
+          <a v-if="gameOptions.expansions.venus" :href="rulebookUrls.venus" class="tooltip" data-tooltip="Venus Next rulebook" target="_blank"><div class="create-game-expansion-icon expansion-icon-venus"></div></a>
+          <a v-if="gameOptions.expansions.prelude" :href="rulebookUrls.prelude" class="tooltip" data-tooltip="Prelude rulebook" target="_blank"><div class="create-game-expansion-icon expansion-icon-prelude"></div></a>
+          <a v-if="gameOptions.expansions.prelude2" :href="rulebookUrls.prelude2" class="tooltip" data-tooltip="Prelude 2 rules" target="_blank"><div class="create-game-expansion-icon expansion-icon-prelude2"></div></a>
+          <a v-if="gameOptions.expansions.colonies" :href="rulebookUrls.colonies" class="tooltip" data-tooltip="Colonies rulebook" target="_blank"><div class="create-game-expansion-icon expansion-icon-colony"></div></a>
+          <a v-if="gameOptions.expansions.turmoil" :href="rulebookUrls.turmoil" class="tooltip" data-tooltip="Turmoil rulebook" target="_blank"><div class="create-game-expansion-icon expansion-icon-turmoil"></div></a>
+          <a v-if="gameOptions.expansions.promo" :href="rulebookUrls.promo" class="tooltip" data-tooltip="Promo cards rules" target="_blank"><div class="create-game-expansion-icon expansion-icon-promo"></div></a>
+          <a v-if="gameOptions.expansions.ares" :href="rulebookUrls.ares" class="tooltip" data-tooltip="Ares rules" target="_blank"><div class="create-game-expansion-icon expansion-icon-ares"></div></a>
+          <a v-if="gameOptions.expansions.moon" :href="rulebookUrls.moon" class="tooltip" data-tooltip="The Moon rules" target="_blank"><div class="create-game-expansion-icon expansion-icon-themoon"></div></a>
+          <a v-if="gameOptions.expansions.pathfinders" :href="rulebookUrls.pathfinders" class="tooltip" data-tooltip="Pathfinders rules" target="_blank"><div class="create-game-expansion-icon expansion-icon-pathfinders"></div></a>
+          <a v-if="gameOptions.expansions.community" :href="rulebookUrls.community" class="tooltip" data-tooltip="Community rules" target="_blank"><div class="create-game-expansion-icon expansion-icon-community"></div></a>
           <div v-if="gameOptions.expansions.eros" class="create-game-expansion-icon expansion-icon-eros"></div>
           <div v-if="gameOptions.expansions.commission" class="create-game-expansion-icon expansion-icon-commission"></div>
           <div v-if="isPoliticalAgendasOn" class="create-game-expansion-icon expansion-icon-agendas"></div>
-          <div v-if="gameOptions.expansions.ceo" class="create-game-expansion-icon expansion-icon-ceo"></div>
-          <div v-if="gameOptions.expansions.underworld" class="create-game-expansion-icon expansion-icon-underworld"></div>
+          <a v-if="gameOptions.expansions.ceo" :href="rulebookUrls.ceo" class="tooltip" data-tooltip="CEOs rules" target="_blank"><div class="create-game-expansion-icon expansion-icon-ceo"></div></a>
+          <a v-if="gameOptions.expansions.underworld" :href="rulebookUrls.underworld" class="tooltip" data-tooltip="Underworld rules" target="_blank"><div class="create-game-expansion-icon expansion-icon-underworld"></div></a>
+          <a v-if="gameOptions.expansions.starwars" :href="rulebookUrls.starwars" class="tooltip" data-tooltip="Star Wars rules" target="_blank"><div class="create-game-expansion-icon expansion-icon-starwars"></div></a>
+          <a v-if="gameOptions.expansions.deltaProject" :href="rulebookUrls.deltaProject" class="tooltip" :data-tooltip="$t('Delta Project rules')" target="_blank"><div class="create-game-expansion-icon expansion-icon-deltaProject"></div></a>
         </div>
       </li>
       <li class="setup-row">
@@ -60,9 +64,9 @@
         <div v-if="gameOptions.preludeDraftVariant" class="setup-badge setup-badge--accent" v-i18n>Prelude</div>
       </li>
 
-      <li v-if="gameOptions.escapeVelocityMode" class="setup-row">
+      <li v-if="isEscapeVelocityOn" class="setup-row">
         <div class="create-game-expansion-icon expansion-icon-escape-velocity"></div>
-        <span class="setup-row-text">{{escapeVelocityDescription}}</span>
+        <span class="setup-row-text">{{ escapeVelocityDescription }}</span>
       </li>
 
       <li v-if="gameOptions.expansions.turmoil && gameOptions.removeNegativeGlobalEventsOption" class="setup-row">
@@ -87,6 +91,7 @@
         <div v-if="gameOptionsAny.breakthrough" class="setup-badge setup-badge--neutral" v-i18n>BreakThrough</div>
         <div v-if="gameOptions.doubleCorp" class="setup-badge setup-badge--neutral" v-i18n>Double Corp</div>
       </li>
+
       <li v-if="customCorporationsList.length > 0" class="setup-row setup-row--block">
         <button class="setup-toggle-btn" @click="showCustomCorporationsList = !showCustomCorporationsList">
           {{ showCustomCorporationsList ? '-' : '+' }} {{ $t('Custom corporations') }} ({{ customCorporationsList.length }})
@@ -124,37 +129,41 @@
 </template>
 
 <script lang="ts">
-
-import Vue from 'vue';
+import {defineComponent} from 'vue';
+import {GameOptionsModel} from '@/common/models/GameOptionsModel';
 import {BoardName} from '@/common/boards/BoardName';
 import {RandomMAOptionType} from '@/common/ma/RandomMAOptionType';
 import {translateTextWithParams} from '@/client/directives/i18n';
-import {GameOptionsModel} from '../../common/models/GameOptionsModel';
+import {RULEBOOK_URLS} from '@/client/utils/WikiLinks';
 
 const boardColorClass: Record<BoardName, string> = {
   [BoardName.THARSIS]: 'game-config board-tharsis map',
   [BoardName.HELLAS]: 'game-config board-hellas map',
   [BoardName.ELYSIUM]: 'game-config board-elysium map',
   [BoardName.UTOPIA_PLANITIA]: 'game-config board-utopia-planitia map',
-  [BoardName.VASTITAS_BOREALIS_NOVUS]: 'game-config board-vastitas_borealis_novus map',
-  [BoardName.TERRA_CIMMERIA_NOVUS]: 'game-config board-terra_cimmeria_novus map',
+  [BoardName.VASTITAS_BOREALIS_NOVA]: 'game-config board-vastitas_borealis_nova map',
+  [BoardName.TERRA_CIMMERIA_NOVA]: 'game-config board-terra_cimmeria_nova map',
   [BoardName.AMAZONIS]: 'game-config board-amazonis map',
   [BoardName.ARABIA_TERRA]: 'game-config board-arabia_terra map',
   [BoardName.VASTITAS_BOREALIS]: 'game-config board-vastitas_borealis map',
   [BoardName.TERRA_CIMMERIA]: 'game-config board-terra_cimmeria map',
+  [BoardName.HOLLANDIA]: 'game-config board-hollandia map',
 };
 
-export default Vue.extend({
+export default defineComponent({
   name: 'game-setup-detail',
   props: {
     playerNumber: {
       type: Number,
+      required: true,
     },
     gameOptions: {
       type: Object as () => GameOptionsModel,
+      required: true,
     },
     lastSoloGeneration: {
       type: Number,
+      required: true,
     },
   },
   data() {
@@ -167,6 +176,9 @@ export default Vue.extend({
   computed: {
     gameOptionsAny(): any {
       return this.gameOptions as any;
+    },
+    rulebookUrls(): typeof RULEBOOK_URLS {
+      return RULEBOOK_URLS;
     },
     customCorporationsList(): Array<string> {
       return this.gameOptionsAny.customCorporationsList || [];
@@ -181,25 +193,33 @@ export default Vue.extend({
       return this.lastSoloGeneration ?? 14;
     },
     isPoliticalAgendasOn(): boolean {
-      return (this.gameOptions.politicalAgendasExtension !== 'Standard');
+      return this.gameOptions.politicalAgendasExtension !== 'Standard';
     },
     boardColorClass(): string {
       return boardColorClass[this.gameOptions.boardName];
     },
+    isEscapeVelocityOn(): boolean {
+      return this.gameOptions.escapeVelocity !== undefined;
+    },
     escapeVelocityDescription(): string {
-      const {escapeVelocityThreshold, escapeVelocityPenalty, escapeVelocityPeriod, escapeVelocityBonusSeconds} = this.gameOptions ?? {};
-
-      if (escapeVelocityThreshold === undefined || escapeVelocityPenalty === undefined || escapeVelocityPeriod === undefined || escapeVelocityBonusSeconds === undefined) {
+      const ev = this.gameOptions.escapeVelocity;
+      if (ev === undefined) {
         return '';
       }
-      return translateTextWithParams('After ${0} min, reduce ${1} VP every ${2} min. (${3} bonus sec. per action.)', [escapeVelocityThreshold.toString(), escapeVelocityPenalty.toString(), escapeVelocityPeriod.toString(), escapeVelocityBonusSeconds.toString()]);
+      return translateTextWithParams(
+        'After ${0} min, reduce ${1} VP every ${2} min. (${3} bonus sec. per action.)',
+        [
+          ev.thresholdMinutes.toString(),
+          ev.penaltyVPPerPeriod.toString(),
+          ev.penaltyPeriodMinutes.toString(),
+          ev.bonusSectionsPerAction.toString(),
+        ]);
     },
     RandomMAOptionType(): typeof RandomMAOptionType {
       return RandomMAOptionType;
     },
   },
 });
-
 </script>
 
 <style scoped>
@@ -323,7 +343,6 @@ export default Vue.extend({
   line-height: 1.2;
 }
 
-/* ============ Mobile ============ */
 @media (max-width: 640px) {
   .game-setup-detail-container {
     padding: 8px 10px;

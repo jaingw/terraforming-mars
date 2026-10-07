@@ -10,7 +10,10 @@ import {twoWayDifference} from '../utils/utils';
 import {AresGlobalParametersResponse} from './AresGlobalParametersResponse';
 import {Payment} from './Payment';
 
-function matches(response: any, fields: Array<string>) {
+function matches(response: unknown, fields: Array<string>): response is Record<string, unknown> {
+  if (typeof response !== 'object' || response === null) {
+    return false;
+  }
   return twoWayDifference(Object.keys(response), fields).length === 0;
 }
 export interface SelectOptionResponse {
@@ -92,7 +95,7 @@ export interface SelectPartyResponse {
 }
 
 export function isSelectPartyResponse(response: InputResponse): response is SelectPartyResponse {
-  return response.type === 'party' && matches(response, ['type', 'partyName']);
+  return matches(response, ['type', 'partyName']) && response.type === 'party';
 }
 
 export interface SelectDelegateResponse {
@@ -191,11 +194,30 @@ export function isSelectResourcesResponse(response: InputResponse): response is 
   return response.type === 'resources' && matches(response, ['type', 'units']);
 }
 
+export interface SelectClaimedUndergroundTokenResponse {
+  type: 'claimedUndergroundToken',
+  selected: Array<number>;
+}
+
+export function isSelectClaimedUndergroundTokenResponse(response: InputResponse): response is SelectClaimedUndergroundTokenResponse {
+  return response.type === 'claimedUndergroundToken' && matches(response, ['type', 'selected']);
+}
+
+export interface DeltaProjectInputResponse {
+  type: 'deltaProject',
+  amount: number;
+}
+
+export function isDeltaProjectInputResponse(response: InputResponse): response is DeltaProjectInputResponse {
+  return response.type === 'deltaProject' && matches(response, ['type', 'amount']);
+}
+
 export type InputResponse =
   AndOptionsResponse |
   OrOptionsResponse |
   SelectInitialCardsResponse |
   SelectAmountResponse |
+  DeltaProjectInputResponse |
   SelectCardResponse |
   SelectColonyResponse |
   SelectDelegateResponse |
@@ -210,4 +232,11 @@ export type InputResponse =
   SelectGlobalEventResponse |
   SelectPolicyResponse |
   SelectResourceResponse |
-  SelectResourcesResponse;
+  SelectResourcesResponse |
+  SelectClaimedUndergroundTokenResponse;
+
+  
+export type RequestBody = {
+  id:string,
+  input: InputResponse
+}

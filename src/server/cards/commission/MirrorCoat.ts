@@ -45,7 +45,9 @@ export class MirrorCoat extends CorporationCard implements ICard {
   }
 
   public canAct(player: IPlayer): boolean {
-    if (this.data.isUsed !== true && player.playedCards.has(CardName.MIRRORCOAT) && this.getPlayableBuildingCards(player).length > 0) return true;
+    if (this.data.isUsed !== true && player.playedCards.has(CardName.MIRRORCOAT) && this.getPlayableBuildingCards(player).length > 0) {
+      return true;
+    }
     return false;
   }
 

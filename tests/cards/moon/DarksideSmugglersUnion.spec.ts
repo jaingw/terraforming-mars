@@ -8,7 +8,7 @@ import {SelectColony} from '../../../src/server/inputs/SelectColony';
 import {TestPlayer} from '../../TestPlayer';
 import {AndOptions} from '../../../src/server/inputs/AndOptions';
 import {testGame} from '../../TestGame';
-import {cast} from '../../TestingUtils';
+import {cast} from '@/common/utils/utils';
 import {Message} from '../../../src/common/logs/Message';
 
 describe('DarksideSmugglersUnion', () => {
@@ -37,7 +37,7 @@ describe('DarksideSmugglersUnion', () => {
   it('Cannot act without trade fleets', () => {
     player.playedCards.push(card);
     expect(card.canAct(player)).is.true;
-    player.colonies.tradesThisGeneration = player.colonies.getFleetSize();
+    player.colonies.usedTradeFleets = player.colonies.getFleetSize();
     expect(card.canAct(player)).is.false;
   });
 

@@ -83,7 +83,7 @@ export const COMMISSION_CARD_MANIFEST = new ModuleManifest({
     [CardName.LAND_HARVEST]: {Factory: LandHarvest, compatibility: 'ares'}, // XB57
     [CardName.RESEARCH_ACCELERATOR]: {Factory: ResearchAccelerator}, // XB58
     [CardName.CONSTRUCTION_AID]: {Factory: ConstructionAid}, // XB59
-    [CardName.POLAR_ANIMALS]: {Factory: PolarAnimals}, // XB60
+    [CardName.POLAR_ANIMALS]: {Factory: PolarAnimals, compatibility: 'ares'}, // XB60
     [CardName.OMNIVORE]: {Factory: Omnivore}, // XB61
     [CardName.MOLTEN_RESERVE]: {Factory: MoltenReserve}, // XB62
     [CardName.LOST_BOUNTY]: {Factory: LostBounty}, // XB63

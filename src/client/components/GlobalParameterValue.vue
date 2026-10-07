@@ -1,20 +1,20 @@
 <template>
-<div :title="$t(title)">
-  <div :class="iconClass"></div>
-  <div class="global_params_value">
-    <div v-if="isMax">
-      <img src="assets/misc/checkmark.png" class="checkmark" :alt="$t('Completed!')">
-    </div>
-    <div v-else>
-      {{value}}{{suffix}}
+  <div :title="$t(title)">
+    <div :class="iconClass"></div>
+    <div class="global_params_value">
+      <div v-if="isMax">
+        <img src="assets/misc/checkmark.png" class="checkmark" :alt="$t('Completed!')">
+      </div>
+      <div v-else>
+        {{value}}{{suffix}}
+      </div>
     </div>
   </div>
-</div>
 </template>
 
 <script lang="ts">
 
-import Vue from 'vue';
+import {defineComponent} from 'vue';
 import {MAX_OCEAN_TILES, MAX_OXYGEN_LEVEL, MAX_TEMPERATURE, MAX_VENUS_SCALE} from '@/common/constants';
 import {GlobalParameter} from '@/common/GlobalParameter';
 
@@ -32,14 +32,16 @@ const attributes: Record<BaseGlobalParameter, {max: number, title: string, iconC
   [GlobalParameter.VENUS]: {max: MAX_VENUS_SCALE, title: 'Venus Scale', iconClass: 'venus-tile'},
 };
 
-export default Vue.extend({
+export default defineComponent({
   name: 'global-parameter-value',
   props: {
     param: {
       type: String as () => BaseGlobalParameter,
+      required: true,
     },
     value: {
       type: Number,
+      required: true,
     },
   },
   computed: {

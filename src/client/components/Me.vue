@@ -225,9 +225,8 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import {Phase} from '@/common/Phase';
-import {getPreferences} from '@/client/utils/PreferencesManager';
 import ConfirmDialog from '@/client/components/common/ConfirmDialog.vue';
 import RankBadge from '@/client/components/common/RankBadge.vue';
 import UserGameStats from '@/client/components/common/UserGameStats.vue';
@@ -237,7 +236,7 @@ import {showError} from '@/client/utils/showAlert';
 import {userService} from '@/client/services';
 import {userStore, preferencesStore} from '@/client/stores';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'MePage',
   components: {
     'confirm-dialog': ConfirmDialog,
@@ -311,7 +310,9 @@ export default Vue.extend({
       return points.toLocaleString('en-US');
     },
     formattedJoinDate(): string {
-      if (!this.createtime) return '';
+      if (!this.createtime) {
+        return '';
+      }
       const date = new Date(this.createtime);
       const lang = navigator.language || 'en-US';
       return date.toLocaleDateString(lang, {year: 'numeric', month: 'long', day: 'numeric'});
@@ -321,12 +322,14 @@ export default Vue.extend({
     this.userId = userStore.userId;
     this.userName = userStore.userName;
     this.enable_sounds = preferencesStore.get('enable_sounds');
-    if (this.userId.length > 0) {
-      this.getGames();
-      this.getUserRank();
-      this.getUserStats();
-      this.getProfile();
+    if (this.userId.length === 0) {
+      window.location.replace('/login');
+      return;
     }
+    this.getGames();
+    this.getUserRank();
+    this.getUserStats();
+    this.getProfile();
   },
   methods: {
     getTier() {
@@ -348,7 +351,9 @@ export default Vue.extend({
         });
     },
     getUserRank() {
-      if (this.userId === '') return;
+      if (this.userId === '') {
+        return;
+      }
       userService.getUserRankInstance(this.userId)
         .then((userRank) => {
           this.userRank = userRank;
@@ -387,14 +392,18 @@ export default Vue.extend({
     },
     confimUpdate() {
       const userId = userStore.userId;
-      if (userId === undefined || userId === '') return;
+      if (userId === undefined || userId === '') {
+        return;
+      }
       userService.updateShowHandCards(userId, this.showhandcards)
         .catch((error: any) => {
           showError(error);
         });
     },
     getUserStats() {
-      if (!this.userId) return;
+      if (!this.userId) {
+        return;
+      }
       this.statsLoading = true;
       userService.getUserProfile(this.userId)
         .then((data) => {
@@ -411,7 +420,9 @@ export default Vue.extend({
     },
     activateRank() {
       const userId = userStore.userId;
-      if (userId === undefined || userId === '') return;
+      if (userId === undefined || userId === '') {
+        return;
+      }
       userService.activateRankInstance(userId)
         .then((userRank) => {
           this.userRank = userRank;
@@ -421,7 +432,9 @@ export default Vue.extend({
         });
     },
     getProfile() {
-      if (!this.userId) return;
+      if (!this.userId) {
+        return;
+      }
       userService.getUserProfile(this.userId)
         .then((data) => {
           if (data) {

@@ -22,6 +22,11 @@ import {Warning} from '../src/common/cards/Warning';
 import {TurmoilUtil} from '../src/server/turmoil/TurmoilUtil';
 import {testGame as testGameProxy} from './TestGame';
 import {LogMessage} from '../src/common/logs/LogMessage';
+import {SerializedGame} from '../src/server/SerializedGame';
+import {Game} from '../src/server/Game';
+import {Player} from '../src/server/Player';
+import {cast} from '@/common/utils/utils';
+export {cast} from '@/common/utils/utils';
 
 /**
  * Creates a new game for testing. Has some hidden behavior for testing:
@@ -36,6 +41,17 @@ import {LogMessage} from '../src/common/logs/LogMessage';
  * Test game has a return type with a spread array operator.
  */
 export const testGame = testGameProxy;
+
+export function loadGameFromJSON(serialized: SerializedGame): Game {
+  const players = serialized.players.map((element) => Player.deserialize(element));
+  const firstId = typeof serialized.first === 'string' ? serialized.first : serialized.first.id;
+  const firstPlayer = players.find((player) => player.id === firstId);
+  if (firstPlayer === undefined) {
+    throw new Error(`Player ${firstId} not found when rebuilding First Player`);
+  }
+  const seed = serialized.seed ?? 0;
+  return Game.rebuild(serialized.id, players, firstPlayer, serialized.gameOptions, seed).loadFromJSON(serialized);
+}
 
 // Returns the oceans created during this operation which may not reflect all oceans.
 export function maxOutOceans(player: IPlayer, toValue: number = constants.MAX_OCEAN_TILES): Array<Space> {
@@ -115,7 +131,7 @@ export function forceGenerationEnd(game: IGame, keepwaitng:boolean = false ) {
     testplayer.popWaitingFor.call(player);
   }
   game.playerIsFinishedTakingActions();
-  if (!keepwaitng) {
+  if (!keepwaitng && !(game.phase === Phase.PRODUCTION && game.gameIsOver())) {
     for (const player of game.players) {
       testplayer.popWaitingFor.call(player);
     }
@@ -210,31 +226,6 @@ export function fakeCard(attrs: Partial<IProjectCard> = {}): IProjectCard {
     card.name = 'Fake Card ' + FakeCard.idx++ as CardName;
   }
   return card;
-}
-
-type ConstructorOf<T> = new (...args: any[]) => T;
-
-/**
- * Confirms `obj` is defined and of type `klass`, otherwise it throws an Error.
- *
- * Accepts `undefined` as class and fails when obj is not undefined.
- */
-export function cast<T>(obj: any, klass: ConstructorOf<T>): T;
-export function cast<T>(obj: any, klass: undefined): undefined;
-export function cast<T>(obj: any, klass: ConstructorOf<T> | undefined): T | undefined {
-  if (klass === undefined) {
-    if (obj !== undefined) {
-      throw new Error(`Expected undefined, got type ${obj.constructor.name}`);
-    }
-    return undefined;
-  }
-  if (obj === undefined ) {
-    return undefined;
-  }
-  if (!(obj instanceof klass)) {
-    throw new Error(`Not an instance of ${klass.name}: ${obj?.constructor?.name}`);
-  }
-  return obj;
 }
 
 export async function sleep(ms: number): Promise<void> {

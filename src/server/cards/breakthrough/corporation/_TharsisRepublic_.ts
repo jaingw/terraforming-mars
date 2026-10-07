@@ -3,7 +3,7 @@ import {Space} from '../../../boards/Space';
 import {CardRenderer} from '../../render/CardRenderer';
 import {Board} from '../../../boards/Board';
 import {GainProduction} from '../../../deferredActions/GainProduction';
-import {GainResources} from '../../../deferredActions/GainResources';
+import {GainResourcesDeferred} from '../../../deferredActions/GainResourcesDeferred';
 import {all} from '../../Options';
 import {CardName} from '../../../../common/cards/CardName';
 import {Size} from '../../../../common/cards/render/Size';
@@ -43,7 +43,7 @@ export class _TharsisRepublic_ extends CorporationCard {
   public onTilePlaced(cardOwner: IPlayer, activePlayer: IPlayer, space: Space) {
     if (Board.isCitySpace(space)) {
       if (cardOwner.id === activePlayer.id) {
-        cardOwner.game.defer(new GainResources(cardOwner, Resource.MEGACREDITS, {count: 3}));
+        cardOwner.game.defer(new GainResourcesDeferred(cardOwner, Resource.MEGACREDITS, {count: 3}));
       }
       cardOwner.game.defer(
         new GainProduction(cardOwner, Resource.MEGACREDITS),

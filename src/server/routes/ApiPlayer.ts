@@ -3,7 +3,6 @@ import {isPlayerId} from '../../common/Types';
 import {Server} from '../models/ServerModel';
 import {Handler} from './Handler';
 import {Context} from './IHandler';
-import {GameLoader} from '../database/GameLoader';
 import {Request} from '../Request';
 import {Response} from '../Response';
 
@@ -26,7 +25,7 @@ export class ApiPlayer extends Handler {
       responses.badRequest(req, res, 'invalid player id');
       return;
     }
-    const game = await GameLoader.getInstance().getByParticipantId(playerId);
+    const game = await ctx.gameLoader.getByPlayerId(playerId);
     if (game === undefined) {
       responses.notFound(req, res);
       return;
@@ -37,6 +36,9 @@ export class ApiPlayer extends Handler {
       responses.notFound(req, res);
       return;
     }
+
+    // 预热天梯缓存，保证同步的 ServerModel 能取到所有玩家的 rank
+    await ctx.gameLoader.ensureUserRanksLoaded(game.getAllPlayers());
 
     const playerBlockModel = Server.getPlayerBlock(player, userId);
     responses.writeJson(res, ctx, Server.getPlayerModel(player, playerBlockModel));

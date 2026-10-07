@@ -20,12 +20,4 @@ export interface ITestDatabase extends IDatabase {
    * Return the status of a given game id.
    */
   status(gameId: GameId): Promise<Status>;
-  /**
-   * If the game is waiting to be purged, return the time the game was completed. Otherwise, return `undefined`.
-   */
-  completedTime(gameId: GameId): Promise<number | undefined>;
-  /**
-   * Updates completed_game with the specified time.
-   */
-  setCompletedTime(gameId: GameId, timestampSeconds: number): Promise<unknown>;
 }

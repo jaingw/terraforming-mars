@@ -1,30 +1,30 @@
 <template>
-    <div class="help-standard-projects-container">
+  <div class="help-standard-projects-container">
 
-      <h2 v-i18n>Standard Projects</h2>
-      <div class="cardbox" v-for="card in getBasicStandardProjects()" v-bind:key="card">
-        <Card :card="{'name': card}" />
-      </div>
-
-      <h2 v-i18n>Standard Projects from Expansions and Solo Mode</h2>
-      <div class="cardbox" v-for="card in getExpansionStandardProjects()" v-bind:key="card">
-        <Card :card="{'name': card}" />
-      </div>
-
-      <h2 v-i18n>Standard Project from Fan-made Expansions</h2>
-      <div class="cardbox" v-for="card in getFanMadeStandardProjects()" v-bind:key="card">
-        <Card :card="{'name': card}" />
-      </div>
-
+    <h2 v-i18n>Standard Projects</h2>
+    <div class="cardbox" v-for="card in getBasicStandardProjects()" v-bind:key="card">
+      <Card :card="{'name': card}" />
     </div>
+
+    <h2 v-i18n>Standard Projects from Expansions and Solo Mode</h2>
+    <div class="cardbox" v-for="card in getExpansionStandardProjects()" v-bind:key="card">
+      <Card :card="{'name': card}" />
+    </div>
+
+    <h2 v-i18n>Standard Project from Fan-made Expansions</h2>
+    <div class="cardbox" v-for="card in getFanMadeStandardProjects()" v-bind:key="card">
+      <Card :card="{'name': card}" />
+    </div>
+
+  </div>
 </template>
 <script lang="ts">
 
-import Vue from 'vue';
+import {defineComponent} from 'vue';
 import Card from '@/client/components/card/Card.vue';
 import {CardName} from '@/common/cards/CardName';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'HelpStandardProjects',
   components: {
     Card,

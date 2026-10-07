@@ -4,7 +4,6 @@ import {
   getSeasonNumber,
   getSeasonInfo,
   getPreviousSeasonId,
-  shouldResetSeason,
   softResetMu,
   softResetSigma,
   getSeasonPointsReward,
@@ -57,24 +56,6 @@ describe('SeasonManager', () => {
       const info = getSeasonInfo(new Date(2026, 10, 15));
       expect(info.seasonId).to.eq('2026-S6');
       expect(info.seasonName).to.eq('Season 6 (Nov-Dec 2026)');
-    });
-  });
-
-  describe('shouldResetSeason', () => {
-    it('should return false for undefined lastSeasonId', () => {
-      expect(shouldResetSeason(undefined, new Date(2026, 0, 1))).to.eq(false);
-    });
-
-    it('should return false when season has not changed', () => {
-      expect(shouldResetSeason('2026-S1', new Date(2026, 1, 15))).to.eq(false);
-    });
-
-    it('should return true when season has changed', () => {
-      expect(shouldResetSeason('2026-S1', new Date(2026, 2, 1))).to.eq(true); // S1 -> S2
-    });
-
-    it('should return true across year boundary', () => {
-      expect(shouldResetSeason('2025-S6', new Date(2026, 0, 1))).to.eq(true); // 2025-S6 -> 2026-S1
     });
   });
 

@@ -19,7 +19,6 @@ import {SerializedDealer} from './SerializedDealer';
 import {UnderworldData} from './underworld/UnderworldData';
 import {GlobalParameter} from '../common/GlobalParameter';
 import {Tag} from '../common/cards/Tag';
-import {Expansion} from '../common/cards/GameModule';
 
 export type SerializedGame = {
     exitedPlayers: Array<SerializedPlayer> ;
@@ -39,8 +38,6 @@ export type SerializedGame = {
     deferredActions: Array<DeferredAction>;
     donePlayers: Array<SerializedPlayerId>;
     draftRound: number;
-    // TODO(kberg): Remove ? by 2025-08-01
-    expansions?: Record<Expansion, boolean>;
     exploitationOfVenusInEffect: boolean;
     first: SerializedPlayerId;
     fundedAwards: Array<SerializedFundedAward>;
@@ -54,10 +51,12 @@ export type SerializedGame = {
     initialDraftIteration: number;
     lastSaveId: number;
     milestones: Array<IMilestone>;
-    monsInsuranceOwner: SerializedPlayerId | undefined;
+    monsInsuranceOwner?: SerializedPlayerId | undefined;
     energyStationOwner: SerializedPlayerId | undefined;
     wgPartnershipOwner: SerializedPlayerId | undefined;
     moonData: SerializedMoonData | undefined;
+    // TODO(kberg): make required by 2026-07-01
+    name?: string;
     nomadSpace: SpaceId | undefined;
     pathfindersData: SerializedPathfindersData | undefined;
     oxygenLevel: number;
@@ -70,7 +69,7 @@ export type SerializedGame = {
 
     seed: number;
     someoneHasRemovedOtherPlayersPlants: boolean;
-    spectatorId: SpectatorId | undefined;
+    spectatorId: SpectatorId;
     stJosephCathedrals: Array<SpaceId>;
     syndicatePirateRaider: string | undefined;
     tags: ReadonlyArray<Tag>
@@ -95,4 +94,3 @@ export type SerializedGame = {
     unitedNationsMissionOneOwner: PlayerId | undefined ;
     quitPlayers: Array<SerializedPlayerId>;
 }
-

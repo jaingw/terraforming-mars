@@ -34,7 +34,7 @@ export class _Arklight_ extends Arklight {
   }
 
 
-  public override onCardPlayedForCorps(player: IPlayer, card: ICard): void {
+  public override onCardPlayed(player: IPlayer, card: ICard): void {
     if (player.playedCards.has(CardName._ARKLIGHT_)) {
       const count = card.tags.filter((cardTag) => cardTag === Tag.ANIMAL || cardTag === Tag.PLANT).length;
       if (count > 0 ) {
@@ -43,4 +43,3 @@ export class _Arklight_ extends Arklight {
     }
   }
 }
-

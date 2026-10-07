@@ -48,13 +48,17 @@ export class GreenLeafDance extends CorporationCard {
   }
 
   public onTilePlaced(cardOwner: IPlayer, activePlayer: IPlayer, space: Space, boardType: BoardType) {
-    if (boardType !== BoardType.MARS || space.spaceType === SpaceType.COLONY) return;
+    if (boardType !== BoardType.MARS || space.spaceType === SpaceType.COLONY) {
+      return;
+    }
     if (cardOwner.id !== activePlayer.id || cardOwner.game.phase === Phase.SOLAR) {
       return;
     }
 
     // Don't grant bonuses when overplacing.
-    if (space.tile?.covers !== undefined) return;
+    if (space.tile?.covers !== undefined) {
+      return;
+    }
 
     const bonuses = space.bonus;
     if (bonuses.length === 0 || !bonuses.includes(SpaceBonus.PLANT)) {

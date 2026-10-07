@@ -1,5 +1,6 @@
-import {PlayerId, SpectatorId} from '../../common/Types';
+import {ParticipantId} from '../../common/Types';
 import {IGame} from '../IGame';
+import {IPlayer} from '../IPlayer';
 export enum State {
   /**
    * No id has been requested
@@ -23,11 +24,9 @@ export interface IGameLoader {
   // getLoadedGameIds(): Array<string>;
   /**
    * Gets a game from javascript memory or pulls from database if needed.
-   * @param {GameId} gameId the id of the game to retrieve
-   * @param {boolean} bypassCache always pull from database
    */
-  // getByGameId(gameId: GameId, bypassCache: boolean): Promise<Game | undefined>;
-  getByParticipantId(playerId: PlayerId | SpectatorId): Promise<IGame | undefined>;
+  getGame(id: string): Promise<IGame | undefined>;
+  getByPlayerId(playerId: ParticipantId): Promise<IGame | undefined>;
   /**
    * Reload a game at a specific version, deleting all versions ahead of it.
    *
@@ -42,6 +41,10 @@ export interface IGameLoader {
    * Do not call IDatabase.saveGame directly in a running system.
    */
   saveGame(game: IGame): Promise<void>;
-  completeGame(game: IGame): Promise<void>;
-  maintenance(): Promise<void>;
+
+  /**
+   * 预热给定玩家的天梯缓存（命中即缓存，未命中才查库）。
+   * 展示层 ServerModel 是同步的，构建玩家模型前需先调用本方法。
+   */
+  ensureUserRanksLoaded(players: ReadonlyArray<IPlayer>): Promise<void>;
 }

@@ -1,31 +1,34 @@
 <template>
-      <div class="player-status" v-on:click="changeDisplay">
-        <div class="player-status-bottom">
-          <div :class="getLabelAndTimerClasses()">
-            <div :class="getActionStatusClasses()"><span v-i18n>{{ actionLabel }}</span></div>
-            <div class="player-status-timer" v-if="showTimer && display==='timer'"><player-timer :timer="timer" :live="liveTimer" :player-id="playerId" :rank-mode="rankMode" :finalRankTimeLimit="finalRankTimeLimit"/></div>
-            <RankTier v-if="display==='tier'" :rankTier="rankTier" :showNumber="false" class="ml-2"/>
-          </div>
-        </div>
+  <div class="player-status" v-on:click="changeDisplay">
+    <div class="player-status-bottom">
+      <div :class="getLabelAndTimerClasses()">
+        <div :class="getActionStatusClasses()"><span >{{ actionLabel }}</span></div>
+        <div class="player-status-timer" v-if="showTimer && display==='timer'"><player-timer :timer="timer" :live="liveTimer" :player-id="playerId" :rank-mode="rankMode" :finalRankTimeLimit="finalRankTimeLimit"/></div>
+        <RankTier v-if="display==='tier'" :rankTier="rankTier!" :showNumber="false" class="ml-2"/>
       </div>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
 
-import Vue from 'vue';
+import {defineComponent} from 'vue';
 import {ActionLabel} from '@/client/components/overview/ActionLabel';
 import PlayerTimer from '@/client/components/overview/PlayerTimer.vue';
 import {TimerModel} from '@/common/models/TimerModel';
 import RankTier from '@/client/components/RankTier.vue';
+import type {RankTier as RankTierType} from '@/common/rank/RankTier';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'player-status',
   props: {
     timer: {
       type: Object as () => TimerModel,
+      required: true,
     },
     actionLabel: {
       type: String as () => ActionLabel,
+      required: true,
     },
     showTimer: {
       type: Boolean,
@@ -34,7 +37,7 @@ export default Vue.extend({
       type: Boolean,
     },
     rankTier: {
-      type: Object,
+      type: Object as () => RankTierType,
     },
     playerId: {
       type: String,
@@ -81,8 +84,11 @@ export default Vue.extend({
       return classes.join(' ');
     },
     changeDisplay(): void {
-      if (this.display==='timer' && this.rankTier!==undefined) this.display = 'tier';
-      else this.display = 'timer';
+      if (this.display==='timer' && this.rankTier!==undefined) {
+        this.display = 'tier';
+      } else {
+        this.display = 'timer';
+      }
       console.log(this.rankTier);
     },
   },

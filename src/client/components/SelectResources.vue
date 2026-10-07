@@ -1,44 +1,47 @@
 <template>
   <div class="wf-component wf-options">
     <div v-if="showtitle === true" class="nofloat wf-component-title">{{ $t(playerinput.title) }}</div>
-    <template v-for="unit in keys">
-        <payment-unit-component
-          v-model.number="units[unit]"
-          v-bind:key="unit"
-          :unit="unit"
-          :showMax="false"
-          description=""
-          @plus="addValue(unit)"
-          @minus="reduceValue(unit)">
-        </payment-unit-component>
-        <!-- @max="onMaxClicked(unit)" -->
+    <template v-for="unit in keys" :key="unit">
+      <payment-unit-component
+        v-model.number="units[unit]"
+        :unit="(unit as SpendableResource)"
+        :showMax="false"
+        description=""
+        @plus="addValue(unit)"
+        @minus="reduceValue(unit)">
+      </payment-unit-component>
+      <!-- @max="onMaxClicked(unit)" -->
     </template>
     <div v-if="showsave === true" class="nofloat">
-        <AppButton @click="saveData" :title="playerinput.buttonLabel" />
+      <AppButton @click="saveData" :title="playerinput.buttonLabel" />
     </div>
   </div>
 </template>
 <script lang="ts">
-import Vue from 'vue';
+import {defineComponent} from 'vue';
 import AppButton from '@/client/components/common/AppButton.vue';
 import {SelectResourcesModel} from '@/common/models/PlayerInputModel';
 import {SelectResourcesResponse} from '@/common/inputs/InputResponse';
 import {PlayerViewModel} from '@/common/models/PlayerModel';
 import {Units} from '@/common/Units';
+import {SpendableResource} from '@/common/inputs/Spendable';
 import PaymentUnitComponent from '@/client/components/PaymentUnit.vue';
 import {sum} from '@/common/utils/utils';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'SelectResource',
   props: {
     playerView: {
       type: Object as () => PlayerViewModel,
+      required: true,
     },
     playerinput: {
       type: Object as () => SelectResourcesModel,
+      required: true,
     },
     onsave: {
       type: Function as unknown as () => (out: SelectResourcesResponse) => void,
+      required: true,
     },
     showsave: {
       type: Boolean,
@@ -70,7 +73,9 @@ export default Vue.extend({
       }
 
       const adjustedDelta = Math.min(1, currentValue);
-      if (adjustedDelta === 0) return;
+      if (adjustedDelta === 0) {
+        return;
+      }
       this.units[unit] -= adjustedDelta;
     },
     /**

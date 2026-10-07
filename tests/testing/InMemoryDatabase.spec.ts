@@ -9,7 +9,6 @@
 //   constructor: () => new TestInMemoryDatabase(),
 //   omit: {
 //     purgeUnfinishedGames: true,
-//     moreCleaning: true,
 //   },
 //   stats: {
 //     type: 'InMemoryDatabase',

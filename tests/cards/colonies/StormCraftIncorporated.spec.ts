@@ -4,7 +4,8 @@ import * as constants from '../../../src/common/constants';
 import {testGame} from '../../TestGame';
 import {SelectAmount} from '../../../src/server/inputs/SelectAmount';
 import {TestPlayer} from '../../TestPlayer';
-import {cast, churn} from '../../TestingUtils';
+import {churn} from '../../TestingUtils';
+import {cast} from '../../../src/common/utils/utils';
 
 describe('StormCraftIncorporated', () => {
   let card: StormCraftIncorporated;
@@ -13,7 +14,7 @@ describe('StormCraftIncorporated', () => {
   beforeEach(() => {
     card = new StormCraftIncorporated();
     [/* game */, player] = testGame(2);
-    player.corporations.push(card);
+    player.playedCards.push(card);
   });
 
   it('Should play', () => {

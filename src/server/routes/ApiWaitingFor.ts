@@ -3,7 +3,6 @@ import {Handler} from './Handler';
 import {Context} from './IHandler';
 import {Phase} from '../../common/Phase';
 import {IPlayer} from '../IPlayer';
-import {GameLoader} from '../database/GameLoader';
 import {WaitingForModel} from '../../common/models/WaitingForModel';
 import {IGame} from '../IGame';
 import {isPlayerId, isSpectatorId} from '../../common/Types';
@@ -50,7 +49,7 @@ export class ApiWaitingFor extends Handler {
     const undoCount = Number(ctx.url.searchParams.get('undoCount'));
     let game: IGame | undefined;
     if (isSpectatorId(id) || isPlayerId(id)) {
-      game = await GameLoader.getInstance().getByParticipantId(id);
+      game = await ctx.gameLoader.getByPlayerId(id);
     }
     if (game === undefined) {
       responses.notFound(req, res, 'cannot find game for that player');

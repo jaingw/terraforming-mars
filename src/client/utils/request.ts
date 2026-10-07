@@ -43,12 +43,16 @@ type TQueryParams = Record<string, string | number | boolean | undefined | null>
 
 /** 内部：将 query 对象拼接为 URL 查询字符串 */
 function buildUrl(path: string, params?: TQueryParams): string {
-  if (!params) return path;
+  if (!params) {
+    return path;
+  }
 
   const entries = Object.entries(params)
     .filter(([, v]) => v !== undefined && v !== null);
 
-  if (entries.length === 0) return path;
+  if (entries.length === 0) {
+    return path;
+  }
 
   const query = entries
     .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(String(v))}`)

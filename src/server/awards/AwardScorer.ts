@@ -18,7 +18,7 @@ export class AwardScorer {
   }
 
   public get(player: IPlayer): number {
-    // Ideally throw when player does not match, but this is OK.
+    if (player === undefined) return 0;
     return this.scores.get(player.id) ?? 0;
   }
 }

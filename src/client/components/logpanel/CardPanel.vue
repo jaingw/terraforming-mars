@@ -15,25 +15,30 @@
 
 <script lang="ts">
 
-import Vue from 'vue';
+import {defineComponent} from 'vue';
 import {LogMessage} from '@/common/logs/LogMessage';
 import {LogMessageDataType} from '@/common/logs/LogMessageDataType';
 import {CardName} from '@/common/cards/CardName';
 import {ColonyName} from '@/common/colonies/ColonyName';
-import {ColonyModel} from '@/common/models/ColonyModel';
+import {ColonyModel, simpleColonyModel} from '@/common/models/ColonyModel';
 import {PublicPlayerModel} from '@/common/models/PlayerModel';
 import Card from '@/client/components/card/Card.vue';
 import GlobalEvent from '@/client/components/turmoil/GlobalEvent.vue';
 import AppButton from '@/client/components/common/AppButton.vue';
 import Colony from '@/client/components/colonies/Colony.vue';
-import {deNull} from '@/common/utils/utils';
 import {GlobalEventName} from '@/common/turmoil/globalEvents/GlobalEventName';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'log-panel',
   props: {
-    message: Object as () => LogMessage | undefined,
-    players: Array as () => Array<PublicPlayerModel>,
+    message: {
+      type: Object as () => LogMessage,
+      required: true,
+    },
+    players: {
+      type: Array as () => Array<PublicPlayerModel>,
+      required: true,
+    },
   },
   components: {
     AppButton,
@@ -46,25 +51,15 @@ export default Vue.extend({
       return this.cards.length + this.globalEvents.length + this.colonies.length > 0;
     },
     cards(): ReadonlyArray<CardName> {
-      if (this.message === undefined) {
-        return [];
-      }
-      const entries = this.message.data.map((datum) => datum.type === LogMessageDataType.CARD ? datum.value : undefined);
-      return deNull(entries);
+      return this.message.data
+        .filter((datum) => datum.type === LogMessageDataType.CARD || datum.type === LogMessageDataType.CARDS)
+        .flatMap((datum) => datum.type === LogMessageDataType.CARD ? [datum.value] : datum.value);
     },
     globalEvents(): Array<GlobalEventName> {
-      if (this.message === undefined) {
-        return [];
-      }
-      const entries = this.message.data.map((datum) => datum.type === LogMessageDataType.GLOBAL_EVENT ? datum.value : undefined);
-      return deNull(entries);
+      return this.message.data.filter((datum) => datum.type === LogMessageDataType.GLOBAL_EVENT).map((datum) => datum.value);
     },
     colonies(): Array<ColonyName> {
-      if (this.message === undefined) {
-        return [];
-      }
-      const entries = this.message.data.map((datum) => datum.type === LogMessageDataType.COLONY ? datum.value : undefined);
-      return deNull(entries);
+      return this.message.data.filter((datum) => datum.type === LogMessageDataType.COLONY).map((datum) => datum.value);
     },
   },
   methods: {
@@ -72,13 +67,7 @@ export default Vue.extend({
       this.$emit('hide');
     },
     getColony(name: ColonyName): ColonyModel {
-      return {
-        colonies: [],
-        isActive: false,
-        name: name,
-        trackPosition: 0,
-        visitor: undefined,
-      };
+      return simpleColonyModel(name);
     },
     isSelfReplicatingRobotsCard(cardName: CardName) {
       for (const player of this.players) {

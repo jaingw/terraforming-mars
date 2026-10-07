@@ -226,7 +226,7 @@ describe('Stock', () => {
     expect(player.megaCredits).eq(1);
   });
 
-  it('addResource logging', () => {
+  it('add logging', () => {
     const [game, player] = testGame(1);
 
     const log = game.gameLog;
@@ -240,7 +240,7 @@ describe('Stock', () => {
     expect(formatMessage(logEntry)).eq('blue gained 12 M€');
   });
 
-  it('addResource logging from player', () => {
+  it('add logging from player', () => {
     const [game, player, player2] = testGame(2);
 
     player.megaCredits = 5;
@@ -251,7 +251,7 @@ describe('Stock', () => {
     expect(formatMessage(logEntry)).eq('blue lost 5 M€ because of red');
   });
 
-  it('addResource logging from global event', () => {
+  it('add logging from global event', () => {
     const [game, player] = testGame(1);
 
     player.stock.add(Resource.MEGACREDITS, 12, {log: true, from: {globalEvent: GlobalEventName.ASTEROID_MINING}});
@@ -279,7 +279,7 @@ describe('Stock', () => {
       {
         'gameId': 'game-id',
         'lastSaveId': 0,
-        'logAge': 6,
+        'logAge': 7,
         'currentPlayer': 'p-player1-id',
         'metadata': {
           'player': {

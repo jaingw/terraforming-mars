@@ -76,4 +76,3 @@ export class Cloner {
     to.handicap = Number(from.handicap);
   }
 }
-

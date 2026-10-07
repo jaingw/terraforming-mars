@@ -20,11 +20,6 @@ export class AdhaiHighOrbitConstructions extends CorporationCard implements ICor
       startingMegaCredits: 43,
       resourceType: CardResource.ORBITAL,
 
-      behavior: {
-        // This is the onCardPlayed effect.
-        addResources: 1,
-      },
-
       metadata: {
         cardNumber: 'PfC23',
         description: 'You start with 43 M€.',
@@ -46,13 +41,17 @@ export class AdhaiHighOrbitConstructions extends CorporationCard implements ICor
   private matchingTags(tags: ReadonlyArray<Tag>): boolean {
     let spaceTag = false;
     for (const tag of tags) {
-      if (tag === Tag.SPACE) spaceTag = true;
-      if (isPlanetaryTag(tag)) return false;
+      if (tag === Tag.SPACE) {
+        spaceTag = true;
+      }
+      if (isPlanetaryTag(tag)) {
+        return false;
+      }
     }
     return spaceTag;
   }
 
-  public onCardPlayedForCorps(player: IPlayer, card: ICard) {
+  public onCardPlayed(player: IPlayer, card: ICard) {
     if (this.matchingTags(card.tags)) {
       player.addResourceTo(this, 1);
     }

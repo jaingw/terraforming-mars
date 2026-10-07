@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 
 /**
  * Centralized icon definitions.
@@ -41,7 +41,7 @@ const ICON_PATHS: Record<string, string> = {
   game: '<rect x="2" y="6" width="20" height="12" rx="2"></rect><path d="M12 12h.01"></path><path d="M17 12h.01"></path><path d="M7 12h.01"></path>',
 };
 
-export default Vue.extend({
+export default defineComponent({
   name: 'TfmIcon',
   props: {
     name: {

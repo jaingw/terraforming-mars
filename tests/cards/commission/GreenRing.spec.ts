@@ -14,6 +14,7 @@ import {SearchForLife} from '../../../src/server/cards/base/SearchForLife';
 import {AdvancedAlloys} from '../../../src/server/cards/base/AdvancedAlloys';
 import {Resource} from '../../../src/common/Resource';
 import {Payment} from '../../../src/common/inputs/Payment';
+import {Crashlanding} from '../../../src/server/cards/pathfinders/Crashlanding';
 
 
 describe('GreenRing', () => {
@@ -68,7 +69,30 @@ describe('GreenRing', () => {
     runAllActions(game);
     // 重新打出后依然在 playedCards
     expect(player.playedCards.get(research.name)).to.be.undefined;
+    expect(player.removedFromPlayCards).to.include(research);
+    expect(game.projectDeck.discardPile).to.not.include(research);
     expect(player.cardsInHand.length).to.eq(cardNumber + 2);
+  });
+
+  it('should remove replayed cards from the discard pile', () => {
+    player.playCorporationCard(card);
+    runAllActions(game);
+    const research = new Research();
+    player.playCard(research);
+    runAllActions(game);
+
+    const select = cast(card.action(player), SelectProjectCardToPlay);
+    select.process({
+      type: 'projectCard',
+      payment: Payment.of({megaCredits: 11}),
+      card: research.name,
+    });
+    game.projectDeck.discard(research);
+    runAllActions(game);
+
+    expect(player.playedCards.get(research.name)).to.be.undefined;
+    expect(player.removedFromPlayCards).to.include(research);
+    expect(game.projectDeck.discardPile).to.not.include(research);
   });
 
   it('should act and recycle a valid blue card (AICentral)', () => {
@@ -108,7 +132,17 @@ describe('GreenRing', () => {
     runAllActions(game);
     expect(player.megaCredits).to.eq(79); // AICentral 21
     expect(player.playedCards.get(aiCentral.name)).to.be.undefined;
+    expect(player.removedFromPlayCards).to.include(aiCentral);
+    expect(game.projectDeck.discardPile).to.not.include(aiCentral);
     expect(player.cardsInHand.length).to.eq(cardNumber );
+  });
+
+  it('should not replay events like Crashlanding', () => {
+    player.playCorporationCard(card);
+    runAllActions(game);
+    player.playedCards.push(new Crashlanding());
+
+    expect(card.canAct(player)).to.be.false;
   });
 
   it('should not recycle special tile cards', () => {

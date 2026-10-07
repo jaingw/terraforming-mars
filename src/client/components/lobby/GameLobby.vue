@@ -33,7 +33,7 @@
         </button>
         <button
           class="inline-flex items-center gap-1.5 px-4 py-2.5 bg-mars-surface hover:bg-mars-border text-mars-text-dim hover:text-mars-text font-medium transition-colors border border-mars-border rounded"
-          @click="fetchRooms"
+          @click="fetchRooms({silent: true})"
         >
           <span v-i18n>Refresh</span>
         </button>
@@ -55,18 +55,18 @@
       </button>
 
       <!-- 空状态 -->
-      <div v-if="!hasAnyRooms && !loading" class="text-center py-24">
+      <div v-if="hasLoadedOnce && !hasAnyRooms" class="text-center py-24">
         <div class="lobby-empty-icon text-5xl mb-6">&#9790;</div>
         <p class="text-mars-text-dim text-base mb-1 uppercase tracking-wide" v-i18n>No active rooms</p>
         <p class="text-mars-text-faint text-sm" v-i18n>Create one to get started!</p>
       </div>
 
       <!-- 加载中 -->
-      <div v-if="loading" class="text-center py-20">
+      <div v-if="loading && !hasLoadedOnce" class="text-center py-20">
         <p class="text-mars-text-dim animate-pulse font-mono uppercase tracking-wider text-sm" v-i18n>Scanning rooms...</p>
       </div>
 
-      <div v-if="hasAnyRooms && !loading" class="space-y-5">
+      <div v-if="hasAnyRooms" class="space-y-5">
         <div
           v-for="section in lobbySections"
           :key="section.key"
@@ -102,7 +102,7 @@
                   'lobby-room-card--owner': isOwner(room),
                 }"
               >
-          <!-- HUD corner accents -->
+                <!-- HUD corner accents -->
                 <div class="lobby-corner lobby-corner--tl"></div>
                 <div class="lobby-corner lobby-corner--tr"></div>
                 <div class="lobby-corner lobby-corner--bl"></div>
@@ -163,7 +163,7 @@
                 <div class="px-5 py-2 space-y-1.5">
                   <div
                     v-for="player in room.players"
-                    :key="player.userId"
+                    :key="player.name + '-' + player.color"
                     class="lobby-player-slot flex items-center gap-2 px-3 py-2 text-sm"
                     :class="getPlayerColorClass(player.color)"
                   >
@@ -186,7 +186,7 @@
                     <button
                       v-if="isOwner(room) && !player.isOwner && room.status === 'waiting'"
                       class="ml-auto px-2.5 py-0.5 text-xs font-medium bg-mars-red/15 hover:bg-mars-red/30 text-mars-red rounded-sm transition-colors border border-mars-red/20"
-                      @click="kickPlayer(room.roomId, player.userId)"
+                      @click="kickPlayer(room.roomId, player.name)"
                       v-i18n
                     >Kick</button>
                   </div>
@@ -230,7 +230,6 @@
                       <button
                         class="lobby-btn-join ml-auto px-4 py-1.5 disabled:opacity-30 disabled:cursor-not-allowed text-mars-teal text-sm font-medium transition-all border border-mars-teal/50 hover:border-mars-teal hover:bg-mars-teal/20"
                         @click="joinRoom(room.roomId)"
-                        :disabled="!selectedColors[room.roomId]"
                         v-i18n
                       >Join</button>
                     </div>
@@ -258,7 +257,7 @@
                       class="lobby-btn-create px-4 py-1.5 bg-mars-rust hover:bg-mars-ember text-white text-sm font-medium transition-all"
                       @click="startGame(room.roomId)"
                       v-i18n
-                    >Launch Game</button>
+                    >Start Game</button>
                   </template>
 
                   <!-- 游戏已开始 -->
@@ -282,22 +281,21 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import {Color, PLAYER_COLORS} from '@/common/Color';
-import {ILobbyRoom, ELobbyRoomStatus} from '@/common/lobby/LobbyTypes';
+import {ILobbyRoomView as ILobbyRoom, ELobbyRoomStatus} from '@/common/lobby/LobbyTypes';
 import {PreferencesManager} from '@/client/utils/PreferencesManager';
 import {playerColorClass} from '@/common/utils/utils';
 import {paths} from '@/common/app/paths';
 import {translateText} from '@/client/directives/i18n';
 import CreateGameForm from '@/client/components/create/CreateGameForm.vue';
 import LobbyRoomSettingsModal from '@/client/components/lobby/LobbyRoomSettingsModal.vue';
-import {showError, showWarning} from '@/client/utils/showAlert';
+import {showError} from '@/client/utils/showAlert';
 import {lobbyService} from '@/client/services';
-import {request} from '@/client/utils/request';
 
 const POLL_INTERVAL = 3000;
 
-export default Vue.extend({
+export default defineComponent({
   name: 'GameLobby',
   components: {
     CreateGameForm,
@@ -306,7 +304,9 @@ export default Vue.extend({
   data() {
     return {
       rooms: [] as Array<ILobbyRoom>,
+      previousRoomsById: {} as Record<string, ILobbyRoom>,
       loading: false,
+      hasLoadedOnce: false,
       showCreateForm: false,
       selectedColors: {} as Record<string, Color>,
       pollTimer: null as ReturnType<typeof setInterval> | null,
@@ -323,7 +323,7 @@ export default Vue.extend({
     },
     isInAnyRoom(): boolean {
       return this.rooms.some((room: ILobbyRoom) =>
-        room.players.some((p) => p.userId === this.userId) &&
+        room.isCurrentUserInRoom &&
         room.status !== ELobbyRoomStatus.STARTED,
       );
     },
@@ -398,7 +398,7 @@ export default Vue.extend({
       this.stopPolling();
       this.pollTimer = setInterval(() => {
         if (!this.showCreateForm) {
-          this.fetchRooms();
+          this.fetchRooms({silent: true});
         }
       }, POLL_INTERVAL);
     },
@@ -408,25 +408,54 @@ export default Vue.extend({
         this.pollTimer = null;
       }
     },
-    async fetchRooms() {
-      this.loading = true;
+    areRoomsEqual(a: ILobbyRoom, b: ILobbyRoom): boolean {
+      return JSON.stringify(a) === JSON.stringify(b);
+    },
+    mergeRoomsPreservingIdentity(nextRooms: Array<ILobbyRoom>): Array<ILobbyRoom> {
+      const currentRoomsById = Object.fromEntries(
+        this.rooms.map((room: ILobbyRoom) => [room.roomId, room]),
+      ) as Record<string, ILobbyRoom>;
+
+      return nextRooms.map((room: ILobbyRoom) => {
+        const currentRoom = currentRoomsById[room.roomId];
+        if (currentRoom !== undefined && this.areRoomsEqual(currentRoom, room)) {
+          return currentRoom;
+        }
+        return room;
+      });
+    },
+    async fetchRooms(options: {silent?: boolean} = {}) {
+      const silent = options.silent === true;
+      if (!silent && !this.hasLoadedOnce) {
+        this.loading = true;
+      }
       try {
-        const data = await lobbyService.getRooms();
-        this.rooms = data.rooms || [];
+        const previousRoomsById = this.previousRoomsById;
+        const data = await lobbyService.getRooms(this.userId);
+        const nextRooms = this.mergeRoomsPreservingIdentity(data.rooms || []);
+        const roomsChanged = nextRooms.length !== this.rooms.length ||
+          nextRooms.some((room, index) => room !== this.rooms[index]);
+        if (roomsChanged) {
+          this.rooms = nextRooms;
+        }
+        this.ensureDefaultJoinColors();
+        this.maybeNavigateToStartedGame(previousRoomsById);
+        this.previousRoomsById = Object.fromEntries(
+          nextRooms.map((room: ILobbyRoom) => [room.roomId, room]),
+        );
+        this.hasLoadedOnce = true;
       } catch (err: any) {
         console.error('Failed to fetch rooms:', err);
       } finally {
-        this.loading = false;
+        if (!silent) {
+          this.loading = false;
+        }
       }
     },
     async joinRoom(roomId: string) {
       const color = this.selectedColors[roomId];
-      if (!color) {
-        showWarning(translateText('Please select a color'));
-        return;
-      }
       if (!this.userId) {
-        showWarning(translateText('Please login first'));
+        showError(translateText('Please login first'));
         return;
       }
       try {
@@ -448,9 +477,9 @@ export default Vue.extend({
         showError(err.body || err.message);
       }
     },
-    async kickPlayer(roomId: string, targetUserId: string) {
+    async kickPlayer(roomId: string, targetUserName: string) {
       try {
-        await lobbyService.kickPlayer(roomId, this.userId, targetUserId);
+        await lobbyService.kickPlayer(roomId, this.userId, targetUserName);
         await this.fetchRooms();
       } catch (err: any) {
         showError(err.body || err.message);
@@ -464,25 +493,12 @@ export default Vue.extend({
         showError(err.body || err.message);
       }
     },
-    async pollAndCreateGame(roomId: string) {
-      try {
-        const data = await request.get<{room: ILobbyRoom; allReady: boolean; gameConfig?: any}>(
-          `/api/v2/lobby/${roomId}/poll`,
-        );
-        if (data.allReady && data.gameConfig) {
-          await this.createGameFromLobby(roomId, data.gameConfig);
-          await this.fetchRooms();
-        }
-      } catch (err) {
-        console.error('Failed to poll and create game:', err);
-      }
-    },
     async onRoomCreated(_room: ILobbyRoom) {
       this.showCreateForm = false;
       await this.fetchRooms();
     },
     isInRoom(room: ILobbyRoom): boolean {
-      return room.players.some((p) => p.userId === this.userId);
+      return room.isCurrentUserInRoom;
     },
     isVisibleRoom(room: ILobbyRoom): boolean {
       if (room.status === ELobbyRoomStatus.CLOSED) {
@@ -513,11 +529,25 @@ export default Vue.extend({
       window.location.href = '/' + paths.LOGIN;
     },
     isOwner(room: ILobbyRoom): boolean {
-      return room.ownerId === this.userId;
+      return room.isOwner;
     },
     isReady(room: ILobbyRoom): boolean {
-      const player = room.players.find((p) => p.userId === this.userId);
-      return player?.isReady ?? false;
+      return room.currentUserReady;
+    },
+    ensureDefaultJoinColors() {
+      const nextSelectedColors: Record<string, Color> = {};
+      for (const room of this.rooms) {
+        const availableColors = this.getAvailableColors(room);
+        const selectedColor = this.selectedColors[room.roomId];
+        if (selectedColor && availableColors.includes(selectedColor)) {
+          nextSelectedColors[room.roomId] = selectedColor;
+          continue;
+        }
+        if (availableColors.length > 0) {
+          nextSelectedColors[room.roomId] = availableColors[0];
+        }
+      }
+      this.selectedColors = nextSelectedColors;
     },
     getAvailableColors(room: ILobbyRoom): Array<Color> {
       const usedColors = new Set(room.players.map((p) => p.color));
@@ -550,28 +580,64 @@ export default Vue.extend({
     getSettingsTags(room: ILobbyRoom): Array<string> {
       const tags: Array<string> = [];
       const config = room.gameConfig;
-      if (!config || !config.expansions) return tags;
+      if (!config || !config.expansions) {
+        return tags;
+      }
 
       tags.push(room.maxPlayers + 'P');
 
-      if (config.expansions.prelude) tags.push('Prelude');
-      if (config.expansions.prelude2) tags.push('Prelude 2');
-      if (config.expansions.venus) tags.push('Venus');
-      if (config.expansions.colonies) tags.push('Colonies');
-      if (config.expansions.turmoil) tags.push('Turmoil');
-      if (config.expansions.promo) tags.push('Promos');
-      if (config.expansions.ceo) tags.push('CEOs');
-      if (config.expansions.moon) tags.push('Moon');
-      if (config.expansions.pathfinders) tags.push('Pathfinders');
-      if (config.expansions.ares) tags.push('Ares');
-      if (config.expansions.community) tags.push('Community');
-      if (config.expansions.starwars) tags.push('Star Wars');
-      if (config.expansions.underworld) tags.push('Underworld');
-      if (config.expansions.breakthrough) tags.push('Breakthrough');
-      if (config.expansions.eros) tags.push('Eros');
+      if (config.expansions.prelude) {
+        tags.push('Prelude');
+      }
+      if (config.expansions.prelude2) {
+        tags.push('Prelude 2');
+      }
+      if (config.expansions.venus) {
+        tags.push('Venus');
+      }
+      if (config.expansions.colonies) {
+        tags.push('Colonies');
+      }
+      if (config.expansions.turmoil) {
+        tags.push('Turmoil');
+      }
+      if (config.expansions.promo) {
+        tags.push('Promos');
+      }
+      if (config.expansions.ceo) {
+        tags.push('CEOs');
+      }
+      if (config.expansions.moon) {
+        tags.push('Moon');
+      }
+      if (config.expansions.pathfinders) {
+        tags.push('Pathfinders');
+      }
+      if (config.expansions.ares) {
+        tags.push('Ares');
+      }
+      if (config.expansions.community) {
+        tags.push('Community');
+      }
+      if (config.expansions.starwars) {
+        tags.push('Star Wars');
+      }
+      if (config.expansions.underworld) {
+        tags.push('Underworld');
+      }
+      if (config.expansions.breakthrough) {
+        tags.push('Breakthrough');
+      }
+      if (config.expansions.eros) {
+        tags.push('Eros');
+      }
 
-      if (config.draftVariant) tags.push('Draft');
-      if ((config as any).rankOption) tags.push('Ranked');
+      if (config.draftVariant) {
+        tags.push('Draft');
+      }
+      if ((config as any).rankOption) {
+        tags.push('Ranked');
+      }
 
       return tags;
     },
@@ -585,29 +651,22 @@ export default Vue.extend({
     },
     async confirmReady(roomId: string) {
       try {
-        const data = await lobbyService.confirmReady(roomId, this.userId);
-
-        if (data.allReady && data.gameConfig) {
-          await this.createGameFromLobby(roomId, data.gameConfig);
-        }
+        await lobbyService.confirmReady(roomId, this.userId);
         await this.fetchRooms();
       } catch (err: any) {
         showError(err.body || err.message);
       }
     },
-    async createGameFromLobby(roomId: string, gameConfig: any) {
-      try {
-        const response = await fetch(paths.API_CREATEGAME, {
-          method: 'POST',
-          body: JSON.stringify(gameConfig),
-          headers: {'Content-Type': 'application/json'},
-        });
-        const text = await response.text();
-        const json = JSON.parse(text);
-
-        await lobbyService.markStarted(roomId, json.id, json);
-      } catch (err: any) {
-        showError('Failed to create game: ' + (err.message || err));
+    maybeNavigateToStartedGame(previousRoomsById: Record<string, ILobbyRoom>) {
+      const myStartedRoom = this.rooms.find((room: ILobbyRoom) =>
+        previousRoomsById[room.roomId] !== undefined &&
+        previousRoomsById[room.roomId].status !== ELobbyRoomStatus.STARTED &&
+        room.status === ELobbyRoomStatus.STARTED &&
+        this.isInRoom(room) &&
+        room.gameData !== undefined,
+      );
+      if (myStartedRoom?.gameData) {
+        this.navigateToGame(myStartedRoom.gameData);
       }
     },
     navigateToGame(gameData: any) {

@@ -49,6 +49,7 @@ export class PlayedCards {
   private _eventCount: number = 0;
   private _tags: Record<Tag, number> = {...NO_TAGS};
   public _corporations: Array<ICorporationCard> = [];
+  private _eventTags: Record<Tag, number> = {...NO_TAGS};
   /**
    * Return the number of played cards.
    */
@@ -94,6 +95,11 @@ export class PlayedCards {
   public get tags(): Readonly<Record<Tag, number>> {
     return this._tags;
   }
+
+  public get eventTags(): Readonly<Record<Tag, number>> {
+    return this._eventTags;
+  }
+
   /**
    * Returns the elements of an array that meet the condition specified in a callback function.
    * @param predicate A function that accepts up to three arguments. The filter method calls the predicate function one time for each element in the array.
@@ -145,8 +151,6 @@ export class PlayedCards {
   }
 
   private pushCard(card: ICard) {
-    // TODO(kberg): consider whether corporations should be put in the front
-    // of the array in the way tableau works.
     this.array.push(card);
     this.byName.set(card.name, card);
     if (isICorporationCard(card)) {
@@ -154,8 +158,9 @@ export class PlayedCards {
     }
     if (card.type === CardType.EVENT) {
       this._eventCount++;
+      this.addTags(card, this._eventTags);
     } else {
-      this.addTags(card);
+      this.addTags(card, this._tags);
     }
   }
 
@@ -167,10 +172,14 @@ export class PlayedCards {
     const found = this.byName.delete(card.name);
     if (found) {
       inplaceRemove(this.array, card);
+      if (isICorporationCard(card)) {
+        inplaceRemove(this._corporations, card);
+      }
       if (card.type === CardType.EVENT) {
         this._eventCount--;
+        this.removeTags(card, this._eventTags);
       } else {
-        this.removeTags(card);
+        this.removeTags(card, this._tags);
       }
     }
     return found;
@@ -184,19 +193,21 @@ export class PlayedCards {
     this.array = [];
     this._eventCount = 0;
     this._tags = {...NO_TAGS};
+    this._eventTags = {...NO_TAGS};
+    this._corporations = [];
 
     this.push(...cards);
   }
 
-  private addTags(card: ICard) {
+  private addTags(card: ICard, set: Record<Tag, number>) {
     for (const tag of card.tags) {
-      this._tags[tag]++;
+      set[tag]++;
     }
   }
 
-  private removeTags(card: ICard) {
+  private removeTags(card: ICard, set: Record<Tag, number>) {
     for (const tag of card.tags) {
-      this._tags[tag]--;
+      set[tag]--;
     }
   }
 
@@ -207,9 +218,11 @@ export class PlayedCards {
    * allows the card to update its state.
    */
   public retagCard(card: ICard, cb: () => void) {
-    this.removeTags(card);
+    // This isn't checking whether this applies to an event, since it's
+    // about retagging, which doesn't apply to events, yet?
+    this.removeTags(card, this._tags);
     cb();
-    this.addTags(card);
+    this.addTags(card, this._tags);
   }
 
   public serialize(): Array<SerializedCard> {

@@ -1,45 +1,41 @@
 <template>
   <div class="card-requirement">
-      <div class="card-item-container" :class="nextTo">
-        <template v-if="requirement.max">max&nbsp;</template>
-        <span v-if="!isRepeated">{{amount}}</span>{{suffix}}
-        <template v-if="type === RequirementType.REMOVED_PLANTS">
-          <div class="card-special card-minus"></div>
-          <div class="card-resource card-resource-plant red-outline"></div>
-        </template>
-        <template v-if="type === RequirementType.PRODUCTION">
-          <div class="card-production-box card-production-box--req">
-            <div class="card-production-box-row">
-              <div class="card-production-box-row-item">
-                <div class="card-item-container">
-                  <template v-for="num in repeats">
-                    <div :class="productionClass" :key="num"></div>
-                  </template>
-                </div>
+    <div class="card-item-container" :class="nextTo">
+      <template v-if="requirement.max">max&nbsp;</template>
+      <span v-if="!isRepeated">{{amount}}</span>{{suffix}}
+      <template v-if="type === RequirementType.REMOVED_PLANTS">
+        <div class="card-special card-minus"></div>
+        <div class="card-resource card-resource-plant red-outline"></div>
+      </template>
+      <template v-if="type === RequirementType.PRODUCTION">
+        <div class="card-production-box card-production-box--req">
+          <div class="card-production-box-row">
+            <div class="card-production-box-row-item">
+              <div class="card-item-container">
+                <div v-for="num in repeats" :class="productionClass" :key="num"></div>
               </div>
             </div>
           </div>
-        </template>
-        <CardParty v-else-if="type === RequirementType.PARTY" :party="party" size="req" />
-        <template v-else>
-          <template v-for="num in repeats">
-            <div :class="componentClasses" :key="num"></div>
-          </template>
-        </template>
-      </div>
+        </div>
+      </template>
+      <CardParty v-else-if="type === RequirementType.PARTY" :party="party" size="req" />
+      <template v-else>
+        <div v-for="num in repeats" :key="num" :class="componentClasses"></div>
+      </template>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 
-import Vue from 'vue';
+import {defineComponent} from 'vue';
 import {CardRequirementDescriptor, requirementType} from '@/common/cards/CardRequirementDescriptor';
 import {RequirementType} from '@/common/cards/RequirementType';
 import {range} from '@/common/utils/utils';
 import CardParty from '@/client/components/card/CardParty.vue';
 import {PartyName} from '@/common/turmoil/PartyName';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'CardRequirementComponent',
   props: {
     requirement: {

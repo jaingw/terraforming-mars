@@ -6,14 +6,15 @@
 @import "./mixins.less";
 
 html,
-body {
+body,
+#app {
     height: 100%;
     margin: 0px;
 }
 .btn {
     color: @text_action !important;
     background: @bg_action !important;
-    border-color: @boder_action !important;
+    border-color: @border_action !important;
 }
 .btn-tiny {
     background: #5755d9;
@@ -65,18 +66,6 @@ body {
     margin: 0 0 0 60px;
 }
 
-/* Mobile responsive: reduce main-container margin */
-@media (max-width: 768px) {
-    .main-container {
-        margin: 0 0 0 0;
-    }
-}
-@media (min-width: 769px) and (max-width: 1024px) {
-    .main-container {
-        margin: 0 0 0 20px;
-    }
-}
-
 .hidden {
     display: none !important;
 }
@@ -104,16 +93,19 @@ a:active {
     font-family: Prototype;
     src: url(./assets/Prototype.ttf);
     unicode-range: U+000-5FF; /* Latin glyphs */
+    font-display: swap;
 }
 @font-face {
     font-family: Prototype;
     src: url(./assets/Prototype-ru.ttf);
     unicode-range: U+0410-044F; /* Russian glyphs */
+    font-display: swap;
 }
 @font-face {
     font-family: Prototype;
     src: url(./assets/Prototype-pl.ttf);
     unicode-range: U+0104-0107, U+0118-0119, U+0141-0144, U+00D3, U+00F3, U+015A, U+015B, U+0179, U+017A-017C; /* Polish glyphs */
+    font-display: swap;
 }
 
 body {
@@ -229,9 +221,11 @@ h2 {
 /* ============ Alert Dialog Styles ============ */
 .alert-dialog {
     position: fixed;
+    inset: auto;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    margin: 0;
     padding: 0;
     border: none;
     background: transparent;
@@ -398,6 +392,8 @@ h2 {
 @import "./player_home.less";
 @import "./players_overview.less";
 @import "./preferences.less";
+@import "./popup.less";
+@import "./card_help.less";
 @import "./waiting_for.less";
 @import "./payments.less";
 @import "./other_player.less";
@@ -406,6 +402,7 @@ h2 {
 @import "./load_game_form.less";
 @import "./turmoil.less";
 @import "./ares.less";
+@import "./games-overview.less";
 @import "./help.less";
 @import "./user.less";
 @import "./card_list.less";
@@ -417,49 +414,4 @@ h2 {
 
 /* ============ Global Mobile Responsive Utilities ============ */
 /* Ensure game board pages still have minimum width for proper rendering */
-@media (max-width: 1024px) {
-    .topmost-the-game,
-    .topmost-player-home,
-    .topmost-game-end {
-        min-width: 1024px;
-        overflow-x: auto;
-    }
-}
-
-/* Touch-friendly improvements for mobile */
-@media (max-width: 768px) {
-    /* Ensure buttons/links have minimum tap target */
-    button, a.btn, .btn {
-        min-height: 36px;
-    }
-
-    /* Prevent horizontal overflow on non-game pages */
-    .topmost-start-screen,
-    .topmost-game-lobby,
-    .topmost-me-page,
-    .topmost-ranks,
-    .topmost-user-profile,
-    .topmost-cards,
-    .topmost-create-game-form,
-    .topmost-login,
-    .topmost-register,
-    .topmost-donate,
-    .topmost-help,
-    .topmost-load {
-        max-width: 100vw;
-        overflow-x: hidden;
-    }
-
-    /* Reduce body font slightly for mobile */
-    body {
-        -webkit-text-size-adjust: 100%;
-        text-size-adjust: 100%;
-    }
-
-    /* Smooth scrolling */
-    html {
-        scroll-behavior: smooth;
-        -webkit-overflow-scrolling: touch;
-    }
-}
-
+@import "./keyboard_shortcuts.less";

@@ -1,10 +1,12 @@
 import {expect} from 'chai';
 import {AnubisSecurities} from '../../../src/server/cards/underworld/AnubisSecurities';
 import {testGame} from '../../TestGame';
-import {cast, runAllActions} from '../../TestingUtils';
+import {runAllActions} from '../../TestingUtils';
 import {AICentral} from '../../../src/server/cards/base/AICentral';
 import {Ants} from '../../../src/server/cards/base/Ants';
 import {SelectProjectCardToPlay} from '../../../src/server/inputs/SelectProjectCardToPlay';
+import {Payment} from '../../../src/common/inputs/Payment';
+import {cast} from '../../../src/common/utils/utils';
 
 describe('AnubisSecurities', () => {
   it('First action', () => {
@@ -32,15 +34,26 @@ describe('AnubisSecurities', () => {
     // But it does touch global requirements.
     expect(player.canPlay(ants)).is.true;
 
-    // TODO(kberg): Add test that selects the card, and then shows that the global parameter
-    // bonus no longer applies.
+    // Select ants to play. After playing, the global requirement bonus expires.
+    selectProjectCardToPlay.process({
+      type: 'projectCard',
+      card: ants.name,
+      payment: Payment.of({megacredits: ants.cost}),
+    });
+    runAllActions(player.game);
+
+    // Put ants back in hand to re-test canPlay after bonus has expired.
+    player.cardsInHand.push(ants);
+    player.megaCredits = ants.cost;
+    // Oxygen is still 0%, so ants can no longer be played without the bonus.
+    expect(player.canPlay(ants)).is.false;
   });
 
   it('TR effect, self', () => {
     const card = new AnubisSecurities();
     const [/* game */, player] = testGame(2);
 
-    player.corporations.push(card);
+    player.playedCards.push(card);
     player.megaCredits = 0;
 
     player.increaseTerraformRating(1);
@@ -54,7 +67,7 @@ describe('AnubisSecurities', () => {
     const card = new AnubisSecurities();
     const [/* game */, player, player2] = testGame(2);
 
-    player.corporations.push(card);
+    player.playedCards.push(card);
     player.megaCredits = 0;
     player2.megaCredits = 0;
 
@@ -77,7 +90,7 @@ describe('AnubisSecurities', () => {
   it('canAct', () => {
     const card = new AnubisSecurities();
     const [/* game */, player] = testGame(2);
-    player.corporations.push(card);
+    player.playedCards.push(card);
     player.underworldData.corruption = 0;
     expect(card.canAct(player)).is.false;
     player.underworldData.corruption = 1;
@@ -87,7 +100,7 @@ describe('AnubisSecurities', () => {
   it('action', () => {
     const card = new AnubisSecurities();
     const [/* game */, player] = testGame(2);
-    player.corporations.push(card);
+    player.playedCards.push(card);
     player.underworldData.corruption = 3;
     player.megaCredits = 0;
 

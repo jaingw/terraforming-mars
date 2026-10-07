@@ -18,6 +18,7 @@ export type Preferences = {
   hide_animated_sidebar: boolean,
   debug_view: boolean,
   symbol_overlay: boolean,
+  animated_title: boolean,
   experimental_ui: boolean,
   lang: string,
   donateupdate : string,
@@ -53,6 +54,7 @@ const defaults: Preferences = {
   hide_animated_sidebar: false,
 
   symbol_overlay: false,
+  animated_title: true,
 
   experimental_ui: false,
 
@@ -83,7 +85,9 @@ export class PreferencesManager {
     this._values = {...defaults};
     for (const key of Object.keys(defaults) as Array<Preference>) {
       const value = this.localStorageSupported() ? localStorage.getItem(key) : undefined;
-      if (value) this._set(key, value);
+      if (value) {
+        this._set(key, value);
+      }
     }
   }
 
@@ -118,7 +122,9 @@ export class PreferencesManager {
 
   set(name: Preference, val: string | boolean, setOnChange = false): void {
     // Don't set values if nothing has changed.
-    if (setOnChange && this._values[name] === val) return;
+    if (setOnChange && this._values[name] === val) {
+      return;
+    }
     this._set(name, val);
     if (this.localStorageSupported()) {
       if (typeof(this._values[name]) === 'string') {
@@ -130,7 +136,9 @@ export class PreferencesManager {
   }
 
   static loginOut() {
-    if ( ! PreferencesManager.INSTANCE.localStorageSupported()) return;
+    if ( ! PreferencesManager.INSTANCE.localStorageSupported()) {
+      return;
+    }
     localStorage.removeItem('userId');
     localStorage.removeItem('userName');
     localStorage.removeItem('vip');

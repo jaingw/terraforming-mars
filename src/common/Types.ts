@@ -40,6 +40,8 @@ export type JSONValue =
     | string
     | number
     | boolean
-    | { [x: string]: JSONValue }
+    | JSONObject
     | Array<JSONValue>
     | ReadonlyArray<JSONValue>;
+export type JSONObject = { [x: string]: JSONValue };
+

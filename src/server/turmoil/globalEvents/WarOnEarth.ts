@@ -23,7 +23,7 @@ export class WarOnEarth extends GlobalEvent implements IGlobalEvent {
   }
   public resolve(game: IGame, turmoil: Turmoil) {
     game.playersInGenerationOrder.forEach((player) => {
-      player.decreaseTerraformRating(Math.max(4 - turmoil.getInfluence(player), 0), {log: true});
+      player.decreaseTerraformRating(Math.max(0, 4 - turmoil.getInfluence(player)), {log: true});
     });
   }
 }

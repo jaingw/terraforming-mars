@@ -90,7 +90,7 @@ export class UtopiaInvest extends CorporationCard implements ICorporationCard, I
 
     const reduceHeat = new SelectOption('Decrease heat production', 'Decrease production').andThen(() => {
       player.production.add(Resource.HEAT, -1);
-      player.heat += 4;
+      player.stock.add(Resource.HEAT, 4);
       this.log(player, 'heat');
       return undefined;
     });

@@ -13,8 +13,8 @@
 
       <g id="mare_sereitatis" transform="translate(485, 140)">
         <text class="board-caption">
-            <tspan dy="15">Mare</tspan>
-            <tspan x="4" dy="12">Serenitatis</tspan>
+          <tspan dy="15">Mare</tspan>
+          <tspan x="4" dy="12">Serenitatis</tspan>
         </text>
         <line x1="0" y1="25" x2="-120" y2="50" class="board-line"></line>
         <text x="-122" y="53" class="board-caption board_caption--black">●</text>
@@ -74,7 +74,7 @@
 
 <script lang="ts">
 
-import Vue from 'vue';
+import {defineComponent} from 'vue';
 import {MoonModel} from '@/common/models/MoonModel';
 import {SpaceModel} from '@/common/models/SpaceModel';
 import {SpaceType} from '@/common/boards/SpaceType';
@@ -88,11 +88,12 @@ type MoonParamLevel = {
   strValue: string,
 };
 
-export default Vue.extend({
+export default defineComponent({
   name: 'MoonBoard',
   props: {
     model: {
       type: Object as () => MoonModel,
+      required: true,
     },
     tileView: {
       type: String as () => TileView,

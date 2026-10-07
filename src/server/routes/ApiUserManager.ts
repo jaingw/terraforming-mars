@@ -5,8 +5,8 @@ import {Request} from '../Request';
 import {Response} from '../Response';
 import * as UserManager from '../UserManager';
 
-type IUserGetHandler = ( req: Request, res: Response, ctx: Context) => void;
-type IUserPostHandler = (body: string, req: Request, res: Response, ctx: Context) => void;
+type IUserGetHandler = ( req: Request, res: Response, ctx: Context) => void | Promise<void>;
+type IUserPostHandler = (body: string, req: Request, res: Response, ctx: Context) => void | Promise<void>;
 
 export const userGetHandler :Map<string, IUserGetHandler> = new Map(
   [
@@ -39,15 +39,15 @@ export class ApiUserManager extends Handler {
     super();
   }
 
-  public override get(req: Request, res: Response, ctx: Context): Promise<void> {
+  public override async get(req: Request, res: Response, ctx: Context): Promise<void> {
     const pathname = ctx.url.pathname.substring(1); // Remove leading '/'
     const uhandler: IUserGetHandler | undefined = userGetHandler.get(pathname);
     if (uhandler === undefined) {
       responses.notFound(req, res);
-      return Promise.resolve();
+      return;
     }
     try {
-      uhandler(req, res, ctx);
+      await uhandler(req, res, ctx);
     } catch (err) {
       if (err instanceof Error && err.name === 'UnexpectedInput') {
         console.warn('error ', pathname, err.message);
@@ -59,7 +59,6 @@ export class ApiUserManager extends Handler {
       res.write('执行错误 : ' + message);
       res.end();
     }
-    return Promise.resolve();
   }
 
 
@@ -74,20 +73,24 @@ export class ApiUserManager extends Handler {
     req.on('data', function(data) {
       body += data.toString();
     });
-    req.once('end', function() {
+    req.once('end', async function() {
       try {
         const userReq:any = JSON.parse(body);
-        uhandler(userReq, req, res, ctx);
+        await uhandler(userReq, req, res, ctx);
       } catch (err) {
         if (err instanceof Error && err.name === 'UnexpectedInput') {
           console.warn('error '+pathname+ ',' + body + ',' + err.message);
         } else {
           console.warn('error '+pathname+ ',' + body + ',', err);
         }
-        res.writeHead(500);
-        const message = err instanceof Error ? err.message : String(err);
-        res.write('执行错误 : ' + message);
-        res.end();
+        try {
+          res.writeHead(500);
+          const message = err instanceof Error ? err.message : String(err);
+          res.write('执行错误 : ' + message);
+          res.end();
+        } catch (_) {
+          // Ignore — response may already have been sent by the handler.
+        }
       }
     });
     return Promise.resolve();

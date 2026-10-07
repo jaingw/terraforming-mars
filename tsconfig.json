@@ -31,10 +31,13 @@
         "target": "es2021",
         "types": ["node"],
         "moduleResolution": "node",
+        "ignoreDeprecations": "6.0",
+        "rootDir": ".",
         "resolveJsonModule": true,
+        "esModuleInterop": true,
         "allowUnreachableCode": false,
         "baseUrl": ".",
-        "downlevelIteration":true,
+        "downlevelIteration": true,
         "paths": {
             "@/*": ["./src/*"]
         },

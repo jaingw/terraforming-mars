@@ -5,7 +5,6 @@
  */
 
 import {Database} from '../database/Database';
-import {GameLoader} from '../database/GameLoader';
 import {
   getSeasonId,
   getSeasonInfo as getSeasonInfoFn,
@@ -69,6 +68,19 @@ export interface ISeasonResetRequest {
 }
 
 export class SeasonService {
+  static async resolveCurrentSeasonId(now: Date = new Date()): Promise<string> {
+    const currentSeason = await Database.getInstance().getCurrentSeason();
+    return currentSeason?.seasonId || getSeasonId(now);
+  }
+
+  static async shouldResetSeason(lastSeasonId: string | undefined, now: Date = new Date()): Promise<boolean> {
+    if (lastSeasonId === undefined) {
+      return false;
+    }
+    const currentSeasonId = await this.resolveCurrentSeasonId(now);
+    return currentSeasonId !== lastSeasonId;
+  }
+
   private static async getAllSeasons(): Promise<
     Array<{seasonId: string; seasonName: string; startDate: string; endDate: string}>
     > {
@@ -141,26 +153,20 @@ export class SeasonService {
       throw new ServiceError(400, 'Missing seasonId parameter');
     }
 
-    const snapshots = await Database.getInstance().getSeasonSnapshots(seasonId);
-    const result: Array<ISeasonSnapshotEntry> = snapshots.map((s) => {
-      const user = GameLoader.getInstance().userIdMap.get(s.userId);
-      return {
+    const snapshots = await Database.getInstance().getUserRankSeasonSnapshots(seasonId);
+    const result: Array<ISeasonSnapshotEntry> = [];
+    for (const s of snapshots) {
+      result.push({
         ...s,
-        userName: user?.name || 'Unknown',
-      };
-    });
+        userName: s.userName || 'Unknown',
+      });
+    }
 
     return {seasonId, snapshots: result};
   }
 
   static async getSeasonList(now: Date = new Date()): Promise<ISeasonListResponse> {
-    const currentSeason = await Database.getInstance().getCurrentSeason();
-    let currentSeasonId: string;
-    if (currentSeason) {
-      currentSeasonId = currentSeason.seasonId;
-    } else {
-      currentSeasonId = getSeasonId(now);
-    }
+    const currentSeasonId = await this.resolveCurrentSeasonId(now);
     return {
       currentSeasonId,
       previousSeasonId: getPreviousSeasonId(currentSeasonId),
@@ -175,22 +181,21 @@ export class SeasonService {
       throw new ServiceError(400, 'Missing seasonId parameter');
     }
 
-    const currentSeasonData = await Database.getInstance().getCurrentSeason();
-    const currentSeasonId = currentSeasonData?.seasonId || getSeasonId();
+    const currentSeasonId = await this.resolveCurrentSeasonId();
 
     if (seasonId === currentSeasonId) {
-      const allUserRanks = await Database.getInstance().getUserRanks(Math.min(100, limit));
+      const allUserRanks = await Database.getInstance().getUserRanks(Math.min(100, limit), currentSeasonId);
       const rankList = Array.isArray(allUserRanks) ? allUserRanks : [];
-      const entries = rankList.map((userRank) => {
-        const user = GameLoader.getInstance().userIdMap.get(userRank.userId);
-        return {
-          userName: user?.name || 'Unknown',
+      const entries = [];
+      for (const userRank of rankList) {
+        entries.push({
+          userName: userRank.userName || 'Unknown',
           userTier: userRank.getTier(),
           rankValue: userRank.rankValue,
           trueskill: userRank.trueskill,
           seasonId: userRank.seasonId || currentSeasonId,
-        };
-      });
+        });
+      }
       return {
         seasonId,
         isCurrentSeason: true,
@@ -198,9 +203,9 @@ export class SeasonService {
       };
     }
 
-    const snapshots = await Database.getInstance().getSeasonSnapshots(seasonId);
-    const entries = snapshots.slice(0, Math.min(100, limit)).map((snapshot) => {
-      const user = GameLoader.getInstance().userIdMap.get(snapshot.userId);
+    const snapshots = await Database.getInstance().getUserRankSeasonSnapshots(seasonId, Math.min(100, limit));
+    const entries = [];
+    for (const snapshot of snapshots) {
       const userRank = new UserRank(
         snapshot.userId,
         snapshot.rankValue,
@@ -210,16 +215,16 @@ export class SeasonService {
         0,
         seasonId,
       );
-      return {
-        userName: user?.name || 'Unknown',
+      entries.push({
+        userName: snapshot.userName || 'Unknown',
         userTier: userRank.getTier(),
         rankValue: snapshot.rankValue,
         trueskill: snapshot.trueskill,
         seasonId,
         finalPosition: snapshot.finalPosition,
         pointsEarned: snapshot.pointsEarned,
-      };
-    });
+      });
+    }
 
     return {
       seasonId,

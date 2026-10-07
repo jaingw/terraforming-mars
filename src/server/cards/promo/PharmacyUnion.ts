@@ -116,11 +116,18 @@ export class PharmacyUnion extends CorporationCard implements ICorporationCard {
     }
 
     if (hasMicrobesTag) {
-      player.defer(() => {
-        const microbeTagCount = card.tags.filter((cardTag) => cardTag === Tag.MICROBE).length;
+      const microbeTagCount = card.tags.filter((cardTag) => cardTag === Tag.MICROBE).length;
+      if (card === this) {
+        // 本卡自身被打出时的微生物标签立即结算。双公司场景下两个公司背靠背打出、
+        // 中间不结算延迟动作；若此处也延迟，则本卡的科学标效果（Priority.SUPERPOWER）
+        // 会先于疾病结算执行，误判为“卡上无疾病”而给出翻面选项（并可能被后续 input 覆盖）。
         this.addDisease(player, microbeTagCount);
-        return undefined;
-      }, Priority.PHARMACY_UNION);
+      } else {
+        player.defer(() => {
+          this.addDisease(player, microbeTagCount);
+          return undefined;
+        }, Priority.PHARMACY_UNION);
+      }
     }
   }
 
@@ -133,7 +140,9 @@ export class PharmacyUnion extends CorporationCard implements ICorporationCard {
     const game = player.game;
     for (let i = 0; i < count; i++) {
       player.defer(() => {
-        if (this.isDisabled) return undefined;
+        if (this.isDisabled) {
+          return;
+        }
 
         if (this.resourceCount > 0) {
           if (player.canAfford({cost: 0, tr: {tr: 1}}) === false) {
@@ -150,7 +159,7 @@ export class PharmacyUnion extends CorporationCard implements ICorporationCard {
         if (player.canAfford({cost: 0, tr: {tr: 3}}) === false) {
           // TODO (Lynesth): Remove this when #1670 is fixed
           game.log('${0} cannot turn ${1} face down to gain 3 TR because of unaffordable Reds policy cost', (b) => b.player(player).card(this));
-          return undefined;
+          return;
         }
 
         return new OrOptions(
@@ -171,6 +180,7 @@ export class PharmacyUnion extends CorporationCard implements ICorporationCard {
     });
     player.increaseTerraformRating(3);
   }
+
   public serialize(serialized: SerializedCard) {
     serialized.isDisabled = this.isDisabled;
   }

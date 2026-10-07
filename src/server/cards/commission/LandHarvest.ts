@@ -51,7 +51,9 @@ export class LandHarvest extends Card implements IProjectCard {
       return;
     }
 
-    if (activePlayer.game.phase === Phase.SOLAR) return;
+    if (activePlayer.game.phase === Phase.SOLAR) {
+      return;
+    }
 
     // 只有火星上的版块触发效果
     if (boardType === BoardType.MARS && space.spaceType !== SpaceType.COLONY) {

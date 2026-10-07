@@ -8,8 +8,6 @@ import {NewGameConfig} from '../../src/common/game/NewGameConfig';
 import {RandomBoardOption} from '../../src/common/boards/RandomBoardOption';
 import {RandomMAOptionType} from '../../src/common/ma/RandomMAOptionType';
 import {SimpleGameModel} from '../../src/common/models/SimpleGameModel';
-import {GameLoader} from '../../src/server/database/GameLoader';
-import {IGame} from '../../src/server/IGame';
 
 describe('ApiCreateGame', () => {
   let scaffolding: RouteTestScaffolding;
@@ -36,12 +34,13 @@ describe('ApiCreateGame', () => {
       BoardName.HELLAS,
       BoardName.ELYSIUM,
       BoardName.UTOPIA_PLANITIA,
-      BoardName.VASTITAS_BOREALIS_NOVUS,
-      BoardName.TERRA_CIMMERIA_NOVUS,
+      BoardName.VASTITAS_BOREALIS_NOVA,
+      BoardName.TERRA_CIMMERIA_NOVA,
       BoardName.ARABIA_TERRA,
       BoardName.VASTITAS_BOREALIS,
       BoardName.AMAZONIS,
       BoardName.TERRA_CIMMERIA,
+      BoardName.HOLLANDIA,
     ]);
   });
 
@@ -80,6 +79,7 @@ describe('ApiCreateGame', () => {
           breakthrough: false,
           eros: false,
           commission: false,
+          deltaProject: false,
         },
         board: RandomBoardOption.OFFICIAL,
         seed: '0',
@@ -97,7 +97,7 @@ describe('ApiCreateGame', () => {
         draftVariant: false,
         initialDraft: false,
         preludeDraftVariant: false,
-        ceosDraftVariant: false,
+        ceosDraftVariant: true,
         startingCorporations: 0,
         shuffleMapOption: false,
         randomMA: RandomMAOptionType.NONE,
@@ -113,11 +113,7 @@ describe('ApiCreateGame', () => {
         moonStandardProjectVariant: false,
         moonStandardProjectVariant1: false,
         altVenusBoard: false,
-        escapeVelocityMode: false,
-        escapeVelocityThreshold: undefined,
-        escapeVelocityBonusSeconds: undefined,
-        escapeVelocityPeriod: undefined,
-        escapeVelocityPenalty: undefined,
+        escapeVelocity: undefined,
         customCeos: [],
         startingCeos: 0,
         startingPreludes: 0,
@@ -138,10 +134,10 @@ describe('ApiCreateGame', () => {
     const model = JSON.parse(res.content) as SimpleGameModel;
     expect(model.id).is.not.undefined;
     expect(model.id.startsWith('g')).is.true;
-    await GameLoader.getInstance().getGameById(model.id, (game:IGame|undefined)=>{
-      expect(game).is.not.undefined;
-      expect(game!.players[0].name).eq('Robot');
-    });
+    const game = await scaffolding.ctx.gameLoader.getGame(model.id);
+    expect(game).is.not.undefined;
+    expect(game!.players[0].name).eq('Robot');
+    expect(game!.gameOptions.ceosDraftVariant).is.false;
   });
 
 

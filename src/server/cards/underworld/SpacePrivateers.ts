@@ -10,6 +10,7 @@ import {IPlayer} from '../../IPlayer';
 import {PlayerInput} from '../../PlayerInput';
 import {Resource} from '../../../common/Resource';
 import {message} from '../../logs/MessageBuilder';
+import {all} from '../Options';
 
 export class SpacePrivateers extends Card implements IProjectCard, IActionCard {
   constructor() {
@@ -23,16 +24,16 @@ export class SpacePrivateers extends Card implements IProjectCard, IActionCard {
       requirements: {corruption: 3},
 
       metadata: {
-        cardNumber: 'U50',
+        cardNumber: 'U050',
         renderData: CardRenderer.builder((b) => {
           b.effect('Whenever you play a crime tag, including this, put 1 fighter on this card.', (ab) => {
             ab.tag(Tag.CRIME).startAction.resource(CardResource.FIGHTER);
           }).br;
           b.action(
-            'For each fighter here, steal 1 M€ from EACH OTHER player. ' +
+            'Steal up to 1 M€ per fighter here, from EACH OTHER player. ' +
             // 'For each corruption spent to block this, remove 1 fighter from here.',
             'For each player that blocks this, remove 1 fighter from here.',
-            (ab) => ab.empty().startAction.text('STEAL').megacredits(1).asterix().slash().resource(CardResource.FIGHTER)).br;
+            (ab) => ab.empty().startAction.text('STEAL').megacredits(1, {all}).asterix().slash().resource(CardResource.FIGHTER)).br;
           b.corruptionShield().text(':').minus().resource(CardResource.FIGHTER).br;
           b.plainText('DO NOT USE FOR SOLO').br;
         }),
@@ -61,7 +62,6 @@ export class SpacePrivateers extends Card implements IProjectCard, IActionCard {
       target.maybeBlockAttack(player, message('Lose ${0} M€', (b) => b.number(mc)), (proceed) => {
         if (proceed) {
           target.stock.steal(Resource.MEGACREDITS, mc, player, {log: true});
-          target.resolveInsurance();
         } else {
           player.removeResourceFrom(this, 1, {log: true});
         }

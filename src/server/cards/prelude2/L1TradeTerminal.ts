@@ -42,7 +42,9 @@ export class L1TradeTerminal extends Card {
   }
 
   private getEligibleCards(player: IPlayer) {
-    return [...player.getCardsWithResources(), ...player.getSelfReplicatingRobotsTargetCards().filter((card) => card.resourceCount > 0)];
+    return player.getCardsWithResources().concat(
+      player.getSelfReplicatingRobotsTargetCards().filter((card) => card.resourceCount > 0)
+        .filter((c) => c.name !== this.name)); // When L1 Trade Terminal is coming from Self Replicating Robots, it might include itself.
   }
 
   public override bespokeCanPlay(player: IPlayer): boolean {
@@ -55,7 +57,10 @@ export class L1TradeTerminal extends Card {
 
   public override bespokePlay(player: IPlayer): PlayerInput | undefined {
     const cards = this.getEligibleCards(player);
-    if (cards.length <= 3) {
+    // TODO(kberg): Make compatible with https://github.com/terraforming-mars/terraforming-mars/pull/7539#discussion_r2219661618
+    const noCardsWithNegativeVP = !(cards.some((card) => card.name === CardName.ANCIENT_SHIPYARDS || card.name === CardName.VERMIN));
+
+    if (cards.length <= 3 && noCardsWithNegativeVP) {
       this.addResources(player, cards);
       return undefined;
     }

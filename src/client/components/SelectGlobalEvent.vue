@@ -1,20 +1,20 @@
 <template>
-    <div class="wf-component wf-component--select-global-event">
-        <div v-if="showtitle === true" class="nofloat wf-component-title">{{ $t(playerinput.title) }}</div>
-        <label v-for="globalEventName in playerinput.globalEventNames" :key="globalEventName" class="cardBox">
-          <input v-if="playerinput.max === 1 && playerinput.min === 1" type="radio" v-model="selected" :value="globalEventName" />
-          <input v-else type="checkbox" v-model="selected" :value="globalEventName" :disabled="playerinput.max !== undefined && Array.isArray(selected) && selected.length >= playerinput.max && selected.includes(globalEventName) === false" />
-          <GlobalEvent :globalEventName="globalEventName" type=""></GlobalEvent>
-        </label>
-        <div v-if="showsave === true" class="nofloat">
-          <AppButton :disabled="selected === undefined && playerinput.min > 0" type="submit" @click="saveData" title="OK" />
-        </div>
+  <div class="wf-component wf-component--select-global-event">
+    <div v-if="showtitle === true" class="nofloat wf-component-title">{{ $t(playerinput.title) }}</div>
+    <label v-for="globalEventName in playerinput.globalEventNames" :key="globalEventName" class="cardBox">
+      <input v-if="playerinput.max === 1 && playerinput.min === 1" type="radio" v-model="selected" :value="globalEventName" />
+      <input v-else type="checkbox" v-model="selected" :value="globalEventName" :disabled="playerinput.max !== undefined && Array.isArray(selected) && selected.length >= playerinput.max && selected.includes(globalEventName) === false" />
+      <GlobalEvent :globalEventName="globalEventName" type="distant"></GlobalEvent>
+    </label>
+    <div v-if="showsave === true" class="nofloat">
+      <AppButton :disabled="selected === undefined && playerinput.min > 0" type="submit" @click="saveData" title="OK" />
     </div>
+  </div>
 </template>
 
 <script lang="ts">
 
-import Vue from 'vue';
+import {defineComponent} from 'vue';
 import AppButton from '@/client/components/common/AppButton.vue';
 import {PlayerViewModel} from '@/common/models/PlayerModel';
 import GlobalEvent from '@/client/components/turmoil/GlobalEvent.vue';
@@ -26,17 +26,20 @@ type DataModel = {
   selected: Array<GlobalEventName> | undefined ;
 };
 
-export default Vue.extend({
+export default defineComponent({
   name: 'SelectGlobalEvent',
   props: {
     playerView: {
       type: Object as () => PlayerViewModel,
+      required: true,
     },
     playerinput: {
       type: Object as () => SelectGlobalEventModel,
+      required: true,
     },
     onsave: {
       type: Function as unknown as () => (out: SelectGlobalEventResponse) => void,
+      required: true,
     },
     showsave: {
       type: Boolean,

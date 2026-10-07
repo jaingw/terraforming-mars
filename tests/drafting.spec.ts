@@ -1,9 +1,9 @@
 import {cardsFromJSON} from '../src/server/createCard';
 import {CardName} from '../src/common/cards/CardName';
-import {cast, finishGeneration} from './TestingUtils';
+import {finishGeneration} from './TestingUtils';
 import {expect} from 'chai';
 import {testGame} from './TestGame';
-import {toName} from '../src/common/utils/utils';
+import {cast, toName} from '../src/common/utils/utils';
 import {IProjectCard} from '../src/server/cards/IProjectCard';
 import {IPlayer} from '../src/server/IPlayer';
 import {SelectCard} from '../src/server/inputs/SelectCard';
@@ -748,6 +748,17 @@ describe('drafting', () => {
       CardName.METAL_RICH_ASTEROID,
       CardName.MOHOLE]);
 
+    const dealtToPlayer = [
+      CardName.EXPERIMENTAL_FOREST,
+      CardName.ECOLOGY_EXPERTS,
+      CardName.ECCENTRIC_SPONSOR,
+      CardName.RESEARCH_NETWORK];
+    const dealtToOtherPlayer = [
+      CardName.ACQUIRED_SPACE_AGENCY,
+      CardName.ORBITAL_CONSTRUCTION_YARD,
+      CardName.METAL_RICH_ASTEROID,
+      CardName.MOHOLE];
+
     selectCard(player, CardName.EXPERIMENTAL_FOREST);
     selectCard(otherPlayer, CardName.ACQUIRED_SPACE_AGENCY);
 
@@ -757,6 +768,11 @@ describe('drafting', () => {
     expect(otherPlayer.draftedCards.map(toName)).deep.eq([
       CardName.ACQUIRED_SPACE_AGENCY,
     ]);
+
+    // dealtPreludeCards must not be mutated by drafting; it would leak the
+    // other player's pick to this player's client.
+    expect(player.dealtPreludeCards.map(toName)).deep.eq(dealtToPlayer);
+    expect(otherPlayer.dealtPreludeCards.map(toName)).deep.eq(dealtToOtherPlayer);
 
     // Second prelude card
 
@@ -770,6 +786,9 @@ describe('drafting', () => {
       CardName.ECCENTRIC_SPONSOR,
       CardName.RESEARCH_NETWORK]);
 
+    expect(player.dealtPreludeCards.map(toName)).deep.eq(dealtToPlayer);
+    expect(otherPlayer.dealtPreludeCards.map(toName)).deep.eq(dealtToOtherPlayer);
+
     selectCard(player, CardName.ORBITAL_CONSTRUCTION_YARD);
     selectCard(otherPlayer, CardName.ECOLOGY_EXPERTS);
 
@@ -781,6 +800,9 @@ describe('drafting', () => {
       CardName.ACQUIRED_SPACE_AGENCY,
       CardName.ECOLOGY_EXPERTS,
     ]);
+
+    expect(player.dealtPreludeCards.map(toName)).deep.eq(dealtToPlayer);
+    expect(otherPlayer.dealtPreludeCards.map(toName)).deep.eq(dealtToOtherPlayer);
 
     // Third prelude card
 
@@ -853,111 +875,269 @@ describe('drafting', () => {
     });
   });
 
-  // it('2 player - initial draft + ceo draft', () => {
-  //   const [/* game */, player, otherPlayer] = testGame(2, {
-  //     skipInitialShuffling: true,
-  //     draftVariant: true,
-  //     initialDraftVariant: true,
-  //     ceoExtension: true,
-  //     ceosDraftVariant: true,
-  //   });
+  it('2 player - initial draft + prelude draft + corporation draft', () => {
+    const [game, player, otherPlayer] = testGame(2, {
+      skipInitialShuffling: true,
+      draftVariant: true,
+      initialDraftVariant: true,
+      preludeExtension: true,
+      preludeDraftVariant: true,
+      initialCorpDraftVariant: true,
+      doubleCorp: true,
+      startingCorporations: 4,
+    });
 
-  //   runInitialProjectDraft(player, otherPlayer);
+    runInitialProjectDraft(player, otherPlayer);
 
-  //   // Start of the CEO draft
+    selectCard(player, CardName.EXPERIMENTAL_FOREST);
+    selectCard(otherPlayer, CardName.ACQUIRED_SPACE_AGENCY);
+    selectCard(player, CardName.ORBITAL_CONSTRUCTION_YARD);
+    selectCard(otherPlayer, CardName.ECOLOGY_EXPERTS);
+    selectCard(player, CardName.RESEARCH_NETWORK);
+    selectCard(otherPlayer, CardName.MOHOLE);
 
-  //   expect(player.draftedCards.map(toName)).deep.eq([]);
-  //   expect(otherPlayer.draftedCards.map(toName)).deep.eq([]);
+    expect(game.initialDraftIteration).eq(4);
+    expect(draftSelection(player)).deep.eq([
+      CardName.VITOR,
+      CardName.VALLEY_TRUST,
+      CardName.ROBINSON_INDUSTRIES,
+      CardName.POINT_LUNA,
+    ]);
+    expect(draftSelection(otherPlayer)).deep.eq([
+      CardName.CHEUNG_SHING_MARS,
+      CardName.TERACTOR,
+      CardName.SATURN_SYSTEMS,
+      CardName.UNITED_NATIONS_MARS_INITIATIVE,
+    ]);
+  });
 
-  //   expect(draftSelection(player)).deep.eq([
-  //     CardName.VANALLEN,
-  //     CardName.ULRICH,
-  //     CardName.TATE]);
+  it('2 player - initial draft + ceo draft', () => {
+    const [/* game */, player, otherPlayer] = testGame(2, {
+      skipInitialShuffling: true,
+      draftVariant: true,
+      initialDraftVariant: true,
+      ceoExtension: true,
+      ceosDraftVariant: true,
+    });
 
-  //   expect(draftSelection(otherPlayer)).deep.eq([
-  //     CardName.STEFAN,
-  //     CardName.RYU,
-  //     CardName.MUSK]);
+    runInitialProjectDraft(player, otherPlayer);
 
-  //   selectCard(player, CardName.VANALLEN);
-  //   selectCard(otherPlayer, CardName.STEFAN);
+    // Start of the CEO draft
 
-  //   expect(player.draftedCards.map(toName)).deep.eq([
-  //     CardName.VANALLEN,
-  //   ]);
-  //   expect(otherPlayer.draftedCards.map(toName)).deep.eq([
-  //     CardName.STEFAN,
-  //   ]);
+    expect(player.draftedCards.map(toName)).deep.eq([]);
+    expect(otherPlayer.draftedCards.map(toName)).deep.eq([]);
 
-  //   // Second CEO card
+    expect(draftSelection(player)).deep.eq([
+      CardName.VANALLEN,
+      CardName.ULRICH,
+      CardName.TATE]);
 
-  //   expect(draftSelection(player)).deep.eq([
-  //     CardName.RYU,
-  //     CardName.MUSK]);
+    expect(draftSelection(otherPlayer)).deep.eq([
+      CardName.STEFAN,
+      CardName.RYU,
+      CardName.MUSK]);
 
-  //   expect(draftSelection(otherPlayer)).deep.eq([
-  //     CardName.ULRICH,
-  //     CardName.TATE]);
+    const dealtToPlayer = [CardName.VANALLEN, CardName.ULRICH, CardName.TATE];
+    const dealtToOtherPlayer = [CardName.STEFAN, CardName.RYU, CardName.MUSK];
 
-  //   selectCard(player, CardName.RYU);
-  //   selectCard(otherPlayer, CardName.TATE);
+    selectCard(player, CardName.VANALLEN);
+    selectCard(otherPlayer, CardName.STEFAN);
 
-  //   expect(player.draftedCards.map(toName)).deep.eq([]);
-  //   expect(otherPlayer.draftedCards.map(toName)).deep.eq([]);
+    expect(player.draftedCards.map(toName)).deep.eq([
+      CardName.VANALLEN,
+    ]);
+    expect(otherPlayer.draftedCards.map(toName)).deep.eq([
+      CardName.STEFAN,
+    ]);
 
-  //   // End of draft
+    // dealtCeoCards must not be mutated by drafting; it would leak the
+    // other player's pick to this player's client.
+    expect(player.dealtCeoCards.map(toName)).deep.eq(dealtToPlayer);
+    expect(otherPlayer.dealtCeoCards.map(toName)).deep.eq(dealtToOtherPlayer);
 
-  //   expect(initialCardSelection(player)).deep.eq({
-  //     projectCards: [
-  //       CardName.ADAPTATION_TECHNOLOGY,
-  //       CardName.ARCTIC_ALGAE,
-  //       CardName.AEROBRAKED_AMMONIA_ASTEROID,
-  //       CardName.ARCHAEBACTERIA,
-  //       CardName.ADVANCED_ECOSYSTEMS,
-  //       CardName.ASTEROID_MINING,
-  //       CardName.BLACK_POLAR_DUST,
-  //       CardName.ASTEROID,
-  //       CardName.BIRDS,
-  //       CardName.BIG_ASTEROID,
-  //     ],
-  //     corporationCards: [
-  //       CardName.TERACTOR,
-  //       CardName.SATURN_SYSTEMS,
-  //     ],
-  //     preludeCards: [],
-  //     ceoCards: [
-  //       CardName.VANALLEN,
-  //       CardName.RYU,
-  //       CardName.ULRICH,
-  //     ],
-  //   });
+    // Second CEO card
 
-  //   expect(initialCardSelection(otherPlayer)).deep.eq({
-  //     projectCards: [
-  //       CardName.ALGAE,
-  //       CardName.ANTS,
-  //       CardName.AQUIFER_PUMPING,
-  //       CardName.ADAPTED_LICHEN,
-  //       CardName.ARTIFICIAL_LAKE,
-  //       CardName.BUSHES,
-  //       CardName.ARTIFICIAL_PHOTOSYNTHESIS,
-  //       CardName.BREATHING_FILTERS,
-  //       CardName.BEAM_FROM_A_THORIUM_ASTEROID,
-  //       CardName.BIOMASS_COMBUSTORS,
-  //     ],
-  //     corporationCards: [
-  //       CardName.UNITED_NATIONS_MARS_INITIATIVE,
-  //       CardName.THORGATE,
-  //     ],
-  //     preludeCards: [
-  //     ],
-  //     ceoCards: [
-  //       CardName.STEFAN,
-  //       CardName.TATE,
-  //       CardName.MUSK,
-  //     ],
-  //   });
-  // });
+    expect(draftSelection(player)).deep.eq([
+      CardName.RYU,
+      CardName.MUSK]);
+
+    expect(draftSelection(otherPlayer)).deep.eq([
+      CardName.ULRICH,
+      CardName.TATE]);
+
+    expect(player.dealtCeoCards.map(toName)).deep.eq(dealtToPlayer);
+    expect(otherPlayer.dealtCeoCards.map(toName)).deep.eq(dealtToOtherPlayer);
+
+    selectCard(player, CardName.RYU);
+    selectCard(otherPlayer, CardName.TATE);
+
+    expect(player.draftedCards.map(toName)).deep.eq([]);
+    expect(otherPlayer.draftedCards.map(toName)).deep.eq([]);
+
+    // End of draft
+
+    expect(initialCardSelection(player)).deep.eq({
+      projectCards: [
+        CardName.ADAPTATION_TECHNOLOGY,
+        CardName.ARCTIC_ALGAE,
+        CardName.AEROBRAKED_AMMONIA_ASTEROID,
+        CardName.ARCHAEBACTERIA,
+        CardName.ADVANCED_ECOSYSTEMS,
+        CardName.ASTEROID_MINING,
+        CardName.BLACK_POLAR_DUST,
+        CardName.ASTEROID,
+        CardName.BIRDS,
+        CardName.BIG_ASTEROID,
+      ],
+      corporationCards: [
+        CardName.TERACTOR,
+        CardName.SATURN_SYSTEMS,
+      ],
+      preludeCards: [],
+      ceoCards: [
+        CardName.VANALLEN,
+        CardName.RYU,
+        CardName.ULRICH,
+      ],
+    });
+
+    expect(initialCardSelection(otherPlayer)).deep.eq({
+      projectCards: [
+        CardName.ALGAE,
+        CardName.ANTS,
+        CardName.AQUIFER_PUMPING,
+        CardName.ADAPTED_LICHEN,
+        CardName.ARTIFICIAL_LAKE,
+        CardName.BUSHES,
+        CardName.ARTIFICIAL_PHOTOSYNTHESIS,
+        CardName.BREATHING_FILTERS,
+        CardName.BEAM_FROM_A_THORIUM_ASTEROID,
+        CardName.BIOMASS_COMBUSTORS,
+      ],
+      corporationCards: [
+        CardName.UNITED_NATIONS_MARS_INITIATIVE,
+        CardName.THORGATE,
+      ],
+      preludeCards: [
+      ],
+      ceoCards: [
+        CardName.STEFAN,
+        CardName.TATE,
+        CardName.MUSK,
+      ],
+    });
+  });
+
+  it('2 player - initial draft + corporation draft + ceo extension', () => {
+    const [/* game */, player, otherPlayer] = testGame(2, {
+      skipInitialShuffling: true,
+      draftVariant: true,
+      initialDraftVariant: true,
+      initialCorpDraftVariant: true,
+      doubleCorp: true,
+      startingCorporations: 4,
+      ceoExtension: true,
+      ceosDraftVariant: false,
+    });
+
+    runInitialProjectDraft(player, otherPlayer);
+
+    expect(draftSelection(player)).deep.eq([
+      CardName.TERACTOR,
+      CardName.SATURN_SYSTEMS,
+      CardName.UNITED_NATIONS_MARS_INITIATIVE,
+      CardName.THORGATE,
+    ]);
+    expect(draftSelection(otherPlayer)).deep.eq([
+      CardName.THARSIS_REPUBLIC,
+      CardName.PHOBOLOG,
+      CardName.MINING_GUILD,
+      CardName.INVENTRIX,
+    ]);
+
+    selectCard(player, CardName.TERACTOR);
+    selectCard(otherPlayer, CardName.THARSIS_REPUBLIC);
+
+    expect(draftSelection(player)).deep.eq([
+      CardName.PHOBOLOG,
+      CardName.MINING_GUILD,
+      CardName.INVENTRIX,
+    ]);
+    expect(draftSelection(otherPlayer)).deep.eq([
+      CardName.SATURN_SYSTEMS,
+      CardName.UNITED_NATIONS_MARS_INITIATIVE,
+      CardName.THORGATE,
+    ]);
+
+    selectCard(player, CardName.PHOBOLOG);
+    selectCard(otherPlayer, CardName.SATURN_SYSTEMS);
+
+    expect(draftSelection(player)).deep.eq([
+      CardName.UNITED_NATIONS_MARS_INITIATIVE,
+      CardName.THORGATE,
+    ]);
+    expect(draftSelection(otherPlayer)).deep.eq([
+      CardName.MINING_GUILD,
+      CardName.INVENTRIX,
+    ]);
+
+    selectCard(player, CardName.UNITED_NATIONS_MARS_INITIATIVE);
+    selectCard(otherPlayer, CardName.MINING_GUILD);
+
+    expect(initialCardSelection(player)).deep.eq({
+      projectCards: [
+        CardName.ADAPTATION_TECHNOLOGY,
+        CardName.ARCTIC_ALGAE,
+        CardName.AEROBRAKED_AMMONIA_ASTEROID,
+        CardName.ARCHAEBACTERIA,
+        CardName.ADVANCED_ECOSYSTEMS,
+        CardName.ASTEROID_MINING,
+        CardName.BLACK_POLAR_DUST,
+        CardName.ASTEROID,
+        CardName.BIRDS,
+        CardName.BIG_ASTEROID,
+      ],
+      corporationCards: [
+        CardName.TERACTOR,
+        CardName.PHOBOLOG,
+        CardName.UNITED_NATIONS_MARS_INITIATIVE,
+        CardName.INVENTRIX,
+      ],
+      preludeCards: [],
+      ceoCards: [
+        CardName.VANALLEN,
+        CardName.ULRICH,
+        CardName.TATE,
+      ],
+    });
+
+    expect(initialCardSelection(otherPlayer)).deep.eq({
+      projectCards: [
+        CardName.ALGAE,
+        CardName.ANTS,
+        CardName.AQUIFER_PUMPING,
+        CardName.ADAPTED_LICHEN,
+        CardName.ARTIFICIAL_LAKE,
+        CardName.BUSHES,
+        CardName.ARTIFICIAL_PHOTOSYNTHESIS,
+        CardName.BREATHING_FILTERS,
+        CardName.BEAM_FROM_A_THORIUM_ASTEROID,
+        CardName.BIOMASS_COMBUSTORS,
+      ],
+      corporationCards: [
+        CardName.THARSIS_REPUBLIC,
+        CardName.SATURN_SYSTEMS,
+        CardName.MINING_GUILD,
+        CardName.THORGATE,
+      ],
+      preludeCards: [],
+      ceoCards: [
+        CardName.STEFAN,
+        CardName.RYU,
+        CardName.MUSK,
+      ],
+    });
+  });
 
   // Every initial draft includes project cards first.
   // That shouldn't really be mandatory. Let's fix that.
@@ -1069,7 +1249,7 @@ function selectCard(player: TestPlayer, cardName: CardName) {
 //   const game = player.game;
 
 //   const serialized = await Database.getInstance().getGameVersion(game.id, game.lastSaveId);
-//   const restored = Game.deserialize(serialized);
+//   const restored = loadGameFromJSON(serialized);
 
 //   expect(game.deferredActions).has.length(0);
 //   expect(restored.deferredActions).has.length(0);
@@ -1088,4 +1268,3 @@ function selectCard(player: TestPlayer, cardName: CardName) {
 //     }
 //   }
 // }
-

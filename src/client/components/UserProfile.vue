@@ -123,13 +123,13 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import {RankTier} from '@/common/rank/RankTier';
 import RankBadge from '@/client/components/common/RankBadge.vue';
 import UserGameStats from '@/client/components/common/UserGameStats.vue';
 import {userService, UserProfile as IProfile} from '@/client/services';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'UserProfile',
   components: {
     RankBadge,
@@ -150,7 +150,9 @@ export default Vue.extend({
   },
   computed: {
     formattedJoinDate(): string {
-      if (!this.profile?.createtime) return '';
+      if (!this.profile?.createtime) {
+        return '';
+      }
       const date = new Date(this.profile.createtime);
       const lang = navigator.language || 'en-US';
       return date.toLocaleDateString(lang, {year: 'numeric', month: 'long', day: 'numeric'});
@@ -177,9 +179,8 @@ export default Vue.extend({
         textShadow: '0 2px 4px rgba(0,0,0,0.3)',
       };
     },
-    rankTierObj(): RankTier | null {
-      if (!this.profile?.rank) return null;
-      const t = this.profile.rank.tier;
+    rankTierObj(): RankTier {
+      const t = this.profile!.rank!.tier;
       return new RankTier(
         t.name as any,
         t.measurement as 'star' | 'value',
@@ -196,14 +197,22 @@ export default Vue.extend({
     },
     winRateClass(): string {
       const rate = this.allTimeWinRate;
-      if (rate >= 50) return 'profile-stat--success';
-      if (rate >= 40) return 'profile-stat--warn';
+      if (rate >= 50) {
+        return 'profile-stat--success';
+      }
+      if (rate >= 40) {
+        return 'profile-stat--warn';
+      }
       return '';
     },
     fleeRateClass(): string {
       const rate = this.allTimeFleeRate;
-      if (rate > 20) return 'profile-stat--danger';
-      if (rate > 10) return 'profile-stat--warn';
+      if (rate > 20) {
+        return 'profile-stat--danger';
+      }
+      if (rate > 10) {
+        return 'profile-stat--warn';
+      }
       return '';
     },
   },

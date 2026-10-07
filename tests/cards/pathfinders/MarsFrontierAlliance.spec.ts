@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 import {testGame} from '../../TestGame';
 import {MarsFrontierAlliance} from '../../../src/server/cards/pathfinders/MarsFrontierAlliance';
-import {addGreenery, cast, runAllActions, runNextAction} from '../../TestingUtils';
+import {addGreenery, runAllActions, runNextAction} from '../../TestingUtils';
 import {IPlayer} from '../../../src/server/IPlayer';
 import {PartyName} from '../../../src/common/turmoil/PartyName';
 import {Turmoil} from '../../../src/server/turmoil/Turmoil';
@@ -12,6 +12,7 @@ import {Phase} from '../../../src/common/Phase';
 import {TestPlayer} from '../../TestPlayer';
 import {IGame} from '../../../src/server/IGame';
 import {PolicyId} from '../../../src/common/turmoil/Types';
+import {cast} from '../../../src/common/utils/utils';
 
 describe('MarsFrontierAlliance', () => {
   let card: MarsFrontierAlliance;
@@ -34,7 +35,7 @@ describe('MarsFrontierAlliance', () => {
   });
 
   it('New generation - switch of allied party', () => {
-    player.corporations.push(card);
+    player.playedCards.push(card);
     game.generation = 10;
 
     const reds = game.turmoil!.getPartyByName(PartyName.REDS);
@@ -60,7 +61,7 @@ describe('MarsFrontierAlliance', () => {
   });
 
   it('A card having ruling party as requirement should be playable', () => {
-    player.corporations.push(card);
+    player.playedCards.push(card);
     const sponsoredMohole = new SponsoredMohole();
     expect(sponsoredMohole.canPlay(player)).is.not.true;
 
@@ -70,7 +71,7 @@ describe('MarsFrontierAlliance', () => {
   });
 
   it('Passive effect from Unity policy', () => {
-    player.corporations.push(card);
+    player.playedCards.push(card);
     game.phase = Phase.ACTION;
     const unity = game.turmoil!.getPartyByName(PartyName.UNITY);
     player.setAlliedParty(unity);
@@ -89,7 +90,7 @@ describe('MarsFrontierAlliance', () => {
   });
 
   it('Passive effect from Mars First party should be applied', () => {
-    player.corporations.push(card);
+    player.playedCards.push(card);
     game.phase = Phase.ACTION;
     const marsFirst = game.turmoil!.getPartyByName(PartyName.MARS);
     player.setAlliedParty(marsFirst);
@@ -100,7 +101,7 @@ describe('MarsFrontierAlliance', () => {
   });
 
   it('Passive effect from Reds party should not be applied', () => {
-    player.corporations.push(card);
+    player.playedCards.push(card);
     game.phase = Phase.ACTION;
     const reds = game.turmoil!.getPartyByName(PartyName.REDS);
     player.setAlliedParty(reds);
@@ -116,7 +117,7 @@ describe('MarsFrontierAlliance', () => {
   });
 
   it('Passive effect from Greens party should be applied', () => {
-    player.corporations.push(card);
+    player.playedCards.push(card);
     game.phase = Phase.ACTION;
     const greens = game.turmoil!.getPartyByName(PartyName.GREENS);
     player.setAlliedParty(greens);
@@ -126,7 +127,7 @@ describe('MarsFrontierAlliance', () => {
   });
 
   it('Active effect from Kelvinists party should not be applicable', () => {
-    player.corporations.push(card);
+    player.playedCards.push(card);
     game.phase = Phase.ACTION;
     turmoil = game.turmoil!;
     const kelvinists = game.turmoil!.getPartyByName(PartyName.KELVINISTS);
@@ -138,7 +139,7 @@ describe('MarsFrontierAlliance', () => {
   });
 
   it('Active effect from Scientists party should not be applicable', () => {
-    player.corporations.push(card);
+    player.playedCards.push(card);
     game.phase = Phase.ACTION;
     turmoil = game.turmoil!;
     const scientists = game.turmoil!.getPartyByName(PartyName.SCIENTISTS);

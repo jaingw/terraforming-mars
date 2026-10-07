@@ -20,7 +20,6 @@ export class MarsFirst extends Party implements IParty {
   readonly policies = [MARS_FIRST_POLICY_1, MARS_FIRST_POLICY_2, MARS_FIRST_POLICY_3, MARS_FIRST_POLICY_4];
 }
 
-// TODO(nwai90): Mars First bonus IDs start with 'm' and policies start with 'mp'.
 class MarsFirstBonus01 extends Bonus {
   readonly id = 'mb01' as const;
   readonly description = 'Gain 1 M€ for each building tag you have';
@@ -30,7 +29,7 @@ class MarsFirstBonus01 extends Bonus {
   }
 
   grantForPlayer(player: IPlayer): void {
-    player.stock.add(Resource.MEGACREDITS, this.getScore(player));
+    player.stock.add(Resource.MEGACREDITS, this.getScore(player), {log: true, from: {partyName: PartyName.MARS}});
   }
 }
 
@@ -44,7 +43,7 @@ class MarsFirstBonus02 extends Bonus {
   }
 
   grantForPlayer(player: IPlayer): void {
-    player.stock.add(Resource.MEGACREDITS, this.getScore(player));
+    player.stock.add(Resource.MEGACREDITS, this.getScore(player), {log: true, from: {partyName: PartyName.MARS}});
   }
 }
 
@@ -54,7 +53,7 @@ class MarsFirstPolicy01 implements IPolicy {
 
   onTilePlaced(player: IPlayer, space: Space) {
     if (space.tile && space.spaceType !== SpaceType.COLONY && player.game.phase === Phase.ACTION) {
-      player.stock.add(Resource.STEEL, 1);
+      player.stock.add(Resource.STEEL, 1, {log: true, from: {partyName: PartyName.MARS}});
     }
   }
 }
@@ -64,7 +63,9 @@ class MarsFirstPolicy02 implements IPolicy {
   readonly description = 'When you play a building tag, gain 2 M€';
 
   onCardPlayed(player: IPlayer, card: ICard) {
-    if (card.tags.includes(Tag.BUILDING)) player.stock.add(Resource.MEGACREDITS, 2);
+    if (card.tags.includes(Tag.BUILDING)) {
+      player.stock.add(Resource.MEGACREDITS, 2, {log: true, from: {partyName: PartyName.MARS}});
+    }
   }
 }
 

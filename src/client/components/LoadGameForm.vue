@@ -1,25 +1,24 @@
 <template>
   <div id="load-game">
-      <h1><span v-i18n>{{ APP_NAME }}</span> — <span v-i18n>Load Game</span></h1>
+    <h1><span v-i18n>{{ APP_NAME }}</span> — <span v-i18n>Load Game</span></h1>
 
-      <div class="load-game-form load-game--block">
-          <div class="container load-game-options">
-              <div >
-                  <label for="gameId">Game, player, or spectator ID to reload:</label><br/>
-                  <input class="form-input form-inline load-game-id" :placeholder="'Game Id'" v-model="gameId" /><br/>
-                  <label for="rollbackCount">Number of saves to delete before loading:</label><br/>
-                  <input class="form-input form-inline load-game-id" value="0" v-model="rollbackCount" /><br/>
-                  <AppButton title="Load Game" size="big" type="success" @click="loadGame" />
-              </div>
-          </div>
+    <div class="load-game-form load-game--block">
+      <div class="container load-game-options">
+        <div >
+          <label for="gameId">Game or player ID to reload:</label><br/>
+          <input class="form-input form-inline load-game-id" :placeholder="'Game Id'" v-model="gameId" /><br/>
+          <label for="rollbackCount">Number of saves to delete before loading:</label><br/>
+          <input class="form-input form-inline load-game-id" value="0" v-model="rollbackCount" /><br/>
+          <AppButton title="Load Game" size="big" type="success" @click="loadGame" />
+        </div>
       </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import {defineComponent} from 'vue';
 import * as constants from '@/common/constants';
-import {statusCode} from '@/common/http/statusCode';
 import AppButton from '@/client/components/common/AppButton.vue';
 import {LoadGameFormModel} from '@/common/models/LoadGameFormModel';
 import {SimpleGameModel} from '@/common/models/SimpleGameModel';
@@ -33,7 +32,7 @@ type LoadGameFormDataModel = {
   rollbackCount: number;
 };
 
-export default Vue.extend({
+export default defineComponent({
   name: 'LoadGameForm',
   components: {
     AppButton,
@@ -52,14 +51,23 @@ export default Vue.extend({
         showWarning('Specify a game id');
         return;
       }
-      const xhr = new XMLHttpRequest();
-      xhr.open('PUT', paths.LOAD_GAME);
-      xhr.onerror = function() {
-        showError('Error loading game');
+      const loadGameForm: LoadGameFormModel = {
+        gameId,
+        rollbackCount,
       };
-      xhr.onload = () => {
-        if (xhr.status === statusCode.ok) {
-          const response = xhr.response as SimpleGameModel;
+
+      fetch(paths.LOAD_GAME, {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(loadGameForm),
+      })
+        .then((resp) => {
+          if (!resp.ok) {
+            throw new Error(`Error getting game data: ${resp.statusText}`);
+          }
+          return resp.json();
+        })
+        .then((response: SimpleGameModel) => {
           if (response.players.length === 1) {
             window.location.href = 'player?id=' + response.players[0].id;
             return;
@@ -68,16 +76,11 @@ export default Vue.extend({
             vueRoot(this).game = response;
             vueRoot(this).screen = 'game-home';
           }
-        } else {
-          showError('Unexpected server response');
-        }
-      };
-      const loadGameFormModel: LoadGameFormModel = {
-        gameId: gameId,
-        rollbackCount: rollbackCount,
-      };
-      xhr.responseType = 'json';
-      xhr.send(JSON.stringify(loadGameFormModel));
+        })
+        .catch((err) => {
+          showError('Error loading game');
+          console.error(err);
+        });
     },
   },
   computed: {

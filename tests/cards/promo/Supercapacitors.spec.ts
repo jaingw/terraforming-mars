@@ -2,10 +2,11 @@ import {expect} from 'chai';
 import {Supercapacitors} from '../../../src/server/cards/promo/Supercapacitors';
 import {IGame} from '../../../src/server/IGame';
 import {TestPlayer} from '../../TestPlayer';
-import {cast, doWait, forceGenerationEnd, runAllActions} from '../../TestingUtils';
+import {doWait, forceGenerationEnd, runAllActions} from '../../TestingUtils';
 import {testGame} from '../../TestGame';
 import {SelectCard} from '../../../src/server/inputs/SelectCard';
 import {SelectAmount} from '../../../src/server/inputs/SelectAmount';
+import {cast} from '../../../src/common/utils/utils';
 
 describe('Supercapacitors', () => {
   let card: Supercapacitors;
@@ -22,7 +23,7 @@ describe('Supercapacitors', () => {
     player.production.override({energy: 1, heat: 2});
     player.playedCards.push(card);
     player.energy = 0;
-    forceGenerationEnd(game);
+    forceGenerationEnd(game, true);
     runAllActions(game);
 
     // Select cards for next generation

@@ -1,0 +1,61 @@
+整体概述
+
+  这次主要改了 5 类内容：
+
+  1. 新增“游戏大厅”系统
+      - 前端新增大厅页面 src/client/components/lobby/GameLobby.vue，以及房间设置弹窗。
+      - 公共类型新增 src/common/lobby/LobbyTypes.ts。
+      - 后端新增 src/server/services/LobbyService.ts，负责创建房间、加入/离开、踢人、开始确认、确认准备、启动后清理房间
+        等逻辑。
+      - 新增 Hono 路由 src/server/hono/lobby.ts，暴露 /api/v2/lobby/* 接口。
+      - App.ts 增加了 /lobby 路由入口，前端可以直接切到大厅页。
+  2. 新增玩家个人页 / 我的页面 / 玩家统计
+      - 新增 src/client/components/Me.vue 和 src/client/components/UserProfile.vue。
+      - 新增一批通用组件：NavBar.vue、RankBadge.vue、UserGameStats.vue、UserInfo.vue、UserInfoCard.vue、TfmButton.vue、
+        TfmIcon.vue。
+      - App.ts 新增了 me-page 和 user-profile 路由处理，还支持 /user/:id 这种路径。
+      - 后端新增 src/server/hono/userProfile.ts、src/server/hono/userStats.ts。
+      - 数据库接口 IDatabase.ts 新增用户聚合统计能力，SQLite/PostgreSQL 都补了 getUserGameStats，支持总场次、胜率、逃跑
+        率、平均分、平均名次、排位局统计等。
+  3. 赛季 / 天梯系统升级
+      - 新增 src/common/rank/SeasonManager.ts，定义赛季编号规则，比如一年 6 个赛季、每 2 个月一个赛季。
+      - 新增 src/server/services/SeasonService.ts、UserRankService.ts、SeasonResetHandler.ts。
+      - 新增 Hono 路由 src/server/hono/season.ts，提供 /api/v2/season/info、/list、/history、/leaderboard、/admin/
+        reset。
+      - Game.ts 里结算排位时不再只更新段位，还会：
+          - 检查玩家 rank 是否属于当前赛季
+          - 给赢家额外赛季积分
+          - 保存每局用户结果时记录 is_timeout
+      - 数据库层新增：
+          - rank_seasons 赛季快照表
+          - current_season 当前赛季表
+          - seasons 赛季元数据表
+          - user_rank 增加 points、season_id
+          - user_game_results 增加 is_timeout
+  4. 前端 UI 和交互大改
+      - StartScreen、PreferencesDialog、GameSetupDetail、Ranks、MyGames、BugReportDialog、CreateGameForm 等页面都做了明
+        显重构或重样式。
+      - 新增 src/styles/game_lobby.less，同时 common.less、start_screen.less、create_game_form.less、user.less、
+        card_list.less 等样式文件都改动较大。
+      - App.ts 把很多原先直接 alert 的逻辑换成统一的 showError，并补了 popstate 路由切换处理。
+      - 新增请求封装和服务层：src/client/utils/request.ts、showAlert.ts、src/client/services/*、src/client/stores/*。
+  5. 构建与测试体系从 Webpack/Mochapack 转向 Vite/Vitest
+      - package.json 依赖大改：加入 vite、vitest、@vitejs/plugin-vue2、hono，移除大量 webpack 相关依赖。
+      - 新增 vite.config.ts、vitest.config.ts。
+      - webpack.config.js 被改名成 webpack.config.js.bak，说明 Webpack 基本退出主流程了。
+      - test:client 改成走 vitest。
+      - Vue 版本从 2.6.11 升到了 2.7.16。
+      - 还加了 scripts/test-api.ts 和截图脚本。
+
+  另外还有一块功能性改动
+
+  提交里还加了几张新卡和一些卡牌修正：
+
+  - 新增卡牌：
+      - PolarAnimals
+      - Omnivore
+      - MoltenReserve
+      - LostBounty
+      - MakeItRain
+  - 对应 CardName.ts、卡牌 manifest、测试文件都补上了。
+  - 还有不少旧卡测试同步调整。

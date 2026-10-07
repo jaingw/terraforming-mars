@@ -7,6 +7,7 @@ import {RandomMAOptionType} from '../ma/RandomMAOptionType';
 import {AgendaStyle} from '../turmoil/Types';
 import {GameId} from '../Types';
 import {Expansion} from '../cards/GameModule';
+import type {GameOptionsModel} from '../models/GameOptionsModel';
 
 export type BoardNameType = BoardName | RandomBoardOption;
 
@@ -17,6 +18,17 @@ export interface NewPlayerModel {
   handicap: number;
   first: boolean;
 }
+
+export type EscapeVelocityOptions = {
+  /** Time in minutes a player has to complete a game. */
+  thresholdMinutes: number;
+  /** Number of seconds a player gets back with every action. */
+  bonusSectionsPerAction: number;
+  /** Period in minutes after `thresholdMinutes` after which player loses `penaltyVPPerPeriod` VP. */
+  penaltyPeriodMinutes: number;
+  /** VP a player loses for every `penaltyPeriodMinutes` minutes after `thresholdMinutes`. */
+  penaltyVPPerPeriod: number;
+};
 
 /**
  * Like GameOptions, but the data structure sent from the new game page.
@@ -72,15 +84,28 @@ export interface NewGameConfig {
   moonStandardProjectVariant: boolean;
   moonStandardProjectVariant1: boolean;
   altVenusBoard: boolean;
-  escapeVelocityMode: boolean;
-  escapeVelocityThreshold: number | undefined;
-  escapeVelocityBonusSeconds: number | undefined;
-  escapeVelocityPeriod: number | undefined;
-  escapeVelocityPenalty: number | undefined;
-  // twoCorpsVariant: boolean;
+  escapeVelocity: EscapeVelocityOptions | undefined;
   customCeos: Array<CardName>;
   startingCeos: number;
   rankTimeLimit: number | undefined,
   rankTimePerGeneration: number | undefined;
   startingPreludes: number;
+}
+
+/**
+ * Converts a NewGameConfig (without players) to GameOptionsModel for display purposes.
+ *
+ * Maps field name differences between the two types:
+ * - `board` → `boardName`
+ * - `initialDraft` → `initialDraftVariant`
+ *
+ * Extra fields from NewGameConfig are spread onto the result, preserving them
+ * for consumers that access them via `as any` (e.g. GameSetupDetail.vue).
+ */
+export function newGameConfigToGameOptionsModel(config: Omit<NewGameConfig, 'players'>): GameOptionsModel {
+  return {
+    ...config,
+    boardName: config.board as BoardName,
+    initialDraftVariant: config.initialDraft,
+  };
 }

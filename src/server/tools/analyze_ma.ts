@@ -1,7 +1,7 @@
 require('dotenv').config();
 
-import * as http from 'http';
-import * as fs from 'fs';
+import http from 'http';
+import fs from 'fs';
 import * as responses from '../server/responses';
 
 import {chooseMilestonesAndAwards} from '../ma/MilestoneAwardSelector';
@@ -79,8 +79,9 @@ function calc(params: URLSearchParams): string {
     }
     try {
       const mas = chooseMilestonesAndAwards(options);
-      mas.awards.forEach(results.add);
-      mas.milestones.forEach(results.add);
+      for (const ma of (mas.milestones as Array<string>).concat(mas.awards)) {
+        results.add(ma);
+      }
     } catch (err) {
       console.warn(err);
       results.add('ERROR');

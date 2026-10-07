@@ -11,11 +11,11 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import {RankTier} from '@/common/rank/RankTier';
 import UserInfo from '@/client/components/common/UserInfo.vue';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'UserInfoCard',
   components: {
     UserInfo,

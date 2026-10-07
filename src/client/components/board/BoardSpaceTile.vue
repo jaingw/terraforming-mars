@@ -4,7 +4,7 @@
 
 <script lang="ts">
 
-import Vue from 'vue';
+import {defineComponent} from 'vue';
 import {SpaceType} from '@/common/boards/SpaceType';
 import {TileType, tileTypeToString} from '@/common/TileType';
 import {SpaceHighlight, SpaceModel} from '@/common/models/SpaceModel';
@@ -59,6 +59,7 @@ const tileTypeToCssClass: Record<TileType, string> = {
   [TileType.MAN_MADE_VOLCANO]: 'man-made-volcano',
   [TileType.NEW_HOLLAND]: 'new-holland',
   [TileType.EMPTY]: 'empty',
+  [TileType.NEURAL_INSTANCE]: 'neural-instance',
 };
 
 const tileTypeToCssClassAresOverride = new Map<TileType, string>([
@@ -104,13 +105,15 @@ const descriptions: Record<TileType, string> = {
   [TileType.EMPTY]: 'Any tile',
 
   [TileType.NEW_HOLLAND]: 'New Holland: counts as an ocean and a city',
+  [TileType.NEURAL_INSTANCE]: 'Neural Instance: MarsBot gains VP for adjacent non-human spaces',
 };
 
-export default Vue.extend({
+export default defineComponent({
   name: 'board-space-tile',
   props: {
     space: {
       type: Object as () => SpaceModel,
+      required: true,
     },
     aresExtension: {
       type: Boolean,
@@ -134,8 +137,12 @@ export default Vue.extend({
       return this.space.highlight;
     },
     description(): string {
-      if (this.tileType === undefined) return '';
-      if (this.tileType === TileType.CITY && this.spaceType === SpaceType.COLONY) return 'City in space.';
+      if (this.tileType === undefined) {
+        return '';
+      }
+      if (this.tileType === TileType.CITY && this.spaceType === SpaceType.COLONY) {
+        return 'City in space.';
+      }
       return descriptions[this.tileType];
     },
     klass(): string {
@@ -151,17 +158,22 @@ export default Vue.extend({
         }
         css += ' board-space-tile--' + cssClass;
       } else {
-        if (this.spaceType === SpaceType.OCEAN) {
+        switch (this.spaceType) {
+        case SpaceType.OCEAN:
           css += ' board-space-type-ocean';
-        } else if (this.spaceType === SpaceType.COVE) {
+          break;
+        case SpaceType.COVE:
           if (this.highlight !== 'volcanic') {
             // Custom for Arabia Terra's space Tikhonarov.
             css += ' board-space-type-cove';
           } else {
             css += ' board-space-type-volcanic-cove';
           }
-        } else if (this.spaceType !== SpaceType.RESTRICTED) {
-          css += ` board-space-type-land`;
+          break;
+        case SpaceType.RESTRICTED:
+          break;
+        default:
+          css += ' board-space-type-land';
 
           if (this.highlight) {
             css += ` board-space-type-land-${this.highlight}`;

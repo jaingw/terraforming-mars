@@ -1,6 +1,7 @@
 import {CardName} from '../../../common/cards/CardName';
 import {ModuleManifest} from '../ModuleManifest';
 import {Advertising} from './Advertising';
+import {AlbedoPlants} from './AlbedoPlants';
 import {AntidesertificationTechniques} from './AntidesertificationTechniques';
 import {AqueductSystems} from './AqueductSystems';
 import {ArcadianCommunities} from './ArcadianCommunities';
@@ -26,6 +27,7 @@ import {DiversitySupport} from './DiversitySupport';
 import {DoubleDown} from './DoubleDown';
 import {DuskLaserMining} from './DuskLaserMining';
 import {EnergyMarket} from './EnergyMarket';
+import {EstablishedMethods} from './EstablishedMethods';
 import {Factorum} from './Factorum';
 import {FieldCappedCity} from './FieldCappedCity';
 import {FloydContinuum} from './FloydContinuum';
@@ -66,6 +68,7 @@ import {ProjectInspection} from './ProjectInspection';
 import {ProtectedGrowth} from './ProtectedGrowth';
 import {Psyche} from './16Psyche';
 import {PublicBaths} from './PublicBaths';
+import {PublicPlans} from './PublicPlans';
 import {Recyclon} from './Recyclon';
 import {RedShips} from './RedShips';
 import {RegoPlastics} from './RegoPlastics';
@@ -78,6 +81,8 @@ import {SoilEnrichment} from './SoilEnrichment';
 import {SolarLogistics} from './SolarLogistics';
 import {Splice} from './Splice';
 import {StanfordTorus} from './StanfordTorus';
+import {StaticHarvesting} from './StaticHarvesting';
+import {SterlingVents} from './SterlingVents';
 import {StJosephOfCupertinoMission} from './StJosephOfCupertinoMission';
 import {SubCrustMeasurements} from './SubCrustMeasurements';
 import {Supercapacitors} from './Supercapacitors';
@@ -89,6 +94,8 @@ import {StrategicBasePlanning} from './StrategicBasePlanning';
 import {Hospitals} from './Hospitals';
 import {NewHolland} from './NewHolland';
 import {Vermin} from './Vermin';
+import {WeatherBalloons} from './WeatherBalloons';
+
 
 export const PROMO_CARD_MANIFEST = new ModuleManifest({
   module: 'promo',
@@ -163,6 +170,10 @@ export const PROMO_CARD_MANIFEST = new ModuleManifest({
     [CardName.PROTECTED_GROWTH]: {Factory: ProtectedGrowth},
     [CardName.NEW_HOLLAND]: {Factory: NewHolland},
     [CardName.VERMIN]: {Factory: Vermin},
+    [CardName.PUBLIC_PLANS]: {Factory: PublicPlans},
+    [CardName.STATIC_HARVESTING]: {Factory: StaticHarvesting},
+    [CardName.WEATHER_BALLOONS]: {Factory: WeatherBalloons},
+    [CardName.STERLING_VENTS]: {Factory: SterlingVents},
   },
 
   preludeCards: {
@@ -170,11 +181,15 @@ export const PROMO_CARD_MANIFEST = new ModuleManifest({
     [CardName.MERGER]: {Factory: Merger},
     [CardName.CORPORATE_ARCHIVES]: {Factory: CorporateArchives},
     [CardName.DOUBLE_DOWN]: {Factory: DoubleDown, compatibility: 'prelude'},
+
+    // https://github.com/terraforming-mars/terraforming-mars/issues/5852
     // [CardName.HEAD_START]: {Factory: HeadStart}, // Head Start is disabled because it's not working well.
+
     [CardName.ANTI_DESERTIFICATION_TECHNIQUES]: {Factory: AntidesertificationTechniques},
-    // [CardName.ESTABLISHED_METHODS]: {Factory: EstablishedMethods}, // X54
+    [CardName.ESTABLISHED_METHODS]: {Factory: EstablishedMethods},
     [CardName.GIANT_SOLAR_COLLECTOR]: {Factory: GiantSolarCollector, compatibility: 'venus'},
     [CardName.STRATEGIC_BASE_PLANNING]: {Factory: StrategicBasePlanning, compatibility: 'colonies'},
+    [CardName.ALBEDO_PLANTS]: {Factory: AlbedoPlants},
   },
 
   cardsToRemove: [

@@ -10,8 +10,9 @@ import {GeodesicTents} from '../../../src/server/cards/moon/GeodesicTents';
 import {DeepLunarMining} from '../../../src/server/cards/moon/DeepLunarMining';
 import {Habitat14} from '../../../src/server/cards/moon/Habitat14';
 import {testGame} from '../../TestGame';
-import {cast, runAllActions, setRulingParty} from '../../TestingUtils';
+import {runAllActions, setRulingParty} from '../../TestingUtils';
 import {PartyName} from '../../../src/common/turmoil/PartyName';
+import {cast} from '../../../src/common/utils/utils';
 
 describe('TheArchaicFoundationInstitute', () => {
   let player: TestPlayer;
@@ -21,40 +22,40 @@ describe('TheArchaicFoundationInstitute', () => {
   beforeEach(() => {
     [game, player] = testGame(1, {moonExpansion: true, turmoilExtension: true});
     card = new TheArchaicFoundationInstitute();
-    player.corporations.push(card);
+    player.playedCards.push(card);
   });
 
   it('effect', () => {
     card.resourceCount = 0;
     expect(player.terraformRating).eq(14);
 
-    card.onCardPlayedForCorps(player, new MicroMills());
+    card.onCardPlayed(player, new MicroMills());
     expect(card.resourceCount).eq(0);
     expect(player.terraformRating).eq(14);
 
-    card.onCardPlayedForCorps(player, new HE3ProductionQuotas());
+    card.onCardPlayed(player, new HE3ProductionQuotas());
     expect(card.resourceCount).eq(1);
     expect(player.terraformRating).eq(14);
 
-    card.onCardPlayedForCorps(player, new CosmicRadiation());
+    card.onCardPlayed(player, new CosmicRadiation());
     expect(card.resourceCount).eq(2);
     expect(player.terraformRating).eq(14);
 
-    card.onCardPlayedForCorps(player, new GeodesicTents());
+    card.onCardPlayed(player, new GeodesicTents());
     expect(card.resourceCount).eq(0);
     expect(player.terraformRating).eq(15);
 
-    card.onCardPlayedForCorps(player, new DeepLunarMining());
+    card.onCardPlayed(player, new DeepLunarMining());
     expect(card.resourceCount).eq(1);
     expect(player.terraformRating).eq(15);
 
 
-    card.onCardPlayedForCorps(player, new Habitat14());
+    card.onCardPlayed(player, new Habitat14());
     expect(card.resourceCount).eq(2);
     expect(player.terraformRating).eq(15);
 
     // Two moon tags
-    card.onCardPlayedForCorps(player, new LunaTradeStation());
+    card.onCardPlayed(player, new LunaTradeStation());
     expect(card.resourceCount).eq(1);
     expect(player.terraformRating).eq(16);
   });
@@ -67,7 +68,7 @@ describe('TheArchaicFoundationInstitute', () => {
     setRulingParty(game, PartyName.REDS);
 
     // Two moon tags
-    card.onCardPlayedForCorps(player, new LunaTradeStation());
+    card.onCardPlayed(player, new LunaTradeStation());
     expect(card.resourceCount).eq(4);
     expect(player.terraformRating).eq(14);
 
@@ -82,7 +83,7 @@ describe('TheArchaicFoundationInstitute', () => {
     setRulingParty(game, PartyName.REDS);
 
     // Two moon tags
-    card.onCardPlayedForCorps(player, new LunaTradeStation());
+    card.onCardPlayed(player, new LunaTradeStation());
     expect(card.resourceCount).eq(1);
     runAllActions(game);
     expect(player.terraformRating).eq(15);

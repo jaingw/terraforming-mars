@@ -26,7 +26,9 @@ export const WINNER_POINTS_SMALL_GAME = 1; // 2-3人局
 export const WINNER_POINTS_LARGE_GAME = 2; // 4-5人局
 
 export function getWinnerPointsReward(playerCount: number): number {
-  if (playerCount <= 3) return WINNER_POINTS_SMALL_GAME;
+  if (playerCount <= 3) {
+    return WINNER_POINTS_SMALL_GAME;
+  }
   return WINNER_POINTS_LARGE_GAME;
 }
 
@@ -124,7 +126,9 @@ export function getSeasonInfo(date: Date = new Date()): ISeasonInfo {
  * @param currentDate 当前日期
  */
 export function shouldResetSeason(lastSeasonId: string | undefined, currentDate: Date = new Date()): boolean {
-  if (lastSeasonId === undefined) return false; // 首次无需重置
+  if (lastSeasonId === undefined) {
+    return false;
+  } // 首次无需重置
   const currentSeasonId = getSeasonId(currentDate);
   return currentSeasonId !== lastSeasonId;
 }

@@ -24,7 +24,7 @@ export class Monopoly extends Card implements IProjectCard, IActionCard {
       victoryPoints: -2,
 
       metadata: {
-        cardNumber: 'U65',
+        cardNumber: 'U065',
         renderData: CardRenderer.builder((b) => {
           b.action('Spend 1 corruption to increase any production 1 step.', (ab) => {
             ab.corruption(1).startAction.production((pb) => pb.wild(1));
@@ -32,12 +32,15 @@ export class Monopoly extends Card implements IProjectCard, IActionCard {
           b.text('STEAL').wild(2, {all}).asterix().br;
         }),
         description: 'Requires 2 corruption. Choose a standard resource type. ' +
-          'Steal 2 units of that resource from EACH OTHER player.',
+          'Steal up to 2 units of that resource from EACH OTHER player.',
       },
     });
   }
 
-  private stealableResources(player: IPlayer): Array<keyof Units> {
+  private stealableResources(player: IPlayer): ReadonlyArray<keyof Units> {
+    if (player.game.isSoloMode()) {
+      return Units.keys;
+    }
     const targets = player.opponents;
     return Units.keys.filter((unit) => {
       return targets.some((target) => target.stock[unit] > 0 && !target.isProtected(unit));
@@ -52,8 +55,7 @@ export class Monopoly extends Card implements IProjectCard, IActionCard {
     return new SelectResource(
       'Select which resource type to steal 2 units from all other players.',
       this.stealableResources(player))
-      .andThen((unitKey) => {
-        const resource = Units.ResourceMap[unitKey];
+      .andThen((resource) => {
         if (player.game.isSoloMode()) {
           player.stock.add(resource, 2, {log: true});
           player.resolveInsuranceInSoloGame();
@@ -82,7 +84,7 @@ export class Monopoly extends Card implements IProjectCard, IActionCard {
 
   public action(player: IPlayer) {
     return new SelectResource(
-      'Select which resource type to steal 2 units from all other players.')
+      'Select which production to increase 1 step.')
       .andThen((unitKey) => {
         UnderworldExpansion.loseCorruption(player, 1);
         const units = {...Units.EMPTY};

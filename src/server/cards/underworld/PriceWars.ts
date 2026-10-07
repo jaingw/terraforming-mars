@@ -21,8 +21,7 @@ export class PriceWars extends Card implements IProjectCard {
       },
 
       metadata: {
-        cardNumber: 'U63',
-        hasExternalHelp: true,
+        cardNumber: 'U063',
         renderData: CardRenderer.builder((b) => {
           b.steel(1).titanium(1).colon().plus().megacredits(1).asterix().br;
           b.steel(1, {all}).titanium(1, {all}).colon().minus().megacredits(1, {all}).asterix().br;

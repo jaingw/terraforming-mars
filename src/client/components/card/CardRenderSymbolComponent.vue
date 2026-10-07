@@ -1,13 +1,13 @@
 <template>
   <div>
-  <div v-if="item.isSuperscript === true" :class="classes"><sup>{{ content }}</sup></div>
-  <div v-else :class="classes">{{ content }}</div>
+    <div v-if="item.isSuperscript === true" :class="classes"><sup>{{ content }}</sup></div>
+    <div v-else :class="classes">{{ content }}</div>
   </div>
 </template>
 
 <script lang="ts">
 
-import Vue from 'vue';
+import {defineComponent} from 'vue';
 import {CardRenderSymbolType} from '@/common/cards/render/CardRenderSymbolType';
 import {ICardRenderSymbol} from '@/common/cards/render/Types';
 import {Size} from '@/common/cards/render/Size';
@@ -36,7 +36,7 @@ const sizes: Record<Size, string> = {
   [Size.LARGE]: 'large',
 };
 
-export default Vue.extend({
+export default defineComponent({
   name: 'CardRenderSymbolComponent',
   props: {
     item: {

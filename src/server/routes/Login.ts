@@ -19,7 +19,7 @@ export class Login extends Handler {
       responses.notFound(req, res, 'Auth is not configured for this server.');
       return Promise.resolve();
     }
-    req.url = '/assets/index.html';
+    req.url = '/build/index.html';
     return ServeAsset.INSTANCE.get(req, res, ctx);
   }
 }

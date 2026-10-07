@@ -9,7 +9,7 @@
           <span v-i18n>or</span>
           <a href="https://discord.com/channels/737945098695999559/742721510376210583" target="_blank" v-i18n class="bug-dialog__link">#bug-reports Discord channel</a>
         </p>
-        <textarea ref="textarea" readonly rows="6" v-model="message" class="bug-dialog__textarea"></textarea>
+        <textarea id="bug-report-message" name="bug_report_message" ref="textarea" readonly rows="6" v-model="message" class="bug-dialog__textarea"></textarea>
       </div>
 
       <div class="bug-dialog__actions">
@@ -24,8 +24,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import {WithRefs} from 'vue-typed-refs';
+import {defineComponent} from 'vue';
 import {showModal, windowHasHTMLDialogElement} from '@/client/components/HTMLDialogElementCompatibility';
 import raw_settings from '@/genfiles/settings.json';
 import {vueRoot} from '@/client/components/vueRoot';
@@ -34,11 +33,6 @@ import {SpectatorId} from '@/common/Types';
 import {getPreferences} from '../utils/PreferencesManager';
 
 import dialogPolyfill from 'dialog-polyfill';
-
-type Refs = {
-  dialog: HTMLElement,
-  textarea: HTMLTextAreaElement,
-}
 
 function browser(): string {
   // Taken from https://stackoverflow.com/questions/5916900/how-can-you-detect-the-version-of-a-browser
@@ -50,15 +44,24 @@ function browser(): string {
   }
   if (match[1]=== 'Chrome') {
     const temp = ua.match(/\b(OPR|Edge)\/(\d+)/);
-    if (temp !== null) return temp.slice(1).join(' ').replace('OPR', 'Opera');
+    if (temp !== null) {
+      return temp.slice(1).join(' ').replace('OPR', 'Opera');
+    }
   }
   match = match[2] ? [match[1], match[2]] : [navigator.appName, navigator.appVersion, '-?'];
   const temp = ua.match(/version\/(\d+)/i);
-  if (temp !== null) match.splice(1, 1, temp[1]);
+  if (temp !== null) {
+    match.splice(1, 1, temp[1]);
+  }
   return match.join(' ');
 }
 
-export default (Vue as WithRefs<Refs>).extend({
+type Refs = {
+  dialog: HTMLDialogElement;
+  textarea: HTMLTextAreaElement;
+};
+
+export default defineComponent({
   name: 'BugReportDialog',
   data() {
     return {
@@ -66,13 +69,18 @@ export default (Vue as WithRefs<Refs>).extend({
       showCopied: false,
     };
   },
+  computed: {
+    typedRefs(): Refs {
+      return this.$refs as unknown as Refs;
+    },
+  },
   methods: {
     show() {
-      showModal(this.$refs.dialog);
+      showModal(this.typedRefs.dialog);
     },
     copyTextArea() {
-      this.$refs.textarea.select();
-      navigator.clipboard.writeText(this.$refs.textarea.value);
+      this.typedRefs.textarea.select();
+      navigator.clipboard.writeText(this.typedRefs.textarea.value);
       this.showCopied = true;
     },
     url(playerView: PlayerViewModel | undefined) {
@@ -86,21 +94,39 @@ export default (Vue as WithRefs<Refs>).extend({
     },
     setMessage() {
       const playerView = vueRoot(this).playerView;
-      const content = {
+      const content: Record<string, any> = {
         url: this.url(playerView),
-        color: playerView?.thisPlayer.color,
-        step: playerView?.game.step,
-        version: raw_settings.head,
-        builtAt: raw_settings.builtAt,
-        browser: browser(),
-        language: getPreferences().lang,
-        experimental_ui: getPreferences().experimental_ui,
       };
+      if (playerView !== undefined) {
+        Object.assign(
+          content,
+          {
+            color: playerView.thisPlayer.color,
+            expansions: Object.entries(playerView.game.gameOptions.expansions)
+              .filter(([_k, v]) => v === true)
+              .map(([k, _v]) => k)
+              .join(', '),
+            step: playerView.game.step,
+          });
+      }
+      if (playerView?.game?.turmoil) {
+        content['party'] = playerView.game.turmoil.ruling ?? 'None';
+      }
+      Object.assign(content,
+        {
+          version: raw_settings.head,
+          builtAt: raw_settings.builtAt,
+          browser: browser(),
+          language: getPreferences().lang,
+          experimental_ui: getPreferences().experimental_ui,
+        });
       this.message = JSON.stringify(content, null, 2);
     },
   },
   mounted() {
-    if (!windowHasHTMLDialogElement()) dialogPolyfill.default.registerDialog(this.$refs.dialog);
+    if (!windowHasHTMLDialogElement()) {
+      dialogPolyfill.registerDialog(this.typedRefs.dialog);
+    }
     this.setMessage();
   },
 });
@@ -240,5 +266,3 @@ export default (Vue as WithRefs<Refs>).extend({
   transform: translateY(-10px);
 }
 </style>
-
-

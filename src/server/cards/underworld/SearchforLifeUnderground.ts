@@ -11,10 +11,9 @@ import {CardRenderer} from '../render/CardRenderer';
 import {searchForLife} from '../render/DynamicVictoryPoints';
 import {max} from '../Options';
 import {IdentifySpacesDeferred} from '../../underworld/IdentifySpacesDeferred';
-import {undergroundResourceTokenDescription} from '../../../common/underworld/UndergroundResourceToken';
 import {TITLES} from '../../inputs/titles';
+import {UnderworldExpansion} from '../../underworld/UnderworldExpansion';
 
-// TODO(kberg): Copies a lot of Search For Life.
 export class SearchforLifeUnderground extends Card implements IActionCard, IProjectCard {
   constructor() {
     super({
@@ -28,7 +27,7 @@ export class SearchforLifeUnderground extends Card implements IActionCard, IProj
 
       requirements: {temperature: -18, max},
       metadata: {
-        cardNumber: 'U23',
+        cardNumber: 'U023',
         description: 'Temperature must -18° C or colder.',
         renderData: CardRenderer.builder((b) => {
           b.action('Spend 1 M€ to identify an underground resource. If it depicts at least 1 microbe, add a science resource here.', (eb) => {
@@ -47,26 +46,32 @@ export class SearchforLifeUnderground extends Card implements IActionCard, IProj
     }
     return 0;
   }
+
   public canAct(player: IPlayer): boolean {
-    return player.canAfford(1);
+    return player.canAfford(1) && player.game.underworldData.tokens.length > 0;
   }
+
   public action(player: IPlayer) {
     player.game.defer(new SelectPaymentDeferred(player, 1, {title: TITLES.payForCardAction(this.name)}))
       .andThen(() => {
-        const identify = new IdentifySpacesDeferred(player, 1);
+        const identify = new IdentifySpacesDeferred(player, 1)
+          .andThen(([space]) => {
+            const undergroundResources = typeof space === 'string' ? space : space.undergroundResources;
+            if (undergroundResources === undefined) {
+              player.game.log('${0} had no underground resources to discard', (b) => b.player(player));
+              return;
+            } else if (typeof space === 'string') {
+              // Put it back into the pile. It still gets evaluated.
+              UnderworldExpansion.addTokens(player.game, [space]);
+            }
+
+            player.game.log('${0} revealed ${1}', (b) => b.player(player).undergroundToken(undergroundResources));
+            if (['microbe1', 'microbe2', 'microbe1pertemp'].includes(undergroundResources)) {
+              player.addResourceTo(this, 1);
+              player.game.log('${0} found life!', (b) => b.player(player));
+            }
+          });
         player.game.defer(identify);
-        identify.andThen(([space]) => {
-          const undergroundResources = space.undergroundResources;
-          if (undergroundResources === undefined) {
-            player.game.log('${0} had no underground resources to discard', (b) => b.player(player));
-            return;
-          }
-          player.game.log('${0} revealed ${1}', (b) => b.player(player).string(undergroundResourceTokenDescription[undergroundResources]));
-          if (['microbe1', 'microbe2', 'microbe1pertemp'].includes(undergroundResources)) {
-            player.addResourceTo(this, 1);
-            player.game.log('${0} found life!', (b) => b.player(player));
-          }
-        });
       });
     return undefined;
   }

@@ -32,7 +32,9 @@ async function main() {
       throw new Error('!');
     }
     const set = new MultiSet<SerializedDelegate | SerializedPlayerId>();
-    if (turmoil.chairman) set.add(turmoil.chairman);
+    if (turmoil.chairman) {
+      set.add(turmoil.chairman);
+    }
     turmoil.lobby?.forEach((delegate) => set.add(delegate));
     turmoil.delegateReserve.forEach((delegate) => set.add(delegate));
     turmoil.parties.forEach((party) => {

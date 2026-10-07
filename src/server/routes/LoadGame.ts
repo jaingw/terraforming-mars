@@ -7,7 +7,7 @@ import {LoadGameFormModel} from '../../common/models/LoadGameFormModel';
 import {Request} from '../Request';
 import {Response} from '../Response';
 import {GameId, isGameId, isPlayerId, isSpectatorId} from '../../common/Types';
-import {GameLoader} from '../database/GameLoader';
+import {IGameLoader} from '../database/IGameLoader';
 
 export class LoadGame extends Handler {
   public static readonly INSTANCE = new LoadGame();
@@ -15,13 +15,14 @@ export class LoadGame extends Handler {
     super();
   }
 
-  private async getGameId(id: string): Promise<GameId | undefined> {
+  private async getGameId(id: string, gameLoader: IGameLoader): Promise<GameId | undefined> {
     if (isGameId(id)) {
       return id;
     }
     if (isPlayerId(id) || isSpectatorId(id)) {
       console.log(`Finding game for player/spectator ${id}`);
-      return await Database.getInstance().getGameId(id);
+      const game = await gameLoader.getByPlayerId(id);
+      return game?.id;
     }
     return undefined;
   }
@@ -36,7 +37,7 @@ export class LoadGame extends Handler {
         try {
           const gameReq: LoadGameFormModel = JSON.parse(body);
 
-          const gameId = await this.getGameId(gameReq.gameId);
+          const gameId = await this.getGameId(gameReq.gameId, ctx.gameLoader);
           if (gameId === undefined) {
             throw new Error('Invalid game id');
           }
@@ -44,16 +45,16 @@ export class LoadGame extends Handler {
           // anyone from rolling back a large number of steps.
           const rollbackCount = gameReq.rollbackCount;
           if (rollbackCount > 0) {
-            Database.getInstance().deleteGameNbrSaves(gameId, rollbackCount);
+            await Database.getInstance().deleteGameNbrSaves(gameId, rollbackCount);
           }
-          GameLoader.getInstance().getGameById(gameId, (game) => {
-            if (game === undefined) {
-              console.warn(`unable to find ${gameId} in database`);
-              responses.notFound(req, res, 'game_id not found');
-              return;
-            }
-            responses.writeJson(res, ctx, Server.getSimpleGameModel(game));
-          });
+          const game = await ctx.gameLoader.getGame(gameId);
+          if (game === undefined) {
+            console.warn(`unable to find ${gameId} in database`);
+            responses.notFound(req, res, 'game_id not found');
+            resolve();
+            return;
+          }
+          responses.writeJson(res, ctx, Server.getSimpleGameModel(game));
         } catch (error) {
           console.warn(error);
           responses.internalServerError(req, res, error);

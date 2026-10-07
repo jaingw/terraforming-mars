@@ -1,4 +1,3 @@
-import * as prometheus from 'prom-client';
 import {Clock} from '../../common/Timer';
 import {paths} from '../../common/app/paths';
 import {Request} from '../Request';
@@ -12,7 +11,6 @@ import {ApiGameLogs} from '../routes/ApiGameLogs';
 import {ApiGames} from '../routes/ApiGames';
 import {ApiIPs} from '../routes/ApiIPs';
 import {ApiLogout} from '../routes/ApiLogout';
-import {ApiMetrics} from '../routes/ApiMetrics';
 import {ApiPlayer} from '../routes/ApiPlayer';
 import {ApiProfile} from '../routes/ApiProfile';
 import {ApiSpectator} from '../routes/ApiSpectator';
@@ -27,7 +25,6 @@ import {Load} from '../routes/Load';
 import {LoadGame} from '../routes/LoadGame';
 import {Login} from '../routes/Login';
 import {PlayerInput} from '../routes/PlayerInput';
-import {Reset} from '../routes/Reset';
 import {ServeApp} from '../routes/ServeApp';
 import {ServeAsset} from '../routes/ServeAsset';
 import {serverId, statsId} from '../utils/server-ids';
@@ -39,23 +36,6 @@ import {ApiUserManager, userGetHandler, userPostHandler} from '../routes/ApiUser
 import {SessionManager} from './auth/SessionManager';
 import {handleWithHono} from '../hono/bridge';
 
-
-const metrics = {
-  count: new prometheus.Counter({
-    name: 'http_request_count',
-    help: 'Request count',
-    registers: [prometheus.register],
-    labelNames: ['path', 'method'],
-  }),
-  latency: new prometheus.Histogram({
-    name: 'http_request_latency',
-    help: 'Request latency',
-    registers: [prometheus.register],
-    labelNames: ['path'],
-    buckets: [0.1, 0.25, 0.5, 1, 2.5, 5, 10, 25, 50, 100, 250, 500, 1000],
-  }),
-};
-
 const clock = new Clock();
 
 const ips = (process.env.IP_BLOCKLIST ?? '').trim().split(' ');
@@ -66,7 +46,6 @@ const handlers: Map<string, IHandler> = new Map(
   [
     ['', ServeApp.INSTANCE],
     [paths.ADMIN, ServeApp.INSTANCE],
-    // TODO(kberg): What is this?
     [paths.API_CLONEABLEGAME, ApiCloneableGame.INSTANCE],
     [paths.API_CREATEGAME, ApiCreateGame.INSTANCE],
     [paths.API_GAME, ApiGame.INSTANCE],
@@ -74,7 +53,6 @@ const handlers: Map<string, IHandler> = new Map(
     [paths.API_GAME_LOGS, ApiGameLogs.INSTANCE],
     [paths.API_GAMES, ApiGames.INSTANCE],
     [paths.API_IPS, ApiIPs.INSTANCE],
-    [paths.API_METRICS, ApiMetrics.INSTANCE],
     [paths.API_PLAYER, ApiPlayer.INSTANCE],
     [paths.API_STATS, ApiStats.INSTANCE],
     [paths.API_SPECTATOR, ApiSpectator.INSTANCE],
@@ -96,7 +74,6 @@ const handlers: Map<string, IHandler> = new Map(
     [paths.PLAYER, ServeApp.INSTANCE],
     [paths.PLAYER_INPUT, PlayerInput.INSTANCE],
     [paths.API_PROFILE, ApiProfile.INSTANCE],
-    [paths.RESET, Reset.INSTANCE],
     [paths.SPECTATOR, ServeApp.INSTANCE],
     ['styles.css', ServeAsset.INSTANCE],
     ['tailwindcss.css', ServeAsset.INSTANCE], // Ender: 我新加了Tailwind CSS用于生成样式，不会和之前的样式冲突
@@ -106,11 +83,10 @@ const handlers: Map<string, IHandler> = new Map(
     ['debug-ui', ServeApp.INSTANCE],
     ['login', ServeApp.INSTANCE],
     ['register', ServeApp.INSTANCE],
+    ['reset-password', ServeApp.INSTANCE],
     ['mygames', ServeApp.INSTANCE],
     ['me', ServeApp.INSTANCE],
     ['donate', ServeApp.INSTANCE],
-    ['users', ServeApp.INSTANCE],
-    ['exec', ServeApp.INSTANCE],
     ['ranks', ServeApp.INSTANCE], // 天梯排行榜
     [paths.LOBBY, ServeApp.INSTANCE], // 游戏大厅
   ],
@@ -126,7 +102,10 @@ function getIPAddress(req: Request): string {
   if (typeof socketIpAddress === 'object' && 'address' in socketIpAddress) {
     return '!' + socketIpAddress.address + '!';
   }
-  return String(socketIpAddress);
+  if (typeof socketIpAddress === 'string') {
+    return socketIpAddress;
+  }
+  return '';
 }
 
 function getHandler(pathname: string): IHandler | undefined {
@@ -137,7 +116,7 @@ function getHandler(pathname: string): IHandler | undefined {
   if (userGetHandler.get(pathname) !== undefined || userPostHandler.get(pathname) !== undefined ) {
     return ApiUserManager.INSTANCE;
   }
-  if (pathname.startsWith('assets/') || pathname.startsWith('css/') || pathname.startsWith('chunks/')) {
+  if (pathname.endsWith('.css') || pathname.startsWith('assets/') || pathname.startsWith('css/') || pathname.startsWith('chunks/')) {
     return ServeAsset.INSTANCE;
   }
   // Handle user profile paths like user/xxx
@@ -148,8 +127,6 @@ function getHandler(pathname: string): IHandler | undefined {
 }
 
 export function processRequest(req: Request, res: Response): void {
-  const start = process.hrtime.bigint();
-  let pathnameForLatency: string | undefined = undefined;
   try {
     const ipAddress = getIPAddress(req);
     ipTracker.add(ipAddress);
@@ -194,20 +171,15 @@ export function processRequest(req: Request, res: Response): void {
       // sessionid,
       //      user: user,
     };
-    pathnameForLatency = pathname;
     const handler = getHandler(pathname);
     if (handler !== undefined) {
-      metrics.count.inc({path: pathname, method: req.method});
       handler.processRequest(req, res, ctx);
     } else if (handleWithHono(req, res)) {
       // Hono 处理了此请求（新的 /api/v2/* 路由）
-      metrics.count.inc({path: pathname, method: req.method});
     } else {
-      pathnameForLatency = undefined;
       responses.notFound(req, res);
     }
-  } finally {
-    const duration = Number(process.hrtime.bigint() - start) / 1_000_000;
-    metrics.latency.observe({path: pathnameForLatency}, Number(duration));
+  } catch (error) {
+    responses.internalServerError(req, res, error);
   }
 }

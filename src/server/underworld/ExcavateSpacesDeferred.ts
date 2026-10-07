@@ -21,13 +21,21 @@ export class ExcavateSpacesDeferred extends RunNTimes<void> {
   }
 
   protected run() {
-    const title = 'Select space to excavate' + this.titleSuffix();
+    const title = this.createTitle('Select space to excavate');
     this.player.defer(() => {
       const spaces =
         this.spaces ??
         UnderworldExpansion.excavatableSpaces(this.player, {
           ignorePlacementRestrictions: this.ignorePlacementRestrictions,
         });
+      if (spaces.length === 0) {
+        const undergroundResource = UnderworldExpansion.drawExcavationToken(this.player.game);
+        this.player.game.log('${0} excavated ${1} from the draw pile', (b) =>
+          b.player(this.player).undergroundToken(undergroundResource));
+        UnderworldExpansion.claimToken(this.player, undergroundResource, /* isExcavate= */ true, /* space= */ undefined);
+        return this.next();
+      }
+
       // slicing a copy because the spaces array is mutated between calls.
       return new SelectSpace(title, spaces.slice())
         .andThen((space) => {

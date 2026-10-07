@@ -40,12 +40,12 @@ export class Recyclon extends CorporationCard implements ICorporationCard {
     });
   }
 
-  public onCardPlayedForCorps(player: IPlayer, card: ICard) {
+  public onCardPlayed(player: IPlayer, card: ICard) {
     if (card.tags.includes(Tag.BUILDING) === false) {
       return undefined;
     }
     // 双公司出Mining Guild得2微生物
-    if (card.tags.filter((x) => x === Tag.BUILDING ).length ===2) {
+    if (card.tags.filter((x) => x === Tag.BUILDING ).length === 2) {
       player.addResourceTo(this);
     }
     if (this.resourceCount < 2) {

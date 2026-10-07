@@ -1,5 +1,5 @@
 <template>
-   <div class="colony-grid-container2"><!--  style="margin-top:55px;"  if VENUS-->
+  <div class="colony-grid-container2"><!--  style="margin-top:55px;"  if VENUS-->
     <template v-if="metadata.name === ColonyName.MERCURY">
       <div><div class="production-box mercury-production-box"><div class="production heat"></div></div></div>
       <div><div class="production-box mercury-production-box"><div class="production heat"></div></div></div>
@@ -27,20 +27,20 @@
       <div><div class="production-box"><div class="production plant"></div></div></div>
       <div><div class="production-box"><div class="production plant"></div></div></div>
     </template>
-    <template v-else v-for="idx in range(7)">
-      <div :key="idx">{{metadata.trade.quantity[idx]}}</div>
+    <template v-else v-for="idx in range(7)" :key="idx">
+      <div>{{metadata.trade.quantity[idx]}}</div>
     </template>
   </div>
 </template>
 <script lang="ts">
 
-import Vue from 'vue';
+import {defineComponent} from 'vue';
 
 import {ColonyName} from '@/common/colonies/ColonyName';
 import {ColonyMetadata} from '@/common/colonies/ColonyMetadata';
 import {range} from '@/common/utils/utils';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'ColonyTradeRow',
   props: {
     metadata: {

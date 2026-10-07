@@ -41,7 +41,7 @@ export class StarlinkDrifter extends CorporationCard implements ICard {
   }
 
 
-  public onCardPlayedForCorps(player: IPlayer, card: ICard) {
+  public onCardPlayed(player: IPlayer, card: ICard) {
     if (!player.playedCards.has(this.name)) {
       return;
     }

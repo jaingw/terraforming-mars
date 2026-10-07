@@ -1,48 +1,32 @@
 {
-    "Battery Shipment": "电池运输",
-    "Gain 12 energy. Increase your energy production 2 steps.": "获得12电力。你的电力产能提升2步。",
-
-    "Central Reservoir": "中央水库",
-    "Place an ocean ON AN AREA NOT RESERVED FOR OCEAN. Then identify the underground resources in all adjacent spaces. Claim 2 of them": "在非海洋保留区放置一片海洋。然后识别所有相邻格的地下资源。获得其中2个",
-
-    "Cloud Vortex Outpost": "云涡前哨站",
-    "Raise Venus 2 steps. Place 3 floaters on this card": "金星提升2级。在此卡牌放置3个漂浮物",
-    "Action: Remove 1 floater from THIS card to add 1 floater to ANOTHER card": "（行动：从此卡牌移除1个漂浮物以向另一张卡牌添加1个漂浮物）",
-
-    "Free Trade Port": "自由贸易港",
-    "Gain 1 corruption. Place a colony.": "获得1腐败。放置1个殖民地。",
-
-    "Ganymede Trading Company": "木卫三贸易公司",
-    "Gain 1 corruption, 3 titanium, and a trade fleet.": "获得1腐败、3钛和1个贸易船队。",
-
-    "Geological Expertise": "地质学专长",
-    "Identify 4 underground resources. Claim one of them. Draw 2 cards with science tags.": "探查4个地下资源。获取其中1个。抽取2张带科学标志的牌。",
-
-    "Inherited Fortune": "继承的财富",
-    "Gain 1 corruption and 10 M€. Increase your M€ production 1 step.": "获得1腐败和10 M€。你的M€产能提升1步。",
-
-    "Investor Plaza": "投资者广场",
-    "Place a city and gain 1 corruption.": "放置1个城市并获得1腐败。",
-
-    "Prospecting": "勘探",
-    "Pay 4 M€. Put an additional colony tile of your choice into play. Then place a colony on it.": "支付4 M€。将1个你选择的额外殖民地板块放入游戏。然后在其上放置1个殖民地。",
-
-    "Secret Research": "秘密研究",
-    "Gain 1 corruption and draw 3 cards.": "获得1腐败并抽取3张牌。",
-
-    "Tunneling Operation": "隧道作业",
-    "Identify 1 underground resource. Then excavate 2 underground resources. Increase your steel production 2 steps.": "探查1个地下资源。然后挖掘2个地下资源。你的钢产能提升2步。",
-
-    "Underground Settlement": "地下定居点",
-    "Place a city. Then identify the underground resources in all adjacent spaces. Claim 1 of them": "放置一座城市。然后识别所有相邻格的地下资源。获得其中一个",
-
-    "Election Sponsorship": "选举赞助",
-    "Gain 1 corruption. Place 2 delegates in any party": "获得1点腐败。在任意政党放置2个代表",
-
-
-    "Deepwater Dome": "深水穹顶",
-    
-    "Increase your plant production 1 step. Place an ocean": "你的植物产能提升1级。放置一片海洋",
-    "Effect: When you excavate next to an ocean, gain 2 M€": "效果：当你在海洋相邻格挖掘时，获得2 M€"
-
+  "Battery Shipment": "电池运输",
+  "Gain 12 energy. Increase your energy production 2 steps.": "获得12电力。你的电力产能提升2步。",
+  "Central Reservoir": "中央水库",
+  "Place an ocean ON AN AREA NOT RESERVED FOR OCEAN. Then identify the underground resources in all adjacent spaces. Claim 2 of them": "在非海洋保留区放置一片海洋。然后识别所有相邻格的地下资源。获得其中2个",
+  "Cloud Vortex Outpost": "云涡前哨站",
+  "Raise Venus 2 steps. Place 3 floaters on this card": "金星提升2级。在此卡牌放置3个漂浮物",
+  "Action: Remove 1 floater from THIS card to add 1 floater to ANOTHER card": "（行动：从此卡牌移除1个漂浮物以向另一张卡牌添加1个漂浮物）",
+  "Free Trade Port": "自由贸易港",
+  "Gain 1 corruption. Place a colony.": "获得1腐败。放置1个殖民地。",
+  "Ganymede Trading Company": "木卫三贸易公司",
+  "Gain 1 corruption, 3 titanium, and a trade fleet.": "获得1腐败、3钛和1个贸易船队。",
+  "Geological Expertise": "地质学专长",
+  "Identify 4 underground resources. Claim one of them. Draw 2 cards with science tags.": "探查4个地下资源。获取其中1个。抽取2张带科学标志的牌。",
+  "Inherited Fortune": "继承的财富",
+  "Gain 1 corruption and 10 M€. Increase your M€ production 1 step.": "获得1腐败和10 M€。你的M€产能提升1步。",
+  "Investor Plaza": "投资者广场",
+  "Place a city and gain 1 corruption.": "放置1个城市并获得1腐败。",
+  "Prospecting": "勘探",
+  "Pay 4 M€. Put an additional colony tile of your choice into play. Then place a colony on it.": "支付4 M€。将1个你选择的额外殖民地板块放入游戏。然后在其上放置1个殖民地。",
+  "Secret Research": "秘密研究",
+  "Gain 1 corruption and draw 3 cards.": "获得1腐败并抽取3张牌。",
+  "Tunneling Operation": "隧道作业",
+  "Identify 1 underground resource. Then excavate 2 underground resources. Increase your steel production 2 steps.": "探查1个地下资源。然后挖掘2个地下资源。你的钢产能提升2步。",
+  "Underground Settlement": "地下定居点",
+  "Place a city. Then identify the underground resources in all adjacent spaces. Claim 1 of them": "放置一座城市。然后识别所有相邻格的地下资源。获得其中一个",
+  "Election Sponsorship": "选举赞助",
+  "Gain 1 corruption. Place 2 delegates in any party": "获得1点腐败。在任意政党放置2个代表",
+  "Deepwater Dome": "深水穹顶",
+  "Increase your plant production 1 step. Place an ocean": "你的植物产能提升1级。放置一片海洋",
+  "Effect: When you excavate next to an ocean, gain 2 M€": "效果：当你在海洋相邻格挖掘时，获得2 M€"
 }

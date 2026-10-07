@@ -14,11 +14,13 @@ let buttonElement: HTMLElement | null = null;
 let titleElement: HTMLElement | null = null;
 
 function initElements(): boolean {
-  if (alertDialogElement) return true;
+  if (alertDialogElement) {
+    return true;
+  }
   alertDialogElement = document.getElementById('alert-dialog') as HTMLDialogElement;
   messageElement = document.getElementById('alert-dialog-message');
   buttonElement = document.getElementById('alert-dialog-button');
-  titleElement = document.querySelector('.alert-dialog__title');
+  titleElement = document.getElementById('alert-dialog-title');
   return alertDialogElement !== null && messageElement !== null && buttonElement !== null;
 }
 
@@ -49,7 +51,9 @@ export function showAlert(
 
   return new Promise((resolve) => {
     const done = () => {
-      if (callback) callback();
+      if (callback) {
+        callback();
+      }
       resolve();
     };
 

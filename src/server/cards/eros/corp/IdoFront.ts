@@ -33,8 +33,10 @@ export class IdoFront extends CorporationCard {
     });
   }
 
-  public onCardPlayedForCorps?(player: IPlayer, card: ICard) {
-    if (card.tags.filter((tag) => tag !== Tag.WILD ).length === 0 || !player.playedCards.has(this.name)) return undefined;
+  public onCardPlayed(player: IPlayer, card: ICard) {
+    if (card.tags.filter((tag) => tag !== Tag.WILD ).length === 0 || !player.playedCards.has(this.name)) {
+      return undefined;
+    }
     let count = 0;
     for (const tag of card.tags.filter((tag) => tag !== Tag.WILD )) {
       if (this.allTags.has(tag)) {

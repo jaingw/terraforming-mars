@@ -223,7 +223,7 @@
 
 .notice {
     font-size: @font_size_small;
-    position: absolute;
+    position: fixed;
     bottom: 0px;
     right: 0px;
     padding: 16px 24px;
@@ -254,81 +254,4 @@
 
 .source-code-text:visited {
     color: #94a3b8;
-}
-
-/* ============ Mobile Responsive ============ */
-@media (max-width: 640px) {
-    .start-screen {
-        width: 100%;
-        padding: 0 12px;
-        box-sizing: border-box;
-    }
-
-    .start-screen-links {
-        width: 100%;
-        padding-top: 24px;
-        box-sizing: border-box;
-    }
-
-    .start-screen-hero {
-        padding: 18px 0 12px;
-        margin-bottom: 12px;
-    }
-
-    .start-screen-hero__label {
-        font-size: 11px;
-        letter-spacing: 0.15em;
-    }
-
-    .start-screen-hero__name {
-        font-size: 28px;
-    }
-
-    .start-screen-link {
-        width: 100%;
-        height: 70px;
-        font-size: 20px;
-        padding-left: 14px;
-        padding-bottom: 12px;
-        box-sizing: border-box;
-        background-size: cover;
-    }
-
-    .start-screen-secondary {
-        gap: 4px;
-        margin-top: 8px;
-        margin-bottom: 12px;
-    }
-
-    .start-screen-nav {
-        height: 42px;
-        font-size: 12px;
-        letter-spacing: 0.06em;
-    }
-
-    .notice {
-        position: relative;
-        padding: 12px;
-        text-align: center;
-    }
-}
-
-@media (max-width: 400px) {
-    .start-screen-link {
-        height: 60px;
-        font-size: 18px;
-    }
-
-    .start-screen-hero__name {
-        font-size: 24px;
-    }
-
-    .start-screen-hero__label {
-        font-size: 10px;
-    }
-
-    .start-screen-nav {
-        height: 38px;
-        font-size: 11px;
-    }
 }

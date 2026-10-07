@@ -6,6 +6,7 @@ import {GameId} from '../../common/Types';
 import {RandomMAOptionType} from '../../common/ma/RandomMAOptionType';
 import {AgendaStyle} from '../../common/turmoil/Types';
 import {Expansion} from '../../common/cards/GameModule';
+import {EscapeVelocityOptions} from '../../common/game/NewGameConfig';
 
 export type GameOptions = {
   boardName: BoardName;
@@ -40,7 +41,7 @@ export type GameOptions = {
   starWarsExpansion: boolean;
   underworldExpansion: boolean;
   commissionCardsOption: boolean;
-
+  deltaProjectExpansion: boolean;
   expansions: Record<Expansion, boolean>,
 
   // Variants
@@ -55,7 +56,8 @@ export type GameOptions = {
   randomMA: RandomMAOptionType;
   includeFanMA: boolean;
   modularMA: boolean;
-  soloTR: boolean; // Solo victory by getting TR 63 by game end
+  /** Solo victory by getting TR 63 by game end */
+  soloTR: boolean;
   customCorporationsList: ReadonlyArray<CardName>;
   bannedCards: ReadonlyArray<CardName>;
   includedCards: ReadonlyArray<CardName>;
@@ -76,12 +78,7 @@ export type GameOptions = {
   /** Standard projects can be paid for with steel or titanium at a 1MC loss per alloy */
   moonStandardProjectVariant1: boolean;
   altVenusBoard: boolean;
-  escapeVelocityMode: boolean;
-  escapeVelocityThreshold?: number;
-  escapeVelocityBonusSeconds?: number;
-  escapeVelocityPeriod?: number;
-  escapeVelocityPenalty?: number;
-  // twoCorpsVariant: boolean;
+  escapeVelocity?: EscapeVelocityOptions;
   rankTimeLimit?: number; // 天梯 玩家超时限制
   rankTimePerGeneration?: number; // 天梯 每时代额外加成
   seed: string|undefined;
@@ -106,11 +103,7 @@ export const DEFAULT_GAME_OPTIONS: GameOptions = {
   customCorporationsList: [],
   customPreludes: [],
   draftVariant: false,
-  escapeVelocityMode: false, // When true, escape velocity is enabled.
-  escapeVelocityThreshold: constants.DEFAULT_ESCAPE_VELOCITY_THRESHOLD, // Time in minutes a player has to complete a game.
-  escapeVelocityBonusSeconds: constants.DEFAULT_ESCAPE_VELOCITY_BONUS_SECONDS, // Number of seconds a player gets back with every action.
-  escapeVelocityPeriod: constants.DEFAULT_ESCAPE_VELOCITY_PERIOD, // VP a player loses for every `escapeVelocityPenalty` minutes after `escapeVelocityThreshold`.
-  escapeVelocityPenalty: constants.DEFAULT_ESCAPE_VELOCITY_PENALTY,
+  escapeVelocity: undefined,
   expansions: {
     corpera: false,
     promo: false,
@@ -129,6 +122,7 @@ export const DEFAULT_GAME_OPTIONS: GameOptions = {
     breakthrough: false,
     eros: false,
     commission: false,
+    deltaProject: false,
   },
   fastModeOption: false,
   includeFanMA: false,
@@ -160,13 +154,13 @@ export const DEFAULT_GAME_OPTIONS: GameOptions = {
   turmoilExtension: false,
   underworldExpansion: false,
   commissionCardsOption: false,
+  deltaProjectExpansion: false,
   undoOption: false,
   venusNextExtension: false,
   heatFor: false,
   breakthrough: false,
   doubleCorp: false,
   initialCorpDraftVariant: false,
-  // twoCorpsVariant: false,
   rankOption: false, // 天梯
   rankTimeLimit: constants.DEFAULT_RANK_TIME_LIMIT, // 天梯
   rankTimePerGeneration: constants.DEFAULT_RANK_TIME_PER_GENERATION, // 天梯 每时代额外加成

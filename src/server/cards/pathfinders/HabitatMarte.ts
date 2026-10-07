@@ -31,10 +31,10 @@ export class HabitatMarte extends CorporationCard implements ICorporationCard {
 
   // 触发科标联动， 如火星大学等， 但是目前proxy卡牌不触发onCardPlayed联动
 
-  // public onCardPlayedForCorps(player: IPlayer, card: ICard): void {
+  // public onCardPlayed(player: IPlayer, card: ICard): void {
 
   //   const qty = card.tags.filter((cardTag) => cardTag === Tag.MARS).length;
-  //   console.log('onCardPlayedForCorps', card.name, qty);
+  //   console.log('onCardPlayed', card.name, qty);
   //   if (qty > 0) {
   //     for(let i = 0; i < qty; i++) {
   //       player.playCard(new ScienceTagCard(), undefined, 'nothing');
@@ -42,7 +42,7 @@ export class HabitatMarte extends CorporationCard implements ICorporationCard {
   //   }
   // }
 
-  public onCardPlayedForCorps(player: IPlayer, card: ICard): void {
+  public onCardPlayed(player: IPlayer, card: ICard): void {
     const qty = card.tags.filter((cardTag) => cardTag === Tag.MARS).length;
     if (qty > 0) {
       for (let i = 0; i < qty; i++) {

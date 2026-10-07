@@ -2,7 +2,6 @@ import {CardName} from '../../../common/cards/CardName';
 import {ModuleManifest} from '../ModuleManifest';
 import {AIControlledMineNetwork} from './AIControlledMineNetwork';
 import {AlgaeBioreactors} from './AlgaeBioreactors';
-// import {AncientShipyards} from './AncientShipyards';
 import {AnOfferYouCantRefuse} from './AnOfferYouCantRefuse';
 import {ArchimedesHydroponicsStation} from './ArchimedesHydroponicsStation';
 import {AristarchusRoadNetwork} from './AristarchusRoadNetwork';
@@ -47,7 +46,6 @@ import {LunaPoliticalInstitute} from './LunaPoliticalInstitute';
 import {LunaProjectOffice} from './LunaProjectOffice';
 import {LunarDustProcessingPlant} from './LunarDustProcessingPlant';
 import {LunaResort} from './LunaResort';
-// import {LunarIndependenceWar} from './LunarIndependenceWar';
 import {LunarIndustryComplex} from './LunarIndustryComplex';
 import {LunarMineUrbanization} from './LunarMineUrbanization';
 import {LunarObservationPost} from './LunarObservationPost';
@@ -98,7 +96,6 @@ import {SubterraneanHabitats} from './SubterraneanHabitats';
 import {SyndicatePirateRaids} from './SyndicatePirateRaids';
 import {TempestConsultancy} from './TempestConsultancy';
 import {TheArchaicFoundationInstitute} from './TheArchaicFoundationInstitute';
-// import {TheDarksideofTheMoonSyndicate} from './TheDarksideofTheMoonSyndicate';
 import {TheGrandLunaCapitalGroup} from './TheGrandLunaCapitalGroup';
 import {TheWomb} from './TheWomb';
 import {ThoriumRush} from './ThoriumRush';
@@ -109,6 +106,11 @@ import {UndergroundDetonators} from './UndergroundDetonators';
 import {UndermoonDrugLordsNetwork} from './UndermoonDrugLordsNetwork';
 import {WaterTreatmentComplex} from './WaterTreatmentComplex';
 import {WeGrowAsOne} from './WeGrowAsOne';
+
+// Disabled moon cards retained in source but not registered in this manifest:
+// import {AncientShipyards} from './AncientShipyards';
+// import {LunarIndependenceWar} from './LunarIndependenceWar';
+// import {TheDarksideofTheMoonSyndicate} from './TheDarksideofTheMoonSyndicate';
 
 export const MOON_CARD_MANIFEST = new ModuleManifest({
   module: 'moon',
@@ -131,7 +133,6 @@ export const MOON_CARD_MANIFEST = new ModuleManifest({
     [CardName.COLONIST_SHUTTLES]: {Factory: ColonistShuttles},
     [CardName.LUNAR_DUST_PROCESSING_PLANT]: {Factory: LunarDustProcessingPlant},
     [CardName.DEEP_LUNAR_MINING]: {Factory: DeepLunarMining},
-    // [CardName.ANCIENT_SHIPYARDS]: {Factory: AncientShipyards},
     [CardName.LUNA_PROJECT_OFFICE]: {Factory: LunaProjectOffice},
     [CardName.LUNA_RESORT]: {Factory: LunaResort},
     [CardName.LUNAR_OBSERVATION_POST]: {Factory: LunarObservationPost},
@@ -163,6 +164,8 @@ export const MOON_CARD_MANIFEST = new ModuleManifest({
     [CardName.HE3_FUSION_PLANT]: {Factory: HE3FusionPlant},
     [CardName.HE3_REFINERY]: {Factory: HE3Refinery},
     [CardName.HE3_LOBBYISTS]: {Factory: HE3Lobbyists},
+    // Disabled moon project cards kept out of the manifest on this branch:
+    // [CardName.ANCIENT_SHIPYARDS]: {Factory: AncientShipyards},
     //   // Start of second pack.
     [CardName.REVOLTING_COLONISTS]: {Factory: RevoltingColonists},
     [CardName.COSMIC_RADIATION]: {Factory: CosmicRadiation},
@@ -174,13 +177,13 @@ export const MOON_CARD_MANIFEST = new ModuleManifest({
     [CardName.LUNA_CONFERENCE]: {Factory: LunaConference, compatibility: 'turmoil'},
     [CardName.WE_GROW_AS_ONE]: {Factory: WeGrowAsOne, compatibility: ['turmoil', 'colonies']},
     [CardName.MOONCRATE_CONVOYS_TO_MARS]: {Factory: MooncrateConvoysToMars, compatibility: ['turmoil']},
-    // // [CardName.LUNAR_INDEPENDENCE_WAR]: {Factory: LunarIndependenceWar},
+    // [CardName.LUNAR_INDEPENDENCE_WAR]: {Factory: LunarIndependenceWar},
     [CardName.AN_OFFER_YOU_CANT_REFUSE]: {Factory: AnOfferYouCantRefuse, compatibility: 'turmoil'},
     [CardName.PRELIMINARY_DARKSIDE]: {Factory: PreliminaryDarkside},
     [CardName.HOSTILE_TAKEOVER]: {Factory: HostileTakeover},
     [CardName.SYNDICATE_PIRATE_RAIDS]: {Factory: SyndicatePirateRaids, compatibility: 'colonies'},
     [CardName.DARKSIDE_MINING_SYNDICATE]: {Factory: DarksideMiningSyndicate},
-    //   // [CardName.HE3_PROPULSION]: {Factory: HE3Propulsion, compatibility: 'colonies'},
+    // [CardName.HE3_PROPULSION]: {Factory: HE3Propulsion, compatibility: 'colonies'},
     [CardName.STAGING_STATION_BEHEMOTH]: {Factory: StagingStationBehemoth, compatibility: 'colonies'},
     [CardName.LUNA_ARCHIVES]: {Factory: LunaArchives},
     [CardName.LUNA_SENATE]: {Factory: LunaSenate},
@@ -208,6 +211,7 @@ export const MOON_CARD_MANIFEST = new ModuleManifest({
   corporationCards: {
     [CardName.NANOTECH_INDUSTRIES]: {Factory: NanotechIndustries, compatibility: 'moon'},
     [CardName.TEMPEST_CONSULTANCY]: {Factory: TempestConsultancy, compatibility: ['turmoil', 'moon']},
+    // Disabled moon corporation cards kept out of the manifest on this branch:
     // [CardName.THE_DARKSIDE_OF_THE_MOON_SYNDICATE]: {Factory: TheDarksideofTheMoonSyndicate, compatibility: 'moon'},
     [CardName.LUNA_HYPERLOOP_CORPORATION]: {Factory: LunaHyperloopCorporation, compatibility: 'moon'},
     [CardName.CRESCENT_RESEARCH_ASSOCIATION]: {Factory: CrescentResearchAssociation, compatibility: 'moon'},

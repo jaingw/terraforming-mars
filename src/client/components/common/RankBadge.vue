@@ -13,12 +13,12 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import RankTier from '@/client/components/RankTier.vue';
 import {RankTier as RankTierType} from '@/common/rank/RankTier';
 import {getTierColor} from '@/client/utils/rankUtils';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'RankBadge',
   components: {
     RankTier,

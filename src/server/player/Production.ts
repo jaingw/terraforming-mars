@@ -1,6 +1,5 @@
 import {LawSuit} from '../cards/promo/LawSuit';
 import {Resource} from '../../common/Resource';
-import {LogHelper} from '../LogHelper';
 import {From, isFromPlayer} from '../logs/From';
 import {BaseStock} from './StockBase';
 import {IPlayer} from '../IPlayer';
@@ -19,16 +18,18 @@ export class Production extends BaseStock {
     this[resource] += delta;
 
     if (resource === Resource.HEAT) {
-      if (amount > 0) this.player.heatProductionStepsIncreasedThisGeneration += amount; // Hotsprings hook
+      if (amount > 0) {
+        this.player.heatProductionStepsIncreasedThisGeneration += amount;
+      } // Hotsprings hook
     }
 
     if (options?.log === true) {
-      LogHelper.logUnitDelta(this.player, resource, amount, /* production*/ true, options.from, options.stealing);
+      this.logUnitDelta(resource, amount, /* production*/ true, options.from, options.stealing);
     }
 
     const from = options?.from;
     if (isFromPlayer(from)) {
-      LawSuit.resourceHook(this.player, resource, delta, from.player);
+      LawSuit.resourceHook(this.player, delta, from.player);
 
       // Mons Insurance hook
       if (delta < 0 && from.player.id !== this.player.id) {

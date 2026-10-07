@@ -8,19 +8,20 @@
 
 <script lang="ts">
 
-import Vue from 'vue';
+import {defineComponent} from 'vue';
 import {CardRenderItemType} from '@/common/cards/render/CardRenderItemType';
 import {AltSecondaryTag} from '@/common/cards/render/AltSecondaryTag';
 import {Size} from '@/common/cards/render/Size';
 import {Tag} from '@/common/cards/Tag';
 import {ICardRenderItem, isICardRenderItem} from '@/common/cards/render/Types';
-import {CardResource} from '@/common/CardResource';
+import {cardResourceCSS} from '../common/cardResources';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'CardRenderItemComponent',
   props: {
     item: {
       type: Object as () => ICardRenderItem,
+      required: true,
     },
   },
   methods: {
@@ -30,13 +31,7 @@ export default Vue.extend({
   },
   computed: {
     resourceClass(): string {
-      if (this.item.resource === undefined) {
-        return '';
-      }
-      if (this.item.resource === CardResource.RESOURCE_CUBE) {
-        return 'card-resource-cube';
-      }
-      return 'card-resource-' + this.item.resource.toLowerCase().replaceAll(' ', '-');
+      return (this.item.resource === undefined) ? '' : cardResourceCSS[this.item.resource];
     },
     resourceSizeClass(): string {
       if (this.item.size !== undefined) {
@@ -49,6 +44,12 @@ export default Vue.extend({
         return '';
       }
       return 'card-tag-' + this.item.tag.toLowerCase().replaceAll(' ', '-');
+    },
+    tagSizeClass(): string {
+      if (this.item.size !== undefined) {
+        return 'card-tag-size--' + this.item.size;
+      }
+      return '';
     },
     componentClasses(): ReadonlyArray<string> {
       const classes: Array<string> = [];
@@ -108,7 +109,11 @@ export default Vue.extend({
       case CardRenderItemType.TEMPERATURE:
         return ['card-global-requirement', 'card-temperature-global-requirement'];
       case CardRenderItemType.OXYGEN:
-        return ['card-global-requirement', 'card-oxygen-global-requirement'];
+        if (this.item.size !== undefined && this.item.size !== Size.MEDIUM) {
+          return ['card-global-requirement', 'card-oxygen-global-requirement', `card-oxygen--${this.item.size}`];
+        } else {
+          return ['card-global-requirement', 'card-oxygen-global-requirement'];
+        }
       case CardRenderItemType.OCEANS:
         if (this.item.size !== undefined && this.item.size !== Size.MEDIUM) {
           return ['card-global-requirement', 'card-ocean-global-requirement', `card-ocean--${this.item.size}`];
@@ -116,7 +121,11 @@ export default Vue.extend({
           return ['card-global-requirement', 'card-ocean-global-requirement'];
         }
       case CardRenderItemType.VENUS:
-        return ['card-global-requirement', 'card-venus-global-requirement'];
+        if (this.item.size !== undefined && this.item.size !== Size.MEDIUM) {
+          return ['card-global-requirement', 'card-venus-global-requirement', `card-venus--${this.item.size}`];
+        } else {
+          return ['card-global-requirement', 'card-venus-global-requirement'];
+        }
       case CardRenderItemType.TR:
         if (this.item.size !== undefined && this.item.size !== Size.MEDIUM) {
           return ['card-tile', 'card-tr', `card-tr--${this.item.size}`];
@@ -278,7 +287,7 @@ export default Vue.extend({
       case CardRenderItemType.RESOURCE:
         return [cardResource, this.resourceClass, this.resourceSizeClass];
       case CardRenderItemType.TAG:
-        return ['card-resource-tag', this.tagClass];
+        return ['card-resource-tag', this.tagClass, this.tagSizeClass];
       case CardRenderItemType.NEUTRAL_DELEGATE:
         return ['card-neutral-delegate'];
       case CardRenderItemType.UNDERGROUND_RESOURCES:
@@ -294,12 +303,10 @@ export default Vue.extend({
       }
     },
     amountAbs(): number {
-      if (this.item.amountInside) return 1;
-      return Math.abs(this.item.amount);
+      return this.item.amountInside ? 1 : Math.abs(this.item.amount);
     },
     itemsToShow(): number {
-      if (this.item.showDigit) return 1;
-      return this.amountAbs;
+      return this.item.showDigit ? 1 : this.amountAbs;
     },
     // Oooh this is begging to be a template or something.
     itemHtmlContent(): string {

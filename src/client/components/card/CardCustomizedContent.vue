@@ -1,14 +1,14 @@
 <template>
   <div class="card-lastpay-counter">
-      <div class="card-lastpay-counter-number"> {{ getAmount }} </div>
+    <div class="card-lastpay-counter-number"> {{ getAmount }} </div>
   </div>
 </template>
 
 <script lang="ts">
 
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'CardCustomizedContent',
   props: {
     amount: {

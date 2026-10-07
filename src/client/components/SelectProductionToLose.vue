@@ -47,12 +47,12 @@
     </div>
 
     <div v-if="showsave === true" class="nofloat">
-        <button class="btn btn-primary btn-submit" v-on:click="saveData">{{ $t(playerinput.buttonLabel) }}</button>
+      <button class="btn btn-primary btn-submit" v-on:click="saveData">{{ $t(playerinput.buttonLabel) }}</button>
     </div>
   </div>
 </template>
 <script lang="ts">
-import Vue from 'vue';
+import {defineComponent} from 'vue';
 
 import {SelectProductionToLoseModel} from '@/common/models/PlayerInputModel';
 import {PayProductionModel} from '@/common/models/PayProductionUnitsModel';
@@ -65,14 +65,16 @@ type DataModel = {
   warning: string | undefined;
 }
 
-export default Vue.extend({
+export default defineComponent({
   name: 'SelectProductionToLose',
   props: {
     playerinput: {
       type: Object as () => SelectProductionToLoseModel,
+      required: true,
     },
     onsave: {
       type: Function as unknown as () => (out: SelectProductionToLoseResponse) => void,
+      required: true,
     },
     showsave: {
       type: Boolean,

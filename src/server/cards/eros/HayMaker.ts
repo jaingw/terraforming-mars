@@ -40,8 +40,12 @@ export class HayMaker extends Card implements IProjectCard {
 
   private removeGreenery(player: IPlayer) {
     const removableSpaces = player.game.board.spaces.filter((space) => {
-      if (!Board.isGreenerySpace(space)) return false;
-      if (space.player !== player) return false;
+      if (!Board.isGreenerySpace(space)) {
+        return false;
+      }
+      if (space.player !== player) {
+        return false;
+      }
       return true;
     });
 

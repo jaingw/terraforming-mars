@@ -1,46 +1,46 @@
 <template>
-   <div class="admin-home">
-     <ul>
-       <li v-for="path of paths" v-bind:key="path">
-         <a :href="path + '?serverId=' + serverId" target="_blank">{{path}}</a>
-       </li>
-     </ul>
-     <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #334155;">
-       <h3>Season Admin</h3>
-       <div style="display: flex; gap: 8px; margin-top: 8px;">
-         <button @click="triggerSeasonReset(true)">Dry Run Season Reset</button>
-         <button @click="triggerSeasonReset(false)">Execute Season Reset</button>
-       </div>
-       <div v-if="seasonResetResult" style="margin-top: 8px; white-space: pre-wrap; font-family: monospace;">
-         {{ seasonResetResult }}
-       </div>
-     </div>
+  <div class="admin-home">
+    <ul>
+      <li v-for="path of paths" v-bind:key="path">
+        <a :href="path + '?serverId=' + serverId" target="_blank">{{path}}</a>
+      </li>
+    </ul>
+    <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #334155;">
+      <h3>Season Admin</h3>
+      <div style="display: flex; gap: 8px; margin-top: 8px;">
+        <button @click="triggerSeasonReset(true)">Dry Run Season Reset</button>
+        <button @click="triggerSeasonReset(false)">Execute Season Reset</button>
+      </div>
+      <div v-if="seasonResetResult" style="margin-top: 8px; white-space: pre-wrap; font-family: monospace;">
+        {{ seasonResetResult }}
+      </div>
+    </div>
 
-     <!-- Season Reset Confirm Dialog -->
-     <confirm-dialog
-       ref="confirmDialog"
-       :message="confirmMessage"
-       v-on:accept="onConfirmAccept"
-       v-on:dismiss="onConfirmDismiss">
-     </confirm-dialog>
+    <!-- Season Reset Confirm Dialog -->
+    <confirm-dialog
+      ref="confirmDialog"
+      :message="confirmMessage"
+      v-on:accept="onConfirmAccept"
+      v-on:dismiss="onConfirmDismiss">
+    </confirm-dialog>
 
-     <!-- Final Confirm Dialog -->
-     <confirm-dialog
-       ref="finalConfirmDialog"
-       :message="finalConfirmMessage"
-       v-on:accept="onFinalConfirmAccept"
-       v-on:dismiss="onFinalConfirmDismiss">
-     </confirm-dialog>
-   </div>
- </template>
+    <!-- Final Confirm Dialog -->
+    <confirm-dialog
+      ref="finalConfirmDialog"
+      :message="finalConfirmMessage"
+      v-on:accept="onFinalConfirmAccept"
+      v-on:dismiss="onFinalConfirmDismiss">
+    </confirm-dialog>
+  </div>
+</template>
 
 <script lang="ts">
-import Vue from 'vue';
+import {defineComponent} from 'vue';
 import {paths} from '@/common/app/paths';
 import {request, RequestError} from '@/client/utils/request';
 import ConfirmDialog from '../common/ConfirmDialog.vue';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'admin-home',
   components: {
     'confirm-dialog': ConfirmDialog,
@@ -51,7 +51,6 @@ export default Vue.extend({
         paths.API_STATS,
         paths.GAMES_OVERVIEW,
         paths.API_GAMES,
-        paths.API_METRICS,
         paths.LOAD,
         paths.API_IPS,
       ],
@@ -145,4 +144,3 @@ export default Vue.extend({
   },
 });
 </script>
-

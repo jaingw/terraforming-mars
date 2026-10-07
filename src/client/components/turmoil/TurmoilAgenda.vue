@@ -101,8 +101,8 @@
     </template>
     <template v-else-if="id === 'up02'">
       <div class="policy-top-margin">
-      <span class="money resource">4</span>
-      <span class="red-arrow-3x"></span>2<span class="titanium resource"></span> / 2<span class="floater resource"></span>
+        <span class="money resource">4</span>
+        <span class="red-arrow-3x"></span>2<span class="titanium resource"></span> / 2<span class="floater resource"></span>
       </div>
     </template>
     <template v-else-if="id === 'up03'">
@@ -131,12 +131,12 @@
     </template>
     <template v-else-if="id === 'kp04'">
       <div class="policy-top-margin"><div class="tile empty-tile-small"></div> :
-      <span class="heat resource"></span><span class="heat resource"></span></div>
+        <span class="heat resource"></span><span class="heat resource"></span></div>
     </template>
     <template v-else-if="id === 'rp01'">
       <div class="policy-top-margin">
-      <div class="rating tile"></div> :
-      <div class="resource money">-3</div>
+        <div class="rating tile"></div> :
+        <div class="resource money">-3</div>
       </div>
     </template>
     <template v-else-if="id === 'rp02'">
@@ -165,15 +165,15 @@
     </template>
     <template v-else-if="id === 'gp03'">
       <div class="policy-top-margin">
-      <div class="resource-tag tag-plant party-resource-tag"></div>
-      <div class="resource-tag tag-microbe party-resource-tag"></div>
-      <div class="resource-tag tag-animal party-resource-tag"></div> : <div class="resource money">2</div>
+        <div class="resource-tag tag-plant party-resource-tag"></div>
+        <div class="resource-tag tag-microbe party-resource-tag"></div>
+        <div class="resource-tag tag-animal party-resource-tag"></div> : <div class="resource money">2</div>
       </div>
     </template>
     <template v-else-if="id === 'gp04'">
       <div class="policy-top-margin">
-      <span class="money resource">5</span>
-      <span class="red-arrow-3x"></span>3<span class="plant resource"></span> / 2<span class="microbe resource"></span>
+        <span class="money resource">5</span>
+        <span class="red-arrow-3x"></span>3<span class="plant resource"></span> / 2<span class="microbe resource"></span>
       </div>
     </template>
     <template v-else>
@@ -185,13 +185,14 @@
 <script lang="ts">
 
 import {BonusId, PolicyId} from '@/common/turmoil/Types';
-import Vue from 'vue';
+import {defineComponent} from 'vue';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'TurmoilAgenda',
   props: {
     id: {
       type: String as () => BonusId | PolicyId | undefined,
+      required: true,
     },
   },
 });

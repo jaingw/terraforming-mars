@@ -6,26 +6,17 @@ import {SelectOptionModel} from '../../common/models/PlayerInputModel';
 import {Warning} from '../../common/cards/Warning';
 import {InputError} from './InputError';
 
-export type Options = {
-  buttonLabel?: string;
-  warnings?: Array<Warning>;
-}
-
 export class SelectOption extends BasePlayerInput<undefined> {
+  public warnings: ReadonlyArray<Warning> | undefined = undefined;
   constructor(
     title: string | Message,
-    options: string | Options = 'Confirm') {
+    buttonLabel: string = 'Confirm',
+    warnings: ReadonlyArray<Warning> | undefined = undefined,
+  ) {
     super('option', title);
-    if (typeof options === 'string') {
-      this.buttonLabel = options;
-    } else {
-      this.buttonLabel = options.buttonLabel ?? 'Confirm';
-      this.warnings = options.warnings;
-    }
+    this.buttonLabel = buttonLabel;
+    this.warnings = warnings;
   }
-
-
-  public warnings: Array<Warning> | undefined = undefined;
 
   public override toModel(): SelectOptionModel {
     return {
@@ -36,7 +27,7 @@ export class SelectOption extends BasePlayerInput<undefined> {
     };
   }
   public process(response: InputResponse): PlayerInput | undefined {
-    if (!isSelectOptionResponse(response)) {
+    if (!isSelectOptionResponse(response) && (typeof response !== 'object' || response === null || typeof (response as any).type !== 'string')) {
       throw new InputError('Not a valid SelectOptionResponse');
     }
     return this.cb(undefined);

@@ -141,7 +141,9 @@ export class Timer {
    */
   public static toString(d: SerializedTimer, countDown: number = 0, clock: Clock = REAL_CLOCK) : string {
     let elapsed = d.sumElapsed + (d.running ? clock.now() - d.startedAt : 0);
-    if (countDown > 0) elapsed = Math.max(countDown * 60 * 1000 - elapsed, 0); // 天梯 TODO: 考虑是否显示负数
+    if (countDown > 0) {
+      elapsed = Math.max(countDown * 60 * 1000 - elapsed, 0);
+    } // 天梯 TODO: 考虑是否显示负数
     const elapsedDate = new Date(elapsed);
     const hours = elapsedDate.getUTCHours() + (elapsedDate.getUTCDate() - 1) * 24;
     // if (elapsed >= 3600 * 1000) {
@@ -154,7 +156,9 @@ export class Timer {
   // 获取分钟数 可以通过countDown设置倒计时
   public static getMinutes(d: SerializedTimer, countDown: number = 0, clock: Clock = REAL_CLOCK) : number {
     let elapsed = d.sumElapsed + (d.running ? clock.now() - d.startedAt : 0);
-    if (countDown > 0) elapsed = countDown * 60 * 1000 - elapsed;
+    if (countDown > 0) {
+      elapsed = countDown * 60 * 1000 - elapsed;
+    }
 
     return Math.max(elapsed / (60 * 1000), 0);
   }

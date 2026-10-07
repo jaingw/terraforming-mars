@@ -1,343 +1,238 @@
 {
-  "You start with 3 M€ production and 44 M€.":"起始获得44M€,提升M€产能3级",
-  "Effect: When you play a building tag, you pay 2 M€ less for it.":"效果:当你打出带有建筑标志的牌时,你可以少支付2M€",
-    
-  "Effect: When you play an Earth tag, including this, draw a card.":"效果：你打出的牌上每有一个地球符号，包括此卡，抽一张牌。",
-  "You start with 1 titanium production and 38 M€.":"你起始拥有1点钛产量和38M€。",
-    
-  "You start with 47 M€.":"起始获得47M€",
-  "Action: Spend 4 M€ to increase (one of) your LOWEST production 1 step.":"行动:花费4M€,提升你1项产能最低的产能1级",
-
-  "Effect: When you play a Science tag, you pay 2M€ less for it.":"效果：你打出的牌上每有一个科学标志，你少为其支付2 M€。",
-  "You start with 37 M€. As your first action, draw 3 Prelude cards, and play one of them. Discard the other two.":"你起始拥有37M€，作为你的第一个行动，你必须抽三张前序卡，打出其中一张，然后弃掉剩余两张。",
-
-  "You start with 45 M€. As your first action, fund an award for free.":"起始获得45M€。作为你的起始行动,你可以免费资助一个奖项",
-  "Effect: When you play a card with a NON-NEGATIVE VP icon, including this, gain 3 M€.":"效果:当你打出一张有非负分图标的牌(包括本牌)时,获得3M€",
-    
-
-
-  "max":"最大",
-  
-  "House Printing":"房屋印刷",
-
-  "Lava Tube Settlement":"熔岩城",
-  "Decrease your Energy production 1 step and increase your M€ production 2 steps. Place a City Tile on a VOLCANIC AREA regardless of adjacent cities.":"减少1点电力产能，提升2点M€产能。放置一个城市板块到火山区，忽视相邻规则",
-
-  "Martian Survey":"火星勘察",
-  "Oxygen must be 4% or lower. Draw two cards.":"氧气浓度≤4%.抽两张卡",
-  
-  "Psychrophiles":"嗜冷性细菌",
-  "Action: Add 1 microbe to this card":"行动：在这张卡上添加1个微生物。",
-  "Effect: When paying for a plant card, microbes here may be used as 2 M€ each.":"效果：当你打出植物标志的卡牌时，这张卡上的每个微生物资源可以作为2M€支付",
-  "Temperature must be -20 C or lower.":"温度必须 ≤ -20℃",
-  
-  "Research Coordination":"研究环境",
-  "After being played, when you perform an action, the wild tag counts as any tag of your choice.":"打出来之后，当你执行行动时，问号可以视为任意标志",
-  
-  "SF Memorial":"SF纪念碑",
-  
-  "Space Hotels":"太空酒店",
-  "Requires 2 Earth tags. Increase M€ production 4 steps.":"需要两个地球图标.增加4点M€产能",
-  
+  "You start with 3 M€ production and 44 M€.": "起始获得44M€,提升M€产能3级",
+  "Effect: When you play a building tag, you pay 2 M€ less for it.": "效果:当你打出带有建筑标志的牌时,你可以少支付2M€",
+  "Effect: When you play an Earth tag, including this, draw a card.": "效果：你打出的牌上每有一个地球符号，包括此卡，抽一张牌。",
+  "You start with 1 titanium production and 38 M€.": "你起始拥有1点钛产量和38M€。",
+  "You start with 47 M€.": "起始获得47M€",
+  "Action: Spend 4 M€ to increase (one of) your LOWEST production 1 step.": "行动:花费4M€,提升你1项产能最低的产能1级",
+  "Effect: When you play a Science tag, you pay 2M€ less for it.": "效果：你打出的牌上每有一个科学标志，你少为其支付2 M€。",
+  "You start with 37 M€. As your first action, draw 3 Prelude cards, and play one of them. Discard the other two.": "你起始拥有37M€，作为你的第一个行动，你必须抽三张前序卡，打出其中一张，然后弃掉剩余两张。",
+  "You start with 45 M€. As your first action, fund an award for free.": "起始获得45M€。作为你的起始行动,你可以免费资助一个奖项",
+  "Effect: When you play a card with a NON-NEGATIVE VP icon, including this, gain 3 M€.": "效果:当你打出一张有非负分图标的牌(包括本牌)时,获得3M€",
+  "max": "最大",
+  "House Printing": "房屋印刷",
+  "Lava Tube Settlement": "熔岩城",
+  "Decrease your Energy production 1 step and increase your M€ production 2 steps. Place a City Tile on a VOLCANIC AREA regardless of adjacent cities.": "减少1点电力产能，提升2点M€产能。放置一个城市板块到火山区，忽视相邻规则",
+  "Martian Survey": "火星勘察",
+  "Oxygen must be 4% or lower. Draw two cards.": "氧气浓度≤4%.抽两张卡",
+  "Psychrophiles": "嗜冷性细菌",
+  "Action: Add 1 microbe to this card": "行动：在这张卡上添加1个微生物。",
+  "Effect: When paying for a plant card, microbes here may be used as 2 M€ each.": "效果：当你打出植物标志的卡牌时，这张卡上的每个微生物资源可以作为2M€支付",
+  "Temperature must be -20 C or lower.": "温度必须 ≤ -20℃",
+  "Research Coordination": "研究环境",
+  "After being played, when you perform an action, the wild tag counts as any tag of your choice.": "打出来之后，当你执行行动时，问号可以视为任意标志",
+  "SF Memorial": "SF纪念碑",
+  "Space Hotels": "太空酒店",
+  "Requires 2 Earth tags. Increase M€ production 4 steps.": "需要至少2个地球标志。提升M€产能4级",
   "Allied Bank": "联合银行",
   "Increase your M€ production 4 steps. Gain 3 M€.": "提升4级M€产量,获得3 M€。",
-
   "Aquifer Turbines": "含水层涡轮机",
   "Place an Ocean tile. Increase your energy production 2 steps. Pay 3 M€.": "放置一个海洋。提升你的电力产能2格,支付3M€",
-
   "Biofuels": "生物燃料",
   "Increase your energy and plant production 1 step. Gain 2 plants.": "提升你的电力和植物产能1级,获得2植物资源",
-
   "Biolab": "生物实验室",
   "Increase your plant production 1 step. Draw 3 cards.": "提升你的植物产能1格,抽3张牌",
-
   "Biosphere Support": "生物圈支援载体",
   "Increase your plant production 2 steps. Decrease your M€ production 1 step.": "提升你的植物产能2格,降低你的M€产能1格",
-
   "Business Empire": "商业帝国",
   "Increase your M€ production 6 steps. Pay 6 M€.": "提升你的M€产能6格,支付6M€",
-
   "Dome Farming": "圆顶农业",
   "Increase your M€ production 2 steps and plant production 1 step.": "提升你的M€产量2格和植物产量1格",
-
   "Donation": "捐赠",
   "Gain 21 M€.": "获得 21 M€.",
-
   "Early Settlement": "前期据点",
   "Increase your plant production 1 step. Place a city tile.": "提升你的植物产能1级,放置1个城市板块",
-
   "Ecology Experts": "生态学专家",
   "Increase your plant production 1 step. Play a card from hand, ignoring global requirements.": "提升你的植物产能1级,并从手中打出一张牌,无视它的全球参数需求条件（温度、氧气、海洋、金星）",
-
   "Eccentric Sponsor": "奇特的赞助者",
   "Play a card from hand, reducing its cost by 25 M€": "以降低 25M€ 的价格打出一张手牌",
-
   "Experimental Forest": "实验林场",
   "Place 1 greenery tile and raise oxygen 1 step. Reveal cards until you reveal two cards with plant tags on them. Take them into your hand and discard the rest.": "放置1个绿化板块。不断展示牌库顶的牌,直到有两张带有植物标志的牌。把这两张牌加入你的手牌,并弃掉剩余的牌",
-
   "Galilean Mining": "伽利略矿业",
   "Increase your titanium production 2 steps. Pay 5 M€.": "提升钛合金产量2格,支付5M€",
-
   "Great Aquifer": "大型含水层",
   "Place 2 Ocean tiles.": "放置2块海洋板块",
-
   "Huge Asteroid": "巨型小行星",
   "Increase Temperature 3 steps. Pay 5 M€.": "提升火星温度3格,支付 5M€.",
-
   "Io Research Outpost": "木卫一研究前哨",
   "Increase your titanium production 1 step. Draw a card.": "提升钛合金产量1级,抽1张卡",
-
   "Loan": "贷款",
   "Gain 30 M€. Decrease your M€ production 2 steps.": "获得30M€,降低M€产能2格",
-
   "Martian Industries": "火星工业",
   "Increase your energy and steel production 1 step. Gain 6 M€.": "提升你的电力和钢铁产能1格,获得6M€",
-
   "Metal-Rich Asteroid": "富含金属的小行星",
   "Increase temperature 1 step. Gain 4 titanium and 4 steel.": "提升温度1格,获得4个钛合金资源和4个钢铁资源",
-
   "Metals Company": "金属公司",
   "Increase your M€, steel and titanium production 1 step.": "提升你的M€、钢铁和钛合金产能1格",
-
   "Mining Operations": "采矿作业",
   "Increase your steel production 2 steps. Gain 4 steel.": "提升钢铁产能2级,获得4个钢铁资源",
-
   "Mohole": "超深钻探",
   "Increase your heat production 3 steps. Gain 3 heat.": "提升你的热能产量3级,获得3个热能资源",
-
   "Mohole Excavation": "超深钻探挖掘工程",
   "Increase your steel production 1 step and heat production 2 steps. Gain 2 heat.": "提升1格钢铁产能和2格热能产能,获得2个热能资源",
-
   "Nitrogen Shipment": "氮气运输",
-  "Increase your plant production 1 step. Increase your TR 1 step. Gain 5 M€.": "提升你的1级植物产能和1改造度(TR),获得5M€",
-
+  "Increase your plant production 1 step. Increase your TR 1 step. Gain 5 M€.": "提升你的1级植物产能和1点改造度，获得5 M€",
   "Orbital Construction Yard": "轨道建造场",
   "Increase your titanium production 1 step. Gain 4 titanium.": "提升你的钛合金产能1级,获得4个钛合金资源",
-
   "Polar Industries": "极地工业",
   "Increase your heat production 2 steps. Place an Ocean tile.": "提升你的热能产能2格,放置1个海洋板块",
-
   "Power Generation": "发电",
-
   "Research Network": "研究网络",
-  "Increase your M€ production 1 step. Draw 3 cards. After being played, when you perform an action, the wild tag counts as any tag of your choice.": "提升你的M€产量1格,抽3张牌",
-
+  "Increase your M€ production 1 step. Draw 3 cards. After being played, when you perform an action, the wild tag counts as any tag of your choice.": "提升你的M€产能1级并抽3张牌。打出后，当你执行行动时，万能标志可视为你选择的任意标志",
   "Self-Sufficient Settlement": "自给自足的据点",
   "Increase your M€ production 2 steps. Place a city tile.": "提升你的M€产量2级,放置1个城市板块",
-
   "Smelting Plant": "冶炼厂",
   "Raise oxygen 2 steps. Gain 5 steel.": "提升火星的氧气浓度2格,获得5个钢铁资源",
-
   "Society Support": "社会支援",
   "Increase your plant, energy and heat production 1 step. Decrease M€ production 1 step.": "提升你的植物产能、电力产能和热能产能1格,降低你的M€产能1格",
-
   "Supplier": "供应商",
   "Increase your energy production 2 steps. Gain 4 steel.": "提升你的电力产能2级,获得4个钢铁资源",
-
   "Supply Drop": "空投补给",
   "Gain 3 titanium, 8 steel and 3 plants.": "获得3个钛合金资源、8个钢铁资源和3个植物资源",
-
   "UNMI Contractor": "UNMI 承包商",
   "Increase your TR 3 steps. Draw a card.": "提升你的改造度3格,抽一张牌",
-
   "Acquired Space Agency": "收购太空总署",
-  "Gain 6 titanium. Reveal cards until you reveal two cards with Space Tags. Take them into your hand, discard the rest.": "获得6个钛合金资源。从牌库顶开始展示卡牌,直到有2张带有空间标志的牌,将这两张牌加入手牌,并丢弃其余的牌",
-
-
+  "Gain 6 titanium. Reveal cards until you reveal two cards with Space Tags. Take them into your hand, discard the rest.": "获得6个钛合金资源。从牌库顶开始展示卡牌,直到有2张带有太空标志的牌,将这两张牌加入手牌,并丢弃其余的牌",
   "Sponsoring Nation": "主办国",
-  "Requires 4 Earth tags. Gain 3 TR. Place 2 delegates.": "要求 4 个地球标志。获得 3 TR。放置 2 个代表。",
-  
+  "Requires 4 Earth tags. Gain 3 TR. Place 2 delegates.": "要求4个地球标志。获得3改造度。放置2个代表。",
   "Cloud Tourism": "云端旅游",
   "Increase your M€ production 1 step for each pair of Earth and Venus tags you own. 1 VP for every 3rd floater on this card.": "您拥有的每对地球和金星标志，使您的 M€ 资源产能提升 1 步。此牌上每有 3 个漂浮物，获得 1 VP。",
-  
   "Ceres Tech Market": "谷神星科技市场",
   "Action: Discard any number of cards from your hand to gain 2 M€ for each discarded card.": "行动：从您的手牌中弃掉任意数量的牌，每弃掉 1 张牌获得 2 M€。",
   "Gain 2 M€ per colony you own.": "您每拥有 1 个殖民地获得 2 M€。",
-  
   "Ishtar Expedition": "伊什塔尔远征",
   "Requires Venus 10%. Gain 3 titanium and draw 2 Venus cards.": "要求金星 10%。获得 3 钛并抽取 2 张金星牌。",
-  
   "Red Appeasement": "红色和解",
   "Requires that Reds are ruling or that you have 2 delegates there, AND THAT NO OTHER PLAYER HAS PASSED.": "需要红党为执政党，或你在该党有至少2个代表。且无其他玩家已跳过。",
   "Increase M€ production 2 steps. This counts as passing. You get no other turns this generation.": "M€ 产能提升 2 步。并且跳过，您本时代不再进行其他回合。",
   "PASS": "跳过",
-  
   "Summit Logistics": "峰会后勤",
   "Requires that Scientists are ruling or that you have 2 delegates there. Gain 1 M€ per planet tag and colony you have. Draw 2 cards.": "需要科学家党为执政党，或你在该党有至少2个代表。您拥有的每个行星标志和殖民地提供 1 M€。抽取 2 张牌。",
   "FAN EXPANSION NOTE: This includes Mars but not The Moon.": "粉丝扩展备注：这包括火星但不包括月球。",
-  
   "Frontier Town": "边疆小镇",
-  "Requires that Mars First is ruling or that you have 2 delegates there. Decrease your energy production one step. Place a city tile. GAIN THE PRINTED PLACEMENT BONUS 2 ADDITIONAL TIMES.": "需要火星之首党为执政党，或你在该党有至少2个代表。您的电能产量降低 1 步。放置 1 个城市板块。额外获得 2 次版块的放置奖励。",
-  
+  "Requires that Mars First is ruling or that you have 2 delegates there. Decrease your energy production one step. Place a city tile. GAIN THE PRINTED PLACEMENT BONUS 2 ADDITIONAL TIMES.": "需要火星之首党为执政党，或你在该党有至少2个代表。您的电能产量降低1步。放置1个城市板块。额外获得2次板块上的印刷放置奖励。",
   "WG Project": "WG 项目",
   "Requires that you are Chairman. DRAW 3 PRELUDE CARDS AND PLAY 1 OF THEM, Discard the other 2.": "要求您是主席。抽取 3 张前序牌并打出其中 1 张，弃掉另外 2 张。",
-  
   "Unexpected Application": "意外应用",
   "Discard 1 card to terraform Venus 1 step.": "弃掉 1 张牌以使金星改造度提升 1 步。",
-  
   "Venus Allies": "金星盟友",
   "Raise Venus 2 steps. Gain 4 M€ per colony you have.": "提升金星 2 步。您拥有的每个殖民地提供 4 M€。",
-  
   "Venus Trade Hub": "金星贸易中心",
   "Effect: When you trade, gain 3 M€.": "效果：当您进行贸易时，获得 3 M€。",
   "Requires 2 Venus tags.": "要求 2 个金星标志。",
-  
   "Venus Shuttles": "金星穿梭机",
   "Action: Spend 12 M€ to raise Venus 1 step. This cost is REDUCED BY 1 FOR EACH VENUS TAG you have.": "行动：支付 12 M€ 以提升金星 1 步。您拥有的每个金星标志使此费用减少 1 M€。",
   "Add 2 floaters to ANY VENUS CARD.": "在任意金星牌上放置 2 个漂浮物。",
-  
   "Venus Orbital Survey": "金星轨道勘测",
   "Action: Reveal the top 2 cards, take any venus cards to hand for free. Any other card you either buy or discard": "行动：展示牌库顶的 2 张牌，免费将任何金星牌加入手牌。任何其他牌您可选择购买或弃掉。",
-  
   "Special Permit": "特别许可",
   "Requires that Greens are ruling or that you have 2 delegates there. Steal 4 plants from any player.": "需要绿党为执政党，或你在该党有至少2个代表。从任意玩家处窃取 4 植物。",
-  
   "Soil Studies": "土壤研究",
   "Requires that temperature is -4 C or lower. Gain 1 plant per Venus tag, plant tag, and colony you have.": "要求温度在 -4°C 或更低。您拥有的每个金星标志、植物标志和殖民地提供 1 植物。",
-  
   "GHG Shipment": "温室气体运输",
   "Requires that Kelvinists are in power or that you have 2 delegates there. Increase your heat production 1 step. Gain 1 heat for each floater you have.": "需要开尔文主义党为执政党，或你在该党有至少2个代表。您的热量产能提升 1 步。您拥有的每个漂浮物提供 1 热量。",
-  
   "L1 Trade Terminal": "L1 贸易终端",
   "Effect: When you trade, you may first increase that colony tile track 2 steps.": "效果：当您进行贸易时，您可以先将该殖民地板块轨提升 2 步。",
   "Add a resource to 3 different cards that already have resources.": "在 3 张已有资源的牌上各放置 1 个资源。",
-  
   "Floating Refinery": "漂浮精炼厂",
   "Action: Add 1 floater here.": "行动：在此牌上放置 1 个漂浮物。",
   "Action: Remove 2 floaters from ANY CARD to gain 1 titanium and 2 M€.": "行动：从任意牌上移除 2 个漂浮物，以获得 1 钛和 2 M€。",
   "Add 1 floater here for each Venus tag you have.": "您拥有的每个金星标志在此牌上放置 1 个漂浮物。",
-
   "Colonial Envoys": "殖民特使",
   "Requires that Unity is ruling or that you have 2 delegates there. Place 1 delegate for each colony you have. YOU MAY PLACE THEM IN SEPERATE PARTIES.": "需要联合党为执政党，或你在该党有至少2个代表。您拥有的每个殖民地可放置 1 个代表。您可将他们放置在不同的政党中。",
-  
   "Colonial Representation": "殖民代表权",
   "Gain 3 M€ per colony you have.": "您拥有的每个殖民地提供 3 M€。",
-  
   "Envoys From Venus": "金星来使",
   "Requires 3 Venus tags. Place 2 delegates in 1 party.": "要求 3 个金星标志。在 1 个政党中放置 2 个代表。",
-  
   "Jovian Envoys": "木星来使",
   "Requires 2 Jovian tags. Place 2 delegates in 1 party.": "要求 2 个木星标志。在 1 个政党中放置 2 个代表。",
-  
   "Microgravity Nutrition": "微重力营养学",
   "Increase your M€ production 1 step for each colony you have.": "您拥有的每个殖民地使您的 M€ 产能提升 1 步。",
-  
   "Stratospheric Expedition": "平流层远征",
   "Add two floaters to ANY CARD. Draw 2 Venus cards.": "在任意牌上放置 2 个漂浮物。抽取 2 张金星牌。",
-
-
   "Applied Science": "应用科学",
   "Action: Remove 1 resource here to either add 1 resource to ANY CARD WITH A RESOURCE or gain 1 standard resource.": "行动：移除此处的 1 个资源，以在任意已有资源的牌上放置 1 个资源，或者获得 1 个标准资源。",
   "Add 6 science resources here.": "在此牌上放置 6 个科学资源。",
-  
   "Atmospheric Enhancers": "大气增强器",
   "Raise temperature 2 steps, or raise oxygen 2 steps, or raise Venus 2 steps. Draw 2 cards with floater icons.": "提升温度 2 步，或提升氧气 2 步，或提升金星 2 步。抽取 2 张带漂浮物图标的牌。",
-  
   "Board of Directors": "董事会",
   "DRAW 1 PRELUDE CARD: EITHER DISCARD IT, OR PAY 12 M€ AND REMOVE 1 DIRECTOR RESOURCE HERE TO PLAY IT.": "抽取 1 张前序牌：选择弃掉它，或者支付 12 M€ 并移除此处的 1 个董事资源来打出它。",
   "Add 4 director resources here.": "在此牌上放置 4 个董事资源。",
-  
   "Colony Trade Hub": "殖民地贸易中心",
   "Increase your energy production 1 step. Gain 2 titanium": "您的电能产能提升 1 步。获得 2 钛。",
   "Effect: When any colony is placed, gain 2 M€.": "效果：当任何殖民地被放置时，获得 2 M€。",
-  
   "Corridors of Power": "权力走廊",
   "Effect: Each time you become party leader, draw 1 card.": "效果：每当您成为政党领袖时，抽取 1 张牌。",
-  "Raise your TR 1 step and gain 4 M€": "您的 TR 提升 1 步并获得 4 M€。",
-  
+  "Raise your TR 1 step and gain 4 M€": "您的改造度提升1步并获得4 M€。",
   "Early Colonization": "早期殖民",
   "INCREASE ALL COLONY TRACKS 2 STEPS": "所有殖民地轨道提升 2 步",
   "Place a colony. Gain 3 energy.": "放置 1 个殖民地。获得 3 电能。",
-  
   "Floating Trade Hub": "漂浮贸易站",
   "Action: Add 2 floaters to ANY card.": "行动：在任意牌上放置 2 个漂浮物。",
   "Action: Remove any number of floaters here to gain that many of one standard resource.": "行动：移除此处的任意数量的漂浮物，以获得等量的 1 种标准资源。",
-  
   "Focused Organization": "专注组织",
   "Action: Discard 1 card and spend 1 standard resource to draw 1 card and gain 1 standard resource.": "行动：弃掉 1 张牌并花费 1 个标准资源，以抽取 1 张牌并获得 1 个标准资源。",
   "Draw 1 card and gain 1 standard resource.": "抽取 1 张牌并获得 1 个标准资源。",
-  
   "High Circles": "高层圈子",
-  "Raise your TR 1 step and draw 1 card with PARTY REQUIREMENT. Place 2 delegates in one party.": "您的 TR 提升 1 步并抽取 1 张带政党要求的牌。在 1 个政党中放置 2 个代表。",
-  
+  "Raise your TR 1 step and draw 1 card with PARTY REQUIREMENT. Place 2 delegates in one party.": "您的改造度提升1步并抽取1张带政党要求的牌。在1个政党中放置2个代表。",
   "Industrial Complex": "工业综合体",
   "Lose 18 M€. INCREASE ALL YOUR PRODUCTIONS THAT ARE LOWER THAN 1, TO 1.": "失去 18 M€。将您所有低于 1 的产能提升至 1。",
-  
   "Main Belt Asteroids": "主带小行星",
   "Action: Gain 1 asteroid to ANY CARD.": "行动：在任意牌上获得 1 个小行星。",
   "Effect: When gaining an asteroid HERE, gain 1 titanium.": "效果：当在此牌上获得小行星时，获得 1 钛。",
   "Lose 5 M€. 1 VP per 2 asteroids here.": "支付 5 M€。此牌上每有 2 个小行星，获得 1 VP。",
-  
   "Nobel Prize": "诺贝尔奖",
   "Gain 5 M€. Draw 2 cards with requirements.": "获得 5 M€。抽取 2 张带要求的牌。",
-  
   "Old Mining Colony": "旧采矿殖民地",
   "Increase your titanium production 1 step. Place 1 colony. Discard 1 card.": "您的钛产能提升 1 步。放置 1 个殖民地。弃掉 1 张牌。",
-  
   "Planetary Alliance": "行星联盟",
-  "Raise your TR 2 steps. Draw 1 Jovian card and 1 Venus card.": "您的 TR 提升 2 步。抽取 1 张木星牌和 1 张金星牌。",
-  
+  "Raise your TR 2 steps. Draw 1 Jovian card and 1 Venus card.": "您的改造度提升2步。抽取1张木星牌和1张金星牌。",
   "Preservation Program": "保护计划",
-  "Effect: SKIP THE FIRST TR YOU GAIN IN EACH GENERATION'S ACTION PHASE.": "效果：跳过您在每代行动阶段获得的第一个 TR。",
-  "Raise your TR 5 steps.": "您的 TR 提升 5 步。",
-  
+  "Effect: SKIP THE FIRST TR YOU GAIN IN EACH GENERATION'S ACTION PHASE.": "效果：跳过您在每代行动阶段获得的第一个改造度。",
+  "Raise your TR 5 steps.": "您的改造度提升5步。",
   "Project Eden": "伊甸园计划",
   "Place 1 ocean tile, 1 city tile, and 1 greenery tile. Discard 3 cards.": "放置 1 个海洋板块、1 个城市板块和 1 个绿地板块。弃掉 3 张牌。",
-  
   "Recession": "经济衰退",
   "EACH OPPONENT loses 5 M€ and decreases their M€ production 1 step. You gain 10 M€.": "每位对手失去 5 M€ 并使其 M€ 产能降低 1 步。您获得 10 M€。",
-  
   "Rise To Power": "权力崛起",
   "Increase your M€ production 3 steps and place 3 delegates. YOU MAY PLACE THEM IN SEPARATE PARTIES.": "您的 M€ 产能提升 3 步并放置 3 个代表。您可将他们放置在不同的政党中。",
-  
   "Soil Bacteria": "土壤细菌",
   "Effect: When playing a plant tag or a microbe tag, including this, gain 1 plant.": "效果：当打出植物标志或微生物标志（包括此牌）时，获得 1 植物。",
   "Draw 2 microbe cards and gain 3 plants.": "抽取 2 张微生物牌并获得 3 植物。",
-  
   "Space Lanes": "太空航道",
   "Effect: When you play a Jovian, Earth, or Venus tag, you pay 2 M€ less for it.": "效果：当您打出木星、地球或金星标志时，其费用减少 2 M€。",
   "Gain 3 titanium.": "获得 3 钛。",
-  
   "Suitable Infrastructure": "适宜基础设施",
   "Effect: Once per action you take, gain 2 M€ if you increase any productions.": "效果：您每执行一次行动时，若您提升了任何产能，则获得 2 M€。",
-  
   "Terraforming Deal": "地球化交易",
-  "Effect: Each step your TR is raised, you gain 2 M€.": "效果：您的 TR 每提升 1 步，您获得 2 M€。",
-  
+  "Effect: Each step your TR is raised, you gain 2 M€.": "效果：您的改造度每提升1步，您获得2 M€。",
   "Venus Contract": "金星合同",
   "Effect: Each step you raise Venus, gain 3 M€.": "效果：您每提升金星 1 步，获得 3 M€。",
-  "Draw 1 Venus card. Raise your TR 1 step.": "抽取 1 张金星牌。您的 TR 提升 1 步。",
-  
+  "Draw 1 Venus card. Raise your TR 1 step.": "抽取1张金星牌。您的改造度提升1步。",
   "Venus L1 Shade": "金星 L1 遮阳板",
-  
   "World Government Advisor": "世界政府顾问",
-  "Action: RAISE 1 GLOBAL PARAMETER WITHOUT GETTING ANY TR OR OTHER BONUSES.": "行动：提升 1 个全局参数，但不获得任何 TR 或其他奖励。",
-  "Raise your TR 2 steps. Draw 1 card.": "您的 TR 提升 2 步。抽取 1 张牌。",
-
+  "Action: RAISE 1 GLOBAL PARAMETER WITHOUT GETTING ANY TR OR OTHER BONUSES.": "行动：提升1个全局参数，但不获得任何改造度或其他奖励。",
+  "Raise your TR 2 steps. Draw 1 card.": "您的改造度提升2步。抽取1张牌。",
   "SAGITTA FRONTIER SERVICES": "天箭座边境服务公司",
   "Effect: When you play a card with no tags, including this, gain 4 M€.": "效果：当您打出无标志的牌（包括此牌）时，获得 4 M€。",
   "Effect: When you play a card with EXACTLY 1 TAG, you gain 1 M€.": "效果：当您打出恰好有 1 个标志的牌时，获得 1 M€。",
   "You start with 31 M€. Increase energy production 1 step and M€ production 2 steps. Draw a card that has no tag.": "您起始拥有 31 M€。电能产能提升 1 步，M€ 产能提升 2 步。抽取 1 张无标志的牌。",
-
-
   "ECOTEC": "生态技术公司",
   "Effect: When you play a bio tag, gain 1 plant or add a microbe to ANY card.": "效果：当您打出生物标志（微生物、植物或动物）时，获得 1 植物或在任意牌上放置 1 个微生物。",
   "You start with 42 M€. Increase your plant production 1 step.": "您起始拥有 42 M€。您的植物产能提升 1 步。",
-
-  "Nirgal Enterprises":"Nirgal Enterprises",
+  "Nirgal Enterprises": "Nirgal Enterprises",
   "Effect: AWARDS AND MILESTONES ALWAYS COST 0 M€ FOR YOU.": "奖项和里程碑对您总是花费 0 M€。",
   "You start with 30 M€. Increase your energy, plant, and steel production 1 step each": "您起始拥有 30 M€。您的电能、植物和钢产能各提升 1 步。",
-  
-
   "PALLADIN SHIPPING": "帕拉丁航运",
   "Effect: When you play a space event, gain 1 titanium.": "效果：当您打出太空事件牌时，获得 1 钛。",
   "Action: Spend 2 titanium to raise the temperature 1 step.": "行动：花费 2 钛以提升温度 1 步。",
   "You start with 36 M€. Gain 5 titanium.": "您起始拥有 36 M€。获得 5 钛。",
-
   "SPIRE": "尖峰公司",
   "You start with 50 M€. As your first action, draw 4 cards, then discard 3 cards from your hand.": "您起始拥有 50 M€。作为您的第一个行动，抽取 4 张牌，然后从您的手牌中弃掉 3 张牌。",
   "Effect: When you play a card with at least 2 tags. including this, add 1 science resource here.": "效果：当您打出至少有 2 个标志的牌（包括此牌）时，在此牌上放置 1 个科学资源。",
-  "Effect: When you pay for a standard project, science resources here may be used as 2 M€ each.": "效果：当您支付标准项目费用时，此处的科学资源每个可抵 2 M€。"
-
-  
+  "Effect: When you pay for a standard project, science resources here may be used as 2 M€ each.": "效果：当您支付标准项目费用时，此处的科学资源每个可抵 2 M€。",
+  "New Partner": "新合作伙伴",
+  "Established Methods": "成熟方法",
+  "Albedo Plants": "反照率植物",
+  "Executive Order": "行政命令"
 }

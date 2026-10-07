@@ -1,14 +1,15 @@
 import {expect} from 'chai';
-import {cast, finishGeneration} from '../../TestingUtils';
+import {finishGeneration} from '../../TestingUtils';
 import {LunaProjectOffice} from '../../../src/server/cards/moon/LunaProjectOffice';
 import {SelectCard} from '../../../src/server/inputs/SelectCard';
 import {IProjectCard} from '../../../src/server/cards/IProjectCard';
 import {IPlayer} from '../../../src/server/IPlayer';
 import {testGame} from '../../TestGame';
+import {cast} from '../../../src/common/utils/utils';
 
 describe('LunaProjectOffice', () => {
   it('can play', () => {
-    const [/* game */, player] = testGame(1, {moonExpansion: true});
+    const [/* game */, player] = testGame(1);
     const card = new LunaProjectOffice();
 
     player.cardsInHand = [card];
@@ -22,9 +23,7 @@ describe('LunaProjectOffice', () => {
   });
 
   it('play - solo', () => {
-    const [game, player] = testGame(1, {
-      moonExpansion: true,
-    });
+    const [game, player] = testGame(1);
 
     game.generation = 10;
     const card = new LunaProjectOffice();
@@ -64,7 +63,6 @@ describe('LunaProjectOffice', () => {
   // different paths in the code.
   it('play - 2 player - draft', () => {
     const [game, player, player2] = testGame(2, {
-      moonExpansion: true,
       draftVariant: true,
       turmoilExtension: false,
     });
@@ -113,10 +111,7 @@ describe('LunaProjectOffice', () => {
   // This test is almost exactly the same as the solo test, but it takes
   // different paths in the code.
   it('play - 2 player - no draft', () => {
-    const [game, player, player2] = testGame(2, {
-      moonExpansion: true,
-      draftVariant: false,
-    });
+    const [game, player, player2] = testGame(2, {draftVariant: false});
 
     game.generation = 10;
     const card = new LunaProjectOffice();

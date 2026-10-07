@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {cast, runAllActions} from '../../TestingUtils';
+import {runAllActions} from '../../TestingUtils';
 import {VenusShuttles} from '../../../src/server/cards/prelude2/VenusShuttles';
 import {SelectCard} from '../../../src/server/inputs/SelectCard';
 import {TestPlayer} from '../../TestPlayer';
@@ -7,6 +7,7 @@ import {testGame} from '../../TestGame';
 import {Celestic} from '../../../src/server/cards/venusNext/Celestic';
 import {JetStreamMicroscrappers} from '../../../src/server/cards/venusNext/JetStreamMicroscrappers';
 import {IGame} from '../../../src/server/IGame';
+import {cast} from '../../../src/common/utils/utils';
 
 describe('VenusShuttles', () => {
   let card: VenusShuttles;
@@ -24,7 +25,7 @@ describe('VenusShuttles', () => {
 
   it('Should play, one option', () => {
     const celestic = new Celestic(); // Stores floaters, has Venus tag.
-    player.corporations.push(celestic);
+    player.playedCards.push(celestic);
 
     card.play(player);
     runAllActions(game);
@@ -35,7 +36,7 @@ describe('VenusShuttles', () => {
   it('Should Play, multiple cards.', () => {
     const celestic = new Celestic(); // Stores floaters. has Venus tag
     const jsr = new JetStreamMicroscrappers(); // Stores floaters, has Venus tag.
-    player.corporations.push(celestic);
+    player.playedCards.push(celestic);
     player.playedCards.push(jsr);
     cast(card.play(player), undefined);
     runAllActions(game);

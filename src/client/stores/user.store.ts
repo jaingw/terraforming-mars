@@ -1,4 +1,3 @@
-import Vue from 'vue';
 import {PreferencesManager} from '@/client/utils/PreferencesManager';
 
 interface UserState {

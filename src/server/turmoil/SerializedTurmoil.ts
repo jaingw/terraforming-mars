@@ -23,8 +23,8 @@ export type SerializedTurmoil = {
     delegate_reserve?: Array<SerializedPlayerId | Delegate>; // eslint-disable-line camelcase
     usedFreeDelegateAction: Array<PlayerId>;
     delegateReserve: Array<SerializedPlayerId | SerializedDelegate>;
-    parties: Array<SerializedParty >;
-    playersInfluenceBonus: Array<[string, number]>;
+    parties: Array<SerializedParty>;
+    playersInfluenceBonus: Array<[PlayerId | string, number]>;
     globalEventDealer: SerializedGlobalEventDealer;
     distantGlobalEvent: IGlobalEvent | undefined |GlobalEventName;
     comingGlobalEvent: IGlobalEvent | undefined |GlobalEventName;

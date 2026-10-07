@@ -36,7 +36,6 @@
 }
 
 .card-list-container {
-
   /* ===== Section headings ===== */
   section h2 {
     font-size: 16px;
@@ -124,7 +123,6 @@
     justify-content: center;
     transition: all 0.2s ease;
   }
-
   .expansion-button {
     text-align: left;
     justify-content: left;
@@ -230,96 +228,8 @@
   .turmoil_agenda_cont {
     padding: 2px;
   }
-}
 
-/* ============ Mobile Responsive for Card List ============ */
-@media (max-width: 640px) {
-  .card-list-page {
-    padding: 0 !important;
-  }
-
-  .card-list-page-header {
-    padding: 12px 12px 0 12px;
-    margin-bottom: 12px;
-  }
-
-  .card-list-page-header__title h1 {
-    font-size: 15px;
-  }
-
-  .card-list-container {
-    section h2 {
-      font-size: 13px;
-      padding: 6px 8px;
-      margin: 12px 0 6px;
-    }
-
-    .search-container {
-      flex-wrap: wrap;
-      gap: 4px;
-      padding: 0 8px;
-
-      input {
-        flex: 1 1 100%;
-        margin-bottom: 4px;
-      }
-
-      button {
-        flex: 1 1 auto;
-        min-width: 60px;
-        font-size: 11px;
-        padding: 8px 6px;
-      }
-    }
-
-    .selection-row {
-      padding: 10px 8px;
-      gap: 4px;
-
-      label {
-        min-width: 50px;
-        height: 44px;
-        padding: 6px 8px;
-        font-size: 14px;
-        line-height: 32px;
-        margin: 2px;
-      }
-
-      button {
-        min-width: 40px;
-        padding: 6px 8px;
-        font-size: 11px;
-      }
-    }
-
-    .expansion-icon {
-      width: 22px;
-      height: 22px;
-      background-size: 22px 22px;
-      margin: 3px;
-    }
-
-    .card-list-cards-list {
-      padding: 0 4px;
-    }
-
-    .cardbox {
-      max-width: 100%;
-      overflow: hidden;
-    }
-  }
-}
-
-@media (max-width: 480px) {
-  .card-list-container {
-    .selection-row {
-      label {
-        min-width: 42px;
-        height: 40px;
-        padding: 4px 6px;
-        font-size: 12px;
-        line-height: 30px;
-      }
-    }
+  .small-card {
+    font-size: 75%;
   }
 }

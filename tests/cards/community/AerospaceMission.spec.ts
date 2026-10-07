@@ -7,9 +7,10 @@ import {Io} from '../../../src/server/colonies/Io';
 import {Luna} from '../../../src/server/colonies/Luna';
 import {IGame} from '../../../src/server/IGame';
 import {SelectColony} from '../../../src/server/inputs/SelectColony';
-import {cast, runAllActions} from '../../TestingUtils';
+import {runAllActions} from '../../TestingUtils';
 import {TestPlayer} from '../../TestPlayer';
 import {testGame} from '../../TestingUtils';
+import {cast} from '../../../src/common/utils/utils';
 
 
 describe('AerospaceMission', () => {
@@ -32,6 +33,23 @@ describe('AerospaceMission', () => {
   it('Can play', () => {
     player.megaCredits = 14;
     expect(card.canPlay(player)).is.true;
+  });
+
+  it('Can not play, cannot place colonies', () => {
+    player.megaCredits = 14;
+    for (const colony of game.colonies) {
+      colony.isActive = false; // No colonies can be built
+    }
+    expect(card.canPlay(player)).is.false;
+  });
+
+  it('Can not play, one of two spaces are available.', () => {
+    player.megaCredits = 13;
+    for (const colony of game.colonies) {
+      colony.isActive = false; // No colonies can be built
+    }
+    game.colonies[0].isActive = true; // Make one colony available
+    expect(card.canPlay(player)).is.false;
   });
 
   it('Should play', () => {

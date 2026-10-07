@@ -1,22 +1,21 @@
 {
-  
-"Requires that you are Chairman. The current ruling party will automatically be the ruling party during the next Solar phase, and you will remain the Chairman. (As if the current ruling party were dominant and you were its party leader.)": "要求你是主席。当前执政政党将在下一个世界政府阶段自动成为执政党，并且你将保持主席职位。（如同当前执政政党是主导政党且你是其政党领袖一样。）",
-
-"Action: Add one Clone Trooper to this card OR remove one Clone Trooper from this card to steal one standard resource from any player": "行动：在此牌上添加1个克隆人士兵，或者移除此牌上的1个克隆人士兵以从任意玩家处窃取1个标准资源。",
-
-"Requires 6 ocean tiles. 1 VP per Clone Trooper on this card": "要求6个海洋板块。此牌上每有1个克隆人士兵，获得1 VP。",
-
-"Requires Venus 6%. Raise Venus 1 step. Add 2 floaters to any card": "要求金星6%。提升金星1步。在任意牌上添加2个漂浮物。",
-
-"Requires any 4 greeneries on Mars. Decrease any energy production 2 steps. Add an animal to any card": "要求火星上有任意4个绿地。使任意电力产能降低2步。在任意牌上添加1个动物。",
-
-"Raise your M€ production 4 steps. Place a bronze cube on an empty unreserved space on Mars. No tile or token may be placed on that space for the rest of the game": "你的M€产能提升4步。在火星上1个空的非保留区域放置1个青铜方块。游戏的剩余时间内，不得在该区域放置任何板块或标记。",
-
-"Gain 1 M€ for each of your microbe tags and animal tags": "你每有1个微生物标志和动物标志，获得1 M€。",
-
-"Take another action this turn. Gain 1 TR": "本回合额外执行1次行动。获得1 TR。",
-
-"Action: Spend X Energy and gain X-1 plants (max 4.)": "行动：花费X点电能并获得X-1个植物（最多4个）。",
-
-"Nobody may trade for the rest of this generation": "本时代剩余时间内，无人可以进行贸易。"
+  "Requires that you are Chairman. The current ruling party will automatically be the ruling party during the next Solar phase, and you will remain the Chairman. (As if the current ruling party were dominant and you were its party leader.)": "要求你是主席。当前执政政党将在下一个世界政府阶段自动成为执政党，并且你将保持主席职位。（如同当前执政政党是主导政党且你是其政党领袖一样。）",
+  "Action: Add one Clone Trooper to this card OR remove one Clone Trooper from this card to steal one standard resource from any player": "行动：在此牌上添加1个克隆人士兵，或者移除此牌上的1个克隆人士兵以从任意玩家处窃取1个标准资源。",
+  "Requires 6 ocean tiles. 1 VP per Clone Trooper on this card": "要求6个海洋板块。此牌上每有1个克隆人士兵，获得1 VP。",
+  "Requires Venus 6%. Raise Venus 1 step. Add 2 floaters to any card": "要求金星6%。提升金星1步。在任意牌上添加2个漂浮物。",
+  "Requires any 4 greeneries on Mars. Decrease any energy production 2 steps. Add an animal to any card": "要求火星上有任意4个绿地。使任意电力产能降低2步。在任意牌上添加1个动物。",
+  "Raise your M€ production 4 steps. Place a bronze cube on an empty unreserved space on Mars. No tile or token may be placed on that space for the rest of the game": "你的M€产能提升4步。在火星上1个空的非保留区域放置1个青铜方块。游戏的剩余时间内，不得在该区域放置任何板块或标记。",
+  "Gain 1 M€ for each of your microbe tags and animal tags": "你每有1个微生物标志和动物标志，获得1 M€。",
+  "Take another action this turn. Gain 1 TR": "本回合额外执行1次行动。获得1改造度。",
+  "Action: Spend X Energy and gain X-1 plants (max 4.)": "行动：花费X点电能并获得X-1个植物（最多4个）。",
+  "Nobody may trade for the rest of this generation": "本时代剩余时间内，无人可以进行贸易。",
+  "Trade Embargo (I)": "贸易禁运 (I)",
+  "Clone Troopers (II)": "克隆人部队 (II)",
+  "Behold The Emperor! (III)": "瞻仰皇帝！(III)",
+  "Tosche Station (IV)": "托什站 (IV)",
+  "Cloud City (V)": "云城 (V)",
+  "Forest Moon (VI)": "森林月球 (VI)",
+  "Takonda Castle (VII)": "塔科达城堡 (VII)",
+  "Tool with the First Order (VIII)": "第一秩序的工具 (VIII)",
+  "Rey ... Skywalker?! (IX)": "蕾...天行者？！(IX)"
 }

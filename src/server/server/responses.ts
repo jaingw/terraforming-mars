@@ -3,6 +3,7 @@ import {Context} from '../routes/IHandler';
 import {Request} from '../Request';
 import {Response} from '../Response';
 import {statusCode} from '../../common/http/statusCode';
+import {apiFailure, apiSuccess} from '../../common/http/ApiResponse';
 
 export function badRequest(req: Request, res: Response, err?: string): void {
   console.warn('bad request', req.url);
@@ -96,10 +97,23 @@ export function writeJson(res: Response, ctx: Context, json: any, space?: string
   res.end(s);
 }
 
+export function writeApiSuccess(res: Response, message = 'success'): void {
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify(apiSuccess(undefined, message)));
+}
+
+export function writeApiFailure(res: Response, message: string, responseStatusCode?: number): void {
+  if (responseStatusCode !== undefined) {
+    res.writeHead(responseStatusCode, {'Content-Type': 'application/json'});
+  } else {
+    res.setHeader('Content-Type', 'application/json');
+  }
+  res.end(JSON.stringify(apiFailure(message)));
+}
+
 export function quotaExceeded(req: Request, res: Response) {
   console.warn('Quota exceeded for', req.method, req.url);
   res.writeHead(statusCode.tooManyRequests);
   res.write('Quota exceeded');
   res.end();
 }
-

@@ -1,4 +1,5 @@
 import {SerializedBoard} from '../boards/SerializedBoard';
+import {PlayerId} from '../../common/Types';
 import {SerializedPlayerId} from '../SerializedPlayer';
 
 export interface SerializedMoonData {
@@ -8,4 +9,5 @@ export interface SerializedMoonData {
   logisticRate: number;
   lunaFirstPlayer: SerializedPlayerId | undefined;
   lunaProjectOfficeLastGeneration: number | undefined;
+  lunaFirstPlayerId: PlayerId | undefined;
 }

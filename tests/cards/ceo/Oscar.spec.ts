@@ -78,7 +78,7 @@ describe('Oscar', () => {
 
   it('OPG gains 1 TR with Tempest Consultancy', () => {
     const tempcons = new TempestConsultancy();
-    player.corporations.push(tempcons);
+    player.playedCards.push(tempcons);
     const tr = player.terraformRating;
     card.action(player);
     runAllActions(game);
@@ -87,7 +87,7 @@ describe('Oscar', () => {
     expect(player.terraformRating).is.eq(tr+1);
   });
 
-  it('OPG Counts for POLITICAN Award', () => {
+  it('OPG Counts for POLITICIAN Award', () => {
     const politician = new TPolitician();
     game.awards = [];
     game.awards.push(politician);

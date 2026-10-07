@@ -1,48 +1,48 @@
 <template>
-      <div :class="getClasses()">
-        <div class="player-status-and-res">
-        <div class="player-status">
-          <div class="player-info-details">
-            <div class="player-info-name"  @click="togglePlayerDetails">{{ playerSymbol + player.name }} <em title="vip" v-if="player.isvip" :class="'icon_vip'+player.isvip" /></div>
-            <span @click="togglePlayerDetails"   v-i18n>
-              <div class="player-info-corp" :title="$t(corporationCardName())">
-                {{ corporationCardName() }}
-              </div>
-            </span>
-          </div>
-          <div>
-            <div class="icon-first-player" v-if="firstForGen && playerView.players.length > 1" v-i18n>1st</div>
-            <player-status :timer="player.timer" :showTimer="playerView.game.gameOptions.showTimers" :liveTimer="playerView.game.phase !== Phase.END" :firstForGen="firstForGen" v-trim-whitespace :actionLabel="actionLabel"
-              :rankTier="player.rankTier" :playerId="playerId" :rank-mode="playerView.game.gameOptions.rankOption" :finalRankTimeLimit="finalRankTimeLimit"/>
-          </div>
-        </div>
-          <PlayerResources :player="player" v-trim-whitespace />
-          <div class="player-played-cards">
-            <div class="player-played-cards-top">
-              <div class="played-cards-elements">
-                <div class="played-cards-icon hiding-card-button active"></div>
-                <div class="played-cards-icon hiding-card-button automated"></div>
-                <div class="played-cards-icon hiding-card-button event"></div>
-                <div class="played-cards-count">{{numberOfPlayedCards()}}</div>
-              </div>
+  <div :class="getClasses()">
+    <div class="player-status-and-res">
+      <div class="player-status">
+        <div class="player-info-details">
+          <div class="player-info-name"  @click="togglePlayerDetails">{{ playerSymbol + player.name }} <em title="vip" v-if="player.isvip" :class="'icon_vip'+player.isvip" /></div>
+          <span @click="togglePlayerDetails"   v-i18n>
+            <div class="player-info-corp" :title="$t(corporationCardName())">
+              {{ corporationCardName() }}
             </div>
-            <AppButton class="played-cards-button" size="tiny" @click="togglePlayerDetails" :title="buttonLabel()" />
-          </div>
-          <div class="tag-display player-board-blue-action-counter" :class="tooltipCss" :data-tooltip="$t('The number of available actions on active cards')">
-            <div class="tag-count tag-action-card">
-              <div class="blue-stripe"></div>
-              <div class="red-arrow"></div>
-            </div>
-            <span class="tag-count-display">{{ availableBlueActionCount() }}</span>
-          </div>
+          </span>
         </div>
-        <PlayerTags :player="player" :playerView="playerView" :hideZeroTags="hideZeroTags" :isTopBar="isTopBar" />
-        <PlayerAlliedParty :player="player"/>
+        <div>
+          <div class="icon-first-player" v-if="firstForGen && playerView.players.length > 1" v-i18n>1st</div>
+          <player-status :timer="player.timer" :showTimer="playerView.game.gameOptions.showTimers" :liveTimer="playerView.game.phase !== Phase.END" :firstForGen="firstForGen" v-trim-whitespace :actionLabel="actionLabel"
+                         :rankTier="player.rankTier" :playerId="playerId" :rank-mode="playerView.game.gameOptions.rankOption" :finalRankTimeLimit="finalRankTimeLimit"/>
+        </div>
       </div>
+      <PlayerResources :player="player" v-trim-whitespace />
+      <div class="player-played-cards">
+        <div class="player-played-cards-top">
+          <div class="played-cards-elements">
+            <div class="played-cards-icon hiding-card-button active"></div>
+            <div class="played-cards-icon hiding-card-button automated"></div>
+            <div class="played-cards-icon hiding-card-button event"></div>
+            <div class="played-cards-count">{{numberOfPlayedCards()}}</div>
+          </div>
+        </div>
+        <AppButton class="played-cards-button" size="tiny" @click="togglePlayerDetails" :title="buttonLabel()" />
+      </div>
+      <div class="tag-display player-board-blue-action-counter" :class="tooltipCss" :data-tooltip="$t('The number of available actions on active cards')">
+        <div class="tag-count tag-action-card">
+          <div class="blue-stripe"></div>
+          <div class="red-arrow"></div>
+        </div>
+        <span class="tag-count-display">{{ availableBlueActionCount() }}</span>
+      </div>
+    </div>
+    <PlayerTags :player="player" :playerView="playerView" :hideZeroTags="hideZeroTags" :isTopBar="isTopBar" />
+    <PlayerAlliedParty :player="player"/>
+  </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import {defineComponent} from 'vue';
 import {ViewModel, PublicPlayerModel} from '@/common/models/PlayerModel';
 import PlayerResources from '@/client/components/overview/PlayerResources.vue';
 import PlayerTags from '@/client/components/overview/PlayerTags.vue';
@@ -59,14 +59,16 @@ import {CardName} from '../../../common/cards/CardName';
 import {ActionLabel} from './ActionLabel';
 import {playerSymbol} from '@/client/utils/playerSymbol';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'PlayerInfo',
   props: {
     player: {
       type: Object as () => PublicPlayerModel,
+      required: true,
     },
     playerView: {
       type: Object as () => ViewModel,
+      required: true,
     },
     firstForGen: {
       type: Boolean,
@@ -74,10 +76,11 @@ export default Vue.extend({
     },
     actionLabel: {
       type: String as () => ActionLabel,
-      default: '',
+      required: true,
     },
     playerIndex: {
       type: Number,
+      required: true,
     },
     hideZeroTags: {
       type: Boolean,
@@ -182,7 +185,9 @@ export default Vue.extend({
     },
     corporationCardName(): CardName | undefined {
       const card = this.player.tableau[0];
-      if (card === undefined || getCard(card.name)?.type !== CardType.CORPORATION) return undefined;
+      if (card === undefined || getCard(card.name)?.type !== CardType.CORPORATION) {
+        return undefined;
+      }
       return card.name;
     },
   },

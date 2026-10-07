@@ -6,6 +6,7 @@ import {SimpleDeferredAction} from '../../../deferredActions/DeferredAction';
 import {CardName} from '../../../../common/cards/CardName';
 import {Size} from '../../../../common/cards/render/Size';
 import {Tag} from '../../../../common/cards/Tag';
+import {Resource} from '../../../../common/Resource';
 import {CorporationCard} from '../../corporation/CorporationCard';
 import {IGame} from '../../../IGame';
 
@@ -123,7 +124,7 @@ export class Chaos extends CorporationCard {
         player.titanium += titaniumAmount;
         player.plants += plantsAmount;
         player.energy += energyAmount;
-        player.heat += heatAmount;
+        player.stock.add(Resource.HEAT, heatAmount);
         return undefined;
       });
     selectResources.title = 'Chaos effect: select ' + resourceCount + ' resource(s)';

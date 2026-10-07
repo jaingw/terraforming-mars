@@ -3,13 +3,14 @@ import {getCards} from '@/client/cards/ClientCardManifest';
 import {allColonyNames} from '@/client/colonies/ClientColonyManifest';
 import {CardComponent} from '@/common/cards/render/CardComponent';
 import {isIDescription} from '@/common/cards/render/ICardRenderDescription';
-import {isICardRenderCorpBoxAction, isICardRenderCorpBoxEffect, isICardRenderEffect, isICardRenderItem, isICardRenderProductionBox, isICardRenderRoot} from '@/common/cards/render/Types';
+import {isICardRenderCorpBoxAction, isICardRenderCorpBoxEffect, isICardRenderCorpBoxEffectAction, isICardRenderEffect, isICardRenderItem, isICardRenderProductionBox, isICardRenderRoot} from '@/common/cards/render/Types';
 import {CardRenderItemType} from '@/common/cards/render/CardRenderItemType';
 import {translateText} from '@/client/directives/i18n';
 import {getAward, getMilestone} from '../../MilestoneAwardManifest';
 import {copyAndClear} from '@/common/utils/utils';
 import {awardNames} from '@/common/ma/AwardName';
 import {milestoneNames} from '@/common/ma/MilestoneName';
+import {agendaIdDescription, BONUS_IDS, POLICY_IDS} from '@/common/turmoil/Types';
 
 export class SearchIndex {
   private searchIndex: Map<string, Array<string>>;
@@ -65,6 +66,15 @@ export class SearchIndex {
       this.add(getAward(awardName).description);
       this.store('ma', awardName);
     }
+
+    for (const id of BONUS_IDS) {
+      this.add(agendaIdDescription(id));
+      this.store('agenda', id);
+    }
+    for (const id of POLICY_IDS) {
+      this.add(agendaIdDescription(id));
+      this.store('agenda', id);
+    }
   }
 
   public matches(text: string, type: string, name: string) {
@@ -82,6 +92,7 @@ export class SearchIndex {
       isICardRenderRoot(component) ||
       isICardRenderCorpBoxEffect(component) ||
         isICardRenderCorpBoxAction(component) ||
+        isICardRenderCorpBoxEffectAction(component) ||
         isICardRenderEffect(component) ||
         isICardRenderProductionBox(component)) {
       component.rows.forEach((row) => {

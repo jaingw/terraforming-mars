@@ -4,7 +4,7 @@ import {testGame} from '../TestGame';
 import {UnderworldExpansion} from '../../src/server/underworld/UnderworldExpansion';
 import {IGame} from '../../src/server/IGame';
 import {UnderworldData} from '../../src/server/underworld/UnderworldData';
-import {cast, fakeCard, forceGenerationEnd, formatMessage, runAllActions} from '../TestingUtils';
+import {fakeCard, forceGenerationEnd, formatMessage, runAllActions} from '../TestingUtils';
 import {Units} from '../../src/common/Units';
 import {Cryptocurrency} from '../../src/server/cards/pathfinders/Cryptocurrency';
 import {MartianCulture} from '../../src/server/cards/pathfinders/MartianCulture';
@@ -20,7 +20,9 @@ import {OrOptions} from '../../src/server/inputs/OrOptions';
 import {PrivateMilitaryContractor} from '../../src/server/cards/underworld/PrivateMilitaryContractor';
 import {Tag} from '../../src/common/cards/Tag';
 import {BoardName} from '../../src/common/boards/BoardName';
-import {SpaceName} from '../../src/common/boards/SpaceName';
+import {TunnelingLoophole} from '../../src/server/cards/underworld/TunnelingLoophole';
+import {SpaceType} from '../../src/common/boards/SpaceType';
+import {cast} from '@/common/utils/utils';
 
 describe('UnderworldExpansion', () => {
   let player1: TestPlayer;
@@ -74,18 +76,19 @@ describe('UnderworldExpansion', () => {
     const responses: Array<string> = [];
     const space = game.board.getAvailableSpacesOnLand(player1)[0];
     const fake = fakeCard({
-      onIdentificationByAnyPlayer(cardOwner, identifyingPlayer, space) {
-        responses.push(`${identifyingPlayer?.id} - ${cardOwner.id} - ${space.id}`);
+      onIdentificationByAnyPlayer(cardOwner, identifyingPlayer, token) {
+        responses.push(`${identifyingPlayer?.id} - ${cardOwner.id} - ${token}`);
       },
     });
     player1.playedCards.push(fake);
     player2.playedCards.push(fake);
 
+    game.underworldData.tokens.push('ocean');
     UnderworldExpansion.identify(game, space, player1);
 
     expect(responses).deep.eq([
-      'p-player1-id - p-player1-id - 03',
-      'p-player1-id - p-player2-id - 03',
+      'p-player1-id - p-player1-id - ocean',
+      'p-player1-id - p-player2-id - ocean',
     ]);
   });
 
@@ -340,14 +343,18 @@ describe('UnderworldExpansion', () => {
 
   it('grant bonus - science tag', () => {
     expect(player1.tags.count(Tag.SCIENCE)).eq(2);
+    expect(player1.tags.multipleCount([Tag.SCIENCE])).eq(2);
     UnderworldExpansion.grant(player1, 'sciencetag');
     expect(player1.tags.count(Tag.SCIENCE)).eq(3);
+    expect(player1.tags.multipleCount([Tag.SCIENCE])).eq(3);
   });
 
   it('grant bonus - plant tag', () => {
     expect(player1.tags.count(Tag.PLANT)).eq(0);
+    expect(player1.tags.multipleCount([Tag.PLANT])).eq(0);
     UnderworldExpansion.grant(player1, 'planttag');
     expect(player1.tags.count(Tag.PLANT)).eq(1);
+    expect(player1.tags.multipleCount([Tag.PLANT])).eq(1);
   });
 
   it('excavatableSpaces', () => {
@@ -390,7 +397,43 @@ describe('UnderworldExpansion', () => {
     expect(UnderworldExpansion.excavatableSpaces(player1)).contains(space);
   });
 
-  // TODO(kberg): Test excavatablespaces override
+  it('Rey Skywalker space is not identifiable or excavatable', () => {
+    const space = UnderworldExpansion.identifiableSpaces(player1)[0];
+    game.simpleAddTile(player1, space, {tileType: TileType.REY_SKYWALKER});
+
+    expect(UnderworldExpansion.identifiableSpaces(player1)).not.contains(space);
+    expect(UnderworldExpansion.excavatableSpaces(player1)).not.contains(space);
+
+    expect(() => UnderworldExpansion.excavate(player1, space)).to.throw();
+  });
+
+  it('Martian Nature Wonders space is identifiable and excavatable', () => {
+    const space = UnderworldExpansion.identifiableSpaces(player1)[0];
+    game.simpleAddTile(player1, space, {tileType: TileType.MARTIAN_NATURE_WONDERS});
+
+    expect(UnderworldExpansion.identifiableSpaces(player1)).contains(space);
+    expect(UnderworldExpansion.excavatableSpaces(player1)).contains(space);
+
+    UnderworldExpansion.excavate(player1, space);
+
+    expect(space.excavator?.id).eq(player1.id);
+  });
+
+  it('excavatableSpaces - TunnelingLoophole overrides placement restrictions', () => {
+    // Give player1 one excavated space so placement restrictions kick in.
+    UnderworldExpansion.excavatableSpaces(player1)[0].excavator = player1;
+    const restricted = UnderworldExpansion.excavatableSpaces(player1);
+    // Without TunnelingLoophole, only spaces adjacent to player1's excavation are available.
+    expect(restricted.length).to.be.greaterThan(0);
+
+    // With TunnelingLoophole active this generation, all excavatable spaces are available.
+    const card = new TunnelingLoophole();
+    card.generationUsed = game.generation;
+    player1.playedCards.push(card);
+
+    const unrestricted = UnderworldExpansion.excavatableSpaces(player1);
+    expect(unrestricted.length).to.be.greaterThan(restricted.length);
+  });
 
   it('excavate', () => {
     player1.plants = 0;
@@ -519,11 +562,11 @@ describe('UnderworldExpansion', () => {
     expect(player1.stock.titanium).eq(2);
   });
 
-  it('temperature bonus does not apply to Solar Phase', () => {
+  it('temperature bonus applies to Solar Phase', () => {
     player1.underworldData.activeBonus = 'titanium1pertemp';
     game.phase = Phase.SOLAR;
     game.increaseTemperature(player2, 2);
-    expect(player1.stock.titanium).eq(0);
+    expect(player1.stock.titanium).eq(2);
   });
 
   it('temperature bonus does not apply next generation', () => {
@@ -753,15 +796,30 @@ describe('UnderworldExpansion', () => {
     expect(game.underworldData.tokens).to.have.members(['card1']);
   });
 
-  it('Cannot identify the restricted space on Amazonis Planitia', () => {
-    const [game, player1] = testGame(2, {underworldExpansion: true, boardName: BoardName.AMAZONIS});
-    expect(UnderworldExpansion.identifiableSpaces(player1)).to.not.include(game.board.getSpaceOrThrow(SpaceName.MEDUSAE_FOSSAE));
-    expect(UnderworldExpansion.excavatableSpaces(player1)).to.not.include(game.board.getSpaceOrThrow(SpaceName.MEDUSAE_FOSSAE));
+  it('removeClaimedToken - planttag decrements extra plant tag', () => {
+    player1.underworldData.tokens.push({token: 'planttag', shelter: false, active: false});
+    player1.tags.extraPlantTags = 1;
+
+    UnderworldExpansion.removeClaimedToken(player1, 0);
+
+    expect(player1.underworldData.tokens).is.empty;
+    expect(player1.tags.extraPlantTags).eq(0);
   });
 
-  it('Can identify the space that would be restricted if it were Amazonis Planitia', () => {
-    const [game, player1] = testGame(2, {underworldExpansion: true, boardName: BoardName.THARSIS});
-    expect(UnderworldExpansion.identifiableSpaces(player1)).to.include(game.board.getSpaceOrThrow(SpaceName.MEDUSAE_FOSSAE));
-    expect(UnderworldExpansion.excavatableSpaces(player1)).to.include(game.board.getSpaceOrThrow(SpaceName.MEDUSAE_FOSSAE));
+  it('removeClaimedToken - sciencetag decrements extra science tag', () => {
+    player1.underworldData.tokens.push({token: 'sciencetag', shelter: false, active: false});
+    player1.tags.extraScienceTags = 1;
+
+    UnderworldExpansion.removeClaimedToken(player1, 0);
+
+    expect(player1.underworldData.tokens).is.empty;
+    expect(player1.tags.extraScienceTags).eq(0);
+  });
+
+  it('Cannot identify the restricted space on Amazonis Planitia', () => {
+    const [game, player1] = testGame(2, {underworldExpansion: true, boardName: BoardName.AMAZONIS});
+    const restrictedSpace = game.board.spaces.filter((space) => space.spaceType === SpaceType.RESTRICTED)[0];
+    expect(UnderworldExpansion.identifiableSpaces(player1)).to.not.include(restrictedSpace);
+    expect(UnderworldExpansion.excavatableSpaces(player1)).to.not.include(restrictedSpace);
   });
 });

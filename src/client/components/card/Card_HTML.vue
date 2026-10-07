@@ -2,12 +2,12 @@
   <div class="div-card-content" v-i18n >
     <CardTitle :title="card.name" :type="getCardType()"/>
     <CardContent v-if="getCardMetadata() !== undefined" :metadata="getCardMetadata()" :requirements="getCardRequirements()" :isCorporation="isCorporationCard()"/>
- </div>
+  </div>
 </template>
 
 <script lang="ts">
 
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 
 import {CardModel} from '@/common/models/CardModel';
 import CardTitle from './CardTitle.vue';
@@ -18,7 +18,7 @@ import {CardResource} from '@/common/CardResource';
 import {getCardOrThrow} from '@/client/cards/ClientCardManifest';
 import {CardRequirementDescriptor} from '../../../common/cards/CardRequirementDescriptor';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'CardHTML',
   components: {
     CardTitle,
@@ -50,8 +50,8 @@ export default Vue.extend({
     getCardMetadata(): CardMetadata {
       return this.cardInstance.metadata;
     },
-    getCardRequirements(): Array<CardRequirementDescriptor> {
-      return this.cardInstance.requirements;
+    getCardRequirements(): ReadonlyArray<CardRequirementDescriptor> {
+      return this.cardInstance.requirements ?? [];
     },
     isCorporationCard() : boolean {
       return this.getCardType() === CardType.CORPORATION;
@@ -59,7 +59,9 @@ export default Vue.extend({
   },
   computed: {
     resourceType(): CardResource {
-      if (this.robotCard !== undefined || this.card.isSelfReplicatingRobotsCard === true) return CardResource.RESOURCE_CUBE;
+      if (this.robotCard !== undefined || this.card.isSelfReplicatingRobotsCard === true) {
+        return CardResource.RESOURCE_CUBE;
+      }
       // This last RESOURCE_CUBE is functionally unnecessary and serves to satisfy the type contract.
       return this.cardInstance.resourceType ?? CardResource.RESOURCE_CUBE;
     },

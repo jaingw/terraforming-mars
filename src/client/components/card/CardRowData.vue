@@ -1,19 +1,20 @@
 <template>
-        <div class="card-row">
-            <CardRowComponent v-for="(componentData, i) in rowData" :componentData="componentData" :key="i" />
-        </div>
+  <div class="card-row">
+    <CardRowComponent v-for="(componentData, i) in rowData" :componentData="componentData" :key="i" />
+  </div>
 </template>
 
 <script lang="ts">
 
-import Vue from 'vue';
+import {defineComponent} from 'vue';
 import CardRowComponent from '@/client/components/card/CardRowComponent.vue';
+import {ItemType} from '@/common/cards/render/Types';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'CardRowData',
   props: {
     rowData: {
-      type: Array,
+      type: Array as () => Array<ItemType>,
       required: true,
     },
   },

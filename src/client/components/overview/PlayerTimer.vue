@@ -1,8 +1,8 @@
 <template>
   <div class="player-timer" v-bind:class="timeState">
     <template v-if="hasHours()">
-        <div class="player-timer-hours">{{ getHours() }}</div>
-        <div class="timer-delimiter">:</div>
+      <div class="player-timer-hours">{{ getHours() }}</div>
+      <div class="timer-delimiter">:</div>
     </template>
     <div class="player-timer-minutes">{{ getMinutes() }}</div>
     <div class="timer-delimiter">:</div>
@@ -11,16 +11,17 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import {defineComponent} from 'vue';
 import {Timer} from '@/common/Timer';
 import {TimerModel} from '@/common/models/TimerModel';
 // import {PreferencesManager} from '@/client/utils/PreferencesManager';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'PlayerTimer',
   props: {
     timer: {
       type: Object as () => TimerModel,
+      required: true,
     },
     live: {
       type: Boolean,

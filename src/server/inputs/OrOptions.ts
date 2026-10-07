@@ -4,6 +4,7 @@ import {IPlayer} from '../IPlayer';
 import {OrOptionsModel} from '../../common/models/PlayerInputModel';
 import {OptionsInput} from './OptionsPlayerInput';
 import {InputError} from './InputError';
+import {UndoActionOption} from './UndoActionOption';
 
 export class OrOptions extends OptionsInput<undefined> {
   constructor(...options: Array<PlayerInput>) {
@@ -33,7 +34,10 @@ export class OrOptions extends OptionsInput<undefined> {
     if (this.options.length <= input.index) {
       throw new InputError('Invalid index');
     }
-    player.runInput(input.response, this.options[input.index]);
+    if (this.options[input.index] instanceof UndoActionOption) {
+      player.undoing = true;
+    }
+    player.defer(this.options[input.index].process(input.response, player));
     return this.cb(undefined);
   }
 

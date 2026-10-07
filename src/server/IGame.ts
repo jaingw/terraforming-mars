@@ -18,6 +18,7 @@ import {DeferredActionsQueue} from './deferredActions/DeferredActionsQueue';
 import {SerializedGame} from './SerializedGame';
 import {SpaceBonus} from '../common/boards/SpaceBonus';
 import {TileType} from '../common/TileType';
+import {ICard} from './cards/ICard';
 import {Turmoil} from './turmoil/Turmoil';
 import {AresData} from '../common/ares/AresData';
 import {MoonData} from './moon/MoonData';
@@ -43,12 +44,13 @@ export interface Score {
 
 export interface IGame extends Logger {
   readonly id: GameId;
+  readonly name: string;
   readonly gameOptions: Readonly<GameOptions>;
   // Game-level data
   loadState : string;
   lastSaveId: number;
-  rng: SeededRandom;
-  spectatorId: SpectatorId | undefined;
+  readonly rng: SeededRandom;
+  readonly spectatorId: SpectatorId;
   deferredActions: DeferredActionsQueue;
   createdTime: Date;
   gameAge: number; // Each log event increases it
@@ -123,6 +125,15 @@ export interface IGame extends Logger {
   beholdTheEmperor: boolean;
   /** Double Down: tracking when an action is due to double down. Does not need to be serialized. */
   inDoubleDown: boolean;
+  /**
+   * Double Down: once the prelude is chosen, it's set here to be tracked during its play.
+   *
+   * Pretty much if you double down on New Partner, and draw a prelude, then the app
+   * needs to differentiate between New Partner and this one.  doubleDownPrelude: CardName;
+
+   */
+  doubleDownPrelude: CardName | undefined;
+
   /** If Vermin is in play and it has 10 or more animals */
   verminInEffect: boolean;
   /** If Exploitation of Venus is in effect */
@@ -209,8 +220,16 @@ export interface IGame extends Logger {
    * Gives all the bonuses a player may gain when placing a tile on a space.
    *
    * This includes bonuses on the map, from oceans, Ares tiles, Turmoil, Colonies, etc.
+   *
+   * @param coveringExistingTile when true, don't grant placement bonuses like when covering
+   * a hazard tile, or overplacing one tile on top of another.
    */
-  grantPlacementBonuses(player: IPlayer, space: Space, coveringExistingTile: boolean, occupyBefore: boolean ): void
+  grantPlacementBonuses(player: IPlayer, space: Space, coveringExistingTile?: boolean, arcadianCommunityBonus?: boolean): void
+  /**
+   * Calls f(cardOwner, card) for every card in every player's tableau,
+   * in generation order.
+   */
+  triggerForAllCards(f: (cardOwner: IPlayer, card: ICard) => void): void;
 
   /**
    * Gives all the bonuses from a space on the map.
@@ -242,14 +261,12 @@ export interface IGame extends Logger {
   loadFromJSON(d: SerializedGame, fullLoad?: boolean ): IGame;
   loadFromJSONHalf(d: SerializedGame): IGame;
   rollback() : void;
-  delete() : void;
   isRankMode(): boolean ;
   exitPlayer(player : IPlayer) : void;
   checkTimeOutPlayer(): IPlayer | undefined ;
   checkRankModeEndGame(playerId: string) : Promise<void>;
   getQuitPlayers():Array<Color> ;
   discardForCost(cardCount: 1 | 2, toPlace: TileType): number;
-  expectedPurgeTimeMs(): number;
   logIllegalState(description: string, metadata: {}): void;
   shouldGoToTimeOutPhase() : boolean;
   /**

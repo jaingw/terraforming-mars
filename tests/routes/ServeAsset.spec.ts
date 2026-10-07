@@ -58,7 +58,7 @@ describe('ServeAsset', () => {
   });
 
   it('index.html', async () => {
-    scaffolding.url = '/assets/index.html';
+    scaffolding.url = '/build/index.html';
     scaffolding.req.headers['accept-encoding'] = '';
     await scaffolding.get(instance, res);
     expect(res.content.startsWith('<!DOCTYPE html>'));
@@ -79,11 +79,6 @@ describe('ServeAsset', () => {
     scaffolding.req.headers['accept-encoding'] = '';
     await scaffolding.get(instance, res);
     expect(res.content).eq('data: build/main.js');
-    // expect(fileApi.counts).deep.eq({
-    //   ...primedCache,
-    //   readFile: 1,
-    //   existsSync: 1,
-    // });
   });
 
   it('production main.js', async () => {
@@ -99,17 +94,4 @@ describe('ServeAsset', () => {
     //   existsSync: 0,
     // });
   });
-
-  // it('sw.js', async () => {
-  //   instance = new ServeAsset(undefined, false, fileApi);
-  //   scaffolding.url = '/sw.js';
-  //   scaffolding.req.headers['accept-encoding'] = '';
-  //   await scaffolding.get(instance, res);
-  //   expect(res.content).eq('data: build/sw.js');
-  // expect(fileApi.counts).deep.eq({
-  //   ...primedCache,
-  //   readFile: 1,
-  //   existsSync: 0,
-  // });
-  // });
 });

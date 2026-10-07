@@ -61,6 +61,10 @@ export enum TileType {
 
   // Promo
   NEW_HOLLAND, // 43
+
+    // Automa
+    NEURAL_INSTANCE, // 44
+
   // EROS 新增版块放这里，避免影响历史数据
   WASTE_INCINERATOR_OLD = 50,
   // 为避免后续版块数量增加过度， 将自定义版块数值增加到150
@@ -118,6 +122,7 @@ export const tileTypeToString: Record<TileType, string> = {
   [TileType.REY_SKYWALKER]: CardName.REY_SKYWALKER,
   [TileType.MAN_MADE_VOLCANO]: CardName.MAN_MADE_VOLCANO,
   [TileType.NEW_HOLLAND]: CardName.NEW_HOLLAND,
+  [TileType.NEURAL_INSTANCE]: 'Neural Instance',
   [TileType.EMPTY]: 'Any tile',
 } as const;
 

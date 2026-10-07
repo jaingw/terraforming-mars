@@ -41,7 +41,9 @@ export class MarsHotSpring extends Card implements IProjectCard {
   }
   public override bespokePlay(player: IPlayer) {
     const availableSpaces = this.getAvailableSpaces(player, player.game);
-    if (availableSpaces.length < 1) return undefined;
+    if (availableSpaces.length < 1) {
+      return undefined;
+    }
 
     return new SelectSpace('Select space for tile', availableSpaces ).andThen((foundSpace: Space) => {
       player.game.addTile(player, foundSpace, {tileType: TileType.HOT_SPRING});

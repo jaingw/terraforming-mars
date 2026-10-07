@@ -1,65 +1,63 @@
 <template>
-    <div class="help-container">
+  <div class="help-container">
 
-        <div class="help-tabs">
-            <input type="radio" name="help-tab" id="radio-help-operation" checked>
-            <label for="radio-help-operation" v-on:click="setTab('help-operation')">
-                <span v-i18n>Operation</span>
-            </label>
-            <input type="radio" name="help-tab" id="radio-symbols" >
-            <label for="radio-symbols" v-on:click="setTab('iconology')">
-                <span v-i18n>Game Iconology</span>
-            </label>
-            <input type="radio" name="help-tab" id="radio-standard-projects">
-            <label for="radio-standard-projects" v-on:click="setTab('standard projects')">
-                <span v-i18n>Standard Projects</span>
-            </label>
-            <input type="radio" name="help-tab" id="radio-phases">
-            <label for="radio-phases" v-on:click="setTab('phases')">
-                <span v-i18n>Game Phases</span>
-            </label>
-            <input type="radio" name="help-tab" id="radio-hotkeys">
-            <label for="radio-hotkeys" v-on:click="setTab('hotkeys')">
-                <span v-i18n>Hot Keys</span>
-            </label>
-        </div>
+    <div class="help-tabs">
+      <input type="radio" name="help-tab" id="radio-help-operation" value="help-operation" v-model="currentPage">
+      <label for="radio-help-operation">
+        <span v-i18n>Operation</span>
+      </label>
 
-        <HelpOperation v-if="isOpen('help-operation')"></HelpOperation>
+      <input type="radio" name="help-tab" id="radio-symbols" value="iconology" v-model="currentPage">
+      <label for="radio-symbols">
+        <span v-i18n>Game Iconology</span>
+      </label>
+      <input type="radio" name="help-tab" id="radio-standard-projects" value="standard-projects" v-model="currentPage">
+      <label for="radio-standard-projects">
+        <span v-i18n>Standard Projects</span>
+      </label>
 
-        <HelpIconology v-if="isOpen('iconology')"></HelpIconology>
+      <input type="radio" name="help-tab" id="radio-phases" value="phases" v-model="currentPage">
+      <label for="radio-phases">
+        <span v-i18n>Game Phases</span>
+      </label>
 
-        <HelpStandardProjects v-if="isOpen('standard projects')"></HelpStandardProjects>
+      <input type="radio" name="help-tab" id="radio-hotkeys" value="hotkeys" v-model="currentPage">
+      <label for="radio-hotkeys">
+        <span v-i18n>Hot Keys</span>
+      </label>
 
-        <HelpPhases v-if="isOpen('phases')"></HelpPhases>
-
-        <div v-if="isOpen('hotkeys')">
-          <div class="help-hotkeys">
-            <div class="keys">
-              <div v-i18n>Main Board</div>
-              <div v-i18n>Players Overview Table</div>
-              <div v-i18n>Cards in Hand</div>
-              <div v-i18n>Colonies</div>
-            </div>
-          </div>
-          <div class="help-hotkeys-example"></div>
-        </div>
-
+      <input type="radio" name="help-tab" id="radio-rulebooks" value="rulebooks" v-model="currentPage">
+      <label for="radio-rulebooks">
+        <span v-i18n>Rules</span>
+      </label>
     </div>
+
+    <HelpOperation v-if="isOpen('help-operation')"></HelpOperation>
+
+    <HelpIconology v-if="isOpen('iconology')"></HelpIconology>
+    <HelpStandardProjects v-if="isOpen('standard-projects')"></HelpStandardProjects>
+    <HelpPhases v-if="isOpen('phases')"></HelpPhases>
+    <HelpRulebooks v-if="isOpen('rulebooks')"></HelpRulebooks>
+    <HelpHotkeys v-if="isOpen('hotkeys')"></HelpHotkeys>
+  </div>
 </template>
 <script lang="ts">
-import Vue from 'vue';
+import {defineComponent} from 'vue';
 import HelpIconology from '@/client/components/help/HelpIconology.vue';
 import HelpPhases from '@/client/components/help/HelpPhases.vue';
+import HelpHotkeys from '@/client/components/help/HelpHotkeys.vue';
+import HelpRulebooks from '@/client/components/help/HelpRulebooks.vue';
 import HelpStandardProjects from '@/client/components/help/HelpStandardProjects.vue';
-import {HelpOperation} from './HelpOperation';
+import HelpOperation from './HelpOperation.vue';
 
-type Tab = 'iconology' | 'standard projects' | 'phases' | 'hotkeys' | 'help-operation';
+const TABS = ['help-operation', 'iconology', 'standard-projects', 'phases', 'hotkeys', 'rulebooks'] as const;
+type Tab = typeof TABS[number];
 
 export interface HelpPageModel {
     currentPage: Tab;
 }
 
-export default Vue.extend({
+export default defineComponent({
   name: 'Help',
   data(): HelpPageModel {
     return {
@@ -68,9 +66,23 @@ export default Vue.extend({
   },
   components: {
     HelpIconology,
-    HelpStandardProjects,
     HelpPhases,
     HelpOperation,
+    HelpRulebooks,
+    HelpStandardProjects,
+    HelpHotkeys,
+  },
+  mounted() {
+    const hash = window.location.hash.replace('#', '') as Tab;
+
+    if (TABS.includes(hash)) {
+      this.currentPage = hash;
+    }
+  },
+  watch: {
+    currentPage(newTab: Tab) {
+      window.location.hash = newTab;
+    },
   },
   methods: {
     setTab(tab: Tab): void {
@@ -80,6 +92,5 @@ export default Vue.extend({
       return tab === this.currentPage;
     },
   },
-
 });
 </script>

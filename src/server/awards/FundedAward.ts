@@ -1,7 +1,7 @@
 import {IAward} from './IAward';
 import {IPlayer} from '../IPlayer';
 import {SerializedPlayerId} from '../SerializedPlayer';
-import {maybeRenamedAward} from '../../common/ma/AwardName';
+import {AwardName, maybeRenamedAward} from '../../common/ma/AwardName';
 
 export type FundedAward = {
   award: IAward;
@@ -26,7 +26,18 @@ export function deserializeFundedAwards(
   fundedAwards: Array<SerializedFundedAward>,
   players: Array<IPlayer>,
   awards: Array<IAward>): Array<FundedAward> {
-  return fundedAwards.map((element: SerializedFundedAward) => {
+  const loadedAwards = new Set<AwardName>();
+  const filtered: Array<SerializedFundedAward> = [];
+  for (const fundedAward of fundedAwards) {
+    const awardName = maybeRenamedAward(fundedAward.award.name);
+    if (loadedAwards.has(awardName)) {
+      console.error('Found duplicate award: ' + awardName);
+      continue;
+    }
+    filtered.push(fundedAward);
+    loadedAwards.add(awardName);
+  }
+  return filtered.map((element: SerializedFundedAward) => {
     const player = players.find((player) => player.id === element.player.id);
     const awardName = maybeRenamedAward(element.award.name);
     const award = awards.find((award) => award.name === awardName);

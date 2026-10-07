@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 import {UndergroundRailway} from '../../../src/server/cards/underworld/UndergroundRailway';
 import {testGame} from '../../TestGame';
-import {cast} from '../../TestingUtils';
+import {cast} from '@/common/utils/utils';
 
 describe('UndergroundRailway', () => {
   it('canPlay', () => {
@@ -19,14 +19,14 @@ describe('UndergroundRailway', () => {
 
     player.production.override({energy: 1});
     player.underworldData.tokens.push(
-      'nothing',
-      'nothing',
-      'nothing',
-      'nothing',
-      'nothing',
-      'nothing',
-      'nothing',
-      'nothing',
+      {token: 'nothing', shelter: false, active: false},
+      {token: 'nothing', shelter: false, active: false},
+      {token: 'nothing', shelter: false, active: false},
+      {token: 'nothing', shelter: false, active: false},
+      {token: 'nothing', shelter: false, active: false},
+      {token: 'nothing', shelter: false, active: false},
+      {token: 'nothing', shelter: false, active: false},
+      {token: 'nothing', shelter: false, active: false},
     );
     player.setTerraformRating(20);
     cast(card.play(player), undefined);

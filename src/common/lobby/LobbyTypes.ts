@@ -24,6 +24,17 @@ export interface ILobbyPlayer {
   rankValue?: number;
 }
 
+/** 大厅中的玩家（返回给客户端，不包含 userId） */
+export interface ILobbyPlayerView {
+  name: string;
+  color: Color;
+  isOwner: boolean;
+  isReady: boolean;
+  isCurrentUser: boolean;
+  /** 玩家段位信息（可选） */
+  rankValue?: number;
+}
+
 /** 大厅中的房间 */
 export interface ILobbyRoom {
   roomId: string;
@@ -41,9 +52,31 @@ export interface ILobbyRoom {
   gameData?: any;
 }
 
+/** 大厅中的房间（返回给客户端，不包含 ownerId/player.userId） */
+export interface ILobbyRoomView {
+  roomId: string;
+  ownerName: string;
+  players: Array<ILobbyPlayerView>;
+  /** 当前请求用户是否为房主 */
+  isOwner: boolean;
+  /** 当前请求用户是否在房间内 */
+  isCurrentUserInRoom: boolean;
+  /** 当前请求用户是否已确认 */
+  currentUserReady: boolean;
+  /** 游戏设置（不含 players/userId 信息） */
+  gameConfig: Omit<NewGameConfig, 'players' | 'userId'>;
+  status: ELobbyRoomStatus;
+  maxPlayers: number;
+  createdAt: number;
+  /** 创建后的游戏 ID（仅 STARTED 状态有值） */
+  gameId?: string;
+  /** 创建后的游戏完整数据 */
+  gameData?: any;
+}
+
 /** 房间列表响应 */
 export interface ILobbyListResponse {
-  rooms: Array<ILobbyRoom>;
+  rooms: Array<ILobbyRoomView>;
 }
 
 /** 创建房间请求 */
@@ -56,7 +89,7 @@ export interface ICreateRoomRequest {
 
 /** 创建房间响应 */
 export interface ICreateRoomResponse {
-  room: ILobbyRoom;
+  room: ILobbyRoomView;
 }
 
 /** 加入房间请求 */
@@ -69,7 +102,7 @@ export interface IJoinRoomRequest {
 /** 踢人请求 */
 export interface IKickPlayerRequest {
   userId: string;
-  targetUserId: string;
+  targetUserName: string;
 }
 
 /** 通用操作请求（加入/离开/确认/启动等） */
@@ -79,12 +112,12 @@ export interface ILobbyActionRequest {
 
 /** 房间详情响应 */
 export interface IRoomDetailResponse {
-  room: ILobbyRoom;
+  room: ILobbyRoomView;
 }
 
 /** 启动游戏后返回结果 */
 export interface IStartGameResponse {
-  room: ILobbyRoom;
+  room: ILobbyRoomView;
   /** 游戏创建结果 */
   gameData?: any;
 }

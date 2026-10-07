@@ -26,23 +26,6 @@
     }
 }
 
-/* Mobile responsive for create game form */
-@media (max-width: 640px) {
-    .topmost-create-game-form .main-container {
-        margin: 0 8px;
-    }
-
-    .create-game-player {
-        padding: 12px;
-        margin: 8px 0;
-    }
-
-    .create-game-solo-player {
-        padding: 12px;
-        margin: 16px 8px;
-    }
-}
-
 .create-game-player {
     padding: 25px;
     margin: 10px 0px 10px 15px
@@ -354,6 +337,9 @@
     .create-game-vastitas-borealis{
         color: @board-vastitas_borealis;
     }
+    .create-game-hollandia {
+        color: @board-hollandia;
+    }
 }
 
 .create-game-page-column .create-game-random {
@@ -580,8 +566,43 @@
 
 /* Forbidden label (non-VIP) */
 .create-game-page-column label.forbidden {
-    opacity: 0.35;
-    cursor: not-allowed;
+    opacity: 0.65;
+    cursor: pointer;
+    position: relative;
+    overflow: visible;
+    padding-right: 38px;
+    border-color: rgba(245, 158, 11, 0.4);
+    box-shadow: inset 0 0 0 1px rgba(245, 158, 11, 0.08);
+}
+
+.create-game-page-column label.forbidden:hover {
+    opacity: 0.9;
+    border-color: rgba(245, 158, 11, 0.7);
+    background: rgba(245, 158, 11, 0.08);
+}
+
+.create-game-vip-lock-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    min-width: 28px;
+    height: 16px;
+    padding: 0 5px;
+    margin-left: 0;
+    border-radius: 3px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    text-transform: uppercase;
+    color: #2b1903;
+    border: 1px solid rgba(245, 158, 11, 0.55);
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.92), rgba(245, 158, 11, 0.88));
+    box-shadow: 0 2px 6px rgba(245, 158, 11, 0.18);
+    clip-path: polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 0 100%);
 }
 
 /* Discord invite banner styling */
@@ -589,65 +610,4 @@
     color: #94a3b8;
     padding: 4px 18px;
     font-size: 14px;
-}
-
-/* Mobile adjustments for create game form */
-@media (max-width: 768px) {
-    .create-game h1 {
-        font-size: 17px;
-        padding: 12px 12px 8px;
-    }
-
-    .create-game h4 {
-        font-size: 12px;
-    }
-
-    .create-game--block {
-        margin: 10px 8px 0;
-        padding: 14px;
-    }
-
-    .create-game-page-column label {
-        font-size: 16px;
-        min-width: 90px;
-        height: 48px;
-        padding: 8px 12px;
-        line-height: 32px;
-    }
-
-    .create-game-subsection-label {
-        font-size: 14px;
-    }
-
-    .agendas-text {
-        font-size: 16px;
-    }
-
-    /* Mobile button adjustments */
-    .create-game-action {
-        margin: 24px 5px;
-        padding-left: 5px;
-        gap: 10px;
-    }
-
-    .btn-create-game,
-    .btn-cancel-game {
-        font-size: 15px;
-        padding: 10px 20px;
-        flex: 1;
-        min-width: 120px;
-    }
-
-    .create-game-settings-buttons {
-        margin-left: 0;
-        width: 100%;
-        justify-content: flex-start;
-        margin-top: 10px;
-    }
-
-    .btn-settings-upload,
-    .btn-settings-download {
-        width: 40px;
-        height: 40px;
-    }
 }

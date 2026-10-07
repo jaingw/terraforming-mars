@@ -1,12 +1,13 @@
 // Exports a game locally for debugging.
 // See README.md for instructions.
 
-import * as ansi from 'ansi-escape-sequences';
 import {mkdirSync, writeFileSync} from 'fs';
+import path from 'path';
 import {GameId, isGameId, isPlayerId, isSpectatorId} from '../../common/Types';
 import {Database} from '../database/Database';
 import {IDatabase} from '../database/IDatabase';
-import {LocalFilesystem} from '../database/LocalFilesystem';
+import {GameLoader} from '../database/GameLoader';
+import {State} from '../database/IGameLoader';
 import {exportLogs} from './exportLogs';
 
 const args = process.argv.slice(2);
@@ -15,13 +16,10 @@ const id = args[0];
 if (id === undefined) {
   throw new Error('missing game id');
 }
-if (process.env.LOCAL_FS_DB !== undefined) {
-  throw new Error('Do not run exportGame on local filesystem. Just access the files themselves');
-}
 
 const db: IDatabase = Database.getInstance();
-const localDb = new LocalFilesystem();
-LocalFilesystem.quiet = true;
+const exportRoot = path.resolve(process.cwd(), './db/files');
+const historyRoot = path.resolve(exportRoot, 'history');
 
 async function getGameId(id: string): Promise<GameId | undefined> {
   if (isGameId(id)) {
@@ -29,13 +27,23 @@ async function getGameId(id: string): Promise<GameId | undefined> {
   }
   if (isPlayerId(id) || isSpectatorId(id)) {
     console.log(`Finding game for player/spectator ${id}`);
-    return await db.getGameId(id);
+    const game = await (await getGameLoader()).getByPlayerId(id);
+    return game?.id;
   }
   return undefined;
 }
 
+async function getGameLoader(): Promise<GameLoader> {
+  const loader = GameLoader.getInstance();
+  if (loader.state === State.READY) {
+    return loader;
+  }
+  return await new Promise((resolve) => {
+    loader.start(() => resolve(loader));
+  });
+}
+
 async function main() {
-  await db.initialize();
   const gameId = await getGameId(id);
   if (gameId === undefined) {
     console.log('Game is undefined');
@@ -58,12 +66,11 @@ function showProgressBar(current: number, total: number, width: number = process
 
   const percentage = Math.round((current / total) * 100);
 
-  const ansiEscapeCode = `${ansi.cursor.horizontalAbsolute(0)}${progressString} ${percentage}% ${current}`;
-  process.stdout.write(ansiEscapeCode);
+  process.stdout.write(`\r${progressString} ${percentage}% ${current}`);
 }
 
 async function load(gameId: GameId) {
-  await localDb.initialize();
+  mkdirSync(historyRoot, {recursive: true});
   console.log(`Loading game ${gameId}`);
   const game = await db.getGame(gameId);
 
@@ -76,7 +83,7 @@ async function load(gameId: GameId) {
     try {
       const serialized = await db.getGameVersion(gameId, saveId);
       showProgressBar(saveId, game.lastSaveId);
-      localDb.saveSerializedGame(serialized);
+      saveSerializedGame(serialized);
       writes++;
     } catch (err) {
       console.warn(`failed to process saveId ${saveId}: ${err}`);
@@ -92,13 +99,20 @@ async function load(gameId: GameId) {
     // ignored. Most of the time this isn't a problem.
   }
 
-  const logs = await exportLogs(localDb, gameId);
+  const logs = await exportLogs(db, gameId);
   const logFilename = `logs/${gameId}.log`;
 
   writeFileSync(logFilename, logs.join('\n'));
   console.log(`Log at ${logFilename}`);
   console.log(`Wrote ${writes} records and had ${errors} failures.`);
   console.log(`id: ${gameId}`);
+}
+
+function saveSerializedGame(serializedGame: Awaited<ReturnType<IDatabase['getGame']>>) {
+  const text = JSON.stringify(serializedGame, null, 2);
+  writeFileSync(path.resolve(exportRoot, `${serializedGame.id}.json`), text);
+  const saveIdString = serializedGame.lastSaveId.toString().padStart(5, '0');
+  writeFileSync(path.resolve(historyRoot, `${serializedGame.id}-${saveIdString}.json`), text);
 }
 
 main();

@@ -4,7 +4,7 @@ import {Viron} from '../../../src/server/cards/venusNext/Viron';
 import {testGame} from '../../TestGame';
 import {SelectCard} from '../../../src/server/inputs/SelectCard';
 import {TestPlayer} from '../../TestPlayer';
-import {cast} from '../../TestingUtils';
+import {cast} from '@/common/utils/utils';
 import {FocusedOrganization} from '../../../src/server/cards/prelude2/FocusedOrganization';
 
 describe('Viron', () => {
@@ -21,7 +21,7 @@ describe('Viron', () => {
 
     cast(action, undefined);
 
-    player.corporations.push(card);
+    player.playedCards.push(card);
     const restrictedArea = new RestrictedArea();
     player.playedCards.push(restrictedArea);
     player.actionsThisGeneration.add(restrictedArea.name);
@@ -39,7 +39,7 @@ describe('Viron', () => {
   it('Cannot act once Viron is used', () => {
     card.play(player);
 
-    player.corporations.push(card);
+    player.playedCards.push(card);
     const restrictedArea = new RestrictedArea();
     player.playedCards.push(restrictedArea);
     player.actionsThisGeneration.add(restrictedArea.name);
@@ -52,7 +52,7 @@ describe('Viron', () => {
   it('Works with active preludes', () => {
     card.play(player);
 
-    player.corporations.push(card);
+    player.playedCards.push(card);
     const focusedOrganization = new FocusedOrganization();
 
     expect(focusedOrganization.canAct(player)).is.false;

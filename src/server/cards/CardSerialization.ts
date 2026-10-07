@@ -21,9 +21,6 @@ export function serializeCard(card: ICard): SerializedCard {
 
 export function deserializeCard(element: SerializedCard): IProjectCard | ICorporationCard {
   const card = newCard(element.name);
-  if (card === undefined) {
-    throw new Error(`Card ${element.name} not found`);
-  }
   if (card.type === CardType.CORPORATION) {
     return deserializeCorporationCard(element);
   } else {
@@ -89,7 +86,7 @@ export function deserializeProjectCard(element: SerializedCard): IProjectCard {
   if (element.resourceCount !== undefined) {
     card.resourceCount = element.resourceCount;
   }
-  if (card.hasOwnProperty('data')) {
+  if (card.hasOwnProperty('data') && element.data !== undefined) {
     card.data = element.data;
   }
   if (element.generationUsed !== undefined) {

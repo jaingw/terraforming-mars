@@ -53,7 +53,7 @@ export class BuyNLarge extends CorporationCard {
     });
   }
 
-  public onCardPlayedForCorps(player: IPlayer, card: ICard) {
+  public onCardPlayed(player: IPlayer, card: ICard) {
     if (player.playedCards.has(this.name)) {
       for (const tag of card.tags) {
         if (tag === Tag.ANIMAL || tag === Tag.PLANT || tag === Tag.MICROBE) {
@@ -74,7 +74,9 @@ export class BuyNLarge extends CorporationCard {
   }
 
   public onResourceAdded(player: IPlayer, playedCard: ICard) {
-    if (playedCard.name !== this.name) return;
+    if (playedCard.name !== this.name) {
+      return;
+    }
     if (this.resourceCount >= SEED_THRESHOLD) {
       const delta = Math.floor(this.resourceCount / SEED_THRESHOLD);
       const deducted = delta * SEED_THRESHOLD;
@@ -85,4 +87,3 @@ export class BuyNLarge extends CorporationCard {
     }
   }
 }
-

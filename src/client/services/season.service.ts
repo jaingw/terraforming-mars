@@ -2,22 +2,22 @@ import {request} from '@/client/utils/request';
 import {SeasonInfoResponse, SeasonList, LeaderboardResponse} from './types';
 
 class SeasonService {
-  async getSeasonInfo(): Promise<SeasonInfoResponse> {
+  getSeasonInfo(): Promise<SeasonInfoResponse> {
     return request.get<SeasonInfoResponse>('/api/v2/season/info');
   }
 
-  async getSeasonList(): Promise<SeasonList> {
+  getSeasonList(): Promise<SeasonList> {
     return request.get<SeasonList>('/api/v2/season/list');
   }
 
-  async getLeaderboard(seasonId: string, limit: number): Promise<LeaderboardResponse> {
+  getLeaderboard(seasonId: string, limit: number): Promise<LeaderboardResponse> {
     return request.get<LeaderboardResponse>('/api/v2/season/leaderboard', {
       seasonId,
       limit,
     });
   }
 
-  async resetSeason(serverId: string, options: {
+  resetSeason(serverId: string, options: {
     dryRun?: boolean;
     expectedFromSeasonId?: string;
   } = {}): Promise<any> {

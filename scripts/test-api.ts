@@ -243,7 +243,7 @@ async function main(): Promise<void> {
     playerIds = data.players.map((p: any) => p.id);
     console.log(`    Game ID: ${gameId}`);
     console.log(`    Player IDs: ${playerIds.join(', ')}`);
-  }
+  });
 
   // ─── 7. 坐下（绑定用户到座位）───
   section('7. Sit Down');

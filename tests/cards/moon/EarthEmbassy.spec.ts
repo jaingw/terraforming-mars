@@ -60,15 +60,15 @@ describe('EarthEmbassy', () => {
 
   it('Does not work with Point Luna', () => {
     const pointLuna = new PointLuna();
-    player.corporations.push(pointLuna);
+    player.playedCards.push(pointLuna);
 
     const fake = fakeCard({tags: [Tag.MOON]});
-    pointLuna.onCardPlayedForCorps(player, fake);
+    pointLuna.onCardPlayed(player, fake);
 
     expect(player.cardsInHand).has.length(0);
 
     player.playedCards.push(earthEmbassy);
-    pointLuna.onCardPlayedForCorps(player, fake);
+    pointLuna.onCardPlayed(player, fake);
 
     expect(player.cardsInHand).is.empty;
   });

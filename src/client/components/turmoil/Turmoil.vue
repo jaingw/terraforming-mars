@@ -1,99 +1,100 @@
 <template>
-    <div class="turmoil" v-trim-whitespace>
-      <div class="events-board">
-        <global-event v-if="turmoil.distant" :globalEventName="turmoil.distant" type="distant"></global-event>
-        <global-event v-if="turmoil.coming" :globalEventName="turmoil.coming" type="coming"></global-event>
-        <global-event v-if="turmoil.current" :globalEventName="turmoil.current" type="current"></global-event>
+  <div class="turmoil" v-trim-whitespace>
+    <div class="events-board">
+      <global-event v-if="turmoil.distant" :globalEventName="turmoil.distant" type="distant" :showDistance="true"></global-event>
+      <global-event v-if="turmoil.coming" :globalEventName="turmoil.coming" type="coming" :showDistance="true"></global-event>
+      <global-event v-if="turmoil.current" :globalEventName="turmoil.current" type="current" :showDistance="true"></global-event>
+    </div>
+
+    <div class="turmoil-board">
+      <div class="turmoil-header">
+        <div class="turmoil-lobby">
+          <div class="lobby-spot" v-for="n in 5" :key="n">
+            <div v-if="turmoil.lobby.length >= n" :class="'player-token '+turmoil.lobby[n-1]"></div>
+          </div>
+        </div>
+        <div class="dominant-party-name">
+          <div :class="'party-name party-name--'+partyNameToCss(turmoil.ruling)" v-i18n>{{ turmoil.ruling }}</div>
+        </div>
+        <div class="dominant-party-bonus">
+          <turmoil-agenda :id="getPolicy(turmoil.ruling)"></turmoil-agenda>
+        </div>
+        <div class="policy-user-cubes">
+          <template v-for="n in turmoil.policyActionUsers" :key="n.color">
+            <div v-if="n.turmoilPolicyActionUsed" :key="n.color" :class="'policy-use-marker board-cube--'+n.color"></div>
+            <div v-if="n.politicalAgendasActionUsedCount > 0" :key="n.color" :class="'policy-use-marker board-cube--'+n.color">{{n.politicalAgendasActionUsedCount}}</div>
+          </template>
+        </div>
+        <div class="chairman-spot"><div v-if="turmoil.chairman" :class="'player-token '+turmoil.chairman"></div></div>
+        <div class="turmoil-reserve">
+          <div class="lobby-spot" v-for="n in turmoil.reserve.length" :key="n">
+            <div v-if="turmoil.reserve.length >= n" :class="'player-token '+turmoil.reserve[n-1].color">{{ turmoil.reserve[n-1].number }}</div>
+          </div>
+        </div>
+        <div class="policies">
+          <div class="policies-title">
+            <a class="policies-clickable" href="#" v-on:click.prevent="toggleMe()" v-i18n>Policies</a>
+          </div>
+          <div v-show="isVisible()" class='policies-global'>
+            <div v-for="party in turmoil.parties" :key="party.name" class='policy-block'>
+              <div :class="'party-name party-name--'+partyNameToCss(party.name)" v-i18n>{{party.name}}</div>
+
+              <div class="party-bonus">
+                <turmoil-agenda :id="getPolicy(party.name)"></turmoil-agenda>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div class="turmoil-board">
-        <div class="turmoil-header">
-          <div class="turmoil-lobby">
-            <div class="lobby-spot" v-for="n in 5" :key="n">
-                <div v-if="turmoil.lobby.length >= n" :class="'player-token '+turmoil.lobby[n-1]"></div>
-            </div>
-          </div>
-          <div class="dominant-party-name">
-            <div :class="'party-name party-name--'+partyNameToCss(turmoil.ruling)" v-i18n>{{ turmoil.ruling }}</div>
-          </div>
-          <div class="dominant-party-bonus">
-            <turmoil-agenda :id="getPolicy(turmoil.ruling)"></turmoil-agenda>
-          </div>
-          <div class="policy-user-cubes">
-            <template v-for="n in turmoil.policyActionUsers">
-              <div v-if="n.turmoilPolicyActionUsed" :key="n.color" :class="'policy-use-marker board-cube--'+n.color"></div>
-              <div v-if="n.politicalAgendasActionUsedCount > 0" :key="n.color" :class="'policy-use-marker board-cube--'+n.color">{{n.politicalAgendasActionUsedCount}}</div>
-            </template>
-          </div>
-          <div class="chairman-spot"><div v-if="turmoil.chairman" :class="'player-token '+turmoil.chairman"></div></div>
-          <div class="turmoil-reserve">
-              <div class="lobby-spot" v-for="n in turmoil.reserve.length" :key="n">
-                <div v-if="turmoil.reserve.length >= n" :class="'player-token '+turmoil.reserve[n-1].color">{{ turmoil.reserve[n-1].number }}</div>
-              </div>
-          </div>
-          <div class="policies">
-            <div class="policies-title">
-                <a class="policies-clickable" href="#" v-on:click.prevent="toggleMe()" v-i18n>Policies</a>
-            </div>
-            <div v-show="isVisible()" class='policies-global'>
-              <div v-for="party in turmoil.parties" :key="party.name" class='policy-block'>
-                <div :class="'party-name party-name--'+partyNameToCss(party.name)" v-i18n>{{party.name}}</div>
-
-                <div class="party-bonus">
-                  <turmoil-agenda :id="getPolicy(party.name)"></turmoil-agenda>
-                </div>
-              </div>
-            </div>
+      <div class="grid-leaders">
+        <div v-for="party in turmoil.parties" :key="party.name" :class="['leader-spot', 'leader-spot--'+partyNameToCss(party.name), {'player-token-new-leader': (party.name === turmoil.dominant)}]">
+          <div class="delegate-spot">
+            <div v-if="party.partyLeader" :class="['player-token', party.partyLeader]"></div>
           </div>
         </div>
+      </div>
 
-        <div class="grid-leaders">
-          <div v-for="party in turmoil.parties" :key="party.name" :class="['leader-spot', 'leader-spot--'+partyNameToCss(party.name), {'player-token-new-leader': (party.name === turmoil.dominant)}]">
-            <div class="delegate-spot">
-              <div v-if="party.partyLeader" :class="['player-token', party.partyLeader]"></div>
+      <div class="grid-parties">
+        <div v-for="party in turmoil.parties" :key="party.name" :class="'board-party board-party--'+partyNameToCss(party.name)">
+          <div class="grid-delegates">
+            <div class="delegate-spot" v-for="n in 6" :key="n">
+              <div v-if="party.delegates.length >= n" :class="'player-token '+party.delegates[n-1].color">{{ party.delegates[n-1].number }}</div>
             </div>
           </div>
-        </div>
-
-        <div class="grid-parties">
-          <div v-for="party in turmoil.parties" :key="party.name" :class="'board-party board-party--'+partyNameToCss(party.name)">
-            <div class="grid-delegates">
-              <div class="delegate-spot" v-for="n in 6" :key="n">
-                <div v-if="party.delegates.length >= n" :class="'player-token '+party.delegates[n-1].color">{{ party.delegates[n-1].number }}</div>
-              </div>
-            </div>
-            <div :class="'party-name party-name--'+partyNameToCss(party.name)" v-i18n>{{party.name}}</div>
-            <div class="party-bonus">
-              <turmoil-agenda type="party-bonus" :id="getBonus(party.name)"></turmoil-agenda>
-            </div>
+          <div :class="'party-name party-name--'+partyNameToCss(party.name)" v-i18n>{{party.name}}</div>
+          <div class="party-bonus">
+            <turmoil-agenda type="party-bonus" :id="getBonus(party.name)"></turmoil-agenda>
           </div>
         </div>
+      </div>
 
-        <div class="turmoil-party-transition-arrow-grid">
-          <div class="turmoil-party-transition-arrow"></div>
-          <div class="turmoil-party-transition-arrow"></div>
-          <div class="turmoil-party-transition-arrow"></div>
-          <div class="turmoil-party-transition-arrow"></div>
-          <div class="turmoil-party-transition-arrow"></div>
-        </div>
+      <div class="turmoil-party-transition-arrow-grid">
+        <div class="turmoil-party-transition-arrow"></div>
+        <div class="turmoil-party-transition-arrow"></div>
+        <div class="turmoil-party-transition-arrow"></div>
+        <div class="turmoil-party-transition-arrow"></div>
+        <div class="turmoil-party-transition-arrow"></div>
       </div>
     </div>
+  </div>
 </template>
 
 <script lang="ts">
 
-import Vue from 'vue';
+import {defineComponent} from 'vue';
 import {vueRoot} from '@/client/components/vueRoot';
 import {PartyName} from '@/common/turmoil/PartyName';
 import {TurmoilModel} from '@/common/models/TurmoilModel';
 import TurmoilAgenda from '@/client/components/turmoil/TurmoilAgenda.vue';
 import GlobalEvent from '@/client/components/turmoil/GlobalEvent.vue';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'turmoil',
   props: {
     turmoil: {
       type: Object as () => TurmoilModel,
+      required: true,
     },
   },
   methods: {
@@ -159,4 +160,3 @@ export default Vue.extend({
 });
 
 </script>
-

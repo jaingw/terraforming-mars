@@ -1,9 +1,9 @@
 import {IPlayer} from '../IPlayer';
 import {Board} from '../boards/Board';
 import {Space} from '../boards/Space';
-import {UnderworldData, UnderworldPlayerData} from './UnderworldData';
+import {UnderworldData} from './UnderworldData';
 import {Random} from '../../common/utils/Random';
-import {TemporaryBonusToken, UndergroundResourceToken, undergroundResourceTokenDescription} from '../../common/underworld/UndergroundResourceToken';
+import {TemporaryBonusToken, UndergroundResourceToken} from '../../common/underworld/UndergroundResourceToken';
 import {inplaceShuffle} from '../utils/shuffle';
 import {Resource} from '../../common/Resource';
 import {AddResourcesToCard} from '../deferredActions/AddResourcesToCard';
@@ -17,13 +17,13 @@ import {OrOptions} from '../inputs/OrOptions';
 import {SelectOption} from '../inputs/SelectOption';
 import {message} from '../logs/MessageBuilder';
 import {SelectPaymentDeferred} from '../deferredActions/SelectPaymentDeferred';
-import {Phase} from '../../common/Phase';
 import {Units} from '../../common/Units';
-import {LogHelper} from '../LogHelper';
 import {Message} from '../../common/logs/Message';
-import {inplaceRemove} from '../../common/utils/utils';
 import {GlobalParameter} from '../../common/GlobalParameter';
 import {Tag} from '../../common/cards/Tag';
+import {UnderworldPlayerData} from '../../common/underworld/UnderworldPlayerData';
+import {GainAnyResourceButScienceDeferred} from '../deferredActions/GainAnyResourceButScienceDeferred';
+import {TileType} from '../../common/TileType';
 
 export class UnderworldExpansion {
   private constructor() {}
@@ -86,7 +86,7 @@ export class UnderworldExpansion {
     add(2, 'ocean');
     add(2, 'sciencetag');
     add(2, 'planttag');
-    add(2, 'volcanicoceanspace');
+    add(2, 'anyresource1');
     add(2, 'place6mc');
 
     add(2, 'oceanrequirementmod');
@@ -112,8 +112,12 @@ export class UnderworldExpansion {
       return false;
     }
     if (space.tile !== undefined) {
-      return false;
+      // Players may still identify on Martian Nature Wonders (but not Rey Skywalker, which blocks tokens)
+      if (space.tile.tileType !== TileType.MARTIAN_NATURE_WONDERS) {
+        return false;
+      }
     }
+
     if (space.spaceType === SpaceType.COLONY || space.spaceType === SpaceType.RESTRICTED) {
       return false;
     }
@@ -122,10 +126,22 @@ export class UnderworldExpansion {
 
   /**
    * Return the spaces that have not yet been identified.
+   *
+   * This doesn't take into account that there may not be available tokens in the supply.
+   * But canIdentifyN supports that.
    */
   public static identifiableSpaces(player: IPlayer): ReadonlyArray<Space> {
-    const spaces = player.game.board.spaces.filter(UnderworldExpansion.canIdentify);
-    return spaces;
+    return player.game.board.spaces.filter(UnderworldExpansion.canIdentify);
+  }
+
+  public static canIdentifyN(player: IPlayer, count: number): boolean {
+    const tokens = player.game.underworldData.tokens.length;
+    if (tokens >= count) {
+      return true;
+    }
+
+    const spaces = this.identifiableSpaces(player).length;
+    return spaces >= count;
   }
 
   /**
@@ -142,12 +158,7 @@ export class UnderworldExpansion {
 
     const undergroundResource = this.drawExcavationToken(game);
     space.undergroundResources = undergroundResource;
-
-    for (const p of game.playersInGenerationOrder) {
-      for (const card of p.tableau) {
-        card.onIdentificationByAnyPlayer?.(p, player, space);
-      }
-    }
+    game.triggerForAllCards((p, c) => c.onIdentificationByAnyPlayer?.(p, player, undergroundResource));
     return true;
   }
 
@@ -190,7 +201,10 @@ export class UnderworldExpansion {
       }
 
       if (space.tile !== undefined) {
-        return false;
+        // Players may still excavate from Martian Nature Wonders (but not Rey Skywalker, which blocks tokens)
+        if (space.tile.tileType !== TileType.MARTIAN_NATURE_WONDERS) {
+          return false;
+        }
       }
 
       if (space.undergroundResources === 'ocean' && !player.canAfford({cost: 4, tr: {oceans: 1}})) {
@@ -222,11 +236,28 @@ export class UnderworldExpansion {
     return spaces;
   }
 
+  public static canExcavateN(player: IPlayer, count: number): boolean {
+    const tokens = player.game.underworldData.tokens.length;
+    // Optimization
+    if (tokens >= count) {
+      return true;
+    }
+
+    // Ignoring placement restrictions is acceptable since the player might have
+    // to choose spaces outside their excavatable area.
+    const spaces = this.excavatableSpaces(player, {ignorePlacementRestrictions: true}).length;
+    return tokens + spaces >= count;
+  }
+
+
   public static excavate(player: IPlayer, space: Space): UndergroundResourceToken {
     const game = player.game;
     validateUnderworldExpansion(game);
     if (space.tile !== undefined) {
-      throw new Error(`cannot excavate space ${space.id} which has a tile.`);
+      // Players may still excavate from Martian Nature Wonders (but not Rey Skywalker, which blocks tokens)
+      if (space.tile.tileType !== TileType.MARTIAN_NATURE_WONDERS) {
+        throw new Error(`cannot excavate space ${space.id} which has a tile.`);
+      }
     }
 
     if (space.undergroundResources === undefined) {
@@ -238,7 +269,8 @@ export class UnderworldExpansion {
       throw new Error('No available identification tokens');
     }
 
-    LogHelper.logBoardTileAction(player, space, `${undergroundResourceTokenDescription[undergroundResource]}`, 'excavated');
+    player.game.log('${0} excavated ${1} at ${2}', (b) =>
+      b.player(player).undergroundToken(undergroundResource).space(space));
 
     space.excavator = player;
     space.undergroundResources = undefined;
@@ -272,16 +304,22 @@ export class UnderworldExpansion {
       throw new Error('No available identification tokens');
     }
 
-    LogHelper.logBoardTileAction(player, space, `${undergroundResourceTokenDescription[undergroundResource]}`, 'claimed');
     space.undergroundResources = undefined;
 
     this.claimToken(player, undergroundResource, /* isExcavate= */false, space);
   }
 
   public static claimToken(player: IPlayer, token: UndergroundResourceToken, isExcavate: boolean, space: Space | undefined) {
+    if (space) {
+      player.game.log('${0} claimed ${1} at ${2}', (b) =>
+        b.player(player).undergroundToken(token).space(space));
+    } else {
+      player.game.log('${0} claimed ${1}', (b) => b.player(player).undergroundToken(token));
+    }
+
     validateUnderworldExpansion(player.game);
     this.grant(player, token);
-    player.underworldData.tokens.push(token);
+    player.underworldData.tokens.push({token, shelter: false, active: player.underworldData.activeBonus === token});
     for (const card of player.tableau) {
       card.onClaim?.(player, isExcavate, space);
     }
@@ -356,15 +394,25 @@ export class UnderworldExpansion {
     case 'microbe2':
       player.game.defer(new AddResourcesToCard(player, CardResource.MICROBE, {count: 2}));
       break;
+    case 'anyresource1':
+      player.game.defer(new GainAnyResourceButScienceDeferred(player));
+      break;
     case 'tr':
       player.increaseTerraformRating();
       break;
     case 'ocean':
-      if (player.canAfford({cost: 4, tr: {oceans: 1}})) {
-        if (player.game.canAddOcean() || player.tableau.has(CardName.WHALES)) {
+      const canAddOcean = player.game.canAddOcean();
+      const canAfford = player.canAfford({cost: 4, tr: {oceans: 1}});
+      const hasWhales = player.tableau.has(CardName.WHALES);
+      if (canAddOcean || hasWhales) {
+        if (canAfford) {
           player.game.defer(new SelectPaymentDeferred(player, 4, {title: message('Select how to pay 4 M€ for ocean bonus')}))
             .andThen(() => player.game.defer(new PlaceOceanTile(player)));
+        } else {
+          player.game.log('${0} cannot afford to place an ocean', (b) => b.player(player));
         }
+      } else {
+        player.game.log('There is no room to place an ocean');
       }
       break;
     case 'data1pertemp':
@@ -377,39 +425,39 @@ export class UnderworldExpansion {
     case 'oceanrequirementmod':
     case 'oxygenrequirementmod':
     case 'temprequirementmod':
-      const activeBonus = player.underworldData.activeBonus;
-      if (activeBonus !== undefined) {
-        player.game.log('For the rest of this generation, ${0} will gain ${1}, replacing ${2}',
-          (b) => b.player(player)
-            .string(undergroundResourceTokenDescription[token])
-            .string(undergroundResourceTokenDescription[activeBonus]));
-      } else {
-        player.game.log('For the rest of this generation, ${0} will gain ${1}',
-          (b) => b.player(player)
-            .string(undergroundResourceTokenDescription[token]));
-      }
-      player.underworldData.activeBonus = token;
+      UnderworldExpansion.activateBonus(player, token);
       break;
     case 'sciencetag':
       player.tags.extraScienceTags++;
-      for (const card of player.tableau) {
-        card.onNonCardTagAdded?.(player, Tag.SCIENCE, player);
-      }
+      player.triggerOnNonCardTagAdded(Tag.SCIENCE);
       break;
     case 'planttag':
       player.tags.extraPlantTags++;
-      for (const card of player.tableau) {
-        card.onNonCardTagAdded?.(player, Tag.PLANT, player);
-      }
+      player.triggerOnNonCardTagAdded(Tag.PLANT);
       break;
 
-    // These don't reward anything.
-    case 'volcanicoceanspace':
+    // This doesn't reward anything.
     case 'place6mc':
       break;
     default:
       throw new Error('Unknown reward: ' + token);
     }
+  }
+
+  private static activateBonus(player: IPlayer, token: TemporaryBonusToken) {
+    const activeBonus = player.underworldData.activeBonus;
+    for (const claimedToken of player.underworldData.tokens) {
+      claimedToken.active = false;
+    }
+    player.underworldData.activeBonus = token;
+    if (activeBonus !== undefined) {
+      player.game.log('For the rest of this generation, ${0} will gain ${1}, replacing ${2}',
+        (b) => b.player(player).undergroundToken(token).undergroundToken(activeBonus));
+    } else {
+      player.game.log('For the rest of this generation, ${0} will gain ${1}',
+        (b) => b.player(player).undergroundToken(token));
+    }
+    player.underworldData.activeBonus = token;
   }
 
   public static maybeBlockAttack(target: IPlayer, perpetrator: IPlayer, msg: Message | string, cb: (proceed: boolean) => PlayerInput | undefined): PlayerInput | undefined {
@@ -503,22 +551,6 @@ export class UnderworldExpansion {
     inplaceShuffle(game.underworldData.tokens, game.rng);
   }
 
-  static removeTokenFromPlayer(player: IPlayer, token: UndergroundResourceToken) {
-    const playerTokens = player.underworldData.tokens;
-    if (!inplaceRemove(playerTokens, token)) {
-      throw new Error('Token ${token} not found');
-    }
-    switch (token) {
-    case 'sciencetag':
-      player.tags.extraScienceTags = Math.max(player.tags.extraScienceTags - 1, 0);
-      break;
-    case 'planttag':
-      player.tags.extraPlantTags = Math.max(player.tags.extraPlantTags - 1, 0);
-      break;
-    }
-    this.addTokens(player.game, [token]);
-  }
-
   /** Add the set of tokens to the pool, and then shuffle the pool */
   static addTokens(game: IGame, tokens: ReadonlyArray<UndergroundResourceToken>) {
     validateUnderworldExpansion(game);
@@ -533,14 +565,14 @@ export class UnderworldExpansion {
   static endGeneration(game: IGame) {
     for (const player of game.players) {
       player.underworldData.activeBonus = undefined;
+      for (const claimedToken of player.underworldData.tokens) {
+        claimedToken.active = false;
+      }
     }
   }
 
   //   // TODOc(kberg): add viz for temperature bonus.
   static onTemperatureChange(game: IGame, steps: number) {
-    if (game.phase !== Phase.ACTION) {
-      return;
-    }
     game.playersInGenerationOrder.forEach((player) => {
       switch (player.underworldData.activeBonus) {
       case 'data1pertemp':
@@ -551,7 +583,6 @@ export class UnderworldExpansion {
         }
         break;
       case 'microbe2pertemp':
-        // TODO(kberg): Replace with RunNTimes.
         for (let i = 0; i < steps; i++) {
           player.game.defer(new AddResourcesToCard(player, CardResource.MICROBE, {count: 2}));
         }
@@ -607,6 +638,20 @@ export class UnderworldExpansion {
       return 3;
     }
     return 0;
+  }
+
+  static removeClaimedToken(player: IPlayer, idx: number) {
+    const tokens = player.underworldData.tokens;
+    const [token] = tokens.splice(idx, 1);
+    if (token.active) {
+      // TODO(kberg): Log the discard.
+      player.underworldData.activeBonus = undefined;
+    }
+    if (token.token === 'sciencetag') {
+      player.tags.extraScienceTags = Math.max(player.tags.extraScienceTags - 1, 0);
+    } else if (token.token === 'planttag') {
+      player.tags.extraPlantTags = Math.max(player.tags.extraPlantTags - 1, 0);
+    }
   }
 }
 

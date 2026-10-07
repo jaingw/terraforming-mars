@@ -1,18 +1,40 @@
-/*
- * @Author: Ender-Wiggin
- * @Date: 2024-10-26 11:51:43
- * @LastEditors: Ender-Wiggin
- * @LastEditTime: 2024-10-26 13:21:22
- * @Description:
- */
 import * as responses from '../server/responses';
 import {Handler} from './Handler';
 import {Context} from './IHandler';
-import {GameLoader} from '../database/GameLoader';
-import {State} from '../database/IGameLoader';
 import * as UserUtil from '../UserUtil';
 import {Request} from '../Request';
 import {Response} from '../Response';
+import {normalizeUserId} from '../../common/utils/normalizeUserId';
+import {Database} from '../database/Database';
+import {IGameMetadata, IShortData} from '../database/IDatabase';
+
+// 将数据库轻量 metadata 转成列表接口的返回结构；没有 shortData 的旧记录会被过滤掉。
+export function metadataToGameListItem(metadata: IGameMetadata) {
+  const game = metadata.shortData;
+  if (game === undefined) {
+    return undefined;
+  }
+  return shortDataToGameListItem(game);
+}
+
+// 只暴露列表页需要的字段，避免把 userId 等敏感字段透给客户端。
+function shortDataToGameListItem(game: IShortData) {
+  return {
+    id: game.id,
+    phase: game.phase,
+    players: game.players.map((player) => {
+      return {
+        id: player.id,
+        name: player.name,
+        color: player.exited ? 'gray' : player.color,
+      };
+    }),
+    createtime: game.createtime?.slice(0, 16),
+    updatetime: game.updatetime?.slice(0, 16),
+    gameAge: game.gameAge,
+    saveId: game.lastSaveId,
+  };
+}
 
 export class ApiGames extends Handler {
   public static readonly INSTANCE = new ApiGames();
@@ -20,46 +42,18 @@ export class ApiGames extends Handler {
     super({validateServerId: true});
   }
 
-  public override get(req: Request, res: Response, ctx: Context): Promise<void> {
+  public override async get(req: Request, res: Response, ctx: Context): Promise<void> {
     const userId = ctx.url.searchParams.get('userId');
-    if (userId === undefined || userId === null || !userId.startsWith(UserUtil.myId || '')) {
+    if (userId === undefined || userId === null || normalizeUserId(userId) !== UserUtil.myId) {
       console.warn('Not me');
       responses.notFound(req, res, 'Not me');
-      return Promise.resolve();
+      return;
     }
 
-    if (GameLoader.getInstance().state !== State.READY ) {
-      console.warn('loading');
-      responses.notFound(req, res, 'loading');
-      return Promise.resolve();
-    }
-    const answer: Array<any> = [];
-    const games = GameLoader.getInstance().games;
-    for (const key of Array.from(games.keys())) {
-      const game = games.get(key);
-      if (game !== undefined) {
-        answer.push({
-          activePlayer: game.activePlayer.color,
-          id: game.id,
-          phase: game.phase,
-          players: game.getAllPlayers().map((player) => {
-            return {
-              id: player.id,
-              name: player.name,
-              color: player.exited? 'gray' : player.color,
-            };
-          }),
-          createtime: game.createtime?.slice(0, 16),
-          updatetime: game.updatetime?.slice(0, 16),
-          gameAge: game.gameAge,
-          saveId: game.lastSaveId,
-        });
-      }
-    }
-    answer.sort((a: any, b: any) => {
-      return a.updatetime > b.updatetime ? -1 : (a.updatetime === b.updatetime ? 0 : 1);
-    });
+    // 列表接口直接查 game 表元数据，不触发完整游戏加载。
+    const answer = (await Database.getInstance().getGames())
+      .map(metadataToGameListItem)
+      .filter((game) => game !== undefined);
     responses.writeJson(res, ctx, answer);
-    return Promise.resolve();
   }
 }

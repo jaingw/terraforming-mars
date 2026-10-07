@@ -4,7 +4,7 @@ import {FakeSessionManager} from './FakeSessionManager';
 import {MockRequest, MockResponse} from './HttpMocks';
 import {newIpTracker} from '../../src/server/server/IPTracker';
 import {FakeClock} from '../common/FakeClock';
-import {GameLoader} from '../../src/server/database/GameLoader';
+import {FakeGameLoader} from './FakeGameLoader';
 
 export type Header = 'accept-encoding';
 
@@ -17,7 +17,7 @@ export class RouteTestScaffolding {
       url: new URL('http://boo.com'),
       ip: '123.45.678.90',
       ipTracker: newIpTracker(),
-      gameLoader: GameLoader.getInstance(),
+      gameLoader: new FakeGameLoader(),
       sessionManager: new FakeSessionManager(),
       ids: {
         serverId: '1',
@@ -25,7 +25,9 @@ export class RouteTestScaffolding {
       },
       clock: new FakeClock(),
     };
-    if (!this.req.headers) this.req.headers = {};
+    if (!this.req.headers) {
+      this.req.headers = {};
+    }
   }
 
   // Strictly speaking |url| can also accept a fragment.

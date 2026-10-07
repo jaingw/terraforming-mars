@@ -37,10 +37,10 @@
         <!-- Right: User area + hamburger -->
         <div class="tfm-navbar__right">
           <template v-if="userName">
-          <a href="/me" class="tfm-navbar__user" @click.prevent="navigate('/me')">
-            <span class="tfm-navbar__avatar">{{ avatarLetter }}</span>
-            <span class="tfm-navbar__username">{{ userName }}</span>
-          </a>
+            <a href="/me" class="tfm-navbar__user" @click.prevent="navigate('/me')">
+              <span class="tfm-navbar__avatar">{{ avatarLetter }}</span>
+              <span class="tfm-navbar__username">{{ userName }}</span>
+            </a>
           </template>
           <template v-else>
             <a href="/login" class="tfm-navbar__login" @click.prevent="navigate('/login')" v-i18n>Sign In</a>
@@ -105,11 +105,11 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import {userStore} from '@/client/stores';
 import TfmIcon from '@/client/components/common/TfmIcon.vue';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'NavBar',
   components: {
     TfmIcon,
@@ -130,7 +130,7 @@ export default Vue.extend({
       return [
         {path: '/', label: 'Home', icon: 'home'},
         {path: '/lobby', label: 'Lobby', icon: 'lobby'},
-        {path: '/me', label: 'Me', icon: 'user'},
+        {path: '/me', label: 'My Space', icon: 'user'},
         {path: '/ranks', label: 'Ranks', icon: 'trophy'},
         {path: '/cards', label: 'Cards', icon: 'cards'},
       ];

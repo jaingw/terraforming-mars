@@ -2,6 +2,7 @@ import {TierName} from '../rank/TierName';
 import {RankTiers} from '../rank/RankTiers';
 import {DEFAULT_TIMEOUT_COMPENSATE, DEFAULT_TIMEOUT_PENALTY} from '../rank/constants';
 import {RankTier, challengerStar} from '../rank/RankTier';
+import {normalizeUserId} from '../utils/normalizeUserId';
 import {rate, Rating} from 'ts-trueskill';
 const rankValueChangeRules = [
   [1, -1], // 2p
@@ -20,12 +21,9 @@ export class UserRank {
       public trueskill: number = 0, // 顶段后显示积分,由mu和sigma计算得出
       public points: number = 0, // 赛季累计积分
       public seasonId: string = '', // 当前赛季ID
+      public userName: string = 'Unknown',
   ) {
-    if (this.userId.startsWith('u')) {
-      this.userId = userId.substring(0, 13);
-    } else {
-      this.userId = userId.substring(0, 12);
-    }
+    this.userId = normalizeUserId(userId);
   }
 
   public getRankValue() {
@@ -33,8 +31,12 @@ export class UserRank {
   }
 
   public setRankValue(rankValue: number) {
-    if (rankValue <= 0) rankValue = 0;
-    if (rankValue > challengerStar) rankValue = challengerStar;
+    if (rankValue <= 0) {
+      rankValue = 0;
+    }
+    if (rankValue > challengerStar) {
+      rankValue = challengerStar;
+    }
     this.rankValue = rankValue;
   }
 
@@ -51,7 +53,9 @@ export class UserRank {
     const tier = this.getTier();
 
     // 暂时hardcode, 前面的段位或者最高段位不降星
-    if ((tier.measurement === 'value' || tier.name === TierName.IRON || tier.name === TierName.BRONZE || tier.name === TierName.SILVER) && delta < 0) return;
+    if ((tier.measurement === 'value' || tier.name === TierName.IRON || tier.name === TierName.BRONZE || tier.name === TierName.SILVER) && delta < 0) {
+      return;
+    }
     this.setRankValue(this.rankValue + delta); // 不低于0
   }
 
@@ -136,4 +140,3 @@ export function getNewSkills(userRanks: Array<UserRank>, timeOutUser: UserRank |
   }
   return updatedRanks;
 }
-

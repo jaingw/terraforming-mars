@@ -33,7 +33,9 @@ describe('BorderCheckpoint', () => {
     setEnergyProduction(1);
     // 占满所有边界地块
     const all = game.board.getAvailableSpacesOnLand(player).filter((s) => s.x === 0 || s.x === 8 || s.y === 0 || s.y === 8 || s.x === Math.abs(4-s.y));
-    for (const s of all) game.addCity(player, s);
+    for (const s of all) {
+      game.addCity(player, s);
+    }
     expect(card.canPlay(player)).to.be.false;
   });
 

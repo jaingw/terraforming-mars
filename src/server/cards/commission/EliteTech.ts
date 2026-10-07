@@ -36,7 +36,7 @@ export class EliteTech extends CorporationCard {
     return undefined;
   }
 
-  public onCardPlayedForCorps(player: IPlayer, card: ICard ) {
+  public onCardPlayed(player: IPlayer, card: ICard ) {
     if (player.playedCards.has(CardName.ELITETECH) && (card.requirements === undefined || card.requirements.length === 0 )) {
       player.stock.add(Resource.MEGACREDITS, 1, {log: true});
     }

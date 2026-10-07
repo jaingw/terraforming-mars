@@ -1,13 +1,13 @@
 import {request} from '@/client/utils/request';
-import {ILobbyRoom, ILobbyListResponse, ICreateRoomResponse} from '@/common/lobby/LobbyTypes';
+import {ILobbyListResponse, ICreateRoomResponse} from '@/common/lobby/LobbyTypes';
 import {Color} from '@/common/Color';
 
 class LobbyService {
-  async getRooms(): Promise<ILobbyListResponse> {
-    return request.get('/api/v2/lobby/list');
+  getRooms(userId: string): Promise<ILobbyListResponse> {
+    return request.get('/api/v2/lobby/list?userId=' + encodeURIComponent(userId));
   }
 
-  async createRoom(options: {
+  createRoom(options: {
     userId: string;
     userName: string;
     gameConfig: any;
@@ -16,7 +16,7 @@ class LobbyService {
     return request.post<ICreateRoomResponse>('/api/v2/lobby/create', options);
   }
 
-  async joinRoom(roomId: string, options: {
+  joinRoom(roomId: string, options: {
     userId: string;
     userName: string;
     color: Color;
@@ -24,27 +24,20 @@ class LobbyService {
     return request.post(`/api/v2/lobby/${roomId}/join`, options);
   }
 
-  async leaveRoom(roomId: string, userId: string): Promise<void> {
+  leaveRoom(roomId: string, userId: string): Promise<void> {
     return request.post(`/api/v2/lobby/${roomId}/leave`, {userId});
   }
 
-  async kickPlayer(roomId: string, userId: string, targetUserId: string): Promise<void> {
-    return request.post(`/api/v2/lobby/${roomId}/kick`, {userId, targetUserId});
+  kickPlayer(roomId: string, userId: string, targetUserName: string): Promise<void> {
+    return request.post(`/api/v2/lobby/${roomId}/kick`, {userId, targetUserName});
   }
 
-  async startGame(roomId: string, userId: string): Promise<void> {
+  startGame(roomId: string, userId: string): Promise<void> {
     return request.post(`/api/v2/lobby/${roomId}/start`, {userId});
   }
 
-  async confirmReady(roomId: string, userId: string): Promise<{
-    allReady: boolean;
-    gameConfig?: any;
-  }> {
+  confirmReady(roomId: string, userId: string): Promise<void> {
     return request.post(`/api/v2/lobby/${roomId}/confirm`, {userId});
-  }
-
-  async markStarted(roomId: string, gameId: string, gameData: any): Promise<void> {
-    return request.post(`/api/v2/lobby/${roomId}/markStarted`, {gameId, gameData});
   }
 }
 

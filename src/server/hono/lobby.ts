@@ -27,14 +27,15 @@ lobbyRoutes.post(
   createSafeHandler(async (c) => {
     const body = await c.req.json();
     const room = LobbyService.createRoom(body);
-    return {room};
+    return {room: LobbyService.toClientRoom(room, body.userId)};
   }),
 );
 
 lobbyRoutes.get(
   '/list',
-  createSafeHandler(() => {
-    const rooms = LobbyService.listRooms();
+  createSafeHandler((c) => {
+    const userId = c.req.query('userId');
+    const rooms = LobbyService.listRoomViews(userId);
     return {rooms};
   }),
 );
@@ -43,8 +44,9 @@ lobbyRoutes.get(
   '/:roomId',
   createSafeHandler((c) => {
     const roomId = requireRouteParam(c, 'roomId');
+    const userId = c.req.query('userId');
     const room = LobbyService.getRoom(roomId);
-    return {room};
+    return {room: LobbyService.toClientRoom(room, userId)};
   }),
 );
 
@@ -63,7 +65,7 @@ lobbyRoutes.post(
     const roomId = requireRouteParam(c, 'roomId');
     const body = await c.req.json();
     const room = LobbyService.joinRoom(roomId, body);
-    return {room};
+    return {room: LobbyService.toClientRoom(room, body.userId)};
   }),
 );
 
@@ -73,7 +75,7 @@ lobbyRoutes.post(
     const roomId = requireRouteParam(c, 'roomId');
     const body = await c.req.json();
     const room = LobbyService.leaveRoom(roomId, body.userId);
-    return {room, closed: room === null};
+    return {room: room === null ? null : LobbyService.toClientRoom(room, body.userId), closed: room === null};
   }),
 );
 
@@ -83,7 +85,7 @@ lobbyRoutes.post(
     const roomId = requireRouteParam(c, 'roomId');
     const body = await c.req.json();
     const room = LobbyService.kickPlayer(roomId, body);
-    return {room};
+    return {room: LobbyService.toClientRoom(room, body.userId)};
   }),
 );
 
@@ -93,7 +95,7 @@ lobbyRoutes.post(
     const roomId = requireRouteParam(c, 'roomId');
     const body = await c.req.json();
     const room = LobbyService.startConfirm(roomId, body.userId);
-    return {room};
+    return {room: LobbyService.toClientRoom(room, body.userId)};
   }),
 );
 
@@ -102,15 +104,8 @@ lobbyRoutes.post(
   createSafeHandler(async (c) => {
     const roomId = requireRouteParam(c, 'roomId');
     const body = await c.req.json();
-    const room = LobbyService.confirmReady(roomId, body.userId);
-
-    const allReady = LobbyService.isAllReady(roomId);
-    if (allReady) {
-      const gameConfig = LobbyService.buildNewGameConfig(roomId);
-      return {room, allReady: true, gameConfig};
-    }
-
-    return {room, allReady: false};
+    const room = await LobbyService.confirmReady(roomId, body.userId);
+    return {room: LobbyService.toClientRoom(room, body.userId)};
   }),
 );
 
@@ -118,15 +113,9 @@ lobbyRoutes.get(
   '/:roomId/poll',
   createSafeHandler((c) => {
     const roomId = requireRouteParam(c, 'roomId');
+    const userId = c.req.query('userId');
     const room = LobbyService.getRoom(roomId);
-    const allReady = room.players.every((p) => p.isReady);
-
-    let gameConfig = undefined;
-    if (allReady && LobbyService.isAllReady(roomId)) {
-      gameConfig = LobbyService.buildNewGameConfig(roomId);
-    }
-
-    return {room, allReady, gameConfig};
+    return {room: LobbyService.toClientRoom(room, userId)};
   }),
 );
 
@@ -136,7 +125,7 @@ lobbyRoutes.post(
     const roomId = requireRouteParam(c, 'roomId');
     const body = await c.req.json();
     const room = LobbyService.markStarted(roomId, body.gameId, body.gameData);
-    return {room};
+    return {room: LobbyService.toClientRoom(room, body.userId)};
   }),
 );
 

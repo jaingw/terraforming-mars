@@ -9,17 +9,21 @@ import {
   ELobbyRoomStatus,
   ILobbyPlayer,
   ILobbyRoom,
+  ILobbyRoomView,
   ICreateRoomRequest,
   IJoinRoomRequest,
   IKickPlayerRequest,
 } from '../../common/lobby/LobbyTypes';
 import {NewGameConfig, NewPlayerModel} from '../../common/game/NewGameConfig';
 import {ServiceError} from './ServiceError';
+import {ApiCreateGame} from '../routes/ApiCreateGame';
+import {GameLoader} from '../database/GameLoader';
+import {normalizeUserId} from '../../common/utils/normalizeUserId';
 
 /** 房间存储 */
 const rooms = new Map<string, ILobbyRoom>();
 const ROOM_CLEANUP_INTERVAL_MS = 30 * 60 * 1000;
-const NON_STARTED_ROOM_MAX_AGE_MS = 24 * 60 * 60 * 1000;
+const NON_STARTED_ROOM_MAX_AGE_MS = 3 * 60 * 60 * 1000;
 const FINISHED_PHASES = new Set(['end', 'timeout', 'abandon']);
 
 /** 自增 ID 计数器 */
@@ -37,6 +41,13 @@ function isFinishedStartedRoom(room: ILobbyRoom): boolean {
   return typeof phase === 'string' && FINISHED_PHASES.has(phase);
 }
 
+function isCurrentUser(player: ILobbyPlayer, currentUserId?: string | null): boolean {
+  return currentUserId !== undefined &&
+    currentUserId !== null &&
+    currentUserId !== '' &&
+    normalizeUserId(player.userId) === normalizeUserId(currentUserId);
+}
+
 /** 获取房间，不存在则抛异常 */
 function getRoom(roomId: string): ILobbyRoom {
   const room = rooms.get(roomId);
@@ -48,7 +59,7 @@ function getRoom(roomId: string): ILobbyRoom {
 
 /** 检查是否房主 */
 function assertOwner(room: ILobbyRoom, userId: string): void {
-  if (room.ownerId !== userId) {
+  if (normalizeUserId(room.ownerId) !== normalizeUserId(userId)) {
     throw new ServiceError(403, 'Only the room owner can perform this action');
   }
 }
@@ -128,6 +139,38 @@ export class LobbyService {
     return result;
   }
 
+  static toClientRoom(room: ILobbyRoom, currentUserId?: string | null): ILobbyRoomView {
+    const currentPlayer = room.players.find((player) => isCurrentUser(player, currentUserId));
+    // gameConfig去除players 以及userId
+    const {userId, ...gameConfig} = room.gameConfig as Omit<NewGameConfig, 'players'> & {userId?: string};
+    void userId;
+    return {
+      roomId: room.roomId,
+      ownerName: room.ownerName,
+      players: room.players.map((player) => ({
+        name: player.name,
+        color: player.color,
+        isOwner: player.isOwner,
+        isReady: player.isReady,
+        isCurrentUser: isCurrentUser(player, currentUserId),
+        rankValue: player.rankValue,
+      })),
+      isOwner: currentPlayer?.isOwner ?? false,
+      isCurrentUserInRoom: currentPlayer !== undefined,
+      currentUserReady: currentPlayer?.isReady ?? false,
+      gameConfig,
+      status: room.status,
+      maxPlayers: room.maxPlayers,
+      createdAt: room.createdAt,
+      gameId: room.gameId,
+      gameData: room.gameData,
+    };
+  }
+
+  static listRoomViews(currentUserId?: string | null): Array<ILobbyRoomView> {
+    return this.listRooms().map((room) => this.toClientRoom(room, currentUserId));
+  }
+
   /**
    * 获取房间详情
    */
@@ -150,7 +193,8 @@ export class LobbyService {
     }
 
     // 检查是否已在房间中
-    if (room.players.some((p) => p.userId === req.userId)) {
+    const normalizedUserId = normalizeUserId(req.userId);
+    if (room.players.some((p) => normalizeUserId(p.userId) === normalizedUserId)) {
       throw new ServiceError(400, 'You are already in this room');
     }
 
@@ -183,16 +227,17 @@ export class LobbyService {
    */
   static leaveRoom(roomId: string, userId: string): ILobbyRoom | null {
     const room = getRoom(roomId);
+    const normalizedUserId = normalizeUserId(userId);
 
     // 房主离开 = 关闭房间
-    if (room.ownerId === userId) {
+    if (normalizeUserId(room.ownerId) === normalizedUserId) {
       room.status = ELobbyRoomStatus.CLOSED;
       rooms.delete(roomId);
       console.log(`[Lobby] Owner ${userId} left room ${roomId}, room closed`);
       return null;
     }
 
-    const idx = room.players.findIndex((p) => p.userId === userId);
+    const idx = room.players.findIndex((p) => normalizeUserId(p.userId) === normalizedUserId);
     if (idx === -1) {
       throw new ServiceError(400, 'You are not in this room');
     }
@@ -221,11 +266,22 @@ export class LobbyService {
     const room = getRoom(roomId);
     assertOwner(room, req.userId);
 
-    if (req.targetUserId === req.userId) {
+    const normalizedUserId = normalizeUserId(req.userId);
+    if (req.targetUserName === undefined || req.targetUserName === '') {
+      throw new ServiceError(400, 'Missing target user name');
+    }
+
+    const target = room.players.find((p) => p.name === req.targetUserName);
+    if (target === undefined) {
+      throw new ServiceError(404, 'Target player not found in room');
+    }
+
+    const normalizedTargetUserId = normalizeUserId(target.userId);
+    if (normalizedTargetUserId === normalizedUserId) {
       throw new ServiceError(400, 'Cannot kick yourself');
     }
 
-    const idx = room.players.findIndex((p) => p.userId === req.targetUserId);
+    const idx = room.players.findIndex((p) => p.name === req.targetUserName);
     if (idx === -1) {
       throw new ServiceError(404, 'Target player not found in room');
     }
@@ -242,7 +298,7 @@ export class LobbyService {
       }
     }
 
-    console.log(`[Lobby] Owner kicked ${req.targetUserId} from room ${roomId}`);
+    console.log(`[Lobby] Owner kicked ${req.targetUserName} from room ${roomId}`);
     return room;
   }
 
@@ -278,20 +334,29 @@ export class LobbyService {
   /**
    * 玩家确认准备
    */
-  static confirmReady(roomId: string, userId: string): ILobbyRoom {
+  static async confirmReady(roomId: string, userId: string): Promise<ILobbyRoom> {
     const room = getRoom(roomId);
 
     if (room.status !== ELobbyRoomStatus.CONFIRMING) {
       throw new ServiceError(400, 'Room is not in confirming state');
     }
 
-    const player = room.players.find((p) => p.userId === userId);
+    const normalizedUserId = normalizeUserId(userId);
+    const player = room.players.find((p) => normalizeUserId(p.userId) === normalizedUserId);
     if (!player) {
       throw new ServiceError(404, 'Player not found in room');
     }
 
     player.isReady = true;
     console.log(`[Lobby] ${userId} confirmed ready in room ${roomId}`);
+
+    if (this.isAllReady(roomId)) {
+      const gameConfig = this.buildNewGameConfig(roomId);
+      const gameData = await ApiCreateGame.createGame(gameConfig, GameLoader.getInstance());
+      this.markStarted(roomId, gameData.id, gameData);
+      console.log(`[Lobby] Room ${roomId} auto-started after all players confirmed`);
+    }
+
     return room;
   }
 
@@ -345,7 +410,7 @@ export class LobbyService {
     // 五分钟后从内存中移除（给玩家足够时间看到跳转链接）
     setTimeout(() => {
       rooms.delete(roomId);
-    }, 5 * 60_000);
+    }, 5 * 60_000).unref();
 
     return room;
   }
@@ -359,7 +424,7 @@ export class LobbyService {
   }
 
   /**
-   * 清理超时房间（超过 1 天且未启动的房间）
+   * 清理超时房间（超过 3 小时且未启动的房间）
    */
   static cleanup(): number {
     const now = Date.now();
@@ -378,4 +443,4 @@ export class LobbyService {
 }
 
 // 每 30 分钟清理一次过期房间
-setInterval(() => LobbyService.cleanup(), ROOM_CLEANUP_INTERVAL_MS);
+setInterval(() => LobbyService.cleanup(), ROOM_CLEANUP_INTERVAL_MS).unref();

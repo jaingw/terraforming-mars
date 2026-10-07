@@ -1,192 +1,230 @@
 <template>
-<div :class="'sidebar_cont sidebar '+getSideBarClass()">
-  <div class="tm" :title="$t('Generation Marker')">
-    <div class="gen-text" v-i18n>GEN</div>
-    <div class="gen-marker">{{ getGenMarker() }}</div>
-  </div>
-  <div v-if="gameOptions.expansions.turmoil" :title="$t('Ruling Party')">
-    <div :class="'party-name party-name-indicator party-name--'+rulingPartyToCss()"> <span v-i18n>{{ getRulingParty() }}</span></div>
-  </div>
-  <div class="global_params">
-    <global-parameter-value :param="this.globalParameter.TEMPERATURE" :value="this.temperature"></global-parameter-value>
-    <global-parameter-value :param="this.globalParameter.OXYGEN" :value="this.oxygen"></global-parameter-value>
-    <global-parameter-value :param="this.globalParameter.OCEANS" :value="this.oceans"></global-parameter-value>
-    <global-parameter-value v-if="gameOptions.expansions.venus" :param="this.globalParameter.VENUS" :value="this.venus"></global-parameter-value>
-    <MoonGlobalParameterValue v-if="gameOptions.expansions.moon" :moonData="this.moonData"></MoonGlobalParameterValue>
-  </div>
-  <div class="sidebar_item preferences_player" :title="$t('Player Color Cube')">
-    <div :class="getPlayerColorCubeClass()+' player_bg_color_' + player_color"></div>
-  </div>
-  <a  href="/donate" target="_blank">
+  <div ref="sidebar-root" :class="'sidebar_cont sidebar '+getSideBarClass()">
+    <div class="tm" :title="$t('Generation Marker')">
+      <div class="gen-text" v-i18n>GEN</div>
+      <div class="gen-marker">{{ getGenMarker() }}</div>
+    </div>
+    <div v-if="gameOptions.expansions.turmoil" :title="$t('Ruling Party')">
+      <div :class="'party-name party-name-indicator party-name--'+rulingPartyToCss()"> <span v-i18n>{{ getRulingParty() }}</span></div>
+    </div>
+    <div class="global_params">
+      <global-parameter-value :param="globalParameter.TEMPERATURE" :value="temperature"></global-parameter-value>
+      <global-parameter-value :param="globalParameter.OXYGEN" :value="oxygen"></global-parameter-value>
+      <global-parameter-value :param="globalParameter.OCEANS" :value="oceans"></global-parameter-value>
+      <global-parameter-value v-if="gameOptions.expansions.venus" :param="globalParameter.VENUS" :value="venus"></global-parameter-value>
+      <MoonGlobalParameterValue v-if="moonData" :moonData="moonData"></MoonGlobalParameterValue>
+    </div>
+    <div class="sidebar_item preferences_player" :title="$t('Player Color Cube')">
+      <div :class="getPlayerColorCubeClass()+' player_bg_color_' + player_color"></div>
+    </div>
+    <a href="/donate" target="_blank">
       <div class="sidebar_item sidebar_item_shortcut">
-          <i class="sidebar_icon sidebar_icon--donate"><div class="deck-size">赞助</div></i>
+        <i class="sidebar_icon sidebar_icon--donate"><div class="deck-size">赞助</div></i>
       </div>
-  </a>
-  <a  v-if="gameOptions.rankOption" href="#quit_panel" style="position: relative;">
+    </a>
+    <a  v-if="gameOptions.rankOption" href="#quit_panel" style="position: relative;">
       <div class="sidebar_item sidebar_item_shortcut">
-          <i class="sidebar_icon sidebar_icon--quit"  v-on:click="quitPanelOpen">
-            <div class="deck-size" v-i18n>Quit</div>
-          </i>
+        <i class="sidebar_icon sidebar_icon--quit"  v-on:click="quitPanelOpen">
+          <div class="deck-size" v-i18n>Quit</div>
+        </i>
       </div>
-    <div v-if="ui.quit_panel_open" class="resign_panel" id="quit_panel">
-      <div class="rounded-md bg-gray-500 w-72 my-4 text-center text-md p-2" v-i18n>
-        <div class="text-lg text-yellow-400 font-bold">{{ $t('Ask for Quit: (') +  quitPlayers.length + $t(' Players)') }}</div>
-        <div class="flex items-center justify-center">
-          <div v-for="(p, i) of quitPlayers" :key="i" :class="'mx-2 preferences_player_inner player_bg_color_' + p.toString()"></div>
+      <div v-if="ui.quit_panel_open" class="resign_panel" id="quit_panel">
+        <div class="rounded-md bg-gray-500 w-72 my-4 text-center text-md p-2" v-i18n>
+          <div class="text-lg text-yellow-400 font-bold">{{ $t('Ask for Quit: (') +  quitPlayers.length + $t(' Players)') }}</div>
+          <div class="flex items-center justify-center">
+            <div v-for="(p, i) of quitPlayers" :key="i" :class="'mx-2 preferences_player_inner player_bg_color_' + p.toString()"></div>
+          </div>
+        </div>
+        <div class="w-72 my-4 text-center text-md" v-i18n>
+          如果所有玩家均选择退出
+          <br/>
+          则游戏会被放弃
+          <br/>
+          所有玩家段位保持不变
+        </div>
+        <div class="preferences_panel_actions">
+          <button class="btn btn-lg btn-primary" v-on:click="resignWait" v-if="!ui.resign_wait && ui.canquit" v-i18n>Quit!{{ui.resign_time}}</button>
+          <button class="btn btn-lg btn-primary" v-on:click="quit" v-if="ui.resign_wait" v-i18n>Confirm</button>
         </div>
       </div>
-      <div class="w-72 my-4 text-center text-md" v-i18n>
-        如果所有玩家均选择退出
-        <br/>
-        则游戏会被放弃
-        <br/>
-        所有玩家段位保持不变
-      </div>
-      <div class="preferences_panel_actions">
-        <button class="btn btn-lg btn-primary" v-on:click="resignWait" v-if="!ui.resign_wait && ui.canquit" v-i18n>Quit!{{ui.resign_time}}</button>
-        <button class="btn btn-lg btn-primary" v-on:click="quit" v-if="ui.resign_wait" v-i18n>Confirm</button>
-      </div>
-    </div>
-  </a>
-  <a  v-if="!gameOptions.rankOption || this.players === 2" href="#resign_panel" style="position: relative;">
-    <div class="sidebar_item sidebar_item_shortcut">
-      <i class="sidebar_icon sidebar_icon--resign"  v-on:click="resignPanelOpen">
-        <div class="deck-size">体退</div>
-      </i>
-    </div>
-    <div v-if="ui.resign_panel_open" class="resign_panel" id="resign_panel">
-      <div class="preferences_panel_item form-group">
-        体退功能必须满足以下条件：
-        <li> 用户已登录且为赞助用户</li>
-        <li> 游戏处于行动阶段</li>
-        <li> 剩余玩家人数至少2人</li>
-        <li> 玩家当前回合才能体退</li>
-        <li> 玩家名称未注册 或者 本人登录</li>
-        <li v-if="gameOptions.rankOption">二人游戏且时代数不小于5</li>
-        <br />
-      </div>
-      <div style="padding: 10px;border-top: dashed;">玩家只剩1人时不能再获得新的里程牌<br>以及设立奖项</div>
-      <div class="preferences_panel_actions">
-        <button class="btn btn-lg btn-primary" v-on:click="resignWait" v-if="!ui.resign_wait && ui.canresign" >我要体退！{{ui.resign_time}}</button>
-        <button class="btn btn-lg btn-primary" v-on:click="resign" v-if="ui.resign_wait" >确认体退</button>
-      </div>
-    </div>
-  </a>
-  <a href="#board" :title="$t('Jump to board')">
+    </a>
+    <a  v-if="!gameOptions.rankOption || players === 2" href="#resign_panel" style="position: relative;">
       <div class="sidebar_item sidebar_item_shortcut">
-          <i class="sidebar_icon sidebar_icon--board"></i>
+        <i class="sidebar_icon sidebar_icon--resign"  v-on:click="resignPanelOpen">
+          <div class="deck-size">体退</div>
+        </i>
       </div>
-  </a>
-  <a href="#actions" :title="$t('Jump to actions')">
+      <div v-if="ui.resign_panel_open" class="resign_panel" id="resign_panel">
+        <div class="preferences_panel_item form-group">
+          体退功能必须满足以下条件：
+          <li> 用户已登录且为赞助用户</li>
+          <li> 游戏处于行动阶段</li>
+          <li> 剩余玩家人数至少2人</li>
+          <li> 玩家当前回合才能体退</li>
+          <li> 玩家名称未注册 或者 本人登录</li>
+          <li v-if="gameOptions.rankOption">二人游戏且时代数不小于5</li>
+          <br />
+        </div>
+        <div style="padding: 10px;border-top: dashed;">玩家只剩1人时不能再获得新的里程牌<br>以及设立奖项</div>
+        <div class="preferences_panel_actions">
+          <button class="btn btn-lg btn-primary" v-on:click="resignWait" v-if="!ui.resign_wait && ui.canresign" >我要体退！{{ui.resign_time}}</button>
+          <button class="btn btn-lg btn-primary" v-on:click="resign" v-if="ui.resign_wait" >确认体退</button>
+        </div>
+      </div>
+    </a>
+    <a href="#board" :title="$t('Jump to board')">
       <div class="sidebar_item sidebar_item_shortcut">
-          <i class="sidebar_icon sidebar_icon--actions"></i>
+        <i class="sidebar_icon sidebar_icon--board"></i>
       </div>
-  </a>
-  <a href="#cards" :title="$t('Jump to cards')">
-      <div class="sidebar_item goto-cards sidebar_item_shortcut">
-          <i class="sidebar_icon sidebar_icon--cards"><slot></slot></i>
-      </div>
-  </a>
-  <a v-if="coloniesCount > 0" href="#colonies" :title="$t('Jump to colonies')">
+    </a>
+    <a href="#actions" :title="$t('Jump to actions')">
       <div class="sidebar_item sidebar_item_shortcut">
-          <i class="sidebar_icon sidebar_icon--colonies"></i>
+        <i class="sidebar_icon sidebar_icon--actions"></i>
       </div>
-  </a>
+    </a>
+    <a href="#cards" :title="$t('Jump to cards')">
+      <div class="sidebar_item goto-cards sidebar_item_shortcut-long">
+        <i class="sidebar_icon sidebar_icon--cards">
+          <div class="deck-size">🂠{{ deckSize }}<br>🗑{{ discardPileSize }}</div>
+        </i>
+      </div>
+    </a>
+    <a v-if="coloniesCount > 0" href="#colonies" :title="$t('Jump to colonies')">
+      <div class="sidebar_item sidebar_item_shortcut">
+        <i class="sidebar_icon sidebar_icon--colonies"></i>
+      </div>
+    </a>
 
-  <language-icon></language-icon>
+    <div class="sidebar_footer" :class="{'sidebar_footer--compact': footerToolsCompact}">
+      <div
+        v-if="footerToolsCompact"
+        class="sidebar_item sidebar_item--footer-toggle"
+        v-on:click="toggleFooterTools"
+        :title="footerToolsExpanded ? $t('Collapse footer tools') : $t('More sidebar tools')">
+        <i
+          class="sidebar_icon sidebar_icon--footer-toggle fas"
+          :class="footerToolsExpanded ? 'fa-chevron-down' : 'fa-ellipsis-h'"></i>
+      </div>
 
-  <div class="sidebar_item sidebar_item--info" :title="$t('Information panel')">
-    <i class="sidebar_icon sidebar_icon--info"
-      :class="{'sidebar_item--is-active': ui.gamesetup_detail_open}"
-      v-on:click="ui.gamesetup_detail_open = !ui.gamesetup_detail_open"
-      :title="$t('game setup details')"></i>
-    <div class="info_panel" v-if="ui.gamesetup_detail_open">
-      <div class="info_panel-spacing"></div>
-      <div class="info-panel-title" v-i18n>Game Setup Details</div>
-      <game-setup-detail :gameOptions="gameOptions" :playerNumber="playerNumber" :lastSoloGeneration="lastSoloGeneration"></game-setup-detail>
+      <div v-show="!footerToolsCompact || footerToolsExpanded" ref="sidebar-footer-tools" class="sidebar_footer_tools">
+        <language-icon></language-icon>
 
-      <div class="info_panel_actions">
-        <button class="btn btn-lg btn-primary" v-on:click="ui.gamesetup_detail_open=false" v-i18n>Ok</button>
+        <div class="sidebar_item sidebar_item--info" :title="$t('Information panel')">
+          <i class="sidebar_icon sidebar_icon--info"
+             :class="{'sidebar_item--is-active': ui.gamesetup_detail_open}"
+             v-on:click="ui.gamesetup_detail_open = !ui.gamesetup_detail_open"
+             :title="$t('game setup details')"></i>
+          <div class="info_panel" v-if="ui.gamesetup_detail_open">
+            <div class="info_panel-spacing"></div>
+            <div class="info-panel-title" v-i18n>Game Setup Details</div>
+            <game-setup-detail :gameOptions="gameOptions" :playerNumber="playerNumber" :lastSoloGeneration="lastSoloGeneration"></game-setup-detail>
+
+            <div class="info_panel_actions">
+              <button class="btn btn-lg btn-primary" v-on:click="ui.gamesetup_detail_open=false" v-i18n>Ok</button>
+            </div>
+          </div>
+        </div>
+
+        <a href="help" target="_blank">
+          <div class="sidebar_item sidebar_item--help">
+            <i class="sidebar_icon sidebar_icon--help" :title="$t('player aid')"></i>
+          </div>
+        </a>
+
+        <preferences-icon @preferencesPanelOpen="preferencesPanelOpen" ref='preferences-icon'></preferences-icon>
       </div>
     </div>
   </div>
-
-  <a href="help" target="_blank">
-    <div class="sidebar_item sidebar_item--help">
-      <i class="sidebar_icon sidebar_icon--help" :title="$t('player aid')"></i>
-    </div>
-  </a>
-
-  <preferences-icon @preferencesPanelOpen="preferencesPanelOpen"  ref='preferences-icon'></preferences-icon>
-</div>
 </template>
 
 <script lang="ts">
 
-import Vue from 'vue';
+import {defineComponent, type PropType} from 'vue';
 import {Color} from '@/common/Color';
 import {getPreferences, PreferencesManager} from '@/client/utils/PreferencesManager';
 import {TurmoilModel} from '@/common/models/TurmoilModel';
 import {PartyName} from '@/common/turmoil/PartyName';
 import GameSetupDetail from '@/client/components/GameSetupDetail.vue';
+import {GameOptionsModel} from '@/common/models/GameOptionsModel';
 import GlobalParameterValue from '@/client/components/GlobalParameterValue.vue';
 import MoonGlobalParameterValue from '@/client/components/moon/MoonGlobalParameterValue.vue';
 import {GlobalParameter} from '@/common/GlobalParameter';
 import {MoonModel} from '@/common/models/MoonModel';
 import PreferencesIcon from '@/client/components/PreferencesIcon.vue';
 import {mainAppSettings} from '@/client/components/App';
-import {PlayerViewModel} from '@/common/models/PlayerModel';
+import {PlayerViewModel, ViewModel} from '@/common/models/PlayerModel';
 import LanguageIcon from '@/client/components/LanguageIcon.vue';
 import {Timer} from '@/common/Timer';
 import {Phase} from '@/common/Phase';
-import {GameOptions} from '../../server/game/GameOptions';
 import {showError} from '../utils/showAlert';
 
-let ui_timeout_id : number;
-export default Vue.extend({
+export type SidebarViewModel = ViewModel & Partial<PlayerViewModel>;
+
+let ui_timeout_id: number;
+const FOOTER_TOOLS_HEIGHT = 228;
+export default defineComponent({
   name: 'sidebar',
   props: {
     playerNumber: {
       type: Number,
+      required: true,
     },
     gameOptions: {
-      type: Object as () => GameOptions,
+      type: Object as PropType<GameOptionsModel>,
+      required: true,
     },
     playerView: {
-      type: Object as () => PlayerViewModel,
+      type: Object as PropType<SidebarViewModel>,
+      required: true,
     },
     acting_player: {
       type: Boolean,
     },
     player_color: {
       type: String as () => Color,
+      required: true,
     },
     generation: {
       type: Number,
+      required: true,
     },
     coloniesCount: {
       type: Number,
+      required: true,
     },
     temperature: {
       type: Number,
+      required: true,
     },
     oxygen: {
       type: Number,
+      required: true,
     },
     oceans: {
       type: Number,
+      required: true,
     },
     venus: {
       type: Number,
+      required: true,
     },
     moonData: {
-      type: Object as () => MoonModel,
+      type: Object as () => MoonModel | undefined,
     },
     turmoil: {
-      type: Object as () => TurmoilModel || undefined,
+      type: Object as () => TurmoilModel | undefined,
     },
     lastSoloGeneration: {
       type: Number,
+      required: true,
+    },
+    deckSize: {
+      type: Number,
+      required: true,
+    },
+    discardPileSize: {
+      type: Number,
+      required: true,
     },
   },
   components: {
@@ -210,12 +248,35 @@ export default Vue.extend({
       },
       'globalParameter': GlobalParameter,
       'phase': this.playerView?.game.phase,
-      'quitPlayers': this.playerView?.game.quitPlayers,
-      'players': this.playerView?.players.length,
+      'quitPlayers': this.playerView?.game.quitPlayers ?? [],
+      'players': this.playerView?.players.length ?? 0,
+      'footerToolsCompact': false,
+      'footerToolsExpanded': false,
     };
   },
   methods: {
-    preferencesPanelOpen: function(set: Boolean | undefined) :void {
+    updateFooterMode(): void {
+      const root = this.$refs['sidebar-root'] as HTMLElement | undefined;
+      const tools = this.$refs['sidebar-footer-tools'] as HTMLElement | undefined;
+      if (root === undefined || tools === undefined) {
+        return;
+      }
+      const hasTallViewport = window.innerHeight >= 1040;
+      const footer = root.querySelector('.sidebar_footer') as HTMLElement | null;
+      const nonFooterChildren = Array.from(root.children).filter((child) => child !== footer) as HTMLElement[];
+      const contentBottom = nonFooterChildren.reduce((max, child) => Math.max(max, child.offsetTop + child.offsetHeight), 0);
+      const compact = !hasTallViewport && contentBottom + FOOTER_TOOLS_HEIGHT + 8 > root.clientHeight;
+      if (this.footerToolsCompact !== compact) {
+        this.footerToolsCompact = compact;
+      }
+      if (!compact && this.footerToolsExpanded) {
+        this.footerToolsExpanded = false;
+      }
+    },
+    toggleFooterTools(): void {
+      this.footerToolsExpanded = !this.footerToolsExpanded;
+    },
+    preferencesPanelOpen(set: boolean | undefined): void {
       this.ui.resign_panel_open = false;
       this.ui.quit_panel_open = false;
       this.ui.resign_wait = false;
@@ -224,41 +285,39 @@ export default Vue.extend({
       clearInterval(ui_timeout_id);
       if (set === false) {
         this.ui.preferences_panel_open = false;
+        this.footerToolsExpanded = false;
       } else {
         this.ui.preferences_panel_open = !this.ui.preferences_panel_open;
       }
-      // (this.$refs['preferences-icon'] as any).preferences_panel_open = this.ui.preferences_panel_open;
     },
-    resignPanelOpen: function(): void {
+    resignPanelOpen(): void {
       const ui = this.ui;
       ui.preferences_panel_open = false;
       (this.$refs['preferences-icon'] as any).preferences_panel_open = false;
-      //
       clearInterval(ui_timeout_id);
       ui.quit_panel_open = false;
-      ui.resign_panel_open = ! ui.resign_panel_open;
+      ui.resign_panel_open = !ui.resign_panel_open;
       ui.resign_wait = false;
       ui.resign_time = '';
     },
-    quitPanelOpen: function(): void {
+    quitPanelOpen(): void {
       const ui = this.ui;
       ui.preferences_panel_open = false;
       (this.$refs['preferences-icon'] as any).preferences_panel_open = false;
-      //
       clearInterval(ui_timeout_id);
       ui.resign_panel_open = false;
-      ui.quit_panel_open = ! ui.quit_panel_open;
+      ui.quit_panel_open = !ui.quit_panel_open;
       ui.resign_wait = false;
       ui.resign_time = '';
     },
-    resignWait: function():void {
+    resignWait(): void {
       this.ui.resign_time = '(3s)';
       let wait_time = 3;
       clearInterval(ui_timeout_id);
-      const resignWaitTime = ()=> {
-        if (wait_time > 1 ) {
+      const resignWaitTime = () => {
+        if (wait_time > 1) {
           wait_time = wait_time - 1;
-          this.ui.resign_time = '('+ wait_time +'s)';
+          this.ui.resign_time = `(${wait_time}s)`;
         } else {
           clearInterval(ui_timeout_id);
           this.ui.resign_wait = true;
@@ -266,7 +325,7 @@ export default Vue.extend({
       };
       ui_timeout_id = (setInterval(resignWaitTime, 1000) as any);
     },
-    resign: function():void {
+    resign(): void {
       const userId = PreferencesManager.load('userId');
       this.resignPanelOpen();
       if (userId === '') {
@@ -278,53 +337,45 @@ export default Vue.extend({
       xhr.responseType = 'json';
       xhr.onload = () => {
         if (xhr.status === 200) {
-          const root = this.$root.$data as unknown as typeof mainAppSettings.data;
+          const root = (this.$root!.$data) as unknown as typeof mainAppSettings.data;
           root.screen = 'empty';
           root.playerView = xhr.response;
-          root.playerkey++;
+          root.playerkey += 1;
           root.screen = 'player-home';
           if ((root.playerView?.game.phase === Phase.END || root.playerView?.game.phase === Phase.TIMEOUT || root.playerView?.game.phase === Phase.ABANDON) && window.location.pathname !== '/the-end') {
             (window as any).location = (window as any).location;
           }
         } else if (xhr.status === 400 && xhr.responseType === 'json') {
           const root = this.$root as unknown as typeof mainAppSettings.methods;
-          root.showAlert( xhr.response.message || '', () =>{});
+          root.showAlert(xhr.response.message || 'Unexpected server response', () => {});
         } else {
           showError('Error sending input');
         }
       };
-      const senddata ={'playerId': this.playerView.id, 'userId': userId};
+      const senddata = {'playerId': this.playerView.id, 'userId': userId};
       xhr.send(JSON.stringify(senddata));
     },
-    endGameForTimeOut: function():void {
+    endGameForTimeOut(): void {
       const userId = PreferencesManager.load('userId');
-      // this.resignPanelOpen();
-      // if (userId === '') {
-      //   this.resignPanelOpen();
-      //   return;
-      // }
       const xhr = new XMLHttpRequest();
       xhr.open('POST', 'player/endgame');
       xhr.responseType = 'json';
       xhr.onload = () => {
         if (xhr.status === 200) {
-          const root = this.$root.$data as unknown as typeof mainAppSettings.data;
+          const root = (this.$root!.$data) as unknown as typeof mainAppSettings.data;
           if ((root.playerView?.game.phase === Phase.END || root.playerView?.game.phase === Phase.TIMEOUT || root.playerView?.game.phase === Phase.ABANDON) && window.location.pathname !== '/the-end') {
             (window as any).location = (window as any).location;
           }
         }
-        // else if (xhr.status === 400 && xhr.responseType === 'json') {
-        //   root.showAlert( xhr.response.message || '', () =>{});
-        // } else {
-        //   alert('Error sending input');
-        // }
       };
-      const senddata ={'playerId': this.playerView.id, 'userId': userId};
+      const senddata = {'playerId': this.playerView.id, 'userId': userId};
       xhr.send(JSON.stringify(senddata));
     },
-    timeOutCheck: function(): void {
+    timeOutCheck(): void {
       const rankOption = this.gameOptions.rankOption;
-      if (!rankOption) return;
+      if (!rankOption) {
+        return;
+      }
       const finalRankTimeLimit = Number(this.gameOptions.rankTimeLimit) + Number(this.gameOptions.rankTimePerGeneration) * Math.max(Number(this.generation) - 1, 0);
       const phase = this.playerView.game.phase;
       console.log('运行超时检查', 'phase: ', phase, 'generation: ', this.generation, '基础时间：', this.gameOptions.rankTimeLimit, '总时间: ', finalRankTimeLimit);
@@ -338,7 +389,7 @@ export default Vue.extend({
         }
       }
     },
-    quit: function():void {
+    quit(): void {
       const userId = PreferencesManager.load('userId');
       this.quitPanelOpen();
       if (userId === '') {
@@ -355,13 +406,8 @@ export default Vue.extend({
             (window as any).location = (window as any).location;
           }
         }
-        // else if (xhr.status === 400 && xhr.responseType === 'json') {
-        //   root.showAlert( xhr.response.message || '', () =>{});
-        // } else {
-        //   alert('Error sending input');
-        // }
       };
-      const senddata ={'playerId': this.playerView.id, 'userId': userId};
+      const senddata = {'playerId': this.playerView.id, 'userId': userId};
       xhr.send(JSON.stringify(senddata));
     },
     getPlayerColorCubeClass(): string {
@@ -374,14 +420,15 @@ export default Vue.extend({
       return `${this.generation}`;
     },
     rulingPartyToCss(): string {
-      if (this.turmoil.ruling === undefined) {
+      if (this.turmoil?.ruling === undefined) {
         console.warn('no party provided');
         return '';
       }
       return this.turmoil.ruling.toLowerCase().split(' ').join('_');
     },
     getRulingParty(): string {
-      switch (this.turmoil.ruling) {
+      const ruling = this.turmoil?.ruling;
+      switch (ruling) {
       case PartyName.MARS:
         return 'Mars';
       case PartyName.SCIENTISTS:
@@ -391,25 +438,31 @@ export default Vue.extend({
       case undefined:
         return '???';
       default:
-        return this.turmoil.ruling;
+        return ruling;
       }
     },
   },
-  mounted: function() {
-    //    this.updatePreferencesFromStorage();
-    this.ui.canresign = this.playerView.canExit &&
-            (this.$root as any).isvip &&
-            this.playerView.block === false &&
-            (!this.gameOptions.rankOption || (this.players === 2 && this.generation >= 1)); // 如果是排名模式2人局，打到5时代才能体退
-    this.ui.canquit = this.playerView.block === false && !this.isGameEnd && !this.quitPlayers.includes(this.player_color); // 只要是对应玩家就可以申请退出
-    if (!this.isGameEnd) setTimeout(this.timeOutCheck, 1000);
-    console.log('检查是否能体退', this.gameOptions.rankOption, this.players === 2);
+  mounted() {
+    this.ui.canresign = !!this.playerView.canExit &&
+      !!(this.$root as any).isvip &&
+      this.playerView.role !== 'other' &&
+      (!this.gameOptions.rankOption || (this.players === 2 && this.generation >= 1));
+    this.ui.canquit = this.playerView.role !== 'other' && !this.isGameEnd && !this.quitPlayers.includes(this.player_color);
+    if (!this.isGameEnd) {
+      setTimeout(this.timeOutCheck, 1000);
+    }
+    window.addEventListener('resize', this.updateFooterMode);
+    this.$nextTick(() => this.updateFooterMode());
+    // console.log('检查是否能体退', this.gameOptions.rankOption, this.players === 2);
+  },
+  beforeUnmount() {
+    window.removeEventListener('resize', this.updateFooterMode);
   },
   computed: {
     preferencesManager(): PreferencesManager {
       return PreferencesManager.INSTANCE;
     },
-    isGameEnd() {
+    isGameEnd(): boolean {
       return (this.phase === Phase.END || this.phase === Phase.ABANDON || this.phase === Phase.TIMEOUT);
     },
   },

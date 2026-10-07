@@ -3,6 +3,7 @@ import {RandomMAOptionType} from '../ma/RandomMAOptionType';
 import {AgendaStyle} from '../turmoil/Types';
 import {CardName} from '../cards/CardName';
 import {Expansion} from '../cards/GameModule';
+import {EscapeVelocityOptions} from '../game/NewGameConfig';
 
 export interface GameOptionsModel {
   aresExtremeVariant: boolean,
@@ -11,11 +12,7 @@ export interface GameOptionsModel {
   bannedCards: ReadonlyArray<CardName>;
   expansions: Record<Expansion, boolean>,
   draftVariant: boolean,
-  escapeVelocityMode: boolean,
-  escapeVelocityThreshold?: number,
-  escapeVelocityBonusSeconds?: number,
-  escapeVelocityPeriod?: number,
-  escapeVelocityPenalty?: number,
+  escapeVelocity?: EscapeVelocityOptions,
   fastModeOption: boolean,
   includedCards: ReadonlyArray<CardName>;
   includeFanMA: boolean,
@@ -32,7 +29,6 @@ export interface GameOptionsModel {
   randomMA: RandomMAOptionType,
   requiresMoonTrackCompletion: boolean,
   requiresVenusTrackCompletion: boolean,
-  // twoCorpsVariant: boolean,
   undoOption: boolean,
   rankOption: boolean; // 天梯
   rankTimeLimit?: number; // 天梯 玩家超时限制

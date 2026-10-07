@@ -54,7 +54,9 @@ export class Eris extends CorporationCard {
     const availableSpaces = this.getAvailableSpaces(player, game);
     const hazardSpaces = this.getAllUnprotectedHazardSpaces(game);
 
-    if (availableSpaces.length === 0 && hazardSpaces.length === 0) return false;
+    if (availableSpaces.length === 0 && hazardSpaces.length === 0) {
+      return false;
+    }
     return true;
   }
 
@@ -88,7 +90,9 @@ export class Eris extends CorporationCard {
       }));
     }
 
-    if (orOptions.options.length === 1) return orOptions.options[0].cb();
+    if (orOptions.options.length === 1) {
+      return orOptions.options[0].cb();
+    }
     return orOptions;
   }
 

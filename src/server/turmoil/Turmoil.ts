@@ -23,10 +23,9 @@ import {KELVINISTS_POLICY_1, Kelvinists} from './parties/Kelvinists';
 import {REDS_POLICY_1, Reds} from './parties/Reds';
 import {SCIENTISTS_POLICY_1, Scientists} from './parties/Scientists';
 import {UNITY_POLICY_1, Unity} from './parties/Unity';
+import {getPoliticalReformPartyName, getPoliticalReformPolicyId} from './PoliticalReformData';
 export type NeutralPlayer = 'NEUTRAL';
 export type Delegate = IPlayer | NeutralPlayer;
-
-export type PartyFactory = new() => IParty;
 
 export function getDefaultPolicy(partName: PartyName): IPolicy {
   switch (partName) {
@@ -61,7 +60,7 @@ export class Turmoil {
   public usedFreeDelegateAction = new Set<IPlayer>();
   public delegateReserve = new MultiSet<Delegate>();
   public parties = createParties();
-  public playersInfluenceBonus = new Map<string, number>();
+  public playersInfluenceBonus = new Map<PlayerId, number>();
   public readonly globalEventDealer: GlobalEventDealer;
   public distantGlobalEvent: IGlobalEvent | undefined;
   public comingGlobalEvent: IGlobalEvent | undefined;
@@ -121,14 +120,18 @@ export class Turmoil {
     return party;
   }
 
-  rulingPolicy(): IPolicy {
-    const rulingParty = this.rulingParty;
-    const rulingPolicyId: PolicyId = PoliticalAgendas.currentAgenda(this).policyId;
-    const policy = rulingParty.policies.find((policy) => policy.id === rulingPolicyId);
+  public getPolicyByPartyName(partyName: PartyName): IPolicy {
+    const party = this.getPartyByName(partyName);
+    const policyId: PolicyId = PoliticalAgendas.getAgenda(this, partyName).policyId;
+    const policy = party.policies.find((candidate) => candidate.id === policyId);
     if (policy === undefined) {
-      throw new Error(`Policy ${rulingPolicyId} not found in ${rulingParty.name}`);
+      throw new Error(`Policy ${policyId} not found in ${party.name}`);
     }
     return policy;
+  }
+
+  rulingPolicy(): IPolicy {
+    return this.getPolicyByPartyName(this.rulingParty.name);
   }
 
   public sendDelegateToParty(delegate: Delegate, partyName: PartyName, game: IGame, throwIfError = false): void {
@@ -158,10 +161,9 @@ export class Turmoil {
     if (isIPlayer(delegate)) {
       const corp = delegate.playedCards.get(CardName.POLITICALREFORM);
       if (corp !== undefined && corp.data === undefined && this.rulingParty !== party) {
-        corp.data = party.name;
-        if (party.name === PartyName.UNITY) {
-          delegate.increaseTitaniumValue();
-        }
+        const policy = this.getPolicyByPartyName(party.name);
+        corp.data = {partyName: party.name, policyId: policy.id};
+        policy.onPolicyStartForPlayer?.(delegate);
       }
     }
 
@@ -255,9 +257,13 @@ export class Turmoil {
       return;
     }
     if (corp.data !== undefined) {
-      if (corp.data === PartyName.UNITY) {
-        player.decreaseTitaniumValue();
-      }
+      const partyName = getPoliticalReformPartyName(corp.data);
+      const policyId = getPoliticalReformPolicyId(corp.data);
+      const policy = partyName === undefined ? undefined :
+        (policyId === undefined ?
+          this.getPolicyByPartyName(partyName) :
+          this.getPartyByName(partyName).policies.find((candidate) => candidate.id === policyId));
+      policy?.onPolicyEndForPlayer?.(player);
       corp.data = undefined;
     }
   }
@@ -390,7 +396,9 @@ export class Turmoil {
       const chairman = this.chairman;
       let steps = gainTR ? 1 : 0;
       // Tempest Consultancy Hook (gains an additional TR when they become chairman)
-      if (chairman.playedCards.has(CardName.TEMPEST_CONSULTANCY)) steps += 1;
+      if (chairman.tableau.has(CardName.TEMPEST_CONSULTANCY)) {
+        steps += 1;
+      }
 
       // Raise TR
       chairman.defer(() => {
@@ -514,7 +522,9 @@ export class Turmoil {
 
   public getInfluence(player: IPlayer) {
     let influence = 0;
-    if (this.chairman === player) influence++;
+    if (this.chairman === player) {
+      influence++;
+    }
 
     const dominantParty : IParty = this.dominantParty;
     const isPartyLeader = dominantParty.partyLeader === player;
@@ -522,9 +532,13 @@ export class Turmoil {
 
     if (isPartyLeader) {
       influence++;
-      if (delegateCount > 1) influence++; // at least 1 non-leader delegate
+      if (delegateCount > 1) {
+        influence++;
+      } // at least 1 non-leader delegate
     } else {
-      if (delegateCount > 0) influence++;
+      if (delegateCount > 0) {
+        influence++;
+      }
     }
 
     if (this.playersInfluenceBonus.has(player.id)) {
@@ -582,7 +596,9 @@ export class Turmoil {
    */
   public getVictoryPoints(player: IPlayer): number {
     let victory = 0;
-    if (this.chairman === player) victory++;
+    if (this.chairman === player) {
+      victory++;
+    }
     this.parties.forEach((party) => {
       if (party.partyLeader === player) {
         victory++;
@@ -681,7 +697,7 @@ export class Turmoil {
       }
     });
 
-    turmoil.playersInfluenceBonus = new Map<string, number>(d.playersInfluenceBonus);
+    turmoil.playersInfluenceBonus = new Map(d.playersInfluenceBonus as Array<[PlayerId, number]>);
     if (d.distantGlobalEvent) {
       turmoil.distantGlobalEvent = getGlobalEventByName((d.distantGlobalEvent as any).name || d.distantGlobalEvent );
     }

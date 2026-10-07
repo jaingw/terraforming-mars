@@ -15,11 +15,11 @@ describe('PointLuna', () => {
   });
 
   it('Gets card when earth tag played', () => {
-    player.corporations.push(card);
-    card.onCardPlayedForCorps(player, new Ants());
+    player.playedCards.push(card);
+    card.onCardPlayed(player, new Ants());
     expect(player.cardsInHand).has.lengthOf(0);
 
-    card.onCardPlayedForCorps(player, new EarthCatapult());
+    card.onCardPlayed(player, new EarthCatapult());
     expect(player.cardsInHand).has.lengthOf(1);
   });
 

@@ -40,7 +40,7 @@ export interface IUserProfileResponse {
 }
 
 async function buildProfileResponse(user: User): Promise<IUserProfileResponse> {
-  const userRank: UserRank | undefined = GameLoader.getInstance().userRankMap.get(user.id);
+  const userRank: UserRank | undefined = await GameLoader.getInstance().getUserRankById(user.id);
 
   let rankData: IUserProfileResponse['rank'] = null;
   if (userRank) {
@@ -93,12 +93,10 @@ export const userProfileRoutes = new Hono();
 userProfileRoutes.get('/:identifier', async (c) => {
   const identifier = requireRouteParam(c, 'identifier');
 
-  // Try by ID first
-  let user: User | undefined = GameLoader.getInstance().userIdMap.get(identifier);
+  let user: User | undefined = await GameLoader.getInstance().getUserById(identifier);
 
-  // Then try by name (userNameMap stores names in lowercase)
   if (!user) {
-    user = GameLoader.getInstance().userNameMap.get(identifier.toLowerCase());
+    user = await GameLoader.getInstance().getUserByName(identifier);
   }
 
   if (!user) {

@@ -13,7 +13,6 @@
     "include": [
         "testing/setup.ts",
         "**/*.spec.ts",
-        "vue-shims.d.ts",
         "TestingUtils.ts"
     ]
 }

@@ -2,7 +2,7 @@
   <div class="user-info flex items-center gap-3">
     <!-- Avatar -->
     <div class="user-info__avatar flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-base font-bold uppercase"
-      :style="avatarStyle"
+         :style="avatarStyle"
     >
       {{ avatarLetter }}
     </div>
@@ -38,11 +38,11 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import {RankTier} from '@/common/rank/RankTier';
 import RankTierComponent from '@/client/components/RankTier.vue';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'UserInfo',
   components: {
     RankTier: RankTierComponent,
@@ -87,23 +87,39 @@ export default Vue.extend({
       };
     },
     winRateDisplay(): string {
-      if (this.winRate === undefined) return '--';
+      if (this.winRate === undefined) {
+        return '--';
+      }
       return this.winRate.toFixed(1) + '%';
     },
     fleeRateDisplay(): string {
-      if (this.fleeRate === undefined) return '--';
+      if (this.fleeRate === undefined) {
+        return '--';
+      }
       return this.fleeRate.toFixed(1) + '%';
     },
     winRateClass(): string {
-      if (this.winRate === undefined) return 'text-mars-text-dim';
-      if (this.winRate >= 50) return 'text-mars-teal';
-      if (this.winRate >= 30) return 'text-mars-text-dim';
+      if (this.winRate === undefined) {
+        return 'text-mars-text-dim';
+      }
+      if (this.winRate >= 50) {
+        return 'text-mars-teal';
+      }
+      if (this.winRate >= 30) {
+        return 'text-mars-text-dim';
+      }
       return 'text-mars-red';
     },
     fleeRateClass(): string {
-      if (this.fleeRate === undefined) return 'text-mars-text-dim';
-      if (this.fleeRate <= 5) return 'text-mars-teal';
-      if (this.fleeRate <= 15) return 'text-mars-yellow';
+      if (this.fleeRate === undefined) {
+        return 'text-mars-text-dim';
+      }
+      if (this.fleeRate <= 5) {
+        return 'text-mars-teal';
+      }
+      if (this.fleeRate <= 15) {
+        return 'text-mars-yellow';
+      }
       return 'text-mars-red';
     },
   },

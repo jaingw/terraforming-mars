@@ -4,10 +4,11 @@ import {IGame} from '../../../src/server/IGame';
 import {OrOptions} from '../../../src/server/inputs/OrOptions';
 import {Resource} from '../../../src/common/Resource';
 import {TestPlayer} from '../../TestPlayer';
-import {cast, runAllActions, testGame} from '../../TestingUtils';
+import {runAllActions, testGame} from '../../TestingUtils';
 import {Helion} from '../../../src/server/cards/corporation/Helion';
 import {SelectPayment} from '../../../src/server/inputs/SelectPayment';
 import {Payment} from '../../../src/common/inputs/Payment';
+import {cast} from '../../../src/common/utils/utils';
 
 describe('RobinsonIndustries', () => {
   let card: RobinsonIndustries;
@@ -17,7 +18,7 @@ describe('RobinsonIndustries', () => {
   beforeEach(() => {
     card = new RobinsonIndustries();
     [game, player] = testGame(1);
-    player.corporations.push(card);
+    player.playedCards.push(card);
   });
 
   it('Can not act', () => {
@@ -54,7 +55,7 @@ describe('RobinsonIndustries', () => {
   it('Helion + Robinson Industries', () => {
     const helion = new Helion();
     helion.play(player);
-    player.corporations.push(helion);
+    player.playedCards.push(helion);
     player.megaCredits = 3;
     expect(card.canAct(player)).is.false;
     player.heat = 1;
@@ -69,7 +70,7 @@ describe('RobinsonIndustries', () => {
     selectResource.options[1].cb();
     runAllActions(game);
     const selectPayment = cast(player.popWaitingFor(), SelectPayment);
-    selectPayment.cb({...Payment.EMPTY, megaCredits: 2, heat: 2});
+    selectPayment.cb({...Payment.EMPTY, megacredits: 2, heat: 2});
     expect(player.production.steel).to.eq(1);
     expect(player.megaCredits).to.eq(1);
     expect(player.heat).to.eq(3);

@@ -26,9 +26,9 @@
     </template>
     <template v-else-if="id === 'rp01'">
       <div class="policy-top-margin">
-      <div :class="'party-badge party-badge--reds'" v-i18n></div>
-      <div class="rating tile"></div> :
-      <div class="resource money">-3</div>
+        <div :class="'party-badge party-badge--reds'" v-i18n></div>
+        <div class="rating tile"></div> :
+        <div class="resource money">-3</div>
       </div>
     </template>
     <template v-else-if="id === 'gp01'">
@@ -43,14 +43,15 @@
 
 <script lang="ts">
 
-import Vue from 'vue';
+import {defineComponent} from 'vue';
 import {PolicyId} from '@/common/turmoil/Types';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'AlliedPartyAgenda',
   props: {
     id: {
       type: String as () => PolicyId,
+      required: true,
     },
   },
 });

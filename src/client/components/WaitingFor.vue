@@ -1,44 +1,42 @@
 <template>
   <div>
-  <template v-if="playerView.block">{{ $t('Please Login with right user') }} <a v-if="!userId" href="login" class="player_name  player_bg_color_blue">{{ $t('Login') }}</a></template>
-  <template v-else-if="playerView.undoing">{{ $t('Undoing, Please refresh or wait seconds') }}</template>
-  <template v-else-if="waitingfor === undefined">
-    {{ $t('Not your turn to take any actions') }}
-    <template v-if="playersWaitingFor.length > 0">
-      (⌛ <span v-for="color in playersWaitingFor" :class="playerColorClass(color, 'bg')" :key="color">&nbsp;&nbsp;&nbsp;</span>)
+    <template v-if="playerView.role === 'other'">{{ $t('Please Login with right user') }} <a v-if="!userId" href="login" class="player_name player_bg_color_blue">{{ $t('Login') }}</a></template>
+    <template v-else-if="playerView.undoing">{{ $t('Undoing, Please refresh or wait seconds') }}</template>
+    <template v-else-if="waitingfor === undefined">
+      {{ $t('Not your turn to take any actions') }}
+      <template v-if="playersWaitingFor.length > 0">
+        (⌛ <span v-for="color in playersWaitingFor" :key="color" class="log-player" :class="playerColorClass(color, 'bg')">{{ getPlayerName(color) }}</span>)
+      </template>
+
+      <template v-if="preferences().experimental_ui && playerView.game.phase === Phase.ACTION && playerView.players.length !== 1">
+        <input id="suspend-checkbox" v-model="suspend" type="checkbox" name="suspend" @change="updateSuspend">
+        <label for="suspend-checkbox">
+          <span v-i18n>Suspend</span>
+        </label>
+        <div v-if="showRefresh()">Refresh<span class="reset"></span></div>
+      </template>
     </template>
-
-    <template v-if="preferences().experimental_ui && playerView.game.phase === Phase.ACTION && playerView.players.length !== 1">
-      <input type="checkbox" name="suspend" id="suspend-checkbox" v-model="suspend" v-on:change="updateSuspend">
-      <label for="suspend-checkbox">
-        <span v-i18n>Suspend</span>
-      </label>
-      <div v-if="showRefresh()">Refresh<span class="reset"></span></div>
-    </template>
-
-  </template>
-  <div v-else class="wf-root">
-
-
-    <player-input-factory :players="players"
-                          :playerView="playerView"
-                          :playerinput="waitingfor"
-                          :onsave="onsave"
-                          :showsave="true"
-                          :showtitle="true" />
+    <div v-else class="wf-root">
+      <player-input-factory
+        :players="playerView.players"
+        :playerView="playerView"
+        :playerinput="waitingfor"
+        :onsave="onsave"
+        :showsave="true"
+        :showtitle="true"
+      />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-
-import Vue from 'vue';
+import {defineComponent} from 'vue';
 import * as constants from '@/common/constants';
 import raw_settings from '@/genfiles/settings.json';
 import {vueRoot} from '@/client/components/vueRoot';
 import {PlayerInputModel} from '@/common/models/PlayerInputModel';
+import {PlayerViewModel, ViewModel} from '@/common/models/PlayerModel';
 import {playerColorClass} from '@/common/utils/utils';
-import {PublicPlayerModel, PlayerViewModel} from '@/common/models/PlayerModel';
 import {getPreferences, PreferencesManager} from '@/client/utils/PreferencesManager';
 import {SoundManager} from '@/client/utils/SoundManager';
 import {WaitingForModel} from '@/common/models/WaitingForModel';
@@ -49,37 +47,39 @@ import {isPlayerId} from '@/common/Types';
 import {InputResponse} from '@/common/inputs/InputResponse';
 import {INVALID_RUN_ID} from '@/common/app/AppErrorId';
 import {Color} from '@/common/Color';
+import {gameDocumentTitle} from '../utils/documentTitle';
 
-let ui_update_timeout_id: number | undefined;
+let uiUpdateTimeoutId: number | undefined;
 let documentTitleTimer: number | undefined;
 
+type WaitableViewModel = ViewModel & {
+  undoing?: boolean;
+  waitingFor?: PlayerInputModel;
+};
+
 type DataModel = {
-  userId:string,
-  waitingForTimeout: typeof raw_settings.waitingForTimeout,
-  playersWaitingFor: Array<Color>
+  userId: string,
+  playersWaitingFor: Array<Color>,
   suspend: boolean,
   savedPlayerView: PlayerViewModel | undefined;
 }
 
-export default Vue.extend({
+const CANNOT_CONTACT_SERVER = 'Unable to reach the server. It may be restarting or down for maintenance.';
+
+export default defineComponent({
   name: 'waiting-for',
   props: {
     playerView: {
-      type: Object as () => PlayerViewModel,
-    },
-    players: {
-      type: Array as () => Array<PublicPlayerModel>,
-    },
-    settings: {
-      type: Object as () => typeof raw_settings,
+      type: Object as () => WaitableViewModel,
+      required: true,
     },
     waitingfor: {
       type: Object as () => PlayerInputModel | undefined,
+      default: undefined,
     },
   },
   data(): DataModel {
     return {
-      waitingForTimeout: this.settings.waitingForTimeout,
       userId: PreferencesManager.load('userId'),
       playersWaitingFor: [],
       suspend: false,
@@ -87,7 +87,15 @@ export default Vue.extend({
     };
   },
   methods: {
+    getPlayerName(color: Color): string {
+      const player = this.playerView.players.find((p) => p.color === color);
+      return player ? player.name : color;
+    },
     animateTitle() {
+      if (!getPreferences().animated_title) {
+        return;
+      }
+
       const sequence = '\u25D1\u25D2\u25D0\u25D3';
       const first = document.title[0];
       const position = sequence.indexOf(first);
@@ -95,11 +103,10 @@ export default Vue.extend({
       if (position !== -1 && position < sequence.length - 1) {
         next = sequence[position + 1];
       }
-      document.title = next + ' ' + this.$t(constants.APP_NAME);
+      document.title = next + ' ' + gameDocumentTitle(this.playerView.game);
     },
     onsave(out: InputResponse) {
       const root = vueRoot(this);
-
       if (root.isServerSideRequestInProgress) {
         console.warn('Server request in progress');
         return;
@@ -107,7 +114,7 @@ export default Vue.extend({
       root.isServerSideRequestInProgress = true;
 
       const xhr = new XMLHttpRequest();
-      let url = paths.PLAYER_INPUT + '?id=' + (this.$parent as any).playerView.id;
+      let url = paths.PLAYER_INPUT + '?id=' + this.playerView.id;
       if (this.userId) {
         url += '&userId=' + this.userId;
       }
@@ -115,44 +122,16 @@ export default Vue.extend({
       xhr.responseType = 'json';
       xhr.onload = () => {
         this.loadPlayerViewResponse(xhr);
-        //   if (this.playerView.game.phase === 'end' && window.location.pathname !== paths.THE_END) {
-        root.isServerSideRequestInProgress = false;
       };
-      const senddata ={'id': (this.waitingfor as any)?.id, 'runId': this.playerView.runId, 'input': out};
+      xhr.onerror = () => {
+        root.isServerSideRequestInProgress = false;
+        root.showAlert('Error sending input', CANNOT_CONTACT_SERVER);
+      };
+      const senddata = {id: (this.waitingfor as any)?.id, runId: this.playerView.runId, input: out};
       xhr.send(JSON.stringify(senddata));
-      xhr.onerror = function() {
-        // todo(kberg): Report error to caller
-        root.isServerSideRequestInProgress = false;
-      };
-    },
-    reset() {
-      const xhr = new XMLHttpRequest();
-      const root = vueRoot(this);
-      if (root.isServerSideRequestInProgress) {
-        console.warn('Server request in progress');
-        return;
-      }
-
-      root.isServerSideRequestInProgress = true;
-
-      let url = paths.RESET + '?id=' + this.playerView.id;
-      if (this.userId.length > 0) {
-        url += '&userId=' + this.userId;
-      }
-      xhr.open('GET', url);
-      xhr.responseType = 'json';
-      xhr.onload = () => {
-        this.loadPlayerViewResponse(xhr);
-      };
-      xhr.send();
-      xhr.onerror = function() {
-        // todo(kberg): Report error to caller
-        root.isServerSideRequestInProgress = false;
-      };
     },
     loadPlayerViewResponse(xhr: XMLHttpRequest) {
       const root = vueRoot(this);
-      const showAlert = vueRoot(this).showAlert;
       if (xhr.status === statusCode.ok) {
         this.updatePlayerView(xhr.response);
       } else if (xhr.status === statusCode.badRequest && xhr.responseType === 'json') {
@@ -160,9 +139,9 @@ export default Vue.extend({
         if (xhr.response.id === INVALID_RUN_ID) {
           cb = () => setTimeout(() => window.location.reload(), 100);
         }
-        showAlert(xhr.response.message, cb);
+        root.showAlert('Error with input', xhr.response.message, cb);
       } else {
-        showAlert('Unexpected response from server. Please try again.');
+        root.showAlert('Error processing response', 'Unexpected response from server. Please try again.');
       }
       root.isServerSideRequestInProgress = false;
     },
@@ -173,53 +152,54 @@ export default Vue.extend({
         root.playerView = playerView;
         root.playerkey++;
         root.screen = 'player-home';
-        if ((root?.playerView?.game.phase === Phase.END || root.playerView?.game.phase === Phase.TIMEOUT || root.playerView?.game.phase === Phase.ABANDON) && window.location.pathname !== '/' + paths.THE_END) {
-          window.location = window.location as any as (string & Location); // eslint-disable-line no-self-assign
+        if (
+          root.playerView?.game.phase === Phase.END ||
+          root.playerView?.game.phase === Phase.TIMEOUT ||
+          root.playerView?.game.phase === Phase.ABANDON
+        ) {
+          if (window.location.pathname !== '/' + paths.THE_END) {
+            window.location = window.location as any as string & Location;
+          }
         }
         this.savedPlayerView = undefined;
       } else {
         this.savedPlayerView = playerView;
       }
     },
-    waitForUpdate: function(faster:boolean = false) {
+    waitForUpdate(faster = false) {
       const root = vueRoot(this);
-      clearInterval(ui_update_timeout_id);
+      window.clearInterval(uiUpdateTimeoutId);
       let failednum = 0;
       let allnum = 0;
+
       const askForUpdate = () => {
         const xhr = new XMLHttpRequest();
         xhr.open('GET', paths.API_WAITING_FOR + window.location.search + '&gameAge=' + this.playerView.game.gameAge + '&undoCount=' + this.playerView.game.undoCount);
-        xhr.onerror = function() {
-          failednum ++;
+        xhr.onerror = () => {
+          failednum++;
           if (failednum < 5) {
-            root.showAlert('Unable to reach the server. The server may be restarting or down for maintenance.', () => {});
+            root.showAlert('Error fetching state', CANNOT_CONTACT_SERVER, () => {});
           }
         };
         xhr.onload = () => {
           if (xhr.status === statusCode.ok) {
-            allnum ++;
+            allnum++;
             failednum = 0;
-            if (root.playerView?.game.phase === 'end') {
-              clearInterval(ui_update_timeout_id);
+            if (root.playerView?.game.phase === Phase.END) {
+              window.clearInterval(uiUpdateTimeoutId);
               return;
             }
             const result = xhr.response as WaitingForModel;
             this.playersWaitingFor = result.waitingFor;
-            if (result.result === 'GO' && this.waitingfor === undefined && !this.playerView.block) {
-              // Will only apply to player, not spectator.
-              // Add error handling for updatePlayer
+            if (result.result === 'GO' && this.waitingfor === undefined && this.playerView.role !== 'other') {
               try {
                 root.updatePlayer();
                 this.notify();
               } catch (err) {
                 console.warn('Error calling updatePlayer:', err);
-                // If update fails, continue waiting instead of stopping
-                return;
               }
-              // We don't need to wait anymore - it's our turn
               return;
             } else if (result.result === 'REFRESH') {
-              // Something changed, let's refresh UI
               try {
                 if (isPlayerId(this.playerView.id)) {
                   root.updatePlayer();
@@ -228,38 +208,42 @@ export default Vue.extend({
                 }
               } catch (err) {
                 console.warn('Error calling updatePlayer/updateSpectator:', err);
-                // Continue polling on error
-                return;
               }
               return;
             }
-          } else if (xhr.status !== statusCode.ok) {
-            // Only show alert for non-200 status codes
-            if (xhr.status !== 404) {
-              root.showAlert(`Received unexpected response from server (${xhr.status}). This is often due to the server restarting.`, () => {});
-            }
-            failednum ++;
+          } else if (xhr.status === statusCode.notFound) {
+            window.clearInterval(uiUpdateTimeoutId);
+            root.showAlert(
+              'Game not found',
+              'This game has been cleaned up or does not exist.',
+              () => {},
+            );
+          } else {
+            root.showAlert(
+              'Error with input',
+              `Received unexpected response from server (${xhr.status}). This is often due to the server restarting.`,
+              () => {},
+            );
+            failednum++;
           }
-          console.log(`allnum:${allnum}, failednum:${failednum}` );
-          // (vueApp as any).waitForUpdate();
+
+          if (failednum >= 5 || allnum > 200) {
+            window.clearInterval(uiUpdateTimeoutId);
+          }
         };
         xhr.responseType = 'json';
         xhr.send();
-        if (failednum >= 5 || allnum > 200) {
-          // 失败5次不再发送请求 需手动刷新
-          clearInterval(ui_update_timeout_id);
-        }
       };
+
       if (faster) {
         askForUpdate();
-        ui_update_timeout_id = (setInterval(askForUpdate, 1000) as any);
+        uiUpdateTimeoutId = window.setInterval(askForUpdate, 1000);
       } else {
-        ui_update_timeout_id = (setInterval(askForUpdate, this.waitingForTimeout) as any);
+        uiUpdateTimeoutId = window.setInterval(askForUpdate, raw_settings.waitingForTimeout);
       }
     },
     notify() {
       if (!this.playerView.undoing && getPreferences().enable_sounds) {
-        //  自己撤回时，也会进到这里，就不用放音了
         SoundManager.playActivePlayerSound();
       }
 
@@ -274,15 +258,12 @@ export default Vue.extend({
         try {
           new Notification(notificationTitle, notificationOptions);
         } catch (e) {
-          // ok so the native Notification doesn't work which will happen
-          // try to use the service worker
           if (!window.isSecureContext || !navigator.serviceWorker) {
             return;
           }
           navigator.serviceWorker.ready.then((registration) => {
             registration.showNotification(notificationTitle, notificationOptions);
           }).catch((err) => {
-            // avoid promise going uncaught
             console.warn('Failed to display notification with serviceWorker', err);
           });
         }
@@ -298,19 +279,22 @@ export default Vue.extend({
     },
   },
   mounted() {
-    if (this.playerView.undoing ) {
-      (this as any).waitForUpdate(true);
+    if (this.playerView.undoing) {
+      this.waitForUpdate(true);
       return;
     }
-    // if (!this.playerView.block ) {
-    (this as any).waitForUpdate();
-    // }
-    document.title = this.$t(constants.APP_NAME);
+
+    this.waitForUpdate();
+    document.title = gameDocumentTitle(this.playerView.game);
     window.clearInterval(documentTitleTimer);
 
     if (this.playerView.players.length > 1 && this.waitingfor !== undefined) {
       documentTitleTimer = window.setInterval(() => this.animateTitle(), 1000);
     }
+  },
+  beforeUnmount() {
+    window.clearInterval(uiUpdateTimeoutId);
+    window.clearInterval(documentTitleTimer);
   },
   computed: {
     Phase(): typeof Phase {
@@ -324,6 +308,4 @@ export default Vue.extend({
     },
   },
 });
-
 </script>
-

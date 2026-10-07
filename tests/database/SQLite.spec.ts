@@ -2,9 +2,11 @@ import {describeDatabaseSuite} from './databaseSuite';
 import {IGame} from '../../src/server/IGame';
 import {IN_MEMORY_SQLITE_PATH, SQLite} from '../../src/server/database/SQLite';
 import {GameId} from '../../src/common/Types';
-import {RunResult} from 'sqlite3';
 import {ITestDatabase, Status} from './ITestDatabase';
 import {Game} from '../../src/server/Game';
+import {rejects} from 'node:assert';
+import {UserNameExistsError} from '../../src/server/database/IDatabase';
+import {expect} from 'chai';
 
 class TestSQLite extends SQLite implements ITestDatabase {
   public lastSaveGamePromise: Promise<void> = Promise.resolve();
@@ -31,15 +33,6 @@ class TestSQLite extends SQLite implements ITestDatabase {
     }
     throw new Error('Invalid status for ' + gameId + ': ' + statusText);
   }
-
-  async completedTime(gameId: GameId): Promise<number | undefined> {
-    const row = await this.asyncGet('SELECT completed_time FROM completed_game WHERE game_id = $1', [gameId]);
-    return row.completed_time;
-  }
-
-  setCompletedTime(gameId: GameId, timestampSeconds: number): Promise<RunResult> {
-    return this.asyncRun('UPDATE completed_game SET completed_time = to_timestamp(?) WHERE game_id = ?', [timestampSeconds, gameId]);
-  }
 }
 
 const newgame = Game.newInstance;
@@ -50,12 +43,34 @@ Game.newInstance = (...args) => {
 describeDatabaseSuite({
   name: 'SQLite',
   constructor: () => new TestSQLite(),
-  omit: {
-    markFinished: true,
-  },
   stats: {
     type: 'SQLite',
     path: ':memory:',
     size_bytes: -1,
   },
+});
+
+describe('SQLite users', () => {
+  it('enforces case-insensitive unique user names', async () => {
+    const db = new TestSQLite();
+    await db.initialize();
+    await db.saveUser('u1', 'test-user', 'password', '{}');
+
+    await rejects(
+      db.saveUser('u2', 'TEST-USER', 'password', '{}'),
+      (err) => err instanceof UserNameExistsError,
+    );
+  });
+
+  it('rejects a case-insensitive duplicate user name on update', async () => {
+    const db = new TestSQLite();
+    await db.initialize();
+    await db.saveUser('u1', 'first-user', 'password', '{}');
+    await db.saveUser('u2', 'second-user', 'password', '{}');
+    const user = await db.getUser('u2');
+    expect(user).is.not.undefined;
+    user!.name = 'FIRST-USER';
+
+    expect((await db.getUser('u2'))?.name).eq('second-user');
+  });
 });

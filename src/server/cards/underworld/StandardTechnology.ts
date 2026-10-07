@@ -7,7 +7,7 @@ import {Tag} from '../../../common/cards/Tag';
 import {IPlayer} from '../../IPlayer';
 import {IActionCard} from '../ICard';
 import {IStandardProjectCard} from '../IStandardProjectCard';
-import {SelectCard} from '../../inputs/SelectCard';
+import {SelectStandardProjectToPlay} from '../../inputs/SelectStandardProjectToPlay';
 
 export class StandardTechnology extends Card implements IActionCard, IProjectCard {
   constructor() {
@@ -28,16 +28,13 @@ export class StandardTechnology extends Card implements IActionCard, IProjectCar
     });
   }
 
-  // TODO(kberg): Remove data by 2025-08-01
-  public data: {projects: Array<CardName>} = {projects: []};
-
   // Controls when the standard project discount applies. It doesn't apply when normally evaluating standard projects
   //
   // Does not need to be serialized.
   private discount: boolean = false;
 
   private includeThisStandardProject(player: IPlayer, cardName: CardName) {
-    return player.standardProjectsThisGeneration.has(cardName) || this.data.projects.includes(cardName);
+    return player.standardProjectsThisGeneration.has(cardName);
   }
 
   private getStandardProjects(player: IPlayer) {
@@ -56,18 +53,11 @@ export class StandardTechnology extends Card implements IActionCard, IProjectCar
 
   public action(player: IPlayer) {
     const standardProjects = this.getStandardProjects(player);
-    return new SelectCard(
-      'Standard projects',
-      'Confirm',
-      standardProjects)
-      .andThen(([card]) => {
-        this.discount = true;
-        try {
-          return card.action(player);
-        } finally {
-          this.discount = false;
-        }
-      });
+    return new SelectStandardProjectToPlay(player, standardProjects, {
+      title: 'Standard projects',
+      buttonLabel: 'Confirm',
+      adjustedCost: (card) => Math.max(0, card.getAdjustedCost(player) - 8),
+    });
   }
 
   public getStandardProjectDiscount(player: IPlayer, card: IStandardProjectCard): number {
@@ -75,9 +65,5 @@ export class StandardTechnology extends Card implements IActionCard, IProjectCar
       return 8;
     }
     return 0;
-  }
-
-  onProductionPhase(): void {
-    this.data = {projects: []};
   }
 }

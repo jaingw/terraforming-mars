@@ -40,10 +40,18 @@ export class BorderCheckpoint extends Card implements IProjectCard {
   }
 
   private isOnEdge(x: number, y: number): boolean {
-    if (y === 0) return true;
-    if (y === 8) return true;
-    if (x === 8) return true;
-    if (x === (Math.abs(4-y))) return true;
+    if (y === 0) {
+      return true;
+    }
+    if (y === 8) {
+      return true;
+    }
+    if (x === 8) {
+      return true;
+    }
+    if (x === (Math.abs(4-y))) {
+      return true;
+    }
     return false;
   }
 

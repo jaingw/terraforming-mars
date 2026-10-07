@@ -1,35 +1,18 @@
 
-// import * as prometheus from 'prom-client';
 import {Database} from './Database';
-import {Game, LoadState} from '../Game';
+import {Game} from '../Game';
 import {Player} from '../Player';
-import {GameId, ParticipantId} from '../../common/Types';
 import {User} from '../User';
 import {IGameLoader, State} from './IGameLoader';
-import {GameIdLedger, IGameShortData} from './IDatabase';
 import {UserRank} from '../../common/rank/RankManager';
+import {normalizeUserId} from '../../common/utils/normalizeUserId';
 import {IGame} from '../IGame';
 // import {Cache} from './Cache';
 // import {timeAsync} from '../utils/timer';
-import {CacheConfig} from './CacheConfig';
-import {Clock} from '../../common/Timer';
 import {IPlayer} from '../IPlayer';
-import {durationToMilliseconds} from '../utils/durations';
+import {GameId} from '../../common/Types';
+import {GameNotFoundError} from './IDatabase';
 
-type LoadCallback = (game: IGame | undefined) => void;
-
-// const metrics = {
-//   initialize: new prometheus.Gauge({
-//     name: 'gameloader_initialize',
-//     help: 'Time to load all games',
-//     registers: [prometheus.register],
-//   }),
-//   evictions: new prometheus.Counter({
-//     name: 'gameloader_evictions',
-//     help: 'Game evictions count',
-//     registers: [prometheus.register],
-//   }),
-// };
 
 /**
  * Loads games from javascript memory or database
@@ -37,25 +20,27 @@ type LoadCallback = (game: IGame | undefined) => void;
  */
 export class GameLoader implements IGameLoader {
   public state: State = State.WAITING;
-  public readonly games = new Map<string, IGame>();
-  private readonly pendingGame = new Map<string, Array<LoadCallback>>();
-  private readonly pendingPlayer = new Map<string, Array<LoadCallback>>();
-  public readonly playerToGame = new Map<string, IGame>();
-  public readonly userIdMap: Map<string, User> = new Map<string, User>();
-  public readonly userNameMap: Map<string, User> = new Map<string, User>();
-  public readonly usersToGames: Map<string, Set<string>> = new Map<string, Set<string>>();
+  private readonly games = new Map<string, IGame>();
+  private readonly playerToGame = new Map<string, IGame>();
+  private readonly userIdMap: Map<string, User> = new Map<string, User>();
+  private readonly userNameMap: Map<string, User> = new Map<string, User>();
 
   // 天梯，id到`UserRank`的映射表
-  public readonly userRankMap: Map<string, UserRank> = new Map<string, UserRank>();
-  // 以前的game没存shortData, 通过allGameIds读取全部数据
-  public allGameIds: Array<GameId> = [];
+  private readonly userRankMap: Map<string, UserRank> = new Map<string, UserRank>();
 
-  private static instance?: GameLoader;
+  private readonly missingGameIds = new Map<string, number>();
+  private readonly missingParticipantIds = new Map<string, number>();
+  private readonly missingUserIds = new Map<string, number>();
+  private readonly missingUserNames = new Map<string, number>();
+  private readonly missingUserRankIds = new Map<string, number>();
+  private readonly lastAccessedAt = new Map<string, number>();
+  private readonly loadingGames = new Map<GameId, Promise<IGame | undefined>>();
 
-  // private cache: Cache;
-  // private readonly config: CacheConfig;
-  // private readonly clock: Clock;
-  private purgedGames: Array<GameId>;
+  private static readonly MISS_TTL_MS = 24 * 60 * 60 * 1000; // 24小时
+  private static readonly LOADED_GAME_TTL_MS = 12 * 60 * 60 * 1000; // 12小时
+
+  private static instance: GameLoader | undefined;
+
 
   public reset(): void {
     GameLoader.instance = undefined;
@@ -63,21 +48,12 @@ export class GameLoader implements IGameLoader {
     });
   }
 
-  private constructor(_config: CacheConfig, _clock: Clock) {
-    // this.config = config;
-    // this.clock = clock;
-    // this.cache = new Cache(config, clock);
-    this.purgedGames = [];
-    // timeAsync(this.cache.load())
-    //   .then((v) => {
-    //     metrics.initialize.set(v.duration);
-    //   });
+  private constructor( ) {
   }
 
   public static getInstance(): GameLoader {
-    if (GameLoader.instance === undefined) {
-      const config = parseConfigString(process.env.GAME_CACHE ?? '');
-      GameLoader.instance = new GameLoader(config, new Clock());
+    if (!GameLoader.instance) {
+      GameLoader.instance = new GameLoader();
       const userNameMap = GameLoader.instance.userNameMap;
       // 统一转换成小写，以忽略大小写限制
       const getfunc = userNameMap.get;
@@ -96,12 +72,7 @@ export class GameLoader implements IGameLoader {
         if (key === undefined || key === '') {
           return undefined;
         }
-        if (key.startsWith('u')) {
-          key = key.substring(0, 13);
-        } else {
-          key = key.substring(0, 12);
-        }
-        return idgetfunc.apply(this, [key]);
+        return idgetfunc.apply(this, [normalizeUserId(key)]);
       };
 
       const userRankMap = GameLoader.instance.userRankMap;
@@ -111,12 +82,7 @@ export class GameLoader implements IGameLoader {
         if (key === undefined || key === '') {
           return undefined;
         }
-        if (key.startsWith('u')) {
-          key = key.substring(0, 13);
-        } else {
-          key = key.substring(0, 12);
-        }
-        return rankgetfunc.apply(this, [key]);
+        return rankgetfunc.apply(this, [normalizeUserId(key)]);
       };
     }
     return GameLoader.instance;
@@ -131,6 +97,88 @@ export class GameLoader implements IGameLoader {
       user = GameLoader.getInstance().userNameMap.get(player.name);
     }
     return user;
+  }
+
+  // 按 userId 懒加载单个用户；查不到时写入 miss map，避免重复打数据库。
+  public async getUserById(userId: string): Promise<User | undefined> {
+    const normalizedUserId = normalizeUserId(userId);
+    const cachedUser = this.userIdMap.get(normalizedUserId);
+    if (cachedUser !== undefined) {
+      return cachedUser;
+    }
+    if (this.isMissing(this.missingUserIds, normalizedUserId)) {
+      return undefined;
+    }
+    const user = await Database.getInstance().getUser(normalizedUserId);
+    if (user === undefined) {
+      this.markMissing(this.missingUserIds, normalizedUserId);
+      return undefined;
+    }
+    this.cacheUser(user);
+    return user;
+  }
+
+  // 按用户名懒加载单个用户，用户名统一小写后参与缓存和 miss 判断。
+  public async getUserByName(name: string): Promise<User | undefined> {
+    const normalizedName = name.trim().toLowerCase();
+    const cachedUser = this.userNameMap.get(normalizedName);
+    if (cachedUser !== undefined) {
+      return cachedUser;
+    }
+    if (this.isMissing(this.missingUserNames, normalizedName)) {
+      return undefined;
+    }
+    const user = await Database.getInstance().getUserByName(normalizedName);
+    if (user === undefined) {
+      this.markMissing(this.missingUserNames, normalizedName);
+      return undefined;
+    }
+    this.cacheUser(user);
+    return user;
+  }
+
+  // 按 userId 懒加载用户排名，避免启动时全量加载 user_rank。
+  public async getUserRankById(userId: string): Promise<UserRank | undefined> {
+    const normalizedUserId = normalizeUserId(userId);
+    const cachedUserRank = this.userRankMap.get(normalizedUserId);
+    if (cachedUserRank !== undefined) {
+      return cachedUserRank;
+    }
+    if (this.isMissing(this.missingUserRankIds, normalizedUserId)) {
+      return undefined;
+    }
+    const userRank = await Database.getInstance().getUserRank(normalizedUserId);
+    if (userRank === undefined) {
+      this.markMissing(this.missingUserRankIds, normalizedUserId);
+      return undefined;
+    }
+    this.addOrUpdateUserRank(userRank);
+    return userRank;
+  }
+
+  public static getLoadedGameCount(): number {
+    return GameLoader.getInstance().games.size;
+  }
+
+  // 只查询内存中的游戏，不触发数据库加载。
+  public getLoadedGame(id: string): IGame | undefined {
+    return this.games.get(id);
+  }
+
+  // 返回快照，避免外部直接修改排名缓存。
+  public getCachedUserRanks(): ReadonlyArray<UserRank> {
+    return Array.from(this.userRankMap.values());
+  }
+
+  // 预热给定玩家的天梯缓存：命中缓存为 O(1)，未命中才查库。
+  // 展示层 ServerModel 是同步的，构建玩家模型前需先调用本方法，
+  // 否则 rankValue/rankTier 会因缓存未命中而显示为 -1/undefined。
+  public async ensureUserRanksLoaded(players: ReadonlyArray<IPlayer>): Promise<void> {
+    await Promise.all(players.map(async (player) => {
+      if (player.userId !== undefined) {
+        await this.getUserRankById(player.userId);
+      }
+    }));
   }
 
   public start(cb = () => { }): void {
@@ -148,330 +196,257 @@ export class GameLoader implements IGameLoader {
 
   public add(game: IGame): void {
     this.games.set(game.id, game);
+    // 每次进入内存都刷新访问时间，供 12 小时未访问清理使用。
+    this.lastAccessedAt.set(game.id, Date.now());
+    this.missingGameIds.delete(game.id);
+    if (game.spectatorId !== undefined) {
+      this.playerToGame.set(game.spectatorId, game);
+      this.missingParticipantIds.delete(game.spectatorId);
+    }
     for (const player of game.getAllPlayers()) {
       this.playerToGame.set(player.id, game);
-      const user = GameLoader.getUserByPlayer(player);
-      if (user !== undefined) {
-        if (this.usersToGames.get(user.id) === undefined) {
-          this.usersToGames.set(user.id, new Set());
-        }
-        this.usersToGames.get(user.id)?.add(game.id);
+      this.missingParticipantIds.delete(player.id);
+    }
+  }
+
+  // 缓存懒加载得到的用户，并清掉对应 miss 标记，便于后续访问直接命中内存。
+  public cacheUser(user: User): void {
+    this.userIdMap.set(user.id, user);
+    this.userNameMap.set(user.name.trim().toLowerCase(), user);
+    this.missingUserIds.delete(user.id);
+    this.missingUserNames.delete(user.name.trim().toLowerCase());
+  }
+
+  // 只读取内存里的用户缓存，不触发数据库懒加载，供同步建模逻辑使用。
+  public getCachedUserById(userId: string): User | undefined {
+    return this.userIdMap.get(userId);
+  }
+
+  // 用户被删除或改名时，从内存缓存移除旧索引，避免旧名称/ID 继续命中。
+  public removeUserFromCache(user: User): void {
+    this.userIdMap.delete(user.id);
+    this.userIdMap.delete(normalizeUserId(user.id));
+    this.userNameMap.delete(user.name.trim().toLowerCase());
+  }
+
+
+  // 按 gameId 获取游戏：先查内存，miss map 命中则直接返回，否则直接加载完整 games 存档。
+  public async getGame(id: string): Promise<IGame | undefined> {
+    if (this.state !== State.READY) {
+      return undefined;
+    }
+    const loadedGame = this.games.get(id);
+    if (loadedGame !== undefined) {
+      // 访问命中时刷新 lastAccessedAt，防止活跃游戏被定时清理。
+      this.lastAccessedAt.set(loadedGame.id, Date.now());
+      return loadedGame;
+    }
+
+    if (this.isMissing(this.missingGameIds, id)) {
+      // 不存在的 gameId 每天统一清理 miss map 前不再重复查库。
+      return undefined;
+    }
+
+    const gameId = id as GameId;
+    //同一 gameId 的并发请求共享加载 Promise
+    const pendingLoad = this.loadingGames.get(gameId);
+    if (pendingLoad !== undefined) {
+      return await pendingLoad;
+    }
+
+    const load = this.loadFullGame(gameId);
+    this.loadingGames.set(gameId, load);
+    try {
+      return await load;
+    } finally {
+      if (this.loadingGames.get(gameId) === load) {
+        this.loadingGames.delete(gameId);
       }
     }
   }
 
-  // READY是已读取gameid, 可以处理请求， 否则直接返回空
-  public getGameById(gameId: string, cb: LoadCallback): void {
-    if (this.state === State.READY ) {
-      const game = this.games.get(gameId);
-      if (game === undefined) {
-        cb(undefined);
-        return;
+  // 按 playerId/spectatorId 找游戏；userId 查询已经拆到 getGamesByUserId，不走这里。
+  public async getByPlayerId(playerId: string): Promise<IGame | undefined> {
+    if (this.state !== State.READY) {
+      return undefined;
+    }
+    const loadedGame = this.playerToGame.get(playerId);
+    if (loadedGame !== undefined) {
+      if (!this.games.has(loadedGame.id)) {
+        this.playerToGame.delete(playerId);
+        return undefined;
       }
-      if (game.loadState === LoadState.LOADED) {
-        cb(game);
-        return;
-      }
-      if (game.loadState === LoadState.HALFLOADED) {
-        game.loadState = LoadState.LOADING;
-        this.loadFullGame(game);
-      }
+      // 访问命中时刷新 lastAccessedAt，防止活跃游戏被定时清理。
+      this.lastAccessedAt.set(loadedGame.id, Date.now());
+      return loadedGame;
+    }
 
-      // LOADING 等待读库回调
-      const pendingGame = this.pendingGame.get(gameId);
-      if (pendingGame !== undefined) {
-        pendingGame.push(cb);
-      } else {
-        this.pendingGame.set(gameId, [cb]);
-      }
+    if (this.isMissing(this.missingParticipantIds, playerId)) {
+      return undefined;
+    }
+
+    const gameId = await Database.getInstance().getGameIdByParticipant(playerId);
+    if (gameId === undefined) {
+      // playerId 查不到游戏时记 miss，避免同一不存在玩家反复查库。
+      this.markMissing(this.missingParticipantIds, playerId);
+      return undefined;
+    }
+
+    const game = await this.getGame(gameId);
+    if (game === undefined) {
+      this.markMissing(this.missingParticipantIds, playerId);
     } else {
-      cb(undefined);
+      this.missingParticipantIds.delete(playerId);
     }
+    return game;
   }
 
-  public getByParticipantId(playerId: ParticipantId ): Promise<IGame | undefined> {
-    return this.getByPlayerId(playerId);
-  }
-
-  public getByPlayerId(playerId: string): Promise<IGame | undefined> {
-    return new Promise((resolve) => {
-      if (this.state === State.READY && this.playerToGame.has(playerId)) {
-        const game: any = this.playerToGame.get(playerId);
-        if (this.games.get(game.id) === undefined) {
-          this.playerToGame.delete(game.id);
-          resolve(game);
-          return;
-        }
-        if (game.loadState === LoadState.LOADED) {
-          resolve(game);
-          return;
-        }
-        if (game.loadState !== LoadState.LOADING) {
-          game.loadState === LoadState.LOADING;
-          this.loadFullGame(game);
-        }
-
-        // LOADING 等待读库回调
-        const pendingArray = this.pendingPlayer.get(playerId);
-        if (pendingArray !== undefined) {
-          pendingArray.push(resolve);
-        } else {
-          this.pendingPlayer.set(playerId, [resolve]);
-        }
-      } else {
-        resolve(undefined);
-      }
-
-      // reject(new Error(`unknown error loadign player count for ${gameId}`));
-    });
-  }
-
-  private async loadFullGame(game: IGame): Promise<void> {
-    console.log('game phase', game.phase); // 天梯 TEST
-    const gameId = game.id;
+  // 直接从 games 表加载完整存档；不再先查 metadata，也不放 HALFLOADED 占位对象。
+  private async loadFullGame(gameId: GameId): Promise<IGame | undefined> {
     try {
       console.log(`loadFullGame ${gameId}`);
       const serializedGame = await Database.getInstance().getGame(gameId);
       if ( serializedGame === undefined) {
         console.error(`unable to load  game ${gameId}`);
-        this.onGameLoaded(game, true);
+        this.markMissing(this.missingGameIds, gameId);
+        return undefined;
       } else {
+        // loadFromJSON 是实例方法，所以先构造空 game，成功后再一次性写入内存 map。
+        const game = this.createEmptyGame(gameId);
         game.loadFromJSON(serializedGame, true);
         this.onGameLoaded(game);
+        return game;
       }
     } catch (err) {
-      console.error(`unable to load  game ${gameId}`, err);
-      this.onGameLoaded(game, true);
-      return undefined;
+      if (err instanceof GameNotFoundError) {
+        console.warn(`game ${gameId} not found in database`);
+        this.markMissing(this.missingGameIds, gameId);
+        return undefined;
+      }
+      throw err;
     }
   }
 
+  // 完整游戏加载成功后统一建立 game/player/user 映射；失败时清理残留映射。
   private onGameLoaded(game: IGame, err: boolean = false): void {
     const gameId = game.id;
     console.log(`load game ${gameId}  result:${err ? 'failed' : 'success'}`);
     if (err) {
-      // 加载失败 移除game_id相关数据
+      // 加载失败，从所有映射中移除
       this.games.delete(gameId);
+      this.lastAccessedAt.delete(gameId);
       for (const player of game.getAllPlayers()) {
         this.playerToGame.delete(player.id);
-        const user = GameLoader.getUserByPlayer(player);
-        if (user !== undefined) {
-          this.usersToGames.get(user.id)?.delete(game.id);
-        }
       }
     } else {
       this.games.set(game.id, game);
+      // 成功加载才刷新访问时间和移除 miss 标记。
+      this.lastAccessedAt.set(game.id, Date.now());
+      this.missingGameIds.delete(game.id);
       if (game.spectatorId !== undefined) {
         this.playerToGame.set(game.spectatorId, game);
+        this.missingParticipantIds.delete(game.spectatorId);
       }
       for (const player of game.getAllPlayers()) {
         this.playerToGame.set(player.id, game);
-        const user = GameLoader.getUserByPlayer(player);
-        if (user !== undefined) {
-          this.usersToGames.get(user.id)?.add(game.id);
-        }
-      }
-    }
-
-    if (game.loadState === LoadState.LOADED) {
-      const pendingGames = this.pendingGame.get(gameId);
-      if (pendingGames !== undefined) {
-        for (const pendingGame of pendingGames) {
-          pendingGame(err ? undefined : game);
-        }
-        this.pendingGame.delete(gameId);
-      }
-      for (const player of game.getAllPlayers()) {
-        const pendingPlayers = this.pendingPlayer.get(player.id);
-        if (pendingPlayers !== undefined) {
-          for (const pendingPlayer of pendingPlayers) {
-            pendingPlayer(err ? undefined : this.playerToGame.get(player.id));
-          }
-          this.pendingPlayer.delete(player.id);
-        }
+        this.missingParticipantIds.delete(player.id);
       }
     }
   }
 
-  // public async getIds(): Promise<Array<GameIdLedger>> {
-  //   const d = await this.cache.getGames();
-  //   const map = new MultiMap<GameId, ParticipantId>();
-  //   d.participantIds.forEach((gameId, participantId) => map.set(gameId, participantId));
-  //   const arry: Array<[GameId, Array<PlayerId | SpectatorId>]> = Array.from(map.associations());
-  //   return arry.map(([gameId, participantIds]) => ({gameId, participantIds}));
-  // }
 
-  // public async isCached(gameId: GameId): Promise<boolean> {
-  //   const d = await this.cache.getGames();
-  //   return d.games.get(gameId) !== undefined;
-  // }
-
-  // public async getGame(id: GameId | PlayerId | SpectatorId, forceLoad: boolean = false): Promise<IGame | undefined> {
-  //   const d = await this.cache.getGames();
-  //   const gameId = isGameId(id) ? id : d.participantIds.get(id);
-  //   if (gameId === undefined) return undefined;
-
-  //   // 1. Check the cache as long as forceLoad isn't true.
-  //   if (forceLoad === false && d.games.get(gameId) !== undefined) return d.games.get(gameId);
-
-  //   // 2. The game isn't cached. If it's in the database, there will still be an entry
-  //   // for it in the cache.
-  //   if (d.games.has(gameId)) {
-  //     try {
-  //       const serializedGame = await Database.getInstance().getGame(gameId);
-  //       if (serializedGame === undefined) {
-  //         console.error(`GameLoader:loadGame: game ${gameId} not found`);
-  //         return undefined;
-  //       }
-  //       const game = Game.deserialize(serializedGame);
-  //       await this.add(game);
-  //       console.log(`GameLoader loaded game ${gameId} into memory from database`);
-  //       return game;
-  //     } catch (e) {
-  //       console.error('GameLoader:loadGame', e);
-  //       return undefined;
-  //     }
-  //   }
-
-
+  // 数据库初始化完成即可进入 READY；启动阶段不再全量加载 games/users/user_rank。
   private onAllGamesLoaded(): void {
     this.state = State.READY;
-
-    // any pendingPlayer or pendingGame callbacks
-    // are waiting for a train that is never coming
-    // send them packing. call their callbacks with
-    // undefined and remove from pending
-    for (const pendingGame of Array.from(this.pendingGame.values())) {
-      for (const cb of pendingGame) {
-        cb(undefined);
-      }
-    }
-    this.pendingGame.clear();
-    for (const pendingPlayer of Array.from(this.pendingPlayer.values())) {
-      for (const cb of pendingPlayer) {
-        cb(undefined);
-      }
-    }
-    this.pendingPlayer.clear();
   }
 
+  // 启动只初始化数据库连接和表结构，具体游戏等首次访问时再懒加载。
   private async loadAllGames(cb = () => { }): Promise<void> {
     this.state = State.LOADING;
     await Database.getInstance().initialize();
-    const $this = this;
-    Database.getInstance().getUsers(function(err, allUser) {
-      if (err) {
-        return;
-      }
-      allUser.forEach((user) => {
-        $this.userIdMap.set(user.id, user);
-        $this.userNameMap.set(user.name.trim().toLowerCase(), user);
-        $this.usersToGames.set(user.id, new Set());
-      });
-
-      Database.getInstance().getGames().then( (allGames:Array<IGameShortData> ) => {
-        // Load user ranks regardless of whether there are games
-        Database.getInstance().getUserRanks().then( (allUserRanks:Array<UserRank> ) => {
-          if (allUserRanks.length > 0) {
-            console.log(`loading all ranks ${allUserRanks.length}`);
-            allUserRanks.forEach((userRank) => {
-              $this.userRankMap.set(userRank.userId, userRank);
-            });
-          }
-        }).catch((err) => {
-          console.error('error loading all user ranks', err);
-        });
-
-        if (allGames.length === 0) {
-          $this.onAllGamesLoaded();
-          cb();
-          return;
-        }
-        console.log(`loading all games ${allGames.length}`);
-        const player = new Player('test', 'blue', false, 0, 'p000');
-        const player2 = new Player('test2', 'red', false, 0, 'p111');
-
-        allGames.forEach((gamedata) => {
-          if (gamedata.shortData) {
-            const gameToRebuild = Game.rebuild(gamedata.gameId, [player, player2], player);
-            Object.assign(gameToRebuild, gamedata.shortData);
-            gameToRebuild.loadState = LoadState.HALFLOADED;
-            $this.onGameLoaded(gameToRebuild);
-          } else {
-            $this.allGameIds.push(gamedata.gameId);
-          }
-        });
-        $this.loadNextGame(cb);
-      }).catch((err) => {
-        console.error('error loading all games', err);
-        $this.onAllGamesLoaded();
-        cb();
-        return;
-      });
-    });
+    this.onAllGamesLoaded();
+    cb();
   }
 
-  private loadNextGame(cb = () => { }) {
-    const game_id = this.allGameIds.shift();
-    if (game_id === undefined) {
-      this.onAllGamesLoaded();
-      cb();
-      return;
-    }
+  // 为 loadFromJSON 提供最小可重建对象；对象不会以半加载状态写入内存。
+  private createEmptyGame(gameId: GameId): IGame {
     const player = new Player('test', 'blue', false, 0, 'p000');
     const player2 = new Player('test2', 'red', false, 0, 'p111');
-    const gameToRebuild = Game.rebuild(game_id, [player, player2], player);
+    const game = Game.rebuild(gameId, [player, player2], player);
+    return game;
+  }
 
-    console.log(`ready to load game ${game_id}`);
+  // 记录数据库 miss 的时间戳，实际过期删除只在每日凌晨统一清理。
+  private markMissing(cache: Map<string, number>, id: string): void {
+    cache.set(id, Date.now());
+  }
 
-    try {
-      Database.getInstance().getGame(game_id).then((serializedGame) =>{
-        if ( serializedGame === undefined) {
-          console.error(`unable to load  game ${game_id}`);
-        } else {
-          gameToRebuild.loadFromJSON(serializedGame, false);
-          this.onGameLoaded(gameToRebuild);
-        }
-        this.loadNextGame(cb);
-      });
-    } catch (err) {
-      console.error(`unable to load game ${game_id}`, err);
-      this.loadNextGame(cb);
+  // 访问时只判断是否命中 miss map，不在这里做过期清理。
+  private isMissing(cache: Map<string, number>, id: string): boolean {
+    return cache.has(id);
+  }
+
+  public cleanupExpiredMisses(): void {
+    const now = Date.now();
+    for (const [id, missingAt] of this.missingGameIds) {
+      if (now - missingAt >= GameLoader.MISS_TTL_MS) {
+        this.missingGameIds.delete(id);
+      }
+    }
+    for (const [id, missingAt] of this.missingParticipantIds) {
+      if (now - missingAt >= GameLoader.MISS_TTL_MS) {
+        this.missingParticipantIds.delete(id);
+      }
+    }
+    for (const [id, missingAt] of this.missingUserIds) {
+      if (now - missingAt >= GameLoader.MISS_TTL_MS) {
+        this.missingUserIds.delete(id);
+      }
+    }
+    for (const [id, missingAt] of this.missingUserNames) {
+      if (now - missingAt >= GameLoader.MISS_TTL_MS) {
+        this.missingUserNames.delete(id);
+      }
+    }
+    for (const [id, missingAt] of this.missingUserRankIds) {
+      if (now - missingAt >= GameLoader.MISS_TTL_MS) {
+        this.missingUserRankIds.delete(id);
+      }
     }
   }
 
-  public async getIds(): Promise<Array<GameIdLedger>> {
-    await Promise.resolve();
-    return Promise.resolve([]);
+  // 定时清理长时间未访问的完整游戏，只移除内存对象，不删除数据库数据。
+  public cleanupExpiredLoadedGames(): void {
+    const now = Date.now();
+    for (const [gameId, accessedAt] of this.lastAccessedAt) {
+      const game = this.games.get(gameId);
+      if (game === undefined) {
+        this.lastAccessedAt.delete(gameId);
+        continue;
+      }
+      if ( now - accessedAt >= GameLoader.LOADED_GAME_TTL_MS) {
+        this.removeGameFromMemory(game);
+      }
+    }
   }
 
-  public completeGame(_game: IGame) {
-    // const database = Database.getInstance();
-    // await database.saveGame(game);
-    try {
-      // this.mark(game.id);
-      // await database.markFinished(game.id);
-      // await this.maintenance();
-    } catch (err) {
-      console.error(err);
+  // 从所有内存索引里移除游戏，确保 game/player/user 映射不会留下悬挂引用。
+  public removeGameFromMemory(game: IGame): void {
+    this.games.delete(game.id);
+    this.lastAccessedAt.delete(game.id);
+    if (game.spectatorId !== undefined) {
+      this.playerToGame.delete(game.spectatorId);
     }
-    return Promise.resolve();
+    for (const player of game.getAllPlayers()) {
+      this.playerToGame.delete(player.id);
+    }
   }
+
 
   public saveGame(game: IGame): Promise<void> {
-    if (this.purgedGames.includes(game.id)) {
-      throw new Error('This game no longer exists');
-    }
     return Database.getInstance().saveGame(game);
   }
 
-
-  public async maintenance() {
-    const database = Database.getInstance();
-    const purgedGames = await database.purgeUnfinishedGames();
-    this.purgedGames.push(...purgedGames);
-    await database.compressCompletedGames();
-  }
 
   // 天梯
   public static getUserRankByPlayer(player: IPlayer): UserRank | undefined {
@@ -483,28 +458,14 @@ export class GameLoader implements IGameLoader {
     return userRank;
   }
 
-  // 天梯，新增UserRank到GameLoader
-  public addOrUpdateUserRank(userRank: UserRank): void {
-    this.userRankMap.set(userRank.userId, userRank);
+  // 天梯，新增/更新 UserRank 到 GameLoader。
+  // onlyIfCached=true 时只刷新已在缓存中的用户、不新增，避免把懒加载缓存撑成全量。
+  public addOrUpdateUserRank(userRank: UserRank, onlyIfCached = false): void {
+    const key = normalizeUserId(userRank.userId);
+    if (onlyIfCached && !this.userRankMap.has(key)) {
+      return;
+    }
+    // 键需与 userRankMap.get 的规范化保持一致，否则按规范化 id 取不到回填的排名。
+    this.userRankMap.set(key, userRank);
   }
-}
-
-
-function parseConfigString(stringValue: string): CacheConfig {
-  const options: CacheConfig = {
-    sweep: 'manual', // default is manual
-    evictMillis: durationToMilliseconds('15m'),
-    sleepMillis: durationToMilliseconds('5m'),
-  };
-  const parsed = Object.fromEntries((stringValue ?? '').split(';').map((s) => s.split('=', 2)));
-  if (parsed.sweep === 'auto' || parsed.sweep === 'manual') {
-    options.sweep = parsed.sweep;
-  } else if (parsed.sweep !== undefined) {
-    throw new Error('invalid sweep option from GAME_CACHE: ' + parsed.sweep);
-  }
-  const evictMillis = durationToMilliseconds(parsed.eviction_age);
-  if (!isNaN(evictMillis)) options.evictMillis = evictMillis;
-  const sleepMillis = durationToMilliseconds(parsed.sweep_freq);
-  if (!isNaN(sleepMillis)) options.sleepMillis = sleepMillis;
-  return options;
 }

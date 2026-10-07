@@ -3,9 +3,9 @@
     <!-- Period toggle -->
     <div class="ugs-period-toggle">
       <button :class="['ugs-tab', period === 'allTime' && 'ugs-tab--active']"
-        @click="period = 'allTime'">All Time</button>
+              @click="period = 'allTime'">All Time</button>
       <button :class="['ugs-tab', period === 'recent3Months' && 'ugs-tab--active']"
-        @click="period = 'recent3Months'">Last 3 Months</button>
+              @click="period = 'recent3Months'">Last 3 Months</button>
     </div>
 
     <!-- Hero metrics row: Win Rate + Flee Rate -->
@@ -68,7 +68,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 
 /**
  * Shared game stats display component.
@@ -76,7 +76,7 @@ import Vue from 'vue';
  * Used by both Me.vue (own profile) and UserProfile.vue (public profile).
  * Accepts the full IUserGameStats shape and handles period toggling internally.
  */
-export default Vue.extend({
+export default defineComponent({
   name: 'UserGameStats',
   props: {
     /** allTime stats block */
@@ -101,9 +101,15 @@ export default Vue.extend({
     },
     fleeRateClass(): string {
       const rate = this.activeStats.fleeRate;
-      if (rate > 20) return 'ugs-hero__value--critical';
-      if (rate > 10) return 'ugs-hero__value--danger';
-      if (rate > 5) return 'ugs-hero__value--warn';
+      if (rate > 20) {
+        return 'ugs-hero__value--critical';
+      }
+      if (rate > 10) {
+        return 'ugs-hero__value--danger';
+      }
+      if (rate > 5) {
+        return 'ugs-hero__value--warn';
+      }
       return 'ugs-hero__value--safe';
     },
   },

@@ -1,3 +1,5 @@
 *.ts text eol=lf
 *.js text eol=lf
 *.vue text eol=lf
+src/server/database/LocalFilesystem.ts merge=ours
+src/server/database/LocalStorage.ts merge=ours

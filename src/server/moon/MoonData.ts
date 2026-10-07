@@ -10,7 +10,7 @@ export type MoonData = {
   miningRate: number;
   logisticRate: number;
   lunaFirstPlayer: IPlayer | undefined;
-  lunaProjectOfficeLastGeneration: number | undefined;
+  lunaProjectOfficeLastGeneration?: number;
 }
 
 export namespace MoonData {
@@ -25,6 +25,7 @@ export namespace MoonData {
       logisticRate: moonData.logisticRate,
       lunaFirstPlayer: moonData.lunaFirstPlayer?.serializeId(),
       lunaProjectOfficeLastGeneration: moonData.lunaProjectOfficeLastGeneration,
+      lunaFirstPlayerId: moonData.lunaFirstPlayer ? moonData.lunaFirstPlayer.id : undefined,
     };
   }
 
@@ -48,8 +49,8 @@ export namespace MoonData {
       logisticRate: moonData.logisticRate,
       miningRate: moonData.miningRate,
       moon: board,
-      lunaFirstPlayer: findPlayer(players, moonData.lunaFirstPlayer?.id),
       lunaProjectOfficeLastGeneration: moonData.lunaProjectOfficeLastGeneration,
+      lunaFirstPlayer: findPlayer(players, moonData.lunaFirstPlayerId ?? moonData.lunaFirstPlayer?.id),
     };
   }
 }

@@ -3,6 +3,7 @@ import {IPlayer} from '../IPlayer';
 import {Board} from '../boards/Board';
 import {MoonExpansion} from '../moon/MoonExpansion';
 import {PathfindersExpansion} from '../pathfinders/PathfindersExpansion';
+import {DeltaProjectExpansion} from '../delta/DeltaProjectExpansion';
 import {VictoryPointsBreakdownBuilder} from './VictoryPointsBreakdownBuilder';
 import {FundedAward} from '../awards/FundedAward';
 import {AwardScorer} from '../awards/AwardScorer';
@@ -79,6 +80,7 @@ export function calculateVictoryPoints(player: IPlayer) {
   }
   MoonExpansion.calculateVictoryPoints(player, builder);
   PathfindersExpansion.calculateVictoryPoints(player, builder);
+  DeltaProjectExpansion.calculateVictoryPoints(player, builder);
 
   // Underworld Score Bribing
   if (player.game.gameOptions.underworldExpansion === true) {
@@ -87,15 +89,15 @@ export function calculateVictoryPoints(player: IPlayer) {
   }
 
   // Escape velocity VP penalty
-  if (player.game.gameOptions.escapeVelocityMode) {
-    const threshold = player.game.gameOptions.escapeVelocityThreshold;
-    const bonusSecondsPerAction = player.game.gameOptions.escapeVelocityBonusSeconds;
-    const period = player.game.gameOptions.escapeVelocityPeriod;
-    const penaltyPerMin = player.game.gameOptions.escapeVelocityPenalty ?? 1;
-    const elapsedTimeInMinutes = player.timer.getElapsedTimeInMinutes();
-    if (threshold !== undefined && bonusSecondsPerAction !== undefined && period !== undefined && elapsedTimeInMinutes > threshold) {
-      const overTimeInMinutes = Math.max(elapsedTimeInMinutes - threshold - (player.actionsTakenThisGame * (bonusSecondsPerAction / 60)), 0);
-      const vpPenalty = penaltyPerMin * Math.floor(overTimeInMinutes / period);
+  if (player.game.gameOptions.escapeVelocity !== undefined) {
+    const options = player.game.gameOptions.escapeVelocity;
+
+    const elapsedTimeMinutes = player.timer.getElapsedTimeInMinutes();
+    const bonusActionMinutes = player.actionsTakenThisGame * (options.bonusSectionsPerAction / 60);
+    const overageMin = elapsedTimeMinutes - bonusActionMinutes - options.thresholdMinutes;
+
+    if (overageMin > 0) {
+      const vpPenalty = options.penaltyVPPerPeriod * Math.floor(overageMin / options.penaltyPeriodMinutes);
       builder.setVictoryPoints('escapeVelocity', -vpPenalty);
     }
   }
@@ -116,12 +118,18 @@ function maybeSetVP(thisPlayer: IPlayer, awardWinner: IPlayer, fundedAward: Fund
 
 function giveAwards(player: IPlayer, builder: VictoryPointsBreakdownBuilder) {
   // Awards are disabled for 1 player games
-  if (player.game.isSoloMode() || player.game.players.length === 1) return;
+  if (player.game.isSoloMode()) {
+    return;
+  }
 
   player.game.fundedAwards.forEach((fundedAward) => {
     const award = fundedAward.award;
     const scorer = new AwardScorer(player.game, award);
     const players: Array<IPlayer> = player.game.players.slice();
+
+    // 当其他玩家体退后，活跃玩家可能不足2人，无法竞争奖励，跳过此奖项
+    if (players.length < 2) return;
+
     players.sort((p1, p2) => scorer.get(p2) - scorer.get(p1));
 
     // There is one rank 1 player

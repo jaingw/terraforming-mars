@@ -44,7 +44,9 @@ export class StrategicRetrieval extends Card implements IProjectCard {
     const cards = [];
     for (let idx = 0; idx < 3; idx++) {
       const card = player.game.projectDeck.discardPile.pop();
-      if (card === undefined) break;
+      if (card === undefined) {
+        break;
+      }
       cards.push(card);
     }
     player.game.cardDrew = true;

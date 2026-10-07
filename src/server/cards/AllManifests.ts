@@ -19,6 +19,7 @@ import {PRELUDE2_CARD_MANIFEST} from './prelude2/Prelude2CardManifest';
 import {STAR_WARS_CARD_MANIFEST} from './starwars/StarwarsCardManifest';
 import {UNDERWORLD_CARD_MANIFEST} from './underworld/UnderworldCardManifest';
 import {COMMISSION_CARD_MANIFEST} from './commission/CommissionCardManifest';
+import {DELTA_PROJECT_CARD_MANIFEST} from './delta/DeltaProjectCardManifest';
 
 export const ALL_MODULE_MANIFESTS: Array<ModuleManifest> = [
   BASE_CARD_MANIFEST,
@@ -39,4 +40,5 @@ export const ALL_MODULE_MANIFESTS: Array<ModuleManifest> = [
   STAR_WARS_CARD_MANIFEST,
   UNDERWORLD_CARD_MANIFEST,
   COMMISSION_CARD_MANIFEST, // 赞助卡牌
+  DELTA_PROJECT_CARD_MANIFEST,
 ];

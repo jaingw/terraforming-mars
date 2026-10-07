@@ -3,6 +3,7 @@ import {IPlayer} from '../../IPlayer';
 import {CardName} from '../../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
 import {CardResource} from '../../../common/CardResource';
+import {Resource} from '../../../common/Resource';
 import {ICard} from '../../cards/ICard';
 import {CorporationCard} from '../corporation/CorporationCard';
 
@@ -36,7 +37,7 @@ export class Protogen extends CorporationCard {
   // }
   public onResourceAdded(player: IPlayer, card: ICard) {
     if (card.resourceType === CardResource.MICROBE) {
-      player.heat += 2;
+      player.stock.add(Resource.HEAT, 2);
     }
   }
 }

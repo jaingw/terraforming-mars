@@ -1,8 +1,8 @@
 import {expect} from 'chai';
 import {UndergroundResearchCenter} from '../../../src/server/cards/underworld/UndergroundResearchCenter';
 import {testGame} from '../../TestGame';
-import {cast, runAllActions} from '../../TestingUtils';
-import {toName} from '../../../src/common/utils/utils';
+import {runAllActions} from '../../TestingUtils';
+import {cast, toName} from '../../../src/common/utils/utils';
 import {CardName} from '../../../src/common/cards/CardName';
 import {Tag} from '../../../src/common/cards/Tag';
 import {assertIsExcavationAction} from '../../underworld/underworldAssertions';
@@ -21,7 +21,7 @@ describe('UndergroundResearchCenter', () => {
       const [/* game */, player/* , opponent */] = testGame(2, {underworldExpansion: true});
 
       for (let idx = 0; idx < run.excavationTokens; idx++) {
-        player.underworldData.tokens.push('nothing');
+        player.underworldData.tokens.push({token: 'nothing', shelter: false, active: false});
       }
       expect(card.canPlay(player)).eq(run.expected);
     });

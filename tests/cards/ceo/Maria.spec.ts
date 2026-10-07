@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 import {IGame} from '../../../src/server/IGame';
-import {cast, forceGenerationEnd, runAllActions} from '../../TestingUtils';
+import {forceGenerationEnd, runAllActions} from '../../TestingUtils';
 import {TestPlayer} from '../../TestPlayer';
 import {testGame} from '../../TestGame';
 import {SelectColony} from '../../../src/server/inputs/SelectColony';
@@ -9,6 +9,7 @@ import {Venus} from '../../../src/server/cards/community/Venus';
 import {Celestic} from '../../../src/server/cards/venusNext/Celestic';
 import {IapetusII} from '../../../src/server/cards/pathfinders/IapetusII';
 import {CollegiumCopernicus} from '../../../src/server/cards/pathfinders/CollegiumCopernicus';
+import {cast} from '../../../src/common/utils/utils';
 
 describe('Maria', () => {
   let card: Maria;
@@ -60,7 +61,7 @@ describe('Maria', () => {
   });
 
   it('Takes action - chooses Venus, which is activated', () => {
-    player2.corporations.push(new Celestic());
+    player2.playedCards.push(new Celestic());
     const venus = new Venus();
     game.discardedColonies = [];
     game.discardedColonies.push(venus);
@@ -89,7 +90,7 @@ describe('Maria', () => {
   });
 
   it('Takes action - chooses Ieptus II, which is activated', () => {
-    player2.corporations.push(new CollegiumCopernicus());
+    player2.playedCards.push(new CollegiumCopernicus());
     const iapetusii = new IapetusII();
     game.discardedColonies = [];
     game.discardedColonies.push(iapetusii);

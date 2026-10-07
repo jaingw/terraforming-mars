@@ -1,4 +1,6 @@
 export type Warning =
+ 'pass' |
+ 'undoBestEffort' |
  'maxtemp' |
  'maxoxygen' |
  'maxoceans' |
@@ -19,4 +21,5 @@ export type Warning =
  'noEffect' |
  'selfTarget' |
  'pharmacyUnion' |
- 'kaguyaTech';
+ 'kaguyaTech' |
+ 'underworldtokendiscard';

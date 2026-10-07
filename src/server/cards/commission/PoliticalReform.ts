@@ -6,9 +6,13 @@ import {Size} from '../../../common/cards/render/Size';
 import {PartyName} from '../../../common/turmoil/PartyName';
 import {IPlayer} from '../../IPlayer';
 import {IPolicy} from '../../turmoil/Policy';
-import {KELVINISTS_POLICY_1} from '../../turmoil/parties/Kelvinists';
-import {SCIENTISTS_POLICY_1} from '../../turmoil/parties/Scientists';
 import {ICard} from '../ICard';
+import {Turmoil} from '../../turmoil/Turmoil';
+import {
+  PoliticalReformData,
+  getPoliticalReformPartyName,
+  getPoliticalReformPolicyId,
+} from '../../turmoil/PoliticalReformData';
 
 /**
  * 实现额外的政策
@@ -17,7 +21,31 @@ import {ICard} from '../ICard';
  * TurmoilHandler partyAction 科 热  PoliticalReform.canAct
  */
 export class PoliticalReform extends CorporationCard implements ICard {
-  public data:PartyName | undefined = undefined;
+  public data: PoliticalReformData | undefined = undefined;
+
+  public static getPartyName(data: PoliticalReformData | undefined): PartyName | undefined {
+    return getPoliticalReformPartyName(data);
+  }
+
+  public static getPolicyId(data: PoliticalReformData | undefined) {
+    return getPoliticalReformPolicyId(data);
+  }
+
+  private getPartyPolicy(player: IPlayer): IPolicy | undefined {
+    if (!player.game.turmoil || this.data === undefined) {
+      return undefined;
+    }
+    const turmoil = player.game.turmoil as Turmoil;
+    const partyName = PoliticalReform.getPartyName(this.data);
+    if (partyName === undefined) {
+      return undefined;
+    }
+    const explicitPolicyId = PoliticalReform.getPolicyId(this.data);
+    if (explicitPolicyId !== undefined) {
+      return turmoil.getPartyByName(partyName).policies.find((policy) => policy.id === explicitPolicyId);
+    }
+    return turmoil.getPolicyByPartyName(partyName);
+  }
 
   constructor() {
     super({
@@ -42,32 +70,13 @@ export class PoliticalReform extends CorporationCard implements ICard {
 
 
   public canAct(player: IPlayer): boolean {
-    if (PartyName.KELVINISTS === this.data && KELVINISTS_POLICY_1.canAct?.(player)) {
-      return true;
-    }
-    if ( PartyName.SCIENTISTS === this.data && SCIENTISTS_POLICY_1.canAct?.(player)) {
-      return true;
-    }
-    return false;
+    return this.getPartyPolicy(player)?.canAct?.(player) === true;
   }
 
   public action(player: IPlayer) {
-    if (!player.game.turmoil) {
-      return undefined;
-    }
-
-    if (this.data === PartyName.KELVINISTS) {
-      const policy: IPolicy = KELVINISTS_POLICY_1;
-      if (policy.canAct?.(player)) {
-        policy.action?.(player);
-      }
-    }
-
-    if (this.data === PartyName.SCIENTISTS) {
-      const policy: IPolicy = SCIENTISTS_POLICY_1;
-      if (policy.canAct?.(player)) {
-        policy.action?.(player);
-      }
+    const policy = this.getPartyPolicy(player);
+    if (policy?.canAct?.(player)) {
+      policy.action?.(player);
     }
     return undefined;
   }

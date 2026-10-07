@@ -12,6 +12,8 @@ export class User {
   public showhandcards : boolean = false;
   public donateNum : number = 0;
   public tokenList : Array<string> = [];
+  public passwordResetTokenHash: string = '';
+  public passwordResetTokenExpiresAt: number = 0;
 
   constructor(
         public name: string,
@@ -33,6 +35,8 @@ export class User {
       showhandcards: this.showhandcards,
       donateNum: this.donateNum,
       tokenList: this.tokenList,
+      passwordResetTokenHash: this.passwordResetTokenHash,
+      passwordResetTokenExpiresAt: this.passwordResetTokenExpiresAt,
     });
   }
 
@@ -100,4 +104,3 @@ export class User {
     return 0;
   }
 }
-

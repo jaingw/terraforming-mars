@@ -1,51 +1,39 @@
 <template>
-  <!-- single item in GamesOverview -->
-  <span>
-    <a v-bind:href="'game?id='+id">{{id}}</a>
-    <template v-if="game === undefined">
-      ...{{status}}
-    </template>
-    <template v-else>
-      <span>{{game.createtime.slice(5, 16)}}  {{game.updatetime.slice(5, 16)}}  </span>
-      age: {{game.gameAge}}
-      <span v-i18n>with {{game.players.length}} player(s) :</span>
-      <span class="player_home_block nofloat" >
-          <span v-for="player in game.players" class="player_name" :class="'player_bg_color_'+ player.color" :key="player.name+player.color">
-              <a target="blank" :href="'player?id=' + player.id">{{player.name}}</a>
-          </span>
-          <!-- TODO(kberg) Give spectator a color. -->
-          <!-- <a target="blank" :href="'/spectator?id=' + game.spectatorId" v-i18n>Spectator</a> -->
-          <span v-if="isRunning()" v-i18n>is running</span><span v-else v-i18n>has ended</span>
+  <tr>
+    <td><span :class="isRunning ? 'status-running' : 'status-finished'"></span></td>
+    <td><a :href="'game?id='+id" class="game-id">{{id}}</a></td>
+    <td class="game-overview-time">
+      <span>{{game.createtime?.slice(5, 16)}} {{game.updatetime?.slice(5, 16)}}</span>
+      <span v-if="game.gameAge !== undefined"> age: {{game.gameAge}}</span>
+    </td>
+    <td>
+      <span class="player_home_block nofloat">
+        <span v-for="player in game.players" :key="player.color" class="player_name" :class="'player_bg_color_'+ player.color">
+          <a target="blank" :href="'player?id=' + player.id">{{player.name}}</a>
+        </span>
       </span>
-    </template>
-  </span>
+    </td>
+  </tr>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import {SimpleGameModel} from '@/common/models/SimpleGameModel';
-import {Phase} from '@/common/Phase';
+import {defineComponent} from 'vue';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'GameOverview',
-  data() {
-    return {
-    };
-  },
   props: {
-    status: {
-      type: String,
-    },
     game: {
-      type: Object as () => SimpleGameModel | undefined,
+      type: Object,
+      required: true,
     },
     id: {
       type: String,
+      required: true,
     },
   },
-  methods: {
+  computed: {
     isRunning(): boolean {
-      return this.game?.phase !== Phase.END;
+      return this.game.phase !== 'end';
     },
   },
 });

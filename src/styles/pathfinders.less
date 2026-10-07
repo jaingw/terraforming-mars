@@ -16,6 +16,27 @@
 		margin-bottom: 10px;
 	}
 
+	.track-icon {
+		position: absolute;
+        height: 16px;
+        width: 16px;
+        background-size: 16px 16px;
+        margin: -8px 0px 0px -8px;
+	}
+
+  .track-icon--rising-player {
+    background-image: url(./assets/pathfinders/pawn.png);
+  }
+
+  .track-icon--everyone {
+    background-image: url(./assets/pathfinders/pawns.png);
+  }
+
+  .track-icon--most-tags {
+    background-image: url(./assets/pathfinders/crown_a.png);
+    margin-left: -35px;
+    margin-top: -8px;
+  }
 	.track-numbers {
 		margin-left: 50px;
 		font-family: 'Prototype';
@@ -58,13 +79,15 @@
 	}
 
 	.highlight {
-    font-weight: bold;
-		background: linear-gradient(transparent,#fff8);
+		font-weight: bold;
+		background: linear-gradient(transparent, #fff8);
+		border-left: 2px solid #222;
  	}
 	td {
 		padding: 0;
 		text-align: center;
 		background: linear-gradient(transparent, #0008);
+		border-left: 2px solid #0008;
 	}
 	tr {
 		height: 50px;
@@ -294,6 +317,8 @@
 
 .board-space-tile--martian-nature-wonders {
 	background: url("./assets/pathfinders/martian-nature-wonders.png");
+  // The z-index puts the image on top of the Underworld tile.
+  z-index: 1;
 }
 
 .card-tile-crashlanding {

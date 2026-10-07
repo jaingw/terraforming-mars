@@ -11,29 +11,35 @@ src/genfiles/
 dist/
 *.swp
 .nyc_output/
-db/*
-*.pem
-
-/desktop.ini
-/databak
-/assets/settings.json
+.vscode/
+.idea/
 pid
 *.log
 .eslintcache
-tsconfig.tsbuildinfo
+tsconfig*.tsbuildinfo
 assets/locales
 
 # Local Packages
 node_modules/
-/styles.css
-build/assets/index_ca.html
-/yarn.lock
-/tsconfig.tsbuildinfo
-/tt.js
-/.idea/
 
 # misc
 .gitconfig
 ./logs/
-/pnpm-lock.yaml
+/desktop.ini
+/databak
+/assets/settings.json
+/styles.css
+build/assets/index_ca.html
+/yarn.lock
+/tt.js
 /.cursorignore
+/.opencode/
+/.vite/
+/.codex
+/.vscode/settings.json
+/pnpm-lock.yaml
+
+/.ai/work.md
+/.agents/
+/.cursor/
+/.claude/

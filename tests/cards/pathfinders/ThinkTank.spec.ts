@@ -120,12 +120,12 @@ describe('ThinkTank', () => {
     selectProjectCardToPlay.process({
       type: 'projectCard',
       card: breathingFilters.name,
-      payment: Payment.of({megaCredits: breathingFilters.cost}),
+      payment: Payment.of({megacredits: breathingFilters.cost}),
     });
     expect(thinkTank.resourceCount).eq(1);
   });
 
-  it('effect ', () => {
+  it('effect', () => {
     // Breathing filters requires 7% oxygen
     const breathingFilters = new BreathingFilters();
     player.cardsInHand.push(breathingFilters);
@@ -138,7 +138,7 @@ describe('ThinkTank', () => {
     selectProjectCardToPlay.process({
       type: 'projectCard',
       card: breathingFilters.name,
-      payment: Payment.of({megaCredits: breathingFilters.cost}),
+      payment: Payment.of({megacredits: breathingFilters.cost}),
     });
     expect(thinkTank.resourceCount).eq(1);
   });

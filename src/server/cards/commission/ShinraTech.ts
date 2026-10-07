@@ -28,7 +28,7 @@ export class ShinraTech extends CorporationCard {
       },
     });
   }
-  public onCardPlayedForCorps(player: IPlayer, card: ICard) {
+  public onCardPlayed(player: IPlayer, card: ICard) {
     if (player.playedCards.has(this.name)) {
       for (const tag of card.tags) {
         if (tag === Tag.POWER) {

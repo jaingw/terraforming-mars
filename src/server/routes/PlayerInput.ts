@@ -1,9 +1,12 @@
 import {GameLoader} from '../database/GameLoader';
+import {Database} from '../database/Database';
 import * as responses from '../server/responses';
 import {IPlayer} from '../IPlayer';
 import {Server} from '../models/ServerModel';
 import {Handler} from './Handler';
 import {Context} from './IHandler';
+import {OrOptions} from '../inputs/OrOptions';
+import {UndoActionOption} from '../inputs/UndoActionOption';
 import {isPlayerId} from '../../common/Types';
 import {Request} from '../Request';
 import {Response} from '../Response';
@@ -13,6 +16,8 @@ import {statusCode} from '../../common/http/statusCode';
 import {InputError} from '../inputs/InputError';
 import {UnexpectedInput} from '../inputs/UnexpectedInput';
 import {isIProjectCard} from '../cards/IProjectCard';
+import {AppErrorResponse, INVALID_RUN_ID} from '../../common/app/AppErrorId';
+import { RequestBody} from '../../common/inputs/InputResponse';
 
 export class PlayerInput extends Handler {
   public static readonly INSTANCE = new PlayerInput();
@@ -32,7 +37,7 @@ export class PlayerInput extends Handler {
 
     ctx.ipTracker.addParticipant(playerId, ctx.ip);
 
-    const game = await GameLoader.getInstance().getByParticipantId(playerId);
+    const game = await ctx.gameLoader.getByPlayerId(playerId);
     if (game === undefined) {
       responses.notFound(req, res);
       return;
@@ -50,6 +55,29 @@ export class PlayerInput extends Handler {
     return this.processInput(req, res, ctx, player, userId);
   }
 
+  private isWaitingForUndo(player: IPlayer, entity: RequestBody): boolean {
+    const waitingFor = player.getWaitingFor();
+    const input = entity.input;
+    if (input.type === 'or' && waitingFor instanceof OrOptions) {
+      return waitingFor.options[input.index] instanceof UndoActionOption;
+    }
+    return false;
+  }
+
+  private async performUndo(player: IPlayer): Promise<IPlayer> {
+    try {
+      player.undoing = true;
+      const gameId = player.game.id;
+      await Database.getInstance().restoreGame(gameId, player.game.lastSaveId, player.game, player.id);
+      return player.game.getPlayerById(player.id);
+    } catch (error) {
+      console.error(error);
+      player.undoing = false;
+      return player;
+    }
+  }
+
+
   private processInput(req: Request, res: Response, ctx: Context, player: IPlayer, userId: string | null): Promise<void> {
     // TODO(kberg): Find a better place for this optimization.
     for (const card of player.tableau) {
@@ -63,13 +91,21 @@ export class PlayerInput extends Handler {
       req.on('data', (data) => {
         body += data.toString();
       });
-      req.once('end', () => {
+      req.once('end', async () => {
         try {
-          const entity = JSON.parse(body);
+          const entity = JSON.parse(body) as RequestBody;
           validateRunId(entity);
-          player.process(entity);
-          const playerBlockModel = Server.getPlayerBlock(player, userId);
-          responses.writeJson(res, ctx, Server.getPlayerModel(player, playerBlockModel));
+          let currentPlayer = player;
+          
+          if (this.isWaitingForUndo(player, entity)) {
+            currentPlayer = await this.performUndo(player);
+          } else {
+            player.process(entity);
+          }
+          // 预热天梯缓存，保证同步的 ServerModel 能取到所有玩家的 rank
+          await ctx.gameLoader.ensureUserRanksLoaded(currentPlayer.game.getAllPlayers());
+          const playerBlockModel = Server.getPlayerBlock(currentPlayer, userId);
+          responses.writeJson(res, ctx, Server.getPlayerModel(currentPlayer, playerBlockModel));
           resolve();
         } catch (e :any ) {
           // TODO(kberg): use responses.ts, though that changes the output.
@@ -83,7 +119,11 @@ export class PlayerInput extends Handler {
           }
           const id = e instanceof AppError ? e.id : undefined;
           const message = e instanceof Error ? e.message : String(e);
-          res.write(JSON.stringify({id: id, message: message}));
+          const response: AppErrorResponse = {
+            id: id,
+            message: message,
+          };
+          res.write(JSON.stringify(response));
           res.end();
           resolve();
         }
@@ -94,10 +134,9 @@ export class PlayerInput extends Handler {
 function validateRunId(entity: any) {
   if (entity.runId !== undefined && runId !== undefined) {
     if (entity.runId !== runId) {
-      throw new AppError('#invalid-run-id', 'The server has restarted. Click OK to refresh this page.');
+      throw new AppError(INVALID_RUN_ID, 'The server has restarted. Click OK to refresh this page.');
     }
   }
   // Clearing this out to be compatible with the input response processors.
   delete entity.runId;
 }
-

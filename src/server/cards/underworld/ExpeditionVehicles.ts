@@ -21,7 +21,7 @@ export class ExpeditionVehicles extends Card implements IProjectCard {
       victoryPoints: 1,
 
       metadata: {
-        cardNumber: 'U79',
+        cardNumber: 'U079',
         renderData: CardRenderer.builder((b) => {
           b.effect(
             'After you place a tile (on Mars or in space) that has no adjacent tiles, draw a card.',
@@ -32,6 +32,11 @@ export class ExpeditionVehicles extends Card implements IProjectCard {
   }
 
   onTilePlaced(cardOwner: IPlayer, activePlayer: IPlayer, space: Space, boardType: BoardType) {
+    // onTilePlaced gets called with Mars Nomads, should be ignored here.
+    if (space.tile === undefined) {
+      return;
+    }
+
     if (cardOwner === activePlayer) {
       const game = activePlayer.game;
       const board = boardType === BoardType.MARS ? game.board : MoonExpansion.moonData(game).moon;

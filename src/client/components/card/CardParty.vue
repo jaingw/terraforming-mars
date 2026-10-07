@@ -1,14 +1,14 @@
 <template>
   <div class="card-party">
-  <span :class="classes"></span>
+    <span :class="classes"></span>
   </div>
 </template>
 
 <script lang="ts">
 
-import Vue from 'vue';
+import {defineComponent} from 'vue';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'CardParty',
   props: {
     party: {

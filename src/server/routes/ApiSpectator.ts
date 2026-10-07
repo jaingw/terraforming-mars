@@ -3,7 +3,6 @@ import {Handler} from './Handler';
 import {Context} from './IHandler';
 import {IGame} from '../IGame';
 import {isSpectatorId} from '../../common/Types';
-import {GameLoader} from '../database/GameLoader';
 import {Request} from '../Request';
 import {Response} from '../Response';
 
@@ -22,7 +21,7 @@ export class ApiSpectator extends Handler {
     }
     let game: IGame | undefined;
     if (isSpectatorId(id)) {
-      game = await GameLoader.getInstance().getByParticipantId(id);
+      game = await ctx.gameLoader.getByPlayerId(id);
     }
     if (game === undefined) {
       responses.notFound(req, res);

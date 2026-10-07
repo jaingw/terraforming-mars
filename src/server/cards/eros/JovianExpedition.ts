@@ -39,7 +39,9 @@ export class JovianExpedition extends Card implements IProjectCard {
 
   public override bespokePlay(player: IPlayer) {
     const game = player.game;
-    if (!game.gameOptions.coloniesExtension) return undefined;
+    if (!game.gameOptions.coloniesExtension) {
+      return undefined;
+    }
 
     ColoniesHandler.addColonyTile(
       player,

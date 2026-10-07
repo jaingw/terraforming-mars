@@ -9,12 +9,13 @@ import {Venus} from '../../../src/server/cards/community/Venus';
 import {Celestic} from '../../../src/server/cards/venusNext/Celestic';
 import {Tag} from '../../../src/common/cards/Tag';
 import {Player} from '../../../src/server/Player';
-import {cast, runAllActions} from '../../TestingUtils';
+import {runAllActions} from '../../TestingUtils';
 import {SelectColony} from '../../../src/server/inputs/SelectColony';
 import {InputResponse} from '../../../src/common/inputs/InputResponse';
 import {ColonyName} from '../../../src/common/colonies/ColonyName';
 import {GHGProducingBacteria} from '../../../src/server/cards/base/GHGProducingBacteria';
 import {Leavitt} from '../../../src/server/cards/community/Leavitt';
+import {cast} from '../../../src/common/utils/utils';
 
 let card: Aridor;
 let game: IGame;
@@ -30,7 +31,7 @@ describe('Aridor', () => {
 
   it('Should play', () => {
     cast(card.play(player), undefined);
-    player.corporations.push(card);
+    player.playedCards.push(card);
 
     // Predators has an Animal tag
     player.playCard(new Predators());
@@ -85,7 +86,7 @@ describe('Aridor', () => {
   });
 
   it('initialAction - chooses Venus, which is activated', () => {
-    player2.corporations.push(new Celestic());
+    player2.playedCards.push(new Celestic());
     const venus = new Venus();
     game.discardedColonies.push(venus);
     player.defer(card.initialAction(player));
@@ -101,7 +102,7 @@ describe('Aridor', () => {
 
   it('serialization test for Player with Aridor', () => {
     card.play(player);
-    player.corporations.push(card);
+    player.playedCards.push(card);
     player.playCard(new Predators());
     player2.playCard(new ResearchOutpost());
     player.playCard(new ResearchOutpost());
@@ -119,7 +120,7 @@ describe('Aridor', () => {
   });
 
   it('Compatible with Leavitt #6349', () => {
-    player.corporations.push(card);
+    player.playedCards.push(card);
 
     expect(player.production.megacredits).eq(0);
 

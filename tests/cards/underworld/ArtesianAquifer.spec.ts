@@ -1,18 +1,17 @@
 import {expect} from 'chai';
 import {ArtesianAquifer} from '../../../src/server/cards/underworld/ArtesianAquifer';
 import {testGame} from '../../TestGame';
-import {cast, runAllActions} from '../../TestingUtils';
+import {runAllActions} from '../../TestingUtils';
 import {SelectSpace} from '../../../src/server/inputs/SelectSpace';
 import {TileType} from '../../../src/common/TileType';
+import {cast} from '../../../src/common/utils/utils';
 
 describe('ArtesianAquifer', () => {
   it('play', () => {
     const card = new ArtesianAquifer();
     const [game, player] = testGame(2, {underworldExpansion: true});
 
-    cast(card.play(player), undefined);
-    runAllActions(game);
-    const selectSpace = cast(player.popWaitingFor(), SelectSpace);
+    const selectSpace = cast(card.play(player), SelectSpace);
     const space = selectSpace.spaces[0];
     space.undergroundResources = 'plant2';
     space.bonus = [];

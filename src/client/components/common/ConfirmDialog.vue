@@ -15,21 +15,21 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import {WithRefs} from 'vue-typed-refs';
+import {defineComponent} from 'vue';
 import {showModal, windowHasHTMLDialogElement} from '@/client/components/HTMLDialogElementCompatibility';
 
 import dialogPolyfill from 'dialog-polyfill';
 
 type Refs = {
-  dialog: HTMLElement,
-}
+  dialog: HTMLDialogElement;
+};
 
-export default (Vue as WithRefs<Refs>).extend({
+export default defineComponent({
   name: 'ConfirmDialog',
   props: {
     message: {
       type: String,
+      required: true,
     },
     enableDontShowAgainCheckbox: {
       type: Boolean,
@@ -47,20 +47,35 @@ export default (Vue as WithRefs<Refs>).extend({
       this.$emit('hide', this.hide);
     },
   },
+  computed: {
+    typedRefs(): Refs {
+      return this.$refs as unknown as Refs;
+    },
+  },
   methods: {
+    closeDialog() {
+      const dialog = this.$refs.dialog as HTMLDialogElement;
+      if ((dialog as any).open) {
+        dialog.close();
+      }
+    },
     accept() {
+      this.closeDialog();
       this.$emit('accept');
     },
     dismiss() {
+      this.closeDialog();
       this.$emit('dismiss');
     },
     show() {
       this.shown = true;
-      showModal(this.$refs.dialog);
+      showModal(this.typedRefs.dialog);
     },
   },
   mounted() {
-    if (!windowHasHTMLDialogElement()) dialogPolyfill.default.registerDialog(this.$refs.dialog);
+    if (!windowHasHTMLDialogElement()) {
+      dialogPolyfill.registerDialog(this.typedRefs.dialog);
+    }
   },
 });
 </script>
@@ -167,4 +182,3 @@ export default (Vue as WithRefs<Refs>).extend({
   white-space: pre-wrap;
 }
 </style>
-

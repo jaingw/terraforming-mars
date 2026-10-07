@@ -32,23 +32,24 @@ export abstract class Board {
   private maxX: number = 0;
   private maxY: number = 0;
   private map: Map<SpaceId, Space> = new Map();
+  public volcanicSpaceIds: ReadonlyArray<SpaceId>;
 
   // stores adjacent spaces in clockwise order starting from the top left
   private readonly adjacentSpaces = new Map<SpaceId, ReadonlyArray<Space>>();
 
-  protected constructor(
+  public constructor(
     public readonly spaces: ReadonlyArray<Space>,
-    public readonly noctisCitySpaceId: SpaceId | undefined,
-    public readonly volcanicSpaceIds: ReadonlyArray<SpaceId>) {
+    public readonly noctisCitySpaceId?: SpaceId | undefined) {
     this.maxX = Math.max(...spaces.map((s) => s.x));
     this.maxY = Math.max(...spaces.map((s) => s.y));
     spaces.forEach((space) => {
       const adjacentSpaces = this.computeAdjacentSpaces(space);
       const filtered = adjacentSpaces.filter((space) => space !== undefined);
-      // "as ReadonlyArray<Space> is OK because the line above filters out the undefined values."
-      this.adjacentSpaces.set(space.id, filtered as ReadonlyArray<Space>);
+      this.adjacentSpaces.set(space.id, filtered);
       this.map.set(space.id, space);
     });
+
+    this.volcanicSpaceIds = this.spaces.filter((space) => space.volcanic).map((space) => space.id);
   }
 
   /* Returns the space given a Space ID. */
@@ -133,13 +134,7 @@ export abstract class Board {
   }
 
   public getSpaces(spaceType: SpaceType): ReadonlyArray<Space> {
-    // TODO(kberg): How to make this not bother with the special case when
-    // Underworld is not in play? It's not very expensive.
-    if (spaceType !== SpaceType.OCEAN) {
-      return this.spaces.filter((space) => space.spaceType === spaceType);
-    } else {
-      return this.spaces.filter((space) => space.spaceType === spaceType || space.undergroundResources === 'volcanicoceanspace');
-    }
+    return this.spaces.filter((space) => space.spaceType === spaceType);
   }
 
   /**
@@ -170,9 +165,11 @@ export abstract class Board {
     switch (hazardSeverity(space.tile?.tileType)) {
     case 'mild':
       costs.megacredits += 8;
+      costs.tr.tr = (costs.tr.tr ?? 0) + 1;
       break;
     case 'severe':
       costs.megacredits += 16;
+      costs.tr.tr = (costs.tr.tr ?? 0) + 2;
       break;
     }
 
@@ -305,7 +302,7 @@ export abstract class Board {
   }
 
   public static ownedBy(player: IPlayer): (space: Space) => boolean {
-    return (space: Space) => space.player?.id === player.id;
+    return (space: Space) => space.player?.id === player.id || space.coOwner?.id === player.id;
   }
 
   public static spaceOwnedBy(space: Space, player: IPlayer): boolean {
@@ -313,7 +310,11 @@ export abstract class Board {
   }
 
   public getHazards(): ReadonlyArray<Space> {
-    return this.spaces.filter((space) => space.tile && HAZARD_TILES.has(space.tile.tileType));
+    return this.spaces.filter(AresHandler.hasHazardTile);
+  }
+
+  public getUnprotectedHazards(): ReadonlyArray<Space> {
+    return this.getHazards().filter((space) => space.tile?.protectedHazard !== true);
   }
 
   /** Hazard tiles don't really count as tiles. */
@@ -343,7 +344,9 @@ export abstract class Board {
         if (space.coOwner !== undefined) {
           serialized.coOwner = space.coOwner.id;
         }
-
+        if (space.volcanic) {
+          serialized.volcanic = true;
+        }
         return serialized;
       }),
     };
@@ -392,6 +395,9 @@ export abstract class Board {
     }
     if (coOwner !== undefined) {
       space.coOwner = coOwner;
+    }
+    if (serialized.volcanic !== undefined) {
+      space.volcanic = serialized.volcanic;
     }
     return space;
   }

@@ -21,7 +21,7 @@ export type GameModel = {
   colonies: ReadonlyArray<ColonyModel>;
   discardedColonies: ReadonlyArray<ColonyName>;
   deckSize: number;
-  expectedPurgeTimeMs: number;
+  discardPileSize: number;
   experimentalReset?: boolean;
   gameAge: number;
   gameOptions: GameOptionsModel;
@@ -31,6 +31,7 @@ export type GameModel = {
   lastSoloGeneration: number,
   milestones: ReadonlyArray<ClaimedMilestoneModel>;
   moon: MoonModel | undefined;
+  name: string;
   oceans: number;
   oxygenLevel: number;
   passedPlayers: ReadonlyArray<Color>;

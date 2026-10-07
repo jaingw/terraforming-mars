@@ -7,8 +7,11 @@ import {SelectPlayer} from '../../../src/server/inputs/SelectPlayer';
 import {SelectSpace} from '../../../src/server/inputs/SelectSpace';
 import {TestPlayer} from '../../TestPlayer';
 import {SpaceType} from '../../../src/common/boards/SpaceType';
-import {addGreenery, cast, maxOutOceans, runAllActions} from '../../TestingUtils';
+import {addGreenery, maxOutOceans, runAllActions} from '../../TestingUtils';
 import {testGame} from '../../TestGame';
+import {cast} from '../../../src/common/utils/utils';
+import {assertIsMaybeBlock} from '../../underworld/underworldAssertions';
+import {Payment} from '../../../src/common/inputs/Payment';
 
 describe('Flooding', () => {
   let card: Flooding;
@@ -93,5 +96,61 @@ describe('Flooding', () => {
     expect(card.canPlay(player)).is.true;
 
     cast(card.play(player), undefined);
+  });
+
+  it('removes money after adjacent player declines to block with corruption', () => {
+    [game, player, player2] = testGame(2, {underworldExpansion: true});
+    const oceans = game.board.getAvailableSpacesForOcean(player);
+    cast(card.play(player), undefined);
+    runAllActions(game);
+    const selectSpace = cast(player.popWaitingFor(), SelectSpace);
+
+    const adjacentSpaces = game.board.getAdjacentSpaces(oceans[0]);
+    for (const adjacentSpace of adjacentSpaces) {
+      if (adjacentSpace.spaceType === SpaceType.LAND) {
+        game.addGreenery(player2, adjacentSpace);
+        break;
+      }
+    }
+
+    player2.megaCredits = 4;
+    player2.underworldData.corruption = 1;
+    cast(selectSpace.cb(oceans[0]), undefined);
+    runAllActions(game);
+    const subAction = cast(player.popWaitingFor(), OrOptions);
+    const subActionSelectPlayer = cast(subAction.options[0], SelectPlayer);
+
+    subActionSelectPlayer.cb(player2);
+    runAllActions(game);
+    assertIsMaybeBlock(player2, player2.popWaitingFor(), 'do not block');
+
+    expect(player2.megaCredits).to.eq(0);
+    expect(player2.underworldData.corruption).to.eq(1);
+  });
+
+  it('removes money when played through player.playCard', () => {
+    player.cardsInHand.push(card);
+    player.megaCredits = 7;
+    player2.megaCredits = 4;
+    const oceanSpace = game.board.getAvailableSpacesForOcean(player)[0];
+    const adjacentSpaces = game.board.getAdjacentSpaces(oceanSpace);
+    for (const adjacentSpace of adjacentSpaces) {
+      if (adjacentSpace.spaceType === SpaceType.LAND) {
+        game.addGreenery(player2, adjacentSpace);
+        break;
+      }
+    }
+
+    player.playCard(card, Payment.of({megacredits: 7}));
+    runAllActions(game);
+    const selectSpace = cast(player.popWaitingFor(), SelectSpace);
+    cast(selectSpace.cb(oceanSpace), undefined);
+    runAllActions(game);
+    const subAction = cast(player.popWaitingFor(), OrOptions);
+    const subActionSelectPlayer = cast(subAction.options[0], SelectPlayer);
+    subActionSelectPlayer.cb(player2);
+
+    expect(player.megaCredits).to.eq(0);
+    expect(player2.megaCredits).to.eq(0);
   });
 });

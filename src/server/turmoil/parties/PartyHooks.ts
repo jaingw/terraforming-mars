@@ -9,7 +9,7 @@ import {PoliticalAgendas} from '../PoliticalAgendas';
 import {TurmoilUtil} from '../TurmoilUtil';
 import {CardName} from '../../../common/cards/CardName';
 import {GREENS_POLICY_1} from './Greens';
-import {getDefaultPolicy} from '../Turmoil';
+import {getPoliticalReformPartyName, getPoliticalReformPolicyId} from '../PoliticalReformData';
 
 export class PartyHooks {
   static applyMarsFirstRulingPolicy(player: IPlayer, spaceType: SpaceType) {
@@ -24,6 +24,10 @@ export class PartyHooks {
       const greensPolicy = GREENS_POLICY_1;
       greensPolicy.onTilePlaced(player, space);
     }
+  }
+
+  static reds01PolicyInEffect(player: IPlayer) {
+    return this.shouldApplyPolicy(player, PartyName.REDS, 'rp01');
   }
 
   /**
@@ -51,8 +55,8 @@ export class PartyHooks {
       }
       /** hook of POLITICALREFORM */
       const corp = player.playedCards.get(CardName.POLITICALREFORM);
-      if (corp !== undefined && corp.data !== undefined && corp.data === partyName) {
-        const myPolicyId = getDefaultPolicy(corp.data).id;
+      if (corp !== undefined && corp.data !== undefined && getPoliticalReformPartyName(corp.data) === partyName) {
+        const myPolicyId = getPoliticalReformPolicyId(corp.data) ?? turmoil.getPolicyByPartyName(partyName).id;
         if (myPolicyId === policyId) {
           return true;
         }

@@ -17,9 +17,6 @@ export class TradeAdvance extends PreludeCard implements IProjectCard {
     super({
       name: CardName.TRADE_ADVANCE,
       tags: [Tag.EARTH],
-      behavior: {
-        stock: {megacredits: 2},
-      },
 
       metadata: {
         cardNumber: 'Y05',
@@ -50,7 +47,9 @@ export class TradeAdvance extends PreludeCard implements IProjectCard {
     });
 
     if (player.game.isSoloMode()) {
-      player.megaCredits += 8;
+      player.megaCredits += 10;
+    } else {
+      player.megaCredits += 2;
     }
 
     return undefined;

@@ -8,7 +8,7 @@ import {GalileanMining} from '../../../src/server/cards/prelude/GalileanMining';
 import {PowerGeneration} from '../../../src/server/cards/prelude/PowerGeneration';
 import {ICard} from '../../../src/server/cards/ICard';
 import {IGame} from '../../../src/server/IGame';
-import {cast, runAllActions} from '../../TestingUtils';
+import {runAllActions} from '../../TestingUtils';
 import {Arklight} from '../../../src/server/cards/colonies/Arklight';
 import {BiosphereSupport} from '../../../src/server/cards/prelude/BiosphereSupport';
 import {NewPartner} from '../../../src/server/cards/promo/NewPartner';
@@ -20,6 +20,7 @@ import {Merger} from '../../../src/server/cards/promo/Merger';
 import {Astrodrill} from '../../../src/server/cards/promo/Astrodrill';
 import {Helion} from '../../../src/server/cards/corporation/Helion';
 import {toName} from '../../../src/common/utils/utils';
+import {cast} from '../../../src/common/utils/utils';
 
 describe('DoubleDown', () => {
   let doubleDown: DoubleDown;
@@ -95,7 +96,7 @@ describe('DoubleDown', () => {
   it('Does not count tags of copied prelude', () => {
     // When a plant or animal tag is played, add one resource to thi9s card.
     const corp = new Arklight();
-    player.corporations.push(corp);
+    player.playedCards.push(corp);
 
     expect(corp.resourceCount).eq(0);
 
@@ -203,7 +204,7 @@ describe('DoubleDown', () => {
 
   it('Make compatible with Merger + Corp with resources', () => {
     // Merger doesn't work without at least one starting corporation
-    player.corporations.push(new Helion());
+    player.playedCards.push(new Helion());
     // player needs some MC to help pay for Merger.
     player.megaCredits = 100;
 
@@ -228,5 +229,20 @@ describe('DoubleDown', () => {
     runAllActions(game);
     expect(astroDrill.resourceCount).eq(3);
     expect(player.tableau.asArray().map(toName)).to.have.members([CardName.HELION, CardName.ASTRODRILL, CardName.MERGER, CardName.DOUBLE_DOWN]);
+  });
+
+  it('Compatible with New Partner and Board of Directors', () => {
+    const newPartner = new NewPartner();
+    player.playedCards.push(newPartner);
+    const boardOfDirectors = new BoardOfDirectors();
+    game.preludeDeck.drawPile.push(boardOfDirectors);
+    const selectCard = cast(doubleDown.play(player), SelectCard);
+    selectCard.cb([newPartner]);
+    runAllActions(game);
+    const selectNewPrelude = cast(player.popWaitingFor(), SelectCard);
+    selectNewPrelude.cb([boardOfDirectors]);
+    runAllActions(game);
+
+    expect(boardOfDirectors.resourceCount).eq(4);
   });
 });

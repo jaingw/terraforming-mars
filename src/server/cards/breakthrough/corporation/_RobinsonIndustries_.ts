@@ -22,7 +22,7 @@ export class _RobinsonIndustries_ extends RobinsonIndustries {
         b.br.br.br;
         b.megacredits(47);
         b.corpBox('action', (ce) => {
-          ce.action('Spend 3 M€ to increase (one of) your LOWEST production 1 step.And you will product this resource immediately(M€ production ignore TR).', (eb) => {
+          ce.action('Spend 3 M€ to increase (one of) your LOWEST production 1 step. Then produce this resource immediately (M€ production ignores TR and does not reduce M€ when negative).', (eb) => {
             eb.megacredits(3).startAction.production((pb) => pb.wild(1).asterix()).asterix();
           });
         });
@@ -34,6 +34,6 @@ export class _RobinsonIndustries_ extends RobinsonIndustries {
     player.stock.deduct(Resource.MEGACREDITS, 3);
     player.production.add(resource, 1, {log: true});
     const number = player.production.get(resource);
-    player.stock.add(resource, number);
+    player.stock.add(resource, resource === Resource.MEGACREDITS ? Math.max(0, number) : number);
   }
 }

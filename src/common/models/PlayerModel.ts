@@ -11,13 +11,19 @@ import {RankTier} from '../rank/RankTier';
 import {PartyName} from '../turmoil/PartyName';
 import {Agenda} from '../turmoil/Types';
 import {Tag} from '../cards/Tag';
+import {UnderworldPlayerData} from '../underworld/UnderworldPlayerData';
+import {GlobalParameter} from '../GlobalParameter';
+import {DeltaProjectPlayerModel} from './DeltaProjectPlayerModel';
+
+/** Who the current viewer is relative to the player being viewed */
+export type PlayerViewRole = 'self' | 'other' | 'anonymous';
 
 export interface ViewModel {
   game: GameModel;
   players: Array<PublicPlayerModel>;
   id?: ParticipantId;
   thisPlayer: PublicPlayerModel | undefined;
-  block?: boolean;
+  role?: PlayerViewRole;
   runId: string;
 }
 
@@ -47,6 +53,7 @@ export type PublicPlayerModel = {
   corporationCard: CardModel | undefined;
   corporationCard2: CardModel | undefined;
   corruption: number,
+  deltaProject?: DeltaProjectPlayerModel;
   energy: number;
   energyProduction: number;
   fleetSize: number;
@@ -57,8 +64,8 @@ export type PublicPlayerModel = {
   influence: number;
   isActive: boolean;
   lastCardPlayed?: CardName;
-  megaCredits: number;
-  megaCreditProduction: number;
+  megacredits: number;
+  megacreditProduction: number;
   name: string;
   noTagsCount: number;
   plants: number;
@@ -77,7 +84,7 @@ export type PublicPlayerModel = {
   titaniumProduction: number;
   titaniumValue: number;
   tradesThisGeneration: number;
-  undergroundTokens: number;
+  underworldData: UnderworldPlayerData,
   victoryPointsBreakdown: VictoryPointsBreakdown;
 
   waitingFor: {} | undefined;
@@ -87,6 +94,7 @@ export type PublicPlayerModel = {
   rankTier: RankTier; // 天梯 玩家段位
 
   victoryPointsByGeneration: ReadonlyArray<number>;
+  globalParameterSteps: Partial<Record<GlobalParameter, number>>;
 }
 
 /** A player's view of the game, including their secret information. */
@@ -107,16 +115,14 @@ export interface PlayerViewModel extends ViewModel {
   undoing :boolean;
   canExit?: boolean;
   userName: string;
-  isme: boolean;
+  role: PlayerViewRole;
   isvip: number;
   waitingFor: PlayerInputModel | undefined;
   exited?: boolean;
-  block: boolean;
   thisPlayer: PublicPlayerModel;
 }
 
 export interface PlayerBlockModel {
-    block: boolean;
-    isme: boolean;
+    role: PlayerViewRole;
     showhandcards: boolean;
 }

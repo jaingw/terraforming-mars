@@ -28,7 +28,8 @@ export type UndergroundResourceToken = TemporaryBonusToken |
   'titaniumandplant' |
   'energy2' | 'energy1production' | 'heat2production' |
   'microbe1' | 'microbe2' | 'tr' | 'ocean' |
-  'sciencetag' | 'planttag' | 'volcanicoceanspace' | 'place6mc';
+  'sciencetag' | 'planttag' | 'place6mc' |
+  'anyresource1';
 
 /**
  * Text descriptions of each Underground resource token.
@@ -67,9 +68,9 @@ export const undergroundResourceTokenDescription: Record<UndergroundResourceToke
   mcprod1pertemp: '1 M€ production / 2 °C',
   sciencetag: '1 science tag',
   planttag: '1 plant tag',
-  volcanicoceanspace: 'This space can be volcanic and an ocean.',
   place6mc: 'Gain 6 M€ when placing a tile here',
   oceanrequirementmod: 'Ocean requirements are ±3',
   oxygenrequirementmod: 'Oxygen requirements are ±3',
-  temprequirementmod: 'Tempoerature requirements are ±6 °C',
+  temprequirementmod: 'Temperature requirements are ±6 °C',
+  anyresource1: 'Any resource except science',
 };

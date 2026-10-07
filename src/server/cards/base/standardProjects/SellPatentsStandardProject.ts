@@ -4,6 +4,7 @@ import {CardRenderer} from '../../render/CardRenderer';
 import {StandardProjectCard} from '../../StandardProjectCard';
 import {SelectCard} from '../../../inputs/SelectCard';
 import {IProjectCard} from '../../IProjectCard';
+import {Resource} from '../../../../common/Resource';
 // import {DeferredAction} from '../../../deferredActions/DeferredAction';
 import {OrOptions} from '../../../inputs/OrOptions';
 import {SelectOption} from '../../../inputs/SelectOption';
@@ -32,7 +33,7 @@ export class SellPatentsStandardProject extends StandardProjectCard {
     // no-op
   }
 
-  public override action(player: IPlayer): SelectCard<IProjectCard> {
+  public action(player: IPlayer): SelectCard<IProjectCard> {
     return new SelectCard(
       'Sell patents',
       'Sell',
@@ -44,12 +45,15 @@ export class SellPatentsStandardProject extends StandardProjectCard {
         if (player.playedCards.get( CardName.WASTE_INCINERATOR) !== undefined) {
           result = new OrOptions(
             new SelectOption('Sell patents for heat', 'Confirm' ).andThen(() => {
-              player.heat += 2*cards.length;
+              player.stock.add(Resource.HEAT, 2 * cards.length, {log: true});
               return undefined;
             }),
             new SelectOption('Sell patents for MC', 'Confirm' ).andThen( () => {
-              if (player.playedCards.has(CardName._POLYPHEMOS_)) player.megaCredits += 3* cards.length;
-              else player.megaCredits += cards.length;
+              if (player.playedCards.has(CardName._POLYPHEMOS_)) {
+                player.megaCredits += 3* cards.length;
+              } else {
+                player.megaCredits += cards.length;
+              }
               return undefined;
             }),
           );

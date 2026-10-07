@@ -46,11 +46,6 @@ export class SelectInitialCards extends OptionsInput<undefined> {
         }),
     );
 
-    // Give each player Merger in this variant
-    // if (game.gameOptions.twoCorpsVariant) {
-    //   player.dealtPreludeCards.push(new Merger());
-    // }
-
     if (game.gameOptions.preludeExtension) {
       this.push('prelude',
         new SelectCard(titles.SELECT_PRELUDE_TITLE, undefined, player.dealtPreludeCards, {min: 2, max: 2})
@@ -69,7 +64,7 @@ export class SelectInitialCards extends OptionsInput<undefined> {
           if (ceoCards.length !== 1) {
             throw new InputError('Only select 1 CEO');
           }
-          player.ceoCardsInHand.push(ceoCards[0]);
+          player.ceoCardsInHand.add(ceoCards[0]);
           return undefined;
         }));
     }
@@ -112,7 +107,7 @@ export class SelectInitialCards extends OptionsInput<undefined> {
     }
 
     for (const card of player.dealtCeoCards) {
-      if (player.ceoCardsInHand.includes(card) === false) {
+      if (player.ceoCardsInHand.has(card) === false) {
         game.ceoDeck.discard(card);
       }
     }
@@ -140,7 +135,7 @@ export class SelectInitialCards extends OptionsInput<undefined> {
       throw new InputError('Incorrect options provided');
     }
     for (let i = 0; i < input.responses.length; i++) {
-      player.runInput(input.responses[i], this.options[i]);
+      player.defer(this.options[i].process(input.responses[i], player));
     }
     return this.cb(undefined);
   }

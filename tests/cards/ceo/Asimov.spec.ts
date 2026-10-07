@@ -4,10 +4,11 @@ import {OrOptions} from '../../../src/server/inputs/OrOptions';
 import {TestPlayer} from '../../TestPlayer';
 import {testGame} from '../../TestGame';
 import {ASIMOV_AWARD_BONUS} from '../../../src/common/constants';
-import {cast, forceGenerationEnd} from '../../TestingUtils';
+import {forceGenerationEnd} from '../../TestingUtils';
 import {Asimov} from '../../../src/server/cards/ceos/Asimov';
 import {FundedAwardModel} from '../../../src/common/models/FundedAwardModel';
 import {Server} from '../../../src/server/models/ServerModel';
+import {cast} from '../../../src/common/utils/utils';
 
 describe('Asimov', () => {
   let card: Asimov;
@@ -25,7 +26,7 @@ describe('Asimov', () => {
     expect(game.awards).length.greaterThan(0);
 
     function score(model: FundedAwardModel, p: TestPlayer): number {
-      return model.scores.find((s) => s.playerColor === p.color)!.playerScore;
+      return model.scores.find((s) => s.color === p.color)!.score;
     }
 
     const awardModel = Server.getAwards(game);

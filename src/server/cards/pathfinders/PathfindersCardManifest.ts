@@ -132,7 +132,7 @@ export const PATHFINDERS_CARD_MANIFEST = new ModuleManifest({
     [CardName.TERRAFORMING_CONTROL_STATION]: {Factory: TerraformingControlStation, compatibility: 'venus'},
     // // [CardName.MARTIAN_TRANSHIPMENT_STATION]: {Factory: MartianTranshipmentStation},  // COMPLICATED EFFECT.
     [CardName.CERES_SPACEPORT]: {Factory: CeresSpaceport},
-    [CardName.DYSON_SCREENS]: {Factory: DysonScreens},
+    [CardName.DYSON_SCREENS]: {Factory: DysonScreens, compatibility: 'venus'},
     [CardName.LUNAR_EMBASSY]: {Factory: LunarEmbassy},
     [CardName.GEOLOGICAL_EXPEDITION]: {Factory: GeologicalExpedition},
     [CardName.EARLY_EXPEDITION]: {Factory: EarlyExpedition},
@@ -159,14 +159,14 @@ export const PATHFINDERS_CARD_MANIFEST = new ModuleManifest({
     [CardName.FLAT_MARS_THEORY]: {Factory: FlatMarsTheory},
     [CardName.ASTEROID_RESOURCES]: {Factory: AsteroidResources},
     [CardName.KICKSTARTER]: {Factory: Kickstarter},
-    [CardName.ECONOMIC_HELP]: {Factory: EconomicHelp},
+    [CardName.ECONOMIC_HELP]: {Factory: EconomicHelp, compatibility: ['venus', 'moon']},
     [CardName.INTERPLANETARY_TRANSPORT]: {Factory: InterplanetaryTransport},
     [CardName.MARTIAN_DUST_PROCESSING_PLANT]: {Factory: MartianDustProcessingPlant},
     [CardName.CULTIVATION_OF_VENUS]: {Factory: CultivationOfVenus, compatibility: 'venus'},
     [CardName.EXPEDITION_TO_THE_SURFACE_VENUS]: {Factory: ExpeditionToTheSurfaceVenus, compatibility: 'venus'},
     [CardName.LAST_RESORT_INGENUITY]: {Factory: LastResortIngenuity},
     [CardName.CRASHLANDING]: {Factory: Crashlanding, compatibility: 'ares'},
-    [CardName.THINK_TANK]: {Factory: ThinkTank},
+    [CardName.THINK_TANK]: {Factory: ThinkTank, compatibility: 'venus'},
     [CardName.BOTANICAL_EXPERIENCE]: {Factory: BotanicalExperience},
     [CardName.CRYPTOCURRENCY]: {Factory: Cryptocurrency},
     [CardName.RICH_DEPOSITS]: {Factory: RichDeposits},
@@ -215,6 +215,7 @@ export const PATHFINDERS_CARD_MANIFEST = new ModuleManifest({
     [CardName.ROBIN_HAULINGS]: {Factory: RobinHaulings, compatibility: ['venus', 'pathfinders']},
     [CardName.ODYSSEY]: {Factory: Odyssey},
     [CardName.GAGARIN_MOBILE_BASE]: {Factory: GagarinMobileBase},
+    // Broken. #7519
     [CardName.MARS_FRONTIER_ALLIANCE]: {Factory: MarsFrontierAlliance, compatibility: 'turmoil'},
     [CardName.MIND_SET_MARS]: {Factory: MindSetMars, compatibility: 'turmoil'},
     [CardName.HABITAT_MARTE]: {Factory: HabitatMarte, compatibility: 'pathfinders'},
@@ -226,7 +227,7 @@ export const PATHFINDERS_CARD_MANIFEST = new ModuleManifest({
     [CardName.CO2_REDUCERS]: {Factory: CO2Reducers, compatibility: 'venus'},
     [CardName.HYDROGEN_BOMBARDMENT]: {Factory: HydrogenBombardment, compatibility: 'venus'},
     [CardName.RESEARCH_GRANT_PATHFINDERS]: {Factory: ResearchGrant},
-    [CardName.CREW_TRAINING]: {Factory: CrewTraining, compatibility: 'pathfinders'},
+    [CardName.CREW_TRAINING]: {Factory: CrewTraining, compatibility: ['pathfinders', 'venus', 'moon']},
     [CardName.SURVEY_MISSION]: {Factory: SurveyMission},
     [CardName.DESIGN_COMPANY]: {Factory: DesignCompany},
     // [CardName.CONSOLIDATION]: {Factory: Consolidation},
@@ -253,4 +254,3 @@ export const PATHFINDERS_CARD_MANIFEST = new ModuleManifest({
     CardName.VALUABLE_GASES,
   ],
 });
-

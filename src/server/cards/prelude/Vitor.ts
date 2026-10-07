@@ -46,7 +46,9 @@ export class Vitor extends CorporationCard implements ICorporationCard {
     const game = player.game;
 
     // Awards are disabled for 1 player games
-    if (game.isSoloMode()) return;
+    if (game.isSoloMode()) {
+      return;
+    }
 
     const freeAward = new OrOptions().setTitle('Select award to fund').setButtonLabel('Confirm');
 
@@ -57,7 +59,7 @@ export class Vitor extends CorporationCard implements ICorporationCard {
     return freeAward;
   }
 
-  public onCardPlayedForCorps(player: IPlayer, card: ICard) {
+  public onCardPlayed(player: IPlayer, card: ICard) {
     if (!player.playedCards.has(this.name)) {
       return;
     }
@@ -65,12 +67,18 @@ export class Vitor extends CorporationCard implements ICorporationCard {
       return;
     }
     const victoryPoints = card.metadata?.victoryPoints;
-    if (victoryPoints === undefined) return;
+    if (victoryPoints === undefined) {
+      return;
+    }
     if (typeof(victoryPoints) === 'number') {
-      if (victoryPoints <= 0) return;
+      if (victoryPoints <= 0) {
+        return;
+      }
     } else {
       // victoryPoints type is CardRenderDynamicVictoryPoints
-      if (victoryPoints.points <= 0) return;
+      if (victoryPoints.points <= 0) {
+        return;
+      }
     }
 
     player.stock.add(Resource.MEGACREDITS, 3, {log: true, from: {card: this}});

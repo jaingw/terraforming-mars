@@ -11,6 +11,7 @@ import {isSpecialTile} from '../../boards/Board';
 import {AltSecondaryTag} from '../../../common/cards/render/AltSecondaryTag';
 import {SelectProjectCardToPlay} from '../../inputs/SelectProjectCardToPlay';
 import {TileType} from '../../../common/TileType';
+import {inplaceRemove} from '../../../common/utils/utils';
 
 export class GreenRing extends CorporationCard implements ICard {
   constructor() {
@@ -98,34 +99,32 @@ export class GreenRing extends CorporationCard implements ICard {
   ];
   private getCards(player: IPlayer): ReadonlyArray<IProjectCard> {
     return player.playedCards.projects().filter((card) => {
+      // Only automated (green) and active (blue) cards are eligible
       if (card.type !== CardType.AUTOMATED && card.type !== CardType.ACTIVE) {
         return false;
       }
+      // Astra Mechanica returns to hand — cannot replay
       if (card.name === CardName.ASTRA_MECHANICA) {
         return false;
       }
+      // Exclude cards that place special tiles (detected via tilesBuilt)
       if (card.tilesBuilt.some(isSpecialTile)) {
         return false;
       }
-      if ( this.specialTiles.includes(card.name)) {
+      // Manual exclusion list for cards that place special tiles
+      // (catches cards where tilesBuilt may not fully reflect the tile type)
+      if (this.specialTiles.includes(card.name)) {
         return false;
       }
+      // Exclude cards placing non-standard tiles through behavior.tile
       const tileType = card.behavior?.tile?.type;
       if (tileType !== undefined && tileType !== TileType.GREENERY &&
         tileType !== TileType.OCEAN && tileType !== TileType.CITY) {
         return false;
       }
 
-      const canPlay = player.canPlay(card);
-      return canPlay;
-      // if (!canPlay) {
-      //   return false;
-      // }
-
-
-      // 这里好像跟上面的有点多余
-      // const canAffordOptions = player.affordOptionsForCard(card);
-      // return player.canAfford(canAffordOptions) && card.canPlay(player, canAffordOptions);
+      // Must be playable (affordable + meeting requirements + valid placement)
+      return player.canPlay(card);
     });
   }
 
@@ -144,10 +143,14 @@ export class GreenRing extends CorporationCard implements ICard {
       playableCards.push(card);
     }
 
-    return new SelectProjectCardToPlay(player, playableCards, {action: 'nothing'}).andThen((selectedCard) => {
-      player.playedCards.remove(selectedCard);
-      selectedCard.onDiscard?.(player);
+    return new SelectProjectCardToPlay(player, playableCards, {action: 'discard'}).andThen((selectedCard) => {
+      inplaceRemove(player.game.projectDeck.discardPile, selectedCard);
       player.removedFromPlayCards.push(selectedCard);
+      player.defer(() => {
+        inplaceRemove(player.game.projectDeck.discardPile, selectedCard);
+        player.playedCards.remove(selectedCard);
+        return undefined;
+      });
       return undefined;
     });
   }

@@ -1,12 +1,12 @@
 <template>
-     <div v-if="isAwardCards(name)" :class="awardClass" :style="awardStyle(name)">
-     <span class="award-name">{{ awardName(name)}}</span>
-     </div>
+  <div v-if="isAwardCards(name)" :class="awardClass" :style="awardStyle(name)">
+    <span class="award-name">{{ awardName(name)}}</span>
+  </div>
 </template>
 
 <script lang="ts">
 
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import {CardName} from '@/common/cards/CardName';
 
 type IAward = {
@@ -28,7 +28,7 @@ const awardMapping: Map<CardName, IAward> = new Map<CardName, IAward>([
 ]);
 
 
-export default Vue.extend({
+export default defineComponent({
   name: 'CardAwardPlayer',
   props: {
     name: {
@@ -46,8 +46,12 @@ export default Vue.extend({
     awardStyle: function(name: CardName): {top?: string, left?: string} {
       const award = awardMapping.get(name);
       const styleObj: {top?: string, left?: string} = {};
-      if (award?.top !== undefined) styleObj.top = `${award.top}px`;
-      if (award?.left !== undefined) styleObj.left = `${award.left}px`;
+      if (award?.top !== undefined) {
+        styleObj.top = `${award.top}px`;
+      }
+      if (award?.left !== undefined) {
+        styleObj.left = `${award.left}px`;
+      }
       return styleObj;
     },
   },

@@ -1,24 +1,30 @@
 <template>
+  <div class="top-bar-container">
     <div :class="formatCssClass()" :key="componentKey">
-      <PlayerInfo v-show="isExpanded()" :player="playerView.thisPlayer" :playerView="playerView" actionLabel="" :playerIndex="0" :hideZeroTags="true" :isTopBar="true"/>
+      <PlayerInfo v-show="isExpanded()" :player="playerView.thisPlayer" :playerView="playerView" :actionLabel="'none'" :playerIndex="0" :hideZeroTags="true" :isTopBar="true"/>
       <div class="top-bar-collapser" v-on:click="toggleBar()">
         <img src="assets/arrows_left.png">
       </div>
     </div>
+  </div>
+  <div v-if="playerView.game.isTerraformed" class="terraformed-banner">
+    <span v-i18n>Mars is Terraformed!</span>
+  </div>
 </template>
 
 <script lang="ts">
 
-import Vue from 'vue';
+import {defineComponent} from 'vue';
 import {PlayerViewModel} from '@/common/models/PlayerModel';
 import PlayerInfo from '@/client/components/overview/PlayerInfo.vue';
 import {getPreferences, PreferencesManager} from '@/client/utils/PreferencesManager';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'top-bar',
   props: {
     playerView: {
       type: Object as () => PlayerViewModel,
+      required: true,
     },
   },
   components: {
@@ -50,4 +56,3 @@ export default Vue.extend({
   },
 });
 </script>
-

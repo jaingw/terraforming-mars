@@ -3,7 +3,7 @@ import {ICard} from '../../../src/server/cards/ICard';
 import {Merger} from '../../../src/server/cards/promo/Merger';
 import {IGame} from '../../../src/server/IGame';
 import {SelectCard} from '../../../src/server/inputs/SelectCard';
-import {cast, runAllActions} from '../../TestingUtils';
+import {runAllActions} from '../../TestingUtils';
 import {TestPlayer} from '../../TestPlayer';
 import {ArcadianCommunities} from '../../../src/server/cards/promo/ArcadianCommunities';
 import {SaturnSystems} from '../../../src/server/cards/corporation/SaturnSystems';
@@ -42,6 +42,7 @@ import {Inventrix} from '../../../src/server/cards/corporation/Inventrix';
 import {Ambient} from '../../../src/server/cards/pathfinders/Ambient';
 import {OrOptions} from '../../../src/server/inputs/OrOptions';
 import {asArray, toName} from '../../../src/common/utils/utils';
+import {cast} from '../../../src/common/utils/utils';
 
 describe('Merger', () => {
   let merger: Merger;
@@ -62,7 +63,7 @@ describe('Merger', () => {
   }
 
   it('Can play as long as have enough M€', () => {
-    player.corporations.push(new BeginnerCorporation()); // Vestigial corporation
+    player.playedCards.push(new BeginnerCorporation()); // Vestigial corporation
     player.megaCredits = 28; // 28 + 14 from Terralabs is just enough to pay the cost of 42 M€
     merger.play(player);
     runAllActions(game);
@@ -94,7 +95,7 @@ describe('Merger', () => {
   });
 
   it('Fizzle if player cannot play any corp', () => {
-    player.corporations.push(new BeginnerCorporation()); // Vestigial corporation
+    player.playedCards.push(new BeginnerCorporation()); // Vestigial corporation
     player.megaCredits = 0;
     game.corporationDeck.drawPile = [new ValleyTrust(), new PhoboLog(), new TerralabsResearch(), new InterplanetaryCinematics()];
     merger.play(player);
@@ -105,7 +106,7 @@ describe('Merger', () => {
   });
 
   it('Can play as long as have enough M€', () => {
-    player.corporations.push(new BeginnerCorporation()); // Vestigial corporation
+    player.playedCards.push(new BeginnerCorporation()); // Vestigial corporation
     player.megaCredits = 28; // 28 + 14 from Terralabs is just enough to pay the cost of 42 M€
     merger.play(player);
     runAllActions(game);
@@ -120,17 +121,17 @@ describe('Merger', () => {
   });
 
   it('Player has 2 corps after playing Merger', () => {
-    player.corporations.push(new Splice());
+    player.playedCards.push(new Splice());
     merger.play(player);
     runAllActions(game);
 
     const selectCorp = cast(player.popWaitingFor(), SelectCard<ICard>);
     selectCorp.cb([selectCorp.cards[0]]);
-    expect(player.corporations).has.length(2);
+    expect(player.playedCards.corporations()).has.length(2);
   });
 
   it('Player has effects of both corps', () => {
-    player.corporations.push(new Splice(), new SaturnSystems());
+    player.playedCards.push(new Splice(), new SaturnSystems());
     player.megaCredits = 0;
 
     expect(player.tableau.has(CardName.SPLICE)).is.true;
@@ -152,14 +153,14 @@ describe('Merger', () => {
   });
 
   it('Confirming that Cheung Shing Mars works', () => {
-    player.corporations.push(new Splice());
+    player.playedCards.push(new Splice());
     merger.play(player);
     runAllActions(game);
 
     const selectCorp = cast(player.popWaitingFor(), SelectCard<ICard>);
     const cheungShingMARS = new CheungShingMARS();
     selectCorp.cb([cheungShingMARS]);
-    expect(player.corporations).has.length(2);
+    expect(player.playedCards.corporations()).has.length(2);
 
     expect(player.tableau.has(CardName.SPLICE)).is.true;
     expect(player.tableau.has(CardName.CHEUNG_SHING_MARS)).is.true;
@@ -168,7 +169,7 @@ describe('Merger', () => {
   });
 
   it('Works with Terralabs played via Merger', () => {
-    player.corporations.push(new BeginnerCorporation()); // Vestigial corporation
+    player.playedCards.push(new BeginnerCorporation()); // Vestigial corporation
     player.megaCredits = 50; // Ensure enough to pay for Merger cost
     merger.play(player);
     runAllActions(game);
@@ -180,7 +181,7 @@ describe('Merger', () => {
   });
 
   it('Works with Polyphemos played via Merger', () => {
-    player.corporations.push(new BeginnerCorporation()); // Vestigial corporation
+    player.playedCards.push(new BeginnerCorporation()); // Vestigial corporation
     merger.play(player);
     runAllActions(game);
 

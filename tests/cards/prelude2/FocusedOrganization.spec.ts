@@ -2,11 +2,12 @@ import {expect} from 'chai';
 import {FocusedOrganization} from '../../../src/server/cards/prelude2/FocusedOrganization';
 import {testGame} from '../../TestGame';
 import {Units} from '../../../src/common/Units';
-import {cast, runAllActions} from '../../TestingUtils';
+import {runAllActions} from '../../TestingUtils';
 import {SelectResource} from '../../../src/server/inputs/SelectResource';
 import {AndOptions} from '../../../src/server/inputs/AndOptions';
 import {SelectCard} from '../../../src/server/inputs/SelectCard';
 import {SolBank} from '../../../src/server/cards/pathfinders/SolBank';
+import {cast} from '../../../src/common/utils/utils';
 
 describe('FocusedOrganization', () => {
   it('play', () => {
@@ -84,7 +85,7 @@ describe('FocusedOrganization', () => {
     const card = new FocusedOrganization();
     const solBank = new SolBank();
     const [game, player] = testGame(1, {pathfindersExpansion: true});
-    player.corporations.push(solBank);
+    player.playedCards.push(solBank);
 
     const firstCard = game.projectDeck.drawOrThrow(game);
     const secondCard = game.projectDeck.drawOrThrow(game);

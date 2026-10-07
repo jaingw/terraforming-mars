@@ -9,8 +9,8 @@ import {SelectCard} from '../src/server/inputs/SelectCard';
 import {SerializedGame} from '../src/server/SerializedGame';
 import {testGame} from './TestGame';
 import {InMemoryDatabase} from './testing/InMemoryDatabase';
-import {cast, finishGeneration} from './TestingUtils';
-import {toName} from '../src/common/utils/utils';
+import {finishGeneration, loadGameFromJSON} from './TestingUtils';
+import {cast, toName} from '../src/common/utils/utils';
 import {restoreTestDatabase, setTestDatabase} from './testing/setup';
 import {TestPlayer} from './TestPlayer';
 
@@ -79,18 +79,18 @@ describe('drafting and serialization', () => {
 
     const serializedGame = await Database.getInstance().getGameVersion(game.id, game.lastSaveId - 1);
 
-    const player3 = TestPlayer.BLUE.newPlayer();
-    const player4 = TestPlayer.RED.newPlayer();
-    let game2 = Game.newInstance('gameid', [player3, player4], player3, {pathfindersExpansion: false});
-    game2 = game2.loadFromJSON(serializedGame);
+    const game2 = loadGameFromJSON(serializedGame);
 
     expect(game2.phase).eq(Phase.DRAFTING);
     expect(game2.draftRound).eq(1);
     const players2 = game2.players;
 
+    // 每个玩家保存当前的 waitingFor，然后清除掉，避免后续 process 回调中 startDraft 触发 overwrite
     const selectCard = cast(players2[0].getWaitingFor(), SelectCard);
-    selectCard.process({type: 'card', cards: [selectCard.cards[0].name]});
+    (players2[0] as any).waitingFor = undefined;
     const selectCard2 = cast(players2[1].getWaitingFor(), SelectCard);
+    (players2[1] as any).waitingFor = undefined;
+    selectCard.process({type: 'card', cards: [selectCard.cards[0].name]});
     selectCard2.process({type: 'card', cards: [selectCard2.cards[0].name]});
   });
 });
@@ -706,8 +706,7 @@ const stored = {
     'customCorporationsList': [],
     'customPreludes': [],
     'draftVariant': true,
-    'escapeVelocityMode': false,
-    'escapeVelocityBonusSeconds': 2,
+    'escapeVelocity': undefined,
     'fastModeOption': false,
     'includeFanMA': false,
     'initialDraftVariant': false,
@@ -736,7 +735,6 @@ const stored = {
     'underworldExpansion': false,
     'undoOption': false,
     'venusNextExtension': false,
-    'twoCorpsVariant': false,
   },
   'generation': 2,
   'globalsPerGeneration': [

@@ -2,10 +2,12 @@ import {expect} from 'chai';
 import {LobbyHalls} from '../../src/server/cards/pathfinders/LobbyHalls';
 import {Tag} from '../../src/common/cards/Tag';
 import {deserializeProjectCard, serializeProjectCard} from '../../src/server/cards/CardSerialization';
-import {cast, fakeCard} from '../TestingUtils';
+import {fakeCard} from '../TestingUtils';
 import {Asimov} from '../../src/server/cards/ceos/Asimov';
 import {SerializedCard} from '../../src/server/SerializedCard';
 import {CardName} from '../../src/common/cards/CardName';
+import {cast} from '../../src/common/utils/utils';
+import {Faraday} from '../../src/server/cards/ceos/Faraday';
 
 describe('CardSerialization', () => {
   it('undefiend clone tags serialize and deserialize', () => {
@@ -49,6 +51,12 @@ describe('CardSerialization', () => {
 
     serialized.isDisabled = true;
     expect(cast(deserializeProjectCard(serialized), Asimov).isDisabled).is.true;
+  });
+
+  it('keeps default card data when old saves do not have data', () => {
+    const deserialized = cast(deserializeProjectCard({name: CardName.FARADAY}), Faraday);
+
+    expect(deserialized.data).deep.eq({counts: {}});
   });
 
   it('custom .serialized works', () => {

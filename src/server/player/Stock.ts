@@ -1,18 +1,17 @@
 import {LawSuit} from '../cards/promo/LawSuit';
 import {IPlayer} from '../IPlayer';
-import {Resource} from '../../common/Resource';
+import {Resource, StandardResource} from '../../common/Resource';
 import {CrashSiteCleanup} from '../cards/promo/CrashSiteCleanup';
 import {CardName} from '../../common/cards/CardName';
 import {Phase} from '../../common/Phase';
 import {EnergyStation} from '../cards/eros/EnergyStation';
 import {MoltenReserve} from '../cards/commission/MoltenReserve';
-import {LogHelper} from '../LogHelper';
 import {From, isFromPlayer} from '../logs/From';
 import {BaseStock} from './StockBase';
 
 export class Stock extends BaseStock {
   public add(
-    resource: Resource,
+    resource: Resource | StandardResource,
     amount : number,
     options? : {
       log?: boolean,
@@ -48,16 +47,16 @@ export class Stock extends BaseStock {
     this[resource] += delta;
 
     if (options?.log === true) {
-      LogHelper.logUnitDelta(this.player, resource, delta, /* production*/ false, options.from, options.stealing);
+      this.logUnitDelta(resource, delta, /* production*/ false, options.from, options.stealing);
     }
 
     const from = options?.from;
     if (isFromPlayer(from)) {
-      LawSuit.resourceHook(this.player, resource, delta, from.player);
-      CrashSiteCleanup.resourceHook(this.player, resource, delta, from.player);
+      LawSuit.resourceHook(this.player, delta, from.player);
+      CrashSiteCleanup.resourceHook(this.player, resource as Resource, delta, from.player);
 
       if (resource === Resource.PLANTS && delta < 0 && from.player.id !== this.player.id) {
-        EnergyStation.resourceHook(this.player, resource, delta, from.player);
+        EnergyStation.resourceHook(this.player, resource as Resource, delta, from.player);
       }
       // Mons Insurance hook
       if ( delta < 0 && from.player.id !== this.player.id) {
@@ -87,7 +86,7 @@ export class Stock extends BaseStock {
    * `from` steals up to `qty` units of `resource` from this player. Or, at least as
    * much as possible.
    */
-  public steal(resource: Resource, qty: number, thief: IPlayer, options?: {log?: boolean}) {
+  public steal(resource: Resource | StandardResource, qty: number, thief: IPlayer, options?: {log?: boolean}) {
     const qtyToSteal = Math.min(this[resource], qty);
     if (qtyToSteal > 0) {
       this.deduct(resource, qtyToSteal, {log: options?.log ?? true, from: {player: thief}, stealing: true});

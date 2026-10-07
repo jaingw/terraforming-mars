@@ -1,18 +1,18 @@
 <template>
   <component :is="componentName"
-    :players="players"
-    :playerView="playerView"
-    :playerinput="playerinput"
-    :onsave="onsave"
-    :showsave="showsave"
-    :showtitle="showtitle"/>
+             ref="childInput"
+             :playerView="playerView"
+             :playerinput="playerinput"
+             :onsave="onsave"
+             :showsave="showsave"
+             :showtitle="showtitle"/>
 </template>
 
 <script lang="ts">
 
-import Vue from 'vue';
+import {defineComponent} from 'vue';
 import {PlayerInputType} from '@/common/input/PlayerInputType';
-import {PlayerViewModel, PublicPlayerModel} from '@/common/models/PlayerModel';
+import {PlayerViewModel} from '@/common/models/PlayerModel';
 import {PlayerInputModel} from '@/common/models/PlayerInputModel';
 import {InputResponse} from '@/common/inputs/InputResponse';
 import AndOptions from '@/client/components/AndOptions.vue';
@@ -20,7 +20,10 @@ import OrOptions from '@/client/components/OrOptions.vue';
 import SelectAmount from '@/client/components/SelectAmount.vue';
 import SelectCard from '@/client/components/SelectCard.vue';
 import SelectPayment from '@/client/components/SelectPayment.vue';
+import SelectPaymentRevised from '@/client/components/SelectPaymentRevised.vue';
 import SelectProjectCardToPlay from '@/client/components/SelectProjectCardToPlay.vue';
+import SelectProjectCardToPlayRevised from '@/client/components/SelectProjectCardToPlayRevised.vue';
+import {getPreferences} from '@/client/utils/PreferencesManager';
 import SelectInitialCards from '@/client/components/SelectInitialCards.vue';
 import SelectOption from '@/client/components/SelectOption.vue';
 import SelectPlayer from '@/client/components/SelectPlayer.vue';
@@ -33,6 +36,8 @@ import ShiftAresGlobalParameters from '@/client/components/ShiftAresGlobalParame
 import SelectGlobalEvent from '@/client/components/SelectGlobalEvent.vue';
 import SelectResource from '@/client/components/SelectResource.vue';
 import SelectResources from '@/client/components/SelectResources.vue';
+import SelectClaimedUndergroundToken from '@/client/components/SelectClaimedUndergroundToken.vue';
+import DeltaProjectInput from '@/client/components/delta/DeltaProjectInput.vue';
 
 const typeToComponentName: Record<PlayerInputType, string> = {
   'and': 'and-options',
@@ -54,27 +59,32 @@ const typeToComponentName: Record<PlayerInputType, string> = {
   'policy': 'select-policy',
   'resource': 'select-resource',
   'resources': 'select-resources',
+  'claimedUndergroundToken': 'select-claimed-underground-token',
+  'deltaProject': 'delta-project-input',
 };
 
-export default Vue.component('player-input-factory', {
+export default defineComponent({
+  name: 'player-input-factory',
   props: {
-    players: {
-      type: Array as () => Array<PublicPlayerModel>,
-    },
     playerView: {
       type: Object as () => PlayerViewModel,
+      required: true,
     },
     playerinput: {
       type: Object as () => PlayerInputModel,
+      required: true,
     },
     onsave: {
       type: Function as unknown as () => (out: InputResponse) => void,
+      required: true,
     },
     showsave: {
       type: Boolean,
+      required: true,
     },
     showtitle: {
       type: Boolean,
+      default: true,
     },
   },
   components: {
@@ -84,7 +94,9 @@ export default Vue.component('player-input-factory', {
     SelectCard,
     'select-option': SelectOption,
     SelectPayment,
+    SelectPaymentRevised,
     SelectProjectCardToPlay,
+    SelectProjectCardToPlayRevised,
     SelectInitialCards,
     'select-player': SelectPlayer,
     'select-space': SelectSpace,
@@ -96,19 +108,33 @@ export default Vue.component('player-input-factory', {
     SelectGlobalEvent,
     'select-resource': SelectResource,
     'select-resources': SelectResources,
+    'select-claimed-underground-token': SelectClaimedUndergroundToken,
+    'delta-project-input': DeltaProjectInput,
   },
   methods: {
     saveData() {
-      (this.$children[0] as any).saveData();
+      this.typedRefs.childInput.saveData();
     },
     canSave(): boolean {
-      const canSave = (this.$children[0] as any).canSave;
+      const canSave = this.typedRefs.childInput.canSave;
       return canSave ? canSave() : true;
     },
   },
   computed: {
+    typedRefs(): {childInput: {saveData: () => void, canSave?: () => boolean}} {
+      return this.$refs as unknown as {childInput: {saveData: () => void, canSave?: () => boolean}};
+    },
     componentName(): string {
-      return typeToComponentName[this.playerinput.type];
+      const type = this.playerinput.type;
+      if (getPreferences().experimental_ui) {
+        if (type === 'payment') {
+          return 'SelectPaymentRevised';
+        }
+        if (type === 'projectCard') {
+          return 'SelectProjectCardToPlayRevised';
+        }
+      }
+      return typeToComponentName[type];
     },
   },
 });

@@ -22,6 +22,11 @@ export class _Aphrodite_ extends Aphrodite {
     return undefined;
   }
 
+  // Breakthrough Aphrodite does not start with plant production.
+  public override get behavior() {
+    return undefined;
+  }
+
 
   public override get metadata(): CardMetadata {
     return {

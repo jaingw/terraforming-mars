@@ -7,6 +7,7 @@ import {GameOptionsModel} from './GameOptionsModel';
 export type SimpleGameModel = {
     activePlayer: Color;
     id: GameId;
+    name: string;
     phase: Phase;
     players: Array<SimplePlayerModel>;
 
@@ -23,7 +24,6 @@ export type SimpleGameModel = {
     spectatorId: SpectatorId | undefined;
     gameOptions: GameOptionsModel;
     lastSoloGeneration: number;
-    expectedPurgeTimeMs: number;
 }
 
 type SimplePlayerModel = {

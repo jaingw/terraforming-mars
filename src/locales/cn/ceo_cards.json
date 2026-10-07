@@ -1,127 +1,88 @@
 {
-
-    "ACTIVATE THE BELOW ABILITY": "激活下方能力",
-
-    "Co-leadership": "共同领导",
-    "Draw 3 CEO cards and take one to your hand, it will be played on your first turn. Discard the other 2.": "抽取3张CEO牌，将其中1张加入你的手牌，它将在你的第一个回合打出。弃掉另外2张。",
-    
-    "Apollo": "阿波罗",
-    "Once per game, gain 3 M€ for each tile on The Moon.": "每局游戏一次，月球上每有1个板块，获得3 M€。",
-    
-    "Asimov": "阿西莫夫",
-    "Effect: You have +2 score for all awards.": "效果：所有奖项你获得+2分。",
-    "Once per game, draw 10-X awards (min. 1), where X is the current generation number. You may put one into the game and fund it for free.": "每局游戏一次，抽取10-X张奖项牌（至少1张），X为当前世代数。你可以将其中1张放入游戏并免费资助它。",
-    
-    "Bjorn": "比约恩",
-    "Once per game, steal X+2 M€ from each player that has more M€ than you, where X is the current generation number.": "每局游戏一次，从每个M€比你多的玩家处窃取X+2 M€，X为当前世代数。",
-    
-    "Caesar": "凯撒",
-    "Once per game, place X hazard tiles where X is the current generation number. Each opponent loses 1 unit of production of their choice, or 2 units if there are 6 or more hazard tiles.": "每局游戏一次，放置X个危险地块，X为当前世代数。每个对手选择失去1产能，或者如果有6个或更多危险地块则失去2产能。",
-    
-    "Clarke": "克拉克",
-    "Once per game, increase your plant and heat production 1 step each. Gain plants and heat equal to your production +4.": "每局游戏一次，你的植物和热量产能各提升1步。获得等同于你产能等级+4的植物和热量。",
-    
-    "Duncan": "邓肯",
-    "Once per game, gain 7-X VP and 4X M€, where X is the current generation number.": "每局游戏一次，获得7-X VP和4X M€，X为当前世代数。",
-    
-    "Ender": "安德",
-    "Once per game, discard any number of cards up to twice the current generation number to draw that many cards.": "每局游戏一次，弃掉最多相当于当前世代数两倍的任意数量的牌，以抽取等量的牌。",
-    
-    "Faraday": "法拉第",
-    "When you gain a multiple of 5 for any tag type IN PLAY, you may pay 3 M€ to draw a card with that tag. Wild tags do not count for this effect.": "当你在场上的任何标志类型达到5的倍数时，你可以支付3 M€来抽取1张带有该标志的牌。万能标志不触发此效果。",
-    
-    "Floyd": "弗洛伊德",
-    "Once per game, play a card from hand for 13 + 2X M€ less, where X is the current generation number.": "每局游戏一次，以减少13 + 2X M€的费用从手牌打出一张牌，X为当前世代数。",
-    
-    "Gaia": "盖亚",
-    "Once per game, gain the Ares adjacency bonuses of all player-owned tiles on Mars.": "每局游戏一次，获得火星上所有玩家拥有板块的Ares相邻奖励。",
-    
-    "Gordon": "戈登",
-    "Effect: Ignore placement restrictions for greenery and city tiles on Mars.": "效果：忽略火星上绿地和城市板块的放置限制。",
-    "Effect: Gain 2 M€ when you place a greenery or city tile on Mars.": "效果：当你在火星放置绿地或城市板块时，获得2 M€。",
-    
-    "Greta": "格蕾塔",
-    "When you take an action or play a card that increases your TR THIS GENERATION (max 10 times), gain 4 M€.": "当你执行行动或打出牌使你在本世代提升TR时（最多10次），获得4 M€。",
-    
-    "HAL 9000": "哈尔9000",
-    "Once per game, decrease each of your productions 1 step to gain 4 of that resource.": "每局游戏一次，将你的每种产能降低1步，以获得4个该资源。",
-    
-    "Ingrid": "英格丽德",
-    "When you take an action that places a tile on Mars THIS GENERATION, draw a card.": "本时代当你执行行动在火星放置板块时，抽取1张牌。",
-    
-    "Jansson": "詹森",
-    "Once per game, gain all placement bonuses under your tiles on Mars.": "每局游戏一次，获得你在火星的板块下的所有放置奖励。",
-    
-    "Karen": "卡伦",
-    "Once per game, draw Prelude cards equal to the current generation number and choose one to play, and discard the rest.": "每局游戏一次，抽取等同于当前世代数量的前序牌，选择1张打出，并弃掉其余的。",
-    
-    "Lowell": "洛厄尔",
-    "Once per game, pay 8 M€ to draw 3 CEO cards and choose one to play. Discard this card.": "每局游戏一次，支付8 M€来抽取3张CEO牌并选择1张打出。弃掉此牌。",
-    
-    "Maria": "玛丽亚",
-    "Once per game, draw colony tiles equal to the current generation number. Put one into play and build a colony on it for free if possible.": "每局游戏一次，抽取等同于当前世代数量的殖民地板块。将其中1个放入游戏，如果可能的话免费在其上建造1个殖民地。",
-    
-    "Musk": "马斯克",
-    "Once per game, discard any number of Earth cards to draw that many space cards, and gain that many units of titanium, plus 6.": "每局游戏一次，弃掉任意数量的地球牌以抽取等量的太空牌，并获得等量+6的钛。",
-    
-    "Naomi": "娜奥米",
-    "Effect: When you build a colony, gain 2 energy and 3 M€.": "效果：当你建造殖民地时，获得2能量和3 M€。",
-    "Once per game, move each colony tile track marker to its highest or lowest value.": "每局游戏一次，将每个殖民地板块轨道标记移至其最高或最低值。",
-    
-    "Neil": "尼尔",
-    "Effect: Gain 1 M€ when any player plays a Moon tag.": "效果：任何玩家打出月球标志时，获得1 M€。",
-    "Once per game, increase your M€ production by the value of the LOWEST Moon rate.": "每局游戏一次，你的M€产能提升等同于最低月球轨道等级的值。",
-    
-    "Oscar": "奥斯卡",
-    "Once per game, replace the Chairman with one of your delegates.": "每局游戏一次，用你的1个代表替换主席。",
-    
-    "Petra": "佩特拉",
-    "Once per game, replace all Neutral delegates with your delegates. Gain 3 M€ for each delegate replaced this way. Place 3 Neutral delegates.": "每局游戏一次，用你的代表替换所有中立代表。每以此法替换1个代表，获得3 M€。放置3个中立代表。",
-    
-    "Quill": "奎尔",
-    "Once per game, add 2 floaters to each of your cards that collect floaters, then add 2 floaters to ANY card. Gain 1 M€ for every 2 floaters added this way.": "每局游戏一次，在你的每张收集漂浮物的牌上放置2个漂浮物，然后在任意牌上放置2个漂浮物。每以此法放置2个漂浮物，获得1 M€。",
-    
-    "Rogers": "罗杰斯",
-    "Ignore global requirements for your Venus cards THIS GENERATION. When you play a Venus tag THIS GENERATION, you pay 3 M€ less for it.": "本世代，你的金星牌无视全局要求。本世代当你打出金星标志时，其费用减少3 M€。",
-    
-    "Ryu": "流",
-    "Once per game, swap up to X+2 units of production between two resources, where X is the current generation number.": "每局游戏一次，在两种资源之间交换最多X+2单位的产能，X为当前世代数。",
-    
-    "Shara": "莎拉",
-    "Once per game, choose a planet tag. This card counts as having immediately played 2 of that tag. Then gain M€ equal to that tags planety influence track.": "每局游戏一次，选择1个行星标志。此牌视为立即打出了2个该标志。然后获得等同于该标志行星影响力轨道等级的M€。",
-    
-    "Stefan": "斯特凡",
-    "Once per game, sell any number of cards from your hand for 3 M€ each.": "每局游戏一次，以每张3 M€的价格出售你手牌中的任意数量的牌。",
-    
-    "Tate": "泰特",
-    "Once per game, name a tag. Reveal cards from the deck until you find 5 cards with that tag. BUY up to 2 cards and discard the rest.": "每局游戏一次，说出1个标志。展示牌库顶牌直到你找到5张带有该标志的牌。购买最多2张牌并弃掉其余的。",
-    
-    "Ulrich": "乌尔里希",
-    "Once per game, gain 4 M€ for each ocean placed. If all oceans are aleady placed, gain only 15 M€.": "每局游戏一次，每有1个已放置的海洋，获得4 M€。如果所有海洋都已放置，则只获得15 M€。",
-    
-    "Van Allen": "范艾伦",
-    "Effect: MILESTONES ALWAYS COST 0 M€ FOR YOU.": "效果：里程碑对你总是花费0 M€。",
-    "Effect: When any milestone is claimed, gain 3 M€.": "效果：任何里程碑被认领时，获得3 M€。",
-    
-    "Will": "威尔",
-    "Once per game, add the following resources to your cards: 2 animals, 2 microbes, 2 floaters, 2 wild.": "每局游戏一次，在你的牌上添加以下资源：2个动物、2个微生物、2个漂浮物、2个万能资源。",
-    
-    "Xavier": "泽维尔",
-    "Once per game, gain 2 wild tags for THIS GENERATION.": "每局游戏一次，本时代获得2个万能标志。",
-    "Effect: AFTER this action has been used, when playing a card with a requirement, you pay 1 M€ less for it.": "效果：在此行动被使用后，当打出带要求的牌时，其费用减少1 M€。",
-    
-    "Xu": "徐",
-    "Once per game, gain 2 M€ for each Venus tag in play. Gain an additional 8 M€ if you have the most Venus tags in play.": "每局游戏一次，场上每有1个金星标志，获得2 M€。如果你拥有的金星标志最多，则额外获得8 M€。",
-    
-    "Yvonne": "伊冯娜",
-    "Once per game, gain all your colony bonuses twice.": "每局游戏一次，获得你所有的殖民地奖励两次。",
-    "GAIN ALL YOUR COLONY BONUSES TWICE":"获得你所有的殖民地奖励两次。",
-
-    "Zan": "赞",
-    "Effect: You are immune to Reds' ruling policy.": "效果：你免疫红色政党的执政政策。",
-    "Once per game, place all of your available delegates in Reds. Gain 1 M€ for each delegate placed this way.": "每局游戏一次，将你所有可用的代表放置在红色政党中。每以此法放置1个代表，获得1 M€。",
-
-    "Huàn": "幻",
-    "ALL OPPONENTS CANNOT TRADE NEXT GENERATION. Gain 1 Trade Fleet": "所有对手下一世代不能进行贸易。获得1个贸易船队。"
+  "ACTIVATE THE BELOW ABILITY": "激活下方能力",
+  "Co-leadership": "共同领导",
+  "Draw 3 CEO cards and take one to your hand, it will be played on your first turn. Discard the other 2.": "抽取3张CEO牌，将其中1张加入你的手牌，它将在你的第一个回合打出。弃掉另外2张。",
+  "Apollo": "阿波罗",
+  "Once per game, gain 3 M€ for each tile on The Moon.": "每局游戏一次，月球上每有1个板块，获得3 M€。",
+  "Asimov": "阿西莫夫",
+  "Effect: You have +2 score for all awards.": "效果：所有奖项你获得+2分。",
+  "Once per game, draw 10-X awards (min. 1), where X is the current generation number. You may put one into the game and fund it for free.": "每局游戏一次，抽取10-X张奖项牌（至少1张），X为当前世代数。你可以将其中1张放入游戏并免费资助它。",
+  "Bjorn": "比约恩",
+  "Once per game, steal X+2 M€ from each player that has more M€ than you, where X is the current generation number.": "每局游戏一次，从每个M€比你多的玩家处窃取X+2 M€，X为当前世代数。",
+  "Caesar": "凯撒",
+  "Once per game, place X hazard tiles where X is the current generation number. Each opponent loses 1 unit of production of their choice, or 2 units if there are 6 or more hazard tiles.": "每局游戏一次，放置X个危险地块，X为当前世代数。每个对手选择失去1产能，或者如果有6个或更多危险地块则失去2产能。",
+  "Clarke": "克拉克",
+  "Once per game, increase your plant and heat production 1 step each. Gain plants and heat equal to your production +4.": "每局游戏一次，你的植物和热量产能各提升1步。获得等同于你产能等级+4的植物和热量。",
+  "Duncan": "邓肯",
+  "Once per game, gain 7-X VP and 4X M€, where X is the current generation number.": "每局游戏一次，获得7-X VP和4X M€，X为当前世代数。",
+  "Ender": "安德",
+  "Once per game, discard any number of cards up to twice the current generation number to draw that many cards.": "每局游戏一次，弃掉最多相当于当前世代数两倍的任意数量的牌，以抽取等量的牌。",
+  "Faraday": "法拉第",
+  "When you gain a multiple of 5 for any tag type IN PLAY, you may pay 3 M€ to draw a card with that tag. Wild tags do not count for this effect.": "当你在场上的任何标志类型达到5的倍数时，你可以支付3 M€来抽取1张带有该标志的牌。万能标志不触发此效果。",
+  "Floyd": "弗洛伊德",
+  "Once per game, play a card from hand for 13 + 2X M€ less, where X is the current generation number.": "每局游戏一次，以减少13 + 2X M€的费用从手牌打出一张牌，X为当前世代数。",
+  "Gaia": "盖亚",
+  "Once per game, gain the Ares adjacency bonuses of all player-owned tiles on Mars.": "每局游戏一次，获得火星上所有玩家拥有板块的Ares相邻奖励。",
+  "Gordon": "戈登",
+  "Effect: Ignore placement restrictions for greenery and city tiles on Mars.": "效果：忽略火星上绿地和城市板块的放置限制。",
+  "Effect: Gain 2 M€ when you place a greenery or city tile on Mars.": "效果：当你在火星放置绿地或城市板块时，获得2 M€。",
+  "Greta": "格蕾塔",
+  "When you take an action or play a card that increases your TR THIS GENERATION (max 10 times), gain 4 M€.": "当你执行行动或打出牌使你在本世代提升改造度时（最多10次），获得4 M€。",
+  "HAL 9000": "哈尔9000",
+  "Once per game, decrease each of your productions 1 step to gain 4 of that resource.": "每局游戏一次，将你的每种产能降低1步，以获得4个该资源。",
+  "Ingrid": "英格丽德",
+  "When you take an action that places a tile on Mars THIS GENERATION, draw a card.": "本时代当你执行行动在火星放置板块时，抽取1张牌。",
+  "Jansson": "詹森",
+  "Once per game, gain all placement bonuses under your tiles on Mars.": "每局游戏一次，获得你在火星的板块下的所有放置奖励。",
+  "Karen": "卡伦",
+  "Once per game, draw Prelude cards equal to the current generation number and choose one to play, and discard the rest.": "每局游戏一次，抽取等同于当前世代数量的前序牌，选择1张打出，并弃掉其余的。",
+  "Lowell": "洛厄尔",
+  "Once per game, pay 8 M€ to draw 3 CEO cards and choose one to play. Discard this card.": "每局游戏一次，支付8 M€来抽取3张CEO牌并选择1张打出。弃掉此牌。",
+  "Maria": "玛丽亚",
+  "Once per game, draw colony tiles equal to the current generation number. Put one into play and build a colony on it for free if possible.": "每局游戏一次，抽取等同于当前世代数量的殖民地板块。将其中1个放入游戏，如果可能的话免费在其上建造1个殖民地。",
+  "Musk": "马斯克",
+  "Once per game, discard any number of Earth cards to draw that many space cards, and gain that many units of titanium, plus 6.": "每局游戏一次，弃掉任意数量的地球牌以抽取等量的太空牌，并获得等量+6的钛。",
+  "Naomi": "娜奥米",
+  "Effect: When you build a colony, gain 2 energy and 3 M€.": "效果：当你建造殖民地时，获得2能量和3 M€。",
+  "Once per game, move each colony tile track marker to its highest or lowest value.": "每局游戏一次，将每个殖民地板块轨道标记移至其最高或最低值。",
+  "Neil": "尼尔",
+  "Effect: Gain 1 M€ when any player plays a Moon tag.": "效果：任何玩家打出月球标志时，获得1 M€。",
+  "Once per game, increase your M€ production by the value of the LOWEST Moon rate.": "每局游戏一次，你的M€产能提升等同于最低月球轨道等级的值。",
+  "Oscar": "奥斯卡",
+  "Once per game, replace the Chairman with one of your delegates.": "每局游戏一次，用你的1个代表替换主席。",
+  "Petra": "佩特拉",
+  "Once per game, replace all Neutral delegates with your delegates. Gain 3 M€ for each delegate replaced this way. Place 3 Neutral delegates.": "每局游戏一次，用你的代表替换所有中立代表。每以此法替换1个代表，获得3 M€。放置3个中立代表。",
+  "Quill": "奎尔",
+  "Once per game, add 2 floaters to each of your cards that collect floaters, then add 2 floaters to ANY card. Gain 1 M€ for every 2 floaters added this way.": "每局游戏一次，在你的每张收集漂浮物的牌上放置2个漂浮物，然后在任意牌上放置2个漂浮物。每以此法放置2个漂浮物，获得1 M€。",
+  "Rogers": "罗杰斯",
+  "Ignore global requirements for your Venus cards THIS GENERATION. When you play a Venus tag THIS GENERATION, you pay 3 M€ less for it.": "本世代，你的金星牌无视全局要求。本世代当你打出金星标志时，其费用减少3 M€。",
+  "Ryu": "流",
+  "Once per game, swap up to X+2 units of production between two resources, where X is the current generation number.": "每局游戏一次，在两种资源之间交换最多X+2单位的产能，X为当前世代数。",
+  "Shara": "莎拉",
+  "Once per game, choose a planet tag. This card counts as having immediately played 2 of that tag. Then gain M€ equal to that tags planety influence track.": "每局游戏一次，选择1个行星标志。此牌视为立即打出了2个该标志。然后获得等同于该标志星际航线等级的M€。",
+  "Stefan": "斯特凡",
+  "Once per game, sell any number of cards from your hand for 3 M€ each.": "每局游戏一次，以每张3 M€的价格出售你手牌中的任意数量的牌。",
+  "Tate": "泰特",
+  "Once per game, name a tag. Reveal cards from the deck until you find 5 cards with that tag. BUY up to 2 cards and discard the rest.": "每局游戏一次，说出1个标志。展示牌库顶牌直到你找到5张带有该标志的牌。购买最多2张牌并弃掉其余的。",
+  "Ulrich": "乌尔里希",
+  "Once per game, gain 4 M€ for each ocean placed. If all oceans are aleady placed, gain only 15 M€.": "每局游戏一次，每有1个已放置的海洋，获得4 M€。如果所有海洋都已放置，则只获得15 M€。",
+  "Van Allen": "范艾伦",
+  "Effect: MILESTONES ALWAYS COST 0 M€ FOR YOU.": "效果：里程碑对你总是花费0 M€。",
+  "Effect: When any milestone is claimed, gain 3 M€.": "效果：任何里程碑被认领时，获得3 M€。",
+  "Will": "威尔",
+  "Once per game, add the following resources to your cards: 2 animals, 2 microbes, 2 floaters, 2 wild.": "每局游戏一次，在你的牌上添加以下资源：2个动物、2个微生物、2个漂浮物、2个万能资源。",
+  "Xavier": "泽维尔",
+  "Once per game, gain 2 wild tags for THIS GENERATION.": "每局游戏一次，本时代获得2个万能标志。",
+  "Effect: AFTER this action has been used, when playing a card with a requirement, you pay 1 M€ less for it.": "效果：在此行动被使用后，当打出带要求的牌时，其费用减少1 M€。",
+  "Xu": "徐",
+  "Once per game, gain 2 M€ for each Venus tag in play. Gain an additional 8 M€ if you have the most Venus tags in play.": "每局游戏一次，场上每有1个金星标志，获得2 M€。如果你拥有的金星标志最多，则额外获得8 M€。",
+  "Yvonne": "伊冯娜",
+  "Once per game, gain all your colony bonuses twice.": "每局游戏一次，获得你所有的殖民地奖励两次。",
+  "GAIN ALL YOUR COLONY BONUSES TWICE": "获得你所有的殖民地奖励两次。",
+  "Zan": "赞",
+  "Effect: You are immune to Reds' ruling policy.": "效果：你免疫红色政党的执政政策。",
+  "Once per game, place all of your available delegates in Reds. Gain 1 M€ for each delegate placed this way.": "每局游戏一次，将你所有可用的代表放置在红色政党中。每以此法放置1个代表，获得1 M€。",
+  "Huàn": "幻",
+  "ALL OPPONENTS CANNOT TRADE NEXT GENERATION. Gain 1 Trade Fleet": "所有对手下一世代不能进行贸易。获得1个贸易船队。",
+  "Iapetus II": "伊阿珀托斯 II"
 }
-

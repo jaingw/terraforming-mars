@@ -7,10 +7,12 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import {defineComponent} from 'vue';
 import {Warning} from '@/common/cards/Warning';
 
 const descriptions: Record<Warning, string> = {
+  'pass': 'You will not take any more actions this generation.',
+  'undoBestEffort': 'Undo is best effort only. Please do not report any bugs if it is broken.',
   'maxtemp': 'Note: the temperature is already at its goal.',
   'maxoxygen': 'Note: the oxygen level is already at its goal.',
   'maxoceans': 'Note: all oceans are already on the board.',
@@ -32,13 +34,14 @@ const descriptions: Record<Warning, string> = {
   'selfTarget': 'Note: This action will target you.',
   'pharmacyUnion': 'Note: playing a card with a microbe tag will cause you to lose 4 M€ (or as much as possible).',
   'kaguyaTech': 'Warning: Your only greeneries are special tiles.',
+  'underworldtokendiscard': 'Warning: You will have to discard an underworld resource token you rely on.',
 };
 
-export default Vue.extend({
+export default defineComponent({
   name: 'WarningsComponent',
   props: {
     warnings: {
-      type: Array as () => Array<Warning>,
+      type: Array as () => ReadonlyArray<Warning>,
       default: () => {
         return [];
       },

@@ -1,7 +1,7 @@
 <template>
   <div v-if="typeof victoryPoints !== 'number'" :class="classes">
     <template v-if="victoryPoints.targetOneOrMore">
-       <!-- This is the Search for Life special case. -->
+      <!-- This is the Search for Life special case. -->
       <div class="card-points-item-first">
         <CardRenderItemComponent v-if="victoryPoints.item !== undefined" :item="victoryPoints.item" data-test="item"/>
         *:3
@@ -25,7 +25,7 @@
 
 <script lang="ts">
 
-import Vue from 'vue';
+import {defineComponent} from 'vue';
 import CardRenderItemComponent from '@/client/components/card/CardRenderItemComponent.vue';
 import {CardRenderDynamicVictoryPoints} from '@/common/cards/render/CardRenderDynamicVictoryPoints';
 import {CardRenderItemType} from '@/common/cards/render/CardRenderItemType';
@@ -33,7 +33,7 @@ import {CardResource} from '@/common/CardResource';
 import {ICardRenderItem} from '@/common/cards/render/Types';
 import {Size} from '@/common/cards/render/Size';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'CardVictoryPoints',
   props: {
     victoryPoints: {

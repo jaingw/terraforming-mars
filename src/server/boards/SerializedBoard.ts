@@ -13,6 +13,7 @@ export interface SerializedBoard {
 export interface SerializedSpace {
   id: SpaceId;
   spaceType: SpaceType;
+  volcanic?: true;
   tile?: Tile;
   player?: SerializedPlayerId;
   bonus: Array<SpaceBonus>;

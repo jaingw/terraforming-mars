@@ -26,6 +26,16 @@ export class SolBank extends CorporationCard implements ICorporationCard {
     });
   }
 
+  public override bespokePlay(player: IPlayer): undefined {
+    if (player.megaCredits === 0) {
+      player.megaCredits = this.startingMegaCredits - player.cardsInHand.length * player.cardCost;
+      if (player.cardsInHand.length > 0) {
+        player.addResourceTo(this, {log: true});
+      }
+    }
+    return undefined;
+  }
+
   // Behavior is in Pathfinders.addToSolBank.
   public onProductionPhase(player: IPlayer): undefined {
     player.megaCredits += this.resourceCount;

@@ -1,4 +1,4 @@
-import * as dotenv from 'dotenv';
+import dotenv from 'dotenv';
 import {expect} from 'chai';
 import {describeDatabaseSuite} from '../database/databaseSuite';
 import {ITestDatabase, Status} from '../database/ITestDatabase';
@@ -8,13 +8,12 @@ import {PostgreSQL, POSTGRESQL_TABLES} from '../../src/server/database/PostgreSQ
 import {TestPlayer} from '../TestPlayer';
 import {SelectOption} from '../../src/server/inputs/SelectOption';
 import {Phase} from '../../src/common/Phase';
-import {cast, runAllActions} from '../TestingUtils';
+import {runAllActions} from '../TestingUtils';
 import {IPlayer} from '../../src/server/IPlayer';
 import {Database} from '../../src/server/database/Database';
 import {GameId} from '../../src/common/Types';
-import {QueryResult} from 'pg';
 import {SelectInitialCards} from '../../src/server/inputs/SelectInitialCards';
-import {range} from '../../src/common/utils/utils';
+import {cast, range} from '../../src/common/utils/utils';
 import {GameLoader} from '../../src/server/database/GameLoader';
 
 dotenv.config({path: 'tests/integration/.env', debug: true});
@@ -50,7 +49,7 @@ class TestPostgreSQL extends PostgreSQL implements ITestDatabase {
     response['size-bytes-database'] = 'any';
     response['size-bytes-participants'] = 'any';
 
-    const extraFields = ['rows-game', 'size-bytes-game', 'rows-completed-game', 'size-bytes-completed-game', 'rows-session', 'size-bytes-session'];
+    const extraFields = ['rows-game', 'size-bytes-game', 'rows-session', 'size-bytes-session'];
     for (const field of extraFields) {
       expect(response[field], 'For ' + field).is.not.undefined;
       delete response[field];
@@ -88,19 +87,6 @@ class TestPostgreSQL extends PostgreSQL implements ITestDatabase {
       return statusText;
     }
     throw new Error('Invalid status for ' + gameId + ': ' + statusText);
-  }
-
-  async completedTime(gameId: GameId): Promise<number | undefined> {
-    const res = await this.client.query('SELECT completed_time FROM completed_game WHERE game_id = $1', [gameId]);
-    if (res.rows.length === 0 || res.rows[0] === undefined) {
-      return undefined;
-    }
-    const row = res.rows[0];
-    return row.completed_time;
-  }
-
-  setCompletedTime(gameId: GameId, timestampSeconds: number): Promise<QueryResult<any>> {
-    return this.client.query('UPDATE completed_game SET completed_time = to_timestamp($1) WHERE game_id = $2', [timestampSeconds, gameId]);
   }
 }
 
@@ -141,7 +127,7 @@ describeDatabaseSuite({
     it('saveGame with the same saveID', async () => {
       const db = dbFactory();
       const player = TestPlayer.BLACK.newPlayer();
-      const game = Game.newInstance('game-id-1212', [player], player);
+      const game = Game.newInstance('game-id-1212', [player], player, 'spectatorid');
       cast(player.popWaitingFor(), SelectInitialCards);
       await db.lastSaveGamePromise;
 
@@ -178,13 +164,13 @@ describeDatabaseSuite({
     it('getGames - returns in order of last saved', async () => {
       const db = dbFactory();
       const player = TestPlayer.BLACK.newPlayer();
-      const game1 = Game.newInstance('game-id-1111', [player], player);
+      const game1 = Game.newInstance('game-id-1111', [player], player, 'spectatorid');
       await db.lastSaveGamePromise;
       const player2 = TestPlayer.RED.newPlayer();
-      const game2 = Game.newInstance('game-id-2222', [player2], player2);
+      const game2 = Game.newInstance('game-id-2222', [player2], player2, 'spectatorid');
       await db.lastSaveGamePromise;
       const player3 = TestPlayer.BLUE.newPlayer();
-      const game3 = Game.newInstance('game-id-3333', [player3], player3);
+      const game3 = Game.newInstance('game-id-3333', [player3], player3, 'spectatorid');
       await db.lastSaveGamePromise;
 
       expect((await db.getGames()).map((data) => data.gameId)).deep.eq(['game-id-3333', 'game-id-2222', 'game-id-1111']);
@@ -209,7 +195,7 @@ describeDatabaseSuite({
       const db = dbFactory();
       const player = TestPlayer.BLACK.newPlayer();
       const player2 = TestPlayer.RED.newPlayer();
-      const game = Game.newInstance('gameid', [player, player2], player, {draftVariant: false, undoOption: true});
+      const game = Game.newInstance('gameid', [player, player2], player, 'spectatorid', {draftVariant: false, undoOption: true});
 
       await db.awaitAllSaves();
 
@@ -241,7 +227,7 @@ describeDatabaseSuite({
       }
 
       // Player's first action
-      expect(game.activePlayer).eq(player);
+      expect(game.activePlayer.id).eq(player.id);
       expect(player.actionsTakenThisRound).eq(0);
 
       // Taking an action triggers a save (when undo is enabled.)
@@ -256,7 +242,7 @@ describeDatabaseSuite({
       expect(await db.getStat('save-conflict-undo-count')).eq(0);
 
       // Player's second action
-      expect(game.activePlayer).eq(player);
+      expect(game.activePlayer.id).eq(player.id);
       expect(player.actionsTakenThisRound).eq(1);
 
       takeAction(player);
@@ -267,7 +253,7 @@ describeDatabaseSuite({
       // It is now the second player's turn. This test doesn't care about what the
       // second player does, but it is just a cue that the server has done a few things.
       // This test cares about the database things it does.
-      expect(game.activePlayer).eq(player2);
+      expect(game.activePlayer.id).eq(player2.id);
       expect(player.actionsTakenThisRound).eq(0);
 
       // Notice how save-count was 3 and is now 5. It saved twice.
@@ -284,7 +270,7 @@ describeDatabaseSuite({
       const db = dbFactory();
       const player = TestPlayer.BLACK.newPlayer();
       const player2 = TestPlayer.RED.newPlayer();
-      const game = Game.newInstance('gameid', [player, player2], player2, {draftVariant: false, undoOption: true});
+      const game = Game.newInstance('gameid', [player, player2], player2, 'spectatorid', {draftVariant: false, undoOption: true});
       // Adding to the GameLoader because this is manually managed by the Game route, which is the real place responsible for
       // creating new games.
       GameLoader.getInstance().add(game);
@@ -297,14 +283,14 @@ describeDatabaseSuite({
       game.playerIsFinishedWithResearchPhase(player2);
       runAllActions(game);
       expect(game.phase).eq(Phase.ACTION);
-      expect(game.activePlayer).eq(player2);
+      expect(game.activePlayer.id).eq(player2.id);
 
       await db.awaitAllSaves();
 
       player2.pass();
       game.playerIsFinishedTakingActions();
       runAllActions(game);
-      expect(game.activePlayer).eq(player);
+      expect(game.activePlayer.id).eq(player.id);
 
       // Player.takeAction sets waitingFor and waitingForCb. This overrides it
       // with a custom option (gain one mc), and then mimics the waitingForCb behavior at
@@ -322,7 +308,7 @@ describeDatabaseSuite({
         });
       }
 
-      expect(game.activePlayer).eq(player);
+      expect(game.activePlayer.id).eq(player.id);
       expect(player.actionsTakenThisRound).eq(0);
 
       player.megaCredits -=42;
@@ -381,7 +367,7 @@ describeDatabaseSuite({
     it('undo works in solo', async () => {
       const db = dbFactory();
       const player = TestPlayer.BLACK.newPlayer();
-      const game = Game.newInstance('gameid', [player], player, {undoOption: true});
+      const game = Game.newInstance('gameid', [player], player, 'spectatorid', {undoOption: true});
       await db.awaitAllSaves();
 
       // Move into the action phase. This triggers a save.
@@ -405,7 +391,7 @@ describeDatabaseSuite({
         });
       }
 
-      expect(game.activePlayer).eq(player);
+      expect(game.activePlayer.id).eq(player.id);
       expect(player.actionsTakenThisRound).eq(0);
 
       player.megaCredits -=42;
@@ -467,7 +453,7 @@ describeDatabaseSuite({
       const db = dbFactory();
 
       const player = TestPlayer.BLACK.newPlayer();
-      const game = Game.newInstance('game-id-1212', [player], player);
+      const game = Game.newInstance('game-id-1212', [player], player, 'spectatorid');
       await db.lastSaveGamePromise;
       expect(game.lastSaveId).eq(1);
 
@@ -531,7 +517,7 @@ describeDatabaseSuite({
       db.setTrimCount(5);
 
       const player = TestPlayer.BLACK.newPlayer();
-      const game = Game.newInstance('game-id-1212', [player], player);
+      const game = Game.newInstance('game-id-1212', [player], player, 'spectatorid');
       await db.lastSaveGamePromise;
       expect(game.lastSaveId).eq(1);
 
@@ -563,7 +549,7 @@ describeDatabaseSuite({
       db.setTrimCount(2);
 
       const player = TestPlayer.BLACK.newPlayer();
-      const game = Game.newInstance('game-id-1212', [player], player);
+      const game = Game.newInstance('game-id-1212', [player], player, 'spectatorid');
       await db.lastSaveGamePromise;
       expect(game.lastSaveId).eq(1);
 
@@ -593,7 +579,7 @@ describeDatabaseSuite({
       db.setTrimCount(0);
 
       const player = TestPlayer.BLACK.newPlayer();
-      const game = Game.newInstance('game-id-1212', [player], player);
+      const game = Game.newInstance('game-id-1212', [player], player, 'spectatorid');
       await db.lastSaveGamePromise;
       expect(game.lastSaveId).eq(1);
 
@@ -662,7 +648,7 @@ describeDatabaseSuite({
       db.setTrimCount(-1);
 
       const player = TestPlayer.BLACK.newPlayer();
-      const game = Game.newInstance('game-id-1212', [player], player);
+      const game = Game.newInstance('game-id-1212', [player], player, 'spectatorid');
       await db.lastSaveGamePromise;
       expect(game.lastSaveId).eq(1);
 

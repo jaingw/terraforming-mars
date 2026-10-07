@@ -4,7 +4,7 @@ export enum CardName {
   POWER_PLANT_STANDARD_PROJECT = 'Power Plant:SP',
   ASTEROID_STANDARD_PROJECT = 'Asteroid:SP',
   BUFFER_GAS_STANDARD_PROJECT = 'Buffer Gas',
-  BUILD_COLONY_STANDARD_PROJECT = 'Colony',
+  BUILD_COLONY_STANDARD_PROJECT = 'Build Colony',
   AQUIFER_STANDARD_PROJECT = 'Aquifer',
   GREENERY_STANDARD_PROJECT = 'Greenery',
   CITY_STANDARD_PROJECT = 'City',
@@ -346,7 +346,7 @@ export enum CardName {
   BEGINNER_CORPORATION = 'Beginner Corporation',
   DOUBLE_CORPORATION = 'Double Corporation',
   CREDICOR = 'CrediCor',
-  ECOLINE = 'EcoLine',
+  ECOLINE = 'Ecoline',
   HELION = 'Helion',
   INTERPLANETARY_CINEMATICS = 'Interplanetary Cinematics',
   INVENTRIX = 'Inventrix',
@@ -355,7 +355,7 @@ export enum CardName {
   SATURN_SYSTEMS = 'Saturn Systems',
   TERACTOR = 'Teractor',
   THARSIS_REPUBLIC = 'Tharsis Republic',
-  THORGATE = 'Thorgate',
+  THORGATE = 'ThorGate',
   UNITED_NATIONS_MARS_INITIATIVE = 'United Nations Mars Initiative',
   ACQUIRED_SPACE_AGENCY = 'Acquired Space Agency',
   // Preludes:
@@ -395,7 +395,7 @@ export enum CardName {
   POSEIDON = 'Poseidon',
   STORMCRAFT_INCORPORATED = 'Stormcraft Incorporated',
   ARCADIAN_COMMUNITIES = 'Arcadian Communities',
-  ASTRODRILL = 'Astrodrill',
+  ASTRODRILL = 'AstroDrill',
   ADVERTISING = 'Advertising',
   PHARMACY_UNION = 'Pharmacy Union',
   INDUSTRIAL_CENTER = 'Industrial Center',
@@ -571,6 +571,11 @@ export enum CardName {
   PROTECTED_GROWTH = 'Protected Growth',
   VERMIN = 'Vermin',
   CASINOS = 'Casinos',
+  PUBLIC_PLANS = 'Public Plans',
+  STATIC_HARVESTING = 'Static Harvesting',
+  WEATHER_BALLOONS = 'Weather Balloons',
+  ALBEDO_PLANTS = 'Albedo Plants',
+  STERLING_VENTS = 'Sterling Vents',
 
   // Promo cards from Dutch Open
   FLOYD_CONTINUUM = 'Floyd Continuum',
@@ -1136,7 +1141,7 @@ export enum CardName {
   MARTIAN_EXPRESS = 'Martian Express',
   EXPEDITION_VEHICLES = 'Expedition Vehicles',
   CUT_THROAT_BUDGETING = 'Cut-throat Budgeting',
-  GEOLOGICAL_SURVEY_UNDERWORLD = 'Geological Survey:underworld',
+  CANYON_SURVEY = 'Canyon Survey',
   CLASS_ACTION_LAWSUIT = 'Class-action Lawsuit',
   MERCENARY_SQUAD = 'Mercenary Squad',
   RESEARCH_DEVELOPMENT_HUB = 'Research & Development Hub',
@@ -1186,6 +1191,9 @@ export enum CardName {
   PROSPECTING = 'Prospecting',
   ELECTION_SPONSORSHIP = 'Election Sponsorship',
   CLOUD_VORTEX_OUTPOST = 'Cloud Vortex Outpost',
+
+  // Delta Project
+  DELTA_PROJECT = 'Delta Project',
 
   // Underworld Standard Projects
   EXCAVATE_STANDARD_PROJECT = 'Excavate:SP',

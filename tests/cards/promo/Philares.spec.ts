@@ -11,9 +11,10 @@ import {TestPlayer} from '../../TestPlayer';
 import {Units} from '../../../src/common/Units';
 import {MAX_OXYGEN_LEVEL, MAX_TEMPERATURE} from '../../../src/common/constants';
 import {OrOptions} from '../../../src/server/inputs/OrOptions';
-import {cast, runAllActions, setOxygenLevel, setTemperature} from '../../TestingUtils';
+import {runAllActions, setOxygenLevel, setTemperature} from '../../TestingUtils';
 import {SelectSpace} from '../../../src/server/inputs/SelectSpace';
 import {testGame} from '../../TestGame';
+import {cast} from '../../../src/common/utils/utils';
 
 describe('Philares', () => {
   let card: Philares;
@@ -33,7 +34,7 @@ describe('Philares', () => {
     adjacentSpace = game.board.getAdjacentSpaces(space)[0];
     adjacentSpace2 = game.board.getAdjacentSpaces(space)[2];
 
-    philaresPlayer.corporations.push(card);
+    philaresPlayer.playedCards.push(card);
   });
 
   it('No bonus when placing next to self', () => {

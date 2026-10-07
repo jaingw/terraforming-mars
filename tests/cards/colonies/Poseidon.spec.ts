@@ -2,9 +2,10 @@ import {expect} from 'chai';
 import {Poseidon} from '../../../src/server/cards/colonies/Poseidon';
 import {Ceres} from '../../../src/server/colonies/Ceres';
 import {testGame} from '../../TestGame';
-import {cast, runAllActions} from '../../TestingUtils';
+import {runAllActions} from '../../TestingUtils';
 import {SelectColony} from '../../../src/server/inputs/SelectColony';
 import {Units} from '../../../src/common/Units';
+import {cast} from '../../../src/common/utils/utils';
 
 describe('Poseidon', () => {
   it('Should play', () => {
@@ -13,7 +14,7 @@ describe('Poseidon', () => {
 
     cast(card.play(player), undefined);
 
-    player.corporations.push(card);
+    player.playedCards.push(card);
     const ceres = new Ceres();
     ceres.addColony(player);
 

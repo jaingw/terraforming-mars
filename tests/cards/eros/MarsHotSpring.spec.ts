@@ -24,14 +24,20 @@ describe('MarsHotSpring', function() {
     // 找到与陆地相邻的海洋空间并放置海洋
     const oceanSpacesWithAdjacentLand: Array<Space> = [];
     for (const space of game.board.spaces) {
-      if (space.spaceType !== SpaceType.OCEAN) continue;
-      if (space.tile !== undefined) continue;
+      if (space.spaceType !== SpaceType.OCEAN) {
+        continue;
+      }
+      if (space.tile !== undefined) {
+        continue;
+      }
       const adjSpaces = game.board.getAdjacentSpaces(space);
       const adjacentLand = adjSpaces.some((s) => s.spaceType === SpaceType.LAND);
       if (adjacentLand) {
         game.addTile(player, space, {tileType: TileType.OCEAN});
         oceanSpacesWithAdjacentLand.push(space);
-        if (oceanSpacesWithAdjacentLand.length >= 3) break;
+        if (oceanSpacesWithAdjacentLand.length >= 3) {
+          break;
+        }
       }
     }
     return oceanSpacesWithAdjacentLand;

@@ -1,194 +1,123 @@
 {
-    "Eros":"群友扩",
-
-    "Sister Planet Sponsors":"姊妹星球赞助",
-    "Requires Venus and Earth tags. Increase your M€ production 4 steps. ALL OPPONENTS increase their M€ production 1 step":"需要你有1个金星标记和1个地球标记。提升你的M€产能4格。所有对手各提升M€产能1格",
-
-    "Mars Hot Spring":"火星温泉",
-    "Requires 3 ocean tiles. Increase your M€ and Heat production 2 steps. Place this tile ADJACENT TO an ocean tile":"需要有3块海洋。提升你的M€产能和热能产能各2格，放置此板块到与海洋相邻的位置",
-
-    "Solar Cosmic Rays":"太阳射线",
-    "Increase your energy production 1 steps. For each energy production other player has, you increase your heat production 1 step[max 15].":"提升你的电力产能1格。全场其他每有1点电力产能，你提升你的热能产能1格（至多15）",
-
-    "Interplanetary Alliance":"星际联邦",
-
-    "Hydrothermal Vent Archaea":"深海热泉细菌",
-    "Effect: When you increase Temperature 1 step, add a microbe to this card":"效果：每当你提升温度1格，增加1个微生物资源到此卡",
-    "Requires 3 oceans":"需要有3块海洋",
-
-    "Waste Incinerator":"垃圾焚烧站",
-    "Effect: When you sell patents, you can gain 2 heat instead of 1 MC":"效果：当你贩卖专利时，可以改为获得2点热能",
-
-    "Nitrogenrich Comet":"富氮彗星",
-    "Increase Temperature 1 step. Gain 4 plants":"提升温度1格。获得4个植物资源",
-
-
-    "Cutting Edge Lab":"前沿实验室",
-
-    "Respiration Enhance":"呼吸作用增强",
-    "Effect: When you place a greenery, you can choose to increase temperature 1 step, intead of oxygen":"效果：每当你放置一片绿化板块，你可以选择提升温度1格而不是提升氧气",
-
-    "Electric Sheep":"电子羊",
-    "Requires 4 Power tags. Decrease any Energy production 1 step":"需要你有4个电力标志。降低任意玩家电力产能1格",
-
-    "Ansible":"安塞波",
-    "Action: draw 3 cards. All OPPONENTS draw 1 card":"行动：抽3张牌。所有对手各抽1张牌",
-    "Requires 6 science tags":"需要你有6个科学标志",
-
-    "Large Ecological Reserve":"大型生态保护区",
-    "Requires a Plant tag, a Microbe tag, and an Animal tag. Place 2 greenery tiles and raise oxygen 2 steps":"需要你有1个植物标志，1个微生物标志，1个动物标志。放置2片绿化板块并提升氧气2格",
-
-
-    "Clone Technology":"克隆科技",
-    "Duplicate the production box and plant resource of one of your plant cards":"复制你的一张植物牌的产能和植物资源",
-
-    "Energy Supply":"电力补给",
-    "Gain 3 energy":"获得3电力",
-
-    "Urgent Terraforming Command":"紧急改造令",
-    "IMMEDIATE PRODUCE":"立即生产",
-    "Requires that you have at least 25 TR.you gain plants and heat equal to your plants and heat production":"要求你的TR≥25，根据你的植物和热能产量获得对应数量的植物和热能资源",
-
-    "Cow":"奶牛",
-    "Action: Spend 1 plant to add 1 Animal to this card and gain 5 M€":"行动：花费1个植物资源来向此卡增加1个动物资源并获得5M€",
-    "1 VP for per 2 Animals on this card":"此卡每有2个动物资源获得1分",
-    "Requires 5% oxygen":"需要5%氧气浓度",
-
-    "Starcore Plunter":"窃取星核",
-
-    "Jovian Expedition":"木星远征",
-    "Requires a colony. Add a colony tile(NOT TITANIA) and place a colony.":"需要你有1个殖民地。将一个殖民地加入游戏（不能是Titania）并放置一个殖民地",
-
-    "Action: draw cards or gain standard resources equal to your influences":"行动：获得等于你影响力数量的资源或卡牌",
-    "Action: replace all neutral delegates with your delegates, once per game":"行动：将所有中立代表替换为你自己的代表，每局游戏限一次",
-    "You start with 42 M€":"你起始获得42M€",
-    "Effect: When perform an action, each of your highest production can provide a wild tag; When producing, each of your highest tag number can provide a standard resource.":"效果：你的行动阶段，每个你全场唯一最高（至少为1）的产能为你提供一个问号标志；你的生产阶段，每个你全场唯一最多（至少为1）的标志为你生产一个标准资源。",
-    "Increase all production 3 steps.Decrease all production 2 steps(as low as 0) after being played 3 gens later.Can't be copied by other cards.Can't be played before Gen 3.":"增加所有产能3点。打出3时代后降低所有产能2点（最低至0）。不能被其他卡复制。不能在前2时代打出",
-    "Chaos effect: select ":"Chaos公司技能：选择",
-
-    "Action: inrease temperature/oxygen/venus 1step or spend 5M€ to place an ocean":"行动：提升温度/氧气/金星参数一格或者花费5M€放置一片海洋",
-
-    "Community Worker":"社区工作者",
-    "Effect: When you play a card WITH NO TAGS, including this, you gain 4M€":"效果：当你打出无标志的卡牌时[包括此卡]获得4M€",
-
-    "You start with 48 M€. As your first action, place two delegates in one party":"起始获得48M€.作为第一个行动，放置2个代表到1个党派上",
-    "Action: Look at the top 3 cards of global events deck and discard any of them.":"行动：查看全球事件牌堆顶的3张牌，弃置其中任意张，将剩余的按原顺序放回",
-    "Effect: Get 1 influence per leader of the Non-dominant party.":"效果：你的每个非主导政党的领导者也提供1点影响力",
-
-    "Fall of Sunrise":"拂晓陨落",
-
-    "Trade Navigator":"贸易领航者",
-    "Effect: The first time any player trades a colony in each generation, you perform a same trade without decreasing the track":"效果：每时代第一次有玩家进行贸易时，你执行一次完全一样的贸易，但是不会降低贸易轨道。",
-
-    "Brotherhood of Mutants":"变种人兄弟会",
-
-    "Starcore Mining":"星核开采",
-    "Effect: When you play a Plant, Energy, Space or Building tag, including these, gain related resource":"效果：每当你打出植/电/空间/建筑/标志时，获得对应资源，包括本卡。",
-
-    "EM Drive":"无工质推进飞船",
-    "Action: Increase a Colony Tile track to the maximum":"行动：将一个殖民地板块推到顶点。",
-
-    "You start with 51 MC":"你起始获得51MC",
-
-    "Action: Decrease 1 TR to draw 2 card. If you have no card, you do not need to decrease TR.":"行动：降低1点TR，抽2张牌。如果你没有手牌，则不需要降低TR。",
-
-    "Fleet Recycling":"飞船回收",
-
-    "Lose 1 Trade Fleet. Gain 4 steel and 4 titanium":"失去一艘贸易飞船。获得4点钢铁以及4点钛",
-
-    "Venus University":"金星大学",
-    "Effect: When you increase Venus Rate, draw a card":"当你提升金星改造度时，抽一张牌",
-
-    "Squid Game":"鱿鱼游戏",
-
-    "FOR EACH MILESTONE YOU HAVE, DECREASE 5 MC":"你每设立一个里程碑，本卡费用-5",
-
-    "Draw 6 new awards. Select one and add to this game":"随机抽取6个未加入游戏的奖励，选择一个设立",
-
-    "Plant Smuggling":"植物走私集团",
-
-    "Requires a colony. Increase your MC production 2 step. When any player trades, you gain 1 plant.":"需要有一个殖民地。提升2点金钱产能。每当有玩家贸易，你获得1点植物。",
-
-    "AntiGravity Experiment":"反重力先行试验",
-
-    "Effect: For this generation, when you play a card, you pay 2 MC less for it":"效果：本时代内，你打出卡牌费用-2",
-
-    "Action: Draw a card from discard pile":"行动：从弃牌堆中抽一张牌。",
-
-    "Border Checkpoint": "边境检查站",
-
-    "Place a city tile on the border":"放置一片城市到火星边缘。无视其它放置规则。",
-
-    "scolex":"星核",
-
-    "✡Ind✡": "✡工业✡",
-
-    "Action: Discard a card, and use a non resource card action from other opponents.": "行动：弃置一张牌，使用其它玩家的一张的行动卡，该卡上资源数量必须为0。",
-
-    "Effect: For each different tag, get 1 MC discount per 3 related tags": "效果：每3个相同的标记使拥有该标记卡牌费用-1。",
-
-    "Hay Maker" : "炎拳",
-
-    "Remove one of your greenery and place a neutral cube. Gain 12 heat.": "移除你的一片绿化。放置一个中立标记。获得12点热能。",
-
-    "Martian Fencing" : "火星击剑",
-
-    "Find one Eros card. Choose to buy it or not." : "找1张群友扩卡牌，选择是否购买。",
-
-    "Action: Move one of your colony to another colony (Could not be TITANIA for both case)." : "行动：将你的一个殖民地移动到另一个殖民地，同时获得放置奖励（本行动不包含分数殖民地）。",
-
-    "Effect: You gain double trade bonus." : "效果：你获得双倍殖民地贸易奖励，如luna的2钱，牌星的摸1弃1。",
-
-    "Action: If you have no card, draw 2 card." : "行动：如果你没有手牌，抽2张牌。",
-
-    "Action: Or you can discard X cards to draw X-1 cards. Maximum X is current generation number." : "行动：或者你可以弃X摸X-1牌。X不大于当前时代数。",
-
-    "Effect: When you gain microbes in one action, also gain 2 heat." : "效果：每次你获得微生物时，获得2热。如果一次获得多个微生物也只获得2热。",
-
-    "Action: Send a Neutral delegate to any party." : "行动：放置一个中立代表。",
-
-    "Effect: Your delegates count as neutral delegates. If neutral delegate becomes chairman, you can decide: let all other player lose 1 TR, or ignore their ruling bonus." : "效果：所有场上的中立代表均视为你的代表。当你执政时，你不获得TR，改为选择：让其它玩家失去1TR, 或者让其它玩家忽略本时代的执政奖励。",
-
-    "Action: Discard a card. For each tag it has, draw a card with the same tag." : "行动：弃一张牌。该牌上每有一个标记，你抽一张对应标记的卡牌。",
-
-    "Action: Decrease 1 production (not MC), and Increase 1 production." : "行动：降低一点产能，不能是钱产。提升一点任意产能。",
-
-
-    "Jovian Defense Department" : "木星防空署",
-    "Effect: When you play a Jovian tag, including this, add 1 Asteroid to this card." : "效果：每当你打出一个木星标记，在本卡上增加一个陨石标记。",
-    "1 VP per Asteroid on this card": "此牌上每有1个小行星，获得1 VP。",
-
-    "Trantor" : "川陀",
-    "Increase your M€ production 2 steps. Place a city tile IN SPACE, outside and separate from the planet. At the end of the game, if you have the most cities not on Mars (including ties), gain 3 VPs." : "提升2点钱产。放置一个城市到外太空。终局计分时，如果你拥有最多(可以并列)外太空城市，获得3分。",
-
-    "You start with 41 M€. As your first action, transform all Neutral delegates to your delegates." : "游戏开始时你获得41MC。作为第一个行动，将所有中立代表转化为你的代表。",
-
-    "Id Front":"前线基地",
-    "Imperial Star Destroyer":"帝国歼星舰",
-    "Millennium Falcon":"千年隼",
-    "Prism":"棱镜光谱研究室",
-    "Runciter Associates":"朗西斯联合公司",
-    "TeiAi Group":"帝爱赌场",
-
-    "Energy Station": "能源站",
-    "Effect: When a player 's plants are removed by another player,you gain 1 Heat for each plant removed.": "效果：一名玩家叶子被其他玩家移除时，每移除一个叶子使你获得1热。",
-    "Action: Spend X Plant to gain 2X Heat": "行动：花费X个植物资源获得2X热能",
-    "Action: Spend 2X Heat to gain X Plant": "行动：花费2X热能获得X植物资源",
-    "Space Monster Park": "太空怪兽乐园",
-    "Decrease your titanium production 1 step. When you play a Space/Earth/Venus tag, including these, either add a floater resource to this card, or remove 2 floater resource from this card to draw a card.": "减少1点钛产。效果：你每打出一个太空/地球/金星标志，你可以在本卡上增加一个漂浮物，或者移除2个漂浮物抽一张牌。",
-    "Effect: When you play a Space/Earth/Venus tag, including these, either add a floater resource to this card, or remove 2 floater resource from this card to draw a card.": "效果：你每打出一个太空/地球/金星标志，你可以在本卡上增加一个漂浮物，或者移除2个漂浮物抽一张牌。",
-    "Decrease your titanium production 1 step.": "减少1点钛产。",
-    "Luna Chain": "连月",
-    "Effect: After you pay for a card with the same amount as your last card, you gain 3 M€": "效果：当你打出的项目卡实际支付的M€与上一张项目卡相同时，你获得3M€",
-    "WG Partnership": "世界政府小伙伴",
-    "You gain the bonus of world government.": "你获得世界政府的收益，包括轨道奖励和放海收益（但仍然由原本玩家执行世界政府）。",
-
-    "You start with 53 M€ and 1 extra trade fleet": "您起始拥有 53 M€ 和 1 个额外贸易船队。",
-
-    "You start with 54 M€. As your first action, place two delegates in one party": "您起始拥有 54 M€。作为您的第一个行动，在一个政党中放置两个代表。",
-
-    "You start with 28 M€. As your first action, place a colony": "您起始拥有 28 M€。作为您的第一个行动，放置一个殖民地。"
-
-
+  "Eros": "群友扩",
+  "Sister Planet Sponsors": "姊妹星球赞助",
+  "Requires Venus and Earth tags. Increase your M€ production 4 steps. ALL OPPONENTS increase their M€ production 1 step": "需要你有1个金星标志和1个地球标志。提升你的M€产能4级。所有对手各提升M€产能1级",
+  "Mars Hot Spring": "火星温泉",
+  "Requires 3 ocean tiles. Increase your M€ and Heat production 2 steps. Place this tile ADJACENT TO an ocean tile": "需要有3块海洋。提升你的M€产能和热能产能各2格，放置此板块到与海洋相邻的位置",
+  "Solar Cosmic Rays": "太阳射线",
+  "Increase your energy production 1 steps. For each energy production other player has, you increase your heat production 1 step[max 15].": "提升你的电力产能1格。全场其他每有1点电力产能，你提升你的热能产能1格（至多15）",
+  "Interplanetary Alliance": "星际联邦",
+  "Hydrothermal Vent Archaea": "深海热泉细菌",
+  "Effect: When you increase Temperature 1 step, add a microbe to this card": "效果：每当你提升温度1格，增加1个微生物资源到此卡",
+  "Requires 3 oceans": "需要有3块海洋",
+  "Waste Incinerator": "垃圾焚烧站",
+  "Effect: When you sell patents, you can gain 2 heat instead of 1 MC": "效果：当你出售专利时，可以改为获得2点热能，而不是1 M€",
+  "Nitrogenrich Comet": "富氮彗星",
+  "Increase Temperature 1 step. Gain 4 plants": "提升温度1格。获得4个植物资源",
+  "Cutting Edge Lab": "前沿实验室",
+  "Respiration Enhance": "呼吸作用增强",
+  "Effect: When you place a greenery, you can choose to increase temperature 1 step, intead of oxygen": "效果：每当你放置一片绿化板块，你可以选择提升温度1格而不是提升氧气",
+  "Electric Sheep": "电子羊",
+  "Requires 4 Power tags. Decrease any Energy production 1 step": "需要你有4个电力标志。降低任意玩家电力产能1格",
+  "Ansible": "安塞波",
+  "Action: draw 3 cards. All OPPONENTS draw 1 card": "行动：抽3张牌。所有对手各抽1张牌",
+  "Requires 6 science tags": "需要你有6个科学标志",
+  "Large Ecological Reserve": "大型生态保护区",
+  "Requires a Plant tag, a Microbe tag, and an Animal tag. Place 2 greenery tiles and raise oxygen 2 steps": "需要你有1个植物标志，1个微生物标志，1个动物标志。放置2片绿化板块并提升氧气2格",
+  "Clone Technology": "克隆科技",
+  "Duplicate the production box and plant resource of one of your plant cards": "复制你的一张植物牌的产能和植物资源",
+  "Energy Supply": "电力补给",
+  "Gain 3 energy": "获得3电力",
+  "Urgent Terraforming Command": "紧急改造令",
+  "IMMEDIATE PRODUCE": "立即生产",
+  "Requires that you have at least 25 TR.you gain plants and heat equal to your plants and heat production": "要求你的改造度至少为25。根据你的植物和热能产能获得对应数量的植物和热能资源",
+  "Cow": "奶牛",
+  "Action: Spend 1 plant to add 1 Animal to this card and gain 5 M€": "行动：花费1个植物资源来向此卡增加1个动物资源并获得5M€",
+  "1 VP for per 2 Animals on this card": "此卡每有2个动物资源获得1分",
+  "Requires 5% oxygen": "需要5%氧气浓度",
+  "Starcore Plunter": "窃取星核",
+  "Jovian Expedition": "木星远征",
+  "Requires a colony. Add a colony tile(NOT TITANIA) and place a colony.": "需要你有1个殖民地。将一个殖民地加入游戏（不能是Titania）并放置一个殖民地",
+  "Action: draw cards or gain standard resources equal to your influences": "行动：获得等于你影响力数量的资源或卡牌",
+  "Action: replace all neutral delegates with your delegates, once per game": "行动：将所有中立代表替换为你自己的代表，每局游戏限一次",
+  "You start with 42 M€": "你起始获得42M€",
+  "Effect: When perform an action, each of your highest production can provide a wild tag; When producing, each of your highest tag number can provide a standard resource.": "效果：你的行动阶段，每个你全场唯一最高（至少为1）的产能为你提供一个问号标志；你的生产阶段，每个你全场唯一最多（至少为1）的标志为你生产一个标准资源。",
+  "Increase all production 3 steps.Decrease all production 2 steps(as low as 0) after being played 3 gens later.Can't be copied by other cards.Can't be played before Gen 3.": "增加所有产能3点。打出3时代后降低所有产能2点（最低至0）。不能被其他卡复制。不能在前2时代打出",
+  "Chaos effect: select ": "Chaos公司技能：选择",
+  "Action: inrease temperature/oxygen/venus 1step or spend 5M€ to place an ocean": "行动：提升温度/氧气/金星参数一格或者花费5M€放置一片海洋",
+  "Community Worker": "社区工作者",
+  "Effect: When you play a card WITH NO TAGS, including this, you gain 4M€": "效果：当你打出无标志的卡牌时[包括此卡]获得4M€",
+  "You start with 48 M€. As your first action, place two delegates in one party": "起始获得48M€.作为第一个行动，放置2个代表到1个党派上",
+  "Action: Look at the top 3 cards of global events deck and discard any of them.": "行动：查看全球事件牌堆顶的3张牌，弃置其中任意张，将剩余的按原顺序放回",
+  "Effect: Get 1 influence per leader of the Non-dominant party.": "效果：你的每个非主导政党的领导者也提供1点影响力",
+  "Fall of Sunrise": "拂晓陨落",
+  "Trade Navigator": "贸易领航者",
+  "Effect: The first time any player trades a colony in each generation, you perform a same trade without decreasing the track": "效果：每时代第一次有玩家进行贸易时，你执行一次完全一样的贸易，但是不会降低贸易轨道。",
+  "Brotherhood of Mutants": "变种人兄弟会",
+  "Starcore Mining": "星核开采",
+  "Effect: When you play a Plant, Energy, Space or Building tag, including these, gain related resource": "效果：每当你打出植物、电力、太空或建筑标志时（包括本卡），获得对应资源。",
+  "EM Drive": "无工质推进飞船",
+  "Action: Increase a Colony Tile track to the maximum": "行动：将一个殖民地板块推到顶点。",
+  "You start with 51 MC": "你起始获得51 M€",
+  "Action: Decrease 1 TR to draw 2 card. If you have no card, you do not need to decrease TR.": "行动：降低1点改造度，抽2张牌。如果你没有手牌，则不需要降低改造度。",
+  "Fleet Recycling": "飞船回收",
+  "Lose 1 Trade Fleet. Gain 4 steel and 4 titanium": "失去一艘贸易飞船。获得4点钢铁以及4点钛",
+  "Venus University": "金星大学",
+  "Effect: When you increase Venus Rate, draw a card": "当你提升金星改造度时，抽一张牌",
+  "Squid Game": "鱿鱼游戏",
+  "FOR EACH MILESTONE YOU HAVE, DECREASE 5 MC": "你每设立一个里程碑，本卡费用-5",
+  "Draw 6 new awards. Select one and add to this game": "随机抽取6个未加入游戏的奖励，选择一个设立",
+  "Plant Smuggling": "植物走私集团",
+  "Requires a colony. Increase your MC production 2 step. When any player trades, you gain 1 plant.": "需要有一个殖民地。提升2点M€产能。每当有玩家贸易，你获得1点植物。",
+  "AntiGravity Experiment": "反重力先行试验",
+  "Effect: For this generation, when you play a card, you pay 2 MC less for it": "效果：本时代内，你打出卡牌时少支付2 M€",
+  "Action: Draw a card from discard pile": "行动：从弃牌堆中抽一张牌。",
+  "Border Checkpoint": "边境检查站",
+  "Place a city tile on the border": "放置一片城市到火星边缘。无视其它放置规则。",
+  "scolex": "星核",
+  "✡Ind✡": "✡工业✡",
+  "Action: Discard a card, and use a non resource card action from other opponents.": "行动：弃置一张牌，使用其它玩家的一张的行动卡，该卡上资源数量必须为0。",
+  "Effect: For each different tag, get 1 MC discount per 3 related tags": "效果：每有3个相同的标志，拥有该标志的卡牌费用减少1 M€。",
+  "Hay Maker": "炎拳",
+  "Remove one of your greenery and place a neutral cube. Gain 12 heat.": "移除你的一片绿化。放置一个中立标记。获得12点热能。",
+  "Martian Fencing": "火星击剑",
+  "Find one Eros card. Choose to buy it or not.": "找1张群友扩卡牌，选择是否购买。",
+  "Action: Move one of your colony to another colony (Could not be TITANIA for both case).": "行动：将你的一个殖民地移动到另一个殖民地板块；移出和移入的板块均不能是泰坦妮亚（分数殖民地）。",
+  "Effect: You gain double trade bonus.": "效果：你获得双倍殖民地贸易奖励，如luna的2钱，牌星的摸1弃1。",
+  "Action: If you have no card, draw 2 card.": "行动：如果你没有手牌，抽2张牌。",
+  "Action: Or you can discard X cards to draw X-1 cards. Maximum X is current generation number.": "行动：或者你可以弃X摸X-1牌。X不大于当前时代数。",
+  "Effect: When you gain microbes in one action, also gain 2 heat.": "效果：每次你获得微生物时，获得2热。如果一次获得多个微生物也只获得2热。",
+  "Action: Send a Neutral delegate to any party.": "行动：放置一个中立代表。",
+  "Effect: Your delegates count as neutral delegates. If neutral delegate becomes chairman, you can decide: let all other player lose 1 TR, or ignore their ruling bonus.": "效果：你的代表同时视为中立代表。当中立代表成为主席时，你可以选择：让所有其他玩家失去1点改造度，或令其执政奖励无效。",
+  "Action: Discard a card. For each tag it has, draw a card with the same tag.": "行动：弃置1张牌。该牌每有1个标志，抽1张带有相同标志的牌。",
+  "Action: Decrease 1 production (not MC), and Increase 1 production.": "行动：降低1点非M€产能，并提升1点任意产能。",
+  "Jovian Defense Department": "木星防空署",
+  "Effect: When you play a Jovian tag, including this, add 1 Asteroid to this card.": "效果：每当你打出1个木星标志时（包括本卡），在本卡上添加1个小行星资源。",
+  "1 VP per Asteroid on this card": "此牌上每有1个小行星，获得1 VP。",
+  "Trantor": "川陀",
+  "Increase your M€ production 2 steps. Place a city tile IN SPACE, outside and separate from the planet. At the end of the game, if you have the most cities not on Mars (including ties), gain 3 VPs.": "提升M€产能2级。在行星之外的太空中放置1个城市板块。游戏结束时，若你拥有最多不在火星上的城市（并列也可），获得3分。",
+  "You start with 41 M€. As your first action, transform all Neutral delegates to your delegates.": "游戏开始时你获得41 M€。作为第一个行动，将所有中立代表转化为你的代表。",
+  "Id Front": "前线基地",
+  "Imperial Star Destroyer": "帝国歼星舰",
+  "Millennium Falcon": "千年隼",
+  "Prism": "棱镜光谱研究室",
+  "Runciter Associates": "朗西斯联合公司",
+  "TeiAi Group": "帝爱赌场",
+  "Energy Station": "能源站",
+  "Effect: When a player 's plants are removed by another player,you gain 1 Heat for each plant removed.": "效果：一名玩家叶子被其他玩家移除时，每移除一个叶子使你获得1热。",
+  "Action: Spend X Plant to gain 2X Heat": "行动：花费X个植物资源获得2X热能",
+  "Action: Spend 2X Heat to gain X Plant": "行动：花费2X热能获得X植物资源",
+  "Space Monster Park": "太空怪兽乐园",
+  "Decrease your titanium production 1 step. When you play a Space/Earth/Venus tag, including these, either add a floater resource to this card, or remove 2 floater resource from this card to draw a card.": "减少1点钛产。效果：你每打出一个太空/地球/金星标志，你可以在本卡上增加一个漂浮物，或者移除2个漂浮物抽一张牌。",
+  "Effect: When you play a Space/Earth/Venus tag, including these, either add a floater resource to this card, or remove 2 floater resource from this card to draw a card.": "效果：你每打出一个太空/地球/金星标志，你可以在本卡上增加一个漂浮物，或者移除2个漂浮物抽一张牌。",
+  "Decrease your titanium production 1 step.": "减少1点钛产。",
+  "Luna Chain": "连月",
+  "Effect: After you pay for a card with the same amount as your last card, you gain 3 M€": "效果：当你打出的项目卡实际支付的M€与上一张项目卡相同时，你获得3M€",
+  "WG Partnership": "世界政府小伙伴",
+  "You gain the bonus of world government.": "你获得世界政府的收益，包括轨道奖励和放海收益（但仍然由原本玩家执行世界政府）。",
+  "You start with 53 M€ and 1 extra trade fleet": "您起始拥有 53 M€ 和 1 个额外贸易船队。",
+  "You start with 54 M€. As your first action, place two delegates in one party": "您起始拥有 54 M€。作为您的第一个行动，在一个政党中放置两个代表。",
+  "You start with 28 M€. As your first action, place a colony": "您起始拥有 28 M€。作为您的第一个行动，放置一个殖民地。",
+  "Chaos": "混沌",
+  "Void": "虚空"
 }
-

@@ -11,10 +11,46 @@ import {generateRandomId} from './utils/server-ids';
 import {Request} from './Request';
 import {Response} from './Response';
 import {UnexpectedInput} from './inputs/UnexpectedInput';
-import {Phase} from '../common/Phase';
 import {UserCenter, ServiceError} from './services/UserCenter';
+import {normalizeUserId} from '../common/utils/normalizeUserId';
+import {Phase} from '../common/Phase';
+import {writeApiFailure, writeApiSuccess} from './server/responses';
+import {UserNameExistsError} from './database/IDatabase';
+import {PLAYER_COLORS} from '../common/Color';
+import {metadataToGameListItem} from './routes/ApiGames';
 
-const colorNames = ['blue', 'red', 'yellow', 'green', 'black', 'purple', 'you', '红色', '绿色', '黄色', '蓝色', '黑色', '紫色'];
+const colorNames: ReadonlyArray<string> = [
+  ...PLAYER_COLORS,
+  'grey',
+  'you',
+  '红色',
+  '绿色',
+  '黄色',
+  '蓝色',
+  '黑色',
+  '紫色',
+  '橙色',
+  '粉色',
+  '灰色',
+];
+
+function userRankToClientRank(userRank: UserRank) {
+  return {
+    rankValue: userRank.rankValue,
+    mu: userRank.mu,
+    sigma: userRank.sigma,
+    trueskill: userRank.trueskill,
+    points: userRank.points || 0,
+    seasonId: userRank.seasonId || '',
+  };
+}
+
+function withoutUserId<T extends {userId?: string}>(value: T): Omit<T, 'userId'> {
+  const copy: T = {...value};
+  delete copy.userId;
+  return copy;
+}
+
 function notFound(req: Request, res: Response, msg: string = ''): void {
   if ( ! process.argv.includes('hide-not-found-warnings')) {
     console.warn('UserManager Process Error', req.method, req.url, msg);
@@ -24,23 +60,7 @@ function notFound(req: Request, res: Response, msg: string = ''): void {
   res.end();
 }
 
-async function refreshUserVipState(user: User): Promise<void> {
-  await new Promise<void>((resolve) => {
-    Database.getInstance().getUsers((_err, allUsers) => {
-      const latestUser = allUsers.find((candidate) => candidate.id === user.id);
-      if (latestUser !== undefined) {
-        user.vip = latestUser.vip;
-        user.vipDate = latestUser.vipDate;
-        user.donateNum = latestUser.donateNum;
-        user.accessDate = latestUser.accessDate;
-      }
-      resolve();
-    });
-  });
-}
-
-
-export function apiGameBack(userReq:any, req: Request, res: Response): void {
+export async function apiGameBack(userReq:any, req: Request, res: Response): Promise<void> {
   const gameId = userReq['id'];
   const userId = userReq['userId'];
   if (gameId === undefined || gameId === '') {
@@ -53,60 +73,49 @@ export function apiGameBack(userReq:any, req: Request, res: Response): void {
     return;
   }
 
-  const user = GameLoader.getInstance().userIdMap.get(userId);
+  const user = await GameLoader.getInstance().getUserById(userId);
   if (user === undefined || !user.canRollback() || !user.checkToken(userId)) {
     notFound(req, res, user === undefined ? 'Not find user ' + userId : !user.canRollback() ? '!user.canRollback()' : 'token过期');
     return;
   }
-  const game = GameLoader.getInstance().games.get(gameId);
+  const game = GameLoader.getInstance().getLoadedGame(gameId);
 
   if (game === undefined) {
     notFound(req, res, 'game is undefined');
     return;
   }
   console.log('user:'+ user.name +' rollback game ' + game.id);
-  game.rollback();
+  try {
+    await game.rollback();
+  } catch (error) {
+    console.error('Rollback failed for game ' + game.id, error);
+    writeApiFailure(res, 'Rollback failed', 500);
+    return;
+  }
   user.reduceRollbackNum();
-  res.write('success');
-  res.end();
+  writeApiSuccess(res);
 }
 
-export function apiGetMyGames(req: Request, res: Response, ctx: Context): void {
+export async function apiGetMyGames(req: Request, res: Response, ctx: Context): Promise<void> {
   const userId = ctx.url.searchParams.get('id');
   if (userId === undefined || userId === null) {
     notFound(req, res, 'not find user id');
     return;
   }
-  const user = GameLoader.getInstance().userIdMap.get(userId);
+  const user = await GameLoader.getInstance().getUserById(userId);
 
   if (user === undefined || !user.checkToken(userId)) {
     notFound(req, res, user === undefined ? 'user is undefined' : 'token过期');
     return;
   }
-  const gameids = GameLoader.getInstance().usersToGames.get(user.id);
   const mygames: Array<any> = [];
-  if (gameids !== undefined && gameids.size > 0) {
-    gameids.forEach((id) => {
-      const game = GameLoader.getInstance().games.get(id);
-      if (game !== undefined) {
-        mygames.push({
-          activePlayer: game.activePlayer.color,
-          id: game.id,
-          phase: game.phase,
-          players: game.getAllPlayers().map((player) => {
-            return {
-              id: player.id,
-              name: player.name,
-              color: player.color,
-            };
-          }),
-          createtime: game.createtime?.slice(5, 16),
-          updatetime: game.updatetime?.slice(5, 16),
-          gameAge: game.gameAge,
-          saveId: game.lastSaveId,
-        });
-      }
-    });
+  // “我的游戏”只需要最近的列表元数据，一次 SQL 返回最近 30 条，避免 1 + N 查询。
+  const games = await Database.getInstance().getGamesByUserId(user.id, 30);
+  for (const metadata of games) {
+    const game = metadataToGameListItem(metadata);
+    if (game !== undefined) {
+      mygames.push(game);
+    }
   }
   mygames.sort((a: any, b: any) => {
     return a.updatetime > b.updatetime ? -1 : (a.updatetime === b.updatetime ? 0 : 1);
@@ -120,13 +129,13 @@ export function apiGetMyGames(req: Request, res: Response, ctx: Context): void {
   res.end();
 }
 
-export function login(userReq:any, _req: Request, res: Response): Promise<void> {
+export async function login(userReq:any, _req: Request, res: Response): Promise<void> {
   const userName: string = userReq.userName.trim().toLowerCase();
   let password: string = userReq.password.trim().toLowerCase();
   if (userName === undefined || userName.length === 0) {
     throw new UnexpectedInput('UserName must not be empty');
   }
-  const user = GameLoader.getInstance().userNameMap.get(userName);
+  const user = await GameLoader.getInstance().getUserByName(userName);
   if (user === undefined) {
     throw new UnexpectedInput('User not exists or Password error');
   }
@@ -143,32 +152,36 @@ export function login(userReq:any, _req: Request, res: Response): Promise<void> 
   res.setHeader('Content-Type', 'application/json');
   res.write(JSON.stringify({id: token, name: user.name}));
   res.end();
-  return Promise.resolve();
 }
 
-export function register(userReq: any, _req: Request, res: Response): void {
+export async function register(userReq: any, _req: Request, res: Response): Promise<void> {
   const userId = generateRandomId('u');
   const userName: string = userReq.userName ? userReq.userName.trim().toLowerCase() : '';
   let password: string = userReq.password ? userReq.password.trim().toLowerCase() : '';
   if (userName === undefined || userName.length <= 1) {
     throw new Error('Please enter at least 2 characters for userName');
   }
-  if (GameLoader.getInstance().userNameMap.get(userName) !== undefined || colorNames.indexOf(userName) > -1) {
+  if (await GameLoader.getInstance().getUserByName(userName) !== undefined || colorNames.indexOf(userName) > -1) {
     throw new Error('User name already exists, please use another name');
   }
   if (password === undefined || password.length <= 2) {
     throw new Error('Please enter at least 3 characters for password');
   }
   password = crypto.createHash('md5').update( password ).digest('hex');
-  Database.getInstance().saveUser(userId, userName, password, '{}');
+  try {
+    await Database.getInstance().saveUser(userId, userName, password, '{}');
+  } catch (err) {
+    if (err instanceof UserNameExistsError) {
+      throw new Error('User name already exists, please use another name');
+    }
+    throw err;
+  }
   const user: User = new User(userName, password, userId);
   user.createtime = getDay();
-  GameLoader.getInstance().userNameMap.set(userName, user);
-  GameLoader.getInstance().userIdMap.set(userId, user);
+  GameLoader.getInstance().cacheUser(user);
   res.setHeader('Content-Type', 'application/json');
   res.write(JSON.stringify({success: true}));
   res.end();
-  return;
 }
 
 
@@ -180,7 +193,7 @@ export async function isvip(req: Request, res: Response, ctx: Context): Promise<
     return;
   }
 
-  const user = GameLoader.getInstance().userIdMap.get(userId);
+  const user = await GameLoader.getInstance().getUserById(userId);
   if (user === undefined || !user.checkToken(userId)) {
     notFound(req, res, user === undefined ? 'not find user' : 'token过期');
     return;
@@ -193,25 +206,21 @@ export async function isvip(req: Request, res: Response, ctx: Context): Promise<
     user.accessDate = getDate();
   }
   try {
-    // Keep VIP state in sync with direct DB changes (e.g., manual SQL updates).
-    await refreshUserVipState(user);
     res.setHeader('Content-Type', 'application/json');
     res.write(JSON.stringify({id: userId, isvip: user.isvip()}));
     res.end();
   } catch (err) {
     console.warn('error execute', err);
-    res.writeHead(500);
-    res.write('Unable to execute');
-    res.end();
+    writeApiFailure(res, 'Unable to execute', 500);
   }
 }
 
-export function resign(userReq:any, req: Request, res: Response): void {
+export async function resign(userReq:any, req: Request, res: Response): Promise<void> {
   const userId: string = userReq.userId;
   const playerId: string = userReq.playerId;
 
-  const game = GameLoader.getInstance().playerToGame.get(playerId);
-  if (game === undefined || GameLoader.getInstance().games.get(game.id) === undefined) {
+  const game = await GameLoader.getInstance().getByPlayerId(playerId);
+  if (game === undefined) {
     notFound(req, res);
     return;
   }
@@ -221,7 +230,7 @@ export function resign(userReq:any, req: Request, res: Response): void {
     return;
   }
   const userPlayer = GameLoader.getUserByPlayer(player);
-  const user = GameLoader.getInstance().userIdMap.get(userId);
+  const user = await GameLoader.getInstance().getUserById(userId);
   if (user === undefined || !user.isvip() || !user.checkToken(userId)) {
     notFound(req, res, user === undefined ? 'user === undefined' : !user.isvip() ? '!user.isvip() ' : 'token过期');
     return;
@@ -232,15 +241,17 @@ export function resign(userReq:any, req: Request, res: Response): void {
   }
   game.exitPlayer(player);
   res.setHeader('Content-Type', 'application/json');
+  // 预热天梯缓存，保证同步的 ServerModel 能取到所有玩家的 rank
+  await GameLoader.getInstance().ensureUserRanksLoaded(game.getAllPlayers());
   const playerBlockModel = Server.getPlayerBlock(player, userId);
   res.end(JSON.stringify(Server.getPlayerModel(player, playerBlockModel)));
 }
 
-export function showHand(userReq:any, req: Request, res: Response): Promise<void> {
-  const user = GameLoader.getInstance().userIdMap.get(userReq.userId);
+export async function showHand(userReq:any, req: Request, res: Response): Promise<void> {
+  const user = await GameLoader.getInstance().getUserById(userReq.userId);
   if (user === undefined || !user.checkToken(userReq.userId)) {
     notFound(req, res, user === undefined? 'user === undefined' : 'token过期');
-    return Promise.resolve();
+    return;
   }
   if (userReq.showhandcards ) {
     user.showhandcards = true;
@@ -248,16 +259,13 @@ export function showHand(userReq:any, req: Request, res: Response): Promise<void
     user.showhandcards = false;
   }
 
-  res.setHeader('Content-Type', 'application/json');
-  res.write('success');
-  res.end();
-  return Promise.resolve();
+  writeApiSuccess(res);
 }
 
 
 //
 export async function sitDown(userReq:any, req: Request, res: Response): Promise<void> {
-  const userme = GameLoader.getInstance().userIdMap.get(userReq.userId);
+  const userme = await GameLoader.getInstance().getUserById(userReq.userId);
   if (userme === undefined || !userme.checkToken(userReq.userId)) {
     notFound(req, res, userme === undefined ? 'userme === undefined' : 'token过期');
     return;
@@ -278,7 +286,7 @@ export async function sitDown(userReq:any, req: Request, res: Response): Promise
   }
 
   // 已经属于其他用户
-  const userThat = GameLoader.getInstance().userNameMap.get(player.name);
+  const userThat = await GameLoader.getInstance().getUserByName(player.name);
   if (userThat !== undefined ) {
     notFound(req, res, 'sitDown userThat !== undefined');
     return;
@@ -286,10 +294,8 @@ export async function sitDown(userReq:any, req: Request, res: Response): Promise
 
   let haveSit = false;
   game.getAllPlayers().forEach( (p) => {
-    if (p !== player && ( p.userId === userme.id || p.name === userme.name)) {
-      // res.setHeader('Content-Type', 'application/json');
-      res.write('不能重复坐下，请使用你自己的游戏地址');
-      res.end();
+    if (p !== player && ((p.userId !== undefined && normalizeUserId(p.userId) === userme.id) || p.name === userme.name)) {
+      writeApiFailure(res, '不能重复坐下，请使用你自己的游戏地址');
       haveSit = true;
       return;
     }
@@ -301,9 +307,7 @@ export async function sitDown(userReq:any, req: Request, res: Response): Promise
   player.userId = userme.id;
   game.log('${0} sit down', (b) => b.player(player));
   GameLoader.getInstance().add(game);
-  // res.setHeader('Content-Type', 'application/json');
-  res.write('success');
-  res.end();
+  writeApiSuccess(res);
 }
 
 
@@ -312,9 +316,9 @@ export async function sitDown(userReq:any, req: Request, res: Response): Promise
 // 天梯 用户激活排名的接口 — 委托给 UserCenter
 export async function activateRank(userReq: any, _req: Request, res: Response): Promise<void> {
   await UserCenter.activateRank(userReq.userId);
+  const rank = withoutUserId(await UserCenter.getUserRank(userReq.userId, null));
   res.setHeader('Content-Type', 'application/json');
-  res.write('success');
-  res.end();
+  res.end(JSON.stringify(rank));
   return;
 }
 
@@ -323,7 +327,7 @@ export async function getUserRank(req: Request, res: Response, ctx: Context): Pr
   const userId = ctx.url.searchParams.get('userId');
   const playerName = ctx.url.searchParams.get('playerName');
   try {
-    const data = await UserCenter.getUserRank(userId, playerName);
+    const data = withoutUserId(await UserCenter.getUserRank(userId, playerName));
     res.setHeader('Content-Type', 'application/json');
     res.write(JSON.stringify(data));
     res.end();
@@ -336,39 +340,33 @@ export async function getUserRank(req: Request, res: Response, ctx: Context): Pr
   }
 }
 
-export function getUserRanks(req: Request, res: Response, ctx: Context): void {
+export async function getUserRanks(req: Request, res: Response, ctx: Context): Promise<void> {
   const limit = Math.min(100, Number(ctx.url.searchParams.get('limit')));
-  Database.getInstance().getUserRanks(limit).then( (allUserRanks:Array<UserRank> ) => {
-    try {
-      const resRanks: Array<{userName: String, userRank: UserRank, userTier: RankTier}> = [];
-      allUserRanks.forEach((userRank) => {
-        const user = GameLoader.getInstance().userIdMap.get(userRank.userId);
-        if (user !== undefined) {
-          resRanks.push({userName: user.name, userRank: userRank, userTier: userRank.getTier()});
-        }
-      });
-      if (resRanks.length === 0) {
-        notFound(req, res);
-        return;
-      }
-      const data = {allUserRanks: resRanks};
-      res.setHeader('Content-Type', 'application/json');
-      res.write(JSON.stringify(data));
-      res.end();
-    } catch (err) {
-      if (err instanceof Error && err.name === 'UnexpectedInput') {
-        console.warn('error ', getUserRanks, ',', limit, ',', err.message);
-      } else {
-        console.warn('error ', getUserRanks, ',', limit, ',', err);
-      }
-      res.writeHead(500);
-      const message = err instanceof Error ? err.message : String(err);
-      res.write('执行错误 : ' + message);
-      res.end();
+  try {
+    const allUserRanks = await Database.getInstance().getUserRanks(limit);
+    const resRanks: Array<{userName: String, userRank: ReturnType<typeof userRankToClientRank>, userTier: RankTier}> = [];
+    for (const userRank of allUserRanks) {
+      resRanks.push({userName: userRank.userName, userRank: userRankToClientRank(userRank), userTier: userRank.getTier()});
     }
-  }).catch((err) => {
-    console.error('getUserRanks', err);
-  });
+    if (resRanks.length === 0) {
+      notFound(req, res);
+      return;
+    }
+    const data = {allUserRanks: resRanks};
+    res.setHeader('Content-Type', 'application/json');
+    res.write(JSON.stringify(data));
+    res.end();
+  } catch (err) {
+    if (err instanceof Error && err.name === 'UnexpectedInput') {
+      console.warn('error ', getUserRanks, ',', limit, ',', err.message);
+    } else {
+      console.warn('error ', getUserRanks, ',', limit, ',', err);
+    }
+    res.writeHead(500);
+    const message = err instanceof Error ? err.message : String(err);
+    res.write('执行错误 : ' + message);
+    res.end();
+  }
 }
 
 // 天梯 由于超时或者所有玩家退出游戏，调用API
@@ -376,7 +374,7 @@ export async function endGameByEvent(userReq: any, req: Request, res: Response):
   const userId: string = userReq.userId;
   const playerId: string = userReq.playerId;
   const game = await GameLoader.getInstance().getByPlayerId(playerId); // 多个请求时await
-  if (game === undefined || GameLoader.getInstance().games.get(game.id) === undefined) {
+  if (game === undefined || GameLoader.getInstance().getLoadedGame(game.id) === undefined) {
     notFound(req, res);
     return;
   }
@@ -388,8 +386,7 @@ export async function endGameByEvent(userReq: any, req: Request, res: Response):
       console.error('endGameByEvent', err);
     });
   }
-  res.setHeader('Content-Type', 'application/json');
-  res.end();
+  writeApiSuccess(res);
 }
 
 // 赛季 API 已迁移到 Hono (/api/v2/season/*)

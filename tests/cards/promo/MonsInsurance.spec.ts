@@ -11,9 +11,10 @@ import {OrOptions} from '../../../src/server/inputs/OrOptions';
 import {Resource} from '../../../src/common/Resource';
 import {GlobalEventName} from '../../../src/common/turmoil/globalEvents/GlobalEventName';
 import {TestPlayer} from '../../TestPlayer';
-import {cast, runAllActions} from '../../TestingUtils';
+import {runAllActions} from '../../TestingUtils';
 import {testGame} from '../../TestGame';
 import {IGame} from '../../../src/server/IGame';
+import {cast} from '../../../src/common/utils/utils';
 
 describe('MonsInsurance', () => {
   let card: MonsInsurance;
@@ -26,7 +27,7 @@ describe('MonsInsurance', () => {
 
     [/* game */, player, player2, player3] = testGame(3);
     card.play(player);
-    player.corporations.push(card);
+    player.playedCards.push(card);
   });
 
   it('Should play', () => {
@@ -137,7 +138,7 @@ describe('MonsInsurance - Solo', () => {
 
     [game, player] = testGame(1, {preludeExtension: true});
     card.play(player);
-    player.corporations.push(card);
+    player.playedCards.push(card);
   });
 
   it('Should play', () => {

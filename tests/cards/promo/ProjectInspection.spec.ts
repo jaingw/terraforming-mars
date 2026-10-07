@@ -10,8 +10,9 @@ import {IProjectCard} from '../../../src/server/cards/IProjectCard';
 import {Resource} from '../../../src/common/Resource';
 import {TestPlayer} from '../../TestPlayer';
 import {Odyssey} from '../../../src/server/cards/pathfinders/Odyssey';
-import {cast, runAllActions, testGame} from '../../TestingUtils';
+import {runAllActions, testGame} from '../../TestingUtils';
 import {Payment} from '../../../src/common/inputs/Payment';
+import {cast} from '../../../src/common/utils/utils';
 
 describe('ProjectInspection', () => {
   let card: ProjectInspection;
@@ -49,7 +50,7 @@ describe('ProjectInspection', () => {
 
   it('Can not play with Playwrights if there is no other card to chain', () => {
     const playwrights = new Playwrights();
-    player.corporations.push(playwrights);
+    player.playedCards.push(playwrights);
 
     player.actionsThisGeneration.add(playwrights.name);
     expect(card.canPlay(player)).is.false; // PI -> PW -> ???
@@ -58,7 +59,7 @@ describe('ProjectInspection', () => {
   it('Can be used to play Playwrights into another available event card', () => {
     const playwrights = new Playwrights();
     const indenturedWorkers = new IndenturedWorkers();
-    player.corporations.push(playwrights);
+    player.playedCards.push(playwrights);
     player.playedCards.push(indenturedWorkers);
     player.actionsThisGeneration.add(playwrights.name);
     expect(card.canPlay(player)).is.true; // PI -> PW -> PI -> PW -> IW
@@ -88,7 +89,7 @@ describe('ProjectInspection', () => {
   it('Can be used to play Odyssey into another available event card', () => {
     const odyssey = new Odyssey();
     const indenturedWorkers = new IndenturedWorkers();
-    player.corporations.push(odyssey);
+    player.playedCards.push(odyssey);
     player.playedCards.push(indenturedWorkers);
     player.actionsThisGeneration.add(odyssey.name);
     expect(card.canPlay(player)).is.true; // PI -> OD -> PI -> OD -> IW
@@ -118,7 +119,7 @@ describe('ProjectInspection', () => {
 
   it('Can be played by Playwrights into different blue card', () => {
     const playwrights = new Playwrights();
-    player.corporations.push(playwrights);
+    player.playedCards.push(playwrights);
     player.playedCards.push(card);
     player.playedCards.push(restrictedArea);
     player.actionsThisGeneration.add(restrictedArea.name);
@@ -140,7 +141,7 @@ describe('ProjectInspection', () => {
   it('Can be played by Playwrights into Playwrights into another available event card', () => {
     const playwrights = new Playwrights();
     const indenturedWorkers = new IndenturedWorkers();
-    player.corporations.push(playwrights);
+    player.playedCards.push(playwrights);
     player.playedCards.push(card);
     player.playedCards.push(indenturedWorkers);
     player.actionsThisGeneration.add(playwrights.name);

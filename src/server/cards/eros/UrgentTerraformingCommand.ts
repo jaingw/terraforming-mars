@@ -27,7 +27,7 @@ export class UrgentTerraformingCommand extends Card implements IProjectCard {
     });
   }
   public override bespokeCanPlay(player: IPlayer): boolean {
-    return player.getTerraformRating() >= 25;
+    return player.terraformRating >= 25;
   }
   public override bespokePlay(player: IPlayer) {
     player.stock.add(Resource.PLANTS, player.production.get(Resource.PLANTS));

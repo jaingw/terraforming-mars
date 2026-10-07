@@ -24,7 +24,9 @@ export class Oscar extends CeoCard {
 
   public override play(player: IPlayer) {
     const turmoil = player.game.turmoil;
-    if (turmoil) turmoil.addInfluenceBonus(player);
+    if (turmoil) {
+      turmoil.addInfluenceBonus(player);
+    }
     return undefined;
   }
 
@@ -40,8 +42,8 @@ export class Oscar extends CeoCard {
     const turmoil = TurmoilUtil.getTurmoil(player.game);
     turmoil.setNewChairman(player, player.game, /* setAgenda*/false, /* gainTR*/false);
     turmoil.delegateReserve.remove(player);
-    // Increase totalDelegatesPlaced manually since we're not using SendDeletageToArea()
-    // If we dont do this player will not get the bonus for POLITICAN Awards
+    // Increase totalDelegatesPlaced manually since we're not using SendDelegateToArea()
+    // If we dont do this player will not get the bonus for POLITICIAN Awards
     player.totalDelegatesPlaced += 1;
     this.isDisabled = true;
     return undefined;

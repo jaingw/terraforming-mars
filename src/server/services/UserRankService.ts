@@ -6,10 +6,10 @@
 
 import {Database} from '../database/Database';
 import {GameLoader} from '../database/GameLoader';
-import {getSeasonId} from '../../common/rank/SeasonManager';
 import {UserRank} from '../../common/rank/RankManager';
 import {DEFAULT_MU, DEFAULT_RANK_VALUE, DEFAULT_SIGMA} from '../../common/rank/constants';
 import {ServiceError} from './ServiceError';
+import {SeasonService} from './SeasonService';
 
 export interface IUserRankResponse {
   userId: string;
@@ -26,7 +26,7 @@ export class UserRankService {
     let resolvedUserId = userId;
 
     if (!resolvedUserId && playerName) {
-      const user = GameLoader.getInstance().userNameMap.get(playerName);
+      const user = await GameLoader.getInstance().getUserByName(playerName);
       if (user !== undefined) {
         resolvedUserId = user.id;
       }
@@ -36,10 +36,9 @@ export class UserRankService {
       throw new ServiceError(404, 'not find user id or player name');
     }
 
-    const currentSeasonData = await Database.getInstance().getCurrentSeason();
-    const currentSeasonId = currentSeasonData?.seasonId || getSeasonId();
+    const currentSeasonId = await SeasonService.resolveCurrentSeasonId();
 
-    let userRank: UserRank | undefined = GameLoader.getInstance().userRankMap.get(resolvedUserId);
+    let userRank: UserRank | undefined = await GameLoader.getInstance().getUserRankById(resolvedUserId);
     if (userRank === undefined) {
       userRank = new UserRank(
         resolvedUserId,
@@ -70,10 +69,9 @@ export class UserRankService {
       throw new ServiceError(400, 'Missing userId');
     }
 
-    const currentSeasonData = await Database.getInstance().getCurrentSeason();
-    const currentSeasonId = currentSeasonData?.seasonId || getSeasonId();
+    const currentSeasonId = await SeasonService.resolveCurrentSeasonId();
 
-    let userRank = GameLoader.getInstance().userRankMap.get(userId);
+    let userRank = await GameLoader.getInstance().getUserRankById(userId);
     if (userRank === null || userRank === undefined) {
       userRank = new UserRank(
         userId,

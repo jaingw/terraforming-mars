@@ -51,17 +51,6 @@ describe('GameCards', () => {
     });
   });
 
-  it('correctly removes the Merger prelude card if twoCorpsVariant is being used ', () => {
-    const gameOptions: GameOptions = {
-      ...DEFAULT_GAME_OPTIONS,
-      corporateEra: true,
-      preludeExtension: true,
-    };
-
-    const preludeDeck = new GameCards(gameOptions).getPreludeCards();
-    expect(preludeDeck).to.not.contain(CardName.MERGER);
-  });
-
   it('CEOs: Includes/Excludes specific CEOs if those expansions are/are not selected ', () => {
     const gameOptions: GameOptions = {
       ...DEFAULT_GAME_OPTIONS,
@@ -152,8 +141,20 @@ describe('GameCards', () => {
       corporateEra: true,
       includedCards: [CardName.GREENERY_STANDARD_PROJECT],
     };
-    const names = new GameCards(gameOptions).getProjectCards().map(toName);
-    expect(names).to.not.contain(CardName.GREENERY_STANDARD_PROJECT);
+    expect(() => new GameCards(gameOptions).getProjectCards()).to.throw('Card [Greenery] not found');
+  });
+
+  it('does not duplicate corporations when customCorporationsList mixes old and new card names', () => {
+    // 'Thorgate' is the old name; CardName.THORGATE ('ThorGate') is canonical. Both are in base manifest.
+    // 'EcoLine' is the old name; CardName.ECOLINE ('Ecoline') is canonical.
+    const gameOptions: GameOptions = {
+      ...DEFAULT_GAME_OPTIONS,
+      customCorporationsList: ['Thorgate' as CardName, CardName.THORGATE, 'EcoLine' as CardName, CardName.ECOLINE],
+    };
+    const corps = new GameCards(gameOptions).getCorporationCards();
+    const thorgates = corps.filter((c) => c.name === CardName.THORGATE);
+    const ecolines = corps.filter((c) => c.name === CardName.ECOLINE);
+    expect(thorgates).to.have.length(1);
+    expect(ecolines).to.have.length(1);
   });
 });
-

@@ -1,44 +1,36 @@
 <template>
-  <div id="games-overview">
+  <div id="games-overview" class="games-overview-container">
     <h1 v-i18n>{{ constants.APP_NAME }} — Games Overview</h1>
-            <a  href="/users" target="_blank" >Users Manager</a> &nbsp;&nbsp;&nbsp;&nbsp;
-      <p v-i18n>The following games are available on this server:</p>
-      <ul>
-        <li v-for="entry in entries" :key="entry.id">
-          <game-overview :id="entry.id" :game="entry" :status="'loading'"></game-overview>
-        </li>
-    </ul>
+    <p v-i18n>The following games are available on this server:</p>
+    <table>
+      <game-overview v-for="game in games" :key="game.id" :id="game.id" :game="game"></game-overview>
+    </table>
   </div>
 </template>
 
 <script lang="ts">
 
-import Vue from 'vue';
+import {defineComponent} from 'vue';
 import {PreferencesManager} from '../utils/PreferencesManager';
 import * as constants from '@/common/constants';
 import GameOverview from '@/client/components/admin/GameOverview.vue';
-import {SimpleGameModel} from '@/common/models/SimpleGameModel';
-import {GameId} from '@/common/Types';
-import {statusCode} from '@/common/http/statusCode';
 import {showError} from '../utils/showAlert';
 
-type FetchStatus = {
-  id: GameId;
-  game: SimpleGameModel | undefined;
-  status: string;
-}
-type DataModel = {
-  entries: Array<FetchStatus>,
+type ApiGame = {
+  id: string;
+  phase: string;
+  players: Array<{id: string; name: string; color: string}>;
+  createtime: string;
+  updatetime: string;
+  gameAge: number;
+  saveId: number;
 };
 
-// Copied from routes/Game.ts and probably IDatabase. Should be centralized I suppose
-// type Response = {gameId: GameId, participants: Array<ParticipantId>};
-
-export default Vue.extend({
+export default defineComponent({
   name: 'games-overview',
-  data(): DataModel {
+  data() {
     return {
-      entries: [],
+      games: [] as Array<ApiGame>,
     };
   },
   mounted() {
@@ -48,70 +40,29 @@ export default Vue.extend({
     GameOverview,
   },
   methods: {
-    getGames() {
-      const vueApp = this;
-      const xhr = new XMLHttpRequest();
-      xhr.open('GET', 'api/games?serverId='+this.serverId+'&userId='+ PreferencesManager.load('userId'));
-      xhr.onerror = function() {
-        showError('Error getting games data');
-      };
-      xhr.onload = () => {
-        if (xhr.status === statusCode.ok) {
-          const result = xhr.response;
-          if (result instanceof Array) {
-            (vueApp as any).entries = result;
-            // result.forEach(function (gameId) {
-            // (vueApp as any).getGame(gameId);
-            // });
-          } else {
-            showError('Unexpected response fetching games from API');
-          }
+    async getGames() {
+      try {
+        const serverId = (new URL(location.href)).searchParams.get('serverId') || '';
+        const response = await fetch('api/games?serverId=' + serverId + '&userId=' + PreferencesManager.load('userId'));
+        if (!response.ok) {
+          showError('Unexpected response fetching games from API');
+          return;
+        }
+        const result = await response.json();
+        if (result instanceof Array) {
+          this.games = result;
         } else {
           showError('Unexpected response fetching games from API');
         }
-      };
-      xhr.responseType = 'json';
-      xhr.send();
-    },
-    getGame(idx: number) {
-      if (idx >= this.entries.length) {
-        return;
+      } catch (error) {
+        showError('Error getting games data');
       }
-      const entry = this.entries[idx];
-      const gameId = entry.id;
-      const xhr = new XMLHttpRequest();
-      xhr.open('GET', 'api/game?id='+gameId);
-      xhr.onerror = () => {
-        entry.status = 'error';
-        this.getGame(idx + 1);
-      };
-      xhr.onload = () => {
-        if (xhr.status === statusCode.ok) {
-          const result = xhr.response;
-          if (result instanceof Object) {
-            const game = result as SimpleGameModel;
-            entry.status = 'done';
-            entry.game = game;
-            this.getGame(idx + 1);
-            return;
-          }
-        }
-        entry.status = 'error';
-        this.getGame(idx + 1);
-      };
-      xhr.responseType = 'json';
-      // setTimeout(() => xhr.send(), 500);
-      xhr.send();
     },
   },
   computed: {
     constants(): typeof constants {
       return constants;
     },
-    serverId(): string {
-      return (new URL(location.href)).searchParams.get('serverId') || '';
-    },
   },
 });
 </script>
-

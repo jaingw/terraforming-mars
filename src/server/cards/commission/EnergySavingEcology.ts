@@ -92,7 +92,7 @@ export class EnergySavingEcology extends CorporationCard {
     return undefined;
   }
 
-  public onCardPlayedForCorps(player: IPlayer, card: ICard): void {
+  public onCardPlayed(player: IPlayer, card: ICard): void {
     if (player.playedCards.has(this.name) && isIProjectCard(card) && card.cost <= 10) {
       this.effect(player);
     }

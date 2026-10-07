@@ -11,7 +11,7 @@
       <div class="lobby-settings-body">
         <game-setup-detail
           v-if="room !== null"
-          :game-options="room.gameConfig"
+          :game-options="newGameConfigToGameOptionsModel(room.gameConfig)"
           :player-number="room.maxPlayers"
           :last-solo-generation="14"
         />
@@ -21,39 +21,44 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import {WithRefs} from 'vue-typed-refs';
+import { defineComponent } from 'vue';
 import {showModal, windowHasHTMLDialogElement} from '@/client/components/HTMLDialogElementCompatibility';
 import dialogPolyfill from 'dialog-polyfill';
-import {ILobbyRoom} from '@/common/lobby/LobbyTypes';
+import {ILobbyRoomView} from '@/common/lobby/LobbyTypes';
 import GameSetupDetail from '@/client/components/GameSetupDetail.vue';
+import {newGameConfigToGameOptionsModel} from '@/common/game/NewGameConfig';
 
-type TRefs = {
-  dialog: HTMLElement;
-}
-
-export default (Vue as WithRefs<TRefs>).extend({
+export default defineComponent({
   name: 'LobbyRoomSettingsModal',
   components: {
     GameSetupDetail,
   },
   props: {
     room: {
-      type: Object as () => ILobbyRoom | null,
+      type: Object as () => ILobbyRoomView | null,
       default: null,
     },
   },
   methods: {
+    getDialog(): HTMLDialogElement | undefined {
+      return this.$refs.dialog as HTMLDialogElement | undefined;
+    },
     show() {
-      showModal(this.$refs.dialog);
+      const dialog = this.getDialog();
+      if (dialog !== undefined) {
+        showModal(dialog);
+      }
     },
     close() {
-      (this.$refs.dialog as any).close?.();
+      this.getDialog()?.close?.();
     },
   },
   mounted() {
     if (!windowHasHTMLDialogElement()) {
-      dialogPolyfill.default.registerDialog(this.$refs.dialog);
+      const dialog = this.getDialog();
+      if (dialog !== undefined) {
+        dialogPolyfill.registerDialog(dialog);
+      }
     }
   },
 });

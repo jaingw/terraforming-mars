@@ -1,6 +1,6 @@
 {
   "Aerial Lenses": "对空透镜",
-  "Requires that Kelvinists are ruling or that you have 2 delegates there. Remove up to 2 plants from any player. Increase your heat production 2 steps.": "需要开尔文主义党为执政党，或你在该党有至少2个代表。提升2点热能产量。减少任意一位玩家两点植物。",
+  "Requires that Kelvinists are ruling or that you have 2 delegates there. Remove up to 2 plants from any player. Increase your heat production 2 steps.": "需要开尔文主义党为执政党，或你在该党有至少2个代表。移除任意玩家最多2个植物标记，并提升热能产能2级。",
 
   "Banned Delegate": "违法代表",
   "Requires that you are Chairman. Remove any NON-LEADER delegate.": "需要你是主席。移除1个非领导者代表",
@@ -16,7 +16,7 @@
   "Requires that Scientists are ruling or that you have 2 delegates there.": "需要科学家党为执政党，或你在该党有至少2个代表",
 
   "GMO Contract": "转基因生物合约",
-  "Effect: Each time you play a plant, animal or microbe tag, including this, gain 2 M€." : "效果：每当你打出1个植物、动物、微生物标志，包括本卡，获得2点M€。",
+  "Effect: Each time you play a plant, animal or microbe tag, including this, gain 2 M€.": "效果：每当你打出1个植物、动物、微生物标志，包括本卡，获得2点M€。",
   "Requires that Greens are ruling or that you have 2 delegates there.": "需要绿党为执政党，或你在该党有至少2个代表。",
 
   "Martian Media Center": "火星媒体中心",
@@ -45,14 +45,11 @@
   "Requires that Scientists are ruling or that you have 2 delegates there. Draw 2 cards.": "需要科学家党为执政党，或你在该党有至少2个代表。抽两张牌。",
 
   "Wildlife Dome": "野生生物穹顶",
-  "Requires that Greens are ruling or that you have 2 delegates there. Place a greenery tile and raise oxygen 1 step.": "需要绿党为执政党，或你在该党有至少2个代表。放置一片绿化板块。",
+  "Requires that Greens are ruling or that you have 2 delegates there. Place a greenery tile and raise oxygen 1 step.": "需要绿党为执政党，或你在该党有至少2个代表。放置1个绿化板块并提升氧气浓度1级。",
 
   "Vote Of No Confidence": "不信任票",
   "Requires that you have a Party Leader in any party and that the sitting Chairman is neutral. Remove the NEUTRAL Chairman and move your own delegate (from the reserve) there instead. Gain 1 TR": "需要你是一个政党的领导者且当前主席是中立代表。将中立主席替换为你储备区的一名代表。提升1点改造度。",
-
-  "2 Party leaders":"成为2个党派领袖",
-  "Requires that you have 2 party leaders. Gain 1 TR.":"需要你是2个政党的领导者，获得1TR",
-
-  "Political Alliance":"政治结盟"
-
+  "2 Party leaders": "成为2个党派领袖",
+  "Requires that you have 2 party leaders. Gain 1 TR.": "需要你是2个政党的领导者，获得1点改造度",
+  "Political Alliance": "政治结盟"
 }

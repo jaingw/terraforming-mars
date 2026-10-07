@@ -1,9 +1,10 @@
 import {expect} from 'chai';
 import {DemetronLabs} from '../../../src/server/cards/underworld/DemetronLabs';
 import {testGame} from '../../TestGame';
-import {cast, fakeCard, runAllActions} from '../../TestingUtils';
+import {fakeCard, runAllActions} from '../../TestingUtils';
 import {Tag} from '../../../src/common/cards/Tag';
 import {assertIsClaimAction, assertIsIdentificationAction} from '../../underworld/underworldAssertions';
+import {cast} from '../../../src/common/utils/utils';
 
 describe('DemetronLabs', () => {
   it('play', () => {
@@ -18,8 +19,8 @@ describe('DemetronLabs', () => {
   it('onCardPlayed', () => {
     const card = new DemetronLabs();
     const [/* game */, player] = testGame(2, {underworldExpansion: true});
-    player.corporations.push(card);
-    card.onCardPlayedForCorps(player, fakeCard({tags: [Tag.SCIENCE]}));
+    player.playedCards.push(card);
+    card.onCardPlayed(player, fakeCard({tags: [Tag.SCIENCE]}));
     expect(card.resourceCount).eq(2);
   });
 

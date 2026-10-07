@@ -2,10 +2,24 @@ import {IGame, Score} from '../IGame';
 import {GameOptions} from '../game/GameOptions';
 import {SerializedGame} from '../SerializedGame';
 import {SerializedPlayer} from '../SerializedPlayer';
-import {GameId, ParticipantId} from '../../common/Types';
+import {GameId} from '../../common/Types';
 import {Phase} from '../../common/Phase';
 import {User} from '../User';
 import {UserRank} from '../../common/rank/RankManager';
+
+export class GameNotFoundError extends Error {
+  constructor(gameId: string) {
+    super(`Game ${gameId} not found`);
+    this.name = 'GameNotFoundError';
+  }
+}
+
+export class UserNameExistsError extends Error {
+  constructor(name: string) {
+    super(`User name ${name} already exists`);
+    this.name = 'UserNameExistsError';
+  }
+}
 
 export interface IUserGameStatsBlock {
     totalGames: number;
@@ -36,11 +50,26 @@ export interface IShortData {
     //  id name color exited userId
     players : Array<SerializedPlayer>;
 }
-export interface IGameShortData {
+export interface IGameMetadata {
     gameId: GameId;
     shortData? :IShortData;
+    // 单局唯一参与者标识，只放 playerId/spectatorId，不放账号 userId。
+    participants: Array<string>;
+    // 账号维度归属，用于“我的游戏”这类 userId 查询。
+    userids: Array<string>;
+    updatedTime: string;
 }
-export type GameIdLedger = {gameId: GameId, participantIds: Array<ParticipantId>}
+
+export interface IUserRankSeasonSnapshot {
+    userId: string;
+    userName: string;
+    rankValue: number;
+    mu: number;
+    sigma: number;
+    trueskill: number;
+    pointsEarned: number;
+    finalPosition: number;
+}
 
 /**
  * A game store. Load, save, you know the drill.
@@ -68,15 +97,6 @@ export interface IDatabase {
     getGame(gameId: string): Promise<SerializedGame>;
 
     /**
-     * Finds the game id associated with the given player.
-     *
-     * This is not yet written efficiently in Postgres, so use sparingly.
-     *
-     * @param id the `PlayerId` or `SpectatorId` assocaited with a game
-     */
-    getGameId(id: ParticipantId): Promise<GameId>;
-
-    /**
      * Get all the save ids assocaited with a game.
      */
     getSaveIds(gameId: GameId): Promise<Array<number>>;
@@ -87,13 +107,19 @@ export interface IDatabase {
     getGameVersion(gameId: GameId, saveId: number): Promise<SerializedGame>;
 
     /**
-     * Return a list of all game IDs.
-     *
-     * When the server starts games will be loaded from first to last. The postgres implmentation
-     * speeds up loading by sorting game ids so games most recently updated are loaded first, thereby
-     * being available sooner than other games.
+     * 返回列表页用的轻量游戏元数据，不反序列化完整 games 存档。
      */
-    getGames(): Promise<Array<IGameShortData>>;
+    getGames(): Promise<Array<IGameMetadata>>;
+
+    /**
+     * 按 playerId/spectatorId 查询游戏 id；这里不处理账号 userId。
+     */
+    getGameIdByParticipant(participantId: string): Promise<GameId | undefined>;
+
+    /**
+     * 按账号 userId 一次性查询最近的游戏元数据，避免先查 id 再逐条查 metadata。
+     */
+    getGamesByUserId(userId: string, limit?: number): Promise<Array<IGameMetadata>>;
 
     /**
      * Get the player count for a game.
@@ -130,7 +156,7 @@ export interface IDatabase {
      */
     // TODO(kberg): it's not clear to me how this save_id is known to
     // be the absolute prior game id, so that could use some clarification.
-    restoreGame(game_id: GameId, save_id: number, game: IGame, playId: string): Promise<void>;
+    restoreGame(game_id: GameId, save_id: number, game: IGame, playId: string): Promise<IGame>;
 
     /*
      * Deletes the last `rollbackCount` saves of the specified game.
@@ -153,28 +179,26 @@ export interface IDatabase {
     // DELETE all saves
     cleanGameAllSaves(game_id: string): void;
     cleanGameSave(game_id: string, save_id: number): void;
-    saveUser(id: string, name: string, password: string, prop: string): void ;
+    saveUser(id: string, name: string, password: string, prop: string): Promise<void>;
     updateUserProp(id: string, prop: string): void;
     getUsers(cb:(err: any, allUsers:Array<User>)=> void): void ;
-    refresh(): void ;
-
-        /**
-     * A maintenance task that purges abandoned solo games older
-     * than a given date range.
-     *
-     * Behavior when the environment variable is absent is system-dependent:
-     * * In PostgreSQL, it uses a default of 10 days
-     * * In Sqlite, it doesn't purge
-     * * This whole method is ignored in LocalFilesystem.
-     *
-     * Returns a list of purged Game IDs.
-     */
-    purgeUnfinishedGames(maxGameDays?: string): Promise<Array<GameId>>;
 
     /**
-     * A maintenance task that compresses completed games.
+     * 按 userId 单查用户，供 GameLoader 懒加载使用，避免启动时全量加载 users。
      */
-    compressCompletedGames(maxGameDays?: string): Promise<unknown>;
+    getUser(id: string): Promise<User | undefined>;
+
+    /**
+     * 按用户名单查用户，供登录等路径懒加载使用。
+     */
+    getUserByName(name: string): Promise<User | undefined>;
+    refresh(): void ;
+
+    /**
+     * 按 game 表状态清理早于 dayAgo 的未完结游戏。
+     * 返回被清理的 gameId。
+     */
+    purgeUnfinishedGames(dayAgo?: string): Promise<Array<GameId>>;
 
     /**
      * Generate database statistics for admin purposes.
@@ -183,11 +207,13 @@ export interface IDatabase {
      */
     stats(): Promise<{[key: string]: string | number}>;
 
-    storeParticipants(entry: GameIdLedger): Promise<void>;
-    getParticipants(): Promise<Array<GameIdLedger>>;
-
     addUserRank(userRank: UserRank): void ;
-    getUserRanks(limit?: number): Promise<Array<UserRank>>;
+
+    /**
+     * 按 userId 单查排名，避免启动时全量加载 user_rank。
+     */
+    getUserRank(userId: string): Promise<UserRank | undefined>;
+    getUserRanks(limit?: number, seasonId?: string): Promise<Array<UserRank>>;
     updateUserRank(userRank: UserRank): Promise<void>;
     saveUserGameResult(user_id: string, game_id: string, phase: string, score: Score, players: number, generations: number, create_time: string, position: number, is_rank: boolean, user_rank: UserRank | undefined, is_timeout?: boolean): void;
 
@@ -198,8 +224,8 @@ export interface IDatabase {
     getUserGameStats(userId: string): Promise<IUserGameStats>;
 
     // 赛季相关
-    saveSeasonSnapshot(userId: string, seasonId: string, rankValue: number, mu: number, sigma: number, trueskill: number, pointsEarned: number, finalPosition: number): Promise<void>;
-    getSeasonSnapshots(seasonId: string): Promise<Array<{userId: string, rankValue: number, mu: number, sigma: number, trueskill: number, pointsEarned: number, finalPosition: number}>>;
+    saveUserRankSeasonSnapshot(userId: string, seasonId: string, rankValue: number, mu: number, sigma: number, trueskill: number, pointsEarned: number, finalPosition: number): Promise<void>;
+    getUserRankSeasonSnapshots(seasonId: string, limit?: number): Promise<Array<IUserRankSeasonSnapshot>>;
     getAvailableSeasons(): Promise<Array<string>>;
     updateUserPoints(userId: string, points: number): Promise<void>;
   setCurrentSeason(seasonId: string, seasonName: string, startDate: Date, endDate: Date): Promise<void>;

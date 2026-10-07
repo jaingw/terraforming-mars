@@ -54,7 +54,9 @@ export class ColonialOne extends CorporationCard {
 
   public action(player: IPlayer) {
     const game = player.game;
-    if (game.gameOptions.coloniesExtension === false) return undefined;
+    if (game.gameOptions.coloniesExtension === false) {
+      return undefined;
+    }
 
     const opts: Array<SelectOption> = [];
     const activeColonies = game.colonies.filter((colony) => colony.isActive);
@@ -108,7 +110,7 @@ export class ColonialOne extends CorporationCard {
       return undefined;
     });
 
-    if (openColonies.length > 0 && player.colonies.getFleetSize() > player.colonies.tradesThisGeneration && this.resourceCount > 0) {
+    if (openColonies.length > 0 && player.colonies.getFleetSize() > player.colonies.usedTradeFleets && this.resourceCount > 0) {
       opts.push(spendResource);
     }
 

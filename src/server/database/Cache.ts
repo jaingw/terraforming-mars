@@ -1,5 +1,5 @@
 import {IGame} from '../IGame';
-import {GameId, ParticipantId} from '../../common/Types';
+import {GameId} from '../../common/Types';
 import {once} from 'events';
 import {EventEmitter} from 'events';
 import {Database} from './Database';
@@ -9,7 +9,6 @@ import {Clock} from '../../common/Timer';
 export class Cache extends EventEmitter {
   private loaded = false;
   private readonly games = new Map<GameId, IGame | undefined>();
-  private readonly participantIds = new Map<ParticipantId, GameId>();
   private readonly db = Database.getInstance();
 
   /** Map of game IDs and the time they were scheduled for eviction */
@@ -26,12 +25,11 @@ export class Cache extends EventEmitter {
   public async load(): Promise<void> {
     try {
       console.log('Preloading IDs.');
-      const entries = await this.db.getParticipants();
+      const entries = await this.db.getGames();
       for (const entry of entries) {
         const gameId = entry.gameId;
         if (this.games.get(gameId) === undefined) {
           this.games.set(gameId, undefined);
-          entry.participantIds.forEach((participant) => this.participantIds.set(participant, gameId));
         }
       }
       console.log(`Preloaded ${entries.length} IDs.`);
@@ -47,11 +45,11 @@ export class Cache extends EventEmitter {
     return Promise.resolve();
   }
 
-  public async getGames(): Promise<{games:Map<GameId, IGame | undefined>, participantIds:Map<ParticipantId, GameId>}> {
+  public async getGames(): Promise<{games:Map<GameId, IGame | undefined>}> {
     if (!this.loaded) {
       await once(this, 'loaded');
     }
-    return {games: this.games, participantIds: this.participantIds};
+    return {games: this.games};
   }
 
   public mark(gameId: GameId) {
@@ -83,9 +81,15 @@ export class Cache extends EventEmitter {
 
   private evict(gameId: GameId) {
     const game = this.games.get(gameId);
-    if (game === undefined) return;
+    if (game === undefined) {
+      return;
+    }
     game.players.forEach((p) => p.tearDown());
     this.games.set(gameId, undefined); // Setting to undefied is the same as "not yet loaded."
+  }
+
+  public countLoadedGames(): number {
+    return [...this.games.values()].filter((game) => game !== undefined).length;
   }
 }
 
@@ -98,5 +102,5 @@ function scheduleSweep(cache: Cache, sleepMillis: number) {
       console.error(err);
     }
     scheduleSweep(cache, sleepMillis);
-  }, sleepMillis);
+  }, sleepMillis).unref();
 }

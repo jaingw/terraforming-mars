@@ -1,10 +1,11 @@
 import {expect} from 'chai';
 import {InducedTremor} from '../../../src/server/cards/underworld/InducedTremor';
 import {testGame} from '../../TestGame';
-import {cast, runAllActions} from '../../TestingUtils';
+import {runAllActions} from '../../TestingUtils';
 import {assertIsExcavationAction} from '../../underworld/underworldAssertions';
 import {SelectSpace} from '../../../src/server/inputs/SelectSpace';
 import {UnderworldExpansion} from '../../../src/server/underworld/UnderworldExpansion';
+import {cast} from '../../../src/common/utils/utils';
 
 describe('InducedTremor', () => {
   it('cannot play', () => {
@@ -40,7 +41,7 @@ describe('InducedTremor', () => {
 
     const selectSpace = cast(player.popWaitingFor(), SelectSpace);
     expect(selectSpace.spaces).to.have.members(spaces.slice(0, 3));
-    selectSpace.cb(spaces[1]);
+    const nextSelectSpace = selectSpace.cb(spaces[1]);
 
     expect(spaces[0].undergroundResources).is.not.undefined;
     expect(spaces[1].undergroundResources).is.undefined;
@@ -48,6 +49,6 @@ describe('InducedTremor', () => {
     expect(game.underworldData.tokens).has.length(89);
 
     runAllActions(game);
-    assertIsExcavationAction(player, player.popWaitingFor());
+    assertIsExcavationAction(player, nextSelectSpace);
   });
 });

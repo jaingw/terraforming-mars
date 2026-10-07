@@ -36,10 +36,8 @@ export class ArcadianCommunities extends CorporationCard implements ICorporation
     });
   }
 
-  public override initialAction(player: IPlayer) {
-    return new SelectSpace(
-      'Select space for claim',
-      player.game.board.getAvailableSpacesOnLand(player))
+  private askToClaimSpace(player: IPlayer, spaces: ReadonlyArray<Space>) {
+    return new SelectSpace('Select space for claim', spaces)
       .andThen((space: Space) => {
         space.player = player;
         player.game.log('${0} placed a Community (player marker)', (b) => b.player(player));
@@ -47,12 +45,18 @@ export class ArcadianCommunities extends CorporationCard implements ICorporation
       });
   }
 
+  public override initialAction(player: IPlayer) {
+    return this.askToClaimSpace(player, player.game.board.getAvailableSpacesOnLand(player));
+  }
+
   public getAvailableSpacesForMarker(player: IPlayer): Array<Space> {
     const board = player.game.board;
     const candidateSpaces = board.getAvailableSpacesOnLand(player);
     const spaces = candidateSpaces.filter((space) => {
       // Exclude spaces that already have a player marker.
-      if (space.player !== undefined) return false;
+      if (space.player !== undefined) {
+        return false;
+      }
       const adjacentSpaces = board.getAdjacentSpaces(space);
       return adjacentSpaces.find((adj) => adj.player === player) !== undefined;
     });
@@ -65,10 +69,6 @@ export class ArcadianCommunities extends CorporationCard implements ICorporation
   }
 
   public action(player: IPlayer) {
-    return new SelectSpace('Select space for claim', this.getAvailableSpacesForMarker(player))
-      .andThen((space) => {
-        space.player = player;
-        return undefined;
-      });
+    return this.askToClaimSpace(player, this.getAvailableSpacesForMarker(player));
   }
 }

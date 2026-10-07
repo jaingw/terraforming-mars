@@ -48,17 +48,13 @@ export class CardRequirements {
     if (tags.length > 1 && !player.tags.playerHas(tags)) {
       return false;
     }
-    let result = true;
     for (const requirement of this.requirements) {
       const satisfies = requirement.satisfies(player, card);
       if (satisfies === false) {
         return false;
       }
-      if (typeof(satisfies) === 'object') {
-        result = satisfies;
-      }
     }
-    return result;
+    return true;
   }
 
   public static compile(descriptors: Array<CardRequirementDescriptor> | undefined): CardRequirements {
@@ -90,7 +86,7 @@ export class CardRequirements {
     } else if (descriptor.cities !== undefined) {
       return new CitiesRequirement({...descriptor, count: descriptor.cities});
     } else if (descriptor.colonies !== undefined) {
-      return new ColoniesRequirement({...descriptor, count: descriptor.colonies});
+      return new ColoniesRequirement({...descriptor, count: descriptor.colonies, all: descriptor.all});
     } else if (descriptor.floaters !== undefined) {
       return new FloatersRequirement({...descriptor, count: descriptor.floaters});
     } else if (descriptor.partyLeader !== undefined) {

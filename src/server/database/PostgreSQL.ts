@@ -1,21 +1,52 @@
-import type * as pg from 'pg';
-import {IDatabase, IGameShortData} from './IDatabase';
+import pg from 'pg';
+import {GameNotFoundError, IDatabase, IGameMetadata, UserNameExistsError} from './IDatabase';
 import {IGame, Score} from '../IGame';
 import {GameOptions} from '../game/GameOptions';
-import {GameId, ParticipantId, PlayerId, isGameId, safeCast} from '../../common/Types';
+import {GameId, PlayerId} from '../../common/Types';
 import {SerializedGame} from '../SerializedGame';
 import {User} from '../User';
 import {Timer} from '../../common/Timer';
-import {daysAgoToSeconds, stringToNumber} from './utils';
-import {GameIdLedger} from './IDatabase';
+import {stringToNumber} from './utils';
 import {UserRank} from '../../common/rank/RankManager';
 import {Color} from '../../common/Color';
-type StoredSerializedGame = Omit<SerializedGame, 'gameOptions' | 'gameLog'> & {logLength: number};
+import {toID} from '../../common/utils/utils';
+import {normalizeUserId} from '../../common/utils/normalizeUserId';
+type StoredSerializedGame = Omit<SerializedGame, 'gameOptions' | 'gameLog'>;
 // import {Rating} from 'ts-trueskill';
 
-export const POSTGRESQL_TABLES = ['game', 'games', 'game_results', 'participants', 'completed_game'] as const;
+export const POSTGRESQL_TABLES = ['game', 'games', 'game_results'] as const;
 
 const POSTGRES_TRIM_COUNT = stringToNumber(process.env.POSTGRES_TRIM_COUNT, 0);
+
+// 生成单局参与者索引，只包含 playerId/spectatorId，不混入账号 userId。
+function getParticipantIds(game: IGame): Array<string> {
+  const participantIds = new Set<string>(game.getAllPlayers().map(toID));
+  if (game.spectatorId !== undefined) {
+    participantIds.add(game.spectatorId);
+  }
+  return Array.from(participantIds);
+}
+
+// 生成账号维度索引，供“我的游戏”按 userId 直接查询最近游戏列表。
+function getUserIds(game: IGame): Array<string> {
+  const userIds = new Set<string>();
+  for (const player of game.getAllPlayers()) {
+    if (player.userId !== undefined && player.userId !== '') {
+      userIds.add(normalizeUserId(player.userId));
+    }
+  }
+  return Array.from(userIds);
+}
+
+// 单条用户懒加载时复用这里反序列化，保持旧 prop 字段兼容。
+function deserializeUser(row: any): User {
+  const prop = typeof row.prop === 'string' && row.prop !== '' ? JSON.parse(row.prop) : (row.prop ?? {});
+  const user = Object.assign(new User('', '', ''), {id: row.id, name: row.name, password: row.password, createtime: row.createtime}, prop);
+  if (user.donateNum === 0 && user.isvip() > 0) {
+    user.donateNum = 1;
+  }
+  return user;
+}
 
 export class PostgreSQL implements IDatabase {
   private databaseName: string | undefined = undefined; // Use this only for stats.
@@ -31,9 +62,28 @@ export class PostgreSQL implements IDatabase {
 
   protected get client(): pg.Pool {
     if (this._client === undefined) {
-      throw new Error('attempt to get client before intialized');
+      throw new Error('attempt to get client before initialized');
     }
     return this._client;
+  }
+
+  private async transaction<T>(fn: (client: pg.PoolClient) => Promise<T>): Promise<T> {
+    const client = await this.client.connect();
+    try {
+      await client.query('BEGIN');
+      const result = await fn(client);
+      await client.query('COMMIT');
+      return result;
+    } catch (err) {
+      try {
+        await client.query('ROLLBACK');
+      } catch (rollbackErr) {
+        console.error('PostgreSQL:rollback failed', rollbackErr);
+      }
+      throw err;
+    } finally {
+      client.release();
+    }
   }
 
   constructor(
@@ -57,8 +107,7 @@ export class PostgreSQL implements IDatabase {
   }
 
   public async initialize(): Promise<void> {
-    const {Pool} = await import('pg');
-    this._client = new Pool(this.config);
+    this._client = new pg.Pool(this.config);
 
     //  createtime timestamp 时间戳带毫秒  createtime timestamp(0) 去掉毫秒
     const sql = `
@@ -68,7 +117,7 @@ export class PostgreSQL implements IDatabase {
       game text,
       status text default 'running',
       createtime timestamp(0) default now(),
-      prop text, 
+      prop jsonb,
       PRIMARY KEY (game_id, save_id));
 
     /* A single game, storing the log and the options. Normalizing out some of the game state. */
@@ -76,14 +125,12 @@ export class PostgreSQL implements IDatabase {
       game_id varchar NOT NULL,
       log text NOT NULL,
       options text NOT NULL,
+      participants varchar[],
+      userids varchar[],
+      prop jsonb,
       status text default 'running' NOT NULL,
       created_time timestamp default now() NOT NULL,
-      PRIMARY KEY (game_id));
-
-    /* A list of the players and spectator IDs, which optimizes loading unloaded for a specific player. */
-    CREATE TABLE IF NOT EXISTS participants(
-      game_id varchar,
-      participants varchar[],
+      updated_time timestamp default now() NOT NULL,
       PRIMARY KEY (game_id));
 
     CREATE TABLE IF NOT EXISTS game_results(
@@ -96,19 +143,21 @@ export class PostgreSQL implements IDatabase {
       createtime timestamp(0) default now(),
       PRIMARY KEY (game_id));
 
-    CREATE TABLE IF NOT EXISTS completed_game(
-      game_id varchar not null,
-      completed_time timestamp default now(),
-      PRIMARY KEY (game_id));
 
 
     CREATE INDEX IF NOT EXISTS games_i1 on games(save_id);
     CREATE INDEX IF NOT EXISTS games_i2 on games(createtime);
-    CREATE INDEX IF NOT EXISTS participants_idx_ids on participants USING GIN (participants);
-    CREATE INDEX IF NOT EXISTS completed_game_idx_completed_time on completed_game(completed_time);
+
+    -- 异步索引创建不能在事务中运行
+    -- CREATE INDEX CONCURRENTLY IF NOT EXISTS game_i1 on game(updated_time);
+    -- CREATE INDEX CONCURRENTLY IF NOT EXISTS game_participants_i1 on game USING GIN (participants);
+    -- CREATE INDEX CONCURRENTLY IF NOT EXISTS game_userids_i1 on game USING GIN (userids);
+    -- CREATE INDEX CONCURRENTLY IF NOT EXISTS game_running_updated_time_idx ON game(updated_time) WHERE status = 'running';
+
     `;
     await this.client.query(sql);
-    await this.client.query('CREATE TABLE IF NOT EXISTS users(id varchar not null, name varchar not null, password varchar not null, prop varchar, createtime timestamp(0) default now(), PRIMARY KEY (id))');
+    await this.client.query('CREATE TABLE IF NOT EXISTS users(id varchar not null, name varchar not null, password varchar not null, prop jsonb, createtime timestamp(0) default now(), PRIMARY KEY (id))');
+    await this.client.query('CREATE UNIQUE INDEX IF NOT EXISTS users_name_lower_unique_idx ON users (lower(name))');
 
     // 天梯 新增`user_rank`表记录用户的排名
     await this.client.query('CREATE TABLE IF NOT EXISTS user_rank (id varchar not null, rank_value integer default 0, mu float4, sigma float4,trueskill float4, PRIMARY KEY (id))');
@@ -117,8 +166,8 @@ export class PostgreSQL implements IDatabase {
     // Migrate: add is_timeout column if missing (backward-compatible)
     await this.client.query('ALTER TABLE user_game_results ADD COLUMN IF NOT EXISTS is_timeout integer default 0').catch(() => {});
 
-    // 赛季快照表：保存每个赛季结束时的排名数据
-    await this.client.query(`CREATE TABLE IF NOT EXISTS rank_seasons (
+    // 赛季快照表：保存每个赛季结束时的用户排名快照
+    await this.client.query(`CREATE TABLE IF NOT EXISTS user_rank_seasons (
       user_id varchar not null,
       season_id varchar not null,
       rank_value integer default 0,
@@ -163,37 +212,55 @@ export class PostgreSQL implements IDatabase {
     return res.rows[0].players;
   }
 
-  public async getGames(): Promise<Array<IGameShortData>> {
-    const sql: string = 'SELECT games.game_id,games.prop FROM games, (SELECT max(save_id) save_id, game_id FROM games  GROUP BY game_id) a WHERE games.game_id = a.game_id AND games.save_id = a.save_id ORDER BY createtime DESC';
-    const res = await this.client.query(sql);
-    return res.rows.map((row) => ({gameId: row.game_id, shortData: row.prop !== undefined && row.prop !=='' ? row.prop : undefined}));
+  // 游戏大厅只读 game 表上的轻量元数据，避免启动或列表接口加载完整存档。
+  public async getGames(): Promise<Array<IGameMetadata>> {
+    const res = await this.client.query('SELECT game_id, participants, userids, prop, updated_time FROM game ORDER BY updated_time DESC LIMIT 500');
+    return res.rows.map((row) => ({
+      gameId: row.game_id,
+      participants: row.participants ?? [],
+      userids: row.userids ?? [],
+      shortData: typeof row.prop === 'string' && row.prop !== '' ? JSON.parse(row.prop) : (row.prop ?? undefined),
+      updatedTime: row.updated_time,
+    }));
+  }
+
+  // playerId/spectatorId 只对应一个当前游戏，返回单个 gameId 即可。
+  public async getGameIdByParticipant(participantId: string): Promise<GameId | undefined> {
+    const res = await this.client.query(
+      'SELECT game_id FROM game WHERE participants @> ARRAY[$1]::varchar[] ORDER BY updated_time DESC LIMIT 1',
+      [participantId],
+    );
+    return res.rows[0]?.game_id;
+  }
+
+  // 账号可能对应多个历史游戏，直接返回最近 N 条 metadata，避免 1 + N 查询。
+  public async getGamesByUserId(userId: string, limit: number = 30): Promise<Array<IGameMetadata>> {
+    const res = await this.client.query(
+      `SELECT game_id, participants, userids, prop, updated_time
+       FROM game
+       WHERE userids @> ARRAY[$1]::varchar[]
+       ORDER BY updated_time DESC
+       LIMIT $2`,
+      [normalizeUserId(userId), limit],
+    );
+    return res.rows.map((row) => ({
+      gameId: row.game_id,
+      participants: row.participants ?? [],
+      userids: row.userids ?? [],
+      shortData: typeof row.prop === 'string' && row.prop !== '' ? JSON.parse(row.prop) : (row.prop ?? undefined),
+      updatedTime: row.updated_time,
+    }));
   }
 
   private compose(game: string, log: string, options: string): SerializedGame {
     const stored: StoredSerializedGame = JSON.parse(game);
-    const {logLength, ...remainder} = stored;
-    // console.log(log, options, stored.logLength);
     // TODO(kberg): Remove the outer join, and the else of this conditional by 2025-01-01
-    if (stored.logLength !== undefined) {
+    if (log !== null && options !== null) {
       const gameLog = JSON.parse(log);
-      gameLog.length = logLength; // 截断日志, 感觉没啥必要
       const gameOptions = JSON.parse(options);
-      return {...remainder, gameOptions, gameLog};
+      return {...stored, gameOptions, gameLog};
     } else {
-      return remainder as SerializedGame;
-    }
-  }
-
-  public async getGameId(participantId: ParticipantId): Promise<GameId> {
-    try {
-      const res = await this.client.query('SELECT game_id FROM participants WHERE $1 = ANY(participants)', [participantId]);
-      if (res.rowCount === 0) {
-        throw new Error(`Game for player id ${participantId} not found`);
-      }
-      return res.rows[0].game_id;
-    } catch (err) {
-      console.error('PostgreSQL:getGameId', err);
-      throw err;
+      return stored as SerializedGame;
     }
   }
 
@@ -221,7 +288,7 @@ export class PostgreSQL implements IDatabase {
       [gameId],
     );
     if (res.rows.length === 0 || res.rows[0] === undefined) {
-      throw new Error(`Game ${gameId} not found`);
+      throw new GameNotFoundError(gameId);
     }
     const row = res.rows[0];
     return this.compose(row.game, row.log, row.options);
@@ -275,20 +342,37 @@ export class PostgreSQL implements IDatabase {
     await this.client.query('DELETE FROM games WHERE game_id = $1 AND save_id < $2 AND save_id > 0', [gameId, maxSaveId]);
     // Flag game as finished
     await this.client.query('UPDATE games SET status = \'finished\' WHERE game_id = $1', [gameId]);
+    await this.client.query('UPDATE game SET status = \'finished\' WHERE game_id = $1', [gameId]);
     // Purge after setting the status as finished so it does not delete the game.
     // const delete3 = this.purgeUnfinishedGames();
     // await Promise.all([delete1, delete2]);
   }
   async markFinished(gameId: GameId): Promise<void> {
     const promise1 = this.client.query('UPDATE games SET status = \'finished\' WHERE game_id = $1', [gameId]);
-    const promise2 = this.client.query('INSERT INTO completed_game(game_id) VALUES ($1)', [gameId]);
-    await Promise.all([promise1, promise2]);
+    const promise3 = this.client.query('UPDATE game SET status = \'finished\' WHERE game_id = $1', [gameId]);
+    await Promise.all([promise1, promise3]);
   }
 
-  // Purge unfinished games older than MAX_GAME_DAYS days. If this environment variable is absent, it uses the default of 10 days.
-  async purgeUnfinishedGames(maxGameDays: string | undefined = process.env.MAX_GAME_DAYS): Promise<Array<GameId>> {
-    const dateToSeconds = daysAgoToSeconds(maxGameDays, 10);
-    const selectResult = await this.client.query('SELECT DISTINCT game_id FROM games WHERE created_time < to_timestamp($1)', [dateToSeconds]);
+  private async deleteGamesAndMetadata(client: pg.PoolClient, gameIds: ReadonlyArray<string>): Promise<number | null> {
+    const deleteGamesResult = await client.query('DELETE FROM games WHERE game_id = ANY($1)', [gameIds]);
+    await client.query('DELETE FROM game WHERE game_id = ANY($1)', [gameIds]);
+    return deleteGamesResult.rowCount;
+  }
+
+  // 按 game 表状态清理早于 dayAgo 的未完结游戏。
+  async purgeUnfinishedGames(dayAgo?: string): Promise<Array<GameId>> {
+    if (dayAgo === undefined) {
+      return [];
+    }
+    const selectResult = await this.client.query(
+      `SELECT game_id
+       FROM game
+       WHERE status = 'running'
+       AND updated_time < $1::timestamp
+       ORDER BY updated_time ASC
+       LIMIT 1000`,
+      [dayAgo],
+    );
     let gameIds = selectResult.rows.map((row) => row.game_id);
     if (gameIds.length > 1000) {
       console.log('Truncated purge to 1000 games.');
@@ -298,19 +382,16 @@ export class PostgreSQL implements IDatabase {
     }
 
     if (gameIds.length > 0) {
-      // https://github.com/brianc/node-postgres/wiki/FAQ#11-how-do-i-build-a-where-foo-in--query-to-find-rows-matching-an-array-of-values
-      const deleteGamesResult = await this.client.query('DELETE FROM games WHERE game_id = ANY($1)', [gameIds]);
-      console.log(`Purged ${deleteGamesResult.rowCount} rows from games`);
+      console.log(`cleanGame game   ${gameIds} .`);
+      const deletedRows = await this.transaction((client) => this.deleteGamesAndMetadata(client, gameIds));
+      console.log(`Purged ${deletedRows} rows from games`);
     }
     return gameIds;
   }
 
   cleanGameAllSaves(game_id: string): void {
-    // DELETE all saves
-    this.client.query('DELETE FROM games WHERE game_id = $1 ', [game_id], function(err: { message: any; }) {
-      if (err) {
-        return console.warn('cleanGame '+game_id, err);
-      }
+    void this.transaction((client) => this.deleteGamesAndMetadata(client, [game_id])).catch((err) => {
+      console.warn('cleanGame '+game_id, err);
     });
   }
 
@@ -322,11 +403,17 @@ export class PostgreSQL implements IDatabase {
       }
     });
   }
-  async restoreGame(gameId: GameId, save_id: number, game: IGame, playId: string): Promise<void> {
-    const serializedGame = await this.getGameVersion(gameId, save_id);
-    if ( serializedGame === undefined) {
+  async restoreGame(gameId: GameId, save_id: number, game: IGame, playId: string): Promise<IGame> {
+    let serializedGame: SerializedGame;
+    try {
+      serializedGame = await this.getGameVersion(gameId, save_id);
+    } catch (err) {
+      console.error(`PostgreSQL:restoreGame save_id ${save_id} not found for game ${gameId} — rollback skipped: ${err}`);
+      return game;
+    }
+    if (serializedGame === undefined) {
       console.error(`PostgreSQL:restoreGame Game not found ${gameId}`);
-      return Promise.resolve();
+      return game;
     }
     if (serializedGame.lastSaveId !== save_id) {
       console.error(`PostgreSQL:restoreGame saveId not equal ${gameId} ${save_id} ${serializedGame.lastSaveId} `);
@@ -348,33 +435,9 @@ export class PostgreSQL implements IDatabase {
       game.log('${0} undo turn', (b) => b.player(game.getPlayerById(playId as PlayerId)));
     }
     console.log(`${playId} undo turn ${gameId}  ${save_id}`);
-    return Promise.resolve();
+    return game;
   }
 
-
-  async compressCompletedGames(compressCompletedGamesDays: string | undefined = process.env.COMPRESS_COMPLETED_GAMES_DAYS): Promise<void> {
-    if (compressCompletedGamesDays === undefined) {
-      return;
-    }
-    const dateToSeconds = daysAgoToSeconds(compressCompletedGamesDays, 0);
-    const selectResult = await this.client.query('SELECT DISTINCT game_id FROM completed_game WHERE completed_time < to_timestamp($1)', [dateToSeconds]);
-    const gameIds = selectResult.rows.slice(0, 1000).map((row) => row.game_id);
-    console.log(`${gameIds.length} completed games to be compressed.`);
-    if (gameIds.length > 1000) {
-      gameIds.length = 1000;
-      console.log('Compressing 1000 games.');
-    }
-    for (const gameId of gameIds) {
-      // This isn't using await because nothing really depends on it.
-      await this.compressCompletedGame(gameId);
-    }
-  }
-
-  async compressCompletedGame(gameId: GameId): Promise<void> {
-    const maxSaveId = await this.getMaxSaveId(gameId);
-    await this.client.query('DELETE FROM games WHERE game_id = $1 AND save_id < $2 AND save_id > 0', [gameId, maxSaveId]);
-    await this.client.query('DELETE FROM completed_game where game_id = $1', [gameId]);
-  }
 
   async saveGame(game: IGame): Promise<void> {
     try {
@@ -382,30 +445,37 @@ export class PostgreSQL implements IDatabase {
       const options = JSON.stringify(serialized.gameOptions);
       const log = JSON.stringify(serialized.gameLog);
 
-      const storedSerialized: StoredSerializedGame = {...serialized, logLength: game.gameLog.length};
+      const storedSerialized: StoredSerializedGame = {...serialized};
       (storedSerialized as any).gameLog = [];
       (storedSerialized as any).gameOptions = {};
       const gameJSON = JSON.stringify(storedSerialized);
       const prop = game.toShortJSON();
+      // participants/userids 分开存，分别服务 playerId 查询和账号维度列表查询。
+      const participantIds = getParticipantIds(game);
+      const userIds = getUserIds(game);
       this.statistics.saveCount++;
-      await this.client.query('BEGIN');
+      const res = await this.transaction(async (client) => {
+        // xmax = 0 is described at https://stackoverflow.com/questions/39058213/postgresql-upsert-differentiate-inserted-and-updated-rows-using-system-columns-x
+        const saveResult = await client.query(
+          `INSERT INTO games (game_id, save_id, game)
+          VALUES ($1, $2, $3)
+          ON CONFLICT (game_id, save_id) DO UPDATE SET game = $3
+          RETURNING (xmax = 0) AS inserted`,
+          [game.id, game.lastSaveId, gameJSON]);
 
-      // Holding onto a value avoids certain race conditions where saveGame is called twice in a row.
-      // const thisSaveId = game.lastSaveId;
-      // xmax = 0 is described at https://stackoverflow.com/questions/39058213/postgresql-upsert-differentiate-inserted-and-updated-rows-using-system-columns-x
-      const res = await this.client.query(
-        `INSERT INTO games (game_id, save_id, game, prop)
-        VALUES ($1, $2, $3, $4)
-        ON CONFLICT (game_id, save_id) DO UPDATE SET game = $3
-        RETURNING (xmax = 0) AS inserted`,
-        [game.id, game.lastSaveId, gameJSON, prop]);
-
-      await this.client.query(
-        `INSERT INTO game (game_id, log, options)
-        VALUES ($1, $2, $3)
-        ON CONFLICT (game_id)
-        DO UPDATE SET log = $2`,
-        [game.id, log, options]);
+        await client.query(
+          `INSERT INTO game (game_id, log, options, participants, userids, prop, updated_time)
+          VALUES ($1, $2, $3, $4, $5, $6, now())
+          ON CONFLICT (game_id)
+          DO UPDATE SET
+            log = $2,
+            participants = $4,
+            userids = $5,
+            prop = $6,
+            updated_time = now()`,
+          [game.id, log, options, participantIds, userIds, prop]);
+        return saveResult;
+      });
 
 
       let inserted = true;
@@ -421,16 +491,14 @@ export class PostgreSQL implements IDatabase {
           this.statistics.saveConflictNormalCount++;
         }
       }
-
-      await this.client.query('COMMIT');
     } catch (err) {
-      await this.client.query('ROLLBACK');
       this.statistics.saveErrorCount++;
       console.error('PostgreSQL:saveGame' + game.id, err);
     }
     this.trim(game);
   }
 
+  // 默认0 没有启用
   private async trim(game: IGame) {
     if (this.trimCount <= 0) {
       return;
@@ -452,24 +520,18 @@ export class PostgreSQL implements IDatabase {
     await this.client.query('DELETE FROM games WHERE ctid IN (SELECT ctid FROM games WHERE game_id = $1 ORDER BY save_id DESC LIMIT $2)', [gameId, rollbackCount]);
   }
 
-  public async storeParticipants(entry: GameIdLedger): Promise<void> {
-    await this.client.query('INSERT INTO participants (game_id, participants) VALUES($1, $2)', [entry.gameId, entry.participantIds]);
+  async saveUser(id: string, name: string, password: string, prop: string): Promise<void> {
+    try {
+      await this.client.query('INSERT INTO users(id, name, password, prop) VALUES($1, $2, $3, $4)', [id, name, password, prop]);
+    } catch (err) {
+      const constraint = (err as {constraint?: string}).constraint;
+      if (constraint === 'users_name_unique' || constraint === 'users_name_lower_unique_idx') {
+        throw new UserNameExistsError(name);
+      }
+      throw err;
+    }
   }
 
-  public async getParticipants(): Promise<Array<{gameId: GameId, participantIds: Array<ParticipantId>}>> {
-    const res = await this.client.query('select game_id, participants from participants');
-    return res.rows.map((row) => {
-      return {gameId: safeCast(row.game_id, isGameId), participantIds: row.participants as Array<ParticipantId>};
-    });
-  }
-  saveUser(id: string, name: string, password: string, prop: string): void {
-    // Insert user
-    this.client.query('INSERT INTO users(id, name, password, prop) VALUES($1, $2, $3, $4)', [id, name, password, prop], function(err:any ) {
-      if (err) {
-        return console.error('saveUser' + id, err);
-      }
-    });
-  }
   updateUserProp(id: string, prop: string): void {
     this.client.query('UPDATE users SET prop = $1 WHERE id = $2', [prop, id], function(err: any) {
       if (err) {
@@ -486,15 +548,25 @@ export class PostgreSQL implements IDatabase {
       }
       if (res && res.rows.length > 0) {
         res.rows.forEach((row) => {
-          const user = Object.assign(new User('', '', ''), {id: row.id, name: row.name, password: row.password, createtime: row.createtime}, row.prop );
-          if (user.donateNum === 0 && user.isvip() > 0) {
-            user.donateNum = 1;
-          }
-          allUsers.push(user );
+          allUsers.push(deserializeUser(row));
         });
         return cb(err, allUsers);
       }
     });
+  }
+
+  // 按 userId 单查用户，供 GameLoader 懒加载使用，避免启动时全量加载 users。
+  async getUser(id: string): Promise<User | undefined> {
+    const res = await this.client.query('SELECT id, name, password, prop, createtime FROM users WHERE id = $1 LIMIT 1', [normalizeUserId(id)]);
+    const row = res.rows[0];
+    return row === undefined ? undefined : deserializeUser(row);
+  }
+
+  // 按用户名单查用户，供登录等路径懒加载使用。
+  async getUserByName(name: string): Promise<User | undefined> {
+    const res = await this.client.query('SELECT id, name, password, prop, createtime FROM users WHERE lower(name) = lower($1) LIMIT 1', [name]);
+    const row = res.rows[0];
+    return row === undefined ? undefined : deserializeUser(row);
   }
 
   public async stats(): Promise<{[key: string]: string | number}> {
@@ -549,13 +621,34 @@ export class PostgreSQL implements IDatabase {
     });
   }
 
-  public async getUserRanks(limit:number | undefined = 0): Promise<Array<UserRank>> {
-    const concatLimit: string = limit === 0 ? '' : ' limit ' + limit.toString();
-    const sql: string = ' SELECT id, rank_value, mu, sigma, trueskill, points, season_id FROM user_rank   order by rank_value desc,trueskill desc  ' + concatLimit;
+  // 按 userId 单查排名，避免启动时全量加载 user_rank。
+  public async getUserRank(userId: string): Promise<UserRank | undefined> {
+    const res = await this.client.query('SELECT id, rank_value, mu, sigma, trueskill, points, season_id FROM user_rank WHERE id = $1 LIMIT 1', [normalizeUserId(userId)]);
+    const row = res.rows[0];
+    if (row === undefined) {
+      return undefined;
+    }
+    return new UserRank(row.id, row.rank_value, row.mu, row.sigma, row.trueskill, row.points || 0, row.season_id || '');
+  }
+
+  public async getUserRanks(limit:number | undefined = 0, seasonId?: string): Promise<Array<UserRank>> {
+    const params: Array<number | string> = [];
+    let sql = ` SELECT user_rank.id, COALESCE(users.name, 'Unknown') AS user_name, rank_value, mu, sigma, trueskill, points, season_id
+                FROM user_rank
+                LEFT JOIN users ON users.id = user_rank.id `;
+    if (seasonId !== undefined && seasonId !== '') {
+      params.push(seasonId);
+      sql += ` WHERE user_rank.season_id = $${params.length} `;
+    }
+    sql += ' order by user_rank.rank_value desc,user_rank.trueskill desc ';
+    if (limit !== 0) {
+      params.push(limit);
+      sql += ` limit $${params.length}`;
+    }
     const allUserRanks : Array<UserRank> = [];
-    const res = await this.client.query(sql);
+    const res = await this.client.query(sql, params);
     res.rows.forEach((row: any) => {
-      const userRank = new UserRank(row.id, row.rank_value, row.mu, row.sigma, row.trueskill, row.points || 0, row.season_id || '');
+      const userRank = new UserRank(row.id, row.rank_value, row.mu, row.sigma, row.trueskill, row.points || 0, row.season_id || '', row.user_name);
       allUserRanks.push(userRank);
     });
     return allUserRanks;
@@ -631,17 +724,30 @@ export class PostgreSQL implements IDatabase {
   }
 
   // 赛季相关方法
-  public async saveSeasonSnapshot(userId: string, seasonId: string, rankValue: number, mu: number, sigma: number, trueskill: number, pointsEarned: number, finalPosition: number): Promise<void> {
+  public async saveUserRankSeasonSnapshot(userId: string, seasonId: string, rankValue: number, mu: number, sigma: number, trueskill: number, pointsEarned: number, finalPosition: number): Promise<void> {
     await this.client.query(
-      'INSERT INTO rank_seasons (user_id, season_id, rank_value, mu, sigma, trueskill, points_earned, final_position) VALUES($1, $2, $3, $4, $5, $6, $7, $8) ON CONFLICT (user_id, season_id) DO NOTHING',
+      `INSERT INTO user_rank_seasons (user_id, season_id, rank_value, mu, sigma, trueskill, points_earned, final_position)
+       VALUES($1, $2, $3, $4, $5, $6, $7, $8)
+       ON CONFLICT (user_id, season_id) DO NOTHING`,
       [userId, seasonId, rankValue, mu, sigma, trueskill, pointsEarned, finalPosition],
     );
   }
 
-  public async getSeasonSnapshots(seasonId: string): Promise<Array<{userId: string, rankValue: number, mu: number, sigma: number, trueskill: number, pointsEarned: number, finalPosition: number}>> {
-    const result = await this.client.query('SELECT user_id, rank_value, mu, sigma, trueskill, points_earned, final_position FROM rank_seasons WHERE season_id = $1 ORDER BY final_position ASC', [seasonId]);
+  public async getUserRankSeasonSnapshots(seasonId: string, limit?: number): Promise<Array<{userId: string, userName: string, rankValue: number, mu: number, sigma: number, trueskill: number, pointsEarned: number, finalPosition: number}>> {
+    const params: Array<string | number> = [seasonId];
+    let sql = `SELECT user_rank_seasons.user_id, COALESCE(users.name, 'Unknown') AS user_name, rank_value, mu, sigma, trueskill, points_earned, final_position
+               FROM user_rank_seasons
+               LEFT JOIN users ON users.id = user_rank_seasons.user_id
+               WHERE season_id = $1
+               ORDER BY final_position ASC`;
+    if (limit !== undefined && limit > 0) {
+      params.push(limit);
+      sql += ' LIMIT $2';
+    }
+    const result = await this.client.query(sql, params);
     return result.rows.map((row: any) => ({
       userId: row.user_id,
+      userName: row.user_name,
       rankValue: row.rank_value,
       mu: row.mu,
       sigma: row.sigma,
@@ -652,7 +758,7 @@ export class PostgreSQL implements IDatabase {
   }
 
   public async getAvailableSeasons(): Promise<Array<string>> {
-    const result = await this.client.query('SELECT DISTINCT season_id FROM rank_seasons ORDER BY season_id DESC', []);
+    const result = await this.client.query('SELECT DISTINCT season_id FROM user_rank_seasons ORDER BY season_id DESC', []);
     return result.rows.map((row: any) => row.season_id);
   }
 

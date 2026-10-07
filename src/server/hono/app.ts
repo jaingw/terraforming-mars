@@ -16,6 +16,7 @@ import {testRoutes} from './test';
 import {userProfileRoutes} from './userProfile';
 import {userStatsRoutes} from './userStats';
 import {serverRoutes} from './server';
+import {passwordResetRoutes} from './passwordReset';
 
 const app = new Hono().basePath('/api/v2');
 
@@ -32,5 +33,6 @@ app.route('/test', testRoutes);
 app.route('/user-profile', userProfileRoutes);
 app.route('/user-stats', userStatsRoutes);
 app.route('/server', serverRoutes);
+app.route('/password-reset', passwordResetRoutes);
 
 export {app};

@@ -23,7 +23,7 @@ export class ExportConvoy extends Card implements IProjectCard {
       victoryPoints: -1,
 
       metadata: {
-        cardNumber: 'U97',
+        cardNumber: 'U097',
         renderData: CardRenderer.builder((b) => {
           b.minus().plants(4, {digit}).or()
             .minus().resource(CardResource.MICROBE, {amount: 3, digit}).asterix().br
@@ -37,11 +37,12 @@ export class ExportConvoy extends Card implements IProjectCard {
   }
 
   public microbeCards(player: IPlayer) {
-    return player.playedCards.filter((card) => card.resourceType === CardResource.MICROBE && card.resourceCount >= 3);
+    return player.playedCards.filter((card) => card.protectedResources !== true && card.resourceType === CardResource.MICROBE && card.resourceCount >= 3);
   }
 
   public animalCards(player: IPlayer) {
-    return player.playedCards.filter((card) => card.resourceType === CardResource.ANIMAL && card.resourceCount >= 2);
+    return player.playedCards.filter((card) => card.protectedResources !== true && card.name !== CardName.PETS && card.resourceType === CardResource.ANIMAL && card.resourceCount >= 2);
+    // NB Animals can't be removed from Pets.
   }
 
   public override bespokeCanPlay(player: IPlayer, _canAffordOptions: CanAffordOptions): boolean {

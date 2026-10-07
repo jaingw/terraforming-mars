@@ -1,9 +1,11 @@
 import {expect} from 'chai';
 import {ExportConvoy} from '../../../src/server/cards/underworld/ExportConvoy';
 import {testGame} from '../../TestGame';
-import {cast, runAllActions} from '../../TestingUtils';
+import {runAllActions} from '../../TestingUtils';
 import {Tardigrades} from '../../../src/server/cards/base/Tardigrades';
 import {Birds} from '../../../src/server/cards/base/Birds';
+import {cast} from '../../../src/common/utils/utils';
+import {BioengineeringEnclosure} from '../../../src/server/cards/ares/BioengineeringEnclosure';
 
 describe('ExportConvoy', () => {
   const canPlayRuns = [
@@ -72,5 +74,15 @@ describe('ExportConvoy', () => {
     expect(birds.resourceCount).eq(0);
     expect(player.underworldData.corruption).eq(1);
     expect(player.megaCredits).eq(20);
+  });
+
+  it('cannot play with only animals from Bioengineering Enclosure', () => {
+    const card = new ExportConvoy();
+    const [/* game */, player] = testGame(2, {aresExtension: true, underworldExpansion: true});
+    const bioengineeringEnclosure = new BioengineeringEnclosure();
+    player.playedCards.push(bioengineeringEnclosure);
+    bioengineeringEnclosure.resourceCount = 2;
+
+    expect(card.canPlay(player)).is.false;
   });
 });

@@ -54,7 +54,7 @@ export class RaincatScientificProbe extends CorporationCard {
   }
 
 
-  public onCardPlayedForCorps(player: IPlayer, _card: IProjectCard) {
+  public onCardPlayed(player: IPlayer, _card: IProjectCard) {
     if (player.playedCards.has(this.name)) {
       player.addResourceTo(this, {log: true});
     }
@@ -62,7 +62,9 @@ export class RaincatScientificProbe extends CorporationCard {
 
 
   public onResourceAdded(player: IPlayer, playedCard: ICard) {
-    if (playedCard.name !== this.name) return;
+    if (playedCard.name !== this.name) {
+      return;
+    }
     if (this.resourceCount >= RESOURCE_AUTO_NUM) {
       player.defer(new OrOptions(
         new SelectOption('Gain 3 steels', 'Gain steel').andThen(() => {
@@ -83,4 +85,3 @@ export class RaincatScientificProbe extends CorporationCard {
     }
   }
 }
-
